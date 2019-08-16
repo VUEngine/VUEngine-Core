@@ -225,5 +225,5 @@ VirtualList SpatialObject::getShapes()
  */
 u32 SpatialObject::getInGameType()
 {
-	return kNoType;
+	return kTypeNone;
 }

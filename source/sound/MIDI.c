@@ -1,12 +1,12 @@
-const s8 sineWaveForm[] = 
+const s8 sineWaveForm[] =
 {
 	  0,  6, 12, 17, 22, 26, 29, 31,
 	 31, 31, 29, 26, 22, 17, 12,  6,
-	  0, -7,-13,-18,-23,-27,-30,-31,
+	  0, -6,-12,-17,-22,-26,-29,-31,
 	-31,-31,-29,-26,-22,-17,-12, -6
 };
 
-const s8 sawtoothWaveForm[] = 
+const s8 sawtoothWaveForm[] =
 {
 	-31,-29,-27,-25,-23,-21,-19,-17,
 	-15,-13,-11, -9, -7, -5, -3, -1,
@@ -14,7 +14,7 @@ const s8 sawtoothWaveForm[] =
 	 17, 19, 21, 23, 25, 27, 29, 31
 };
 
-const s8 triangleWaveForm[] = 
+const s8 triangleWaveForm[] =
 {
 	-31,-27,-23,-19,-15,-11, -7, -3,
 	  0,  4,  8, 12, 16, 20, 24, 28,
@@ -22,7 +22,7 @@ const s8 triangleWaveForm[] =
 	  0, -4, -8,-12,-16,-20,-24,-28
 };
 
-const s8 squareWaveForm[] = 
+const s8 squareWaveForm[] =
 {
 	-31,-31,-31,-31,-31,-31,-31,-31,
 	-31,-31,-31,-31,-31,-31,-31,-31,
@@ -30,7 +30,7 @@ const s8 squareWaveForm[] =
 	 31, 31, 31, 31, 31, 31, 31, 31
 };
 
-const s8 pianoWaveForm[] = 
+const s8 pianoWaveForm[] =
 {
 	  0, -3, -1, 14, 18,  3, -4, -3,
 	 -4, -6, -4, 10, 13, 15, 19, 16,
@@ -38,7 +38,7 @@ const s8 pianoWaveForm[] =
 	-11,  1,  2,-12, -5,-10,-11, -2
 };
 
-const s8 trumpetWaveForm[] = 
+const s8 trumpetWaveForm[] =
 {
 	  7,  6,  4,  1,  1,  4,  4,  2,
 	 -1,  3,  7,  8,  7,  3,  1,  8,
@@ -46,7 +46,7 @@ const s8 trumpetWaveForm[] =
 	 -1,  2,  6,  3,  1,  3,  6,  8
 };
 
-const s8 violinWaveForm[] = 
+const s8 violinWaveForm[] =
 {
 	-30,-13,  6,  7,-12, -5, -3, -2,
 	-27,-31,-12,-30, -8, -5,-15, 17,

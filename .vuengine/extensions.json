@@ -14,6 +14,7 @@
 		]
 	},
 	"config": {
+		"events": "extensions/config/events.json",
 		"fonts": "extensions/config/fonts.json",
 		"romHeader": "extensions/config/romHeader.json",
 		"config": "extensions/config/config.json"
@@ -36,6 +37,13 @@
 			"target": "config.make"
 		},
 		{
+			"file": "extensions/templates/GameEvents.h.nj",
+			"config": [
+				"events"
+			],
+			"target": "source/GameEvents.h"
+		},
+		{
 			"file": "extensions/templates/Fonts.c.nj",
 			"config": [
 				"fonts"
@@ -48,6 +56,17 @@
 				"fonts"
 			],
 			"target": "source/assets/Fonts.h"
+		},
+		{
+			"file": "extensions/templates/Font.c.nj",
+			"config": [
+				"fonts"
+			],
+			"loop": {
+				"config": "fonts",
+				"path": "project.fonts"
+			},
+			"target": "/assets/fonts/{name}FontSpec.c"
 		}
 	],
 	"i18n": [

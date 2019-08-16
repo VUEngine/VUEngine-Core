@@ -380,7 +380,7 @@ void SoundWrapper::release()
 
 	if(this->events)
 	{
-		SoundWrapper::fireEvent(this, kSoundReleased);
+		SoundWrapper::fireEvent(this, kEventSoundReleased);
 	}
 }
 
@@ -588,7 +588,7 @@ void SoundWrapper::completedPlayback()
 {
 	if(this->events)
 	{
-		SoundWrapper::fireEvent(this, kSoundFinished);
+		SoundWrapper::fireEvent(this, kEventSoundFinished);
 	}
 
 	if(!this->sound->loop)

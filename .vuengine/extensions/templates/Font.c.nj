@@ -1,0 +1,50 @@
+{% include('./base/header.c.nj') %}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <Printing.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+//												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern BYTE {{ currentItem.image | basename }}Tiles[];
+
+
+//---------------------------------------------------------------------------------------------------------
+//												DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+CharSetROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT_CH =
+{
+	// number of chars
+	{{ currentItem.characterCount * currentItem.size.x * currentItem.size.y }},
+
+	// allocation type
+	__NOT_ANIMATED,
+
+	// char spec
+	{{ currentItem.image | basename }}Tiles,
+};
+
+FontROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT =
+{
+	// font charset spec pointer
+	(CharSetSpec*)&{{ currentItem.name | toUpperSnakeCase }}_FONT_CH,
+
+	// character number at which the font starts, allows you to skip the control characters for example
+	{{ currentItem.offset }},
+
+	// number of characters in this font
+	{{ currentItem.characterCount }},
+
+	// size of a single character (in chars) ({width, height})
+	{{ "{" }}{{ currentItem.size.x }}, {{ currentItem.size.y }}{{ "}" }},
+
+	// font's name
+	"{{ currentItem.name }}",
+};

@@ -7,16 +7,46 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Fonts.h>
+#include <Printing.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+//												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern BYTE VUEngineFontTiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
 //												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontSpec* const __FONTS[] =
+CharSetROMSpec DEFAULT_FONT_CH =
 {
-	(FontSpec*)&DEFAULT_FONT,
+	// number of chars
+	256,
 
-	NULL
+	// allocation type
+	__NOT_ANIMATED,
+
+	// char spec
+	VUEngineFontTiles,
+};
+
+FontROMSpec DEFAULT_FONT =
+{
+	// font charset spec pointer
+	(CharSetSpec*)&DEFAULT_FONT_CH,
+
+	// character number at which the font starts, allows you to skip the control characters for example
+	0,
+
+	// number of characters in this font
+	256,
+
+	// size of a single character (in chars) ({width, height})
+	{1, 1},
+
+	// font's name
+	"Default",
 };

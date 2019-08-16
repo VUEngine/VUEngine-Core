@@ -18,8 +18,8 @@
 //											GAME SPECIFIC MACROS
 //---------------------------------------------------------------------------------------------------------
 
-{% for key, value in project.config.game -%}
-#define {{ key | toUpperSnakeCase }} {{ value | safe }}
+{% for gameConfig in project.config.game -%}
+#define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfig.value | safe }}
 {% endfor %}
 
 {% endif -%}
@@ -53,7 +53,7 @@
 // dimm screen to make it easier to read the profiling output
 {% if project.config.debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
 
-// print the game's current process while the VIP's frame start and idle interrupts are fired, but the 
+// print the game's current process while the VIP's frame start and idle interrupts are fired, but the
 // game frame is still pending processes to complete
 {% if project.config.debug.profileGameStateDuringVipInterrupt %}#define{% else %}#undef{% endif %} __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 
@@ -183,7 +183,7 @@
 //											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
-// when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired 
+// when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired
 // beforethe current game frame is done
 {% if project.config.frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
 
@@ -235,15 +235,15 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS \
 {%- set poolBlockDefinitions = '' -%}
-{% for size, number in project.config.memoryPools.pools %}
-	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ size ~ ', ' ~  number ~') \\\n' ~ poolBlockDefinitions -%}
+{% for pool in project.config.memoryPools.pools %}
+	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ pool.size ~ ', ' ~  pool.objects ~') \\\n' ~ poolBlockDefinitions -%}
 {% endfor %}
 {{ poolBlockDefinitions }}
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS \
 {%- set poolArrayDefinitions = '' -%}
-{% for size, number in project.config.memoryPools.pools -%}
-	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ size ~ ') \\\n' ~ poolArrayDefinitions -%}
+{% for pool in project.config.memoryPools.pools -%}
+	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ pool.size ~ ') \\\n' ~ poolArrayDefinitions -%}
 {% endfor %}
 {{ poolArrayDefinitions }}
 // percentage (0-100) above which the memory pool's status shows the pool usage
@@ -351,19 +351,6 @@
 //												SOUND
 //---------------------------------------------------------------------------------------------------------
 
-// channels per bgms
-#define __BGM_CHANNELS								{{ project.config.sound.bgmChannels }}
-
-// channels per fx
-#define __FX_CHANNELS								{{ project.config.sound.fxChannels }}
-
-// simultaneous bgms
-#define __BGMS										{{ project.config.sound.bgms }}
-
-// simultaneous fx
-#define __FXS										{{ project.config.sound.fxs }}
-
-#define __TOTAL_SOUNDS								(__BGMS + __FXS)
 #define __LEFT_EAR_CENTER							{{ project.config.sound.leftEarCenter }}
 #define __RIGHT_EAR_CENTER							{{ project.config.sound.rightEarCenter }}
 
@@ -394,15 +381,15 @@
 #define __PRINTING_PALETTE							{{ project.config.colors.palettes.printingPalette }}
 
 // default palette values, actual values are set in stage specs
-#define __BGMAP_PALETTE_0							{{ project.config.colors.palettes.bgMap[0] }}
-#define __BGMAP_PALETTE_1							{{ project.config.colors.palettes.bgMap[1] }}
-#define __BGMAP_PALETTE_2							{{ project.config.colors.palettes.bgMap[2] }}
-#define __BGMAP_PALETTE_3							{{ project.config.colors.palettes.bgMap[3] }}
+#define __BGMAP_PALETTE_0							0b{{ project.config.colors.palettes.bgMap[0][0] }}{{ project.config.colors.palettes.bgMap[0][1] }}{{ project.config.colors.palettes.bgMap[0][2] }}00
+#define __BGMAP_PALETTE_1							0b{{ project.config.colors.palettes.bgMap[1][0] }}{{ project.config.colors.palettes.bgMap[1][1] }}{{ project.config.colors.palettes.bgMap[1][2] }}00
+#define __BGMAP_PALETTE_2							0b{{ project.config.colors.palettes.bgMap[2][0] }}{{ project.config.colors.palettes.bgMap[2][1] }}{{ project.config.colors.palettes.bgMap[2][2] }}00
+#define __BGMAP_PALETTE_3							0b{{ project.config.colors.palettes.bgMap[3][0] }}{{ project.config.colors.palettes.bgMap[3][1] }}{{ project.config.colors.palettes.bgMap[3][2] }}00
 
-#define __OBJECT_PALETTE_0							{{ project.config.colors.palettes.object[0] }}
-#define __OBJECT_PALETTE_1							{{ project.config.colors.palettes.object[1] }}
-#define __OBJECT_PALETTE_2							{{ project.config.colors.palettes.object[2] }}
-#define __OBJECT_PALETTE_3							{{ project.config.colors.palettes.object[3] }}
+#define __OBJECT_PALETTE_0							0b{{ project.config.colors.palettes.object[0][0] }}{{ project.config.colors.palettes.object[0][1] }}{{ project.config.colors.palettes.object[0][2] }}00
+#define __OBJECT_PALETTE_1							0b{{ project.config.colors.palettes.object[1][0] }}{{ project.config.colors.palettes.object[1][1] }}{{ project.config.colors.palettes.object[1][2] }}00
+#define __OBJECT_PALETTE_2							0b{{ project.config.colors.palettes.object[2][0] }}{{ project.config.colors.palettes.object[2][1] }}{{ project.config.colors.palettes.object[2][2] }}00
+#define __OBJECT_PALETTE_3							0b{{ project.config.colors.palettes.object[3][0] }}{{ project.config.colors.palettes.object[3][1] }}{{ project.config.colors.palettes.object[3][2] }}00
 
 
 //---------------------------------------------------------------------------------------------------------
