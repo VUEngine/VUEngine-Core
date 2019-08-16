@@ -62,6 +62,6 @@ With that macro defined, the engine expects you to define a *NULL terminated* ar
 
 Note that the first font in the `__FONTS` array is always the default one, and is used when `NULL` is passed to the various Printing methods instead of a font name.
 
-The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it, simply add `&VUENGINE_FONT` to your `__FONTS` array. It will then be accessible under the name "VUEngine". Don't forget to also declare it as extern in your font definition file, like so:
+The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it, simply add `&DEFAULT_FONT` to your `__FONTS` array. It will then be accessible under the name "VUEngine". Don't forget to also declare it as extern in your font definition file, like so:
 
-    extern FontROMDef VUENGINE_FONT;
+    extern FontROMDef DEFAULT_FONT;
