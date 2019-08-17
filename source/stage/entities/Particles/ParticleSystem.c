@@ -75,7 +75,7 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
  */
 void ParticleSystem::destructor()
 {
-	ParticleSystem::cleanUp(this);
+	ParticleSystem::cleanUp(this, false);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -87,7 +87,7 @@ void ParticleSystem::destructor()
  */
 void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec)
 {
-	ParticleSystem::cleanUp(this);
+	ParticleSystem::cleanUp(this, true);
 	ParticleSystem::setup(this, particleSystemSpec);
 }
 
@@ -131,11 +131,11 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 /**
  * Class cleanUp
  */
-void ParticleSystem::cleanUp()
+void ParticleSystem::cleanUp(bool deleteParticlesImmeditely)
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	ParticleRemover particleRemover = Stage::getParticleRemover(Game::getStage(Game::getInstance()));
+	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(Game::getStage(Game::getInstance()));
 
 	if(!isDeleted(this->particles))
 	{
