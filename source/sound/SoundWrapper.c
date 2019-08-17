@@ -207,6 +207,18 @@ s8 SoundWrapper::getVolumeReduction()
 }
 
 /**
+ * Get channel
+ *
+ *
+ * @param index u8
+ * @return Channel*
+ */
+const Channel* SoundWrapper::getChannel(u8 index)
+{
+	return VirtualList::getObjectAtPosition(this->channels, index);
+}
+
+/**
  * Is paused?
  *
  * @return bool
@@ -711,8 +723,12 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 							}
 						}
 
+#ifdef __SOUND_TEST
 						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
+#else
+						_soundRegistries[channel->number].SxLRV = this->unmute * (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume);
+#endif
 					}
 					break;
 

@@ -237,6 +237,7 @@ class SoundWrapper : Object
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
 
+	const Channel* getChannel(u8 index);
 	bool isPaused();
 	bool hasPCMTracks();
 	void play(const Vector3D* position, u32 playbackType);
