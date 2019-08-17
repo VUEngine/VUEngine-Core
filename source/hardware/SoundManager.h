@@ -93,6 +93,7 @@ enum ChannelTypes
 #define __TOTAL_MODULATION_CHANNELS			1
 #define __TOTAL_NOISE_CHANNELS				1
 #define __TOTAL_NORMAL_CHANNELS				(__TOTAL_CHANNELS - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
+#define __TOTAL_POTENTIAL_NORMAL_CHANNELS	(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
 
 
 //---------------------------------------------------------------------------------------------------------
