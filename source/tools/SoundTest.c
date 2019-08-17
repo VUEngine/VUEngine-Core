@@ -423,14 +423,13 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll);
+	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundReleased, Object::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
 
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
-		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kEventSoundReleased);
 
 		if(SoundWrapper::hasPCMTracks(this->soundWrapper))
 		{

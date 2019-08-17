@@ -123,8 +123,8 @@ singleton class SoundManager : Object
 	bool playPCMSounds();
 	void stopAllSounds();
 
-	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType);
-	SoundWrapper getSound(Sound* sound, u32 command);
+	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope);
+	SoundWrapper getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void deferMIDIPlayback(bool deferMIDIPlayback);

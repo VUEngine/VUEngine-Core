@@ -692,9 +692,9 @@ u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8
 	return usableChannelsCount;
 }
 
-SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType)
+SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
 {
-	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command);
+	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
 
 //	NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::playSound: could not get any sound");
 
@@ -711,11 +711,11 @@ SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* 
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(Sound* sound, u32 command)
+SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
-	if(NULL == sound)
+	if(NULL == sound || NULL == soundReleaseListener || isDeleted(scope))
 	{
 		return NULL;
 	}
@@ -782,7 +782,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command)
 
 				if(0 < VirtualList::getSize(availableChannels))
 				{
-					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate);
+					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope);
 
 					VirtualList::pushBack(this->soundWrappers, soundWrapper);
 				}

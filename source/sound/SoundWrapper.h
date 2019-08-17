@@ -235,7 +235,7 @@ class SoundWrapper : Object
 	bool unmute;
 
 	/// @publicsection
-	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate);
+	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
 
 	bool isPaused();
 	bool hasPCMTracks();

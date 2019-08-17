@@ -57,7 +57,7 @@ friend class VirtualList;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate)
+void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope)
 {
 	// construct base Container
 	Base::constructor();
@@ -83,6 +83,8 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	VirtualList::copy(this->channels, channels);
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
+
+	SoundWrapper::addEventListener(this, scope, soundReleaseListener, kEventSoundReleased);
 }
 
 /**
