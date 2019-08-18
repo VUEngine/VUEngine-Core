@@ -30,6 +30,7 @@
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
 #include <Utilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -258,12 +259,9 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-
-		// Don't allow the sound to come out just yet
-		if(position)
-		{
-			channel->soundChannelConfiguration.SxLRV = SxLRV;
-		}
+		_soundRegistries[channel->number].SxLRV = 0;
+		_soundRegistries[channel->number].SxFQH = 0;
+		_soundRegistries[channel->number].SxFQL = 0;
 	}
 
 	if(!wasPaused)
@@ -688,20 +686,24 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 						{
 							note = 0;
 						}
-						
+
 #ifdef __SOUND_TEST
+						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+#ifdef __SHOW_SOUND_STATUS
 						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
 #else
 						_soundRegistries[channel->number].SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = (note >> 8);
 #endif
+#endif
 
 				case HOLD:
 					// Continue playing the previous note
 					{
 						u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
-
 
 						s16 leftVolume = volume;
 						s16 rightVolume = volume;
@@ -732,7 +734,12 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
 #else
+#ifdef __SHOW_SOUND_STATUS
+						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
+						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
+#else
 						_soundRegistries[channel->number].SxLRV = this->unmute * (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume);
+#endif
 #endif
 					}
 					break;

@@ -904,30 +904,30 @@ void SoundManager::print()
 		PRINT_TEXT("Cursor :        ", x, ++y);
 		PRINT_INT(this->channels[i].cursor, x + xDisplacement, y);
 
-		PRINT_TEXT("Snd Ch : ", x, ++y);
+		PRINT_TEXT("Snd Ch :     ", x, ++y);
 		PRINT_INT(this->channels[i].soundChannel, x + xDisplacement, y);
 
-		PRINT_TEXT("SxRAM  : ", x, ++y);
+		PRINT_TEXT("SxRAM  :     ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
-		PRINT_TEXT("INT/LVR:  /", x, ++y);
+		PRINT_TEXT("INT/LVR:  /   ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxINT | (NULL == this->channels[i].sound ? 0 : 0x80), x + xDisplacement, y, 2);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxLRV, x + xDisplacement + 3, y, 2);
 
-		PRINT_TEXT("EV0/EV1:  /", x, ++y);
+		PRINT_TEXT("EV0/EV1:  /   ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxEV1, x + xDisplacement + 3, y, 2);
 
-		PRINT_TEXT("FQH/FQL:  /", x, ++y);
+		PRINT_TEXT("FQH/FQL:  /   ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQL, x + xDisplacement + 3, y, 2);
 	
-		PRINT_TEXT("Loop   : ", x, ++y);
+		PRINT_TEXT("Loop   :      ", x, ++y);
 		PRINT_TEXT(this->channels[i].sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-		PRINT_TEXT("Length : ", x, ++y);
+		PRINT_TEXT("Length :      ", x, ++y);
 		PRINT_INT(this->channels[i].length, x + xDisplacement, y);
 		
-		PRINT_TEXT("Note   : ", x, ++y);
+		PRINT_TEXT("Note   :     ", x, ++y);
 		switch(this->channels[i].soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
