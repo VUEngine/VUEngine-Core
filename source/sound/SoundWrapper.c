@@ -689,8 +689,13 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 							note = 0;
 						}
 						
+#ifdef __SOUND_TEST
 						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+						_soundRegistries[channel->number].SxFQL = (note & 0xFF);
+						_soundRegistries[channel->number].SxFQH = (note >> 8);
+#endif
 
 				case HOLD:
 					// Continue playing the previous note
