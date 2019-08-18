@@ -909,7 +909,7 @@ void SoundManager::print()
 
 		PRINT_TEXT("SxRAM  :     ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
-		PRINT_TEXT("INT/LVR:  /   ", x, ++y);
+		PRINT_TEXT("INT/LRV:  /   ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxINT | (NULL == this->channels[i].sound ? 0 : 0x80), x + xDisplacement, y, 2);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxLRV, x + xDisplacement + 3, y, 2);
 
