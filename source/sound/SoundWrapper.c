@@ -548,7 +548,7 @@ static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15
 	channel->ticksPerNote = __FIX17_15_DIV(channel->ticksPerNote, speed);
 
 	fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
-	channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+	channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote + 1);
 }
 
 static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 residue __attribute__((unused)), fix17_15 speed __attribute__((unused)), fix17_15 targetTimerResolutionFactor __attribute__((unused)))
