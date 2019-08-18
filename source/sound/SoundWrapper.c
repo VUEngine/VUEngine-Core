@@ -703,8 +703,8 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 						u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
 
 
-						s8 leftVolume = volume;
-						s8 rightVolume = volume;
+						s16 leftVolume = volume;
+						s16 rightVolume = volume;
 
 						if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
 						{
