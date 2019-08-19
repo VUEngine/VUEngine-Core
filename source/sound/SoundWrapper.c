@@ -165,7 +165,32 @@ fix17_15 SoundWrapper::getSpeed()
  */
 void SoundWrapper::setVolumeReduction(s8 volumeReduction)
 {
+	s8 difference = this->volumeReduction - volumeReduction;
 	this->volumeReduction = volumeReduction;
+
+	if(!this->paused)
+	{
+		VirtualNode node = this->channels->head;
+
+		// Prepare channels
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+
+			if(kMIDI !=channel->soundChannelConfiguration.trackType)
+			{
+				continue;
+			}
+
+			s8 currentLeftVolume = channel->soundChannelConfiguration.SxLRV >> 4;
+			s8 currentRightVolume = channel->soundChannelConfiguration.SxLRV & 0x0F;
+			u8 leftVolume = SoundWrapper::clampMIDIOutputValue(currentLeftVolume + difference);
+			u8 rightVolume = SoundWrapper::clampMIDIOutputValue(currentRightVolume + difference);
+
+			channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
+			_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
+		}
+	}
 }
 
 bool SoundWrapper::handleMessage(Telegram telegram)
@@ -248,20 +273,21 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 	bool wasPaused = this->paused;
 	this->paused = false;
 
-	u8 SxLRV = 0x00;
-
 	this->position = position;
 
-	VirtualNode node = this->channels->head;
-
-	// Prepare channels
-	for(; node; node = node->next)
+	if(wasPaused)
 	{
-		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-		_soundRegistries[channel->number].SxLRV = 0;
-		_soundRegistries[channel->number].SxFQH = 0;
-		_soundRegistries[channel->number].SxFQL = 0;
+		VirtualNode node = this->channels->head;
+
+		// Prepare channels
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+			_soundRegistries[channel->number].SxLRV = 0;
+			_soundRegistries[channel->number].SxFQH = 0;
+			_soundRegistries[channel->number].SxFQL = 0;
+		}
 	}
 
 	if(!wasPaused)
@@ -730,17 +756,8 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 							}
 						}
 
-#ifdef __SOUND_TEST
 						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
-#else
-#ifdef __SHOW_SOUND_STATUS
-						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
-						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
-#else
-						_soundRegistries[channel->number].SxLRV = this->unmute * (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume);
-#endif
-#endif
 					}
 					break;
 
