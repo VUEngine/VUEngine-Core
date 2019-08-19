@@ -148,7 +148,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
-
+	this->speed 				= 0;
+	
 	if(!_physhicsClock)
 	{
 		_physhicsClock = Game::getPhysicsClock(Game::getInstance());
