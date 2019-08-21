@@ -683,7 +683,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 */
 		channel->ticks += channel->tickStep;
 
-		if(0 == elapsedMicroseconds || channel->ticks >= channel->ticksPerNote)
+		if(channel->ticks >= channel->ticksPerNote || 0 == elapsedMicroseconds)
 		{
 			if(elapsedMicroseconds)
 			{
