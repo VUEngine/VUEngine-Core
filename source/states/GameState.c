@@ -119,7 +119,7 @@ void GameState::enter(void* owner __attribute__ ((unused)))
  */
 void GameState::execute(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this->stage, "GameState::execute: null stage");
+	NM_ASSERT(this->stage, "GameState::execute: null stage");
 
 	if(!Clock::isPaused(this->updateClock))
 	{

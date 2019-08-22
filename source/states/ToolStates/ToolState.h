@@ -50,6 +50,8 @@ abstract class ToolState : GameState
 	override void exit(void* owner);
 	override void processUserInput(UserInput userInput);
 	override bool stream();
+	override void transform();
+	override void synchronizeGraphics();
 }
 
 

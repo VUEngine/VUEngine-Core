@@ -90,7 +90,7 @@ class GameState : State
 	void startPhysics();
 	void stopClocks();
 	void updatePhysics();
-	void synchronizeGraphics();
+	virtual void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();

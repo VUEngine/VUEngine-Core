@@ -134,3 +134,20 @@ void ToolState::processUserInput(UserInput userInput)
 		Tool::processUserInput(this->tool, userInput.releasedKey);
 	}
 }
+
+/**
+ * Transform
+ *
+ */
+void ToolState::transform()
+{
+}
+
+/**
+ * Sync graphics
+ *
+ */
+void ToolState::synchronizeGraphics()
+{
+}
+
