@@ -1183,7 +1183,7 @@ void Stage::resume()
 
 void Stage::setupSounds()
 {
-	SoundManager::deferMIDIPlayback(SoundManager::getInstance(), this->stageSpec->sound.deferMIDIPlayback);
+	SoundManager::deferMIDIPlayback(SoundManager::getInstance(), this->stageSpec->sound.MIDIPlaybackCounterPerInterrupt);
 
 	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackFrameRate);
 

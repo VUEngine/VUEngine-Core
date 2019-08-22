@@ -155,7 +155,7 @@ void SoundManager::constructor()
 	this->soundWrappers = NULL;
 	this->releasedSoundWrappers = NULL;
 	this->hasPCMSounds = false;
-	this->deferMIDIPlayback = false;
+	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
 
 	SoundManager::reset(this);
@@ -203,6 +203,8 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
+	this->MIDIPlaybackCounterPerInterrupt = NULL;
+
 	if(!isDeleted(this->releasedSoundWrappers))
 	{
 		VirtualNode node = this->releasedSoundWrappers->head;
@@ -307,15 +309,15 @@ void SoundManager::reset()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->deferMIDIPlayback = false;
+	this->MIDIPlaybackCounterPerInterrupt = 0;
 	this->soundWrapperMIDINode = NULL;
 
 	SoundManager::stopAllSounds(this);
 }
 
-void SoundManager::deferMIDIPlayback(bool deferMIDIPlayback)
+void SoundManager::deferMIDIPlayback(u32 MIDIPlaybackCounterPerInterrupt)
 {
-	this->deferMIDIPlayback = deferMIDIPlayback;
+	this->MIDIPlaybackCounterPerInterrupt = MIDIPlaybackCounterPerInterrupt;
 }
 
 void SoundManager::startPCMPlayback()
@@ -333,7 +335,7 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 
 bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
-	if(this->deferMIDIPlayback)
+	if(0 < this->MIDIPlaybackCounterPerInterrupt)
 	{
 		static u32 accumulatedElapsedMicroseconds = 0; 
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
@@ -341,16 +343,18 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 		if(NULL == this->soundWrapperMIDINode)
 		{
 			this->soundWrapperMIDINode = this->soundWrappers->head;
-			elapsedMicroseconds = elapsedMicroseconds;
+			accumulatedElapsedMicroseconds = elapsedMicroseconds;
 		}
 
-		if(this->soundWrapperMIDINode)
+		u16 counter = this->MIDIPlaybackCounterPerInterrupt;
+
+		for(; counter-- && this->soundWrapperMIDINode;)
 		{
 			SoundWrapper soundWrapper = SoundWrapper::safeCast(this->soundWrapperMIDINode->data);
 
 			if(soundWrapper->hasMIDITracks)
 			{
-				SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
+				SoundWrapper::updateMIDIPlayback(soundWrapper, accumulatedElapsedMicroseconds);
 			}
 
 			this->soundWrapperMIDINode = this->soundWrapperMIDINode->next;

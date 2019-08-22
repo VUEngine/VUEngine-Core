@@ -111,8 +111,8 @@ singleton class SoundManager : Object
 	u16 pcmPlaybackCycles;
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;
+	u16 MIDIPlaybackCounterPerInterrupt;
 	bool hasPCMSounds;
-	bool deferMIDIPlayback;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -128,7 +128,7 @@ singleton class SoundManager : Object
 	SoundWrapper getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
-	void deferMIDIPlayback(bool deferMIDIPlayback);
+	void deferMIDIPlayback(u32 MIDIPlaybackCounterPerInterrupt);
 	void startPCMPlayback();
 
 	void updateFrameRate();
