@@ -203,8 +203,6 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	this->soundWrapperMIDINode = NULL;
-
 	if(!isDeleted(this->releasedSoundWrappers))
 	{
 		VirtualNode node = this->releasedSoundWrappers->head;
