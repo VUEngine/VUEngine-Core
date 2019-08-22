@@ -203,7 +203,7 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	this->MIDIPlaybackCounterPerInterrupt = NULL;
+	this->soundWrapperMIDINode = NULL;
 
 	if(!isDeleted(this->releasedSoundWrappers))
 	{
