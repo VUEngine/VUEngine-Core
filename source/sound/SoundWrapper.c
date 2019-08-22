@@ -653,20 +653,8 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 	this->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
 
-	s16 leftVolumeFactor = 0;
-	s16 rightVolumeFactor = 0;
-
-	if(NULL != this->position)
-	{
-		PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
-
-		s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
-		s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
-		s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
-		
-		leftVolumeFactor = (leftDistance + verticalDistance);
-		rightVolumeFactor = (rightDistance + verticalDistance);
-	}
+	s16 leftVolumeFactor = -1;
+	s16 rightVolumeFactor = -1;
 
 	for(; node; node = node->next)
 	{
@@ -733,6 +721,18 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 						s16 leftVolume = volume;
 						s16 rightVolume = volume;
+
+						if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
+						{
+							PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
+
+							s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+							s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+							s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+							
+							leftVolumeFactor = (leftDistance + verticalDistance);
+							rightVolumeFactor = (rightDistance + verticalDistance);
+						}
 
 						if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
 						{
