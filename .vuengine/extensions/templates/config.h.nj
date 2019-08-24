@@ -356,7 +356,8 @@
 
 // affects the amount of attenuation caused by the distance between the x coordinate and each ear's
 // position defined by __LEFT_EAR_CENTER and __RIGHT_EAR_CENTER
-#define __SOUND_STEREO_ATTENUATION_FACTOR			{{ project.config.sound.stereoAttenuationFactor }}
+#define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR		{{ project.config.sound.stereoHorizontalAttenuationFactor }}
+#define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR			{{ project.config.sound.stereoVerticalAttenuationFactor }}
 
 
 //---------------------------------------------------------------------------------------------------------
