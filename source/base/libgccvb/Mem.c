@@ -127,6 +127,10 @@ static void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWOR
 {
 	const WORD* finalSource = source + numberOfWORDS;
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	asm("				\n\t"      \
 		"jr end%=		\n\t"      \
 		"loop%=:		\n\t"      \
@@ -141,6 +145,10 @@ static void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWOR
 		: "r" (destination), "r" (source), "r" (finalSource)
 		: "r10" // regs used
 	);
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 }
 
 static void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
