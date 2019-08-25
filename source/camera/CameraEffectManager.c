@@ -411,7 +411,9 @@ void CameraEffectManager::fxFadeAsync()
 
 	// fade medium red
 	u8 i;
-	for(i = 0; i < 2; i++) {
+	
+	for(i = 0; i < 2; i++) 
+	{
 		if((u8)_vipRegisters[__BRTB] < this->fxFadeTargetBrightness.mediumRed)
 		{
 			_vipRegisters[__BRTB] += 1;
