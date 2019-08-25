@@ -225,7 +225,7 @@ class SoundWrapper : Object
 	fix17_15 speed;
 	fix17_15 targetTimerResolutionFactor;
 	u32 elapsedMicroseconds;
-	u32 totalPlaybackSeconds;
+	u32 totalPlaybackMilliseconds;
 	u16 pcmTargetPlaybackFrameRate;
 	u16 frequencyModifier;
 	s8 volumeReduction;

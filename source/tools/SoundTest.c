@@ -465,6 +465,7 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->soundWrapper))
 	{
+		SoundWrapper::printPlaybackTime(this->soundWrapper, 24, 8);
 		SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
 	}
 }

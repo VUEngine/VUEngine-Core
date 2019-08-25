@@ -70,7 +70,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->speed = __I_TO_FIX17_15(1);
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
-	this->totalPlaybackSeconds = 0;
+	this->totalPlaybackMilliseconds = 0;
 	this->unmute = true;
 	this->frequencyModifier = 0;
 	this->position = NULL;
@@ -498,7 +498,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		}
 	}
 
-	this->totalPlaybackSeconds = SoundWrapper::getTotalPlaybackSeconds(this, channelWithLongestTrack);
+	this->totalPlaybackMilliseconds = SoundWrapper::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
 }
 
 void SoundWrapper::configureSoundRegistries()
@@ -908,7 +908,7 @@ void SoundWrapper::print(int x, int y)
 	}
 }
 
-u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
+u32 SoundWrapper::getTotalPlaybackMilliseconds(Channel* channel)
 {
 	switch(channel->soundChannelConfiguration.trackType)
 	{
@@ -920,20 +920,20 @@ u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
 
 				for(u32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
 
-				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_SECOND) + 1;
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MILLISECONDS_PER_SECOND);
 			}
 			break;
 
 		case kPCM:
 
-			return channel->length / this->pcmTargetPlaybackFrameRate;
+			return (channel->length * __MILLISECONDS_PER_SECOND) / this->pcmTargetPlaybackFrameRate;
 			break;
 	}
 
 	return 0;
 }
 
-u32 SoundWrapper::getElapsedSeconds()
+u32 SoundWrapper::getElapsedMilliseconds()
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
@@ -941,12 +941,12 @@ u32 SoundWrapper::getElapsedSeconds()
 	{
 		case kMIDI:
 
-			return this->elapsedMicroseconds / __MICROSECONDS_PER_SECOND;
+			return this->elapsedMicroseconds / __MILLISECONDS_PER_SECOND;
 			break;
 
 		case kPCM:
 
-			return firstChannel->cursor / this->pcmTargetPlaybackFrameRate;
+			return (firstChannel->cursor * __MILLISECONDS_PER_SECOND) / this->pcmTargetPlaybackFrameRate;
 			break;
 	}
 
@@ -955,11 +955,11 @@ u32 SoundWrapper::getElapsedSeconds()
 
 void SoundWrapper::printPlaybackProgress(int x, int y)
 {
-	u32 elapsedSeconds = SoundWrapper::getElapsedSeconds(this);
+	u32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
 
 	static u16 previousPosition = 0;
 
-	u16 position = (elapsedSeconds << 5) / this->totalPlaybackSeconds;
+	u16 position = (elapsedMilliseconds / this->totalPlaybackMilliseconds) << 5;
 
 	if(0 == position)
 	{
@@ -1009,7 +1009,7 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 void SoundWrapper::printPlaybackTime(int x, int y)
 {
 	static u32 previousSecond = 0;
-	u32 currentSecond = SoundWrapper::getElapsedSeconds(this);
+	u32 currentSecond = SoundWrapper::getElapsedMilliseconds(this) / __MILLISECONDS_PER_SECOND;
 
 	if(previousSecond > currentSecond)
 	{
@@ -1037,9 +1037,9 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	y++;
 
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedSeconds(this), x + 23, y);
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedMilliseconds(this) / __MILLISECONDS_PER_SECOND, x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
-	SoundWrapper::printTiming(this, this->totalPlaybackSeconds, x + 28, y);
+	SoundWrapper::printTiming(this, this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND, x + 28, y);
 
 	if(!this->hasPCMTracks)
 	{
