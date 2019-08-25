@@ -959,7 +959,7 @@ void SoundWrapper::printPlaybackProgress(int x, int y)
 
 	static u16 previousPosition = 0;
 
-	u16 position = (elapsedMilliseconds / this->totalPlaybackMilliseconds) << 5;
+	u16 position = (elapsedMilliseconds << 5) / this->totalPlaybackMilliseconds;
 
 	if(0 == position)
 	{
