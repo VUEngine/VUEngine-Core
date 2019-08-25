@@ -125,7 +125,6 @@ void SoundTest::show()
 
 	SoundTest::applyTimerSettings(this);
 	SoundTest::loadSound(this);
-	SoundTest::printGUI(this, false);
 	SoundTest::dimmGame(this);
 }
 
@@ -165,7 +164,7 @@ void SoundTest::printGUI(bool clearScreen)
 
 	u16 totalSounds = SoundTest::getTotalSounds(this);
 
-	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound);
+	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound + 1);
 	int totalSoundsDigits = Utilities::getDigitCount(totalSounds);
 	Printing::int(_printing, this->selectedSound + 1, 1 + 1, 2, NULL);
 	Printing::text(_printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
@@ -221,8 +220,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 	else if(K_A & pressedKey)
 	{
-		SoundTest::printGUI(this, false);
-
 		if(isDeleted(this->soundWrapper))
 		{
 			SoundTest::loadSound(this);
@@ -236,8 +233,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			SoundWrapper::pause(this->soundWrapper);
 		}
-
-		SoundTest::printGUI(this, false);
 	}
 	else if(K_B & pressedKey)
 	{
@@ -388,7 +383,6 @@ void SoundTest::loadPreviousSound()
 	}
 
 	SoundTest::loadSound(this);
-	SoundTest::printGUI(this, true);
 }
 void SoundTest::loadNextSound()
 {
@@ -404,7 +398,6 @@ void SoundTest::loadNextSound()
 	}
 
 	SoundTest::loadSound(this);
-	SoundTest::printGUI(this, true);
 }
 
 void SoundTest::loadSound()
@@ -459,6 +452,8 @@ void SoundTest::loadSound()
 	}
 
 	Game::enableKeypad(Game::getInstance());
+
+	SoundTest::printGUI(this, false);
 }
 
 void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
