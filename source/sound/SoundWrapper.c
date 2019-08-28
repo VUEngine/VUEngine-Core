@@ -410,11 +410,13 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
-	SoundWrapper::stop(this);
-
 	this->sound = NULL;
 
+	SoundWrapper::stop(this);
+
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
+
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
 	if(this->events)
 	{
