@@ -760,9 +760,17 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
+
+						if(kChannelNoise == channel->soundChannelConfiguration.channelType)
+						{
+							u8 tapLocation = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor]);
+
+							channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+
+							_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+						}
 					}
 					break;
-
 			}
 		}
 		else
