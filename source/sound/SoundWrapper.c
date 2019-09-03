@@ -694,7 +694,7 @@ void SoundWrapper::completedPlayback()
 void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
-	if((!this->sound) | this->paused | this->turnedOn)
+	if((!this->sound) | (this->paused) | (!this->turnedOn))
 	{
 		return;
 	}
