@@ -229,6 +229,7 @@ class SoundWrapper : Object
 	u16 pcmTargetPlaybackFrameRate;
 	u16 frequencyModifier;
 	s8 volumeReduction;
+	bool turnedOn;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
@@ -243,6 +244,8 @@ class SoundWrapper : Object
 	void play(const Vector3D* position, u32 playbackType);
 	void pause();
 	void unpause();
+	void turnOff();
+	void turnOn();
 	void rewind();
 	void stop();
 	void release();

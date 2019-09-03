@@ -94,7 +94,7 @@ enum ChannelTypes
 #define __TOTAL_NOISE_CHANNELS				1
 #define __TOTAL_NORMAL_CHANNELS				(__TOTAL_CHANNELS - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
 #define __TOTAL_POTENTIAL_NORMAL_CHANNELS	(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
-
+#define __TOTAL_WAVEFORMS					__TOTAL_POTENTIAL_NORMAL_CHANNELS
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -107,7 +107,7 @@ singleton class SoundManager : Object
 	VirtualList releasedSoundWrappers;
 	VirtualNode soundWrapperMIDINode;
 	Channel channels[__TOTAL_CHANNELS];
-	Waveform waveforms[__TOTAL_CHANNELS];
+	Waveform waveforms[__TOTAL_WAVEFORMS];
 	u16 pcmPlaybackCycles;
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;

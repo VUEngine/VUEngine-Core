@@ -63,6 +63,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	// construct base Container
 	Base::constructor();
 
+	this->turnedOn = true;
 	this->paused = true;
 	this->sound = sound;
 	this->hasMIDITracks = false;
@@ -336,6 +337,7 @@ void SoundWrapper::pause()
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxLRV = 0x00;
+		_soundRegistries[channel->number].SxINT = 0x00;
 	}
 }
 
@@ -345,7 +347,55 @@ void SoundWrapper::pause()
  */
 void SoundWrapper::unpause()
 {
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->number].SxLRV = 0x00;
+		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+	}
+
 	this->paused = false;
+}
+
+/**
+ * Turn off
+ *
+ */
+void SoundWrapper::turnOff()
+{
+	this->turnedOn = false;
+
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->number].SxLRV = 0x00;
+		_soundRegistries[channel->number].SxINT = 0x00;
+	}
+}
+
+/**
+ * Turn on
+ *
+ */
+void SoundWrapper::turnOn()
+{
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->number].SxLRV = 0x00;
+		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+	}
+
+	this->turnedOn = true;
 }
 
 /**
@@ -644,7 +694,7 @@ void SoundWrapper::completedPlayback()
 void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
-	if((!this->sound) | (this->paused))
+	if((!this->sound) | this->paused | this->turnedOn)
 	{
 		return;
 	}

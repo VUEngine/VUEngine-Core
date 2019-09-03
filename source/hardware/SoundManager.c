@@ -116,7 +116,7 @@ const unsigned char linearWave[32] =
 
 SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
 
-#define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n - 1) * 128)
+#define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n * 128))
 #define __MODDATA					(u8*)0x01000280;
 #define __SSTOP						*(u8*)0x01000580
 
@@ -263,7 +263,7 @@ void SoundManager::reset()
 
 	int i = 0;
 
-	// Reset all sounds and channels
+	// Reset all channels
 	for(i = 0; i < __TOTAL_CHANNELS; i++)
 	{
 		this->channels[i].number = i;
@@ -282,11 +282,20 @@ void SoundManager::reset()
 		this->channels[i].soundChannelConfiguration.SxFQL = 0;
 		this->channels[i].soundChannelConfiguration.waveFormData = NULL;
 		this->channels[i].soundChannelConfiguration.volume = 0xFF;
+	}
 
+	// Reset all waveforms
+	for(i = 0; i < __TOTAL_WAVEFORMS; i++)
+	{
 		this->waveforms[i].number = i;
 		this->waveforms[i].usageCount = 0;
-		this->waveforms[i].wave = __WAVE_ADDRESS(i + 1);
+		this->waveforms[i].wave = __WAVE_ADDRESS(i);
 		this->waveforms[i].data = NULL;
+		
+		for(u16 j = 0; j < 128; j++)
+		{
+			this->waveforms[i].wave[j] = 0;
+		}
 	}
 
 	for(i = 0; i < __TOTAL_NORMAL_CHANNELS; i++)
@@ -546,12 +555,10 @@ void SoundManager::muteAllSounds(u32 type)
 
 s8 SoundManager::getWaveform(const s8* waveFormData)
 {
-	int i = 0;
-
 	Waveform* freeWaveform = NULL;
 
 	// Reset all sounds and channels
-	for(i = __TOTAL_CHANNELS - 1; 0 <= i; i--)
+	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
 	{
 		if(NULL == this->waveforms[i].data)
 		{
@@ -622,11 +629,36 @@ void SoundManager::releaseSoundChannel(Channel* channel)
 	}
 }
 
-void copymem (u8* dest, const u8* src, u16 num)
+void SoundManager::turnOffPlayingSounds()
 {
-	u16 i;
-	for (i = 0; i < num; i++) *dest++ = *src++;
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(!isDeleted(soundWrapper) && !SoundWrapper::isPaused(soundWrapper))
+		{
+			SoundWrapper::turnOff(soundWrapper);
+		}
+	}
 }
+
+void SoundManager::turnOnPlayingSounds()
+{
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(!isDeleted(soundWrapper) && !SoundWrapper::isPaused(soundWrapper))
+		{
+			SoundWrapper::turnOn(soundWrapper);
+		}
+	}
+}
+
 void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 {
 	if(NULL != waveform)
@@ -634,12 +666,17 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		waveform->data = (s8*)data;
 
 		u16 increment = 31;
-		
+
+		// Must stop all sound before writing the waveforms
+		SoundManager::turnOffPlayingSounds(this);
+
 		for(u16 i = 0; i < 32; i++)
 		{
 			waveform->wave[(i << 2)] = (u8)data[i] + increment;
 		}
 
+		// Resume playing sounds
+		SoundManager::turnOnPlayingSounds(this);
 		/*
 		// TODO
 		const u8 kModData[] = {
@@ -755,7 +792,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 
 			if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
 			{
-				s8 waves[__TOTAL_CHANNELS] = {-1, -1, -1, -1, -1};
+				s8 waves[__TOTAL_WAVEFORMS] = {-1, -1, -1, -1, -1};
 
 				u16 i = 0;
 
@@ -768,6 +805,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 
 					if(0 > waves[i])
 					{
+						delete availableChannels;
 						return NULL;
 					}
 				}
