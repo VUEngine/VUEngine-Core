@@ -168,30 +168,6 @@ void SoundWrapper::setVolumeReduction(s8 volumeReduction)
 {
 	s8 difference = this->volumeReduction - volumeReduction;
 	this->volumeReduction = volumeReduction;
-
-	if(!this->paused)
-	{
-		VirtualNode node = this->channels->head;
-
-		// Prepare channels
-		for(; node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-
-			if(kMIDI !=channel->soundChannelConfiguration.trackType)
-			{
-				continue;
-			}
-
-			s8 currentLeftVolume = channel->soundChannelConfiguration.SxLRV >> 4;
-			s8 currentRightVolume = channel->soundChannelConfiguration.SxLRV & 0x0F;
-			u8 leftVolume = SoundWrapper::clampMIDIOutputValue(currentLeftVolume + difference, currentLeftVolume);
-			u8 rightVolume = SoundWrapper::clampMIDIOutputValue(currentRightVolume + difference, currentRightVolume);
-
-			channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
-			_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
-		}
-	}
 }
 
 bool SoundWrapper::handleMessage(Telegram telegram)
@@ -284,10 +260,10 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 		for(; node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-			_soundRegistries[channel->number].SxLRV = 0;
 			_soundRegistries[channel->number].SxFQH = 0;
 			_soundRegistries[channel->number].SxFQL = 0;
+			_soundRegistries[channel->number].SxLRV = 0;
+			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
 		}
 	}
 
@@ -415,8 +391,6 @@ void SoundWrapper::rewind()
 		channel->finished = false;
 		channel->cursor = 0;
 		channel->ticks = 0;
-		channel->soundChannelConfiguration.SxLRV = 0;
-		channel->soundChannelConfiguration.SxFQH = channel->soundChannelConfiguration.SxFQL = 0;
 
 		switch(channel->soundChannelConfiguration.trackType)
 		{
@@ -566,15 +540,13 @@ void SoundWrapper::configureSoundRegistries()
 	{
 		Channel* channel = (Channel*)node->data;
 
+		_soundRegistries[channel->number].SxINT = 0x00;
+		_soundRegistries[channel->number].SxLRV = 0x00;
 		_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
 		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 		_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH;
 		_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL;
 		_soundRegistries[channel->number].SxRAM = channel->soundChannelConfiguration.SxRAM;
-		_soundRegistries[channel->number].SxINT = 0x00;
-
-		// Don't raise the volume just yet
-		_soundRegistries[channel->number].SxLRV = 0x00;
 	}
 }
 
