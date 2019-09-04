@@ -606,11 +606,11 @@ static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 
 	channel->ticks = 0;
 }
 
-static inline u8 SoundWrapper::clampMIDIOutputValue(s8 value, s8 referenceValue)
+static inline u8 SoundWrapper::clampMIDIOutputValue(s8 value)
 {
-	if(value <= 0)
+	if(value < 0)
 	{
-		return 0 < referenceValue ? 1 : 0;
+		return 0;
 	}
 	else if(value > __MAXIMUM_VOLUME)
 	{
@@ -707,6 +707,46 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 			}
 
 			s16 note = channel->soundTrack.dataMIDI[channel->cursor];
+			u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
+
+			s16 leftVolume = volume;
+			s16 rightVolume = volume;
+
+			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
+			{
+				PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
+
+				s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR) / 100;
+				s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
+				s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
+				
+				leftVolumeFactor = (leftDistance + verticalDistance);
+				rightVolumeFactor = (rightDistance + verticalDistance);
+			}
+
+			if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
+			{
+				leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+				//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+				rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+				//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+				/* The maximum sound level for each side is 0xF
+				* In the center position the output level is the one
+				* defined in the sound's spec */
+				if(0 >= leftVolume)
+				{
+					leftVolume = 0 < volume ? 1 : 0;
+				}
+
+				if(0 >= rightVolume)
+				{
+					rightVolume = 0 < volume ? 1 : 0;
+				}
+			}
+
+			u8 SxLRV = (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume) * this->unmute;
 
 			// Is it a special note?
 			switch(note)
@@ -716,84 +756,54 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 					_soundRegistries[channel->number].SxLRV = 0;
 					break;
 
-				default:				
-
-						note += this->frequencyModifier;
-
-						if(0 > note)
-						{
-							note = 0;
-						}
-
+				case HOLD:
+					// Continue playing the previous note, just modify the voluem
 #ifdef __SOUND_TEST
-						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
 #else
 #ifdef __SHOW_SOUND_STATUS
-						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
 #else
-						_soundRegistries[channel->number].SxFQL = (note & 0xFF);
-						_soundRegistries[channel->number].SxFQH = (note >> 8);
+					_soundRegistries[channel->number].SxLRV = SxLRV;
 #endif
 #endif
-
-				case HOLD:
-					// Continue playing the previous note
-					{
-						u8 volume = channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor];
-						volume = SoundWrapper::clampMIDIOutputValue(volume - this->volumeReduction, volume);
-
-						s16 leftVolume = volume;
-						s16 rightVolume = volume;
-
-						if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
-						{
-							PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
-
-							s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR) / 100;
-							s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
-							s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
-							
-							leftVolumeFactor = (leftDistance + verticalDistance);
-							rightVolumeFactor = (rightDistance + verticalDistance);
-						}
-
-						if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
-						{
-							leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-							//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
-
-							rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-							//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
-
-							/* The maximum sound level for each side is 0xF
-							* In the center position the output level is the one
-							* defined in the sound's spec */
-							if(0 >= leftVolume)
-							{
-								leftVolume = 0 < volume ? 1 : 0;
-							}
-
-							if(0 >= rightVolume)
-							{
-								rightVolume = 0 < volume ? 1 : 0;
-							}
-						}
-
-						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
-						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
-
-						if(kChannelNoise == channel->soundChannelConfiguration.channelType)
-						{
-							u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
-
-							channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
-
-							_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
-						}
-					}
 					break;
+
+				default:				
+
+					note += this->frequencyModifier;
+
+					if(0 > note)
+					{
+						note = 0;
+					}
+
+#ifdef __SOUND_TEST
+					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+					_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+					_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+#ifdef __SHOW_SOUND_STATUS
+					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+					_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+					_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+					_soundRegistries[channel->number].SxLRV = SxLRV;
+					_soundRegistries[channel->number].SxFQH = (note >> 8);
+					_soundRegistries[channel->number].SxFQL = (note & 0xFF);
+#endif
+#endif
+					break;
+
+			}
+
+			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
+			{
+				u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
+
+				channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+
+				_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 			}
 		}
 		else
