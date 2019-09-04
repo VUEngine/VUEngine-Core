@@ -185,8 +185,8 @@ void SoundWrapper::setVolumeReduction(s8 volumeReduction)
 
 			s8 currentLeftVolume = channel->soundChannelConfiguration.SxLRV >> 4;
 			s8 currentRightVolume = channel->soundChannelConfiguration.SxLRV & 0x0F;
-			u8 leftVolume = SoundWrapper::clampMIDIOutputValue(currentLeftVolume + difference);
-			u8 rightVolume = SoundWrapper::clampMIDIOutputValue(currentRightVolume + difference);
+			u8 leftVolume = SoundWrapper::clampMIDIOutputValue(currentLeftVolume + difference, currentLeftVolume);
+			u8 rightVolume = SoundWrapper::clampMIDIOutputValue(currentRightVolume + difference, currentRightVolume);
 
 			channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 			_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
@@ -634,11 +634,11 @@ static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 
 	channel->ticks = 0;
 }
 
-static inline u8 SoundWrapper::clampMIDIOutputValue(s8 value)
+static inline u8 SoundWrapper::clampMIDIOutputValue(s8 value, s8 referenceValue)
 {
-	if(value < 0)
+	if(value <= 0)
 	{
-		return 0;
+		return 0 < referenceValue ? 1 : 0;
 	}
 	else if(value > __MAXIMUM_VOLUME)
 	{
@@ -769,7 +769,8 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				case HOLD:
 					// Continue playing the previous note
 					{
-						u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
+						u8 volume = channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor];
+						volume = SoundWrapper::clampMIDIOutputValue(volume - this->volumeReduction, volume);
 
 						s16 leftVolume = volume;
 						s16 rightVolume = volume;
@@ -797,14 +798,14 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 							/* The maximum sound level for each side is 0xF
 							* In the center position the output level is the one
 							* defined in the sound's spec */
-							if(0 > leftVolume)
+							if(0 >= leftVolume)
 							{
-								leftVolume = 0;
+								leftVolume = 0 < volume ? 1 : 0;
 							}
 
-							if(0 > rightVolume)
+							if(0 >= rightVolume)
 							{
-								rightVolume = 0;
+								rightVolume = 0 < volume ? 1 : 0;
 							}
 						}
 
@@ -813,7 +814,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 						if(kChannelNoise == channel->soundChannelConfiguration.channelType)
 						{
-							u8 tapLocation = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor]);
+							u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
 
 							channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
 
