@@ -166,7 +166,6 @@ fix17_15 SoundWrapper::getSpeed()
  */
 void SoundWrapper::setVolumeReduction(s8 volumeReduction)
 {
-	s8 difference = this->volumeReduction - volumeReduction;
 	this->volumeReduction = volumeReduction;
 }
 
@@ -275,7 +274,7 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 		{
 			SoundManager::startPCMPlayback(SoundManager::getInstance());
 		}
-	}
+	}	
 
 	switch(playbackType)
 	{
@@ -295,6 +294,11 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 		case kSoundWrapperPlaybackNormal:
 		default:
 			break;
+	}
+
+	if(wasPaused)
+	{
+		SoundWrapper::updateMIDIPlayback(this, 0);
 	}
 }
 
@@ -663,6 +667,97 @@ void SoundWrapper::completedPlayback()
 	}
 }
 
+void SoundWrapper::playMIDINote(Channel* channel, s16 leftVolumeFactor, s16 rightVolumeFactor)
+{
+	s16 note = channel->soundTrack.dataMIDI[channel->cursor];
+	u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
+
+	s16 leftVolume = volume;
+	s16 rightVolume = volume;
+
+	if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
+	{
+		leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+		//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+		rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+		//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+		/* The maximum sound level for each side is 0xF
+		* In the center position the output level is the one
+		* defined in the sound's spec */
+		if(0 >= leftVolume)
+		{
+			leftVolume = 0 < volume ? 1 : 0;
+		}
+
+		if(0 >= rightVolume)
+		{
+			rightVolume = 0 < volume ? 1 : 0;
+		}
+	}
+
+	u8 SxLRV = (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume) * this->unmute;
+
+	// Is it a special note?
+	switch(note)
+	{
+		case PAU:
+
+			_soundRegistries[channel->number].SxLRV = 0;
+			break;
+
+		case HOLD:
+			// Continue playing the previous note, just modify the voluem
+#ifdef __SOUND_TEST
+			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+#else
+#ifdef __SHOW_SOUND_STATUS
+			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+#else
+			_soundRegistries[channel->number].SxLRV = SxLRV;
+#endif
+#endif
+			break;
+
+		default:				
+
+			note += this->frequencyModifier;
+
+			if(0 > note)
+			{
+				note = 0;
+			}
+
+#ifdef __SOUND_TEST
+			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+#ifdef __SHOW_SOUND_STATUS
+			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#else
+			_soundRegistries[channel->number].SxLRV = SxLRV;
+			_soundRegistries[channel->number].SxFQH = (note >> 8);
+			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
+#endif
+#endif
+			break;
+
+	}
+
+	if(kChannelNoise == channel->soundChannelConfiguration.channelType)
+	{
+		u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
+
+		channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+
+		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+	}
+}
+
 void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
@@ -671,7 +766,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 		return;
 	}
 
-	bool finished = true;
+	bool finished = elapsedMicroseconds ? true : false;
 
 	VirtualNode node = this->channels->head;
 
@@ -706,12 +801,6 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
 			}
 
-			s16 note = channel->soundTrack.dataMIDI[channel->cursor];
-			u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
-
-			s16 leftVolume = volume;
-			s16 rightVolume = volume;
-
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
 			{
 				PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
@@ -724,87 +813,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				rightVolumeFactor = (rightDistance + verticalDistance);
 			}
 
-			if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
-			{
-				leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-				//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
-
-				rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-				//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
-
-				/* The maximum sound level for each side is 0xF
-				* In the center position the output level is the one
-				* defined in the sound's spec */
-				if(0 >= leftVolume)
-				{
-					leftVolume = 0 < volume ? 1 : 0;
-				}
-
-				if(0 >= rightVolume)
-				{
-					rightVolume = 0 < volume ? 1 : 0;
-				}
-			}
-
-			u8 SxLRV = (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume) * this->unmute;
-
-			// Is it a special note?
-			switch(note)
-			{
-				case PAU:
-
-					_soundRegistries[channel->number].SxLRV = 0;
-					break;
-
-				case HOLD:
-					// Continue playing the previous note, just modify the voluem
-#ifdef __SOUND_TEST
-					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-#else
-#ifdef __SHOW_SOUND_STATUS
-					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-#else
-					_soundRegistries[channel->number].SxLRV = SxLRV;
-#endif
-#endif
-					break;
-
-				default:				
-
-					note += this->frequencyModifier;
-
-					if(0 > note)
-					{
-						note = 0;
-					}
-
-#ifdef __SOUND_TEST
-					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-					_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-					_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-#else
-#ifdef __SHOW_SOUND_STATUS
-					_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-					_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-					_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-#else
-					_soundRegistries[channel->number].SxLRV = SxLRV;
-					_soundRegistries[channel->number].SxFQH = (note >> 8);
-					_soundRegistries[channel->number].SxFQL = (note & 0xFF);
-#endif
-#endif
-					break;
-
-			}
-
-			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
-			{
-				u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
-
-				channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
-
-				_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
-			}
+			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);
 		}
 		else
 		{
