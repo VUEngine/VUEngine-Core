@@ -63,7 +63,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	// construct base Container
 	Base::constructor();
 
-	this->turnedOn = true;
+	this->turnedOn = false;
 	this->paused = true;
 	this->sound = sound;
 	this->hasMIDITracks = false;
@@ -248,6 +248,7 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 {
 	bool wasPaused = this->paused;
 	this->paused = false;
+	this->turnedOn = true;
 
 	this->position = position;
 
@@ -308,16 +309,19 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
  */
 void SoundWrapper::pause()
 {
-	this->paused = true;
-
-	VirtualNode node = this->channels->head;
-
-	// Silence all channels first
-	for(; node; node = node->next)
+	if(this->turnedOn)
 	{
-		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-		_soundRegistries[channel->number].SxINT = 0x00;
+		this->paused = true;
+
+		VirtualNode node = this->channels->head;
+
+		// Silence all channels first
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			_soundRegistries[channel->number].SxLRV = 0x00;
+			_soundRegistries[channel->number].SxINT = 0x00;
+		}
 	}
 }
 
@@ -327,17 +331,20 @@ void SoundWrapper::pause()
  */
 void SoundWrapper::unpause()
 {
-	VirtualNode node = this->channels->head;
-
-	// Silence all channels first
-	for(; node; node = node->next)
+	if(this->turnedOn)
 	{
-		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-	}
+		VirtualNode node = this->channels->head;
 
-	this->paused = false;
+		// Silence all channels first
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			_soundRegistries[channel->number].SxLRV = 0x00;
+			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+		}
+
+		this->paused = false;
+	}
 }
 
 /**
@@ -417,6 +424,7 @@ void SoundWrapper::rewind()
  */
 void SoundWrapper::stop()
 {
+	this->turnedOn = false;
 	this->paused = true;
 
 	VirtualNode node = this->channels->head;
