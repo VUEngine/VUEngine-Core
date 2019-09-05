@@ -603,6 +603,8 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 
 		u16 increment = 31;
 
+		HardwareManager::disableInterrupts();
+
 		// Must stop all sound before writing the waveforms
 		SoundManager::turnOffPlayingSounds(this);
 
@@ -613,6 +615,8 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 
 		// Resume playing sounds
 		SoundManager::turnOnPlayingSounds(this);
+
+		HardwareManager::enableInterrupts();
 		/*
 		// TODO
 		const u8 kModData[] = {
