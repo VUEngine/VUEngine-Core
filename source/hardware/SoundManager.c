@@ -555,14 +555,20 @@ void SoundManager::muteAllSounds(u32 type)
 
 s8 SoundManager::getWaveform(const s8* waveFormData)
 {
-	Waveform* freeWaveform = NULL;
+	Waveform* freeWaveformPriority1 = NULL;
+	Waveform* freeWaveformPriority2 = NULL;
 
 	// Reset all sounds and channels
 	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
 	{
+		if(NULL == this->waveforms[i].data)
+		{
+			freeWaveformPriority1 = &this->waveforms[i];
+		}
+
 		if(0 == this->waveforms[i].usageCount)
 		{
-			freeWaveform = &this->waveforms[i];
+			freeWaveformPriority2 = &this->waveforms[i];
 		}
 
 		if(waveFormData == this->waveforms[i].data)
@@ -572,11 +578,18 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 		}
 	}
 
-	if(NULL != freeWaveform)
+	if(NULL != freeWaveformPriority1)
 	{
-		freeWaveform->usageCount += 1;
+		freeWaveformPriority1->usageCount += 1;
 
-		return freeWaveform->number;
+		return freeWaveformPriority1->number;
+	}
+
+	if(NULL != freeWaveformPriority2)
+	{
+		freeWaveformPriority2->usageCount += 1;
+
+		return freeWaveformPriority2->number;
 	}
 
 	return -1;
@@ -986,6 +999,18 @@ void SoundManager::print()
 			x = 1;
 			yDisplacement += 15;
 		}
+	}
+}
+
+void SoundManager::printWaveFormStatus(int x, int y)
+{
+	// Reset all waveforms
+	for(u16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	{
+		PRINT_TEXT("           ", x, y + this->waveforms[i].number);
+		PRINT_INT(this->waveforms[i].number, x, y + this->waveforms[i].number);
+		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].number);
+		PRINT_HEX(this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
 	}
 }
 
