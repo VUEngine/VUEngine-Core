@@ -560,7 +560,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	// Reset all sounds and channels
 	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
 	{
-		if(NULL == this->waveforms[i].data)
+		if(0 == this->waveforms[i].usageCount)
 		{
 			freeWaveform = &this->waveforms[i];
 		}
@@ -574,13 +574,46 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	if(NULL != freeWaveform)
 	{
-		freeWaveform->data = waveFormData;
 		freeWaveform->usageCount += 1;
 
 		return freeWaveform->number;
 	}
 
 	return -1;
+}
+
+void SoundManager::setWaveform(Waveform* waveform, const s8* data)
+{
+	if(NULL != waveform && waveform->data != (s8*)data)
+	{
+		waveform->data = (s8*)data;
+
+		u16 increment = 31;
+
+		// Must stop all sound before writing the waveforms
+		SoundManager::turnOffPlayingSounds(this);
+
+		for(u16 i = 0; i < 32; i++)
+		{
+			waveform->wave[(i << 2)] = (u8)data[i] + increment;
+		}
+
+		// Resume playing sounds
+		SoundManager::turnOnPlayingSounds(this);
+		/*
+		// TODO
+		const u8 kModData[] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
+		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
+		};
+
+		u8* moddata = __MODDATA;
+		for(i = 0; i <= 0x7C; i++)
+		{
+			moddata[i << 2] = kModData[i];
+		}
+		*/
+	}
 }
 
 void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
@@ -594,7 +627,6 @@ void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
 			if(0 >= this->waveforms[waveFormIndex].usageCount)
 			{
 				this->waveforms[waveFormIndex].usageCount = 0;
-				this->waveforms[waveFormIndex].data = NULL;
 			}
 		}
 		else
@@ -656,40 +688,6 @@ void SoundManager::turnOnPlayingSounds()
 		{
 			SoundWrapper::turnOn(soundWrapper);
 		}
-	}
-}
-
-void SoundManager::setWaveform(Waveform* waveform, const s8* data)
-{
-	if(NULL != waveform)
-	{
-		waveform->data = (s8*)data;
-
-		u16 increment = 31;
-
-		// Must stop all sound before writing the waveforms
-		SoundManager::turnOffPlayingSounds(this);
-
-		for(u16 i = 0; i < 32; i++)
-		{
-			waveform->wave[(i << 2)] = (u8)data[i] + increment;
-		}
-
-		// Resume playing sounds
-		SoundManager::turnOnPlayingSounds(this);
-		/*
-		// TODO
-		const u8 kModData[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
-		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
-		};
-
-		u8* moddata = __MODDATA;
-		for(i = 0; i <= 0x7C; i++)
-		{
-			moddata[i << 2] = kModData[i];
-		}
-		*/
 	}
 }
 
