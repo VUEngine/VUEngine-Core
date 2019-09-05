@@ -1010,7 +1010,7 @@ void SoundManager::printWaveFormStatus(int x, int y)
 		PRINT_TEXT("           ", x, y + this->waveforms[i].number);
 		PRINT_INT(this->waveforms[i].number, x, y + this->waveforms[i].number);
 		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].number);
-		PRINT_HEX(this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
+		PRINT_HEX((u32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
 	}
 }
 
