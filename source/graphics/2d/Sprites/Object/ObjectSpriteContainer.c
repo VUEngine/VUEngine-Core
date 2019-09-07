@@ -386,10 +386,15 @@ void ObjectSpriteContainer::render(bool evenFrame)
 
 		if(sprite->hidden || sprite->disposed)
 		{
-			int i = 0;
-			for(; i < sprite->totalObjects; i++)
+			if(!sprite->didHide)
 			{
-				_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+				int i = 0;
+				for(; i < sprite->totalObjects; i++)
+				{
+					_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+				}
+
+				sprite->didHide = true;
 			}
 		}
 		else

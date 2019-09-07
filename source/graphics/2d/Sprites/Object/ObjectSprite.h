@@ -83,6 +83,7 @@ class ObjectSprite : Sprite
 	s16 objectIndex;
 	// number of objects
 	s16 totalObjects;
+	bool didHide;
 
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* oSpriteSpec, Object owner);
@@ -98,6 +99,8 @@ class ObjectSprite : Sprite
 	override u8 getWorldLayer();
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);
+	override void show();
+	override void hide();
 }
 
 

@@ -76,6 +76,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	this->position.z = 0;
 	this->position.parallax = 0;
 
+	this->didHide = false;
+
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
@@ -316,6 +318,30 @@ s16 ObjectSprite::getTotalObjects()
 s16 ObjectSprite::getObjectIndex()
 {
 	return this->objectIndex;
+}
+
+/**
+ * Show
+ *
+ * @memberof			ObjectSprite
+ * @public
+ */
+void ObjectSprite::show()
+{
+	Base::show(this);
+	this->didHide = false;
+}
+
+/**
+ * Hide
+ *
+ * @memberof			ObjectSprite
+ * @public
+ */
+void ObjectSprite::hide()
+{
+	Base::hide(this);
+	this->didHide = false;
 }
 
 /**

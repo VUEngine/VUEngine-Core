@@ -763,6 +763,14 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 		Container::applyEnvironmentToScale(this, environmentTransform);
 	}
 
+	Container::transformChildren(this, environmentTransform, invalidateTransformationFlag);
+
+	// don't update position on next transformation cycle
+	this->invalidateGlobalTransformation = 0;
+}
+
+void Container::transformChildren(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+{
 	// if I have children
 	if(this->children)
 	{
@@ -778,9 +786,6 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 			Container::transform(child, &this->transformation, invalidateTransformationFlag);
 		}
 	}
-
-	// don't update position on next transformation cycle
-	this->invalidateGlobalTransformation = 0;
 }
 
 void Container::synchronizeGraphics()
