@@ -424,23 +424,10 @@ void SoundTest::loadSound()
 	{
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
 
-		if(SoundWrapper::hasPCMTracks(this->soundWrapper))
-		{
-			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 10000);
-			TimerManager::setMinimumTimePerInterruptMS(TimerManager::getInstance(), 100);
-			TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
-			TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-			TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 1000);
-		}
-		else
-		{
-			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 50);
-			TimerManager::setMinimumTimePerInterruptMS(TimerManager::getInstance(), 1);
-			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 50);
-			TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
-			TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-			TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
-		}
+		TimerManager::reset(TimerManager::getInstance());
+		TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
+		TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
 
 		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
 

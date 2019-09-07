@@ -72,9 +72,9 @@ void TimerManager::constructor()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
-	this->minimumTimePerInterruptUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
+	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
+	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 
 	_timerManager = this;
@@ -104,9 +104,9 @@ void TimerManager::reset()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
-	this->minimumTimePerInterruptUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
+	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
+	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 }
 
@@ -176,6 +176,8 @@ void TimerManager::setResolution(u16 resolution)
 			break;
 	}
 
+	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
+
 	u32 timePerInterrupt = this->timePerInterrupt;
 
 	switch(this->timePerInterruptUnits)
@@ -230,7 +232,7 @@ u32 TimerManager::getTimePerInterruptInMS()
 	{
 		case kUS:
 
-			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance()) / __MICROSECONDS_PER_MILLISECOND;
+			return this->timePerInterrupt / __MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		case kMS:
@@ -253,7 +255,7 @@ u32 TimerManager::getTimePerInterruptInUS()
 	{
 		case kUS:
 
-			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance());
+			return this->timePerInterrupt;
 			break;
 
 		case kMS:
@@ -308,56 +310,6 @@ void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 	}
 
 	this->timePerInterrupt = timePerInterrupt;
-}
-
-void TimerManager::setMinimumTimePerInterruptUS(u16 minimumTimePerInterruptUS)
-{
-	if(minimumTimePerInterruptUS > this->maximumTimePerInterruptUS)
-	{
-		minimumTimePerInterruptUS = this->maximumTimePerInterruptUS;
-	}
-
-	this->minimumTimePerInterruptUS = minimumTimePerInterruptUS;
-}
-
-void TimerManager::setMinimumTimePerInterruptMS(u16 minimumTimePerInterruptMS)
-{
-	if(minimumTimePerInterruptMS > this->maximumTimePerInterruptMS)
-	{
-		minimumTimePerInterruptMS = this->maximumTimePerInterruptMS;
-	}
-
-	this->minimumTimePerInterruptMS = minimumTimePerInterruptMS;
-}
-
-void TimerManager::setMaximumTimePerInterruptUS(u16 maximumTimePerInterruptUS)
-{
-	if(maximumTimePerInterruptUS < this->minimumTimePerInterruptUS)
-	{
-		maximumTimePerInterruptUS = this->minimumTimePerInterruptUS;
-	}
-	else if(__TIME_US(maximumTimePerInterruptUS) > (1 << (sizeof(u16) * 8 - sizeof(u16) * 2)))
-	{
-		maximumTimePerInterruptUS = (u16)__TIME_INVERSE_US((u16)(1 << (sizeof(u16) * (8 - 2))));
-	}
-
-	this->maximumTimePerInterruptUS = maximumTimePerInterruptUS;
-}
-
-void TimerManager::setMaximumTimePerInterruptMS(u16 maximumTimePerInterruptMS)
-{
-	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-
-	if(maximumTimePerInterruptMS < this->minimumTimePerInterruptMS)
-	{
-		maximumTimePerInterruptMS = this->minimumTimePerInterruptMS;
-	}
-	else if(__TIME_MS(maximumTimePerInterruptMS * 100 / timerResolutionUS) > (1 << (sizeof(u16) * 8 - 1)))
-	{
-		maximumTimePerInterruptMS = __TIME_INVERSE_MS((1 << (sizeof(u16) * 8 - 1) / (100 / timerResolutionUS)));
-	}
-
-	this->maximumTimePerInterruptMS = maximumTimePerInterruptMS;
 }
 
 /**
@@ -415,8 +367,6 @@ u16 TimerManager::computeTimerCounter()
 {
 	u16 timerCounter = 0;
 
-	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
@@ -426,7 +376,7 @@ u16 TimerManager::computeTimerCounter()
 
 		case kMS:
 
-			timerCounter = __TIME_MS(this->timePerInterrupt * 100 / timerResolutionUS);
+			timerCounter = __TIME_MS(this->timePerInterrupt);
 			break;
 
 			NM_ASSERT(false, "TimerManager::setTimePerInterruptUnits: wrong resolution scale");
@@ -509,7 +459,7 @@ static void TimerManager::interruptHandler()
 	{
 		case kUS:
 
-			_timerManager->microseconds += _timerManager->timePerInterrupt ;
+			_timerManager->microseconds += _timerManager->timePerInterrupt;
 
 			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
 

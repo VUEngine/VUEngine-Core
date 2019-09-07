@@ -72,7 +72,11 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackMilliseconds = 0;
+#ifdef __MUTE_ALL_SOUND
+	this->unmute = false;
+#else
 	this->unmute = true;
+#endif
 	this->frequencyModifier = 0;
 	this->position = NULL;
 	this->volumeReduction = 0;
@@ -110,9 +114,9 @@ void SoundWrapper::destructor()
 void SoundWrapper::computeTimerResolutionFactor()
 {
 	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
-	u16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + 1;
+	u16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	u16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
-	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
+	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK * (timerResolutionUS / 20);
 	this->targetTimerResolutionFactor = __FIX17_15_DIV(__I_TO_FIX17_15(soundTargetUsPerInterrupt), __I_TO_FIX17_15(timerUsPerInterrupt));
 
 	// Compensate for the difference in speed between 20US and 100US timer resolution
