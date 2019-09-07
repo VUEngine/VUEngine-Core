@@ -38,6 +38,7 @@
 //#define __FORCE_FONT "GuiFont"
 //#define __SHOW_CHAR_MEMORY_STATUS
 //#define __SHOW_SOUND_STATUS
+//#define __MUTE_ALL_SOUND
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
