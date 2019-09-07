@@ -136,7 +136,7 @@ class Container : SpatialObject
 	virtual void setupShapes();
 	virtual void releaseGraphics();
 	virtual void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	virtual void transformChildren(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	virtual void transformChildren(u8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
 	virtual void initialTransform(const Transformation* environmentTransform, u32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
