@@ -72,6 +72,8 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackMilliseconds = 0;
+	this->autoReleaseOnFinish = true;
+	
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
 #else
@@ -464,6 +466,15 @@ void SoundWrapper::release()
 	}
 }
 
+/**
+ * Release
+ *
+ */
+void SoundWrapper::autoReleaseOnFinish(bool value)
+{
+	this->autoReleaseOnFinish = value;
+}
+
 void SoundWrapper::mute()
 {
 	this->unmute = false;
@@ -671,7 +682,14 @@ void SoundWrapper::completedPlayback()
 
 	if(!this->sound->loop)
 	{
-		SoundWrapper::release(this);
+		if(this->autoReleaseOnFinish)
+		{
+			SoundWrapper::release(this);
+		}
+		else
+		{
+			SoundWrapper::stop(this);
+		}
 	}
 	else
 	{

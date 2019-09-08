@@ -234,6 +234,7 @@ class SoundWrapper : Object
 	bool hasMIDITracks;
 	bool hasPCMTracks;
 	bool unmute;
+	bool autoReleaseOnFinish;
 
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
@@ -251,6 +252,7 @@ class SoundWrapper : Object
 	void release();
 	void mute();
 	void unmute();
+	void autoReleaseOnFinish(bool value);
 	void updateMIDIPlayback(u32 elapsedMicroseconds);
 	void updatePCMPlayback(u32 elapsedMicroseconds);
 	void setSpeed(fix17_15 speed);

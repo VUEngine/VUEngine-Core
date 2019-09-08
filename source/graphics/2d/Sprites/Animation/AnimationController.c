@@ -218,12 +218,6 @@ bool AnimationController::updateAnimation()
 		// check if the actual frame is out of bounds
 		if(this->actualFrame >= this->animationFunction->numberOfFrames)
 		{
-			// the last frame has been reached
-			if(this->animationFunction->onAnimationComplete)
-			{
-				Object::fireEvent(this, kEventAnimationCompleted);
-			}
-
 			// rewind to first frame
 			this->actualFrame = 0;
 
@@ -235,6 +229,12 @@ bool AnimationController::updateAnimation()
 
 				// invalidate animation
 				this->actualFrame = this->animationFunction->numberOfFrames - 1;
+			}
+			
+			// the last frame has been reached
+			if(this->animationFunction->onAnimationComplete)
+			{
+				Object::fireEvent(this, kEventAnimationCompleted);
 			}
 		}
 
