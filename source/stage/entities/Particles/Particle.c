@@ -274,6 +274,19 @@ void Particle::reset()
 }
 
 /**
+ * Setup
+ */
+void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType)
+{
+	Particle::reset(this);
+	Particle::setLifeSpan(this, lifeSpan);
+	Particle::changeMass(this);
+	Particle::setPosition(this, position);
+	Particle::addForce(this, force, movementType);
+	Particle::show(this);
+}
+
+/**
  * Is visible
  *
  * @return		True if within camera's reach

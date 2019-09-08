@@ -90,6 +90,7 @@ class Particle : SpatialObject
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
 	void setLifeSpan(int lifeSpan);
 	bool isVisible();
+	void setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType);
 	virtual void addForce(const Force* force, u32 movementType);
 	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void synchronizeGraphics(bool updateSpritePosition);

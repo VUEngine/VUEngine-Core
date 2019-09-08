@@ -315,12 +315,10 @@ Particle ParticleSystem::recycleParticle()
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
 
-		Particle::reset(particle);
-		Particle::setLifeSpan(particle, lifeSpan);
-		Particle::changeMass(particle);
-		Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this));
-		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this), this->particleSystemSpec->movementType);
-		Particle::show(particle);
+		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+		Force force = ParticleSystem::getParticleSpawnForce(this);
+
+		Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType);
 
 		VirtualList::popFront(this->recyclableParticles);
 
@@ -335,36 +333,31 @@ Particle ParticleSystem::recycleParticle()
  * @param seed
  * @return		Spawn position
  */
-const Vector3D* ParticleSystem::getParticleSpawnPosition()
+Vector3D ParticleSystem::getParticleSpawnPosition()
 {
-	static Vector3D position =
-	{
-		0, 0, 0
-	};
+	Vector3D position = this->transformation.globalPosition;
 
-	long seed = Utilities::randomSeed();
+	long seed = 0;
 
-	position.x = this->transformation.globalPosition.x;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.x | this->particleSystemSpec->minimumRelativeSpawnPosition.x)
 	{
+		seed = Utilities::randomSeed();
 		position.x += this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
 	}
 
-	seed = Utilities::randomSeed();
-	position.y = this->transformation.globalPosition.y;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.y | this->particleSystemSpec->minimumRelativeSpawnPosition.y)
 	{
+		seed = Utilities::randomSeed();
 		position.y += this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
 	}
 
-	seed = Utilities::randomSeed();
-	position.z = this->transformation.globalPosition.z;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.z | this->particleSystemSpec->minimumRelativeSpawnPosition.z)
 	{
+		seed = Utilities::randomSeed();
 		position.z += this->particleSystemSpec->minimumRelativeSpawnPosition.z + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z));
 	}
 
-	return &position;
+	return position;
 }
 
 /**
@@ -372,36 +365,31 @@ const Vector3D* ParticleSystem::getParticleSpawnPosition()
  * @param seed
  * @return		Force
  */
-const Force* ParticleSystem::getParticleSpawnForce()
+Force ParticleSystem::getParticleSpawnForce()
 {
-	static Force force =
-	{
-		0, 0, 0
-	};
+	Force force = this->particleSystemSpec->minimumForce;
 
-	long seed = Utilities::randomSeed();
+	long seed = 0;
 
-	force.x = this->particleSystemSpec->minimumForce.x;
 	if(this->particleSystemSpec->maximumForce.x | this->particleSystemSpec->minimumForce.x)
 	{
+		seed = Utilities::randomSeed();
 		force.x += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
 	}
 
-	seed = Utilities::randomSeed();
-	force.y = this->particleSystemSpec->minimumForce.y;
 	if(this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y)
 	{
+		seed = Utilities::randomSeed();
 		force.y += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
 	}
 
-	seed = Utilities::randomSeed();
-	force.z = this->particleSystemSpec->minimumForce.z;
 	if(this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z)
 	{
+		seed = Utilities::randomSeed();
 		force.z += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.z - this->particleSystemSpec->minimumForce.z));
 	}
 
-	return &force;
+	return force;
 }
 
 /**
@@ -444,8 +432,10 @@ Particle ParticleSystem::spawnParticle()
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex], lifeSpan);
-	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this));
-	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this), this->particleSystemSpec->movementType);
+	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+	Force force = ParticleSystem::getParticleSpawnForce(this);
+	Particle::setPosition(particle, &position);
+	Particle::addForce(particle, &force, this->particleSystemSpec->movementType);
 
 	return particle;
 }
