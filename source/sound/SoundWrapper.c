@@ -155,7 +155,7 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 	{
 		bool paused = this->paused;
 		this->paused = true;
-		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(10.0f);
+		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(1.0f);
 
 		this->paused = paused;
 	}
