@@ -244,7 +244,20 @@ void SoundManager::reset()
 
 		for(; node; node = node->next)
 		{
-			delete node->data;
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::reset: deleted sound wrapper");
+
+			VirtualNode auxNode = soundWrapper->channels->head;
+
+			for(; auxNode; auxNode = auxNode->next)
+			{
+				Channel* channel = (Channel*)auxNode->data;
+
+				SoundManager::releaseSoundChannel(this, channel);
+			}
+
+			delete soundWrapper;
 		}
 
 		delete this->soundWrappers;
@@ -386,7 +399,7 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 }
 
 bool SoundManager::playPCMSounds()
-{
+{	
 	if(!this->hasPCMSounds)
 	{
 		return false;
@@ -580,6 +593,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	if(NULL != freeWaveformPriority1)
 	{
+		freeWaveformPriority1->data = waveFormData;
 		freeWaveformPriority1->usageCount += 1;
 
 		return freeWaveformPriority1->number;
@@ -587,6 +601,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	if(NULL != freeWaveformPriority2)
 	{
+		freeWaveformPriority2->data = waveFormData;
 		freeWaveformPriority2->usageCount += 1;
 
 		return freeWaveformPriority2->number;
@@ -597,7 +612,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 {
-	if(NULL != waveform && waveform->data != (s8*)data)
+	if(NULL != waveform && 1 == waveform->usageCount)
 	{
 		waveform->data = (s8*)data;
 
@@ -648,6 +663,16 @@ void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
 		}
 		else
 		{
+#ifndef __RELEASE
+			Printing::setDebugMode(Printing::getInstance());
+			Printing::clear(Printing::getInstance());
+			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
+			Printing::int(Printing::getInstance(), waveFormIndex, 16, 12, NULL);
+			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
+			Printing::hex(Printing::getInstance(), waveFormData, 16, 13, 8, NULL);
+			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
+			Printing::hex(Printing::getInstance(), this->waveforms[waveFormIndex].data, 16, 14, 8, NULL);
+#endif
 			NM_ASSERT(false, "SoundManager::releaseWaveform: mismatch between index and data");
 		}	
 	}
