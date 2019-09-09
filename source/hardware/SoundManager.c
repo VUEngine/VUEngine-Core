@@ -569,6 +569,11 @@ void SoundManager::muteAllSounds(u32 type)
 
 s8 SoundManager::getWaveform(const s8* waveFormData)
 {
+	if(NULL == waveFormData)
+	{
+		return -1;
+	}
+
 	Waveform* freeWaveformPriority1 = NULL;
 	Waveform* freeWaveformPriority2 = NULL;
 
@@ -587,7 +592,6 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 		if(waveFormData == this->waveforms[i].data)
 		{
-			this->waveforms[i].overwrite = false;
 			this->waveforms[i].usageCount++;
 			return this->waveforms[i].number;
 		}
