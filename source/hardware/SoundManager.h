@@ -113,6 +113,7 @@ singleton class SoundManager : Object
 	s16 pcmPlaybackCyclesToSkip;
 	u16 MIDIPlaybackCounterPerInterrupt;
 	bool hasPCMSounds;
+	bool lock;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -130,6 +131,9 @@ singleton class SoundManager : Object
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void deferMIDIPlayback(u32 MIDIPlaybackCounterPerInterrupt);
 	void startPCMPlayback();
+
+	void lock();
+	void unlock();
 
 	void updateFrameRate();
 	void print();

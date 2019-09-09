@@ -157,6 +157,7 @@ void SoundManager::constructor()
 	this->hasPCMSounds = false;
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
+	this->lock = false;
 
 	SoundManager::reset(this);
 }
@@ -334,6 +335,7 @@ void SoundManager::reset()
 	this->soundWrapperMIDINode = NULL;
 
 	SoundManager::stopAllSounds(this);
+	SoundManager::unlock(this);
 }
 
 void SoundManager::deferMIDIPlayback(u32 MIDIPlaybackCounterPerInterrupt)
@@ -783,6 +785,16 @@ u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8
 	return usableChannelsCount;
 }
 
+void SoundManager::lock()
+{
+	this->lock = true;
+}
+
+void SoundManager::unlock()
+{
+	this->lock = false;
+}
+
 SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
 {
 	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
@@ -806,7 +818,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
-	if(NULL == sound || NULL == soundReleaseListener || isDeleted(scope))
+	if(this->lock || NULL == sound || NULL == soundReleaseListener || isDeleted(scope))
 	{
 		return NULL;
 	}
