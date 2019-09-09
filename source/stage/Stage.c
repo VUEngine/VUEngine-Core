@@ -246,6 +246,9 @@ void Stage::setupPalettes()
 // load stage's entites
 void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
+	// Setup timer
+	Stage::setupTimer(this);
+
 	// set optical values
 	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
 
@@ -294,9 +297,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// set physics
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
 	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
-
-	// Setup timer
-	Stage::setupTimer(this);
 
 	// load background music
 	Stage::setupSounds(this);
