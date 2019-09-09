@@ -119,6 +119,7 @@ void SoundWrapper::computeTimerResolutionFactor()
 	u16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	u16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
 	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK * (timerResolutionUS / 20);
+
 	this->targetTimerResolutionFactor = __FIX17_15_DIV(__I_TO_FIX17_15(soundTargetUsPerInterrupt), __I_TO_FIX17_15(timerUsPerInterrupt));
 
 	// Compensate for the difference in speed between 20US and 100US timer resolution
@@ -1002,13 +1003,13 @@ u32 SoundWrapper::getTotalPlaybackMilliseconds(Channel* channel)
 
 				for(u32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
 
-				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MILLISECONDS_PER_SECOND);
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
 			}
 			break;
 
 		case kPCM:
 
-			return (channel->length * __MILLISECONDS_PER_SECOND) / this->pcmTargetPlaybackFrameRate;
+			return (channel->length * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackFrameRate;
 			break;
 	}
 
