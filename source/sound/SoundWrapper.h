@@ -146,6 +146,7 @@ typedef struct Waveform
 	u8 number;
 	s8 usageCount;
 	u8* wave;
+	u8 overwrite;
 	const s8* data;
 
 } Waveform;

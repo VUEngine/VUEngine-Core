@@ -304,7 +304,8 @@ void SoundManager::reset()
 		this->waveforms[i].usageCount = 0;
 		this->waveforms[i].wave = __WAVE_ADDRESS(i);
 		this->waveforms[i].data = NULL;
-		
+		this->waveforms[i].overwrite = true;
+
 		for(u16 j = 0; j < 128; j++)
 		{
 			this->waveforms[i].wave[j] = 0;
@@ -586,6 +587,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 		if(waveFormData == this->waveforms[i].data)
 		{
+			this->waveforms[i].overwrite = false;
 			this->waveforms[i].usageCount++;
 			return this->waveforms[i].number;
 		}
@@ -593,6 +595,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	if(NULL != freeWaveformPriority1)
 	{
+		freeWaveformPriority1->overwrite = freeWaveformPriority1->data != waveFormData;
 		freeWaveformPriority1->data = waveFormData;
 		freeWaveformPriority1->usageCount += 1;
 
@@ -601,6 +604,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	if(NULL != freeWaveformPriority2)
 	{
+		freeWaveformPriority2->overwrite = freeWaveformPriority2->data != waveFormData;
 		freeWaveformPriority2->data = waveFormData;
 		freeWaveformPriority2->usageCount += 1;
 
@@ -612,9 +616,10 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 {
-	if(NULL != waveform && 1 == waveform->usageCount)
+	if(NULL != waveform && waveform->overwrite)
 	{
 		waveform->data = (s8*)data;
+		waveform->overwrite = false;
 
 		u16 increment = 31;
 
@@ -635,7 +640,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		/*
 		// TODO
 		const u8 kModData[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 18, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
 		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
 		};
 
@@ -667,11 +672,11 @@ void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
 			Printing::setDebugMode(Printing::getInstance());
 			Printing::clear(Printing::getInstance());
 			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
-			Printing::int(Printing::getInstance(), waveFormIndex, 16, 12, NULL);
+			Printing::int(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
 			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
-			Printing::hex(Printing::getInstance(), waveFormData, 16, 13, 8, NULL);
+			Printing::hex(Printing::getInstance(), (int)waveFormData, 18, 13, 8, NULL);
 			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
-			Printing::hex(Printing::getInstance(), this->waveforms[waveFormIndex].data, 16, 14, 8, NULL);
+			Printing::hex(Printing::getInstance(), (int)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
 #endif
 			NM_ASSERT(false, "SoundManager::releaseWaveform: mismatch between index and data");
 		}	
