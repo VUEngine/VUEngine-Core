@@ -73,6 +73,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
+	this->playbackType = kSoundWrapperPlaybackNormal;
 	
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
@@ -187,6 +188,11 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) - 1);
 				MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
 			}
+			else
+			{
+				this->playbackType = kSoundWrapperPlaybackNormal;
+			}
+			
 			break;
 
 		case kSoundWrapperFadeOut:
@@ -198,6 +204,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			}
 			else
 			{
+				this->playbackType = kSoundWrapperPlaybackNormal;
 				SoundWrapper::release(this);
 			}
 			
@@ -248,6 +255,26 @@ bool SoundWrapper::hasPCMTracks()
 }
 
 /**
+ *  Is fading in?
+ *
+ * @return bool
+ */
+bool SoundWrapper::isFadingIn()
+{
+	return kSoundWrapperPlaybackFadeIn == this->playbackType;
+}
+
+/**
+ *  Is fading out?
+ *
+ * @return bool
+ */
+bool SoundWrapper::isFadingOut()
+{
+	return kSoundWrapperPlaybackFadeOut == this->playbackType;
+}
+
+/**
  * Play
  *
  */
@@ -283,6 +310,8 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 			SoundManager::startPCMPlayback(SoundManager::getInstance());
 		}
 	}	
+
+	this->playbackType = playbackType;
 
 	switch(playbackType)
 	{
@@ -402,26 +431,11 @@ void SoundWrapper::rewind()
 
 	this->elapsedMicroseconds = 0;
 
-	// Silence all channels first
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->finished = false;
 		channel->cursor = 0;
-		channel->ticks = 0;
-
-		switch(channel->soundChannelConfiguration.trackType)
-		{
-			case kMIDI:
-
-				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
-				break;
-
-			case kPCM:
-
-				SoundWrapper::computePCMNextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
-				break;
-		}
 	}
 }
 
@@ -819,6 +833,11 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 			continue;
 		}
 */
+		if(channel->finished)
+		{
+			continue;
+		}
+
 		channel->ticks += channel->tickStep;
 
 		if(channel->ticks >= channel->ticksPerNote || 0 == elapsedMicroseconds)

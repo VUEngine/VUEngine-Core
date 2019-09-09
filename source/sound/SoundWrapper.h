@@ -230,6 +230,7 @@ class SoundWrapper : Object
 	u16 pcmTargetPlaybackFrameRate;
 	u16 frequencyModifier;
 	s8 volumeReduction;
+	u8 playbackType;
 	bool turnedOn;
 	bool paused;
 	bool hasMIDITracks;
@@ -243,6 +244,8 @@ class SoundWrapper : Object
 	const Channel* getChannel(u8 index);
 	bool isPaused();
 	bool hasPCMTracks();
+	bool isFadingIn();
+	bool isFadingOut();
 	void play(const Vector3D* position, u32 playbackType);
 	void pause();
 	void unpause();

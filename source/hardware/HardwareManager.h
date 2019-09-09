@@ -74,10 +74,10 @@ singleton class HardwareManager : Object
 
 	/// @publicsection
 	static HardwareManager getInstance();
-	static void enableInterrupts();
-    static void disableInterrupts();
-    static void enableMultiplexedInterrupts();
-    static void disableMultiplexedInterrupts();
+	static inline void enableInterrupts();
+    static inline void disableInterrupts();
+    static inline void enableMultiplexedInterrupts();
+    static inline void disableMultiplexedInterrupts();
     static int getStackPointer();
     static int getLinkPointer();
     static int getPSW();
@@ -108,5 +108,59 @@ static inline void HardwareManager::halt()
     ((void(*)())&code)(); 
 }
 
+/**
+ * Enable interrupts
+ */
+static inline void HardwareManager::enableInterrupts()
+{
+	asm("cli");
+}
+
+/**
+ * Disable interrupts
+ */
+static inline void HardwareManager::disableInterrupts()
+{
+	asm("sei");
+}
+
+/**
+ * Enable multiplexed interrupts
+ */
+static inline void HardwareManager::enableMultiplexedInterrupts()
+{
+	u32 psw;
+
+	asm("			\n\
+		stsr psw,%0	\n\
+		"
+		: "=r" (psw) // Output
+	);
+
+	psw &= 0xFFF0BFFF;
+
+	asm(" 			\n\
+		ldsr %0,psw	\n\
+		cli			\n\
+		"
+		: // Output
+		: "r" (psw) // Input
+		: // Clobber
+	);
+}
+
+/**
+ * Disable multiplexed interrupts
+ */
+static inline void HardwareManager::disableMultiplexedInterrupts()
+{
+	asm(" 			\n\
+		sei			\n\
+		"
+		: // Output
+		: // Input
+		: // Clobber
+	);
+}
 
 #endif
