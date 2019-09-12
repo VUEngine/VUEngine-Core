@@ -644,7 +644,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 
 		for(u16 i = 0; i < 32; i++)
 		{
-			waveform->wave[(i << 2)] = (u8)data[i] + increment;
+			waveform->wave[(i << 2)] = ((u8)data[i] + increment) >> 1;
 		}
 
 		// Turn back interrupts on
