@@ -117,7 +117,7 @@ const unsigned char linearWave[32] =
 SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
 
 #define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n * 128))
-#define __MODDATA					(u8*)0x01000280;
+#define __MODULATION_DATA			(u8*)0x01000280;
 #define __SSTOP						*(u8*)0x01000580
 
 
@@ -311,6 +311,13 @@ void SoundManager::reset()
 		{
 			this->waveforms[i].wave[j] = 0;
 		}
+	}
+
+	// Reset modulation data
+	u8* modulationData = __MODULATION_DATA;
+	for(i = 0; i <= 32 * 4; i++)
+	{
+		modulationData[i] = 0;
 	}
 
 	for(i = 0; i < __TOTAL_NORMAL_CHANNELS; i++)
@@ -653,7 +660,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
 		};
 
-		u8* moddata = __MODDATA;
+		u8* moddata = __MODULATION_DATA;
 		for(i = 0; i <= 0x7C; i++)
 		{
 			moddata[i << 2] = kModData[i];
@@ -775,7 +782,7 @@ u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8
 
 	for(i = 0; usableChannelsCount < channelsCount && i < __TOTAL_CHANNELS; i++)
 	{
-		if(NULL == this->channels[i].sound && this->channels[i].type & channelType)
+		if(NULL == this->channels[i].sound && (this->channels[i].type & channelType))
 		{
 			usableChannelsCount++;
 			VirtualList::pushBack(availableChannels , &this->channels[i]);

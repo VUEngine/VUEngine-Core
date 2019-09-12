@@ -153,11 +153,7 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 	// Prevent timer interrupts to unsync tracks
 	if(!this->hasPCMTracks)
 	{
-		bool paused = this->paused;
-		this->paused = true;
-		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(1.0f);
-
-		this->paused = paused;
+		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
 	}
 }
 
@@ -589,6 +585,11 @@ void SoundWrapper::configureSoundRegistries()
 		_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH;
 		_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL;
 		_soundRegistries[channel->number].SxRAM = channel->soundChannelConfiguration.SxRAM;
+
+		if(kChannelModulation == channel->type)
+		{
+			_soundRegistries[channel->number].S5SWP = 0;
+		}
 	}
 }
 
