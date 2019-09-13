@@ -776,20 +776,20 @@ void SoundWrapper::playMIDINote(Channel* channel, s16 leftVolumeFactor, s16 righ
 			}
 
 #ifdef __SOUND_TEST
-			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+			channel->soundChannelConfiguration.SxLRV = SxLRV;
+			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			channel->soundChannelConfiguration.SxFQH = (note >> 8);
 #else
 #ifdef __SHOW_SOUND_STATUS
-			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
-			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-#else
+			channel->soundChannelConfiguration.SxLRV = SxLRV;
+			channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			channel->soundChannelConfiguration.SxFQH = (note >> 8);
+#endif
+#endif
+
 			_soundRegistries[channel->number].SxLRV = SxLRV;
 			_soundRegistries[channel->number].SxFQH = (note >> 8);
 			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
-#endif
-#endif
 			break;
 
 	}
