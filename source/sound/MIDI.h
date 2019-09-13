@@ -166,6 +166,9 @@
 // Special sound notes
 #define ENDSOUND  0xFFFF  // Ends the sound.
 #define LOOPSOUND 0xFFFE  // Repeats the sound from the beginning.
+#define MINIMUM_AUDIBLE_NOTE	DS2
+#define MAXIMUM_AUDIBLE_NOTE	D_8
+
 
 // Commom wave forms
 extern const s8 sineWaveForm[];
