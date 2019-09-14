@@ -95,9 +95,9 @@ typedef struct ScreenPixelVector
 
 typedef struct Vector3DFlag
 {
-	u16 x: 2;
-	u16 y: 2;
-	u16 z: 2;
+	bool x;
+	bool y;
+	bool z;
 
 } Vector3DFlag;
 

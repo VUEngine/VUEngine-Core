@@ -114,6 +114,9 @@ class ParticleSystem : Entity
 	bool loop;
 	// Counter of total spawned particles
 	u16 totalSpawnedParticles;
+	// Flags to speed up particle spawning
+	Vector3DFlag spawnPositionDisplacement;
+	Vector3DFlag spawnForceDelta;
 
 	/// @publicsection
 	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, s16 internalId, const char* const name);

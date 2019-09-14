@@ -66,6 +66,8 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
 	this->paused = false;
+	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
+	this->spawnForceDelta = (Vector3DFlag){false, false, false};	
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -119,6 +121,14 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 	this->size.x += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x);
 	this->size.y += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y);
 	this->size.z += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z);
+
+	this->spawnPositionDisplacement.x = this->particleSystemSpec->maximumRelativeSpawnPosition.x | this->particleSystemSpec->minimumRelativeSpawnPosition.x;
+	this->spawnPositionDisplacement.y = this->particleSystemSpec->maximumRelativeSpawnPosition.y | this->particleSystemSpec->minimumRelativeSpawnPosition.y;
+	this->spawnPositionDisplacement.z = this->particleSystemSpec->maximumRelativeSpawnPosition.z | this->particleSystemSpec->minimumRelativeSpawnPosition.z;
+
+	this->spawnForceDelta.x = this->particleSystemSpec->maximumForce.x | this->particleSystemSpec->minimumForce.x;
+	this->spawnForceDelta.y = this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y;
+	this->spawnForceDelta.z = this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z;
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
 
@@ -205,7 +215,7 @@ bool ParticleSystem::getLoop()
  */
 void ParticleSystem::processExpiredParticles()
 {
-	if(!isDeleted(this->expiredParticles))
+	if(!isDeleted(this->expiredParticles) && this->expiredParticles->head)
 	{
 		VirtualNode node = this->expiredParticles->head;
 
@@ -277,8 +287,9 @@ void ParticleSystem::update(u32 elapsedTime)
 	{
 		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 		{
-			if(++this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles &&
-				!this->loop)
+			++this->totalSpawnedParticles;
+
+			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem::pause(this);
 				return;
@@ -339,19 +350,19 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 
 	long seed = 0;
 
-	if(this->particleSystemSpec->maximumRelativeSpawnPosition.x | this->particleSystemSpec->minimumRelativeSpawnPosition.x)
+	if(this->spawnPositionDisplacement.x)
 	{
 		seed = Utilities::randomSeed();
 		position.x += this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
 	}
 
-	if(this->particleSystemSpec->maximumRelativeSpawnPosition.y | this->particleSystemSpec->minimumRelativeSpawnPosition.y)
+	if(this->spawnPositionDisplacement.y)
 	{
 		seed = Utilities::randomSeed();
 		position.y += this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
 	}
 
-	if(this->particleSystemSpec->maximumRelativeSpawnPosition.z | this->particleSystemSpec->minimumRelativeSpawnPosition.z)
+	if(this->spawnPositionDisplacement.z)
 	{
 		seed = Utilities::randomSeed();
 		position.z += this->particleSystemSpec->minimumRelativeSpawnPosition.z + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z));
@@ -371,19 +382,19 @@ Force ParticleSystem::getParticleSpawnForce()
 
 	long seed = 0;
 
-	if(this->particleSystemSpec->maximumForce.x | this->particleSystemSpec->minimumForce.x)
+	if(this->spawnForceDelta.x)
 	{
 		seed = Utilities::randomSeed();
 		force.x += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
 	}
 
-	if(this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y)
+	if(this->spawnForceDelta.y)
 	{
 		seed = Utilities::randomSeed();
 		force.y += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
 	}
 
-	if(this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z)
+	if(this->spawnForceDelta.z)
 	{
 		seed = Utilities::randomSeed();
 		force.z += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.z - this->particleSystemSpec->minimumForce.z));
