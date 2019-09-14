@@ -59,6 +59,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
 	this->position = Vector3D::zero();
+	this->previousZ = 0;
 
 	Particle::addSprite(this);
 }
@@ -137,8 +138,13 @@ void Particle::synchronizeGraphics(bool updateSpritePosition __attribute__ ((unu
 {
 	NM_ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
-	// calculate sprite's parallax
-	Sprite::calculateParallax(this->sprite, this->position.z);
+	if(this->position.z != this->previousZ)
+	{
+		// calculate sprite's parallax
+		Sprite::calculateParallax(this->sprite, this->position.z);
+
+		this->previousZ = this->position.z;
+	}
 
 	// update sprite's 2D position
 	Sprite::position(this->sprite, &this->position);

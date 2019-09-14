@@ -85,6 +85,8 @@ class Particle : SpatialObject
 	Sprite sprite;
 	// Particle's life span in milliseconds
 	int lifeSpan;
+	// To optimizize parallax computation
+	fix10_6 previousZ;
 
 	/// @publicsection
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
