@@ -260,6 +260,9 @@ void Particle::resume()
 {
 	Particle::addSprite(this);
 
+	// Force parallax computation
+	this->previousZ = 0;
+
 	NM_ASSERT(this->sprite, "Particle::resume: null sprite");
 }
 
