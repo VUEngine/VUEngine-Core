@@ -265,6 +265,12 @@ void ParticleSystem::update(u32 elapsedTime)
 	// update each particle
 	VirtualNode node = this->particles->head;
 
+	if(NULL == node && this->paused)
+	{
+		ParticleSystem::hide(this);
+		return;
+	}
+
 	void (* behavior)(Particle particle) = this->particleSystemSpec->particleSpec->behavior;
 
 	for(; node; node = node->next)
@@ -613,6 +619,7 @@ void ParticleSystem::start()
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
+	ParticleSystem::show(this);
 }
 
 void ParticleSystem::pause()
