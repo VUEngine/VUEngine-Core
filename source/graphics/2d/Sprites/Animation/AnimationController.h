@@ -78,7 +78,7 @@ class AnimationController : Object
 	bool play(const AnimationDescription* animationDescription, const char* functionName);
 	void playAnimationFunction(const AnimationFunction* animationFunction);
 	void previousFrame();
-	void setActualFrame(s16 actualFrame);
+	bool setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameCycleDecrement);
 	void setFrameDuration(u8 frameDuration);
 	void stop();

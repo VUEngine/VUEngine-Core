@@ -119,7 +119,7 @@ s16 AnimationController::getActualFrame()
 /**
  * Retrieve the previous frame of animation
  *
- * @private
+ * @publics
  * @return 		Previous frame of animation
  */
 s16 AnimationController::getPreviousFrame()
@@ -130,15 +130,23 @@ s16 AnimationController::getPreviousFrame()
 /**
  * Set the actual frame of animation
  *
- * @private
+ * @public
  * @param actualFrame	The new frame of animation
+ * 
+ * @return bool			Whether the value was updated or not
  */
-void AnimationController::setActualFrame(s16 actualFrame)
+bool AnimationController::setActualFrame(s16 actualFrame)
 {
 	if(this->animationFunction && 0 <= actualFrame && actualFrame < this->animationFunction->numberOfFrames)
 	{
+		bool updatedActualFrame = this->actualFrame != actualFrame;
+
 		this->actualFrame = actualFrame;
+
+		return updatedActualFrame;
 	}
+
+	return false;
 }
 
 /**
