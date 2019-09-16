@@ -214,7 +214,7 @@ void Particle::show()
 {
 	ASSERT(this->sprite, "Particle::show: null sprite");
 
--	Particle::synchronizeGraphics(this, __INVALIDATE_TRANSFORMATION);
+	Particle::synchronizeGraphics(this, __INVALIDATE_TRANSFORMATION);
 
 	Sprite::show(this->sprite);
 
