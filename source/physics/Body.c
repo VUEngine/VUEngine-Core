@@ -131,6 +131,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 
 	this->active = true;
 	this->awake = false;
+	this->changedDirection = false;
 	this->axisSubjectToGravity = axisSubjectToGravity;
 
 	// clear movement type
@@ -620,7 +621,14 @@ MovementResult Body::updateMovement()
 	}
 	
 	this->speed = Vector3D::length(this->velocity);
-	this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
+	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+
+	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
+
+	if(this->changedDirection)
+	{
+		this->direction = newDirection;
+	}
 
 	Body::clampVelocity(this);
 
@@ -640,6 +648,11 @@ MovementResult Body::updateMovement()
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
+}
+
+bool Body::changedDirection()
+{
+	return this->changedDirection;
 }
 
 // stop movement over an axis

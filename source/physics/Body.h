@@ -131,6 +131,8 @@ class Body : Object
 	bool active;
 	// raise flag to update body's physics
 	bool awake;
+	// Flag to indicate if the body changed direction during the last frame
+	bool changedDirection;
 
 	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
@@ -183,6 +185,8 @@ class Body : Object
 	fix10_6 getMaximumSpeed();	
 	void print(int x, int y);
 	MovementResult updateMovement();
+	bool changedDirection();
+
 	virtual void update();
 }
 
