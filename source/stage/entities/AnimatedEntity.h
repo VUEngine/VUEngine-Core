@@ -79,6 +79,7 @@ class AnimatedEntity : Entity
 	void previousFrame();
 	void setActualFrame(s16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
+	virtual void animate();
 	override void ready(bool recursive);
 	override void update(u32 elapsedTime);
 	override void resume();
