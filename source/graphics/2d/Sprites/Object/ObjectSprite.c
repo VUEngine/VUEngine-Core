@@ -228,6 +228,11 @@ void ObjectSprite::render(bool evenFrame)
 {
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
+	if(!this->positioned)
+	{
+		return;
+	}
+
 	Base::render(this, evenFrame);
 
 	//ObjectSprite::checkForContainer(this);
