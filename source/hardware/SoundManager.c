@@ -42,78 +42,6 @@
 //											 CLASS' DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-const unsigned char sawSquareWave[32] =
-{
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
-	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x18, 0x20,
-	0x28, 0x30, 0x38, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-};
-
-const unsigned char glockenWave[32] =
-{
-	0x20, 0x35, 0x26, 0x2d, 0x32, 0x19, 0x1d, 0x2a,	/* Glocken */
-	0x24, 0x30, 0x3e, 0x2e, 0x25, 0x21, 0x17, 0x18,
-	0x20, 0x28, 0x29, 0x1f, 0x1c, 0x12, 0x02, 0x10,
-	0x1c, 0x16, 0x23, 0x27, 0x0f, 0x13, 0x1a, 0x0b,
-};
-
-const unsigned char square0Wave[32] =
-{
-	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave */
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-};
-
-const unsigned char square1Wave[32] =
-{
-	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave (Duty 75%) */
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-};
-
-const unsigned char organWave[32] =
-{
-	0x20, 0x3f, 0x38, 0x38, 0x27, 0x23, 0x27, 0x11,	/* Organ (2+3)*/
-	0x13, 0x26, 0x0c, 0x26, 0x23, 0x22, 0x1e, 0x00,
-	0x20, 0x3f, 0x23, 0x1e, 0x1e, 0x1a, 0x35, 0x1a,
-	0x2c, 0x2f, 0x1a, 0x1d, 0x1a, 0x08, 0x09, 0x00,
-};
-
-const unsigned char sinAlphaWave[32] =
-{
-	0x20, 0x29, 0x30, 0x33, 0x33, 0x31, 0x31, 0x35,	/* Sin Wave + alpha */
-	0x39, 0x3e, 0x3e, 0x3a, 0x33, 0x2a, 0x23, 0x20,
-	0x20, 0x20, 0x1d, 0x16, 0x0e, 0x06, 0x02, 0x02,
-	0x06, 0x0b, 0x0f, 0x0f, 0x0e, 0x0d, 0x10, 0x17,
-};
-
-const unsigned char sawWave[32] =
-{
-	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f,	/* Saw Wave */
-	0x31, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
-	0x21, 0x23, 0x25, 0x27, 0x29, 0x2b, 0x2d, 0x2f,
-	0x11, 0x33, 0x35, 0x37, 0x39, 0x3b, 0x3d, 0x3f,
-};
-
-const unsigned char sinWave[32] =
-{
-	0x00, 0x06, 0x0C, 0x11, 0x16, 0x1A, 0x1D, 0x1E,
-	0x1F, 0x1E, 0x29, 0x1D, 0x16, 0x11, 0x0C, 0x06,
-	0x00, 0x39, 0x33, 0x2E, 0x29, 0x25, 0x22, 0x21,
-	0x20, 0x21, 0x22, 0x25, 0x29, 0x2E, 0x33, 0x39
-};
-
-const unsigned char linearWave[32] =
-{
-	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
-	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
-	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
-	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
-};
-
 SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
 
 #define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n * 128))
@@ -168,7 +96,7 @@ void SoundManager::constructor()
 void SoundManager::destructor()
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
-	
+
 	if(!isDeleted(this->releasedSoundWrappers))
 	{
 		delete this->releasedSoundWrappers;
@@ -367,7 +295,7 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
 	{
-		static u32 accumulatedElapsedMicroseconds = 0; 
+		static u32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
 		if(NULL == this->soundWrapperMIDINode)
@@ -409,7 +337,7 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 }
 
 bool SoundManager::playPCMSounds()
-{	
+{
 	if(!this->hasPCMSounds)
 	{
 		return false;
@@ -460,7 +388,7 @@ void SoundManager::updateFrameRate()
 #ifdef __SOUND_MANAGER_PROFILE
 	static u16 counter = 20;
 
-	if(++counter > 20) 
+	if(++counter > 20)
 	{
 		counter = 0;
 		PRINT_TEXT("    ", 35, 20);
@@ -692,14 +620,14 @@ void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
 			Printing::hex(Printing::getInstance(), (int)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
 #endif
 			NM_ASSERT(false, "SoundManager::releaseWaveform: mismatch between index and data");
-		}	
+		}
 	}
 }
 
 void SoundManager::releaseSoundChannel(Channel* channel)
 {
 	if(channel)
-	{	
+	{
 		if(kChannelNoise != channel->type)
 		{
 			SoundManager::releaseWaveform(this, channel->soundChannelConfiguration.SxRAM, channel->sound->soundChannels[channel->soundChannel]->soundChannelConfiguration->waveFormData);
@@ -753,7 +681,7 @@ void SoundManager::turnOnPlayingSounds()
 
 static u8 SoundManager::getSoundChannelsCount(Sound* sound, u32 channelType)
 {
-	// Compute the number of 
+	// Compute the number of
 	u8 channelsCount = 0;
 
 	for(u16 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
@@ -827,11 +755,11 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 		return NULL;
 	}
 
-	// Compute the number of 
+	// Compute the number of
 	u8 normalChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormal);
 	u8 modulationChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelModulation);
 	u8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
-	
+
 	// Check for free channels
 	VirtualList availableChannels  = new VirtualList();
 
@@ -848,7 +776,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 
 	SoundWrapper soundWrapper = NULL;
 
-		/* TODO 
+		/* TODO
 	if(forceAllChannels)
 	{
 	}
@@ -1028,13 +956,13 @@ void SoundManager::print()
 		PRINT_TEXT("FQH/FQL:  /   ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQL, x + xDisplacement + 3, y, 2);
-	
+
 		PRINT_TEXT("Loop   :      ", x, ++y);
 		PRINT_TEXT(this->channels[i].sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 		PRINT_TEXT("Length :      ", x, ++y);
 		PRINT_INT(this->channels[i].length, x + xDisplacement, y);
-		
+
 		PRINT_TEXT("Note   :     ", x, ++y);
 		switch(this->channels[i].soundChannelConfiguration.trackType)
 		{
