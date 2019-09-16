@@ -500,9 +500,13 @@ Acceleration Body::getGravity()
 
 void Body::clampVelocity()
 {
+	Body::computeDirectionAndSpeed(this);
+
 	// First check if must clamp speed
-	if(this->maximumSpeed && __FIX10_6_EXT_MULT(this->maximumSpeed, this->maximumSpeed) < Vector3D::squareLength(this->velocity))
+	if(this->maximumSpeed && this->maximumSpeed < this->speed)
 	{
+		this->speed = this->maximumSpeed;
+
 		this->velocity = Vector3D::scalarProduct(this->direction, this->maximumSpeed);
 	}
 
@@ -620,16 +624,6 @@ MovementResult Body::updateMovement()
 		}
 	}
 	
-	this->speed = Vector3D::length(this->velocity);
-	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
-
-	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
-
-	if(this->changedDirection)
-	{
-		this->direction = newDirection;
-	}
-
 	Body::clampVelocity(this);
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
@@ -648,6 +642,20 @@ MovementResult Body::updateMovement()
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
+}
+
+void Body::computeDirectionAndSpeed()
+{
+	this->speed = Vector3D::length(this->velocity);
+
+	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+
+	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
+
+	if(this->changedDirection)
+	{
+		this->direction = newDirection;
+	}
 }
 
 bool Body::changedDirection()
@@ -692,6 +700,7 @@ u16 Body::stopMovement(u16 axis)
 
 	if(!Body::getMovementOnAllAxis(this))
 	{
+		this->changedDirection = false;
 		Body::sleep(this);
 	}
 
@@ -1217,8 +1226,6 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	this->velocity.z = w.z - u.z;
 
 	Body::clampVelocity(this);
-
-	this->direction = Vector3D::normalize(this->velocity);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{

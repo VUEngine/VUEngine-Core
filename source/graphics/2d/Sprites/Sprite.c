@@ -570,7 +570,7 @@ void Sprite::pause(bool pause)
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
-		this->writeAnimationFrame = !pause;
+		this->writeAnimationFrame |= !pause;
 	}
 }
 
@@ -587,7 +587,7 @@ void Sprite::play(AnimationDescription* animationDescription, char* functionName
 
 	if(this->animationController)
 	{
-		this->writeAnimationFrame = AnimationController::play(this->animationController, animationDescription, functionName);
+		this->writeAnimationFrame |= AnimationController::play(this->animationController, animationDescription, functionName);
 	}
 }
 
@@ -660,7 +660,7 @@ void Sprite::setActualFrame(s16 actualFrame)
 {
 	if(this->animationController)
 	{
-		this->writeAnimationFrame = AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->writeAnimationFrame |= AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 }
 
