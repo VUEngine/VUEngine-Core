@@ -139,7 +139,7 @@ bool AnimationController::setActualFrame(s16 actualFrame)
 {
 	if(this->animationFunction && 0 <= actualFrame && actualFrame < this->animationFunction->numberOfFrames)
 	{
-		bool updatedActualFrame = this->actualFrame != actualFrame;
+		bool updatedActualFrame = this->actualFrame != actualFrame && 0 <= actualFrame;
 
 		this->actualFrame = actualFrame;
 
