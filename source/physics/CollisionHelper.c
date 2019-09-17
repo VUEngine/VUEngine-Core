@@ -29,6 +29,7 @@
 #include <Box.h>
 #include <InverseBox.h>
 #include <Ball.h>
+#include <LineField.h>
 #include <VirtualList.h>
 #include <debugUtilities.h>
 
@@ -40,6 +41,7 @@
 friend class Box;
 friend class InverseBox;
 friend class Ball;
+friend class LineField;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -101,6 +103,10 @@ CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape shapeB)
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
 			collisionInformation = CollisionHelper::checkIfBallOverlapsBall(this, Ball::safeCast(shapeA), Ball::safeCast(shapeB));
+		}
+		else if(__IS_INSTANCE_OF(LineField, shapeB))
+		{
+			collisionInformation = CollisionHelper::checkIfBallOverlapsLineField(this, Ball::safeCast(shapeA), LineField::safeCast(shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(Box, shapeA))
@@ -372,7 +378,7 @@ CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsBall(InverseBox i
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-CollisionInformation CollisionHelper::checkIfBallOverlapsBall(Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+CollisionInformation CollisionHelper::checkIfBallOverlapsBall(Ball ballA, Ball ballB)
 {
 	SolutionVector solutionVector = CollisionHelper::getSolutionVectorBetweenBallAndBall(this, ballA, ballB);
 
@@ -383,6 +389,19 @@ CollisionInformation CollisionHelper::checkIfBallOverlapsBall(Ball ballA __attri
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
+
+CollisionInformation CollisionHelper::checkIfBallOverlapsLineField(Ball ball, LineField lineField)
+{
+	SolutionVector solutionVector = CollisionHelper::getSolutionVectorBetweenBallAndLineField(this, ball, lineField);
+
+	if(solutionVector.magnitude)
+	{
+		return (CollisionInformation){Shape::safeCast(ball), Shape::safeCast(lineField), solutionVector};
+	}
+
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
+}
+
 
 SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBox(Box boxA, Box boxB)
 {
@@ -600,4 +619,69 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, 
 	}
 
 	return solutionVector;
+}
+
+static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
+{
+	Vector3D ap = Vector3D::get(a, p);
+	Vector3D ab = Vector3D::get(a, b);
+	fix10_6_ext dotApAb = Vector3D::dotProduct(ap, ab);
+	fix10_6_ext dotAbAb = Vector3D::dotProduct(ab, ab);
+
+	if(!dotAbAb)
+	{
+		return p;
+	}
+
+	Vector3D projection = 
+	{
+		a.x + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.x), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+		a.y + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.y), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+		0
+	};
+		
+	return projection;
+}
+
+static bool CollisionHelper::isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB)
+{
+	if(limitA < limitB)
+	{
+		return (unsigned)(value - limitA) <= limitB - limitA;
+	}
+
+	return (unsigned)(value - limitB) <= limitA - limitB;
+}
+
+SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball, LineField lineField)
+{
+	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
+
+	Vector3D ballSideToCheck = Vector3D::sum(ball->center, Vector3D::scalarProduct(lineField->normal, ball->radius));
+
+	fix10_6 position = __FIX10_6_MULT((lineField->b.x - lineField->a.x), (ballSideToCheck.y - lineField->a.y)) - __FIX10_6_MULT((lineField->b.y - lineField->a.y), (ballSideToCheck.x - lineField->a.x));
+
+	if(0 > position)
+	{
+		Vector3D projection = Vector3D::projectOnto(ballSideToCheck, lineField->a, lineField->b);
+
+		if(CollisionHelper::isValueInRange(projection.x, lineField->a.x, lineField->b.x)
+			&&
+			CollisionHelper::isValueInRange(projection.y, lineField->a.y, lineField->b.y)
+			&&
+			CollisionHelper::isValueInRange(projection.z, lineField->a.z, lineField->b.z)
+		)
+		{
+			fix10_6 distanceToLine = Vector3D::length(Vector3D::get(projection, ballSideToCheck));
+
+			if(distanceToLine < lineField->normalLength + (ball->radius << 1))
+			{
+				solutionVector.magnitude = distanceToLine;
+				solutionVector.direction = Vector3D::scalarProduct(lineField->normal, __I_TO_FIX10_6(-1));
+			}
+		}
+	}
+
+	return solutionVector;
+
 }
