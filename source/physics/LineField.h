@@ -35,6 +35,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __LINE_FIELD_VERTEXES		2
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -43,6 +44,7 @@
 /// @ingroup physics
 class LineField : Shape
 {
+	RightBox rightBox;
 	Vector3D normal;
 	Vector3D a;
 	Vector3D b;
@@ -51,6 +53,7 @@ class LineField : Shape
 	/// @publicsection
 	static void project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
 	void constructor(SpatialObject owner);
+	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();

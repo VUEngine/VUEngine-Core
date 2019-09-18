@@ -621,28 +621,6 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, 
 	return solutionVector;
 }
 
-static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
-{
-	Vector3D ap = Vector3D::get(a, p);
-	Vector3D ab = Vector3D::get(a, b);
-	fix10_6_ext dotApAb = Vector3D::dotProduct(ap, ab);
-	fix10_6_ext dotAbAb = Vector3D::dotProduct(ab, ab);
-
-	if(!dotAbAb)
-	{
-		return p;
-	}
-
-	Vector3D projection = 
-	{
-		a.x + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.x), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
-		a.y + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.y), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
-		0
-	};
-		
-	return projection;
-}
-
 static bool CollisionHelper::isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB)
 {
 	if(limitA < limitB)

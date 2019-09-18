@@ -81,6 +81,6 @@ void Line::draw(bool calculateParallax)
 		DirectDraw::getInstance(),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(this->a, this->b)), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)), 0),
-		__COLOR_MEDIUM_RED
+		__COLOR_BRIGHT_RED
 	);
 }

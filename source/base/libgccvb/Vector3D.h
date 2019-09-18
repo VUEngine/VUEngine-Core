@@ -61,6 +61,7 @@ static class Vector3D : Object
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
+	static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline void Vector3D::print(Vector3D vector, int x, int y);
 }
 
@@ -258,6 +259,43 @@ static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
 	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));	
+}
+
+static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
+{
+	Vector3D ap = Vector3D::get(a, p);
+	Vector3D ab = Vector3D::get(a, b);
+	fix10_6_ext dotApAb = Vector3D::dotProduct(ap, ab);
+	fix10_6_ext dotAbAb = Vector3D::dotProduct(ab, ab);
+
+	if(!dotAbAb)
+	{
+		if(a.x == b.x)
+		{
+			p.x = a.x;
+		}
+		
+		if(a.y == b.y)
+		{
+			p.y = a.y;
+		}
+
+		if(a.z == b.z)
+		{
+			p.z = a.z;
+		}
+
+		return p;
+	}
+
+	Vector3D projection = 
+	{
+		a.x + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.x), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+		a.y + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.y), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+		a.z + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.z), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+	};
+		
+	return projection;
 }
 
 static inline void Vector3D::print(Vector3D vector, int x, int y)

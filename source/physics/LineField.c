@@ -54,6 +54,15 @@ void LineField::constructor(SpatialObject owner)
 	this->b = Vector3D::zero();
 	this->normal = Vector3D::zero();
 	this->normalLength = __I_TO_FIX7_9(1);
+
+	this->rightBox.x1 = __I_TO_FIX7_9(1);
+	this->rightBox.y1 = __I_TO_FIX7_9(1);
+	this->rightBox.z1 = __I_TO_FIX7_9(1);
+
+	this->rightBox.x0 = __I_TO_FIX7_9(-1);
+	this->rightBox.y0 = __I_TO_FIX7_9(-1);
+	this->rightBox.z0 = __I_TO_FIX7_9(-1);
+
 }
 
 // class's destructor
@@ -68,7 +77,6 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 {
 	if(size->x)
 	{
-
 		this->a.x = size->x >> 1;
 		this->a.y = 0;
 		this->a.y = 0;
@@ -158,7 +166,40 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		this->normal = (Vector3D){0, __I_TO_FIX10_6(1), 0};
 	}
-	
+
+	if(this->a.x < this->b.x)
+	{
+		this->rightBox.x0 = this->a.x;
+		this->rightBox.x1 = this->b.x;
+	}
+	else
+	{
+		this->rightBox.x0 = this->b.x;
+		this->rightBox.x1 = this->a.x;
+	}
+
+	if(this->a.y < this->b.y)
+	{
+		this->rightBox.y0 = this->a.y;
+		this->rightBox.y1 = this->b.y;
+	}
+	else
+	{
+		this->rightBox.y0 = this->b.y;
+		this->rightBox.y1 = this->a.y;
+	}
+
+	if(this->a.z < this->b.z)
+	{
+		this->rightBox.z0 = this->a.z;
+		this->rightBox.z1 = this->b.z;
+	}
+	else
+	{
+		this->rightBox.z0 = this->b.z;
+		this->rightBox.z1 = this->a.z;
+	}
+
 	Base::position(this, position, rotation, scale, size);
 }
 
@@ -207,16 +248,7 @@ Vector3D LineField::getPosition()
 
 RightBox LineField::getSurroundingRightBox()
 {
-	return (RightBox)
-	{
-		this->a.x,
-		this->a.y,
-		this->a.z,
-
-		this->b.x,
-		this->b.y,
-		this->b.z,
-	};
+	return this->rightBox;
 }
 
 // configure Polyhedron
@@ -229,6 +261,12 @@ void LineField::configureWireframe()
 
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Line(this->a, this->b, Vector3D::scalarProduct(this->normal, this->normalLength), __COLOR_BRIGHT_RED));
+}
+
+void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
+{
+	vertexes[0] = this->a;
+	vertexes[1] = this->b;
 }
 
 // print debug data
