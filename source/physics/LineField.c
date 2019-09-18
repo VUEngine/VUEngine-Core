@@ -25,11 +25,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <LineField.h>
-#include <Box.h>
-#include <InverseBox.h>
+#include <Line.h>
 #include <CollisionHelper.h>
 #include <Optics.h>
-#include <Polyhedron.h>
 #include <Math.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
@@ -219,24 +217,10 @@ static void LineField::project(Vector3D center, fix10_6 radius, Vector3D vector,
 	}
 }
 
-CollisionInformation LineField::testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fix10_6 sizeIncrement __attribute__((unused)))
 {
-/*	// save state
-	Vector3D center = this->center;
-	fix10_6 radius = this->radius;
-	this->radius += sizeIncrement;
-
-	// add displacement
-	this->center.x += displacement.x;
-	this->center.y += displacement.y;
-	this->center.z += displacement.z;
-*/
-	// test for collision on displaced center
+	// TODO
 	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), Shape::safeCast(this), shape);
-
-	// restore state
-//	this->center = center;
-//	this->radius = radius;
 
 	return collisionInformation;
 }
