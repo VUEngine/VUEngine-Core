@@ -625,10 +625,10 @@ static bool CollisionHelper::isValueInRange(fix10_6 value, fix10_6 limitA, fix10
 {
 	if(limitA < limitB)
 	{
-		return (unsigned)(value - limitA) <= limitB - limitA;
+		return (unsigned)(value - limitA) <= (unsigned)(limitB - limitA);
 	}
 
-	return (unsigned)(value - limitB) <= limitA - limitB;
+	return (unsigned)(value - limitB) <= (unsigned)(limitA - limitB);
 }
 
 SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball, LineField lineField)
