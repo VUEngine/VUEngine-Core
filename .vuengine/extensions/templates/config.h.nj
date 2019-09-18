@@ -19,7 +19,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 {% for gameConfig in project.config.game -%}
-#define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfig.value | safe }}
+{%- if (gameConfig.type === 'text') -%}
+	{%- set gameConfigValue = '"' ~ gameConfig.value ~ '"' -%}
+{%- elseif (gameConfig.type === 'boolean') -%}
+	{%- if gameConfig.value === true -%}
+		{%- set gameConfigValue = 1 -%}
+	{%- else -%}
+		{%- set gameConfigValue = 0 -%}
+	{%- endif -%}
+{%- else -%}
+	{%- set gameConfigValue = gameConfig.value -%}
+{%- endif -%}
+#define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfigValue | safe }}
 {% endfor %}
 
 {% endif -%}
