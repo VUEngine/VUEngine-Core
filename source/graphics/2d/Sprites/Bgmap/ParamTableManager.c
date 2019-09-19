@@ -154,6 +154,12 @@ void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForPar
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
 	BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager::getInstance());
+
+	// Clean param tables memory
+	for(u8* data = (u8*)this->paramTableBase; data < __PARAM_TABLE_END; data++)
+	{
+		*data = 0;
+	}
 }
 
 /**
@@ -174,7 +180,7 @@ u32 ParamTableManager::getParamTableBase()
  */
 u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 {
-	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
+	ASSERT(bgmapSprite, "ParamTableManager::calculateSpriteParamTableSize: null sprite");
 
 	u16 spriteHead = Sprite::getHead(bgmapSprite);
 	u32 textureRows = Texture::getRows(Sprite::getTexture(bgmapSprite)) + __PARAM_TABLE_PADDING;
@@ -357,7 +363,7 @@ void ParamTableManager::print(int x, int y)
 	Printing::int(Printing::getInstance(), this->size, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Used:              ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->used, x + xDisplacement, y, NULL);
+	Printing::int(Printing::getInstance(), this->used - 1, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "ParamBase:          ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), this->paramTableBase, x + xDisplacement, y, 8, NULL);
