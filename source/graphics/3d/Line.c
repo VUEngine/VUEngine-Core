@@ -68,7 +68,7 @@ void Line::destructor()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Line::draw(bool calculateParallax)
+void Line::draw(bool calculateParallax __attribute__((unused)))
 {
 	DirectDraw::drawLine(
 		DirectDraw::getInstance(),

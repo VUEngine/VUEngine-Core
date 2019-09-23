@@ -156,7 +156,7 @@ void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForPar
 	BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager::getInstance());
 
 	// Clean param tables memory
-	for(u8* data = (u8*)this->paramTableBase; data < __PARAM_TABLE_END; data++)
+	for(u8* data = (u8*)this->paramTableBase; data < (u8*)__PARAM_TABLE_END; data++)
 	{
 		*data = 0;
 	}
