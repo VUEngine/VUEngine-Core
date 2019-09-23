@@ -5,21 +5,20 @@
 	},
 	"animation": {
 		"maxAnimationFunctionNameLength": 16,
-		"maxFramesPerAnimationFunction": 16,
-		"maxAnimationFunctions": 32
+		"maxAnimationFunctions": 32,
+		"maxFramesPerAnimationFunction": 16
 	},
 	"char": {
 		"totalChars": 2048
 	},
 	"colors": {
 		"brightness": {
-			"darkRed": 32,
-			"mediumRed": 64,
 			"brightRed": 128,
-			"fadeDelay": 8
+			"darkRed": 32,
+			"fadeDelay": 8,
+			"mediumRed": 6,
 		},
 		"palettes": {
-			"printingPalette": 0,
 			"bgMap": {
 				"0": {
 					"0": "11",
@@ -63,7 +62,8 @@
 					"1": "01",
 					"2": "00"
 				}
-			}
+			},
+			"printingPalette": 0
 		}
 	},
 	"compiler": {
@@ -94,10 +94,10 @@
 		}
 	},
 	"frameRate": {
-		"timerResolution": 10,
-		"frameCycle": 0,
 		"forceVipSync": false,
-		"runDelayedMessagesAtHalfFrameRate": false
+		"frameCycle": 0,
+		"runDelayedMessagesAtHalfFrameRate": false,
+		"timerResolution": 10
 	},
 	"game": [],
 	"memoryPools": {
@@ -106,27 +106,27 @@
 		"warningThreshold": 85
 	},
 	"optics": {
-		"screenWidth": 384,
-		"screenHeight": 224,
-		"screenDepth": 2048,
+		"baseFactor": 32,
+		"cameraMinimumDisplacementPixelsPower": 1,
 		"distanceEyeScreen": 384,
+		"horizontalViewPointCenter": 192,
 		"maximumXViewDistance": 2048,
 		"maximumYViewDistance": 4096,
-		"baseFactor": 32,
-		"horizontalViewPointCenter": 192,
-		"verticalViewPointCenter": 112,
 		"parallaxCorrectionFactor": 4,
 		"scalingModifierFactor": 1,
-		"cameraMinimumDisplacementPixelsPower": 1
+		"screenDepth": 2048,
+		"screenHeight": 224,
+		"screenWidth": 384,
+		"verticalViewPointCenter": 112
 	},
 	"physics": {
 		"bodiesToCheckForGravity": 10,
 		"frictionForceFactorPower": 2,
 		"gravity": 19.6,
 		"maximumBouncinessCoefficient": 1,
-		"timeElapsedDivisor": 2,
+		"stopBouncingVelocityThreshold": 48,
 		"stopVelocityThreshold": 8,
-		"stopBouncingVelocityThreshold": 48
+		"timeElapsedDivisor": 2
 	},
 	"random": {
 		"addUserInputAndTimeToRandomSeed": false,
@@ -156,7 +156,6 @@
 		"unloadPad": 312
 	},
 	"texture": {
-		"totalBgmapSegments": 14,
 		"bgmapsPerSegments": 16,
 		"printing": {
 			"offset": {
@@ -165,6 +164,7 @@
 				"parallax": 0
 			},
 			"printableArea": 1792
-		}
+		},
+		"totalBgmapSegments": 14
 	}
 }
