@@ -31,6 +31,11 @@
 
 #define __BASE	((void*)this)
 
+#ifdef __RELEASE
+#define __OBFUSCATE_NAME(value)			("ClassName")
+#else
+#define __OBFUSCATE_NAME(value)			(#value)
+#endif
 
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)																\
@@ -390,7 +395,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
 					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "				\
 					__MAKE_STRING(BaseClassName) ")");													\
-			return #ClassName;																			\
+			return (char*)__OBFUSCATE_NAME(ClassName);													\
 		}																								\
 																										\
 		/* now add the function which will handle the vtable */											\
