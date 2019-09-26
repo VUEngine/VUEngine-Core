@@ -159,9 +159,9 @@
 		"bgmapsPerSegments": 16,
 		"printing": {
 			"offset": {
+				"parallax": 0,
 				"x": 0,
-				"y": 0,
-				"parallax": 0
+				"y": 0
 			},
 			"printableArea": 1792
 		},
