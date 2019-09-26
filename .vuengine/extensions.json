@@ -6,8 +6,8 @@
 				"label": "views.project.menu.fonts.label",
 				"type": "configFile",
 				"icon": {
-					"dark": "extensions/icon/dark/font.png",
-					"light": "extensions/icon/light/font.png"
+					"dark": "extensions/icon/dark/format-font.svg",
+					"light": "extensions/icon/light/format-font.svg"
 				},
 				"value": "fonts"
 			}
