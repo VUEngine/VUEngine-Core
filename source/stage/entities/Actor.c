@@ -678,8 +678,8 @@ void Actor::setPosition(const Vector3D* position)
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
 
-	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION | __INVALIDATE_SCALE;
+	this->invalidateSprites |= __INVALIDATE_POSITION | __INVALIDATE_SCALE;
 
 	Actor::transformShapes(this);
 }
