@@ -1,4 +1,7 @@
 {
+	"app.sound.title": "Sound",
+	"app.sounds.title": "Sounds",
+	"app.waveforms.title": "Waveforms",
 	"views.project.menu.entities.label": "Entitäten",
 	"views.project.menu.fonts.label": "Schriftarten",
 	"views.project.menu.sound.label": "Sound"

@@ -24,7 +24,7 @@
 			{
 				"id": "sound",
 				"label": "views.project.menu.sound.label",
-				"type": "configFile",
+				"type": "app",
 				"icon": {
 					"dark": "extensions/icon/dark/playlist-music.svg",
 					"light": "extensions/icon/light/playlist-music.svg"
@@ -32,6 +32,38 @@
 				"value": "sound"
 			}
 		]
+	},
+	"apps": {
+		"sound": {
+			"title": "app.sound.title",
+			"titleIcon": "playlist-music",
+			"data": [{
+				"type": "config",
+				"items": [
+					"sound"
+				]
+			}],
+			"icon": {
+				"dark": "extensions/icon/dark/playlist-music.svg",
+				"light": "extensions/icon/light/playlist-music.svg"
+			},
+			"components": {
+				"sounds": "extensions/app/appSounds.vue",
+				"waveforms": "extensions/app/appWaveforms.vue",
+				"sWaveformEdit": "extensions/app/cmpWaveformEdit.vue",
+				"sWaveformPreview": "extensions/app/cmpWaveformPreview.vue"
+			},
+			"tabs": [
+				{
+					"title": "app.sounds.title",
+					"component": "sounds"
+				},
+				{
+					"title": "app.waveforms.title",
+					"component": "waveforms"
+				}
+			]
+		}
 	},
 	"config": {
 		"columnTable": "extensions/config/columnTable.json",
