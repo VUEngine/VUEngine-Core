@@ -112,6 +112,7 @@ class Entity : Container
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
+	virtual void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
