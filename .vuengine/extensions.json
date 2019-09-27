@@ -104,6 +104,17 @@
 				"sound"
 			],
 			"target": "source/assets/WaveForms.h"
+		},
+		{
+			"file": "extensions/templates/Entity.c.nj",
+			"config": [
+				"entities"
+			],
+			"loop": {
+				"config": "entities",
+				"path": "project.entities"
+			},
+			"target": "assets/entities/{name}EntitySpec.c"
 		}
 	],
 	"i18n": [
