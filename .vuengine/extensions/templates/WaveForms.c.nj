@@ -9,6 +9,6 @@
 
 const s8 {{ waveform.name }}WaveForm[] =
 {
-	[{{ waveform.values }}]
+	{{ waveform.values }}
 };
 {%- endfor %}
