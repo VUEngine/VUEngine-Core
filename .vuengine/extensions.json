@@ -2,6 +2,16 @@
 	"activityBar": {
 		"project": [
 			{
+				"id": "entities",
+				"label": "views.project.menu.entities.label",
+				"type": "configFile",
+				"icon": {
+					"dark": "extensions/icon/dark/account-outline.svg",
+					"light": "extensions/icon/light/account-outline.svg"
+				},
+				"value": "entities"
+			},
+			{
 				"id": "fonts",
 				"label": "views.project.menu.fonts.label",
 				"type": "configFile",
@@ -10,12 +20,23 @@
 					"light": "extensions/icon/light/format-font.svg"
 				},
 				"value": "fonts"
+			},
+			{
+				"id": "sound",
+				"label": "views.project.menu.sound.label",
+				"type": "configFile",
+				"icon": {
+					"dark": "extensions/icon/dark/playlist-music.svg",
+					"light": "extensions/icon/light/playlist-music.svg"
+				},
+				"value": "sound"
 			}
 		]
 	},
 	"config": {
 		"columnTable": "extensions/config/columnTable.json",
 		"config": "extensions/config/config.json",
+		"entities": "extensions/config/entities.json",
 		"enums": "extensions/config/enums.json",
 		"fonts": "extensions/config/fonts.json",
 		"romHeader": "extensions/config/romHeader.json",

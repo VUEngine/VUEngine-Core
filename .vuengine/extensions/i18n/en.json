@@ -1,3 +1,5 @@
 {
-	"views.project.menu.fonts.label": "Fonts"
+	"views.project.menu.entities.label": "Entities",
+	"views.project.menu.fonts.label": "Fonts",
+	"views.project.menu.sound.label": "Sound"
 }
