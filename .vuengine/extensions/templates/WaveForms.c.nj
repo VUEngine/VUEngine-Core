@@ -9,13 +9,6 @@
 
 const s8 {{ waveform.name }}WaveForm[] =
 {
-	[
-		{%- for value in waveform.values -%}
-			{{ value }}
-			{%- if not loop.last -%}
-				,
-			{%- endif -%}
-		{%- endfor -%}
-	]
+	[{{ waveform.values }}]
 };
 {%- endfor %}
