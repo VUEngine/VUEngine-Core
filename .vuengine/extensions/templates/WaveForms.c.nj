@@ -1,0 +1,21 @@
+{% include('./base/header.c.nj') %}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+{%- for waveform in project.sound.waveforms %}
+
+const s8 {{ waveform.name }}WaveForm[] =
+{
+	[
+		{%- for value in waveform.values -%}
+			{{ value }}
+			{%- if not loop.last -%}
+				,
+			{%- endif -%}
+		{%- endfor -%}
+	]
+};
+{%- endfor %}

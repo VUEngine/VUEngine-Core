@@ -15,10 +15,11 @@
 	},
 	"config": {
 		"columnTable": "extensions/config/columnTable.json",
+		"config": "extensions/config/config.json",
 		"enums": "extensions/config/enums.json",
 		"fonts": "extensions/config/fonts.json",
 		"romHeader": "extensions/config/romHeader.json",
-		"config": "extensions/config/config.json"
+		"sound": "extensions/config/sound.json"
 	},
 	"fileTemplates": [
 		{
@@ -67,7 +68,21 @@
 				"config": "fonts",
 				"path": "project.fonts"
 			},
-			"target": "/assets/fonts/{name}FontSpec.c"
+			"target": "assets/fonts/{name}FontSpec.c"
+		},
+		{
+			"file": "extensions/templates/WaveForms.c.nj",
+			"config": [
+				"sound"
+			],
+			"target": "assets/sounds/WaveForms.c"
+		},
+		{
+			"file": "extensions/templates/WaveForms.h.nj",
+			"config": [
+				"sound"
+			],
+			"target": "source/assets/WaveForms.h"
 		}
 	],
 	"i18n": [
