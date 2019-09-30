@@ -1,5 +1,11 @@
 {% include('./base/header.c.nj') %}
 
+{%- set entityName = currentItem.name | toUpperSnakeCase -%}
+{%- set spriteTypes = [] -%}
+{%- for sprite in currentItem.sprites -%}
+	{%- set spriteTypes = (spriteTypes.push(sprite.type), spriteTypes) -%}
+{%- endfor %}
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -7,8 +13,9 @@
 
 #include <Libgccvb.h>
 #include <FinishLine.h>
-#include <BgmapAnimatedSprite.h>
-#include <Box.h>
+{% for spriteType in spriteTypes -%}
+#include <{{ spriteType }}.h>
+{%- endfor %}
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -26,7 +33,7 @@ extern BYTE {{ sprite.texture.image.name }}Map[];
 //---------------------------------------------------------------------------------------------------------
 
 {% for animation in currentItem.animations.definitions -%}
-AnimationFunctionROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ animation.name | toUpperSnakeCase }}_ANIM =
+AnimationFunctionROMSpec {{ entityName }}_{{ animation.name | toUpperSnakeCase }}_ANIM =
 {
 	// number of frames of this animation function
 	{{ animation.frames.length }},
@@ -51,11 +58,11 @@ AnimationFunctionROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ animation.
 
 {% endfor -%}
 
-AnimationDescriptionROMSpec {{ currentItem.name | toUpperSnakeCase }}_ANIM =
+AnimationDescriptionROMSpec {{ entityName }}_ANIMS =
 {
 	{
 		{% for animation in currentItem.animations.definitions -%}
-			(AnimationFunction*)&{{ currentItem.name | toUpperSnakeCase }}_{{ animation.name | toUpperSnakeCase }}_ANIM,
+			(AnimationFunction*)&{{ entityName }}_{{ animation.name | toUpperSnakeCase }}_ANIM,
 		{% endfor -%}
 		NULL
 	}
@@ -67,8 +74,20 @@ AnimationDescriptionROMSpec {{ currentItem.name | toUpperSnakeCase }}_ANIM =
 //												SPRITES
 //---------------------------------------------------------------------------------------------------------
 
-{% for sprite in currentItem.sprites -%}
-CharSetROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_CH =
+{% set spriteNames = [] -%}
+{%- for sprite in currentItem.sprites -%}
+
+{%- if sprite.name -%}
+	{%- set spriteName = currentItem.name ~ '_' ~ sprite.name -%}
+{%- elseif currentItem.sprites.length > 1-%}
+	{%- set spriteName = currentItem.name ~ '_' ~ loop.index -%}
+{%- else -%}
+	{%- set spriteName = currentItem.name -%}
+{%- endif -%}
+{%- set spriteName = spriteName | toUpperSnakeCase -%}
+{%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
+
+CharSetROMSpec {{ spriteName }}_CH =
 {
 	// number of chars, depending on allocation type:
 	// __ANIMATED_SINGLE*, __ANIMATED_SHARED*: number of chars of a single animation frame (cols * rows)
@@ -87,10 +106,10 @@ CharSetROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_CH =
 	{{ sprite.texture.image.name }}Tiles,
 };
 
-TextureROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_TX =
+TextureROMSpec {{ spriteName }}_TX =
 {
 	// charset spec
-	(CharSetSpec*)&{{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_CH,
+	(CharSetSpec*)&{{ spriteName }}_CH,
 
 	// bgmap spec
 	{{ sprite.texture.image.name }}Map,
@@ -104,7 +123,7 @@ TextureROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_TX =
 	// padding for affine/hbias transformations
 	{
 		{{ sprite.texture.padding.x }}, // cols
-		{{ sprite.texture.padding.y }},	// rows
+		{{ sprite.texture.padding.y }}, // rows
 	},
 
 	// number of frames, depending on charset's allocation type:
@@ -123,14 +142,14 @@ TextureROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_TX =
 	{{ sprite.texture.recyclable }},
 };
 
-BgmapSpriteROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_SP =
+{{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}_SP =
 {
 	{
 		// sprite's type
-		__TYPE(BgmapAnimatedSprite),
+		__TYPE({{ sprite.type }}),
 
 		// texture spec
-		(TextureSpec*)&{{ currentItem.name | toUpperSnakeCase }}_TX,
+		(TextureSpec*)&{{ entityName }}_TX,
 
 		// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 		__TRANSPARENCY_{{ sprite.transparency }},
@@ -148,8 +167,10 @@ BgmapSpriteROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_SP
 	// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
 	__WORLD_{{ sprite.bgmapMode }},
 
+	{% if sprite.bgmapMode !== 'OBJECT' -%}
 	// pointer to affine/hbias manipulation function
 	{% if sprite.manipulationFunction %}(ParamTableEffectMethod){{ sprite.manipulationFunction }}{% else %}NULL{% endif %},
+	{%- endif %}
 
 	// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
 	__WORLD_{{ sprite.displayMode }},
@@ -157,10 +178,10 @@ BgmapSpriteROMSpec {{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_SP
 
 {% endfor -%}
 
-BgmapSpriteROMSpec* const {{ currentItem.name | toUpperSnakeCase }}_SPS[] =
+BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 {
-	{% for sprite in currentItem.sprites -%}
-	&{{ currentItem.name | toUpperSnakeCase }}_{{ loop.index }}_SP,
+	{% for spriteName in spriteNames -%}
+	&{{ spriteName }}_SP,
 	{% endfor -%}
 	NULL
 };
@@ -171,7 +192,7 @@ BgmapSpriteROMSpec* const {{ currentItem.name | toUpperSnakeCase }}_SPS[] =
 //												ENTITY
 //---------------------------------------------------------------------------------------------------------
 
-{{ currentItem.entity.class }}ROMSpec {{ currentItem.name | toUpperSnakeCase }}_EN =
+{{ currentItem.entity.class }}ROMSpec {{ entityName }}_EN =
 {
 	// animated entity
 	{
@@ -184,7 +205,7 @@ BgmapSpriteROMSpec* const {{ currentItem.name | toUpperSnakeCase }}_SPS[] =
 			NULL,
 
 			// sprites
-			(SpriteSpec**){{ currentItem.name | toUpperSnakeCase }}_SPS,
+			(SpriteSpec**){{ entityName }}_SPS,
 
 			// collision shapes
 			(ShapeSpec*)NULL,
@@ -198,14 +219,14 @@ BgmapSpriteROMSpec* const {{ currentItem.name | toUpperSnakeCase }}_SPS[] =
 			},
 
 			// gameworld's character's type
-			{{ currentItem.collisions.type }},
+			kType{{ currentItem.collisions.type }},
 
 			// physical specification
 			(PhysicalSpecification*)NULL,
 		},
 
 		// pointer to the animation spec for the item
-		(AnimationDescription*)&{{ currentItem.name | toUpperSnakeCase }}_ANIM,
+		(AnimationDescription*)&{{ entityName }}_ANIMS,
 
 		// initial animation
 		"{{ currentItem.animations.default }}",
