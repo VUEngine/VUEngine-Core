@@ -105,6 +105,7 @@ class Entity : Container
 	void setShapesLayers(u32 layers);
 	u32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(u32 layersToIgnore);
+	void setTransparent(u8 transparent);
 	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);

@@ -2067,6 +2067,24 @@ void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 }
 
 /**
+ * Set transparency
+ *
+ * @param u8	Transparency value
+ */
+void Entity::setTransparent(u8 transparent)
+{
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		for(; node ; node = node->next)
+		{
+			Sprite::setTransparent(node->data, transparent);
+		}
+	}
+}
+
+/**
  * Get axis for Shape sync with direction
  *
  * @return		Axis
