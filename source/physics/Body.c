@@ -64,7 +64,6 @@ friend class VirtualNode;
 
 #define __MIN_MASS								__F_TO_FIX10_6(0.1f)
 #define __MAX_MASS								__I_TO_FIX10_6(1)
-#define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIX10_6(1)
 
 #ifndef __FRICTION_FORCE_FACTOR_POWER
 #define __FRICTION_FORCE_FACTOR_POWER					2

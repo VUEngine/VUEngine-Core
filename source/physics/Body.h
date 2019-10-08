@@ -40,6 +40,8 @@
 #define	__UNIFORM_MOVEMENT			0x01
 #define	__ACCELERATED_MOVEMENT		0x20
 
+#define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIX10_6(1)
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
