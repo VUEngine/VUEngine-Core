@@ -61,7 +61,7 @@ printBuildingInfo:
 	@echo -e "\033[1mBuilding $(NAME) \033[0m"
 
 printPostBuildingInfo:
-	@echo -e "\033[30;42m BUILD FINISHED \033[0m"
+	@echo -e "\033[7;33;32m BUILD FINISHED \033[0m"
 	@$(eval END_TIME=$(shell date +%s))
 	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Started at: "$(HUMAN_START_DATE)
