@@ -483,6 +483,18 @@ void VIPManager::useInternalColumnTable(bool useInternal)
 }
 
 /**
+ * Write brightness values
+ *
+ * @param brightness	Struct
+ */
+void VIPManager::setupBrightness(Brightness* brightness)
+{
+	_vipRegisters[__BRTA] = brightness->darkRed;
+	_vipRegisters[__BRTB] = brightness->mediumRed;
+	_vipRegisters[__BRTC] = brightness->brightRed - brightness->mediumRed - brightness->darkRed;
+}
+
+/**
  * Write brightness repeat values to column table
  *
  * @param brightnessRepeatSpec	Spec

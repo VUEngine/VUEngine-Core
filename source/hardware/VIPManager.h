@@ -300,6 +300,7 @@ singleton class VIPManager : Object
 	void clearBgmapSegment(int segment, int size);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
+	void setupBrightness(Brightness* brightness);
 	void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 	void setBackgroundColor(u8 color);
 	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
