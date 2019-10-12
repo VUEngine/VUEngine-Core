@@ -13,7 +13,7 @@
 
 #include <Libgccvb.h>
 #include <FinishLine.h>
-{% for spriteType in spriteTypes -%}
+{% for spriteType in spriteTypes | unique -%}
 #include <{{ spriteType }}.h>
 {%- endfor %}
 

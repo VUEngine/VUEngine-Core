@@ -3,7 +3,8 @@
 	<div>
 		<s-input
 			type="text"
-			:data="'config.project.sound.waveforms[' + index + '].name'"
+			:data=$root.data.data.config.project.sound.waveforms[index].name
+			direct-data="true"
 			label="Name"
 		></s-input>
 		<div :class="['d-flex', 'flex-row', {changed: !compare}]">
@@ -22,7 +23,8 @@
 				<b>{{values[key]}}</b>
 				<s-input
 					type="number"
-					:data="'config.project.sound.waveforms[' + index + '].values[' + key + ']'"
+					:data=values[key]
+					direct-data="true"
 					:min=0
 					:max=63
 				></s-input>
@@ -52,16 +54,9 @@
 				return data.data.config.project.sound.waveforms[key].values.every(function(value, index) {
 					return value === data.lastSavedData.config.project.sound.waveforms[key].values[index]
 				})
-			},
-			name: {
-				get: function () {
-					return this.$root.data.data.config.project.sound.waveforms[this.index].name
-				},
-				set: function (newValue) {
-					this.$root.data.data.config.project.sound.waveforms[this.index].name = newValue
-				}
-			},
+			}
 		}
+
 	}
 </script>
 

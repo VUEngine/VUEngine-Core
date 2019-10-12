@@ -4,12 +4,12 @@
 			{
 				"id": "entities",
 				"label": "views.project.menu.entities.label",
-				"type": "configFile",
+				"type": "app",
 				"icon": {
 					"dark": "extensions/icon/dark/account-outline.svg",
 					"light": "extensions/icon/light/account-outline.svg"
 				},
-				"value": "entities"
+				"value": "entity"
 			},
 			{
 				"id": "fonts",
@@ -34,6 +34,46 @@
 		]
 	},
 	"apps": {
+		"entity": {
+			"title": "app.entity.title",
+			"titleIcon": "account-outline",
+			"data": [{
+				"type": "config",
+				"items": [
+					"config",
+					"entities",
+					"enums"
+				]
+			}],
+			"icon": {
+				"dark": "extensions/icon/dark/account-outline.svg",
+				"light": "extensions/icon/light/account-outline.svg"
+			},
+			"components": {
+				"appEntityMain": "extensions/app/appEntityMain.vue",
+				"appEntitySprites": "extensions/app/appEntitySprites.vue",
+				"appEntityAnimations": "extensions/app/appEntityAnimations.vue",
+				"appEntityCollisions": "extensions/app/appEntityCollisions.vue"
+			},
+			"tabs": [
+				{
+					"title": "app.entity.main.title",
+					"component": "appEntityMain"
+				},
+				{
+					"title": "app.entity.sprites.title",
+					"component": "appEntitySprites"
+				},
+				{
+					"title": "app.entity.animations.title",
+					"component": "appEntityAnimations"
+				},
+				{
+					"title": "app.entity.collisions.title",
+					"component": "appEntityCollisions"
+				}
+			]
+		},
 		"sound": {
 			"title": "app.sound.title",
 			"titleIcon": "playlist-music",
@@ -48,19 +88,19 @@
 				"light": "extensions/icon/light/playlist-music.svg"
 			},
 			"components": {
-				"sounds": "extensions/app/appSounds.vue",
-				"waveforms": "extensions/app/appWaveforms.vue",
+				"appSoundSounds": "extensions/app/appSoundSounds.vue",
+				"appSoundWaveforms": "extensions/app/appSoundWaveforms.vue",
 				"sWaveformEdit": "extensions/app/cmpWaveformEdit.vue",
 				"sWaveformPreview": "extensions/app/cmpWaveformPreview.vue"
 			},
 			"tabs": [
 				{
 					"title": "app.sounds.title",
-					"component": "sounds"
+					"component": "appSoundSounds"
 				},
 				{
 					"title": "app.waveforms.title",
-					"component": "waveforms"
+					"component": "appSoundWaveforms"
 				}
 			]
 		}

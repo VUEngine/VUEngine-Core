@@ -1,4 +1,9 @@
 {
+	"app.entity.title": "Entity",
+	"app.entity.main.title": "Main",
+	"app.entity.sprites.title": "Sprites",
+	"app.entity.animations.title": "Animations",
+	"app.entity.collisions.title": "Collisions",
 	"app.sound.title": "Sound",
 	"app.sounds.title": "Sounds",
 	"app.waveforms.title": "Waveforms",
