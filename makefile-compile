@@ -160,7 +160,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
-compile: phony $(C_INTERMEDIATE_SOURCES) $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
+compile: phony $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -178,12 +178,13 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+#$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
 
 # Override make's default call to GCC
-$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
-	@$(eval SOURCE_FILE=$<)
+$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
+	@$(eval RAW_SOURCE_FILE=$<)
+	@$(eval SOURCE_FILE=$(shell echo $< | sed -e "s@.*/source/@$(WORKING_FOLDER)/objects/$(NAME)/source/@g"))
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
 	@$(eval OBJECT_FILE=$@)
 	@rm -f $(OBJECT_FILE)
 	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
