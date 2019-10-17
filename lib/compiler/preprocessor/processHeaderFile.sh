@@ -61,7 +61,7 @@ function tryToLock()
 		echo "Succeeded to lock $file on caller $CALLER" >> $CLASS_LOG_FILE
 		stamp="Stamp $$ : $PPID : $UID"
 		echo $stamp > $lockFile
-		echo "Locked by INPUT_FILE" >> $lockFile
+		echo "Locked by $INPUT_FILE" >> $lockFile
 		echo "Caller $CALLER" >> $lockFile
 
 		waitRandom
