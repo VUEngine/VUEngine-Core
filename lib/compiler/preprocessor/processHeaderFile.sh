@@ -59,12 +59,14 @@ function tryToLock()
 
 		lockFile=$lockFolder/stamp.txt
 		echo "Succeeded to lock $file on caller $CALLER" >> $CLASS_LOG_FILE
-		stamp="$$ : $PPID : $UID"
+		stamp="Stamp $$ : $PPID : $UID"
 		echo $stamp > $lockFile
+		echo "Locked by INPUT_FILE" >> $lockFile
+		echo "Caller $CALLER" >> $lockFile
 
 		waitRandom
 
-		readStamp=`cat $lockFile`
+		readStamp=`grep Stamp $lockFile`
 
 		if [ ! "$readStamp" = "$stamp" ];
 		then
@@ -86,10 +88,10 @@ function releaseLock()
 
 		if [ -d "$lockFolder" ];
 		then
-			stamp="$$ : $PPID : $UID"
+			stamp="Stamp $$ : $PPID : $UID"
 			lockFile=$lockFolder/stamp.txt
 
-			readStamp=`cat $lockFile`
+			readStamp=`grep Stamp $lockFile`
 
 			if [ ! "$readStamp" = "$stamp" ];
 			then
