@@ -271,7 +271,7 @@ baseClassFile=
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
-	processedBaseClassFile=`sed -e 's#.*//#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/#g' <<< "$baseClassFile"`
+	processedBaseClassFile=`sed -e 's#.*/source/#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/source/#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
