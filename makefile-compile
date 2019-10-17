@@ -191,8 +191,7 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 	@sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
-	@sed -e 's#$(OBJECT_FILE)\:#$(SOURCE_FILE)\:#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
-	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.d
+	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d
 	@$(eval HASH_OBJECT=$(shell echo $(OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
 #	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd

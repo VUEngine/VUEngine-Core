@@ -71,7 +71,23 @@ then
 	exit 0
 fi
 
-cp -f $INPUT_FILE $OUTPUT_FILE
+
+if [ ! -f "$OUTPUT_FILE" ];
+then
+	cp -p -f $INPUT_FILE $OUTPUT_FILE
+else
+#	echo "INPUT_FILE $INPUT_FILE"
+#	echo "OUTPUT_FILE $OUTPUT_FILE"
+
+	newer=`find "$INPUT_FILE" -prune -newer "$OUTPUT_FILE" 2>&1`
+
+#	echo "newer $newer"
+
+	if [ ! -z "$newer" ];
+	then
+		cp -p -f $INPUT_FILE $OUTPUT_FILE
+	fi
+fi
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
