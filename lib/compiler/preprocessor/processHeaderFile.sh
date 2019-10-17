@@ -234,6 +234,8 @@ CLASS_LOG_FILE="$WORKING_FOLDER/classes/logs/$className.log"
 CLASS_LOCK="$WORKING_FOLDER/classes/locks/$className"
 tryToLock $CLASS_LOCK exit
 echo "Got lock on calling from $CALLER" > $CLASS_LOG_FILE
+echo "INPUT_FILE $INPUT_FILE" >> $CLASS_LOG_FILE
+echo "OUTPUT_FILE $OUTPUT_FILE" >> $CLASS_LOG_FILE
 
 DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
 if [ -f "$DEPENDENCIES_FILE" ];
