@@ -37,6 +37,8 @@ function tryToLock()
 	then
 		lockFolder=$1".lock"
 
+		waitRandom
+
 		echo "Trying to lock on $file on caller $CALLER" >> $CLASS_LOG_FILE
 		mkdir $lockFolder 2>/dev/null ||
 		{
@@ -49,6 +51,7 @@ function tryToLock()
 
 			if [ ! -z "$command" ] && [ -z "${command##exit}" ];
 			then
+				clean_up
 				echo "Gived up with command $command on caller $CALLER" >> $CLASS_LOG_FILE
 				exit 0
 			fi
@@ -63,8 +66,6 @@ function tryToLock()
 		echo $stamp > $lockFile
 		echo "Locked by $INPUT_FILE" >> $lockFile
 		echo "Caller $CALLER" >> $lockFile
-
-		waitRandom
 
 		readStamp=`grep Stamp $lockFile`
 
@@ -268,7 +269,7 @@ baseClassFile=
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
-	processedBaseClassFile=`sed -e 's#.*/#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/#g' <<< "$baseClassFile"`
+	processedBaseClassFile=`sed -e 's#.*//#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
@@ -285,7 +286,10 @@ then
 			if [ ! -d "$baseClassLock" ];
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
-
+#				echo "$baseClassName needs preprocessing, calling it"
+#				echo "$baseClassName file $baseClassFile"
+#				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
+				
 				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
 			else
 				mustBeReprocessed=true
@@ -363,6 +367,7 @@ then
 				echo "Error processing $className while computing hierarchy on $baseClassName with file $processedBaseClassFile not found"  >> $CLASS_LOG_FILE
 				ls -la FILE: $processedBaseClassFile
 				ls -la LOCK: $baseClassLock.lock
+				clean_up
 				releaseLocks
 				exit 0
 			fi
