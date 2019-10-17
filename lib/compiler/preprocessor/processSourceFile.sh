@@ -58,7 +58,6 @@ done
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo INPUT_FILE $INPUT_FILE
 #echo OUTPUT_FILE $OUTPUT_FILE
-cp -f -q $INPUT_FILE $OUTPUT_FILE
 
 if [ -z "$INPUT_FILE" ];
 then
@@ -71,6 +70,8 @@ then
 	echo "Compiling error (2): file not found $INPUT_FILE"
 	exit 0
 fi
+
+cp -f $INPUT_FILE $OUTPUT_FILE
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
