@@ -44,7 +44,7 @@ function tryToLock()
 		mkdir $lockFolder 2>/dev/null ||
 		{
 			PID=`grep Stamp $lockFile 2>/dev/null | cut -d : -f 2`
-			echo PID $PID
+#			echo PID $PID
 			if [ ! -z "$PID" ] && [ ! kill -0 $PID 2>/dev/null ];
 			then
 				echo "Removing stale lock of nonexistent PID ${PID} for $file" >> $CLASS_LOG_FILE
