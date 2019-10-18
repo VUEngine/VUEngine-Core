@@ -36,18 +36,33 @@ function tryToLock()
 	if [ ! -z "$file" ];
 	then
 		lockFolder=$1".lock"
+		lockFile=$lockFolder/stamp.txt
 
 		waitRandom
 
 		echo "Trying to lock on $file on caller $CALLER" >> $CLASS_LOG_FILE
 		mkdir $lockFolder 2>/dev/null ||
 		{
+			PID=`grep Stamp $lockFile 2>/dev/null | cut -d : -f 2`
+			echo PID $PID
+			if [ ! -z "$PID" ] && [ ! kill -0 $PID 2>/dev/null ];
+			then
+				echo "Removing stale lock of nonexistent PID ${PID} for $file" >> $CLASS_LOG_FILE
+#				echo "Removing stale lock of nonexistent PID ${PID} for $file"
+				rm -f $lockFile
+				waitRandom
+				rm -Rf $lockFolder
+
+				tryToLock $file
+				return
+			else
+				waitForLockToRelease $file
+			fi
+
 			if [ ! -z "$command" ] && [ -z "${command##hierarchy}" ];
 			then
 				echo "Waiting lock on hierarchy file with command $command on caller $CALLER" >> $CLASS_LOG_FILE
 			fi
-
-			waitForLockToRelease $file
 
 			if [ ! -z "$command" ] && [ -z "${command##exit}" ];
 			then
@@ -60,7 +75,6 @@ function tryToLock()
 			return
 		}
 
-		lockFile=$lockFolder/stamp.txt
 		echo "Succeeded to lock $file on caller $CALLER" >> $CLASS_LOG_FILE
 		stamp="Stamp $$ : $PPID : $UID"
 		echo $stamp > $lockFile
