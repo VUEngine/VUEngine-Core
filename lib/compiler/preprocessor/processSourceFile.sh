@@ -2,17 +2,17 @@
 #
 clean_up() {
 	# clean up
-	sed -i -e 's/<%>//g' $OUTPUT_FILE
-	sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
-	sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-	sed -i -e 's/!DECLARATION_MIDDLE!//g' $OUTPUT_FILE
-	sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
-	sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
-	sed -i -e 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
+	sed -i ".bak" 's/<%>//g' $OUTPUT_FILE
+	sed -i ".bak" 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
+	sed -i ".bak" 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
+	sed -i ".bak" 's/!DECLARATION_MIDDLE!//g' $OUTPUT_FILE
+	sed -i ".bak" 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
+	sed -i ".bak" 's/<START_BLOCK>//g' $OUTPUT_FILE
+	sed -i ".bak" 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
 	
 
 	# Replace casts
-    sed -i -e 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
+    sed -i ".bak" 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
 
 	rm -f $OUTPUT_FILE"-e"
 }
@@ -90,31 +90,31 @@ then
 fi
 
 # Prepare file by adding a blank space in front of each Class::method pattern
-sed -i -e 's/\([A-z][A-z0-9]*::[a-z][A-z0-9]*\)/ \1/g' $OUTPUT_FILE
+sed -i ".bak" 's/\([A-z][A-z0-9]*::[a-z][A-z0-9]*\)/ \1/g' $OUTPUT_FILE
 
 mark="@N@"
 # Mark block starters
-sed -i -e 's/{/{<START_BLOCK>/g' $OUTPUT_FILE
+sed -i ".bak" 's/{/{<START_BLOCK>/g' $OUTPUT_FILE
 
 # Inline multiline declarations
-sed -i -e 's/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE
+sed -i ".bak" 's/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE
 awk '{if ($0 ~ "<Â·>") printf "%s ", $0; else print;}' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Identify static declarations
-sed -i -e 's/.*static.*/&<%>/g' $OUTPUT_FILE
+sed -i ".bak" 's/.*static.*/&<%>/g' $OUTPUT_FILE
 echo >> $OUTPUT_FILE
 
 # Find method declarations
 sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2<%DECLARATION>/g' > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Add static qualifier to static methods block start
-sed  -i -e 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g' $OUTPUT_FILE
+sed  -i ".bak" 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g' $OUTPUT_FILE
 
 # Inject _this parameter
-sed -i -e 's/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g' $OUTPUT_FILE
+sed -i ".bak" 's/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g' $OUTPUT_FILE
 
 # Clean methods with no parameters declarations
-sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
+sed -i ".bak" 's/,[ 	]*)/)/g' $OUTPUT_FILE
 
 # Put back line breaks
 sed  -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
@@ -127,20 +127,20 @@ referencedClassesNames=$className"
 rm -f $OUTPUT_FILE.tmp
 
 # Replace :: by _
-sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
+sed -i ".bak" 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 
 prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
 
 # Put back line breaks
-sed  -i -e 's/'"$mark"'/\'$'\n/g'  $OUTPUT_FILE
+sed  -i ".bak" 's/'"$mark"'/\'$'\n/g'  $OUTPUT_FILE
 
 # Clean up empty new line added at the start of file
 tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
 mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Inject this pointer
-sed -i -e 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
-sed -i -e 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
+sed -i ".bak" 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
+sed -i ".bak" 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 
@@ -211,7 +211,7 @@ then
 fi
 
 # Move declaration mark to the end in preparation for virtual method call substitutions
-sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
+sed -i ".bak" 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 
 anyMethodVirtualized=false
 
@@ -305,10 +305,10 @@ then
 fi
 
 # clean up
-sed -i -e 's/<%>//g' $OUTPUT_FILE
-sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
-sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
+sed -i ".bak" 's/<%>//g' $OUTPUT_FILE
+sed -i ".bak" 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
+sed -i ".bak" 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
+sed -i ".bak" 's/<START_BLOCK>//g' $OUTPUT_FILE
 
 
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | sed -e 's/^.*::\(.*\)/\1/g'`
@@ -360,7 +360,7 @@ then
 				classDefinition=$classDefinition"$customSingletonDefinition($className);"
 			fi
 
-			sed -i -e "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE
+			sed -i ".bak" "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE
 
 		fi
 	fi
@@ -386,24 +386,24 @@ then
 	classDefinition=`echo "/*CLASS_IN_FILE($className)*/$classDefinition" | tr -d "\r\n"`
 	firstMethodDeclarationLine=$((firstMethodDeclarationLine))
 	orig=$'\n'; replace=$'\\\n'
-	sed -i -e "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace};&@" $OUTPUT_FILE
-#	sed -i -e 's/<$>/\'$'\n/g' $OUTPUT_FILE
+	sed -i ".bak" "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace};&@" $OUTPUT_FILE
+#	sed -i ".bak" 's/<$>/\'$'\n/g' $OUTPUT_FILE
 fi
 
-sed -i -e 's#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
+sed -i ".bak" 's#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
 
 # replace base method calls
-sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" $OUTPUT_FILE
-sed -i -e 's#,[ 	]*);#);#' $OUTPUT_FILE
-sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
-sed -i -e "s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
+sed -i ".bak" "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" $OUTPUT_FILE
+sed -i ".bak" 's#,[ 	]*);#);#' $OUTPUT_FILE
+sed -i ".bak" "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
+sed -i ".bak" "s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
 
 clean_up
 
 # Replace news and deletes
-sed -i -e "s/\([^A-z0-9]\)new[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*(/\1\2_new(/g" $OUTPUT_FILE
-sed -i -e "s/\([^A-z0-9]\)delete[ 	][ 	]*\(.*\);/\1__DELETE(\2);/g"  $OUTPUT_FILE
-sed -i -e "s/\([^A-z0-9]\)new[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1__NEW_BASIC(\2);/g" $OUTPUT_FILE
+sed -i ".bak" "s/\([^A-z0-9]\)new[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*(/\1\2_new(/g" $OUTPUT_FILE
+sed -i ".bak" "s/\([^A-z0-9]\)delete[ 	][ 	]*\(.*\);/\1__DELETE(\2);/g"  $OUTPUT_FILE
+sed -i ".bak" "s/\([^A-z0-9]\)new[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1__NEW_BASIC(\2);/g" $OUTPUT_FILE
 
 
 if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ];
