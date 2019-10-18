@@ -119,7 +119,6 @@ function clean_up()
 
 function releaseLocks()
 {
-	releaseLock $CLASSES_HIERARCHY_FILE
 	releaseLock $CLASS_LOCK
 }
 
@@ -772,6 +771,7 @@ sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
 echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 # replace any previous entry
 # Clean it
+releaseLock $CLASSES_HIERARCHY_FILE
 echo "Done on caller $CALLER"  >> $CLASS_LOG_FILE
 
 clean_up
