@@ -111,12 +111,12 @@ ifeq ($(TYPE), preprocessor)
 endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects -path $(WORKING_FOLDER)/objects/$(GAME_NAME) -prune -o -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME)/source -type d -print)
+INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects -path $(WORKING_FOLDER)/objects/$(GAME_NAME) -prune -o -type d -print)
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 							\
-						-include $(ENGINE_HOME)/source/libvuengine.h 															\
+						-include $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/source/libvuengine.h 									\
 						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 		\
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))									\
 						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
@@ -209,6 +209,7 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.bin: $(MY_HOME)/%.mid
 
 phony:
 	@echo > /dev/null
+#	@echo $(INCLUDE_PATHS)
 #	@echo WORKING_FOLDER $(WORKING_FOLDER)
 #	@echo GAME_NAME $(GAME_NAME)
 #	@echo NAME $(NAME)
