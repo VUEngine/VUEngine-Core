@@ -183,7 +183,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 # Override make's default call to GCC
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
 	@$(eval RAW_SOURCE_FILE=$<)
-	@$(eval SOURCE_FILE=$(shell echo $< | sed -e "s@.*/source/@$(WORKING_FOLDER)/objects/$(NAME)/source/@g"))
+	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(NAME)/\1/@g"))
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
 	@$(eval OBJECT_FILE=$@)
 	@rm -f $(OBJECT_FILE)
