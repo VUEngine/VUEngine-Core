@@ -104,6 +104,8 @@ function releaseLock()
 			waitRandom
 			rm -Rf $lockFolder
 			echo "Released lock $file on caller $CALLER" >> $CLASS_LOG_FILE
+		else
+			echo "Cannot release lock on $file, doesn't exist the folder $lockFolder" >> $CLASS_LOG_FILE
 		fi
 	fi
 }
@@ -117,6 +119,7 @@ function clean_up()
 
 function releaseLocks()
 {
+	releaseLock $CLASSES_HIERARCHY_FILE
 	releaseLock $CLASS_LOCK
 }
 
@@ -769,8 +772,6 @@ sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
 echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 # replace any previous entry
 # Clean it
-releaseLock $CLASSES_HIERARCHY_FILE
-
 echo "Done on caller $CALLER"  >> $CLASS_LOG_FILE
 
 clean_up
