@@ -769,10 +769,10 @@ cat $TEMPORAL_FILE >> $OUTPUT_FILE
 tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
 
 # Clean up
-sed -i -e 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#' $OUTPUT_FILE
-sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
-sed -i -e 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
-sed -i -e 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
+sed -i ".bak" 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#' $OUTPUT_FILE
+sed -i ".bak" 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
+sed -i ".bak" 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
+sed -i ".bak" 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
 
 echo "Writing class hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
 
@@ -780,8 +780,8 @@ tryToLock $CLASSES_HIERARCHY_FILE hierarchy
 #tryToLock $CLASSES_HIERARCHY_FILE hierarchy
 # save new hierarchy
 touch $CLASSES_HIERARCHY_FILE
-sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
-sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
+sed -i ".bak" "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
+sed -i ".bak" '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
 echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 # replace any previous entry
 # Clean it
