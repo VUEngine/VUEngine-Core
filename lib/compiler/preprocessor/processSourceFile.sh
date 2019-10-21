@@ -2,17 +2,19 @@
 #
 clean_up() {
 	# clean up
-	sed -i.b 's/<%>//g' $OUTPUT_FILE
-	sed -i.b 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
-	sed -i.b 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-	sed -i.b 's/!DECLARATION_MIDDLE!//g' $OUTPUT_FILE
-	sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
-	sed -i.b 's/<START_BLOCK>//g' $OUTPUT_FILE
-	sed -i.b 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
+#	sed -i.b 's/<%>//g' $OUTPUT_FILE
+#	sed -i.b 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
+#	sed -i.b 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
+#	sed -i.b 's/!DECLARATION_MIDDLE!//g' $OUTPUT_FILE
+#	sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
+#	sed -i.b 's/<START_BLOCK>//g' $OUTPUT_FILE
+#	sed -i.b 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
 	
-
+	sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/!DECLARATION_MIDDLE!//g; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/<START_BLOCK>//g; s/,<Â·>/,\'$'\n/g;' $OUTPUT_FILE
+	
 	# Replace casts
-    sed -i.b 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
+	sed -i.b 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
+
 
 	rm -f $OUTPUT_FILE"-e"
 }
