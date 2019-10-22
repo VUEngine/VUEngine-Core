@@ -68,6 +68,7 @@ function tryToLock()
 			then
 				clean_up
 				echo "Gived up with command $command on caller $CALLER" >> $CLASS_LOG_FILE
+				sync
 				exit 0
 			fi
 
@@ -209,6 +210,7 @@ if [ -z "$INPUT_FILE" ] || [ ! -f "$INPUT_FILE" ];
 then
 	echo "Input file not found: $INPUT_FILE"
 	clean_up
+	sync
 	exit 0
 fi
 
@@ -218,6 +220,7 @@ then
 	clean_up
 #	echo "$INPUT_FILE"
 #	echo "$OUTPUT_FILE"
+	sync
 	exit 0
 fi
 
@@ -231,6 +234,7 @@ then
 	cp -f $INPUT_FILE $OUTPUT_FILE
 	clean_up
 #	echo No class in $INPUT_FILE
+	sync
 	exit 0
 fi
 
@@ -273,7 +277,7 @@ then
 		clean_up
 		releaseLocks
 		echo "Already processed on caller $CALLER" >> $CLASS_LOG_FILE
-
+		sync
 		exit 0
 	fi
 fi
@@ -338,6 +342,7 @@ then
 	clean_up
 	releaseLocks
 	echo "Don't need processing, base class is fine, and I'm newer on caller $CALLER"  >> $CLASS_LOG_FILE
+	sync
 	exit 0
 fi
 
@@ -387,6 +392,7 @@ then
 				ls -la LOCK: $baseClassLock.lock
 				clean_up
 				releaseLocks
+				sync
 				exit 0
 			fi
 		done
@@ -548,6 +554,7 @@ do
 		rm -f $OUTPUT_FILE
 		clean_up
 		releaseLocks
+		sync
 		exit 0
 	fi
 done
@@ -682,6 +689,7 @@ then
 		echo " error (2): no constructor defined for $className : $baseClassName in $methodDeclarations"
 		clean_up
 		releaseLocks
+		sync
 		exit 0
 	else
 #		echo "Added allocator"
