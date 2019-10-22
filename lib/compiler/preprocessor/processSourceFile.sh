@@ -11,7 +11,7 @@ clean_up() {
 #	sed -i.b 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
 	
 	sed 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/!DECLARATION_MIDDLE!//g; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/<START_BLOCK>//g; s/,<Â·>/,\'$'\n/g;' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
-	sync
+	
 	# Replace casts
 	sed 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
@@ -63,14 +63,12 @@ done
 if [ -z "$INPUT_FILE" ];
 then
 	echo "Compiling error (1): no input file give"
-	sync
 	exit 0
 fi
 
 if [ ! -f "$INPUT_FILE" ];
 then
 	echo "Compiling error (2): file not found $INPUT_FILE"
-	sync
 	exit 0
 fi
 
@@ -79,7 +77,6 @@ cp -p -f $INPUT_FILE $OUTPUT_FILE
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
 	echo "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g' <<< $INPUT_FILE`"
-	sync
 	exit 0
 fi
 
@@ -158,7 +155,6 @@ firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo "Compiling error (3): could no processes file $OUTPUT_FILE"
-	sync
 	exit 0
 fi
 
@@ -177,15 +173,12 @@ then
 			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
-
-	sync
 	exit 0
 fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (4): could no process file $OUTPUT_FILE"
-	sync
 	exit 0
 fi
 
@@ -193,7 +186,6 @@ if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
 	echo " error (5): no classes hierarchy file $CLASSES_HIERARCHY_FILE"
-	sync
 	exit 0
 fi
 
@@ -210,15 +202,12 @@ then
 			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
-
-	sync
 	exit 0
 fi
 
 if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
 	echo " error (7): $INPUT_FILE must be inside source folder"
-	sync
 	exit 0
 fi
 
@@ -320,7 +309,6 @@ fi
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (8): could not processess file $OUTPUT_FILE"
-	sync
 	exit 0
 fi
 
@@ -391,7 +379,6 @@ fi
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (9): could not processess file $OUTPUT_FILE"
-	sync
 	exit 0
 fi
 
@@ -446,6 +433,7 @@ fi
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (10): could not processess file $OUTPUT_FILE"
-	sync
 	exit 0
 fi
+
+rm -f $OUTPUT_FILE"-e"
