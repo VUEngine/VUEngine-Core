@@ -193,7 +193,7 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
 		sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp && \
 		sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd && \
 		sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d && \
-		rsync $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
+		cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
 #	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
 #	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 #	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp

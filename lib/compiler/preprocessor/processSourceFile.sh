@@ -72,8 +72,7 @@ then
 	exit 0
 fi
 
-#cp -p -f $INPUT_FILE $OUTPUT_FILE
-rsync $INPUT_FILE $OUTPUT_FILE
+cp -p -f $INPUT_FILE $OUTPUT_FILE
 sync
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
