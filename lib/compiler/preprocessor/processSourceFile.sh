@@ -74,7 +74,6 @@ fi
 
 #cp -p -f $INPUT_FILE $OUTPUT_FILE
 rsync $INPUT_FILE $OUTPUT_FILE
-wait
 sync
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
@@ -127,7 +126,7 @@ sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 
 sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g; s/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g; s/,[ 	]*)/)/g' $OUTPUT_FILE && sync
 
 # Put back line breaks
-sed -i.b -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE
+sed -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
 
 # Must read the method calls now that the declarations can be singled out
 methodCalls=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/\([A-Za-z0-9]*::[^(]*\)(/<\1>\'$'\n/g' | grep "<.*::.*>" | sed -e 's/.*<\(.*\)>/\1/g' | sort -u`
