@@ -353,24 +353,27 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	// get coordinates
 	int gx = this->position.x + this->displacement.x - this->halfWidth;
 	int gy = this->position.y + this->displacement.y - this->halfHeight;
+	int gp = this->position.parallax + this->displacement.parallax;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
 	int mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
 	{
-		worldPointer->gx = _cameraFrustum->x0;
 		mxDisplacement = _cameraFrustum->x0 - gx;
+		gx = _cameraFrustum->x0;
+		worldPointer->gx = gx;
 	}
 
 	int myDisplacement = 0;
 	if(_cameraFrustum->y0 > gy)
 	{
-		worldPointer->gy = _cameraFrustum->y0;
 		myDisplacement = _cameraFrustum->y0 - gy;
+		gy = _cameraFrustum->y0;
+		worldPointer->gy = gy;
 	}
 
-	worldPointer->gp = this->position.parallax + this->displacement.parallax;
+	worldPointer->gp = gp;
 
 	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -381,9 +384,9 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	{
     	int w = (this->halfWidth << 1) - mxDisplacement;
 
-		if(w + worldPointer->gx >= _cameraFrustum->x1)
+		if(w + gx >= _cameraFrustum->x1)
 		{
-			w = _cameraFrustum->x1 - worldPointer->gx;
+			w = _cameraFrustum->x1 - gx;
 		}
 
 		if(0 >= w)
@@ -400,7 +403,7 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	}
 	else
 	{
-		worldPointer->mp = - worldPointer->gp;
+		worldPointer->mp = - gp;
 		worldPointer->gp = 0;
 		worldPointer->gx = _cameraFrustum->x0;
 		worldPointer->w = _cameraFrustum->x1 - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
@@ -410,9 +413,9 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	{
     	int h = (this->halfHeight << 1) - myDisplacement;
 
-		if(h + worldPointer->gy >= _cameraFrustum->y1)
+		if(h + gy >= _cameraFrustum->y1)
 		{
-			h = _cameraFrustum->y1 - worldPointer->gy;
+			h = _cameraFrustum->y1 - gy;
 		}
 
 		if(0 >= h)
@@ -431,9 +434,9 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	{
 		int h = _cameraFrustum->y1 - myDisplacement - __WORLD_SIZE_DISPLACEMENT;
 
-		if(0 > h || h + worldPointer->gy >= _cameraFrustum->y1)
+		if(0 > h || h + gy >= _cameraFrustum->y1)
 		{
-			h = _cameraFrustum->y1 - worldPointer->gy - __WORLD_SIZE_DISPLACEMENT;
+			h = _cameraFrustum->y1 - gy - __WORLD_SIZE_DISPLACEMENT;
 		}
 
 		worldPointer->h = h;

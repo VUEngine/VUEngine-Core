@@ -311,9 +311,10 @@ void BgmapSprite::render(bool evenFrame)
 	// get coordinates
 	int gx = this->position.x + this->displacement.x - this->halfWidth;
 	int gy = this->position.y + this->displacement.y - this->halfHeight;
+	int gp = this->position.parallax + this->displacement.parallax;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
-	worldPointer->gp = this->position.parallax + this->displacement.parallax;
+	worldPointer->gp = gp;
 
 	// get sprite's size
 	int width = this->halfWidth << 1;
@@ -327,24 +328,26 @@ void BgmapSprite::render(bool evenFrame)
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
-	if(_cameraFrustum->x0 - __ABS(worldPointer->gp) > gx)
+	if(_cameraFrustum->x0 - __ABS(gp) > gx)
 	{
-		worldPointer->gx = _cameraFrustum->x0 - __ABS(worldPointer->gp);
-		worldPointer->mx += (_cameraFrustum->x0 - __ABS(worldPointer->gp) - gx);
-		w -= (_cameraFrustum->x0 - __ABS(worldPointer->gp) - gx);
+		worldPointer->mx += (_cameraFrustum->x0 - __ABS(gp) - gx);
+		w -= (_cameraFrustum->x0 - __ABS(gp) - gx);
+		gx = _cameraFrustum->x0 - __ABS(gp);
+		worldPointer->gx = gx;
 	}
 
 	if(_cameraFrustum->y0 > gy)
 	{
-		worldPointer->gy = _cameraFrustum->y0;
 		worldPointer->my += (_cameraFrustum->y0 - gy);
 		h -= (_cameraFrustum->y0 - gy);
 		myDisplacement = (_cameraFrustum->y0 - gy);
+		gy = _cameraFrustum->y0;
+		worldPointer->gy = gy;
 	}
 
-	if(w + worldPointer->gx >= _cameraFrustum->x1 + __ABS(worldPointer->gp))
+	if(w + gx >= _cameraFrustum->x1 + __ABS(gp))
 	{
-		w = _cameraFrustum->x1 - worldPointer->gx + __ABS(worldPointer->gp);
+		w = _cameraFrustum->x1 - gx + __ABS(gp);
 	}
 
 	if (0 >= w)
@@ -367,9 +370,9 @@ void BgmapSprite::render(bool evenFrame)
 #endif
 	}
 */
-	if(h + worldPointer->gy >= _cameraFrustum->y1)
+	if(h + gy >= _cameraFrustum->y1)
 	{
-		h = _cameraFrustum->y1 - worldPointer->gy;
+		h = _cameraFrustum->y1 - gy;
 	}
 
 	if (0 >= h)
