@@ -154,7 +154,7 @@ void Actor::setLocalPosition(const Vector3D* position)
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
 
-	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
+	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 
 	this->transformShapes = transformShapes;
 	Actor::transformShapes(this);
@@ -195,18 +195,18 @@ void Actor::syncPositionWithBody()
 	}
 
 	// modify the global position according to the body's displacement
-	Vector3D globalPosition = this->transformation.globalPosition;
-	bodyLastDisplacement.x = bodyPosition.x - globalPosition.x;
-	bodyLastDisplacement.y = bodyPosition.y - globalPosition.y;
-	bodyLastDisplacement.z = bodyPosition.z - globalPosition.z;
+	bodyLastDisplacement.x = bodyPosition.x - this->transformation.globalPosition.x;
+	bodyLastDisplacement.y = bodyPosition.y - this->transformation.globalPosition.y;
+	bodyLastDisplacement.z = bodyPosition.z - this->transformation.globalPosition.z;
 
-	globalPosition.x += bodyLastDisplacement.x;
-	globalPosition.y += bodyLastDisplacement.y;
-	globalPosition.z += bodyLastDisplacement.z;
+//  Optimization: this doesn't seem to do anything useful
+//	globalPosition.x += bodyLastDisplacement.x;
+//	globalPosition.y += bodyLastDisplacement.y;
+//	globalPosition.z += bodyLastDisplacement.z;
 
 	// move the body to the new global position
 	// to account for any parenting
-	Body::setPosition(this->body, &globalPosition, SpatialObject::safeCast(this));
+//	Body::setPosition(this->body, &globalPosition, SpatialObject::safeCast(this));
 
 	// sync local position with global position
 	Vector3D localPosition = this->transformation.localPosition;
@@ -284,8 +284,10 @@ void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __at
 // graphically refresh of characters that are visible
 void Actor::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
+//  Optimization: this doesn't seem to do anything useful
 	// apply environment transformation
-	Container::applyEnvironmentToTransformation(this, environmentTransform);
+//	Container::applyEnvironmentToTransformation(this, environmentTransform);
+
 	bool transformShapes = this->transformShapes;
 
 	if(this->body)

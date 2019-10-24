@@ -91,9 +91,6 @@ class Entity : Container
 	void transformShapes();
 	void releaseSprites(bool forcePurgingGraphicalMemory);
 	void setAnimation(void (*animation)());
-	bool updateSpritePosition();
-	bool updateSpriteRotation();
-	bool updateSpriteScale();
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
 	bool doesAllowCollisions();
@@ -106,6 +103,9 @@ class Entity : Container
 	u32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(u32 layersToIgnore);
 	void setTransparent(u8 transparent);
+	virtual bool updateSpritePosition();
+	virtual bool updateSpriteRotation();
+	virtual bool updateSpriteScale();
 	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);

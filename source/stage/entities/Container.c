@@ -638,15 +638,9 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
 {
 	if(this->inheritEnvironment)
 	{
-		Vector3D globalPosition = environmentTransform->globalPosition;
-		Vector3D localPosition = this->transformation.localPosition;
-
-		// propagate position
-		globalPosition.x += localPosition.x;
-		globalPosition.y += localPosition.y;
-		globalPosition.z += localPosition.z;
-
-		this->transformation.globalPosition = globalPosition;
+		this->transformation.globalPosition.x = environmentTransform->globalPosition.x + this->transformation.localPosition.x;
+		this->transformation.globalPosition.y = environmentTransform->globalPosition.y + this->transformation.localPosition.y;
+		this->transformation.globalPosition.z = environmentTransform->globalPosition.z + this->transformation.localPosition.z;
 	}
 }
 
@@ -660,15 +654,9 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
 {
 	if(this->inheritEnvironment)
 	{
-		Rotation globalRotation = environmentTransform->globalRotation;
-		Rotation localRotation = this->transformation.localRotation;
-
-		// propagate position
-		globalRotation.x += localRotation.x;
-		globalRotation.y += localRotation.y;
-		globalRotation.z += localRotation.z;
-
-		this->transformation.globalRotation = globalRotation;
+		this->transformation.globalRotation.x = environmentTransform->globalRotation.x + this->transformation.localRotation.x;
+		this->transformation.globalRotation.y = environmentTransform->globalRotation.y + this->transformation.localRotation.y;
+		this->transformation.globalRotation.z = environmentTransform->globalRotation.z + this->transformation.localRotation.z;
 	}
 }
 
@@ -682,15 +670,9 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 {
 	if(this->inheritEnvironment)
 	{
-		Scale globalScale = environmentTransform->globalScale;
-		Scale localScale = this->transformation.localScale;
-
-		// propagate scale
-		globalScale.x = __FIX7_9_MULT(globalScale.x, localScale.x);
-		globalScale.y = __FIX7_9_MULT(globalScale.y, localScale.y);
-		globalScale.z = __FIX7_9_MULT(globalScale.z, localScale.z);
-
-		this->transformation.globalScale = globalScale;
+		this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalPosition.x, this->transformation.localScale.x);
+		this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalPosition.y, this->transformation.localScale.y);
+		this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalPosition.z, this->transformation.localScale.z);
 	}
 }
 
