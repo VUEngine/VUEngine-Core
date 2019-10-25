@@ -195,6 +195,14 @@ Velocity Body::getVelocity()
 	return this->velocity;
 }
 
+void Body::setVelocity(Velocity* velocity)
+{
+	if(velocity)
+	{
+		this->velocity = *velocity;
+	}
+}
+
 Direction3D Body::getDirection3D()
 {
 	return this->direction;

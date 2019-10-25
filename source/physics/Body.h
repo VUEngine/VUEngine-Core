@@ -157,6 +157,7 @@ class Body : Object
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
 	Velocity getVelocity();
+	void setVelocity(Velocity* velocity);
 	Direction3D getDirection3D();
 	fix10_6 getSpeed();
 	fix10_6_ext getSpeedSquare();
