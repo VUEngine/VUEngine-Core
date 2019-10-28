@@ -94,7 +94,7 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
 		ParticleSystem::reset(this, true);
 		ParticleSystem::setup(this, particleSystemSpec);
 	}
-	else if(particleSystemSpec)
+	else if(particleSystemSpec && particleSystemSpec != this->particleSystemSpec)
 	{
 		this->particleSystemSpec = particleSystemSpec;
 		ParticleSystem::configure(this);
