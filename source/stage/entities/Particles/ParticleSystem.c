@@ -68,8 +68,6 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	this->paused = false;
 	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
-	this->particleLifeSpanIncrement = 0;	
-	this->maximumNumberOfAliveParticlesIncrement = 0;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -79,7 +77,7 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
  */
 void ParticleSystem::destructor()
 {
-	ParticleSystem::cleanUp(this, false);
+	ParticleSystem::reset(this, false);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -87,23 +85,31 @@ void ParticleSystem::destructor()
 }
 
 /**
- * Class setParticleSystemSpec
+ * Class set ParticleSystemSpec
  */
-void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec)
+void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset)
 {
-	ParticleSystem::cleanUp(this, true);
-	ParticleSystem::setup(this, particleSystemSpec);
+	if(reset)
+	{
+		ParticleSystem::reset(this, true);
+		ParticleSystem::setup(this, particleSystemSpec);
+	}
+	else if(particleSystemSpec)
+	{
+		this->particleSystemSpec = particleSystemSpec;
+		ParticleSystem::configure(this);
+	}
 }
 
 /**
- * Class reset
+ * Class setup
  */
 void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 {
 	// save spec
 	this->particleSystemSpec = particleSystemSpec;
 
-	NM_ASSERT(this->particleSystemSpec, "ParticleSystem::reset: NULL spec");
+	NM_ASSERT(this->particleSystemSpec, "ParticleSystem::setup: NULL spec");
 
 	if(NULL == this->particleSystemSpec)
 	{
@@ -118,6 +124,13 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
 	this->paused = !this->particleSystemSpec->autoStart;
+
+	ParticleSystem::configure(this);
+}
+
+void ParticleSystem::configure()
+{
+	this->animationName = this->particleSystemSpec->particleSpec->initialAnimation;
 
 	// set size from spec
 	this->size.x += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x);
@@ -141,9 +154,9 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 }
 
 /**
- * Class cleanUp
+ * Class reset
  */
-void ParticleSystem::cleanUp(bool deleteParticlesImmeditely)
+void ParticleSystem::reset(bool deleteParticlesImmeditely)
 {
 	ParticleSystem::processExpiredParticles(this);
 
@@ -293,11 +306,11 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime)
 	{
-		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
+		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 		{
 			++this->totalSpawnedParticles;
 
-			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
+			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem::pause(this);
 				return;
@@ -325,12 +338,11 @@ void ParticleSystem::update(u32 elapsedTime)
  */
 Particle ParticleSystem::recycleParticle()
 {
-	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement))
+	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
 	{
 		long seed = Game::getRandomSeed(Game::getInstance());
 
 		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
-		lifeSpan += this->particleLifeSpanIncrement;
 
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
@@ -338,7 +350,7 @@ Particle ParticleSystem::recycleParticle()
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 		Force force = ParticleSystem::getParticleSpawnForce(this);
 
-		Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType);
+		Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->animationName);
 
 		VirtualList::popFront(this->recyclableParticles);
 
@@ -417,7 +429,7 @@ Force ParticleSystem::getParticleSpawnForce()
  */
 void ParticleSystem::spawnAllParticles()
 {
-	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
+	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 	{
 		if(this->particleSystemSpec->recycleParticles)
 		{
@@ -633,14 +645,4 @@ void ParticleSystem::pause()
 bool ParticleSystem::isPaused()
 {
 	return this->paused;
-}
-
-void ParticleSystem::setParticleLifeSpanIncrement(u16 particleLifeSpanIncrement)
-{
-	this->particleLifeSpanIncrement = particleLifeSpanIncrement;
-}
-
-void ParticleSystem::setMaximumNumberOfAliveParticlesIncrement(u8 maximumNumberOfAliveParticlesIncrement)
-{
-	this->maximumNumberOfAliveParticlesIncrement = maximumNumberOfAliveParticlesIncrement;
 }

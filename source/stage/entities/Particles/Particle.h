@@ -87,12 +87,14 @@ class Particle : SpatialObject
 	int lifeSpan;
 	// To optimizize parallax computation
 	fix10_6 previousZ;
+	// Animation name
+	const char* animationName;
 
 	/// @publicsection
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
 	void setLifeSpan(int lifeSpan);
 	bool isVisible();
-	void setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType);
+	void setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const char* animationName);
 	virtual void addForce(const Force* force, u32 movementType);
 	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void synchronizeGraphics(bool updateSpritePosition);
@@ -104,6 +106,7 @@ class Particle : SpatialObject
 	virtual void changeMass();
 	virtual void hide(const Vector3D* position);
 	virtual void show();
+	void setAnimationName(const char* animationName);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();

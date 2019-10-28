@@ -60,6 +60,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->sprite = NULL;
 	this->position = Vector3D::zero();
 	this->previousZ = 0;
+	this->animationName = this->particleSpec->initialAnimation;
 
 	Particle::addSprite(this);
 }
@@ -92,12 +93,22 @@ void Particle::addSprite()
 	// call the appropriate allocator to support inheritance
 	this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)this->spriteSpec, Object::safeCast(this));
 
-	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
+	if(this->animationName && this->particleSpec->animationDescription)
 	{
-		Sprite::play(this->sprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
+		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)this->animationName);
 	}
 
 	ASSERT(this->sprite, "Particle::addSprite: sprite not created");
+}
+
+/**
+ * Change the animation
+ *
+ * @param animationName		Char*
+ */
+void Particle::setAnimationName(const char* animationName)
+{
+	this->animationName = animationName;
 }
 
 /**
@@ -218,9 +229,9 @@ void Particle::show()
 
 	Sprite::show(this->sprite);
 
-	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
+	if(this->animationName && this->particleSpec->animationDescription)
 	{
-		Sprite::play(this->sprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
+		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)this->animationName);
 	}
 }
 
@@ -285,9 +296,10 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType)
+void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const char* animationName)
 {
 	Particle::reset(this);
+	Particle::setAnimationName(this, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);
