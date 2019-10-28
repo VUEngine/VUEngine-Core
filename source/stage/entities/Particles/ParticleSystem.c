@@ -67,7 +67,9 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	this->loop = true;
 	this->paused = false;
 	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
-	this->spawnForceDelta = (Vector3DFlag){false, false, false};	
+	this->spawnForceDelta = (Vector3DFlag){false, false, false};
+	this->particleLifeSpanIncrement = 0;	
+	this->maximumNumberOfAliveParticlesIncrement = 0;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -291,11 +293,11 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime)
 	{
-		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
+		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
 		{
 			++this->totalSpawnedParticles;
 
-			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles)
+			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
 			{
 				ParticleSystem::pause(this);
 				return;
@@ -323,11 +325,12 @@ void ParticleSystem::update(u32 elapsedTime)
  */
 Particle ParticleSystem::recycleParticle()
 {
-	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
+	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement))
 	{
 		long seed = Game::getRandomSeed(Game::getInstance());
 
 		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
+		lifeSpan += this->particleLifeSpanIncrement;
 
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
@@ -414,7 +417,7 @@ Force ParticleSystem::getParticleSpawnForce()
  */
 void ParticleSystem::spawnAllParticles()
 {
-	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
+	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles + this->maximumNumberOfAliveParticlesIncrement)
 	{
 		if(this->particleSystemSpec->recycleParticles)
 		{
@@ -630,4 +633,14 @@ void ParticleSystem::pause()
 bool ParticleSystem::isPaused()
 {
 	return this->paused;
+}
+
+void ParticleSystem::setParticleLifeSpanIncrement(u16 particleLifeSpanIncrement)
+{
+	this->particleLifeSpanIncrement = particleLifeSpanIncrement;
+}
+
+void ParticleSystem::setMaximumNumberOfAliveParticlesIncrement(u8 maximumNumberOfAliveParticlesIncrement)
+{
+	this->maximumNumberOfAliveParticlesIncrement = maximumNumberOfAliveParticlesIncrement;
 }

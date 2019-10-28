@@ -106,12 +106,16 @@ class ParticleSystem : Entity
 	int nextSpawnTime;
 	// particle count
 	int particleCount;
+	// particles' life span increment
+	u16 particleLifeSpanIncrement;
 	// number of sprite specs
 	s16 numberOfSpriteSpecs;
 	// pause flag
 	bool paused;
 	// Flag to keep spawning particles
 	bool loop;
+	// number of particles increment
+	u8 maximumNumberOfAliveParticlesIncrement;
 	// Counter of total spawned particles
 	u16 totalSpawnedParticles;
 	// Flags to speed up particle spawning
@@ -129,6 +133,8 @@ class ParticleSystem : Entity
 	void start();
 	bool getLoop();
 	void setLoop(bool value);
+	void setParticleLifeSpanIncrement(u16 particleLifeSpanIncrement);
+	void setMaximumNumberOfAliveParticlesIncrement(u8 maximumNumberOfAliveParticlesIncrement);
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
