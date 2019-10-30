@@ -739,7 +739,8 @@ void SpriteManager::render()
 				Sprite::update(sprite);
 			}
 
-			Sprite::render(sprite, this->evenFrame);
+
+			Sprite::render(sprite, this->evenFrame, NULL);
 
 			if(!sprite->visible)
 			{
@@ -1049,4 +1050,10 @@ void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
+}
+
+
+VirtualList SpriteManager::getSprites()
+{
+	return this->sprites;
 }

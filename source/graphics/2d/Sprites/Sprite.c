@@ -521,7 +521,7 @@ void Sprite::updateTransparency(bool evenFrame)
  *
  * @param evenFrame
  */
-void Sprite::render(bool evenFrame)
+void Sprite::render(bool evenFrame, const PixelVector* displacement __attribute__ ((unused)))
 {
 	Sprite::updateTransparency(this, evenFrame);
 }

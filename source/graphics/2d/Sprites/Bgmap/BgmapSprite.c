@@ -277,11 +277,11 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-void BgmapSprite::render(bool evenFrame)
+void BgmapSprite::render(bool evenFrame, const PixelVector* displacement __attribute__ ((unused)))
 {
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	Base::render(this, evenFrame);
+	Base::render(this, evenFrame, displacement);
 
 	if(!this->positioned)
 	{
@@ -305,13 +305,20 @@ void BgmapSprite::render(bool evenFrame)
 	}
 */
 
+	PixelVector finalDisplacement = this->displacement;
+
+	if(displacement)
+	{
+		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
+	}
+
 	// set the head
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth;
-	int gy = this->position.y + this->displacement.y - this->halfHeight;
-	int gp = this->position.parallax + this->displacement.parallax;
+	int gx = this->position.x + finalDisplacement.x - this->halfWidth;
+	int gy = this->position.y + finalDisplacement.y - this->halfHeight;
+	int gp = this->position.parallax + finalDisplacement.parallax;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 	worldPointer->gp = gp;
@@ -471,7 +478,7 @@ void BgmapSprite::processHbiasEffects()
 // to clip the image to the camera space, but kill the CPU
 /*
 // render a world layer with the map's information
-void BgmapSprite::render(bool evenFrame)
+void BgmapSprite::render(bool evenFrame, const PixelVector* displacement)
 {
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 

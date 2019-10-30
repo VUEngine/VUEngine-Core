@@ -40,6 +40,7 @@ static class PixelVector : Object
 {
 	/// @publicsection
 	static inline PixelVector get(PixelVector from, PixelVector to);
+	static inline PixelVector sum(PixelVector a, PixelVector b);
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
 	static inline u32 squareLength(PixelVector vector);
@@ -55,6 +56,11 @@ static class PixelVector : Object
 static inline PixelVector PixelVector::get(PixelVector from, PixelVector to)
 {
 	return (PixelVector){to.x - from.x, to.y - from.y, to.z - from.z, to.parallax - from.parallax};
+}
+
+static inline PixelVector PixelVector::sum(PixelVector a, PixelVector b)
+{
+	return (PixelVector){a.x + b.x, a.y + b.y, a.z + b.z, a.parallax + b.parallax};
 }
 
 static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax)

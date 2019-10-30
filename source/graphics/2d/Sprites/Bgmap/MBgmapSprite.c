@@ -319,7 +319,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
+void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)), const PixelVector* displacement __attribute__ ((unused)))
 {
 	if(!this->positioned)
 	{
@@ -330,6 +330,13 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	if(!this->texture | !this->worldLayer)
 	{
 		return;
+	}
+
+	PixelVector finalDisplacement = this->displacement;
+
+	if(displacement)
+	{
+		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
 	}
 
 	MBgmapSprite::updateTransparency(this, evenFrame);
@@ -351,9 +358,9 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth;
-	int gy = this->position.y + this->displacement.y - this->halfHeight;
-	int gp = this->position.parallax + this->displacement.parallax;
+	int gx = this->position.x + finalDisplacement.x - this->halfWidth;
+	int gy = this->position.y + finalDisplacement.y - this->halfHeight;
+	int gp = this->position.parallax + finalDisplacement.parallax;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 

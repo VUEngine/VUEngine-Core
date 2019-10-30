@@ -354,7 +354,7 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-void ObjectSpriteContainer::render(bool evenFrame)
+void ObjectSpriteContainer::render(bool evenFrame, const PixelVector* displacement)
 {
 	// if render flag is set
 	if(!this->worldLayer)
@@ -376,6 +376,13 @@ void ObjectSpriteContainer::render(bool evenFrame)
 	else
 	{
 		ObjectSpriteContainer::sortProgressively(this);
+	}
+
+	PixelVector finalDisplacement = this->displacement;
+
+	if(displacement)
+	{
+		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
 	}
 
 	VirtualNode node = this->objectSprites->head;
@@ -404,7 +411,7 @@ void ObjectSpriteContainer::render(bool evenFrame)
 				Sprite::update(sprite);
 			}
 
-			Sprite::render(sprite, evenFrame);
+			Sprite::render(sprite, evenFrame, &finalDisplacement);
 
 			if(!sprite->visible)
 			{

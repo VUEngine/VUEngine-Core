@@ -224,7 +224,7 @@ void ObjectSprite::calculateParallax(fix10_6 z)
  *
  * @param evenFrame
  */
-void ObjectSprite::render(bool evenFrame)
+void ObjectSprite::render(bool evenFrame, const PixelVector* displacement)
 {
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
@@ -233,7 +233,7 @@ void ObjectSprite::render(bool evenFrame)
 		return;
 	}
 
-	Base::render(this, evenFrame);
+	Base::render(this, evenFrame, displacement);
 
 	//ObjectSprite::checkForContainer(this);
 
@@ -242,17 +242,24 @@ void ObjectSprite::render(bool evenFrame)
 		ObjectTexture::write(this->texture);
 	}
 
+	PixelVector finalDisplacement = this->displacement;
+
+	if(displacement)
+	{
+		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
+	}
+
 	int cols = this->texture->textureSpec->cols;
 	int rows = this->texture->textureSpec->rows;
 
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
-	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
+	int x = this->position.x - this->halfWidth * xDirection + finalDisplacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
+	int y = this->position.y - this->halfHeight * yDirection + finalDisplacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + finalDisplacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)

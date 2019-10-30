@@ -115,7 +115,7 @@ class BgmapSprite : Sprite
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 	void processAffineEffects(int gx, int width, int myDisplacement);
 	void processHbiasEffects();
-	override void render(bool evenFrame);
+	override void render(bool evenFrame, const PixelVector* displacement);
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
 	override void applyAffineTransformations();
