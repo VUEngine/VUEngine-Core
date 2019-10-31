@@ -46,7 +46,7 @@ static class Vector3D : Object
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
-	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline fix10_6_ext dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline fix19_13 dotProduct19_13(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D scalarDivision(Vector3D vector, fix10_6 scalar);
@@ -122,9 +122,9 @@ static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
 	};
 }
 
-static inline fix10_6 Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
+static inline fix10_6_ext Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
 {
-	return __FIX10_6_MULT(vectorA.x, vectorB.x) + __FIX10_6_MULT(vectorA.y, vectorB.y) + __FIX10_6_MULT(vectorA.z, vectorB.z);
+	return __FIX10_6_EXT_MULT(vectorA.x, vectorB.x) + __FIX10_6_EXT_MULT(vectorA.y, vectorB.y) + __FIX10_6_EXT_MULT(vectorA.z, vectorB.z);
 }
 
 static inline fix19_13 Vector3D::dotProduct19_13(Vector3D vectorA, Vector3D vectorB)
