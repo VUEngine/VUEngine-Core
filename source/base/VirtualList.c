@@ -526,6 +526,30 @@ void VirtualList::add(VirtualList sourceList)
 }
 
 /**
+ * Remove source list's elements from list
+ *
+ * @param sourceList
+ */
+void VirtualList::substract(VirtualList sourceList)
+{
+#ifdef __DEBUG
+	int counter = 0;
+#endif
+
+	VirtualNode node = sourceList->head;
+
+	while(node)
+	{
+		// add next node
+		VirtualList::removeElement(this, node->data);
+		// move to next node
+		node = node->next;
+
+		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::remove: endless list removing");
+	}
+}
+
+/**
  * Retrieve list's head's address
  *
  * @return			Node

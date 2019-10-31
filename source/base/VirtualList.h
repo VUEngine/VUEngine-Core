@@ -50,6 +50,7 @@ class VirtualList : Object
 	void clear();
 	void copy(VirtualList sourceList);
 	void add(VirtualList sourceList);
+	void substract(VirtualList sourceList);
 	VirtualNode end();
 	VirtualNode find(const void* const dataPointer);
 	void* front();
