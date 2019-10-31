@@ -319,7 +319,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)), const PixelVector* displacement __attribute__ ((unused)))
+void MBgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)))
 {
 	if(!this->positioned)
 	{
@@ -338,8 +338,6 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)), const PixelVe
 	{
 		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
 	}
-
-	MBgmapSprite::updateTransparency(this, evenFrame);
 
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];

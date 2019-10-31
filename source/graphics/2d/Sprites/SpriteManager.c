@@ -734,17 +734,20 @@ void SpriteManager::render()
 		}
 		else
 		{
-			if((u32)sprite->animationController)
-			{
-				Sprite::update(sprite);
-			}
-
-
-			Sprite::render(sprite, this->evenFrame, NULL);
+			Sprite::updateTransparency(sprite, this->evenFrame);
 
 			if(!sprite->visible)
 			{
 				_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+			}
+			else
+			{
+				if((u32)sprite->animationController)
+				{
+					Sprite::update(sprite);
+				}
+
+				Sprite::render(sprite, NULL);
 			}
 		}
 	}
@@ -952,6 +955,16 @@ void SpriteManager::prepareAll()
 }
 
 /**
+ * Is even frame?
+ *
+ * @return			Bool
+ */
+bool SpriteManager::isEvenFrame()
+{
+	return this->evenFrame;
+}
+
+/**
  * Retrieve the total amount of pixels to be drawn for all the sprites
  *
  * @return			Number of pixels
@@ -1050,10 +1063,4 @@ void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
-}
-
-
-VirtualList SpriteManager::getSprites()
-{
-	return this->sprites;
 }

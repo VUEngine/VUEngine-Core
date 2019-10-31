@@ -277,11 +277,9 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-void BgmapSprite::render(bool evenFrame, const PixelVector* displacement __attribute__ ((unused)))
+void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)))
 {
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
-
-	Base::render(this, evenFrame, displacement);
 
 	if(!this->positioned)
 	{
@@ -478,7 +476,7 @@ void BgmapSprite::processHbiasEffects()
 // to clip the image to the camera space, but kill the CPU
 /*
 // render a world layer with the map's information
-void BgmapSprite::render(bool evenFrame, const PixelVector* displacement)
+void BgmapSprite::render(const PixelVector* displacement)
 {
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 

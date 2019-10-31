@@ -224,7 +224,7 @@ void ObjectSprite::calculateParallax(fix10_6 z)
  *
  * @param evenFrame
  */
-void ObjectSprite::render(bool evenFrame, const PixelVector* displacement)
+void ObjectSprite::render(const PixelVector* displacement)
 {
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
@@ -232,8 +232,6 @@ void ObjectSprite::render(bool evenFrame, const PixelVector* displacement)
 	{
 		return;
 	}
-
-	Base::render(this, evenFrame, displacement);
 
 	//ObjectSprite::checkForContainer(this);
 

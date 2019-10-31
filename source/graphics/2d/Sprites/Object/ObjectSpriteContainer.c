@@ -354,7 +354,7 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-void ObjectSpriteContainer::render(bool evenFrame, const PixelVector* displacement)
+void ObjectSpriteContainer::render(const PixelVector* displacement)
 {
 	// if render flag is set
 	if(!this->worldLayer)
@@ -385,6 +385,8 @@ void ObjectSpriteContainer::render(bool evenFrame, const PixelVector* displaceme
 		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
 	}
 
+	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
+
 	VirtualNode node = this->objectSprites->head;
 
 	for(; node; node = node->next)
@@ -406,12 +408,7 @@ void ObjectSpriteContainer::render(bool evenFrame, const PixelVector* displaceme
 		}
 		else
 		{
-			if((u32)sprite->animationController)
-			{
-				Sprite::update(sprite);
-			}
-
-			Sprite::render(sprite, evenFrame, &finalDisplacement);
+			Sprite::updateTransparency(sprite, evenFrame);
 
 			if(!sprite->visible)
 			{
@@ -420,6 +417,15 @@ void ObjectSpriteContainer::render(bool evenFrame, const PixelVector* displaceme
 				{
 					_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 				}
+			}
+			else
+			{
+				if((u32)sprite->animationController)
+				{
+					Sprite::update(sprite);
+				}
+
+				Sprite::render(sprite, &finalDisplacement);
 			}
 		}
 	}

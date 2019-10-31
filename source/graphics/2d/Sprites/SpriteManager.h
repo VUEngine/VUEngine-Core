@@ -126,6 +126,7 @@ singleton class SpriteManager : Object
 	void sortLayersProgressively();
 	void writeTextures();
 	void prepareAll();
+	bool isEvenFrame();
 }
 
 
