@@ -103,6 +103,7 @@ class Entity : Container
 	u32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(u32 layersToIgnore);
 	void setTransparent(u8 transparent);
+	bool isSpriteVisible(Sprite sprite, int pad);
 	virtual bool updateSpritePosition();
 	virtual bool updateSpriteRotation();
 	virtual bool updateSpriteScale();

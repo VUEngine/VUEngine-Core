@@ -1551,6 +1551,41 @@ fix10_6 Entity::getDepth()
 	return this->size.z;
 }
 
+bool Entity::isSpriteVisible(Sprite sprite, int pad)
+{
+	PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
+
+	PixelSize pixelSize = PixelSize::getFromSize(this->size);
+
+	s16 halfWidth	= pixelSize.x >> 1;
+	s16 halfHeight	= pixelSize.y >> 1;
+	s16 halfDepth	= pixelSize.z >> 1;
+
+	int x = spritePosition.x;
+	int y = spritePosition.y;
+	int z = spritePosition.z;
+
+	// check x visibility
+	if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
+	{
+		return false;
+	}
+
+	// check y visibility
+	if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
+	{
+		return false;
+	}
+
+	// check z visibility
+	if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 /**
  * Whether it is visible
  *
@@ -1560,10 +1595,6 @@ fix10_6 Entity::getDepth()
  */
 bool Entity::isVisible(int pad, bool recursive)
 {
-	int x = 0;
-	int y = 0;
-	int z = 0;
-
 	if(this->sprites && this->sprites->head)
 	{
 		VirtualNode spriteNode = this->sprites->head;
@@ -1573,35 +1604,11 @@ bool Entity::isVisible(int pad, bool recursive)
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
-
-			PixelSize pixelSize = PixelSize::getFromSize(this->size);
-
-			s16 halfWidth	= pixelSize.x >> 1;
-			s16 halfHeight	= pixelSize.y >> 1;
-			s16 halfDepth	= pixelSize.z >> 1;
-
-			x = spritePosition.x;
-			y = spritePosition.y;
-			z = spritePosition.z;
-
-			// check x visibility
-			if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
+			if(!Entity::isSpriteVisible(this, sprite, pad))
 			{
 				continue;
 			}
 
-			// check y visibility
-			if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
-			{
-				continue;
-			}
-
-			// check z visibility
-			if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
-			{
-				continue;
-			}
 
 			return true;
 		}
@@ -1623,9 +1630,9 @@ bool Entity::isVisible(int pad, bool recursive)
 		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
 		s16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
-		x = position2D.x;
-		y = position2D.y;
-		z = position2D.z;
+		int x = position2D.x;
+		int y = position2D.y;
+		int z = position2D.z;
 
 		// check x visibility
 		if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
