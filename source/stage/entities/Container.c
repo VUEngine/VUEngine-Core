@@ -670,9 +670,9 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 {
 	if(this->inheritEnvironment)
 	{
-		this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalPosition.x, this->transformation.localScale.x);
-		this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalPosition.y, this->transformation.localScale.y);
-		this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalPosition.z, this->transformation.localScale.z);
+		this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
+		this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
+		this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
 	}
 }
 

@@ -216,6 +216,9 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 {
 	if(__WORLD_AFFINE & this->head)
 	{
+		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
+		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
+
 		z -= _cameraPosition->z;
 
 		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, _optical->scalingFactor));
@@ -226,8 +229,8 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
 		this->drawSpec.scale.y = __FIX7_9_MULT(scale.y, ratio);
 
-		ASSERT(0 <= this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
-		ASSERT(0 <= this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
+		NM_ASSERT(0 < this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
+		NM_ASSERT(0 < this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
 
 		if(this->texture)
 		{
