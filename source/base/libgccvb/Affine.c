@@ -50,8 +50,8 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 	fix10_6 finalScaleX = __FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(rotation->y)), __FIX7_9_TO_FIX10_6(scale->x));
 	fix10_6 finalScaleY = __FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(rotation->x)), __FIX7_9_TO_FIX10_6(scale->y));
 
-	ASSERT(finalScaleX, "Affine::applyAll: 0 x scale");
-	ASSERT(finalScaleY, "Affine::applyAll: 0 y scale");
+	NM_ASSERT(finalScaleX, "Affine::applyAll: 0 x scale");
+	NM_ASSERT(finalScaleY, "Affine::applyAll: 0 y scale");
 
 	fix10_6 highPrecisionPa = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__COS(-rotation->z)), finalScaleX);
 	fix10_6 highPrecisionPb = -__FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__SIN(-rotation->z)), finalScaleX);
