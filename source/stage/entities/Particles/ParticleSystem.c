@@ -268,6 +268,11 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(u32 elapsedTime)
 {
+	if(ParticleSystem::isPaused(this))
+	{
+		return;
+	}
+
 	if(this->hidden)
 	{
 		return;
@@ -277,12 +282,10 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	ParticleSystem::processExpiredParticles(this);
 
-	// update each particle
 	VirtualNode node = this->particles->head;
 
 	if(NULL == node && this->paused)
 	{
-		ParticleSystem::hide(this);
 		return;
 	}
 
@@ -477,6 +480,11 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
+	if(ParticleSystem::isPaused(this))
+	{
+		return;
+	}
+
 	if(this->hidden)
 	{
 		return;
@@ -498,6 +506,11 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 void ParticleSystem::synchronizeGraphics()
 {
+	if(ParticleSystem::isPaused(this))
+	{
+		return;
+	}
+
 	if(this->hidden)
 	{
 		return;
@@ -642,7 +655,13 @@ void ParticleSystem::pause()
 	this->paused = true;
 }
 
+void ParticleSystem::unpause()
+{
+	this->paused = false;
+	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+}
+
 bool ParticleSystem::isPaused()
 {
-	return this->paused;
+	return this->paused && !this->particles->head;
 }

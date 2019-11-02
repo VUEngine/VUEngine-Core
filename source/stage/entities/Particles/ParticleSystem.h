@@ -130,6 +130,7 @@ class ParticleSystem : Entity
 	bool handleMessage(Telegram telegram);
 	bool isPaused();
 	void pause();
+	void unpause();
 	void show();
 	void spawnAllParticles();
 	void start();
