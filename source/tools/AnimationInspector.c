@@ -464,7 +464,6 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 		if(Sprite::isPlaying(this->animatedSprite))
 		{
 			Sprite::pause(this->animatedSprite, true);
-
 		}
 		else
 		{
