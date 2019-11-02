@@ -56,7 +56,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, lifeSpan);
 
 	this->physicalParticleSpec = physicalParticleSpec;
-	fix10_6 mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(Game::getRandomSeed(Game::getInstance()), this->physicalParticleSpec->massDelta) : 0);
+	fix10_6 mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, physicalParticleSpec->axisSubjectToGravity);
 }
@@ -156,7 +156,7 @@ void PhysicalParticle::setMass(fix10_6 mass)
  */
 void PhysicalParticle::changeMass()
 {
-	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(Game::getRandomSeed(Game::getInstance()), this->physicalParticleSpec->massDelta) : 0));
+	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
 }
 
 /**

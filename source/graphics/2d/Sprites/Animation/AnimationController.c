@@ -278,7 +278,7 @@ void AnimationController::resetFrameDuration()
 	else if(0 > this->frameDuration)
 	{
 		// pick up a random delay
-		this->frameDuration = 1 + Utilities::random(Game::getRandomSeed(Game::getInstance()), __ABS(this->frameDuration));
+		this->frameDuration = 1 + Utilities::random(_gameRandomSeed, __ABS(this->frameDuration));
 	}
 }
 

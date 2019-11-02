@@ -87,7 +87,7 @@ singleton class Game : Object
 	volatile bool currentFrameEnded;
 	volatile bool nextFrameStarted;
 	// random seed
-	long randomSeed;
+	u32 randomSeed;
 	// game paused flag
 	bool isPaused;
 
@@ -146,5 +146,7 @@ singleton class Game : Object
 	void startProfiling();
 }
 
+
+extern u32 _gameRandomSeed;
 
 #endif

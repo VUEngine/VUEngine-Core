@@ -53,8 +53,8 @@ static class Utilities : Object
 	static void setClock(Clock clock);
 	static void setKeypadManager(KeypadManager keypadManager);
 	static void resetRandomSeed();
-	static long randomSeed();
-	static int random(long seed, int randnums);
+	static u32 randomSeed();
+	static int random(u32 seed, int randnums);
 	static char* itoa(u32 num, u32 base, u32 digits);
 	static const char* toUppercase(const char* string);
 	static const char* toLowercase(const char* string);

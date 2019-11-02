@@ -343,7 +343,7 @@ Particle ParticleSystem::recycleParticle()
 {
 	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
 	{
-		long seed = Game::getRandomSeed(Game::getInstance());
+		long seed = _gameRandomSeed;
 
 		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
@@ -372,7 +372,7 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 {
 	Vector3D position = this->transformation.globalPosition;
 
-	long seed = 0;
+	u32 seed = 0;
 
 	if(this->spawnPositionDisplacement.x)
 	{
@@ -454,7 +454,7 @@ void ParticleSystem::spawnAllParticles()
  */
 Particle ParticleSystem::spawnParticle()
 {
-	long seed = Game::getRandomSeed(Game::getInstance());
+	long seed = _gameRandomSeed;
 
 	int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
@@ -639,7 +639,7 @@ void ParticleSystem::particleExpired(Particle particle)
 int ParticleSystem::computeNextSpawnTime()
 {
 	return this->particleSystemSpec->minimumSpawnDelay +
-			(this->particleSystemSpec->spawnDelayDelta ? Utilities::random(Game::getRandomSeed(Game::getInstance()), this->particleSystemSpec->spawnDelayDelta) : 0);
+			(this->particleSystemSpec->spawnDelayDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->spawnDelayDelta) : 0);
 }
 
 void ParticleSystem::start()

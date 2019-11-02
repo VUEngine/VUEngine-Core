@@ -136,7 +136,7 @@ static void Utilities::resetRandomSeed()
 /*
  * Taken from Shokwav's N64 demo
  */
-static long Utilities::randomSeed()
+static u32 Utilities::randomSeed()
 {
 	if(!_seed)
 	{
@@ -151,7 +151,7 @@ static long Utilities::randomSeed()
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
-static int Utilities::random(long seed, int randnums)
+static int Utilities::random(u32 seed, int randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
 	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);

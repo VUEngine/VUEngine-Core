@@ -86,6 +86,8 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+u32 _gameRandomSeed = 0;
+
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 static char* _processNameDuringFRAMESTART = NULL;
 #endif
@@ -1114,7 +1116,7 @@ void Game::run()
 	TimerManager::resetMilliseconds(this->timerManager);
 	
 	// Generate random seed
-	this->randomSeed = Utilities::randomSeed();
+	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
 	// sync entities with their sprites	
 	Game::synchronizeGraphics(this);
