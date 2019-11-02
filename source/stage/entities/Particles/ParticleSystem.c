@@ -343,9 +343,7 @@ Particle ParticleSystem::recycleParticle()
 {
 	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
 	{
-		long seed = _gameRandomSeed;
-
-		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
+		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
@@ -365,31 +363,25 @@ Particle ParticleSystem::recycleParticle()
 
 /**
  * @private
- * @param seed
  * @return		Spawn position
  */
 Vector3D ParticleSystem::getParticleSpawnPosition()
 {
 	Vector3D position = this->transformation.globalPosition;
 
-	u32 seed = 0;
-
 	if(this->spawnPositionDisplacement.x)
 	{
-		seed = Utilities::randomSeed();
-		position.x += this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
+		position.x += this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
 	}
 
 	if(this->spawnPositionDisplacement.y)
 	{
-		seed = Utilities::randomSeed();
-		position.y += this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
+		position.y += this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
 	}
 
 	if(this->spawnPositionDisplacement.z)
 	{
-		seed = Utilities::randomSeed();
-		position.z += this->particleSystemSpec->minimumRelativeSpawnPosition.z + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z));
+		position.z += this->particleSystemSpec->minimumRelativeSpawnPosition.z + Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z));
 	}
 
 	return position;
@@ -397,31 +389,25 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 
 /**
  * @private
- * @param seed
  * @return		Force
  */
 Force ParticleSystem::getParticleSpawnForce()
 {
 	Force force = this->particleSystemSpec->minimumForce;
 
-	long seed = 0;
-
 	if(this->spawnForceDelta.x)
 	{
-		seed = Utilities::randomSeed();
-		force.x += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
+		force.x += Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
 	}
 
 	if(this->spawnForceDelta.y)
 	{
-		seed = Utilities::randomSeed();
-		force.y += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
+		force.y += Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
 	}
 
 	if(this->spawnForceDelta.z)
 	{
-		seed = Utilities::randomSeed();
-		force.z += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.z - this->particleSystemSpec->minimumForce.z));
+		force.z += Utilities::random(Utilities::randomSeed(), __ABS(this->particleSystemSpec->maximumForce.z - this->particleSystemSpec->minimumForce.z));
 	}
 
 	return force;
@@ -454,15 +440,13 @@ void ParticleSystem::spawnAllParticles()
  */
 Particle ParticleSystem::spawnParticle()
 {
-	long seed = _gameRandomSeed;
-
-	int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+	int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
 	int spriteSpecIndex = 0;
 
 	if(1 < this->numberOfSpriteSpecs)
 	{
-		spriteSpecIndex = Utilities::random(seed, this->numberOfSpriteSpecs);
+		spriteSpecIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
 	}
 
 	// call the appropriate allocator to support inheritance
