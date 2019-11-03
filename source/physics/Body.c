@@ -131,6 +131,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->active = true;
 	this->awake = false;
 	this->changedDirection = false;
+	this->sendMessages = true;
 	this->axisSubjectToGravity = axisSubjectToGravity;
 
 	// clear movement type
@@ -410,7 +411,7 @@ void Body::update()
 			{
 				Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-				if(movementResult.axisStoppedMovement)
+				if(movementResult.axisStoppedMovement && this->sendMessages)
 				{
 					MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
 				}
@@ -1072,24 +1073,27 @@ void Body::awake(u16 axisOfAwakening)
 		PhysicalWorld::bodyAwake(Game::getPhysicalWorld(Game::getInstance()), this);
 	}
 
-	if(!this->velocity.x && (__X_AXIS & axisOfAwakening))
+	if(this->sendMessages)
 	{
-		dispatchMessage |= (__X_AXIS & axisOfAwakening);
-	}
+		if(!this->velocity.x && (__X_AXIS & axisOfAwakening))
+		{
+			dispatchMessage |= (__X_AXIS & axisOfAwakening);
+		}
 
-	if(!this->velocity.y && (__Y_AXIS & axisOfAwakening))
-	{
-		dispatchMessage |= (__Y_AXIS & axisOfAwakening);
-	}
+		if(!this->velocity.y && (__Y_AXIS & axisOfAwakening))
+		{
+			dispatchMessage |= (__Y_AXIS & axisOfAwakening);
+		}
 
-	if(!this->velocity.z && (__Z_AXIS & axisOfAwakening))
-	{
-		dispatchMessage |= (__Z_AXIS & axisOfAwakening);
-	}
+		if(!this->velocity.z && (__Z_AXIS & axisOfAwakening))
+		{
+			dispatchMessage |= (__Z_AXIS & axisOfAwakening);
+		}
 
-	if(dispatchMessage)
-	{
-		MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
+		if(dispatchMessage)
+		{
+			MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
+		}
 	}
 }
 
@@ -1257,7 +1261,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	{
 		u16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(axisOfStopping)
+		if(axisOfStopping && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}
@@ -1301,6 +1305,10 @@ fix10_6 Body::getMaximumSpeed()
 	return this->maximumSpeed;
 }
 
+void Body::sendMessages(bool value)
+{
+	this->sendMessages = value;
+}
 
 void Body::print(int x, int y)
 {

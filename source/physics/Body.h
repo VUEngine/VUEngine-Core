@@ -135,6 +135,8 @@ class Body : Object
 	bool awake;
 	// Flag to indicate if the body changed direction during the last frame
 	bool changedDirection;
+	// Flag to enable messages
+	bool sendMessages;
 
 	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
@@ -189,6 +191,7 @@ class Body : Object
 	void print(int x, int y);
 	MovementResult updateMovement();
 	bool changedDirection();
+	void sendMessages(bool value);
 
 	virtual void update();
 }
