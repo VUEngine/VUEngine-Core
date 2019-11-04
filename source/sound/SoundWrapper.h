@@ -46,6 +46,7 @@
 
 #define __MAXIMUM_MIDI_FREQUENCY			D_8
 
+#define __SOUND_WRAPPER_FADE_DELAY			100
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS

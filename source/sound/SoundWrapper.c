@@ -182,7 +182,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			if(0 < SoundWrapper::getVolumeReduction(this))
 			{
 				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) - 1);
-				MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
 			}
 			else
 			{
@@ -196,7 +196,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			if(__MAXIMUM_VOLUME > SoundWrapper::getVolumeReduction(this))
 			{
 				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + 1);
-				MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
 			}
 			else
 			{
@@ -315,13 +315,13 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 
 			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME);
 			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
-			MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
 			break;
 
 		case kSoundWrapperPlaybackFadeOut:
 
 			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
-			MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
 			break;
 
 		case kSoundWrapperPlaybackNormal:
