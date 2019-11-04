@@ -123,7 +123,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->normals = NULL;
 	this->mass = __MIN_MASS < physicalSpecification->mass ? __MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MASS : __MIN_MASS;
 	this->bounciness = physicalSpecification->bounciness;
-	this->frictionCoefficient = physicalSpecification->frictionCoefficient;
+	this->frictionCoefficient = 0;
 	this->surroundingFrictionCoefficient = 0;
 	this->totalFrictionCoefficient = 0;
 	this->frictionForceMagnitude = 0;
@@ -151,6 +151,9 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	
+	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
+	Body::computeFrictionForceMagnitude(this);
+
 	if(!_physhicsClock)
 	{
 		_physhicsClock = Game::getPhysicsClock(Game::getInstance());
@@ -391,10 +394,6 @@ void Body::addForce(const Force* force)
 	ASSERT(force, "Body::addForce: null force");
 
 	Body::applyForce(this, force);
-
-	Body::computeTotalFrictionCoefficient(this);
-
-	Body::computeFrictionForceMagnitude(this);
 }
 
 // update movement
