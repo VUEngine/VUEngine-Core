@@ -283,3 +283,8 @@ int AnimatedEntity::getNumberOfFrames()
 
 	return -1;
 }
+
+void AnimatedEntity::onAnimationCompleteHide(Object eventFirer)
+{
+	AnimatedEntity::hide(this);
+}
