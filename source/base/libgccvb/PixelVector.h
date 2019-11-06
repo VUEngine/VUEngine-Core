@@ -39,6 +39,7 @@
 static class PixelVector : Object
 {
 	/// @publicsection
+	static inline PixelVector zero();
 	static inline PixelVector get(PixelVector from, PixelVector to);
 	static inline PixelVector sum(PixelVector a, PixelVector b);
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax);
@@ -52,6 +53,11 @@ static class PixelVector : Object
 //---------------------------------------------------------------------------------------------------------
 //											IMPLEMENTATIONS
 //---------------------------------------------------------------------------------------------------------
+
+static inline PixelVector PixelVector::zero()
+{
+	return (PixelVector){0, 0, 0, 0};
+}
 
 static inline PixelVector PixelVector::get(PixelVector from, PixelVector to)
 {
