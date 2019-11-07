@@ -405,9 +405,9 @@ void Entity::calculateSize()
 
 	Vector3D centerDisplacement =
 	{
-		(__PIXELS_TO_METERS(pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->transformation.localPosition.x,
-		(__PIXELS_TO_METERS(pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->transformation.localPosition.y,
-		(__PIXELS_TO_METERS(pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
+		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->transformation.localPosition.x,
+		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->transformation.localPosition.y,
+		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
