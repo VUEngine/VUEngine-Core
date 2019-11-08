@@ -234,6 +234,7 @@ void ObjectSprite::render(const PixelVector* displacement)
 	}
 
 	//ObjectSprite::checkForContainer(this);
+	CACHE_ENABLE;
 
 	if(!this->texture->written)
 	{
@@ -300,6 +301,8 @@ void ObjectSprite::render(const PixelVector* displacement)
 			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
+
+	CACHE_DISABLE;
 }
 
 /**
