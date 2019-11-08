@@ -168,7 +168,13 @@ static s16 _previousProcessCollisionsTotalTime = 0;
 static s16 _previousProcessCollisionsHighestTime = 0;
 
 static s16 _previousGameFrameTotalTime = 0;
+#else
 
+#ifdef __ALERT_FOR_TORN_FRAMES
+
+s16 _tornGameFrameCount = 0;
+
+#endif
 #endif
 
 
@@ -547,6 +553,14 @@ void Game::setNextState(GameState state)
 
 	// Fire event
 	Object::fireEvent(this, kEventNextStateSet);
+
+#ifdef __PROFILE_GAME
+	_tornGameFrameCount = 0;
+#else
+#ifdef __ALERT_FOR_TORN_FRAMES
+	_tornGameFrameCount = 0;
+#endif
+#endif
 }
 
 // erase engine's current status
@@ -1096,9 +1110,8 @@ void Game::currentFrameEnded()
 #ifdef __ALERT_FOR_TORN_FRAMES
 	if(this->nextFrameStarted)
 	{
-		static int counter = 0;
-		PRINT_TEXT("Torn Frames:", 0, 26);
-		PRINT_INT(++counter, 13, 26);
+		PRINT_TEXT("Torn Frames:", 10, 26);
+		PRINT_INT(++_tornGameFrameCount, 23, 26);
 	}
 #endif
 #endif
