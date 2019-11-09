@@ -234,12 +234,12 @@ void ObjectSprite::render(const PixelVector* displacement)
 	}
 
 	//ObjectSprite::checkForContainer(this);
-	CACHE_ENABLE;
-
 	if(!this->texture->written)
 	{
 		ObjectTexture::write(this->texture);
 	}
+
+	CACHE_ENABLE;
 
 	PixelVector finalDisplacement = this->displacement;
 

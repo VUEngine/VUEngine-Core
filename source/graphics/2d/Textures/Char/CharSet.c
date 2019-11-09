@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSet.h>
+#include <HardwareManager.h>
 #include <CharSetManager.h>
 #include <Mem.h>
 #include <VIPManager.h>
@@ -170,11 +171,27 @@ u32 CharSet::getNumberOfChars()
  */
 void CharSet::write()
 {
+	s16 numberOfWORDS = __BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD);
+
+	if(numberOfWORDS >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
+
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
-		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
+		numberOfWORDS
 	);
+
+	if(numberOfWORDS >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
 }
 
 /**

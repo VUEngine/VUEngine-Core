@@ -173,6 +173,13 @@ void BgmapTexture::writeAnimatedMulti()
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
+	if(area / counter >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
+
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -186,6 +193,13 @@ void BgmapTexture::writeAnimatedMulti()
 				this->textureSpec->cols,
 				(palette) | (charLocation + area * (j - 1)));
 		}
+	}
+
+	if(area / counter >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
 	}
 }
 
@@ -211,13 +225,29 @@ void BgmapTexture::doWrite()
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 	u32 mapDisplacement = this->mapDisplacement >> 1;
 
+	u32 numberOfHWORDS = this->textureSpec->cols;
+
+	if(numberOfHWORDS * counter >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
+
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
 				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
-				this->textureSpec->cols,
+				numberOfHWORDS,
 				colorInformation);
+	}
+
+	if(numberOfHWORDS * counter >= 32)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
 	}
 }
 
