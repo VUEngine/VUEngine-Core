@@ -205,7 +205,7 @@ static void VIPManager::interruptHandler()
  */
 void VIPManager::processInterrupt(u16 interrupt)
 {
-	const u16 interruptTable[] =
+	static u16 interruptTable[] =
 	{
 		__FRAMESTART,
 		__XPEND,
