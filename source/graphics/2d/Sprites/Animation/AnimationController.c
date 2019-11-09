@@ -225,8 +225,10 @@ bool AnimationController::updateAnimation()
 	// reduce frame delay count
 	if(0 >= this->frameDuration)
 	{
+		this->previousFrame = this->actualFrame;
+
 		// increase the frame to show
-		this->previousFrame = this->actualFrame++;
+		this->actualFrame++;
 
 		// check if the actual frame is out of bounds
 		if(this->actualFrame >= this->animationFunction->numberOfFrames)
@@ -254,7 +256,7 @@ bool AnimationController::updateAnimation()
 		// Reset frame duration
 		AnimationController::resetFrameDuration(this);
 
-		return true;
+		return this->animationFunction->frames[this->actualFrame] != this->animationFunction->frames[this->previousFrame];
 	}
 
 	return false;
