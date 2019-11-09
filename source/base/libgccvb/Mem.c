@@ -56,4 +56,14 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 	return destination;
 }
 
+// Produces graphical glitches if inlined
+// Not to critical since it is not used a lot
+static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
+{
+	u32 i;
 
+	for(i = 0; i < numberOfBYTES; i++)
+	{
+		*destination++ = 0;
+	}
+}

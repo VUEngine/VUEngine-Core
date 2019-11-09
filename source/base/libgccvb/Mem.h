@@ -45,22 +45,12 @@
 static class Mem : Object
 {
 	/// @publicsection
-	static inline void clear(BYTE* destination, u32 numberOfBYTES);
+	static void clear(BYTE* destination, u32 numberOfBYTES);
 	static inline void copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
 	static inline void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
 	static inline void copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
 	static inline void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
 	static inline void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
-}
-
-static inline void Mem::clear(BYTE* destination, u32 numberOfBYTES)
-{
-	u32 i;
-
-	for(i = 0; i < numberOfBYTES; i++)
-	{
-		*destination++ = 0;
-	}
 }
 
 // Copy a block of data from one area in memory to another.
