@@ -205,6 +205,8 @@ static void VIPManager::interruptHandler()
  */
 void VIPManager::processInterrupt(u16 interrupt)
 {
+#define INTERRUPTS	3
+
 	static u16 interruptTable[] =
 	{
 		__FRAMESTART,
@@ -213,9 +215,8 @@ void VIPManager::processInterrupt(u16 interrupt)
 	};
 
 	int i = 0;
-	const int limit = sizeof(interruptTable) / sizeof(u16);
 
-	for(; i < limit; i++)
+	for(; i < INTERRUPTS; i++)
 	{
 		switch(interrupt & interruptTable[i])
 		{

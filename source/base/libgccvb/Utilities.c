@@ -37,7 +37,7 @@ KeypadManager _keypadManager = NULL;
 //---------------------------------------------------------------------------------------------------------
 
 static u32 _seed = 7; /* Seed value */
-static const char numbers[17] = "0123456789ABCDEF";
+static char numbers[17] = "0123456789ABCDEF";
 
 static void Utilities::setClock(Clock clock)
 {
