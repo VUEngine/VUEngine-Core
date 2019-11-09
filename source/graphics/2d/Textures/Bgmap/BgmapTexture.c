@@ -173,8 +173,11 @@ void BgmapTexture::writeAnimatedMulti()
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
-	if(area / counter >= 32)
+	bool disableCache = false;
+
+	if(area / counter >= 16)
 	{
+		disableCache = true;
 		CACHE_DISABLE;
 		CACHE_CLEAR;
 		CACHE_ENABLE;
@@ -195,7 +198,7 @@ void BgmapTexture::writeAnimatedMulti()
 		}
 	}
 
-	if(area / counter >= 32)
+	if(disableCache)
 	{
 		CACHE_DISABLE;
 		CACHE_CLEAR;
@@ -227,8 +230,11 @@ void BgmapTexture::doWrite()
 
 	u32 numberOfHWORDS = this->textureSpec->cols;
 
-	if(numberOfHWORDS * counter >= 32)
+	bool disableCache = false;
+
+	if(numberOfHWORDS * counter >= 16)
 	{
+		disableCache = true;
 		CACHE_DISABLE;
 		CACHE_CLEAR;
 		CACHE_ENABLE;
@@ -243,7 +249,7 @@ void BgmapTexture::doWrite()
 				colorInformation);
 	}
 
-	if(numberOfHWORDS * counter >= 32)
+	if(disableCache)
 	{
 		CACHE_DISABLE;
 		CACHE_CLEAR;

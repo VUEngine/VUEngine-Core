@@ -173,8 +173,11 @@ void CharSet::write()
 {
 	s16 numberOfWORDS = __BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD);
 
-	if(numberOfWORDS >= 32)
+	bool disableCache = false;
+
+	if(numberOfWORDS >= 16)
 	{
+		disableCache = true;
 		CACHE_DISABLE;
 		CACHE_CLEAR;
 		CACHE_ENABLE;
@@ -186,7 +189,7 @@ void CharSet::write()
 		numberOfWORDS
 	);
 
-	if(numberOfWORDS >= 32)
+	if(disableCache)
 	{
 		CACHE_DISABLE;
 		CACHE_CLEAR;
