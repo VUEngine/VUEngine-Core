@@ -373,10 +373,10 @@ void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisp
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
 	// focus now
-	Camera::focus(this, false);
+//	Camera::focus(this, false);
 
 	// make sure that any other entity knows about the change
-	Camera::forceDisplacement(this, true);
+//	Camera::forceDisplacement(this, true);
 }
 
 /**

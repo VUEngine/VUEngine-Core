@@ -47,7 +47,7 @@ static class Vector3D : Object
 	static inline Vector3D perpedicular(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fix10_6_ext dotProduct(Vector3D vectorA, Vector3D vectorB);
-	static inline fix19_13 dotProduct19_13(Vector3D vectorA, Vector3D vectorB);
+	static inline fix19_13 dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D scalarDivision(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D normalize(Vector3D vector);
@@ -62,6 +62,7 @@ static class Vector3D : Object
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
 	static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b);
+	static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
 	static inline void Vector3D::print(Vector3D vector, int x, int y);
 }
 
@@ -127,7 +128,7 @@ static inline fix10_6_ext Vector3D::dotProduct(Vector3D vectorA, Vector3D vector
 	return __FIX10_6_EXT_MULT(vectorA.x, vectorB.x) + __FIX10_6_EXT_MULT(vectorA.y, vectorB.y) + __FIX10_6_EXT_MULT(vectorA.z, vectorB.z);
 }
 
-static inline fix19_13 Vector3D::dotProduct19_13(Vector3D vectorA, Vector3D vectorB)
+static inline fix19_13 Vector3D::dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB)
 {
 	return __FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.x), __FIX10_6_TO_FIX19_13(vectorB.x)) + 
 			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.y), __FIX10_6_TO_FIX19_13(vectorB.y)) + 
@@ -293,6 +294,43 @@ static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 		a.x + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.x), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
 		a.y + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.y), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
 		a.z + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.z), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
+	};
+		
+	return projection;
+}
+
+static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b)
+{
+	Vector3D ap = Vector3D::get(a, p);
+	Vector3D ab = Vector3D::get(a, b);
+	fix19_13 dotApAb = Vector3D::dotProductHighPrecision(ap, ab);
+	fix19_13 dotAbAb = Vector3D::dotProductHighPrecision(ab, ab);
+
+	if(!dotAbAb)
+	{
+		if(a.x == b.x)
+		{
+			p.x = a.x;
+		}
+		
+		if(a.y == b.y)
+		{
+			p.y = a.y;
+		}
+
+		if(a.z == b.z)
+		{
+			p.z = a.z;
+		}
+
+		return p;
+	}
+
+	Vector3D projection = 
+	{
+		a.x + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.x), __FIX19_13_DIV(dotApAb, dotAbAb))),
+		a.y + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.y), __FIX19_13_DIV(dotApAb, dotAbAb))),
+		a.z + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.z), __FIX19_13_DIV(dotApAb, dotAbAb))),
 	};
 		
 	return projection;
