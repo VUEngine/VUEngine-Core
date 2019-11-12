@@ -175,7 +175,7 @@ void CharSet::write()
 
 	bool disableCache = false;
 
-	if(numberOfWORDS >= 16)
+	if(numberOfWORDS >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
 	{
 		disableCache = true;
 		CACHE_DISABLE;

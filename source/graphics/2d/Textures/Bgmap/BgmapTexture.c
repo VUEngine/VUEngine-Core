@@ -175,7 +175,7 @@ void BgmapTexture::writeAnimatedMulti()
 
 	bool disableCache = false;
 
-	if(area / counter >= 16)
+	if(area / counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
 	{
 		disableCache = true;
 		CACHE_DISABLE;
@@ -232,7 +232,7 @@ void BgmapTexture::doWrite()
 
 	bool disableCache = false;
 
-	if(numberOfHWORDS * counter >= 16)
+	if(numberOfHWORDS * counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
 	{
 		disableCache = true;
 		CACHE_DISABLE;
