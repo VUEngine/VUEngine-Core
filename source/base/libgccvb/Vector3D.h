@@ -100,14 +100,14 @@ static inline Vector3D Vector3D::perpedicular(Vector3D a, bool left)
 	if(left)
 	{
 		fix10_6 aux = a.x;
-		a.x = a.y;
-		a.y = -aux;
+		a.x = -a.y;
+		a.y = aux;
 	}
 	else
 	{
 		fix10_6 aux = a.x;
-		a.x = -a.y;
-		a.y = aux;
+		a.x = a.y;
+		a.y = -aux;
 	}
 
 	return a;

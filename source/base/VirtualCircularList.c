@@ -243,6 +243,87 @@ void* VirtualCircularList::popBack()
 	return NULL;
 }
 
+/**
+ * Check if a node is part of this list
+ *
+ * @private
+ * @param node	node to check
+ */
+bool VirtualCircularList::checkThatNodeIsPresent(VirtualNode node)
+{
+	if(!node)
+	{
+		return false;
+	}
+
+	if(this->head)
+	{
+		// point to the head
+		VirtualNode auxNode = this->head;
+
+		// while node doesn't reach the head again
+		do
+		{
+			if(auxNode == node)
+			{
+				return true;
+			}
+
+			// move the node to the head
+			auxNode = auxNode->next;
+		}
+		while(auxNode != this->head);
+	}
+
+	return false;
+}
+
+/**
+ * Insert a node after the node specified
+ *
+ * @param node	Insert after this node
+ * @param data	Data for new node
+ * @return		Newly inserted Node
+ */
+VirtualNode VirtualCircularList::insertAfter(VirtualNode node, const void* const data)
+{
+	if(!VirtualCircularList::checkThatNodeIsPresent(this, node))
+	{
+		return NULL;
+	}
+
+	VirtualNode newNode = NULL;
+
+	if(!node || node == this->tail)
+	{
+		VirtualCircularList::pushBack(this, data);
+
+		newNode = this->tail;
+	}
+	else
+	{
+		newNode = new VirtualNode(data);
+
+		if(!newNode)
+		{
+			return false;
+		}
+
+		// set previous if list isn't empty
+		newNode->next = node->next;
+
+		if(node->next)
+		{
+			node->next->previous = newNode;
+		}
+
+		node->next = newNode;
+
+		newNode->previous = node;
+	}
+
+	return newNode;
+}
 
 /**
  * Retrieve the number of objects the list has
@@ -464,7 +545,7 @@ bool VirtualCircularList::removeNode(VirtualNode node)
 		return true;
 	}
 
-	ASSERT(false, "VirtualCircularList::removeNode: removing invalid node");
+	NM_ASSERT(false, "VirtualCircularList::removeNode: removing invalid node");
 
 	return false;
 }
