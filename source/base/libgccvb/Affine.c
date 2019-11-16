@@ -268,3 +268,81 @@ PRINT_INT(lastRow, 1, 16);
 
 	return -1;
 }
+
+static s16 Affine::rotate(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Rotation* rotation)
+{
+	fix10_6 highPrecisionPa = __FIX7_9_TO_FIX10_6(__COS(-rotation->z));
+	fix10_6 highPrecisionPb = -__FIX7_9_TO_FIX10_6(__SIN(-rotation->z));
+	fix10_6 highPrecisionPc = __FIX7_9_TO_FIX10_6(__SIN(-rotation->z));
+	fix10_6 highPrecisionPd = __FIX7_9_TO_FIX10_6(__COS(-rotation->z));
+	
+	FixedAffineMatrix fixedAffineMatrix;
+	fixedAffineMatrix.pa = __FIX10_6_TO_FIX7_9(highPrecisionPa);
+	fixedAffineMatrix.pc = __FIX10_6_TO_FIX7_9(highPrecisionPc);
+
+	// bgX + bgWidth - pa * dispX - pb * dispY
+	fixedAffineMatrix.dx =
+		mx
+		+
+		__FIX10_6_TO_FIX13_3
+		(
+			halfWidth
+			-
+			(
+				__FIX10_6_MULT(highPrecisionPa, x)
+				+
+				__FIX10_6_MULT(highPrecisionPb, y)
+			)
+		);
+
+	// bgY + bgHeight - pc * dispX - pd * dispY
+	fixedAffineMatrix.dy =
+		my
+		+
+		__FIX10_6_TO_FIX13_3
+		(
+			halfHeight
+			-
+			(
+				__FIX10_6_MULT(highPrecisionPc, x)
+				+
+				__FIX10_6_MULT(highPrecisionPd, y)
+			)
+		);
+
+	fixedAffineMatrix.parallax = 0;
+
+	AffineEntry* affine = (AffineEntry*)param;
+
+
+	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
+	int lastRow = __FIX10_6_TO_I((halfHeight << 1)) + 1;
+
+/*
+	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
+	int lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
+	int counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
+*/
+//	for(;counter && i <= lastRow; i++, counter--)
+	for(;i <= lastRow; i++, )
+	{
+		affine[i].pb_y = __FIX10_6_TO_FIX13_3(__FIX10_6_MULT(__I_TO_FIX10_6(i), highPrecisionPb)) + fixedAffineMatrix.dx;
+		affine[i].parallax = fixedAffineMatrix.parallax;
+		affine[i].pd_y = __FIX10_6_TO_FIX13_3(__FIX10_6_MULT(__I_TO_FIX10_6(i), highPrecisionPd)) + fixedAffineMatrix.dy;
+		affine[i].pa = fixedAffineMatrix.pa;
+		affine[i].pc = fixedAffineMatrix.pc;
+	}
+/*
+	if(i <= lastRow)
+	{
+		return i;
+	}
+*/
+	affine[i].pb_y = 0;
+	affine[i].parallax = 0;
+	affine[i].pd_y = 0;
+	affine[i].pa = 0;
+	affine[i].pc = 0;
+
+	return -1;
+}
