@@ -63,7 +63,7 @@ inline int customAbs(int number)
 }
 
 // usable only when m is a power of 2
-#define __MODULO(n, m)			(n & (m - 1))
+#define __MODULO(n, m)			((n) & ((m) - 1))
 
 // fixed point macros
 #define fix7_9					s16
