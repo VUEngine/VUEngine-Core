@@ -654,9 +654,24 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
 {
 	if(this->inheritEnvironment)
 	{
-		this->transformation.globalRotation.x = environmentTransform->globalRotation.x + this->transformation.localRotation.x;
-		this->transformation.globalRotation.y = environmentTransform->globalRotation.y + this->transformation.localRotation.y;
-		this->transformation.globalRotation.z = environmentTransform->globalRotation.z + this->transformation.localRotation.z;
+		this->transformation.globalRotation.x = __MODULO(environmentTransform->globalRotation.x + this->transformation.localRotation.x, 512);
+		this->transformation.globalRotation.y = __MODULO(environmentTransform->globalRotation.y + this->transformation.localRotation.y, 512);
+		this->transformation.globalRotation.z = __MODULO(environmentTransform->globalRotation.z + this->transformation.localRotation.z, 512);
+
+		if(0 > this->transformation.globalRotation.x)
+		{
+			this->transformation.globalRotation.x += 512;
+		}
+
+		if(0 > this->transformation.globalRotation.y)
+		{
+			this->transformation.globalRotation.y += 512;
+		}
+
+		if(0 > this->transformation.globalRotation.z)
+		{
+			this->transformation.globalRotation.z += 512;
+		}
 	}
 }
 
@@ -869,6 +884,25 @@ void Container::setLocalRotation(const Rotation* rotation)
 {
 	this->transformation.localRotation = *rotation;
 
+	this->transformation.localRotation.x = __MODULO(rotation->x, 512);
+	this->transformation.localRotation.y = __MODULO(rotation->y, 512);
+	this->transformation.localRotation.z = __MODULO(rotation->z, 512);
+
+	if(0 > this->transformation.localRotation.x)
+	{
+		this->transformation.localRotation.x += 512;
+	}
+
+	if(0 > this->transformation.localRotation.y)
+	{
+		this->transformation.localRotation.y += 512;
+	}
+
+	if(0 > this->transformation.localRotation.z)
+	{
+		this->transformation.localRotation.z += 512;
+	}
+	
 	Container::invalidateGlobalRotation(this);
 }
 
