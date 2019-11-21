@@ -176,6 +176,7 @@ class Body : Object
 	Force getLastNormalDirection();
 	void reset();
 	void clearNormal(Object referent);
+	fix10_6 getFrictionForceMagnitude();
 	fix10_6 getFrictionCoefficient();
 	void setFrictionCoefficient(fix10_6 frictionCoefficient);
 	void setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoefficient);

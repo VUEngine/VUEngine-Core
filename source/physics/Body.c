@@ -961,6 +961,11 @@ void Body::clearNormal(Object referent)
 	Body::computeTotalNormal(this);
 }
 
+fix10_6 Body::getFrictionForceMagnitude()
+{
+	return this->frictionForceMagnitude;
+}
+
 fix10_6 Body::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
