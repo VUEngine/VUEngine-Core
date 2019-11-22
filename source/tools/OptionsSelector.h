@@ -101,9 +101,9 @@ class OptionsSelector : Object
 	// Printing row
 	u8 y;
 	// Number of columns per page
-	u8 cols;
+	u16 cols;
 	// Number of rows per page
-	u8 rows;
+	u16 rows;
 	// Width of a column (in chars)
 	u8 columnWidth;
 	// Total number of options
@@ -118,7 +118,7 @@ class OptionsSelector : Object
 	char* font;
 
 	/// @publicsection
-	void constructor(u8 cols, u8 rows, char* font);
+	void constructor(u16 cols, u16 rows, char* font);
 	void doCurrentSelectionCallback();
 	void setColumnWidth(u8 width);
 	void setMarkCharacter(char* mark);

@@ -87,7 +87,7 @@ friend class Printing;
  * @param rows	Number of rows
  * @param font	Font to use for printing selector
  */
-void OptionsSelector::constructor(u8 cols, u8 rows, char* font)
+void OptionsSelector::constructor(u16 cols, u16 rows, char* font)
 {
 	Base::constructor();
 
