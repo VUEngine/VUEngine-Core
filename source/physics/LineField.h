@@ -58,6 +58,7 @@ class LineField : Shape
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();
 	override RightBox getSurroundingRightBox();
+	override Vector3D getNormal();
 	override void configureWireframe();
 	override void print(int x, int y);
 }

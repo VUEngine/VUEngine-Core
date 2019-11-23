@@ -170,6 +170,16 @@ void Shape::setup(u32 layers, u32 layersToIgnore)
 /**
  * Position
  *
+ * @return						Vector3D
+ */
+Vector3D Shape::getNormal()
+{
+	return Vector3D::zero();
+}
+
+/**
+ * Position
+ *
  * @param position				Vector3d*
  * @param rotation				Rotation*
  * @param scale					Scale*

@@ -253,6 +253,11 @@ void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 	vertexes[1] = this->b;
 }
 
+Vector3D LineField::getNormal()
+{
+	return this->normal;
+}
+
 // print debug data
 void LineField::print(int x, int y)
 {

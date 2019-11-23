@@ -239,6 +239,7 @@ abstract class Shape : Object
 	void hide();
 	virtual void setup(u32 layers, u32 layersToIgnore);
 	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	virtual Vector3D getNormal();
 	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
 	virtual Vector3D getPosition() = 0;
 	virtual RightBox getSurroundingRightBox() = 0;
