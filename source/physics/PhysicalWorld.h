@@ -63,10 +63,13 @@ class PhysicalWorld : Object
 	Acceleration gravity;
 	// frictionCoefficient
 	fix10_6 frictionCoefficient;
-	// time scale
-	fix10_6 timeScale;
 	// body to check for gravity
 	VirtualNode bodyToCheckForGravityNode;
+	// time scale
+	fix10_6 timeScale;
+	// Time scale is handled here, not in the Body class
+	u8 remainingSkipCycles;
+	u8 skipCycles;
 
 	/// @publicsection
 	void constructor();

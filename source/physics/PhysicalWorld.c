@@ -66,6 +66,9 @@ void PhysicalWorld::constructor()
 	this->gravity.y = 0;
 	this->gravity.z = 0;
 
+	this->remainingSkipCycles = 0;
+	this->skipCycles = 0;
+
 	this->frictionCoefficient = 0;
 	this->timeScale = __1I_FIX10_6;
 }
@@ -243,10 +246,30 @@ void PhysicalWorld::update(Clock clock)
 		return;
 	}
 
+	if(__1I_FIX10_6 > this->timeScale)
+	{
+		if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+		{
+			if(++this->remainingSkipCycles > this->skipCycles)
+			{
+				this->remainingSkipCycles = 0;
+				return;
+			}
+		}
+		else
+		{
+			if(++this->remainingSkipCycles <= this->skipCycles)
+			{
+				return;
+			}
+
+			this->remainingSkipCycles = 0;
+		}
+	}
+
 	PhysicalWorld::checkForGravity(this);
 
 	// TODO: time scale
-	Body::setCurrentElapsedTime(__FIX10_6_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
 
@@ -299,6 +322,8 @@ void PhysicalWorld::reset()
 	VirtualList::clear(this->activeBodies);
 
 	this->bodyToCheckForGravityNode = NULL;
+
+	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
 }
 
 /**
@@ -360,6 +385,34 @@ void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
 void PhysicalWorld::setTimeScale(fix10_6 timeScale)
 {
 	this->timeScale = timeScale;
+
+	if(this->timeScale > __1I_FIX10_6)
+	{
+		this->timeScale = __1I_FIX10_6;
+	}
+	else if(0 >= timeScale)
+	{
+		this->timeScale = __F_TO_FIX10_6(0.1f);
+	}
+
+	this->remainingSkipCycles = 0;
+	this->skipCycles = 0;
+
+	if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+	{
+		u32 gameFramesPerSecond = __TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR; 
+		fix10_6 targetUpdatesPerSecond = __FIX10_6_MULT(__I_TO_FIX10_6(gameFramesPerSecond), this->timeScale);
+		fix10_6 targetSkipsPerSecond = __I_TO_FIX10_6(gameFramesPerSecond) - targetUpdatesPerSecond;
+
+		if(targetSkipsPerSecond)
+		{
+			this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(targetUpdatesPerSecond, targetSkipsPerSecond) + __05F_FIX10_6);
+		}
+	}
+	else
+	{
+		this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(__1I_FIX10_6, this->timeScale) - __1I_FIX10_6 + __05F_FIX10_6);
+	}
 }
 
 /**
