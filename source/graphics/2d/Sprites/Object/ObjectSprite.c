@@ -203,20 +203,6 @@ void ObjectSprite::checkForContainer()
 }
 
 /**
- * Calculate parallax
- *
- * @memberof			ObjectSprite
- * @public
- *
- * @param z				Z coordinate to base on the calculation
- */
-void ObjectSprite::calculateParallax(fix10_6 z)
-{
-	this->position.z = z - _cameraPosition->z;
-	this->position.parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
-}
-
-/**
  * Write WORLD data to DRAM
  *
  * @memberof		ObjectSprite

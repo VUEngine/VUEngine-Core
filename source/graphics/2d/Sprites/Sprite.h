@@ -221,12 +221,12 @@ abstract class Sprite : Object
 	void updateTransparency(bool evenFrame);
 	void disposed();
 	bool isDisposed();
+	void calculateParallax(fix10_6 z);
 	void updateTransparency(bool evenFrame);
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual void applyAffineTransformations();
 	virtual void applyHbiasEffects();
 	virtual bool areTexturesWritten();
-	virtual void calculateParallax(fix10_6 z);
 	virtual Scale getScale();
 	virtual u8 getWorldLayer();
 	virtual void hide();

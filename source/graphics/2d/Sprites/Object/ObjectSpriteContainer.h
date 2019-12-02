@@ -68,7 +68,6 @@ class ObjectSpriteContainer : Sprite
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
 	s32 addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
-	void calculateParallax(fix10_6 z);
 	int getAvailableObjects();
 	int getFirstObjectIndex();
 	int getLastObjectIndex();

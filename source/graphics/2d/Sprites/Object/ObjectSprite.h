@@ -95,7 +95,6 @@ class ObjectSprite : Sprite
 	override void setPosition(const PixelVector* position);
 	override void position(const Vector3D* position3D);
 	override void rotate(const Rotation* rotation);
-	override void calculateParallax(fix10_6 z);
 	override u8 getWorldLayer();
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);

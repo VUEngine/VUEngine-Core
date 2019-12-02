@@ -28,6 +28,7 @@
 #include <AnimationController.h>
 #include <Camera.h>
 #include <VIPManager.h>
+#include <Optics.h>
 #include <BgmapTexture.h>
 #include <debugUtilities.h>
 
@@ -189,7 +190,9 @@ void Sprite::setPosition(const PixelVector* position)
  * @param z				Z coordinate to base on the calculation
  */
 void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
-{}
+{
+	this->position.parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+}
 
 /**
  * Get position relative to the camera

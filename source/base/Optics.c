@@ -33,25 +33,3 @@
 //												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Calculate parallax based on the x and z coordinates
- *
- * @param x	X parameter for the calculation of the parallax displacement
- * @param z	Z parameter for the calculation of the parallax displacement
- * @return 	Parallax (in pixels)
- */
-static s16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
-{
-	fix10_6 leftEyePoint, rightEyePoint;
-	fix10_6 leftEyeGx, rightEyeGx;
-
-	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
-
-	// set map position and parallax
-	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance);
-	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance);
-	leftEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(leftEyePoint, z) , (_optical->distanceEyeScreen + z));
-	rightEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(rightEyePoint, z) , (_optical->distanceEyeScreen + z));
-
-	return __METERS_TO_PIXELS((rightEyeGx - leftEyeGx) / 2);
-}

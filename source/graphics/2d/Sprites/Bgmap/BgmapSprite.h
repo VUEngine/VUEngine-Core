@@ -121,7 +121,6 @@ class BgmapSprite : Sprite
 	override void applyAffineTransformations();
 	override void applyHbiasEffects();
 	override void resize(Scale scale, fix10_6 z);
-	override void calculateParallax(fix10_6 z);
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);
 }
