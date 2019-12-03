@@ -57,7 +57,7 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 }
 
 // Produces graphical glitches if inlined
-// Not to critical since it is not used a lot
+// Not too critical since it is not used a lot
 static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 {
 	u32 i;
@@ -67,3 +67,26 @@ static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 		*destination++ = 0;
 	}
 }
+
+// TODO: inlining this causes trouble with ANIMATED_MULTI animations
+static void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
+{
+	const HWORD* finalSource = source + numberOfHWORDS;
+
+    asm("					\n\t"      \
+		"jr end%=			\n\t"      \
+		"loop%=:			\n\t"      \
+		"ld.h 0[%1],r10		\n\t"      \
+		"add %3,r10			\n\t"      \
+		"st.h r10,0[%0]		\n\t"      \
+		"add 2,%0			\n\t"      \
+		"add 2,%1			\n\t"      \
+		"end%=:				\n\t"      \
+		"cmp %1,%2			\n\t"      \
+		"bgt loop%=			\n\t"      \
+    : // No Output
+    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
+	: "r10" // regs used
+    );
+}
+
