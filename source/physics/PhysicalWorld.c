@@ -324,6 +324,8 @@ void PhysicalWorld::reset()
 	this->bodyToCheckForGravityNode = NULL;
 
 	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
+
+	PhysicalWorld::setTimeScale(this, __1I_FIX10_6);
 }
 
 /**
