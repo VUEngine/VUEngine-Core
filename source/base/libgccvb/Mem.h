@@ -50,7 +50,7 @@ static class Mem : Object
 	static inline void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
 	static inline void copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
 	static inline void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
-	static inline void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
+	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
 }
 
 // Copy a block of data from one area in memory to another.
@@ -142,27 +142,6 @@ static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numbe
 		"st.b r10,0[%0]		\n\t"      \
 		"add 1,%0			\n\t"      \
 		"add 1,%1			\n\t"      \
-		"end%=:				\n\t"      \
-		"cmp %1,%2			\n\t"      \
-		"bgt loop%=			\n\t"      \
-    : // No Output
-    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
-	: "r10" // regs used
-    );
-}
-
-static inline void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
-{
-	const HWORD* finalSource = source + numberOfHWORDS;
-
-    asm("					\n\t"      \
-		"jr end%=			\n\t"      \
-		"loop%=:			\n\t"      \
-		"ld.h 0[%1],r10		\n\t"      \
-		"add %3,r10			\n\t"      \
-		"st.h r10,0[%0]		\n\t"      \
-		"add 2,%0			\n\t"      \
-		"add 2,%1			\n\t"      \
 		"end%=:				\n\t"      \
 		"cmp %1,%2			\n\t"      \
 		"bgt loop%=			\n\t"      \
