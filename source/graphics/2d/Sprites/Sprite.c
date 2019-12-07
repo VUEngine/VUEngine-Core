@@ -499,7 +499,7 @@ void Sprite::update()
 	if(this->animationController && this->texture)
 	{
 		// first animate the frame
-		if(this->writeAnimationFrame)
+		if(this->writeAnimationFrame && this->visible)
 		{
 			Sprite::writeAnimation(this);
 			this->writeAnimationFrame = false;
