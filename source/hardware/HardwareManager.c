@@ -337,54 +337,6 @@ void HardwareManager::disableKeypad()
 }
 
 /**
- * Retrieve the Stack Pointer's value
- */
-static int HardwareManager::getStackPointer()
-{
-	int sp;
-
-	asm(" 			\n\
-		mov sp,%0	\n\
-		"
-	: "=r" (sp) // Output
-	);
-
-	return sp;
-}
-
-/**
- * Retrieve the Link Pointer's value
- */
-static int HardwareManager::getLinkPointer()
-{
-	int lp;
-
-	asm(" 			\n\
-		mov lp,%0	\n\
-		"
-	: "=r" (lp) // Output
-	);
-
-	return lp;
-}
-
-/**
- * Retrieve PSW
- * @return		 	PSW
- */
-static int HardwareManager::getPSW()
-{
-	int psw;
-
-	asm("			\n\
-		stsr psw,%0	\n\
-		"
-	: "=r" (psw) // Output
-	);
-	return psw;
-}
-
-/**
  * Print manager's state
  *
  * @param x			Camera's x coordinate

@@ -78,9 +78,9 @@ singleton class HardwareManager : Object
     static inline void disableInterrupts();
     static inline void enableMultiplexedInterrupts();
     static inline void disableMultiplexedInterrupts();
-    static int getStackPointer();
-    static int getLinkPointer();
-    static int getPSW();
+    static inline int getStackPointer();
+    static inline int getLinkPointer();
+    static inline int getPSW();
 	static void checkMemoryMap();
 	static void checkStackStatus();
 	void clearScreen();
@@ -161,6 +161,54 @@ static inline void HardwareManager::disableMultiplexedInterrupts()
 		: // Input
 		: // Clobber
 	);
+}
+
+/**
+ * Retrieve the Stack Pointer's value
+ */
+static inline int HardwareManager::getStackPointer()
+{
+	int sp;
+
+	asm(" 			\n\
+		mov sp,%0	\n\
+		"
+	: "=r" (sp) // Output
+	);
+
+	return sp;
+}
+
+/**
+ * Retrieve the Link Pointer's value
+ */
+static inline int HardwareManager::getLinkPointer()
+{
+	int lp;
+
+	asm(" 			\n\
+		mov lp,%0	\n\
+		"
+	: "=r" (lp) // Output
+	);
+
+	return lp;
+}
+
+/**
+ * Retrieve PSW
+ * @return		 	PSW
+ */
+static inline int HardwareManager::getPSW()
+{
+	int psw;
+
+	asm("			\n\
+		stsr psw,%0	\n\
+		"
+	: "=r" (psw) // Output
+	);
+	return psw;
 }
 
 #endif
