@@ -1110,8 +1110,8 @@ void Game::currentFrameEnded()
 #ifdef __ALERT_FOR_TORN_FRAMES
 	if(this->nextFrameStarted)
 	{
-		PRINT_TEXT("Torn Frames:", 10, 26);
-		PRINT_INT(++_tornGameFrameCount, 23, 26);
+		PRINT_TEXT("Torn Frames:     ", 1, 27);
+		PRINT_INT(++_tornGameFrameCount, 24, 27);
 	}
 #endif
 #endif
