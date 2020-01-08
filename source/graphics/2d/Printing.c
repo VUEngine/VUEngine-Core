@@ -452,6 +452,21 @@ void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ 
 }
 #endif
 
+s16 Printing::getWorldCoordinatesX()
+{
+	return this->gx;
+}
+
+s16 Printing::getWorldCoordinatesY()
+{
+	return this->gy;
+}
+
+s16 Printing::getWorldCoordinatesP()
+{
+	return this->gp;
+}
+
 void Printing::resetCoordinates()
 {
 	this->gx = __PRINTING_BGMAP_X_OFFSET;

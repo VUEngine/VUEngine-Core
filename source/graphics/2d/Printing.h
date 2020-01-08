@@ -343,6 +343,27 @@ singleton class Printing : Object
 	void setWorldSize(u16 w, u16 h);
 
 	/**
+	 * Retrieve WORLD's gx
+	 *
+	 * @return			WORLD's gx
+	 */
+	s16 getWorldCoordinatesX();
+
+	/**
+	 * Retrieve WORLD's gy
+	 *
+	 * @return			WORLD's gy
+	 */
+	s16 getWorldCoordinatesY();
+
+	/**
+	 * Retrieve WORLD's gp
+	 *
+	 * @return			WORLD's gp
+	 */
+	s16 getWorldCoordinatesP();
+
+	/**
 	 * Print a string
 	 *
 	 * @param string	String to print
