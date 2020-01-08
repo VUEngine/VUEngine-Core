@@ -268,19 +268,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	
 	Camera::setCameraFrustum(Camera::getInstance(), this->stageSpec->level.cameraFrustum);
 
-	// set palettes
-	Stage::setupPalettes(this);
-
-	// setup OBJs
-	Stage::setObjectSpritesContainers(this);
-
-	// setup SpriteManager's configuration
-	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
-	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
-
-	// preload textures
-	Stage::preloadAssets(this);
+	Stage::prepareGraphics(this);
 
 	// setup ui
 	Stage::setupUI(this);
@@ -590,7 +578,7 @@ void Stage::preloadAssets()
 
 		VirtualNode node = VirtualList::begin(recyclableTextures);
 
-		for(;node; node = node->next)
+		for(; node; node = node->next)
 		{
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
 		}
@@ -1142,19 +1130,7 @@ void Stage::resume()
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
 	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
 
-	// set palettes
-	Stage::setupPalettes(this);
-
-	// set OBJs' z position
-	Stage::setObjectSpritesContainers(this);
-
-	// setup SpriteManager's configuration
-	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
-	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
-
-	// reload textures
-	Stage::preloadAssets(this);
+	Stage::prepareGraphics(this);
 
 	if(this->focusEntity)
 	{
@@ -1180,6 +1156,28 @@ void Stage::resume()
 	}
 
 	this->entityFactory = new EntityFactory();
+}
+
+void Stage::prepareGraphics()
+{
+	// Must clean DRAM
+	SpriteManager::reset(SpriteManager::getInstance());
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	CharSetManager::reset(CharSetManager::getInstance());
+
+	// set palettes
+	Stage::setupPalettes(this);
+
+	// setup OBJs
+	Stage::setObjectSpritesContainers(this);
+
+	// setup SpriteManager's configuration
+	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
+	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
+
+	// preload textures
+	Stage::preloadAssets(this);
 }
 
 void Stage::setupSounds()
