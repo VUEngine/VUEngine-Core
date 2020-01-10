@@ -83,6 +83,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
 	this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
+	Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+
 	this->halfWidth = this->texture->textureSpec->cols << 2;
 	this->halfHeight = this->texture->textureSpec->rows << 2;
 	this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
@@ -106,6 +108,7 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
+		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
 		delete this->texture;
 	}
 
