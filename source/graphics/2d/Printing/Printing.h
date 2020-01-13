@@ -36,11 +36,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some handy macros
-#define PRINT_TEXT(string, x, y)			Printing::text(_printing, string, x, y, NULL)
-#define PRINT_INT(number, x, y)				Printing::int(_printing, number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)			Printing::float(_printing, number, x, y, NULL)
-#define PRINT_HEX(number, x, y)				Printing::hex(_printing, number, x, y, 8, NULL)
-#define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(_printing, number, x, y, d, NULL)
+#define PRINT_TEXT(string, x, y)			Printing::text(Printing::getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)				Printing::int(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)			Printing::float(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)				Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
+#define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
+
+// horizontal tab size in chars
+#define __TAB_SIZE					4
 
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH		16
@@ -174,7 +177,7 @@ typedef const FontData FontROMData;
  *
  * @ingroup graphics-2d
  */
-singleton class Printing : Object
+abstract class Printing : Object
 {
 	/// @protectedsection
 
@@ -281,13 +284,6 @@ singleton class Printing : Object
 	void loadFonts(FontSpec** fontSpecs);
 
 	/**
-     * Render general print output layer
-     *
-     * @param textLayer	Number of layer (World) to set as printing layer
-     */
-	void render(int textLayer);
-
-	/**
      * Empties internal virtual list of registered fonts
      */
 	void reset();
@@ -382,6 +378,7 @@ singleton class Printing : Object
 	 * @fn 	void Printing::constructor()
      * @memberof  Printing
 	 */
+	void constructor();
 
 	/**
 	 * Class destructor
@@ -389,6 +386,7 @@ singleton class Printing : Object
 	 * @fn	void Printing::destructor()
      * @memberof  Printing
 	 */
+	void destructor();
 
  	/**
  	 * Direct printing out method
@@ -401,9 +399,15 @@ singleton class Printing : Object
      * @param string	String to print
      * @param font		Name of font to use for printing
      */
+	virtual void out(u8 x, u8 y, const char* string, const char* font) = 0;
+
+	/**
+     * Render general print output layer
+     *
+     * @param textLayer	Number of layer (World) to set as printing layer
+     */
+	virtual void render(int textLayer) = 0;
 }
 
-// Declare global instance for performance
-extern Printing _printing;
 
 #endif

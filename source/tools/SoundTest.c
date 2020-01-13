@@ -117,7 +117,7 @@ void SoundTest::show()
 
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
-	Printing::resetCoordinates(_printing);
+	Printing::resetCoordinates(Printing::getInstance());
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
@@ -146,30 +146,32 @@ void SoundTest::printGUI(bool clearScreen)
 		SoundTest::loadSound(this);
 	}
 
+	Printing printing = Printing::getInstance();
+
 	if(clearScreen)
 	{
-		Printing::clear(_printing);
+		Printing::clear(printing);
 	}
 
-	Printing::text(_printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 
 	if(NULL == _userSounds[this->selectedSound])
 	{
-		Printing::text(_printing, "No sounds found", 1, 4, NULL);
-		Printing::text(_printing, "Define some in _userSounds global variable", 1, 6, NULL);
+		Printing::text(printing, "No sounds found", 1, 4, NULL);
+		Printing::text(printing, "Define some in _userSounds global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::text(_printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
 
 	u16 totalSounds = SoundTest::getTotalSounds(this);
 
 	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound + 1);
 	int totalSoundsDigits = Utilities::getDigitCount(totalSounds);
-	Printing::int(_printing, this->selectedSound + 1, 1 + 1, 2, NULL);
-	Printing::text(_printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
-	Printing::int(_printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
-	Printing::text(_printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+	Printing::int(printing, this->selectedSound + 1, 1 + 1, 2, NULL);
+	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
 
 	if(isDeleted(this->soundWrapper))
 	{
@@ -182,19 +184,19 @@ void SoundTest::printGUI(bool clearScreen)
 	// Controls
 	if(SoundWrapper::isPaused(this->soundWrapper))
 	{
-		Printing::text(_printing, "Play     \x13", xControls, yControls++, NULL);
+		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
 	}
 	else
 	{
-		Printing::text(_printing, "Pause    \x13", xControls, yControls++, NULL);
+		Printing::text(printing, "Pause    \x13", xControls, yControls++, NULL);
 	}
-	Printing::text(_printing, "Rewind   \x14", xControls, yControls++, NULL);
-	Printing::text(_printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(_printing, SoundWrapper::hasPCMTracks(this->soundWrapper) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text(printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(printing, SoundWrapper::hasPCMTracks(this->soundWrapper) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
 	yControls++;
-	Printing::text(_printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
-	Printing::text(_printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
-	Printing::text(_printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
 	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
@@ -410,7 +412,7 @@ void SoundTest::loadSound()
 	Game::disableKeypad(Game::getInstance());
 
 #ifdef __SOUND_TEST
-	Printing::clear(_printing);
+	Printing::clear(Printing::getInstance());
 	PRINT_TEXT("Loading...", 1, 4);
 #endif
 
