@@ -848,21 +848,29 @@ const Vector3D* Container::getPosition()
 void Container::setLocalPosition(const Vector3D* position)
 {
 	// force global position calculation on the next transformation cycle
-	if(this->transformation.localPosition.z != position->z)
+	if(position == &this->transformation.localPosition)
 	{
 		Container::invalidateGlobalPosition(this);
 		Container::invalidateGlobalScale(this);
 	}
-	else if(this->transformation.localPosition.x != position->x)
+	else
 	{
-		Container::invalidateGlobalPosition(this);
-	}
-	else if(this->transformation.localPosition.y != position->y)
-	{
-		Container::invalidateGlobalPosition(this);
-	}
+		if(this->transformation.localPosition.z != position->z)
+		{
+			Container::invalidateGlobalPosition(this);
+			Container::invalidateGlobalScale(this);
+		}
+		else if(this->transformation.localPosition.x != position->x)
+		{
+			Container::invalidateGlobalPosition(this);
+		}
+		else if(this->transformation.localPosition.y != position->y)
+		{
+			Container::invalidateGlobalPosition(this);
+		}
 
-	this->transformation.localPosition = *position;
+		this->transformation.localPosition = *position;
+	}
 }
 
 /**
