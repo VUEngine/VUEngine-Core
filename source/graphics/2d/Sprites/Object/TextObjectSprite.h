@@ -19,25 +19,20 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef OBJECT_SPRITE_H_
-#define OBJECT_SPRITE_H_
+#ifndef TEXT_OBJECT_SPRITE_H_
+#define TEXT_OBJECT_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
-#include <MiscStructs.h>
-#include <Texture.h>
+#include <ObjectSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											 MACROS
 //---------------------------------------------------------------------------------------------------------
-
-#define __OBJECT_CHAR_SHOW_MASK		0xC000
-#define __OBJECT_CHAR_HIDE_MASK		0x0000
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,29 +40,32 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A ObjectSprite spec
+ * A TextObjectSprite spec
  *
- * @memberof ObjectSprite
+ * @memberof TextObjectSprite
  */
-typedef struct ObjectSpriteSpec
+typedef struct TextObjectSpriteSpec
 {
-	/// it has a Sprite spec at the beginning
-	SpriteSpec spriteSpec;
+	/// it has a ObjectSprite spec at the beginning
+	ObjectSpriteSpec objectSpriteSpec;
 
-	/// the display mode (BGMAP, AFFINE, H-BIAS)
-	u16 bgmapMode;
+	/// Text
+	const char* text;
 
-	/// flag to indicate in which display to show the bg texture
-	u16 display;
+	/// Font
+	const char* font;
 
-} ObjectSpriteSpec;
+	/// Palette
+	u8 palette;
+
+} TextObjectSpriteSpec;
 
 /**
- * A ObjectSprite spec that is stored in ROM
+ * A TextObjectSprite spec that is stored in ROM
  *
- * @memberof ObjectSprite
+ * @memberof TextObjectSprite
  */
-typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
+typedef const TextObjectSpriteSpec TextObjectSpriteROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,31 +73,17 @@ typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites-object
-class ObjectSprite : Sprite
+class TextObjectSprite : ObjectSprite
 {
-	// parent sprite
-	ObjectSpriteContainer objectSpriteContainer;
-	// object index
-	s16 objectIndex;
-	// number of objects
-	s16 totalObjects;
-	bool didHide;
+	const char* text;
+	const char* font;
+	u16 palette;
+	bool printed;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
-	s16 getObjectIndex();
-	s16 getTotalObjects();
-	void setObjectIndex(s16 objectIndex);
-	void invalidateObjectSpriteContainer();
+	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
+
 	override void render(const PixelVector* displacement);
-	override void setPosition(const PixelVector* position);
-	override void position(const Vector3D* position3D);
-	override void rotate(const Rotation* rotation);
-	override u8 getWorldLayer();
-	override void addDisplacement(const PixelVector* displacement);
-	override void setMode(u16 display, u16 mode);
-	override void show();
-	override void hide();
 }
 
 

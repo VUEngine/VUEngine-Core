@@ -79,16 +79,23 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	this->didHide = false;
 
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
+	this->halfWidth = 0;
+	this->halfHeight = 0;
 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
-	this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
-	Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+	if(objectSpriteSpec->spriteSpec.textureSpec)
+	{
+		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
+		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
 
-	this->halfWidth = this->texture->textureSpec->cols << 2;
-	this->halfHeight = this->texture->textureSpec->rows << 2;
-	this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
-	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
+		this->halfWidth = this->texture->textureSpec->cols << 2;
+		this->halfHeight = this->texture->textureSpec->rows << 2;
+
+		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
+
+		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
+	}
 }
 
 /**
@@ -154,7 +161,10 @@ void ObjectSprite::rotate(const Rotation* rotation)
 		this->head &= 0xEFFF;
 	}
 
-	this->texture->written = false;
+	if(!isDeleted(this->texture))
+	{
+		this->texture->written = false;
+	}
 }
 
 /**
@@ -182,8 +192,6 @@ void ObjectSprite::setPosition(const PixelVector* position)
  */
 void ObjectSprite::position(const Vector3D* position)
 {
-	ASSERT(this->texture, "ObjectSprite::position: null texture");
-
 	Base::position(this, position);
 
 	ObjectSprite::checkForContainer(this);
@@ -197,7 +205,7 @@ void ObjectSprite::position(const Vector3D* position)
  */
 void ObjectSprite::checkForContainer()
 {
-	if(0 > this->objectIndex)
+	if(0 > this->objectIndex && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
 		ObjectSprite::setObjectIndex(this, ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
@@ -215,14 +223,16 @@ void ObjectSprite::checkForContainer()
  */
 void ObjectSprite::render(const PixelVector* displacement)
 {
-	ASSERT(this->texture, "ObjectSprite::render: null texture");
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
 
 	if(!this->positioned)
 	{
 		return;
 	}
 
-	//ObjectSprite::checkForContainer(this);
 	if(!this->texture->written)
 	{
 		ObjectTexture::write(this->texture);
@@ -356,15 +366,16 @@ void ObjectSprite::hide()
  */
 void ObjectSprite::setObjectIndex(s16 objectIndex)
 {
-	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
-
 	int previousObjectIndex = this->objectIndex;
 	this->objectIndex = objectIndex;
 
 	if(0 <= this->objectIndex)
 	{
 		// rewrite texture
-		ObjectTexture::setObjectIndex(this->texture, this->objectIndex);
+		if(!isDeleted(this->texture))
+		{
+			ObjectTexture::setObjectIndex(this->texture, this->objectIndex);
+		}
 
 		if(0 <= previousObjectIndex)
 		{
