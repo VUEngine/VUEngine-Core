@@ -260,6 +260,8 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
  */
 void CharSetManager::writeCharSets()
 {
+	CharSetManager::defragment(this);
+
 	VirtualNode node = this->charSetsPendingWriting->head;
 
 	for(; node; node = node->next)
