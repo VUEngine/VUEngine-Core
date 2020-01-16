@@ -312,6 +312,23 @@ bool GameState::stream()
 }
 
 /**
+ * Streaming everything on the Stage
+ */
+void GameState::streamAll()
+{
+	while(Stage::stream(this->stage));
+
+	Stage::streamAll(this->stage);
+
+	// Transformation everything definitively
+	GameState::transform(this);
+
+	// Froce graphics to get ready
+	GameState::synchronizeGraphics(this);
+	SpriteManager::prepareAll(SpriteManager::getInstance());
+}
+
+/**
  * Start a transformation cycle on the Stage
  */
 void GameState::transform()
