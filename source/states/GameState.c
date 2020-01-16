@@ -446,6 +446,9 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);
+
+	// Transformation everything definitively
+	GameState::transform(this);
 }
 
 /**
