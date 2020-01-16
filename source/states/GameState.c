@@ -316,6 +316,16 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
+	// Move the camera to its initial position
+	Camera::focus(Camera::getInstance(), false);
+
+	// Transformation everything so anything outside the camera
+	// can be streamed out
+	GameState::transform(this);
+
+	// Froce graphics to get ready
+	GameState::synchronizeGraphics(this);
+
 	while(Stage::stream(this->stage));
 
 	Stage::streamAll(this->stage);
