@@ -1046,7 +1046,7 @@ void Game::updateFrameRate()
 #ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(this))
 		{
-		//	FrameRate::print(FrameRate::getInstance(), 21, 26);
+			FrameRate::print(FrameRate::getInstance(), 21, 26);
 		}
 #endif
 
