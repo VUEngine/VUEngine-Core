@@ -61,8 +61,8 @@ singleton class BgmapPrinting : Printing
 	 */
 	static BgmapPrinting getInstance();
 
-	override void out(u8 x, u8 y, const char* string, const char* font);
-	override void render(int textLayer);
+//	override void out(u8 x, u8 y, const char* string, const char* font);
+//	override void render(int textLayer);
 }
 
 #endif

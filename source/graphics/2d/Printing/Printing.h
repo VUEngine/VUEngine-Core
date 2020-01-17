@@ -177,7 +177,7 @@ typedef const FontData FontROMData;
  *
  * @ingroup graphics-2d
  */
-abstract class Printing : Object
+singleton class Printing : Object
 {
 	/// @protectedsection
 
@@ -399,14 +399,14 @@ abstract class Printing : Object
      * @param string	String to print
      * @param font		Name of font to use for printing
      */
-	virtual void out(u8 x, u8 y, const char* string, const char* font) = 0;
+	void out(u8 x, u8 y, const char* string, const char* font);
 
 	/**
      * Render general print output layer
      *
      * @param textLayer	Number of layer (World) to set as printing layer
      */
-	virtual void render(int textLayer) = 0;
+	void render(int textLayer);
 }
 
 
