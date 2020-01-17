@@ -1046,8 +1046,12 @@ void Game::updateFrameRate()
 #ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(this))
 		{
-			FrameRate::print(FrameRate::getInstance(), 21, 26);
+		//	FrameRate::print(FrameRate::getInstance(), 21, 26);
 		}
+#endif
+
+#ifdef __SHOW_CHAR_MEMORY_STATUS
+		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
 #endif
 
 #ifdef __PRINT_MEMORY_POOL_STATUS

@@ -139,7 +139,12 @@ void VIPManager::disableDrawing()
 void VIPManager::enableInterrupts(u16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
+
+#ifdef __ALERT_VIP_OVERTIME
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
+#else
+	_vipRegisters[__INTENB]= interruptCode;
+#endif
 }
 
 /**
@@ -309,17 +314,17 @@ void VIPManager::processInterrupt(u16 interrupt)
 				this->processingXPEND = false;
 				break;
 
+#ifdef __ALERT_VIP_OVERTIME
 			case __TIMEERR:
 
-#ifdef __ALERT_VIP_OVERTIME
 				{
 					static u32 count = 0;
 					PRINT_TEXT("VIP Overtime!    (   )", 0, 27);
 					PRINT_INT(++count, 18, 27);
 				}
-#endif
 
 				break;
+#endif
 		}
 	}
 }
