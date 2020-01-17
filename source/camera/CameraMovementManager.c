@@ -103,9 +103,9 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 	// calculate the target position
 	Vector3D cameraNewPosition = 
 	{
-		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2),
-		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__SCREEN_HEIGHT / 2),
-		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __PIXELS_TO_METERS(__SCREEN_DEPTH / 2),
+		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__HALF_SCREEN_WIDTH),
+		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__HALF_SCREEN_HEIGHT),
+		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __PIXELS_TO_METERS(__HALF_SCREEN_DEPTH),
 	};
 
 	Camera::setPosition(camera, cameraNewPosition);
