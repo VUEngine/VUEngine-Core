@@ -1386,3 +1386,8 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 
 	return false;
 }
+
+bool Container::isTransformed()
+{
+	return !this->invalidateGlobalTransformation;
+}

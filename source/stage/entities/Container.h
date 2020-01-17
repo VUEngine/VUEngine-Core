@@ -126,6 +126,7 @@ class Container : SpatialObject
 	void setInheritEnvironment(bool inheritEnvironment);
 	void updateChildren(u32 elapsedTime);
 	void updateBehaviors(u32 elapsedTime);
+
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	bool getChildren(ClassPointer classPointer, VirtualList children);
@@ -150,6 +151,8 @@ class Container : SpatialObject
 	virtual void show();
 	virtual void hide();
 	virtual int passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args);
+	virtual bool isTransformed();
+
 	override const Vector3D* getPosition();
 }
 

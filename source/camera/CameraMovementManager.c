@@ -88,12 +88,12 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 	Camera camera = Camera::getInstance();
 
 	// if focusEntity is defined
-	if(!Camera::getFocusEntity(camera))
+	Entity focusEntity = Camera::getFocusEntity(camera);
+
+	if(isDeleted(focusEntity) || !Entity::isTransformed(focusEntity))
 	{
 		return;
 	}
-
-	Entity focusEntity = Camera::getFocusEntity(camera);
 
 	Direction direction = Entity::getDirection(focusEntity);
 
