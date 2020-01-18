@@ -1042,7 +1042,8 @@ void Stage::streamAll()
 	SpriteManager::disposeSprites(SpriteManager::getInstance());
 	Container::purgeChildren(this);
 	Stage::loadInRangeEntities(this, false);
-	EntityFactory::prepareAllEntities(this->entityFactory);
+	while(EntityFactory::prepareEntities(this->entityFactory));
+//	EntityFactory::prepareAllEntities(this->entityFactory);			// Seems it is buggy
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::sortLayers(SpriteManager::getInstance());
 }
@@ -1092,7 +1093,8 @@ void Stage::suspend()
 {
 	// stream all pending entities to avoid having manually recover
 	// the stage entity registries
-	EntityFactory::prepareAllEntities(this->entityFactory);
+	while(EntityFactory::prepareEntities(this->entityFactory));
+//	EntityFactory::prepareAllEntities(this->entityFactory); // It seems buggy
 
 	Base::suspend(this);
 
