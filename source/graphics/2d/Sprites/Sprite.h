@@ -241,6 +241,7 @@ abstract class Sprite : Object
 	virtual bool writeTextures();
 	virtual void print(int x, int y);
 	virtual int getTotalPixels();
+	virtual void sort();
 }
 
 

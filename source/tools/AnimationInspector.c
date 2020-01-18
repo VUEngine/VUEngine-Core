@@ -771,7 +771,7 @@ void AnimationInspector::createSprite()
 
 	this->animatedSprite->writeAnimationFrame = true;
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::sortLayers(SpriteManager::getInstance());
+	SpriteManager::sort(SpriteManager::getInstance());
 	SpriteManager::render(SpriteManager::getInstance());
 }
 

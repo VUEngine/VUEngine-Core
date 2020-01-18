@@ -266,6 +266,14 @@ u8 Sprite::getWorldLayer()
 }
 
 /**
+ * Sort internally
+ *
+ */
+void Sprite::sort()
+{
+}
+
+/**
  * Write textures
  *
  * @return			true it all textures are written

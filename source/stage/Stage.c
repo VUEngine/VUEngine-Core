@@ -1045,7 +1045,7 @@ void Stage::streamAll()
 	while(EntityFactory::prepareEntities(this->entityFactory));
 //	EntityFactory::prepareAllEntities(this->entityFactory);			// Seems it is buggy
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::sortLayers(SpriteManager::getInstance());
+	SpriteManager::sort(SpriteManager::getInstance());
 }
 
 // execute stage's logic

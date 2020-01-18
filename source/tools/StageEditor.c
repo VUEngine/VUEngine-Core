@@ -795,7 +795,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		StageEditor::printEntityPosition(this);
 
-		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::sort(SpriteManager::getInstance());
 
 		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
@@ -815,7 +815,7 @@ void StageEditor::removePreviousSprite()
 		this->userObjectSprite = NULL;
 	}
 
-	SpriteManager::sortLayers(SpriteManager::getInstance());
+	SpriteManager::sort(SpriteManager::getInstance());
 }
 
 /**
@@ -849,7 +849,7 @@ void StageEditor::showSelectedUserObject()
 
 		this->userObjectSprite->writeAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());
-		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::sort(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 		SpriteManager::render(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
@@ -906,7 +906,7 @@ void StageEditor::selectUserObject(u32 pressedKey)
 		};
 
 		Stage::addChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
-		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::sort(SpriteManager::getInstance());
 
 		VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
@@ -916,7 +916,7 @@ void StageEditor::selectUserObject(u32 pressedKey)
 		StageEditor::setupMode(this);
 
 		StageEditor::removePreviousSprite(this);
-		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::sort(SpriteManager::getInstance());
 		SpriteManager::writeTextures(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 		SpriteManager::render(SpriteManager::getInstance());

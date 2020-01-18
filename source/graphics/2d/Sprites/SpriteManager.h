@@ -122,8 +122,8 @@ singleton class SpriteManager : Object
 	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
 	void showLayer(u8 layer);
-	void sortLayers();
-	void sortLayersProgressively();
+	void sort();
+	void sortProgressively();
 	void writeTextures();
 	void prepareAll();
 	bool isEvenFrame();

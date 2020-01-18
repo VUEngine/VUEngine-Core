@@ -304,6 +304,52 @@ void ObjectSpriteContainer::defragment()
  *
  * @private
  */
+void ObjectSpriteContainer::sort()
+{
+	VirtualNode node = this->objectSprites->tail;
+	VirtualNode auxNode = node->previous;
+
+	for(; node->previous && auxNode; node = node->previous, auxNode = auxNode->previous)
+	{
+		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
+		ObjectSprite auxSprite = ObjectSprite::safeCast(auxNode->data);
+
+		// check if z positions are swapped
+		if(auxSprite->position.z + (Sprite::safeCast(auxSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
+		{
+			if(this->availableObjects >= sprite->totalObjects)
+			{
+				// swap
+				s16 previousObjectIndex = auxSprite->objectIndex;
+
+				ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
+				s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
+
+				ObjectSprite::setObjectIndex(sprite, previousObjectIndex);
+				ObjectSprite::setObjectIndex(auxSprite, previousObjectIndex + sprite->totalObjects);
+
+				int i = 0;
+				for(; i < sprite->totalObjects; i++)
+				{
+					_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+				}
+
+				// swap array entries
+				VirtualNode::swapData(node, auxNode);
+			}
+		}
+	}
+
+	this->node = NULL;
+	
+	this->previousNode = NULL;
+}
+
+/**
+ * Sort the object sprites within this container according to their z coordinates
+ *
+ * @private
+ */
 void ObjectSpriteContainer::sortProgressively()
 {
 	this->node = this->node ? this->previousNode ? this->node : VirtualNode::getPrevious(this->node) : this->objectSprites->tail;

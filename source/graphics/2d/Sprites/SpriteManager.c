@@ -399,52 +399,41 @@ void SpriteManager::disposeSprites()
 /**
  * Sort sprites according to their z coordinate
  */
-void SpriteManager::sortLayers()
+void SpriteManager::sort()
 {
-	bool swap = false;
+	VirtualNode node = this->sprites->tail;
+	VirtualNode auxNode = node->previous;
 
-	do
+	for(; node->previous && auxNode; node = node->previous, auxNode = auxNode->previous)
 	{
-		swap = false;
+		Sprite sprite = Sprite::safeCast(node->data);
+		Sprite nextSprite = Sprite::safeCast(auxNode->data);
 
-		VirtualNode node = this->sprites->head;
-
-		if(node)
+		// check if z positions are swapped
+		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 		{
-			VirtualNode nextNode = node->next;
+			// get each entity's layer
+			u8 worldLayer1 = sprite->worldLayer;
+			u8 worldLayer2 = nextSprite->worldLayer;
 
-			for(; nextNode; node = node->next, nextNode = nextNode->next)
-			{
-				Sprite sprite = Sprite::safeCast(node->data);
-				Sprite nextSprite = Sprite::safeCast(nextNode->data);
+			// swap layers
+			Sprite::setWorldLayer(sprite, worldLayer2);
+			Sprite::setWorldLayer(nextSprite, worldLayer1);
 
-				// check if z positions are swapped
-				if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
-				{
-					// get each entity's layer
-					u8 worldLayer1 = sprite->worldLayer;
-					u8 worldLayer2 = nextSprite->worldLayer;
+			// swap array entries
+			VirtualNode::swapData(node, auxNode);
 
-					// swap layers
-					Sprite::setWorldLayer(sprite, worldLayer2);
-					Sprite::setWorldLayer(nextSprite, worldLayer1);
-
-					// swap array entries
-					VirtualNode::swapData(node, nextNode);
-
-					swap = true;
-				}
-			}
+			Sprite::sort(sprite);
+			Sprite::sort(nextSprite);
 		}
 	}
-	while(swap);
 }
 
 // check if any entity must be assigned another world layer
 /**
  * Deferred sorting sprites according to their z coordinate
  */
-void SpriteManager::sortLayersProgressively()
+void SpriteManager::sortProgressively()
 {
 	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
 
@@ -706,7 +695,7 @@ void SpriteManager::render()
 		if(!ParamTableManager::defragmentProgressively(ParamTableManager::getInstance()))
 		{
 			// z sorting
-        	SpriteManager::sortLayersProgressively(this);
+        	SpriteManager::sortProgressively(this);
 		}
 	}
 
@@ -937,7 +926,7 @@ void SpriteManager::prepareAll()
 	SpriteManager::writeTextures(this);
 
 	// Sort all sprites' layers
-	SpriteManager::sortLayers(this);
+	SpriteManager::sort(this);
 
 	// Render sprites as soon as possible
 	SpriteManager::render(this);
@@ -945,7 +934,7 @@ void SpriteManager::prepareAll()
 	// Sort all sprites' layers again
 	// don't remove me, some custom sprites depend on others
 	// to have been setup up before
-	SpriteManager::sortLayers(this);
+	SpriteManager::sort(this);
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);
