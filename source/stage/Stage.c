@@ -1039,13 +1039,12 @@ void Stage::streamAll()
 	Container::purgeChildren(this);
 
 	Stage::unloadOutOfRangeEntities(this, false);
+	Stage::purgeChildren(this);
 	SpriteManager::disposeSprites(SpriteManager::getInstance());
-	Container::purgeChildren(this);
 	Stage::loadInRangeEntities(this, false);
 	while(EntityFactory::prepareEntities(this->entityFactory));
 //	EntityFactory::prepareAllEntities(this->entityFactory);			// Seems it is buggy
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::sort(SpriteManager::getInstance());
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
 
 // execute stage's logic

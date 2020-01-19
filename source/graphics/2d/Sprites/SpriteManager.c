@@ -338,6 +338,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
 	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
 	this->lockSpritesLists = true;
+	
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
 		if(sprite && !VirtualList::find(this->spritesToDispose, sprite))
@@ -401,31 +402,46 @@ void SpriteManager::disposeSprites()
  */
 void SpriteManager::sort()
 {
-	VirtualNode node = this->sprites->tail;
-	VirtualNode auxNode = node->previous;
-
-	for(; node->previous && auxNode; node = node->previous, auxNode = auxNode->previous)
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
-		Sprite nextSprite = Sprite::safeCast(auxNode->data);
+		VirtualNode auxNode = node;
 
-		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+		for(VirtualNode nextNode = node->next; nextNode; nextNode = nextNode->next)
 		{
+			Sprite nextSprite = Sprite::safeCast(nextNode->data);
+
+			// check if z positions are swapped
+			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+			{
+				auxNode = nextNode;
+			}
+		}
+
+		if(auxNode != node)
+		{
+			Sprite auxSprite = Sprite::safeCast(auxNode->data);
+
 			// get each entity's layer
 			u8 worldLayer1 = sprite->worldLayer;
-			u8 worldLayer2 = nextSprite->worldLayer;
+			u8 worldLayer2 = auxSprite->worldLayer;
 
 			// swap layers
 			Sprite::setWorldLayer(sprite, worldLayer2);
-			Sprite::setWorldLayer(nextSprite, worldLayer1);
+			Sprite::setWorldLayer(auxSprite, worldLayer1);
 
 			// swap array entries
 			VirtualNode::swapData(node, auxNode);
 
-			Sprite::sort(sprite);
-			Sprite::sort(nextSprite);
+			Sprite::sort(auxSprite);
 		}
+	}
+
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		Sprite::sort(sprite);
 	}
 }
 
@@ -919,6 +935,9 @@ void SpriteManager::computeTotalPixelsDrawn()
  */
 void SpriteManager::prepareAll()
 {
+	// Clean up
+	SpriteManager::disposeSprites(this);
+
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(this, false);
 
@@ -935,6 +954,9 @@ void SpriteManager::prepareAll()
 	// don't remove me, some custom sprites depend on others
 	// to have been setup up before
 	SpriteManager::sort(this);
+
+	// Render sprites as soon as possible
+	SpriteManager::render(this);
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);

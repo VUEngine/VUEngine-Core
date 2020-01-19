@@ -306,19 +306,27 @@ void ObjectSpriteContainer::defragment()
  */
 void ObjectSpriteContainer::sort()
 {
-	VirtualNode node = this->objectSprites->tail;
-	VirtualNode auxNode = node->previous;
-
-	for(; node->previous && auxNode; node = node->previous, auxNode = auxNode->previous)
+	// Commented out because this causes lots of errors
+/*	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 	{
 		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
-		ObjectSprite auxSprite = ObjectSprite::safeCast(auxNode->data);
+		VirtualNode auxNode = node;
 
-		// check if z positions are swapped
-		if(auxSprite->position.z + (Sprite::safeCast(auxSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
+		for(VirtualNode nextNode = node->next; nextNode; nextNode = nextNode->next)
 		{
-			if(this->availableObjects >= sprite->totalObjects)
+			ObjectSprite nextSprite = ObjectSprite::safeCast(nextNode->data);
+
+			// check if z positions are swapped
+			if(nextSprite->position.z + (Sprite::safeCast(nextSprite))->displacement.z < sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
 			{
+				auxNode = nextNode;
+			}
+		}
+
+		if(auxNode != node)
+		{
+				ObjectSprite auxSprite = ObjectSprite::safeCast(auxNode->data);
+
 				// swap
 				s16 previousObjectIndex = auxSprite->objectIndex;
 
@@ -336,13 +344,9 @@ void ObjectSpriteContainer::sort()
 
 				// swap array entries
 				VirtualNode::swapData(node, auxNode);
-			}
 		}
 	}
-
-	this->node = NULL;
-	
-	this->previousNode = NULL;
+*/
 }
 
 /**
