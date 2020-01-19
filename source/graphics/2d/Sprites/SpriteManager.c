@@ -451,6 +451,11 @@ void SpriteManager::sort()
  */
 void SpriteManager::sortProgressively()
 {
+	if(this->lockSpritesLists)
+	{
+		return;
+	}
+
 	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
 
 	for(; this->zSortingFirstNode; this->zSortingFirstNode = this->zSortingFirstNode->next)
@@ -655,6 +660,11 @@ void SpriteManager::writeTextures()
  */
 bool SpriteManager::writeSelectedSprite()
 {
+	if(this->lockSpritesLists)
+	{
+		return;
+	}
+
 	bool textureWritten = false;
 
 	if(!this->waitToWriteSpriteTextures)

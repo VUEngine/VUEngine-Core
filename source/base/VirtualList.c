@@ -744,7 +744,7 @@ void* VirtualList::getObjectAtPosition(int position)
 	// locate node
 	for(; node && counter < position; node = node->next, counter++);
 
-	if(counter < VirtualList::getSize(this))
+	if(node)
 	{
 		return node->data;
 	}
