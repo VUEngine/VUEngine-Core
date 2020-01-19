@@ -338,7 +338,9 @@ void SpriteManager::disposeSprite(Sprite sprite)
 	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
 	this->lockSpritesLists = true;
-	
+
+	Sprite::releaseTexture(sprite);
+
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
 		if(sprite && !VirtualList::find(this->spritesToDispose, sprite))

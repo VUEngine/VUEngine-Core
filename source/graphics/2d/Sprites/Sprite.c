@@ -274,6 +274,14 @@ void Sprite::sort()
 }
 
 /**
+ * Release texture
+ *
+ */
+void Sprite::releaseTexture()
+{
+}
+
+/**
  * Write textures
  *
  * @return			true it all textures are written

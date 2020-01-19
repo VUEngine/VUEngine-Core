@@ -121,6 +121,18 @@ void BgmapSprite::destructor()
 		ParamTableManager::free(ParamTableManager::getInstance(), this);
 	}
 
+	BgmapSprite::releaseTexture(this);
+
+	// force stop rendering
+	this->head = __WORLD_OFF;
+
+	// destroy the super object
+	// must always be called at the end of the destructor
+	Base::destructor();
+}
+
+void BgmapSprite::releaseTexture()
+{
 	// free the texture
 	if(!isDeleted(this->texture))
 	{
@@ -129,13 +141,6 @@ void BgmapSprite::destructor()
 	}
 
 	this->texture = NULL;
-
-	// force stop rendering
-	this->head = __WORLD_OFF;
-
-	// destroy the super object
-	// must always be called at the end of the destructor
-	Base::destructor();
 }
 
 /**

@@ -123,6 +123,13 @@ void MBgmapSprite::releaseTextures()
 	}
 }
 
+void MBgmapSprite::releaseTexture()
+{
+	MBgmapSprite::releaseTextures(this);
+
+	this->texture = NULL;
+}
+
 /**
  * Load textures from spec
  *
