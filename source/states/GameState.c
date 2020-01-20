@@ -316,8 +316,6 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
-	HardwareManager::disableInterrupts();
-
 	do
 	{
 		// Move the camera to its initial position
@@ -339,9 +337,9 @@ void GameState::streamAll()
 
 	// Froce graphics to get ready
 	GameState::synchronizeGraphics(this);
-	SpriteManager::prepareAll(SpriteManager::getInstance());
 
-	HardwareManager::enableInterrupts();
+	// Make sure all sprites are ready
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
 
 /**

@@ -66,7 +66,6 @@ friend class VirtualList;
  * @return		SpriteManager instance
  */
 
-
 /**
  * Class constructor
  *
@@ -664,7 +663,7 @@ bool SpriteManager::writeSelectedSprite()
 {
 	if(this->lockSpritesLists)
 	{
-		return;
+		return false;
 	}
 
 	bool textureWritten = false;
@@ -947,6 +946,11 @@ void SpriteManager::computeTotalPixelsDrawn()
  */
 void SpriteManager::prepareAll()
 {
+	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
+
+	// Prevent VIP's interrupt from calling render during this process
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+
 	// Clean up
 	SpriteManager::disposeSprites(this);
 
@@ -972,6 +976,12 @@ void SpriteManager::prepareAll()
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);
+
+	if(isDrawingAllowed)
+	{
+		// Restore drawing
+		HardwareManager::enableRendering(HardwareManager::getInstance());
+	}
 }
 
 /**

@@ -274,6 +274,15 @@ void HardwareManager::displayOff()
 }
 
 /**
+ * Return true if rendering is allowed
+ */
+
+bool HardwareManager::isDrawingAllowed()
+{
+	return VIPManager::isDrawingAllowed(this->vipManager);
+}
+
+/**
  * Disable rendering
  */
 void HardwareManager::disableRendering()

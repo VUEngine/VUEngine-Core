@@ -132,6 +132,14 @@ void VIPManager::disableDrawing()
 }
 
 /**
+ * Return true if rendering is allowed
+ */
+bool VIPManager::isDrawingAllowed()
+{
+	return _vipRegisters[__XPSTTS] & __XPEN ? true : false;
+}
+
+/**
  * Enable VIP's interrupts
  *
  * @param interruptCode			Interrupts to enable

@@ -97,6 +97,7 @@ singleton class HardwareManager : Object
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
+	bool isDrawingAllowed();
 	void printStackStatus(int x, int y, bool resumed);
 
 	static inline void halt();
