@@ -104,9 +104,6 @@
 #define __TOOLS
 #endif
 
-// print frame rate
-#define __PRINT_FRAMERATE
-
 // enable detailed profiling of each of the game's main processes
 // • it is more useful when __TIMER_RESOLUTION approaches 1
 #define __PROFILE_GAME
