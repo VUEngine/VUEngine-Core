@@ -140,6 +140,12 @@ TextureROMSpec {{ spriteName }}_TX =
 
 	// recyclable
 	{{ sprite.texture.recyclable }},
+
+	// vertical flip
+	false,
+
+	// horizontal flip
+	false,
 };
 
 {{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}_SP =

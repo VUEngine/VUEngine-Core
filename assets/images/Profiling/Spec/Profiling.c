@@ -86,6 +86,12 @@ TextureROMSpec PROFILING_IM_TX =
 
 	// recyclable
 	false,
+
+	// vertical flip
+	false,
+
+	// horizontal flip
+	false,
 };
 
 
@@ -130,6 +136,12 @@ TextureROMSpec PROFILING_IM_SHADOW_TX =
 	__PROFILING_SHADOW_PALETTE,
 
 	// recyclable
+	false,
+
+	// vertical flip
+	false,
+
+	// horizontal flip
 	false,
 };
 

@@ -67,6 +67,12 @@ typedef struct TextureSpec
 	/// recyclable
 	bool recyclable;
 
+	// vertical flip
+	bool verticalFlip;
+
+	// horizontal flip
+	bool horizontalFlip;
+
 } TextureSpec;
 
 /**

@@ -206,6 +206,31 @@ void BgmapTexture::writeAnimatedMulti()
 	}
 }
 
+// TODO: inlining this causes trouble with ANIMATED_MULTI animations
+static void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset, u16 flip, bool backward)
+{
+	s16 increment = backward ? -2 : 2;
+
+	const HWORD* finalSource = source + numberOfHWORDS;
+
+    asm("					\n\t"      \
+		"jr end%=			\n\t"      \
+		"loop%=:			\n\t"      \
+		"ld.h 0[%1],r10		\n\t"      \
+		"xor %4,r10			\n\t"      \
+		"add %3,r10			\n\t"      \
+		"st.h r10,0[%0]		\n\t"      \
+		"add %5,%0			\n\t"      \
+		"add 2,%1			\n\t"      \
+		"end%=:				\n\t"      \
+		"cmp %1,%2			\n\t"      \
+		"bgt loop%=			\n\t"      \
+    : // No Output
+    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset), "r" (flip), "r" (increment)
+	: "r10" // regs used
+    );
+}
+
 /**
  * Write Texture to DRAM
  *
@@ -223,7 +248,7 @@ void BgmapTexture::doWrite()
 
 	int bgmapSegment = this->segment;
 	int offsetDisplacement = xOffset + (yOffset << 6);
-	u32 colorInformation = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
+	u16 offset = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 	u32 mapDisplacement = this->mapDisplacement >> 1;
@@ -240,13 +265,65 @@ void BgmapTexture::doWrite()
 		CACHE_ENABLE;
 	}
 
-	//put the map into memory calculating the number of char for each reference
-	for(; counter && this->remainingRowsToBeWritten--; counter--)
+	u16 flip = ((this->textureSpec->horizontalFlip << 1) | this->textureSpec->verticalFlip) << 12;
+
+	if(this->textureSpec->horizontalFlip)
 	{
-		Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
-				numberOfHWORDS,
-				colorInformation);
+		if(this->textureSpec->verticalFlip)
+		{
+			//put the map into memory calculating the number of char for each reference
+			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			{
+				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + ((this->remainingRowsToBeWritten) << 6) + numberOfHWORDS - 1,
+						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						numberOfHWORDS,
+						offset,
+						flip,
+						true);
+			}
+		}
+		else
+		{
+			//put the map into memory calculating the number of char for each reference
+			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			{
+				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6) + numberOfHWORDS - 1,
+						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						numberOfHWORDS,
+						offset,
+						flip,
+						true);
+			}
+		}
+	}
+	else
+	{
+		if(this->textureSpec->verticalFlip)
+		{
+			//put the map into memory calculating the number of char for each reference
+			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			{
+				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
+						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
+						numberOfHWORDS,
+						offset,
+						flip,
+						false);
+			}
+		}
+		else
+		{
+			//put the map into memory calculating the number of char for each reference
+			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			{
+				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
+						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						numberOfHWORDS,
+						offset,
+						flip,
+						false);
+			}
+		}
 	}
 
 	if(disableCache)
