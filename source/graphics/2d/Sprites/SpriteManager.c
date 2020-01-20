@@ -531,7 +531,7 @@ void SpriteManager::registerSprite(Sprite sprite)
 			// add to the front: last element corresponds to the 31 WORLD
 			VirtualList::pushFront(this->sprites, sprite);
 
-			this->zSortingFirstNode = NULL;
+			this->zSortingFirstNode = this->sprites->head;
 			this->zSortingSecondNode = NULL;
 
 			this->lockSpritesLists = false;
