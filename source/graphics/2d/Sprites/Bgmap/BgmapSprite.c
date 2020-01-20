@@ -273,7 +273,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  */
 void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)))
 {
-	if(this->texture)
+	if(!this->texture)
 	{
 		return;
 	}
