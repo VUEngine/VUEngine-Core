@@ -403,47 +403,16 @@ void SpriteManager::disposeSprites()
  */
 void SpriteManager::sort()
 {
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	this->zSortingFirstNode = this->sprites->head;
+	this->zSortingSecondNode = this->zSortingFirstNode->next;
+
+	while(this->zSortingFirstNode && this->zSortingSecondNode)
 	{
-		Sprite sprite = Sprite::safeCast(node->data);
-		VirtualNode auxNode = node;
-
-		for(VirtualNode nextNode = node->next; nextNode; nextNode = nextNode->next)
-		{
-			Sprite nextSprite = Sprite::safeCast(nextNode->data);
-
-			// check if z positions are swapped
-			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
-			{
-				auxNode = nextNode;
-			}
-		}
-
-		if(auxNode != node)
-		{
-			Sprite auxSprite = Sprite::safeCast(auxNode->data);
-
-			// get each entity's layer
-			u8 worldLayer1 = sprite->worldLayer;
-			u8 worldLayer2 = auxSprite->worldLayer;
-
-			// swap layers
-			Sprite::setWorldLayer(sprite, worldLayer2);
-			Sprite::setWorldLayer(auxSprite, worldLayer1);
-
-			// swap array entries
-			VirtualNode::swapData(node, auxNode);
-
-			Sprite::sort(auxSprite);
-		}
+		SpriteManager::sortProgressively(this);
 	}
 
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		Sprite::sort(sprite);
-	}
+	this->zSortingFirstNode = NULL;
+	this->zSortingSecondNode = NULL;
 }
 
 // check if any entity must be assigned another world layer
