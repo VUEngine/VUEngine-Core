@@ -231,7 +231,7 @@ abstract class Sprite : Object
 	virtual u8 getWorldLayer();
 	virtual void hide();
 	virtual void position(const Vector3D* position);
-	virtual void render(const PixelVector* displacement) = 0;
+	virtual void render() = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

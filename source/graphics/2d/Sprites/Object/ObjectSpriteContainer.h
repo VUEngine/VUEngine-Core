@@ -77,7 +77,7 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override void sort();
-	override void render(const PixelVector* displacement);
+	override void render();
 	override void setPosition(const PixelVector* position);
 	override void show();
 	override void hide();

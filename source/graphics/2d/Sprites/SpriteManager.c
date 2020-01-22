@@ -729,7 +729,7 @@ void SpriteManager::render()
 					Sprite::update(sprite);
 				}
 
-				Sprite::render(sprite, NULL);
+				Sprite::render(sprite);
 			}
 		}
 	}

@@ -83,7 +83,7 @@ class TextObjectSprite : ObjectSprite
 	/// @publicsection
 	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
 
-	override void render(const PixelVector* displacement);
+	override void render();
 }
 
 

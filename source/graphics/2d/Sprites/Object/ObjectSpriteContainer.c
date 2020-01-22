@@ -404,7 +404,7 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-void ObjectSpriteContainer::render(const PixelVector* displacement)
+void ObjectSpriteContainer::render()
 {
 	// if render flag is set
 	if(!this->worldLayer)
@@ -428,12 +428,6 @@ void ObjectSpriteContainer::render(const PixelVector* displacement)
 		ObjectSpriteContainer::sortProgressively(this);
 	}
 
-	PixelVector finalDisplacement = this->displacement;
-
-	if(displacement)
-	{
-		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
-	}
 
 	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
@@ -475,7 +469,7 @@ void ObjectSpriteContainer::render(const PixelVector* displacement)
 					Sprite::update(sprite);
 				}
 
-				Sprite::render(sprite, &finalDisplacement);
+				Sprite::render(sprite);
 			}
 		}
 	}

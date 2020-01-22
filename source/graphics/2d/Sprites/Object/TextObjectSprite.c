@@ -99,7 +99,7 @@ void TextObjectSprite::destructor()
  *
  * @param evenFrame
  */
-void TextObjectSprite::render(const PixelVector* displacement)
+void TextObjectSprite::render()
 {
 	if(!this->positioned)
 	{
@@ -111,12 +111,6 @@ void TextObjectSprite::render(const PixelVector* displacement)
 		TextObjectSprite::out(this);
 	}
 
-	PixelVector finalDisplacement = this->displacement;
-
-	if(displacement)
-	{
-		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
-	}
 
 	int cols = strlen(this->text);
 
@@ -126,15 +120,15 @@ void TextObjectSprite::render(const PixelVector* displacement)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = this->position.x - this->halfWidth * xDirection + finalDisplacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
+	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
 
 	// TODO: the halfHeight should be calculted based on the font's height
-	int y = this->position.y - this->halfHeight * yDirection + finalDisplacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
+	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
 
 	//FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + finalDisplacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)

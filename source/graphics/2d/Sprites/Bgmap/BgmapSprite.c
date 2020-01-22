@@ -271,7 +271,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)))
+void BgmapSprite::render()
 {
 	if(!this->texture)
 	{
@@ -300,23 +300,18 @@ void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)
 	}
 */
 
-	PixelVector finalDisplacement = this->displacement;
-
-	if(displacement)
-	{
-		finalDisplacement = PixelVector::sum(finalDisplacement, *displacement);
-	}
-
 	// set the head
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// get coordinates
-	int gx = this->position.x + finalDisplacement.x - this->halfWidth;
-	int gy = this->position.y + finalDisplacement.y - this->halfHeight;
-	int gp = this->position.parallax + finalDisplacement.parallax;
+	int gx = this->position.x + this->displacement.x - this->halfWidth;
+	int gy = this->position.y + this->displacement.y - this->halfHeight;
+	int gp = this->position.parallax + this->displacement.parallax;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 	worldPointer->gp = gp;
+
+	gp = __ABS(gp);
 
 	// get sprite's size
 	int width = this->halfWidth << 1;
@@ -330,11 +325,11 @@ void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
-	if(_cameraFrustum->x0 - __ABS(gp) > gx)
+	if(_cameraFrustum->x0 - gp > gx)
 	{
-		worldPointer->mx += (_cameraFrustum->x0 - __ABS(gp) - gx);
-		w -= (_cameraFrustum->x0 - __ABS(gp) - gx);
-		gx = _cameraFrustum->x0 - __ABS(gp);
+		worldPointer->mx += (_cameraFrustum->x0 - gp - gx);
+		w -= (_cameraFrustum->x0 - gp - gx);
+		gx = _cameraFrustum->x0 - gp;
 		worldPointer->gx = gx;
 	}
 
@@ -347,9 +342,9 @@ void BgmapSprite::render(const PixelVector* displacement __attribute__ ((unused)
 		worldPointer->gy = gy;
 	}
 
-	if(w + gx >= _cameraFrustum->x1 + __ABS(gp))
+	if(w + gx >= _cameraFrustum->x1 + gp)
 	{
-		w = _cameraFrustum->x1 - gx + __ABS(gp);
+		w = _cameraFrustum->x1 - gx + gp;
 	}
 
 	if (0 >= w)
@@ -473,7 +468,7 @@ void BgmapSprite::processHbiasEffects()
 // to clip the image to the camera space, but kill the CPU
 /*
 // render a world layer with the map's information
-void BgmapSprite::render(const PixelVector* displacement)
+void BgmapSprite::displacement()
 {
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
