@@ -238,8 +238,6 @@ void ObjectSprite::render(const PixelVector* displacement)
 		ObjectTexture::write(this->texture);
 	}
 
-	CACHE_ENABLE;
-
 	PixelVector finalDisplacement = this->displacement;
 
 	if(displacement)
@@ -300,8 +298,6 @@ void ObjectSprite::render(const PixelVector* displacement)
 			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
-
-	CACHE_DISABLE;
 }
 
 /**

@@ -439,9 +439,6 @@ void ObjectSpriteContainer::render(const PixelVector* displacement)
 
 	VirtualNode node = this->objectSprites->head;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-
 	for(; node; node = node->next)
 	{
 		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
@@ -482,10 +479,6 @@ void ObjectSpriteContainer::render(const PixelVector* displacement)
 			}
 		}
 	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
 }
 
 /**
