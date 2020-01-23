@@ -221,7 +221,7 @@ void Actor::doSyncRotationWithBody()
 {
 	if(this->body && Body::getMovementOnAllAxis(this->body))
 	{
-		Direction3D direction3D = Body::getDirection3D(this->body);
+		const Direction3D* direction3D = Body::getDirection3D(this->body);
 
 		if(!this->actorSpec->axisForSynchronizationWithBody)
 		{
@@ -230,17 +230,17 @@ void Actor::doSyncRotationWithBody()
 				__RIGHT, __DOWN, __FAR
 			};
 
-			if(0 > direction3D.x)
+			if(0 > direction3D->x)
 			{
 				direction.x = __LEFT;
 			}
 
-			if(0 > direction3D.y)
+			if(0 > direction3D->y)
 			{
 				direction.y = __UP;
 			}
 
-			if(0 > direction3D.z)
+			if(0 > direction3D->z)
 			{
 				direction.z = __NEAR;
 			}
@@ -252,15 +252,15 @@ void Actor::doSyncRotationWithBody()
 			switch(this->actorSpec->axisForSynchronizationWithBody)
 			{
 				case __X_AXIS:
-					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.y), __FIX10_6_TO_FIX7_9(direction3D.z));
+					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
 					break;
 
 				case __Y_AXIS:
-					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.z));
+					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
 					break;
 
 				case __Z_AXIS:
-					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.y));
+					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
 					break;
 
 			}

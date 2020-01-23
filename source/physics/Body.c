@@ -207,9 +207,9 @@ void Body::setVelocity(Velocity* velocity)
 	}
 }
 
-Direction3D Body::getDirection3D()
+const Direction3D* Body::getDirection3D()
 {
-	return this->direction;
+	return &this->direction;
 }
 
 fix10_6 Body::getSpeed()

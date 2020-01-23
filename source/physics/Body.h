@@ -160,7 +160,7 @@ class Body : Object
 	const Vector3D* getPosition();
 	Velocity getVelocity();
 	void setVelocity(Velocity* velocity);
-	Direction3D getDirection3D();
+	const Direction3D* getDirection3D();
 	fix10_6 getSpeed();
 	fix10_6_ext getSpeedSquare();
 	void modifyVelocity(const Velocity* multiplier);
