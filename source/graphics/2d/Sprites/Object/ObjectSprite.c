@@ -238,6 +238,7 @@ void ObjectSprite::render()
 		ObjectTexture::write(this->texture);
 	}
 
+	CACHE_ENABLE;
 
 	int cols = this->texture->textureSpec->cols;
 	int rows = this->texture->textureSpec->rows;
@@ -292,6 +293,8 @@ void ObjectSprite::render()
 			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
+
+	CACHE_DISABLE;
 }
 
 /**

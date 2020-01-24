@@ -178,10 +178,6 @@ void TextObjectSprite::render()
 
 void TextObjectSprite::out()
 {
-#ifdef __FORCE_FONT
-	font = __FORCE_FONT;
-#endif
-
 	u32 i = 0;
 	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 
