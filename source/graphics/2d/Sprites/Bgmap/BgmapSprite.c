@@ -372,7 +372,7 @@ void BgmapSprite::render()
 		h = _cameraFrustum->y1 - gy;
 	}
 
-	if (MINIMUM_BGMAP_SPRITE_HEIGHT >= h)
+	if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h)
 	{
 		worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
