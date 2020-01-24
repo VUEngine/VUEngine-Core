@@ -148,6 +148,10 @@ void MemoryPool::constructor()
 
 	HardwareManager::disableInterrupts();
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
@@ -212,6 +216,10 @@ void MemoryPool::constructor()
 	}
 
 	HardwareManager::enableInterrupts();
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
 	// return designed address
 	return &this->poolLocation[pool][displacement];
