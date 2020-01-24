@@ -48,6 +48,9 @@
 #define __GX_LIMIT									511
 #define __GY_LIMIT									223
 
+#define __MINIMUM_BGMAP_SPRITE_WIDTH				0
+#define __MINIMUM_BGMAP_SPRITE_HEIGHT				7
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
