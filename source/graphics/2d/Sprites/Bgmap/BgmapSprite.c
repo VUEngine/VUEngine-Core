@@ -273,7 +273,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  */
 void BgmapSprite::render()
 {
-	if(!this->texture)
+	if(!this->texture || !this->texture->written)
 	{
 		return;
 	}

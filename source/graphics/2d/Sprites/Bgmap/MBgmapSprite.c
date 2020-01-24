@@ -328,13 +328,17 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  */
 void MBgmapSprite::render()
 {
+	if(!this->texture || !this->texture->written)
+	{
+		return;
+	}
+
 	if(!this->positioned)
 	{
 		return;
 	}
 
-	// if render flag is set
-	if(!this->texture | !this->worldLayer)
+	if(!this->worldLayer)
 	{
 		return;
 	}

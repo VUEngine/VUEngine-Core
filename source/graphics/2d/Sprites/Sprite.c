@@ -153,8 +153,6 @@ void Sprite::hide()
 	if((s8)this->worldLayer)
 	{
 		_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_OFF;
-		_worldAttributesBaseAddress[this->worldLayer].w = 0;
-		_worldAttributesBaseAddress[this->worldLayer].h = 0;
 	}
 }
 
@@ -187,9 +185,9 @@ void Sprite::position(const Vector3D* position)
  */
 void Sprite::setPosition(const PixelVector* position)
 {
-	this->positioned = true;
-
 	this->position = *position;
+
+	this->positioned = true;
 }
 
 /**
@@ -249,11 +247,9 @@ AnimationController Sprite::getAnimationController()
 void Sprite::setWorldLayer(u8 worldLayer)
 {
 	// Prevent retention if lowering the WORLD by going off
-	if((s8)this->worldLayer)
+	if(worldLayer <= (s8)this->worldLayer)
 	{
 		_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_OFF;
-		_worldAttributesBaseAddress[this->worldLayer].w = 0;
-		_worldAttributesBaseAddress[this->worldLayer].h = 0;
 	}
 
 	this->worldLayer = worldLayer;
