@@ -449,6 +449,13 @@ void Printing::render(int textLayer)
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
 {
+#ifdef __DEFAUL_FONT
+	if(NULL == font)
+	{
+		font = __DEFAUL_FONT;
+	}
+#endif
+
 #ifdef __FORCE_FONT
 	font = __FORCE_FONT;
 #endif
