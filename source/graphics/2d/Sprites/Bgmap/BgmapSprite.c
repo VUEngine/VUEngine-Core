@@ -300,51 +300,45 @@ void BgmapSprite::render()
 	}
 */
 
-	// set the head
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth;
-	int gy = this->position.y + this->displacement.y - this->halfHeight;
-	int gp = this->position.parallax + this->displacement.parallax;
-	worldPointer->gx = gx;
-	worldPointer->gy = gy;
-	worldPointer->gp = gp;
+	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
+	s16 gy = this->position.y + this->displacement.y - this->halfHeight;
+	s16 gp = this->position.parallax + this->displacement.parallax;
 
-	gp = __ABS(gp);
+	s16 auxGp = __ABS(gp);
 
 	// get sprite's size
-	int width = this->halfWidth << 1;
-	int height = this->halfHeight << 1;
-	int w = width;
-	int h = height;
-	int myDisplacement = 0;
+	s16 width = this->halfWidth << 1;
+	s16 height = this->halfHeight << 1;
+	s16 w = width;
+	s16 h = height;
+	s16 myDisplacement = 0;
 
-	worldPointer->mx = this->drawSpec.textureSource.mx;
-	worldPointer->my = this->drawSpec.textureSource.my;
-	worldPointer->mp = this->drawSpec.textureSource.mp;
+	// set the head
+	int mx = this->drawSpec.textureSource.mx;
+	int my = this->drawSpec.textureSource.my;
+	int mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
-	if(_cameraFrustum->x0 - gp > gx)
+	if(_cameraFrustum->x0 - auxGp > gx)
 	{
-		worldPointer->mx += (_cameraFrustum->x0 - gp - gx);
-		w -= (_cameraFrustum->x0 - gp - gx);
-		gx = _cameraFrustum->x0 - gp;
-		worldPointer->gx = gx;
+		mx += (_cameraFrustum->x0 - auxGp - gx);
+		w -= (_cameraFrustum->x0 - auxGp - gx);
+		gx = _cameraFrustum->x0 - auxGp;
 	}
 
 	if(_cameraFrustum->y0 > gy)
 	{
-		worldPointer->my += (_cameraFrustum->y0 - gy);
+		my += (_cameraFrustum->y0 - gy);
 		h -= (_cameraFrustum->y0 - gy);
 		myDisplacement = (_cameraFrustum->y0 - gy);
 		gy = _cameraFrustum->y0;
-		worldPointer->gy = gy;
 	}
 
-	if(w + gx >= _cameraFrustum->x1 + gp)
+	if(w + gx >= _cameraFrustum->x1 + auxGp)
 	{
-		w = _cameraFrustum->x1 - gx + gp;
+		w = _cameraFrustum->x1 - gx + auxGp;
 	}
 
 	if (0 >= w)
@@ -382,8 +376,23 @@ void BgmapSprite::render()
 		return;
 	}
 
+	// set the head
+#ifndef __FORCE_VIP_SYNC
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+#endif
+
+	worldPointer->gx = gx;
+	worldPointer->gy = gy;
+	worldPointer->gp = gp;
+
+	worldPointer->mx = mx;
+	worldPointer->my = my;
+	worldPointer->mp = mp;
+
 	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
+
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// set the world size according to the zoom
 	BgmapSprite::processAffineEffects(this, gx, width, myDisplacement);

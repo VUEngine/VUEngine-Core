@@ -277,13 +277,10 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// Allow frame start interrupt
 					VIPManager::enableInterrupts(this, __FRAMESTART);
 
-					if(this->allowDRAMAccess)
-					{
-						// Write to DRAM
-						SpriteManager::render(_spriteManager);
-						
-						this->renderingCompleted = true;
-					}
+					// Write to DRAM
+					SpriteManager::render(_spriteManager);
+					
+					this->renderingCompleted = true;
 
 #ifdef __FORCE_VIP_SYNC
 					// allow VIP's drawing operations

@@ -356,22 +356,16 @@ void MBgmapSprite::render()
 	}
 */
 
-	// set the head
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
-
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth;
-	int gy = this->position.y + this->displacement.y - this->halfHeight;
-	int gp = this->position.parallax + this->displacement.parallax;
-	worldPointer->gx = gx;
-	worldPointer->gy = gy;
+	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
+	s16 gy = this->position.y + this->displacement.y - this->halfHeight;
+	s16 gp = this->position.parallax + this->displacement.parallax;
 
 	int mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
 	{
 		mxDisplacement = _cameraFrustum->x0 - gx;
 		gx = _cameraFrustum->x0;
-		worldPointer->gx = gx;
 	}
 
 	int myDisplacement = 0;
@@ -379,19 +373,19 @@ void MBgmapSprite::render()
 	{
 		myDisplacement = _cameraFrustum->y0 - gy;
 		gy = _cameraFrustum->y0;
-		worldPointer->gy = gy;
 	}
 
-	worldPointer->gp = gp;
+	s16 mx = this->drawSpec.textureSource.mx + mxDisplacement;
+	s16 my = this->drawSpec.textureSource.my + myDisplacement;
+	s16 mp = this->drawSpec.textureSource.mp;
 
-	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
-	worldPointer->mp = this->drawSpec.textureSource.mp;
-
+	s16 w = 0;
+	s16 h = 0;
+	
 	// set the world size
 	if(!this->mBgmapSpriteSpec->xLoop)
 	{
-    	int w = (this->halfWidth << 1) - mxDisplacement;
+    	w = (this->halfWidth << 1) - mxDisplacement;
 
 		if(w + gx >= _cameraFrustum->x1)
 		{
@@ -407,20 +401,18 @@ void MBgmapSprite::render()
 #endif
 			return;
 		}
-
-		worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	}
 	else
 	{
-		worldPointer->mp = - gp;
-		worldPointer->gp = 0;
-		worldPointer->gx = _cameraFrustum->x0;
-		worldPointer->w = _cameraFrustum->x1 - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
+		mp = - gp;
+		gp = 0;
+		gx = _cameraFrustum->x0;
+		w = _cameraFrustum->x1 - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 	}
 
 	if(!this->mBgmapSpriteSpec->yLoop)
 	{
-    	int h = (this->halfHeight << 1) - myDisplacement;
+    	h = (this->halfHeight << 1) - myDisplacement;
 
 		if(h + gy >= _cameraFrustum->y1)
 		{
@@ -436,20 +428,33 @@ void MBgmapSprite::render()
 #endif
 			return;
 		}
-
-		worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 	}
 	else
 	{
-		int h = _cameraFrustum->y1 - myDisplacement - __WORLD_SIZE_DISPLACEMENT;
+		h = _cameraFrustum->y1 - myDisplacement - __WORLD_SIZE_DISPLACEMENT;
 
 		if(0 > h || h + gy >= _cameraFrustum->y1)
 		{
 			h = _cameraFrustum->y1 - gy - __WORLD_SIZE_DISPLACEMENT;
 		}
-
-		worldPointer->h = h;
 	}
+
+#ifndef __FORCE_VIP_SYNC
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+#endif
+
+	worldPointer->gx = gx;
+	worldPointer->gy = gy;
+	worldPointer->gp = gp;
+
+	worldPointer->mx = mx;
+	worldPointer->my = my;
+	worldPointer->mp = mp;
+
+	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
+	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
+
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
 	BgmapSprite::processHbiasEffects(this);
 }
