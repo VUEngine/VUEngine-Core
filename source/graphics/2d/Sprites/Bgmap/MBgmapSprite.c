@@ -419,15 +419,34 @@ void MBgmapSprite::render()
 			h = _cameraFrustum->y1 - gy;
 		}
 
-		if(0 >= h)
+#ifdef __HACK_BGMAP_SPRITE_HEIGHT
+		if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h)
+		{
+			if (0 >= h)
+			{
+				worldPointer->head = __WORLD_OFF;
+
+#ifdef __PROFILE_GAME
+				worldPointer->w = 0;
+				worldPointer->h = 0;
+#endif
+				return;
+			}
+
+			my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
+		}
+#else
+		if (0 >= h)
 		{
 			worldPointer->head = __WORLD_OFF;
+
 #ifdef __PROFILE_GAME
 			worldPointer->w = 0;
 			worldPointer->h = 0;
 #endif
 			return;
 		}
+#endif
 	}
 	else
 	{
