@@ -56,12 +56,12 @@
 #define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->stageSpec->streaming.loadPadding)
-#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageSpec->streaming.loadPadding)
-#define __LOAD_LOW_Y_LIMIT		(-this->stageSpec->streaming.loadPadding)
-#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->stageSpec->streaming.loadPadding)
-#define __LOAD_LOW_Z_LIMIT		(-this->stageSpec->streaming.loadPadding)
-#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->stageSpec->streaming.loadPadding)
+#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->loadPadding)
+#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->loadPadding)
+#define __LOAD_LOW_Y_LIMIT		(-this->loadPadding)
+#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->loadPadding)
+#define __LOAD_LOW_Z_LIMIT		(-this->loadPadding)
+#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -141,6 +141,8 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
 	this->soundWrappers = NULL;
+	this->loadPadding = this->stageSpec->streaming.loadPadding;
+	this->unloadPadding = this->stageSpec->streaming.unloadPadding;
 }
 
 // class's destructor
@@ -737,7 +739,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		Entity entity = Entity::safeCast(node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->loadPadding + this->unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity::getInternalId(entity);
 

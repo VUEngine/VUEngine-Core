@@ -219,6 +219,9 @@ class Stage : Container
 	u32 cameraPreviousDistance;
 	// next entity's id
 	s16 nextEntityId;
+	// load padding
+	u16 loadPadding;
+	u16 unloadPadding;
 
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);
