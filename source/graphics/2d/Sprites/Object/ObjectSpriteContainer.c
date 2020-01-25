@@ -433,8 +433,13 @@ void ObjectSpriteContainer::render()
 
 	VirtualNode node = this->objectSprites->head;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
+	bool manageCache = 24 <= this->totalObjects - this->availableObjects;
+
+	if(manageCache)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+	}
 
 	for(; node; node = node->next)
 	{
@@ -477,8 +482,12 @@ void ObjectSpriteContainer::render()
 		}
 	}
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
+	if(manageCache)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+	}
+
 	CACHE_ENABLE;
 }
 
