@@ -694,7 +694,7 @@ void Stage::loadInitialEntities()
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
-				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
+				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
 				{
