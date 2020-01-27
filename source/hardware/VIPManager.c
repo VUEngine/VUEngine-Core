@@ -582,7 +582,7 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 {
 	if(VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
 	{
-//		return;
+		return;
 	}
 
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = new PostProcessingEffectRegistry;

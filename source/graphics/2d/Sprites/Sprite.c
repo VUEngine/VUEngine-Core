@@ -530,6 +530,15 @@ void Sprite::update()
 }
 
 /**
+ * Is visible?
+ *
+ * @return visibility
+ */
+bool Sprite::isVisible()
+{
+	return this->visible;
+}
+/**
  * Update transparency
  *
  * @param evenFrame

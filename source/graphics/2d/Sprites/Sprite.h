@@ -218,11 +218,11 @@ abstract class Sprite : Object
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	void onTextureRewritten(Object eventFirer);
 	AnimationController getAnimationController();
+	bool isVisible();
 	void updateTransparency(bool evenFrame);
 	void disposed();
 	bool isDisposed();
 	void calculateParallax(fix10_6 z);
-	void updateTransparency(bool evenFrame);
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual void applyAffineTransformations();
 	virtual void applyHbiasEffects();
