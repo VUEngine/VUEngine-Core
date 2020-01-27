@@ -370,6 +370,9 @@ u32 EntityFactory::makeReadyEntities()
 	{
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
+			// Maybe it is needed another list and phase for this
+			Entity::synchronizeGraphics(positionedEntityDescription->entity);
+
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
 

@@ -78,6 +78,7 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 			SpriteManager::writeTextures(SpriteManager::getInstance());
 
+			Entity::synchronizeGraphics(entity);
 			Entity::ready(entity, true);
 		}
 	}

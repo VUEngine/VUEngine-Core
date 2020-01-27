@@ -892,6 +892,9 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::initialTransform(childEntity, &environmentTransform, true);
 
+	// Make sure sprites are ready before calling ready
+	Entity::synchronizeGraphics(childEntity);
+
 	// make ready
 	Entity::ready(childEntity, true);
 

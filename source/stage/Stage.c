@@ -417,6 +417,7 @@ void Stage::makeChildReady(Entity entity)
 
 	if(entity->parent == Container::safeCast(this))
 	{
+		Entity::synchronizeGraphics(entity);
 		Entity::ready(entity, true);
 	}
 }
