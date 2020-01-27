@@ -346,14 +346,12 @@ Particle ParticleSystem::recycleParticle()
 		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
 		// call the appropriate allocator to support inheritance
-		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
+		Particle particle = Particle::safeCast(VirtualList::popFront(this->recyclableParticles));
 
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 		Force force = ParticleSystem::getParticleSpawnForce(this);
 
 		Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->animationName);
-
-		VirtualList::popFront(this->recyclableParticles);
 
 		return particle;
 	}
