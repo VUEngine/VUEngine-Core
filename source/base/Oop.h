@@ -219,6 +219,14 @@
 			*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;									\
 		}
 
+// mutate class method
+#define __CLASS_MUTATE(ClassName, MethodName, NewMethod)												\
+		{																								\
+			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
+			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
+			*(tempPointer) = (void (*)())&ClassName ## _ ## NewMethod;									\
+		}
+
 // configure class's vtable
 #ifndef __RELEASE
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
