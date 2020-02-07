@@ -273,17 +273,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  */
 void BgmapSprite::render()
 {
-	if(!this->texture || !this->texture->written)
-	{
-		return;
-	}
-
-	if(!this->positioned)
-	{
-		return;
-	}
-
-	if(!this->worldLayer)
+	if(!this->texture | !this->texture->written | !this->positioned | !this->worldLayer)
 	{
 		return;
 	}
@@ -299,7 +289,7 @@ void BgmapSprite::render()
 		return;
 	}
 */
-
+	CACHE_ENABLE;
 
 	// get coordinates
 	s16 gx = this->position.x + this->displacement.x - this->halfWidth;

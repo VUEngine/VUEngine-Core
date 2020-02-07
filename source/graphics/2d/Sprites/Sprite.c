@@ -546,8 +546,7 @@ bool Sprite::isVisible()
 void Sprite::updateTransparency(bool evenFrame)
 {
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
-					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
+					(0x01 & (this->transparent ^ evenFrame));
 }
 
 /**

@@ -706,6 +706,10 @@ void SpriteManager::render()
 		this->freeLayer = (Sprite::safeCast(node->data))->worldLayer - 1;
 	}
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	for(; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -730,9 +734,14 @@ void SpriteManager::render()
 				}
 
 				Sprite::render(sprite);
+				CACHE_DISABLE;
 			}
 		}
 	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))

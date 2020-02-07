@@ -45,8 +45,8 @@
 #define __UPDATE_M			0x08
 
 #define __TRANSPARENCY_NONE	0
-#define __TRANSPARENCY_EVEN	1
-#define __TRANSPARENCY_ODD	2
+#define __TRANSPARENCY_ODD	1
+#define __TRANSPARENCY_EVEN	2
 
 
 //---------------------------------------------------------------------------------------------------------

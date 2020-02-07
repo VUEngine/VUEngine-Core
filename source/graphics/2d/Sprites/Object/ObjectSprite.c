@@ -223,12 +223,7 @@ void ObjectSprite::checkForContainer()
  */
 void ObjectSprite::render()
 {
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	if(!this->positioned)
+	if(isDeleted(this->texture) | !this->positioned)
 	{
 		return;
 	}
