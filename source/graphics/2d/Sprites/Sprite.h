@@ -195,8 +195,8 @@ abstract class Sprite : Object
 	void setTransparent(u8 value);
 	void setWorldLayer(u8 worldLayer);
 	s16 getActualFrame();
-	PixelVector getDisplacement();
-	void setDisplacement(PixelVector displacement);
+	const PixelVector* getDisplacement();
+	void setDisplacement(const PixelVector* displacement);
 	s8 getFrameDuration();
 	int getHalfHeight();
 	int getHalfWidth();

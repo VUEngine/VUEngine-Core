@@ -308,7 +308,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 			halfHeight = Sprite::getHalfHeight(sprite);
 			halfDepth = 16;
 
-			PixelVector spriteDisplacement = Sprite::getDisplacement(sprite);
+			PixelVector spriteDisplacement = *Sprite::getDisplacement(sprite);
 
 			if(left > -halfWidth + spriteDisplacement.x)
 			{

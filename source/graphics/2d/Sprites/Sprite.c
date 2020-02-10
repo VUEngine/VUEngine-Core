@@ -465,9 +465,9 @@ void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
  *
  * @return
  */
-PixelVector Sprite::getDisplacement()
+const PixelVector* Sprite::getDisplacement()
 {
-	return this->displacement;
+	return &this->displacement;
 }
 
 /**
@@ -475,9 +475,9 @@ PixelVector Sprite::getDisplacement()
  *
  * @param displacement 	PixelVector
  */
-void Sprite::setDisplacement(PixelVector displacement)
+void Sprite::setDisplacement(const PixelVector* displacement)
 {
-	this->displacement = displacement;
+	this->displacement = *displacement;
 }
 
 /**
@@ -536,7 +536,7 @@ void Sprite::update()
  */
 bool Sprite::isVisible()
 {
-	return this->visible;
+	return this->visible && !this->hidden;
 }
 /**
  * Update transparency
@@ -817,7 +817,7 @@ void Sprite::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->position.x, x + 18, y, NULL);
 	Printing::int(Printing::getInstance(), this->position.y, x + 24, y, NULL);
-	Printing::int(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this).z, x + 30, y, NULL);
+	Printing::int(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
 	Printing::int(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
 	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
