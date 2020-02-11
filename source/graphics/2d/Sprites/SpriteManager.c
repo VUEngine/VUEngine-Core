@@ -77,8 +77,6 @@ void SpriteManager::constructor()
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;
-	this->zSortingFirstNode = NULL;
-	this->zSortingSecondNode = NULL;
 
 	this->sprites = NULL;
 	this->spritesToDispose = NULL;
@@ -172,8 +170,6 @@ void SpriteManager::reset()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	this->zSortingFirstNode = NULL;
-	this->zSortingSecondNode = NULL;
 	this->spritePendingTextureWriting = NULL;
 	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
@@ -403,45 +399,44 @@ void SpriteManager::disposeSprites()
  */
 void SpriteManager::sort()
 {
-	this->zSortingFirstNode = this->sprites->head;
-	this->zSortingSecondNode = this->zSortingFirstNode->next;
+	VirtualNode node = this->sprites->head;
 
-	while(this->zSortingFirstNode && this->zSortingSecondNode)
-	{
-		SpriteManager::sortProgressively(this);
-	}
-
-	this->zSortingFirstNode = NULL;
-	this->zSortingSecondNode = NULL;
+	while(SpriteManager::sortProgressively(this));
 }
 
 // check if any entity must be assigned another world layer
 /**
  * Deferred sorting sprites according to their z coordinate
  */
-void SpriteManager::sortProgressively()
+bool SpriteManager::sortProgressively()
 {
 	if(this->lockSpritesLists)
 	{
-		return;
+		return false;
 	}
 
-	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
+	bool swapped = false;
+	
+	VirtualNode node = this->sprites->head;
 
-	for(; this->zSortingFirstNode; this->zSortingFirstNode = this->zSortingFirstNode->next)
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
+	for(; node; node = node->next)
 	{
-		this->zSortingSecondNode = this->zSortingFirstNode->next;
+		VirtualNode nextNode = node->next;
 
-		if(this->zSortingSecondNode)
+		if(nextNode)
 		{
-			Sprite sprite = Sprite::safeCast(this->zSortingFirstNode->data);
-			Sprite nextSprite = Sprite::safeCast(this->zSortingSecondNode->data);
+			Sprite sprite = Sprite::safeCast(node->data);
+			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 			// check if z positions are swapped
 			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
-				Sprite sprite = Sprite::safeCast(this->zSortingFirstNode->data);
-				Sprite nextSprite = Sprite::safeCast(this->zSortingSecondNode->data);
+				Sprite sprite = Sprite::safeCast(node->data);
+				Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 				// get each entity's layer
 				u8 worldLayer1 = sprite->worldLayer;
@@ -452,12 +447,20 @@ void SpriteManager::sortProgressively()
 				Sprite::setWorldLayer(sprite, worldLayer2);
 
 				// swap nodes' data
-				VirtualNode::swapData(this->zSortingFirstNode, this->zSortingSecondNode);
+				VirtualNode::swapData(node, nextNode);
 
-				this->zSortingFirstNode = this->zSortingSecondNode;
+				node = nextNode;
+
+				swapped = true;
 			}
 		}
 	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
+	return swapped;
 }
 
 /**
@@ -499,9 +502,6 @@ void SpriteManager::registerSprite(Sprite sprite)
 
 			// add to the front: last element corresponds to the 31 WORLD
 			VirtualList::pushFront(this->sprites, sprite);
-
-			this->zSortingFirstNode = this->sprites->head;
-			this->zSortingSecondNode = NULL;
 
 			this->lockSpritesLists = false;
 		}
@@ -556,10 +556,6 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 			// move the sprite to the freed layer
 			Sprite::setWorldLayer(sprite, sprite->worldLayer + 1);
 		}
-
-		// sorting needs to restart
-		this->zSortingFirstNode = NULL;
-		this->zSortingSecondNode = NULL;
 	}
 }
 

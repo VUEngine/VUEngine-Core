@@ -70,10 +70,6 @@ singleton class SpriteManager : Object
 	VirtualList spritesToDispose;
 	// list of object sprite containers
 	VirtualList objectSpriteContainers;
-	// sorting first node
-	VirtualNode zSortingFirstNode;
-	// sorting second node
-	VirtualNode zSortingSecondNode;
 	// sprite's texture writing
 	Sprite spritePendingTextureWriting;
 	// pixels drawn
@@ -123,7 +119,6 @@ singleton class SpriteManager : Object
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
 	void showLayer(u8 layer);
 	void sort();
-	void sortProgressively();
 	void writeTextures();
 	void prepareAll();
 	bool isEvenFrame();
