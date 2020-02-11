@@ -136,7 +136,7 @@ void TextObjectSprite::render()
 		// TODO: Account for multiline characters
 		//int outputY = y + (i << 3) * yDirection;
 		int outputY = y;
-		
+
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
 			int j = 0;
@@ -187,7 +187,7 @@ void TextObjectSprite::out()
 	{
 		return;
 	}
-	
+
 	// print text
 	while(this->text[i])
 	{
@@ -199,14 +199,11 @@ void TextObjectSprite::out()
 					{
 						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 						{
-							// allow fonts with less than 32 letters
-							charOffset = (fontData->fontSpec->characterCount < 32)
-								? charOffsetX + (charOffsetY * fontData->fontSpec->characterCount * fontData->fontSpec->fontSize.x)
-								: charOffsetX + (charOffsetY << 5);
+							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
 							s32 objectIndex = (this->objectIndex + i) << 2;
 
-							u16 charNumber = 
+							u16 charNumber =
 								// font offset in char memory
 								fontData->offset +
 

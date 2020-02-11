@@ -141,10 +141,7 @@ void BgmapPrinting::out(u8 x, u8 y, const char* string, const char* font)
 					{
 						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 						{
-							// allow fonts with less than 32 letters
-							charOffset = (fontData->fontSpec->characterCount < 32)
-								? charOffsetX + (charOffsetY * fontData->fontSpec->characterCount * fontData->fontSpec->fontSize.x)
-								: charOffsetX + (charOffsetY << 5);
+							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
