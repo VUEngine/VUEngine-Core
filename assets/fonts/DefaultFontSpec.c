@@ -44,6 +44,9 @@ FontROMSpec DEFAULT_FONT =
 	// number of characters in this font
 	256,
 
+	// number of characters per line in charset
+	32,
+
 	// size of a single character (in chars) ({width, height})
 	{1, 1},
 

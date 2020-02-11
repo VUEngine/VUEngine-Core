@@ -130,6 +130,9 @@ typedef struct FontSpec
 	/// number of characters in this font
 	u16 characterCount;
 
+	/// number of characters per line in charset
+	u16 charactersPerLineInCharset;
+
 	/// size of a single character (in chars) ({width, height})
 	FontSize fontSize;
 

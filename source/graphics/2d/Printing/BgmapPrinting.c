@@ -141,23 +141,23 @@ void BgmapPrinting::out(u8 x, u8 y, const char* string, const char* font)
 					{
 						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 						{
-							// allow fonts with less than 32 letters
-							charOffset = (fontData->fontSpec->characterCount < 32)
-								? charOffsetX + (charOffsetY * fontData->fontSpec->characterCount * fontData->fontSpec->fontSize.x)
-								: charOffsetX + (charOffsetY << 5);
+							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
-									// font offset in char memory
+									// offset of charset in char memory
 									fontData->offset +
 
-									// top left char of letter
+									// offset of character in charset
 									((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
-									// skip lower chars of multi-char fonts with y > 1
-									((((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) >> 5) * ((fontData->fontSpec->fontSize.y - 1)) << 5) +
+									// additional y offset in charset
+									(((u8)(string[i] - fontData->fontSpec->offset)
+										/ fontData->fontSpec->charactersPerLineInCharset
+										* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
+											* (fontData->fontSpec->fontSize.y - 1)) +
 
-									// respective char of letter in multi-char fonts
+									// respective char of character
 									charOffset
 								)
 								| (this->palette << 14);

@@ -42,6 +42,9 @@ FontROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT =
 	// number of characters in this font
 	{{ currentItem.characterCount }},
 
+	// number of characters per line in charset
+	{{ currentItem.charactersPerLine }},
+
 	// size of a single character (in chars) ({width, height})
 	{{ "{" }}{{ currentItem.size.x }}, {{ currentItem.size.y }}{{ "}" }},
 
