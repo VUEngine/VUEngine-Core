@@ -195,9 +195,7 @@ void Actor::syncPositionWithBody()
 	}
 
 	// modify the global position according to the body's displacement
-	bodyLastDisplacement.x = bodyPosition.x - this->transformation.globalPosition.x;
-	bodyLastDisplacement.y = bodyPosition.y - this->transformation.globalPosition.y;
-	bodyLastDisplacement.z = bodyPosition.z - this->transformation.globalPosition.z;
+	bodyLastDisplacement = Vector3D::get(bodyPosition, this->transformation.globalPosition);
 
 //  Optimization: this doesn't seem to do anything useful
 //	globalPosition.x += bodyLastDisplacement.x;
@@ -664,16 +662,10 @@ void Actor::initialTransform(const Transformation* environmentTransform, u32 rec
 // set position
 void Actor::setPosition(const Vector3D* position)
 {
-	Vector3D displacement = this->transformation.globalPosition;
+	Vector3D displacement = Vector3D::get(*position, this->transformation.globalPosition);
+
+	this->transformation.localPosition = Vector3D::get(this->transformation.localPosition, displacement);
 	this->transformation.globalPosition = *position;
-
-	displacement.x -= this->transformation.globalPosition.x;
-	displacement.y -= this->transformation.globalPosition.y;
-	displacement.z -= this->transformation.globalPosition.z;
-
-	this->transformation.localPosition.x -= displacement.x;
-	this->transformation.localPosition.y -= displacement.y;
-	this->transformation.localPosition.z -= displacement.z;
 
 	if(this->body)
 	{
