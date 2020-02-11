@@ -204,16 +204,19 @@ void TextObjectSprite::out()
 							s32 objectIndex = (this->objectIndex + i) << 2;
 
 							u16 charNumber =
-								// font offset in char memory
+								// offset of charset in char memory
 								fontData->offset +
 
-								// top left char of letter
+								// offset of character in charset
 								((u8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
-								// skip lower chars of multi-char fonts with y > 1
-								((((u8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) >> 5) * ((fontData->fontSpec->fontSize.y - 1)) << 5) +
+								// additional y offset in charset
+								(((u8)(this->text[i] - fontData->fontSpec->offset)
+									/ fontData->fontSpec->charactersPerLineInCharset
+									* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
+										* (fontData->fontSpec->fontSize.y - 1)) +
 
-								// respective char of letter in multi-char fonts
+								// respective char of character
 								charOffset;
 
 							_objectAttributesBaseAddress[objectIndex + 3] = this->palette | (charNumber & 0x7FF);
