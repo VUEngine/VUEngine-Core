@@ -600,22 +600,18 @@ static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall
 SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, Ball ballB)
 {
 	Vector3D distanceVector = Vector3D::get(ballA->center, ballB->center);
+	fix10_6_ext distanceVectorSquareLength = Vector3D::squareLength(distanceVector);
 	fix10_6 radiusesLength = ballA->radius + ballB->radius;
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
-	if(Vector3D::squareLength(distanceVector) < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
+	if(distanceVectorSquareLength < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
 	{
-		fix10_6 distanceVectorLength = Vector3D::length(distanceVector);
+		fix10_6 distanceVectorLength = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(distanceVectorSquareLength)));
 
 		// add padding to prevent rounding problems
-		solutionVector.magnitude = radiusesLength - distanceVectorLength;
-		solutionVector.direction = Vector3D::normalize(distanceVector);
-
-		if(Vector3D::dotProduct(distanceVector, solutionVector.direction) > 0)
-		{
-			solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
-		}
+		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
+		solutionVector.direction = Vector3D::scalarDivision(distanceVector, -distanceVectorLength);
 	}
 
 	return solutionVector;
