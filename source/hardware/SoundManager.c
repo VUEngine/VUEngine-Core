@@ -377,6 +377,15 @@ void SoundManager::updateFrameRate()
 
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
 
+	if(2 < deviation)
+	{
+		deviation = 2;
+	}
+	else if(-2 > deviation)
+	{
+		deviation = -2;
+	}
+
 	// Dubious optimization
 	this->pcmPlaybackCyclesToSkip += deviation;
 

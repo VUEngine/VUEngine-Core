@@ -452,8 +452,8 @@ void SoundWrapper::stop()
 		Channel* channel = (Channel*)node->data;
 
 		channel->cursor = 0;
-		_soundRegistries[channel->number].SxINT = 0x00;
-		_soundRegistries[channel->number].SxLRV = 0x00;
+		_soundRegistries[channel->number].SxINT = 0xBF;
+//		_soundRegistries[channel->number].SxLRV = 0x00;
 	}
 }
 
@@ -920,6 +920,25 @@ void SoundWrapper::updatePCMPlayback(u32 elapsedMicroseconds __attribute__((unus
 		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 #endif
 #endif
+/*
+//	This uses DogP's format
+		u8 volume = this->unmute * channel->soundTrack.dataPCM[channel->cursor];
+		u8 leftVolume = SoundWrapper::clampPCMOutputValue(((channel->soundTrack.dataPCM[channel->cursor] & 0xF0) >> 4) - this->volumeReduction);
+		u8 rightVolume = SoundWrapper::clampPCMOutputValue((channel->soundTrack.dataPCM[channel->cursor] & 0x0F) - this->volumeReduction);
+
+
+#ifdef __SOUND_TEST
+		_soundRegistries[channel->number].SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
+		// No volume printing because it is too heavy on hardware
+//		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
+#else
+#ifndef __RELEASE
+		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
+#else
+		_soundRegistries[channel->number].SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
+#endif
+#endif
+*/
 	}
 
 	// PCM playback must be totally sync on all channels, so, check if completed only
