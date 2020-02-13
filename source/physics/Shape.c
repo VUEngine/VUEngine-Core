@@ -201,7 +201,7 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
  *
  * @param position				Vector3d*
  */
-void Shape::setPosition(const Vector3D* position)
+void Shape::setPosition(const Vector3D* position __attribute__((unused)))
 {
 	this->moved = true;
 }

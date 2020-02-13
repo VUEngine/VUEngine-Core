@@ -399,8 +399,6 @@ void SpriteManager::disposeSprites()
  */
 void SpriteManager::sort()
 {
-	VirtualNode node = this->sprites->head;
-
 	while(SpriteManager::sortProgressively(this));
 }
 
