@@ -65,6 +65,26 @@ void MBgmapAnimatedSprite::destructor()
 
 void MBgmapAnimatedSprite::writeAnimation()
 {
-	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
-	BgmapAnimatedSprite::invalidateParamTable(this);
+	CharSet charSet = Texture::getCharSet(this->texture, true);
+
+	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");
+
+	if(!charSet)
+	{
+		return;
+	}
+
+	switch(CharSet::getAllocationType(charSet))
+	{
+		case __ANIMATED_MULTI:
+
+			BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
+			BgmapAnimatedSprite::invalidateParamTable(this);
+			break;
+
+		default:
+
+			Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+			break;
+	}
 }
