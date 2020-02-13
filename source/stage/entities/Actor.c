@@ -195,7 +195,7 @@ void Actor::syncPositionWithBody()
 	}
 
 	// modify the global position according to the body's displacement
-	bodyLastDisplacement = Vector3D::get(bodyPosition, this->transformation.globalPosition);
+	bodyLastDisplacement = Vector3D::get(this->transformation.globalPosition, bodyPosition);
 
 //  Optimization: this doesn't seem to do anything useful
 //	globalPosition.x += bodyLastDisplacement.x;
