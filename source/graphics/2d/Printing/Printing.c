@@ -146,6 +146,22 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	}
 }
 
+void Printing::setFontPage(const char* font, u16 page)
+{
+	FontData* fontData = Printing::getFontByName(this, font);
+
+	if(!fontData)
+	{
+		return;
+	}
+
+	CharSet charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontData->fontSpec->charSetSpec);
+
+	CharSet::setCharSpecDisplacement(charSet, fontData->fontSpec->charSetSpec->numberOfChars * page);
+
+	CharSet::write(charSet);
+}
+
 void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(

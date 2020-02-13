@@ -287,6 +287,15 @@ singleton class Printing : Object
 	void loadFonts(FontSpec** fontSpecs);
 
 	/**
+     * Writes the font's char set to CHAR memory with displacing the source pointer
+	 * by numberOfChars * page
+     *
+	 * @param font	Name of font to use for printing
+	 * @param page	ROM's displacement multiplier
+     */
+	void setFontPage(const char* font, u16 page);
+
+	/**
      * Empties internal virtual list of registered fonts
      */
 	void reset();
