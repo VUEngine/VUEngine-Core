@@ -599,7 +599,8 @@ static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall
 
 SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, Ball ballB)
 {
-	Vector3D distanceVector = Vector3D::get(ballA->center, ballB->center);
+	// Compute the distance vector backwards to avoid the need to multiply by -1 the direction
+	Vector3D distanceVector = Vector3D::get(ballB->center, ballA->center);
 	fix10_6_ext distanceVectorSquareLength = Vector3D::squareLength(distanceVector);
 	fix10_6 radiusesLength = ballA->radius + ballB->radius;
 
@@ -611,7 +612,34 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, 
 
 		// add padding to prevent rounding problems
 		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
-		solutionVector.direction = Vector3D::scalarDivision(distanceVector, -distanceVectorLength);
+		solutionVector.direction = Vector3D::scalarDivision(distanceVector, distanceVectorLength);
+
+		if(__I_TO_FIX10_6(1) < solutionVector.direction.x)
+		{
+			solutionVector.direction.x = __I_TO_FIX10_6(1);
+		}
+		else if(-__I_TO_FIX10_6(1) > solutionVector.direction.x)
+		{
+			solutionVector.direction.x = -__I_TO_FIX10_6(1);
+		}
+
+		if(__I_TO_FIX10_6(1) < solutionVector.direction.y)
+		{
+			solutionVector.direction.y = __I_TO_FIX10_6(1);
+		}
+		else if(-__I_TO_FIX10_6(1) > solutionVector.direction.y)
+		{
+			solutionVector.direction.y = -__I_TO_FIX10_6(1);
+		}
+
+		if(__I_TO_FIX10_6(1) < solutionVector.direction.z)
+		{
+			solutionVector.direction.z = __I_TO_FIX10_6(1);
+		}
+		else if(-__I_TO_FIX10_6(1) > solutionVector.direction.z)
+		{
+			solutionVector.direction.z = -__I_TO_FIX10_6(1);
+		}
 	}
 
 	return solutionVector;
