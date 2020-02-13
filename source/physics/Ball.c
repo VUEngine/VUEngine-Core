@@ -82,6 +82,16 @@ void Ball::position(const Vector3D* position, const Rotation* rotation __attribu
 	Base::position(this, position, rotation, scale, size);
 }
 
+/**
+ * Set position
+ *
+ * @param position				Vector3d*
+ */
+void Ball::setPosition(const Vector3D* position)
+{
+	this->center = *position;
+}
+
 static void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	// project this onto the current normal

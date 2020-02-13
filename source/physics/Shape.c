@@ -105,8 +105,8 @@ void Shape::destructor()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
+				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -138,8 +138,8 @@ void Shape::reset()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
+				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -193,6 +193,16 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
 	}
 
 	this->ready = true;
+	this->moved = true;
+}
+
+/**
+ * Set position
+ *
+ * @param position				Vector3d*
+ */
+void Shape::setPosition(const Vector3D* position)
+{
 	this->moved = true;
 }
 
@@ -640,8 +650,8 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
 
 	if(!isDeleted(collidingShape))
 	{
-		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
-		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
+		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return true;

@@ -611,7 +611,8 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, 
 		fix10_6 distanceVectorLength = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(distanceVectorSquareLength)));
 
 		// add padding to prevent rounding problems
-		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
+		solutionVector.magnitude = radiusesLength - distanceVectorLength;
+		solutionVector.magnitude += 0 == solutionVector.magnitude ? __PIXELS_TO_METERS(1) : 0;
 		solutionVector.direction = Vector3D::scalarDivision(distanceVector, distanceVectorLength);
 
 		if(__I_TO_FIX10_6(1) < solutionVector.direction.x)
