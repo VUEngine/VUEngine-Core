@@ -126,8 +126,10 @@ abstract class Texture : Object
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	bool isWritten();
 	void setMapDisplacement(u32 mapDisplacement);
+	void setFrame(u16 frame);
 	virtual void write();
 	virtual void rewrite();
+	virtual void setFrameAnimatedMulti(u16 frame);
 }
 
 

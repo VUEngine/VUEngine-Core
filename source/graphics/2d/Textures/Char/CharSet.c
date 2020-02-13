@@ -267,3 +267,15 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
 		Mem::copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }
+
+/**
+ * Write CharSet with displacement = frame * numberOfFrames
+ *
+ * @param frame		ROM memory displacement multiplier
+ */
+void CharSet::setFrame(u16 frame)
+{
+	CharSet::setCharSpecDisplacement(this, this->charSetSpec->numberOfChars * frame);
+
+	CharSet::write(this);
+}

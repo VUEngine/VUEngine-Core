@@ -124,6 +124,7 @@ class CharSet : Object
 	void setCharSpecDisplacement(u32 charSpecDisplacement);
 	void putChar(u32 charToReplace, BYTE* newChar);
 	void putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
+	void setFrame(u16 frame);
 }
 
 

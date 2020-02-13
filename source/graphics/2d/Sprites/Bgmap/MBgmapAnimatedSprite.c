@@ -65,57 +65,6 @@ void MBgmapAnimatedSprite::destructor()
 
 void MBgmapAnimatedSprite::writeAnimation()
 {
-	CharSet charSet = Texture::getCharSet(this->texture, true);
-
-	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");
-
-	if(!charSet)
-	{
-		return;
-	}
-
-	// write according to the allocation type
-	switch(CharSet::getAllocationType(charSet))
-	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-			{
-				// move charset spec to the next frame chars
-				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						AnimationController::getActualFrameIndex(this->animationController));
-
-				BgmapTexture bgmapTexture = BgmapTexture::safeCast(this->texture);
-
-				// move map spec to the next frame
-				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) *
-						(AnimationController::getActualFrameIndex(this->animationController) << 1));
-
-				CharSet::write(charSet);
-				BgmapTexture::rewrite(bgmapTexture);
-			}
-			break;
-
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-			{
-				// move charset spec to the next frame chars
-				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						AnimationController::getActualFrameIndex(this->animationController));
-
-				// write charset
-				CharSet::write(charSet);
-			}
-			break;
-
-		case __ANIMATED_MULTI:
-			{
-				int totalColumns = 64 - (this->originalTextureSource.mx / 8);
-				s32 frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
-				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
-				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
-			}
-
-			BgmapSprite::invalidateParamTable(this);
-			break;
-	}
+	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	BgmapAnimatedSprite::invalidateParamTable(this);
 }

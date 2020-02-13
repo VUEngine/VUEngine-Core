@@ -113,3 +113,14 @@ void ObjectTexture::setObjectIndex(int objectIndex)
 		this->written = false;
 	}
 }
+
+/**
+ * Set Texture's frame
+ *
+ * @param frame	Texture's frame to display
+ */
+void ObjectTexture::setFrameAnimatedMulti(u16 frame)
+{
+	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * (frame << 1));
+	ObjectTexture::write(this);
+}

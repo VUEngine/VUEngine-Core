@@ -50,6 +50,7 @@ enum Events
 
 	kEventAnimationCompleted,
 	kEventTextureRewritten,
+	kEventTextureSetFrame,
 	kEventCharSetRewritten,
 	kEventCharSetDeleted,
 

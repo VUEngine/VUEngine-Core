@@ -206,6 +206,16 @@ void BgmapTexture::writeAnimatedMulti()
 	}
 }
 
+/**
+ * Set Texture's frame
+ *
+ * @param frame	Texture's frame to display
+ */
+void BgmapTexture::setFrameAnimatedMulti(u16 frame __attribute__((unused)))
+{
+	BgmapTexture::fireEvent(this, kEventTextureSetFrame);
+}
+
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
 static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset, u16 flip, bool backward)
 {

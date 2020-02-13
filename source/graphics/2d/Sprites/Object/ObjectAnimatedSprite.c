@@ -86,53 +86,5 @@ void ObjectAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	int animationFrame = AnimationController::getActualFrameIndex(this->animationController);
-
-	if(0 > animationFrame)
-	{
-		return;
-	}
-
-	// write according to the allocation type
-	switch(CharSet::getAllocationType(Texture::getCharSet(this->texture, true)))
-	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-			{
-				CharSet charSet = Texture::getCharSet(this->texture, true);
-
-				// move charset spec to the next frame chars
-				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						AnimationController::getActualFrameIndex(this->animationController));
-
-				ObjectTexture objectTexture = ObjectTexture::safeCast(this->texture);
-
-				// move map spec to the next frame
-				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
-
-				CharSet::write(charSet);
-				ObjectTexture::write(objectTexture);
-			}
-			break;
-
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-			{
-				CharSet charSet = Texture::getCharSet(this->texture, true);
-
-				// move charset spec to the next frame chars
-				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) * animationFrame);
-
-				// write charset
-				CharSet::write(charSet);
-			}
-
-			break;
-
-		case __ANIMATED_MULTI:
-
-			Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
-			ObjectTexture::write(this->texture);
-			break;
-	}
+	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 }

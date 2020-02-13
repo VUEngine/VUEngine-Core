@@ -157,9 +157,7 @@ void Printing::setFontPage(const char* font, u16 page)
 
 	CharSet charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontData->fontSpec->charSetSpec);
 
-	CharSet::setCharSpecDisplacement(charSet, fontData->fontSpec->charSetSpec->numberOfChars * page);
-
-	CharSet::write(charSet);
+	CharSet::setFrame(charSet, page);
 }
 
 void Printing::loadDebugFont()

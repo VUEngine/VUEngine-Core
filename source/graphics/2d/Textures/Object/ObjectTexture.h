@@ -65,6 +65,7 @@ class ObjectTexture : Texture
 	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id);
 	void setObjectIndex(int objectIndex);
 	override void write();
+	override void setFrameAnimatedMulti(u16 frame);
 }
 
 

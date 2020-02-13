@@ -196,6 +196,58 @@ TextureSpec* Texture::getTextureSpec()
 }
 
 /**
+ * Set Texture's frame
+ *
+ * @param frame	Texture's frame to display
+ */
+void Texture::setFrame(u16 frame)
+{
+	if(!this->charSet)
+	{
+		return;
+	}
+
+	// write according to the allocation type
+	switch(CharSet::getAllocationType(this->charSet))
+	{
+		case __ANIMATED_SINGLE_OPTIMIZED:
+			{
+				// move map spec to the next frame
+				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows *
+						(frame << 1));
+
+				CharSet::setFrame(this->charSet, frame);
+				Texture::rewrite(this);
+			}
+			break;
+
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
+			{
+				CharSet::setFrame(this->charSet, frame);
+			}
+			break;
+
+		case __ANIMATED_MULTI:
+			{
+				Texture::setFrameAnimatedMulti(this, frame);
+			}
+			break;
+	}
+}
+
+
+/**
+ * Set Texture's frame
+ *
+ * @param frame	Texture's frame to display
+ */
+void Texture::setFrameAnimatedMulti(u16 frame)
+{
+}
+
+/**
  * Retrieve map's total column size, accounting for the total frames of animation
  *
  * @return	Number of total columns
