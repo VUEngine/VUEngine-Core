@@ -106,6 +106,7 @@ singleton class SoundManager : Object
 	VirtualList soundWrappers;
 	VirtualList releasedSoundWrappers;
 	VirtualNode soundWrapperMIDINode;
+	VirtualList queuedSounds;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_WAVEFORMS];
 	u16 pcmPlaybackCycles;
@@ -125,7 +126,7 @@ singleton class SoundManager : Object
 	bool playPCMSounds();
 	void stopAllSounds();
 
-	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope);
+	void playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope);
 	SoundWrapper getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);

@@ -1194,10 +1194,12 @@ void Stage::setupSounds()
 
 	for(; this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundWrapper soundWrapper = SoundManager::playSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, NULL, kSoundWrapperPlaybackFadeIn, (EventListener)Stage::onSoundReleased, Object::safeCast(this));
+		SoundWrapper soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundReleased, Object::safeCast(this));
 
 		if(!isDeleted(soundWrapper))
 		{
+			SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+
 			if(isDeleted(this->soundWrappers))
 			{
 				this->soundWrappers = new VirtualList();

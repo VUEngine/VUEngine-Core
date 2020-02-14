@@ -93,7 +93,10 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
 
-	SoundWrapper::addEventListener(this, scope, soundReleaseListener, kEventSoundReleased);
+	if(NULL != soundReleaseListener && !isDeleted(scope))
+	{
+		SoundWrapper::addEventListener(this, scope, soundReleaseListener, kEventSoundReleased);
+	}
 }
 
 /**

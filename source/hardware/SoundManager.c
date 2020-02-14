@@ -62,6 +62,19 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+
+typedef struct QueuedSound
+{
+	Sound* sound;
+	u32 command;
+	Vector3D position;
+	bool isPositionValid;
+	u32 playbackType;
+	EventListener soundReleaseListener;
+	Object scope;
+
+} QueuedSound;
+
 /**
  * Get instance
  *
@@ -86,6 +99,7 @@ void SoundManager::constructor()
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
 	this->lock = false;
+	this->queuedSounds = new VirtualList();
 
 	SoundManager::reset(this);
 }
@@ -101,6 +115,19 @@ void SoundManager::destructor()
 	{
 		delete this->releasedSoundWrappers;
 		this->releasedSoundWrappers = NULL;
+	}
+
+	if(!isDeleted(this->queuedSounds))
+	{
+		VirtualNode node = this->queuedSounds->head;
+
+		for(; node; node = node->next)
+		{
+			delete node->data;
+		}
+
+		delete this->queuedSounds;
+		this->soundWrappers = NULL;		
 	}
 
 	if(!isDeleted(this->soundWrappers))
@@ -166,6 +193,18 @@ void SoundManager::purgeReleasedSoundWrappers()
 void SoundManager::reset()
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
+
+	if(!isDeleted(this->queuedSounds))
+	{
+		VirtualNode node = this->queuedSounds->head;
+
+		for(; node; node = node->next)
+		{
+			delete node->data;
+		}
+
+		VirtualList::clear(this->queuedSounds);
+	}
 
 	if(!isDeleted(this->soundWrappers))
 	{
@@ -736,7 +775,7 @@ void SoundManager::unlock()
 	this->lock = false;
 }
 
-SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
+void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
 {
 	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
 
@@ -744,10 +783,47 @@ SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* 
 
 	if(!isDeleted(soundWrapper))
 	{
+		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
 		SoundWrapper::play(soundWrapper, position, playbackType);
 	}
+	else
+	{
+		QueuedSound* queuedSound = new QueuedSound;
+		queuedSound->sound = sound;
+		queuedSound->command = command;
+		queuedSound->isPositionValid = NULL != position;
+		queuedSound->position = queuedSound->isPositionValid ? *position : Vector3D::zero();
+		queuedSound->playbackType = playbackType;
+		queuedSound->soundReleaseListener = soundReleaseListener;
+		queuedSound->scope = scope;
 
-	return soundWrapper;
+		VirtualList::pushBack(this->queuedSounds, queuedSound);
+	}
+}
+
+void SoundManager::onQueuedSoundRelease(Object eventFirer)
+{
+	SoundWrapper soundWrapper = SoundWrapper::safeCast(eventFirer);
+
+	if(!isDeleted(soundWrapper))
+	{
+		QueuedSound* queuedSound = (QueuedSound*)VirtualList::front(this->queuedSounds);
+
+		if(!isDeleted(queuedSound))
+		{
+			SoundWrapper soundWrapper = SoundManager::getSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
+
+			if(!isDeleted(soundWrapper))
+			{
+				SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
+				SoundWrapper::play(soundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
+
+				VirtualList::popFront(this->queuedSounds);
+
+				delete queuedSound;
+			}
+		}
+	}
 }
 
 /**
@@ -759,7 +835,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
-	if(this->lock || NULL == sound || NULL == soundReleaseListener || isDeleted(scope))
+	if(this->lock || NULL == sound)
 	{
 		return NULL;
 	}
