@@ -55,7 +55,7 @@ void BgmapAnimatedSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Ob
 	Base::constructor(bgmapSpriteSpec, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
-	ASSERT(Texture::getCharSet(this->texture), "BgmapAnimatedSprite::constructor: null charset");
+	ASSERT(Texture::getCharSet(this->texture, false), "BgmapAnimatedSprite::constructor: null charset");
 
     this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapSpriteSpec->spriteSpec.textureSpec->charSetSpec);
 

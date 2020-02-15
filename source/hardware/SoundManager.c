@@ -819,7 +819,6 @@ void SoundManager::onQueuedSoundRelease(Object eventFirer)
 				SoundWrapper::play(soundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
 
 				VirtualList::popFront(this->queuedSounds);
-
 				delete queuedSound;
 			}
 		}
