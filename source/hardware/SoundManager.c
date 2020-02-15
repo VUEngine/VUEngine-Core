@@ -779,8 +779,6 @@ void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position
 {
 	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
 
-//	NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::playSound: could not get any sound");
-
 	if(!isDeleted(soundWrapper))
 	{
 		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
