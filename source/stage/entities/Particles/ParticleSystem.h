@@ -98,10 +98,6 @@ class ParticleSystem : Entity
 	const ParticleSystemSpec* particleSystemSpec;
 	// particle list
 	VirtualList particles;
-	// particle list
-	VirtualList recyclableParticles;
-	// particle list
-	VirtualList expiredParticles;
 	// next spawn time
 	int nextSpawnTime;
 	// particle count
@@ -114,8 +110,6 @@ class ParticleSystem : Entity
 	bool paused;
 	// Flag to keep spawning particles
 	bool loop;
-	// number of particles increment
-	s8 maximumNumberOfAliveParticlesIncrement;
 	// Counter of total spawned particles
 	u16 totalSpawnedParticles;
 	// Flags to speed up particle spawning

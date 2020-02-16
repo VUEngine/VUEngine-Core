@@ -37,6 +37,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+friend class Particle;
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -59,8 +60,6 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	Base::constructor(&particleSystemSpec->entitySpec, id, internalId, name);
 
 	this->particles = NULL;
-	this->expiredParticles = NULL;
-	this->recyclableParticles = NULL;
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -117,8 +116,6 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 	}
 
 	this->particles = new VirtualList();
-	this->expiredParticles = new VirtualList();
-	this->recyclableParticles = this->particleSystemSpec->recycleParticles ? new VirtualList() : NULL;
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -183,36 +180,6 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 
 		this->particles = NULL;
 	}
-
-	if(!isDeleted(this->recyclableParticles))
-	{	
-		// the remover handles all the cleaning
-		if(!isDeleted(particleRemover))
-		{
-			ParticleRemover::deleteParticles(particleRemover, this->recyclableParticles);
-		}
-		else
-		{
-			VirtualNode node = this->recyclableParticles->head;
-
-			for(; node; node = node->next)
-			{
-				delete node->data;
-			}
-
-			delete this->recyclableParticles;
-		}
-
-		this->recyclableParticles = NULL;
-	}
-
-	if(this->expiredParticles)
-	{
-		ASSERT(!VirtualList::getSize(this->expiredParticles), "ParticleSystem::destructor: expiredParticles not clean");
-
-		delete this->expiredParticles;
-		this->expiredParticles = NULL;
-	}
 }
 
 void ParticleSystem::setLoop(bool value)
@@ -230,36 +197,36 @@ bool ParticleSystem::getLoop()
  */
 void ParticleSystem::processExpiredParticles()
 {
-	if(!isDeleted(this->expiredParticles) && this->expiredParticles->head)
+	if(!this->particleSystemSpec->recycleParticles)
 	{
-		VirtualNode node = this->expiredParticles->head;
+		VirtualList expiredParticles = new VirtualList();
 
-		if(this->particleSystemSpec->recycleParticles)
+		VirtualNode node = this->particles->head;
+
+		for(; node; node = node->next)
 		{
-			for(; node; node = node->next)
-			{
-				Particle particle = Particle::safeCast(node->data);
-				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted recyclable particle");
-				VirtualList::pushBack(this->recyclableParticles, particle);
-				VirtualList::removeElement(this->particles, particle);
-				this->particleCount--;
-			}
-		}
-		else
-		{
-			for(; node; node = node->next)
-			{
-				Particle particle = Particle::safeCast(node->data);
-				VirtualList::removeElement(this->particles, particle);
+			Particle particle = Particle::safeCast(node->data);
 
-				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
-
-				delete particle;
-				this->particleCount--;
+			if(particle->expired)
+			{
+				VirtualList::pushBack(expiredParticles, particle);
 			}
 		}
 
-		VirtualList::clear(this->expiredParticles);
+		node = expiredParticles->head;
+
+		for(; node; node = node->next)
+		{
+			Particle particle = Particle::safeCast(node->data);
+			VirtualList::removeElement(this->particles, particle);
+
+			NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+
+			delete particle;
+			this->particleCount--;
+		}
+
+		delete expiredParticles;
 	}
 }
 
@@ -293,10 +260,20 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	for(; node; node = node->next)
 	{
-		if(Particle::update(node->data, elapsedTime, behavior))
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
 		{
-			ParticleSystem::particleExpired(this, Particle::safeCast(node->data));
+			continue;
 		}
+
+		if(Particle::update(particle, elapsedTime, behavior))
+		{
+			Particle::expire(particle);
+			this->particleCount--;
+		}
+
+		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 	}
 
 	if(this->paused)
@@ -321,15 +298,17 @@ void ParticleSystem::update(u32 elapsedTime)
 
 			if(this->particleSystemSpec->recycleParticles)
 			{
-				VirtualList::pushBack(this->particles, ParticleSystem::recycleParticle(this));
-				this->particleCount++;
+				if(!ParticleSystem::recycleParticle(this))
+				{
+					VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+				}
 			}
 			else
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
-				this->particleCount++;
 			}
 
+			this->particleCount++;
 			this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 		}
 	}
@@ -337,26 +316,29 @@ void ParticleSystem::update(u32 elapsedTime)
 
 /**
  * @private
- * @return		Particle
+ * @return		Boolean
  */
-Particle ParticleSystem::recycleParticle()
+bool ParticleSystem::recycleParticle()
 {
-	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
+	VirtualNode node = this->particles->head;
+
+	for(; node; node = node->next)
 	{
-		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
+		Particle particle = Particle::safeCast(node->data);
 
-		// call the appropriate allocator to support inheritance
-		Particle particle = Particle::safeCast(VirtualList::popFront(this->recyclableParticles));
+		if(particle->expired)
+		{
+			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+			Force force = ParticleSystem::getParticleSpawnForce(this);
+			int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
-		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-		Force force = ParticleSystem::getParticleSpawnForce(this);
+			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->animationName);
 
-		Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->animationName);
-
-		return particle;
+			return true;
+		}
 	}
 
-	return ParticleSystem::spawnParticle(this);
+	return false;
 }
 
 /**
@@ -418,16 +400,8 @@ void ParticleSystem::spawnAllParticles()
 {
 	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 	{
-		if(this->particleSystemSpec->recycleParticles)
-		{
-			VirtualList::pushBack(this->particles, ParticleSystem::recycleParticle(this));
-			this->particleCount++;
-		}
-		else
-		{
-			VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
-			this->particleCount++;
-		}
+		VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+		this->particleCount++;
 	}
 }
 
@@ -482,7 +456,14 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	for(; node; node = node->next)
 	{
-		Particle::transform(node->data);
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
+		{
+			continue;
+		}
+
+		Particle::transform(particle);
 	}
 }
 
@@ -504,7 +485,14 @@ void ParticleSystem::synchronizeGraphics()
 
 	for(; node; node = node->next)
 	{
-		Particle::synchronizeGraphics(node->data, updateSprites);
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
+		{
+			continue;
+		}
+
+		Particle::synchronizeGraphics(particle, updateSprites);
 	}
 
 	this->invalidateSprites = 0;
@@ -529,7 +517,14 @@ void ParticleSystem::show()
 
 	for(; node; node = node->next)
 	{
-		Particle::show(node->data);
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
+		{
+			continue;
+		}
+
+		Particle::show(particle);
 	}
 }
 
@@ -552,25 +547,14 @@ void ParticleSystem::resume()
 
 	for(; node; node = node->next)
 	{
-		Particle::resume(node->data);
-	}
+		Particle particle = Particle::safeCast(node->data);
 
-	if(this->recyclableParticles)
-	{
-		node = this->recyclableParticles->head;
-
-		for(; node; node = node->next)
+		if(particle->expired)
 		{
-			Particle::resume(node->data);
+			continue;
 		}
-	}
 
-	node = this->expiredParticles->head;
-
-	for(; node; node = node->next)
-	{
-		Particle::resume(node->data);
-		Particle::hide(node->data, &this->transformation.globalPosition);
+		Particle::resume(particle);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -591,27 +575,6 @@ void ParticleSystem::suspend()
 	{
 		Particle::suspend(node->data);
 	}
-
-	if(this->recyclableParticles)
-	{
-		node = this->recyclableParticles->head;
-
-		for(; node; node = node->next)
-		{
-			Particle::suspend(node->data);
-		}
-	}
-}
-
-/**
- * @private
- * @param particle
- */
-void ParticleSystem::particleExpired(Particle particle)
-{
-	VirtualList::pushBack(this->expiredParticles, particle);
-	
-	Particle::hide(particle, &this->transformation.globalPosition);
 }
 
 /**
@@ -645,5 +608,5 @@ void ParticleSystem::unpause()
 
 bool ParticleSystem::isPaused()
 {
-	return this->paused && !this->particles->head;
+	return this->paused && 0 == this->particleCount;
 }

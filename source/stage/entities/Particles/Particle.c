@@ -61,6 +61,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->position = Vector3D::zero();
 	this->previousZ = 0;
 	this->animationName = this->particleSpec->initialAnimation;
+	this->expired = false;
 
 	Particle::addSprite(this);
 }
@@ -116,7 +117,7 @@ void Particle::setAnimationName(const char* animationName)
  *
  * @param elapsedTime
  * @param behavior
- * @return				Boolean that tells whether a body was set active(?)
+ * @return				Returns true if the particle's life span has elapsed
  */
 bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 {
@@ -236,6 +237,16 @@ void Particle::show()
 }
 
 /**
+ * Make Particle expire
+ */
+void Particle::expire()
+{
+	this->expired = true;
+
+	Particle::hide(this, &this->position);
+}
+
+/**
  * Make Particle invisible
  */
 void Particle::hide(const Vector3D* position)
@@ -291,6 +302,7 @@ void Particle::suspend()
  */
 void Particle::reset()
 {
+	this->expired = false;
 }
 
 /**
