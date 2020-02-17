@@ -104,7 +104,17 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
  */
 void SoundWrapper::destructor()
 {
-	SoundWrapper::stop(this);
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		channel->cursor = 0;
+		_soundRegistries[channel->number].SxINT = 0x00;
+		_soundRegistries[channel->number].SxLRV = 0x00;
+	}
 
 	if(!isDeleted(this->channels))
 	{
@@ -354,8 +364,7 @@ void SoundWrapper::pause()
 		for(; node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxLRV = 0x00;
-			_soundRegistries[channel->number].SxINT = 0x00;
+			_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
 		}
 	}
 }
@@ -396,8 +405,7 @@ void SoundWrapper::turnOff()
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-		_soundRegistries[channel->number].SxINT = 0x00;
+		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
@@ -460,8 +468,9 @@ void SoundWrapper::stop()
 		Channel* channel = (Channel*)node->data;
 
 		channel->cursor = 0;
-		_soundRegistries[channel->number].SxINT = 0xBF;
-//		_soundRegistries[channel->number].SxLRV = 0x00;
+
+		// If turned of right away, pops and cracks are perceptible
+		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
