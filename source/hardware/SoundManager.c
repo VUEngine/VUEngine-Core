@@ -710,6 +710,12 @@ void SoundManager::turnOffPlayingSounds()
 			SoundWrapper::turnOff(soundWrapper);
 		}
 	}
+
+	for(int i = 0; i < __TOTAL_CHANNELS; i++)
+	{
+		_soundRegistries[i].SxINT = 0x00;
+		_soundRegistries[i].SxLRV = 0x00;
+	}
 }
 
 void SoundManager::turnOnPlayingSounds()
