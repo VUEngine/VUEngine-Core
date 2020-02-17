@@ -846,11 +846,12 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 	u8 normalChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormal);
 	u8 modulationChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelModulation);
 	u8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
-
+	u8 normalExtendeChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormalExtended);
+	
 	// Check for free channels
 	VirtualList availableChannels  = new VirtualList();
 
-	u8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
+	u8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (normalExtendeChannelsCount && 0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
 	u8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
 	u8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
 
@@ -879,7 +880,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 
 				u16 i = 0;
 
-				for(; i < normalChannelsCount; i++)
+				for(i = 0; i < normalChannelsCount + modulationChannelsCount; i++)
 				{
 					if(kChannelNoise != sound->soundChannels[i]->soundChannelConfiguration->channelType)
 					{
@@ -893,7 +894,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 					}
 				}
 
-				for(i = 0; i < normalChannelsCount; i++)
+				for(i = 0; i < normalChannelsCount + modulationChannelsCount; i++)
 				{
 					if(kChannelNoise != sound->soundChannels[i]->soundChannelConfiguration->channelType)
 					{
