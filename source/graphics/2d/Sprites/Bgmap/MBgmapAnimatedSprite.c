@@ -78,8 +78,8 @@ void MBgmapAnimatedSprite::writeAnimation()
 	{
 		case __ANIMATED_MULTI:
 
-			BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
-			BgmapAnimatedSprite::invalidateParamTable(this);
+			MBgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
+			MBgmapAnimatedSprite::invalidateParamTable(this);
 			break;
 
 		default:
@@ -87,4 +87,12 @@ void MBgmapAnimatedSprite::writeAnimation()
 			Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 			break;
 	}
+}
+
+void MBgmapAnimatedSprite::setFrameAnimatedMulti(u16 frame)
+{
+	int totalColumns = 64 - (this->originalTextureSource.mx / 8);
+	s32 frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
+	this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
+	this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 }
