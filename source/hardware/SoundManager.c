@@ -777,6 +777,11 @@ void SoundManager::unlock()
 
 void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
 {
+	if(this->lock || NULL == sound)
+	{
+		return;
+	}
+
 	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
 
 	if(!isDeleted(soundWrapper))

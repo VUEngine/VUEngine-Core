@@ -444,6 +444,11 @@ void SoundWrapper::rewind()
  */
 void SoundWrapper::stop()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+	
 	this->turnedOn = false;
 	this->paused = true;
 
@@ -466,9 +471,9 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
-	this->sound = NULL;
-
 	SoundWrapper::stop(this);
+
+	this->sound = NULL;
 
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
 
