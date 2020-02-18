@@ -67,6 +67,7 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	this->paused = false;
 	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
+	this->maximumNumberOfAliveParticles = 0;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -121,6 +122,7 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
 	this->paused = !this->particleSystemSpec->autoStart;
+	this->maximumNumberOfAliveParticles = 0;
 
 	ParticleSystem::configure(this);
 }
@@ -143,6 +145,7 @@ void ParticleSystem::configure()
 	this->spawnForceDelta.z = this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z;
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
+	this->maximumNumberOfAliveParticles = this->particleSystemSpec->maximumNumberOfAliveParticles;
 
 	// calculate the number of sprite specs
 	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
@@ -286,11 +289,11 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime)
 	{
-		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
+		if(this->particleCount < this->maximumNumberOfAliveParticles)
 		{
 			++this->totalSpawnedParticles;
 
-			if(!this->loop && this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles)
+			if(!this->loop && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem::pause(this);
 				return;
@@ -398,7 +401,7 @@ Force ParticleSystem::getParticleSpawnForce()
  */
 void ParticleSystem::spawnAllParticles()
 {
-	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
+	while(this->particleCount < this->maximumNumberOfAliveParticles)
 	{
 		VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
 		this->particleCount++;
@@ -585,6 +588,15 @@ int ParticleSystem::computeNextSpawnTime()
 {
 	return this->particleSystemSpec->minimumSpawnDelay +
 			(this->particleSystemSpec->spawnDelayDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->spawnDelayDelta) : 0);
+}
+
+/**
+ * @public
+ * @param maximumNumberOfAliveParticles		Maximum number of particles alive
+ */
+void ParticleSystem::setMaximumNumberOfAliveParticles(u8 maximumNumberOfAliveParticles)
+{
+	this->maximumNumberOfAliveParticles = maximumNumberOfAliveParticles;
 }
 
 void ParticleSystem::start()

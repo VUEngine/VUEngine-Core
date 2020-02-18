@@ -117,6 +117,7 @@ class ParticleSystem : Entity
 	Vector3DFlag spawnForceDelta;
 	// Particles' animation name
 	const char* animationName;
+	u8 maximumNumberOfAliveParticles;
 
 	/// @publicsection
 	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, s16 internalId, const char* const name);
@@ -130,6 +131,7 @@ class ParticleSystem : Entity
 	void start();
 	bool getLoop();
 	void setLoop(bool value);
+	void setMaximumNumberOfAliveParticles(u8 maximumNumberOfAliveParticles);
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
