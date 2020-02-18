@@ -981,7 +981,7 @@ int SpriteManager::getTotalPixelsDrawn()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->visible && sprite->positioned)
+		if(sprite->visible && sprite->positioned && !sprite->hidden)
 		{
 			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
 		}

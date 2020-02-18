@@ -147,6 +147,8 @@ void Sprite::show()
 void Sprite::hide()
 {
 	this->hidden = true;
+
+	// Make sure that I'm positioned to show up again
 	this->positioned = false;
 
 	// Prevent retention if lowering the WORLD by going off
