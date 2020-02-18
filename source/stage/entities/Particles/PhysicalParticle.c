@@ -95,7 +95,7 @@ bool PhysicalParticle::update(u32 elapsedTime, void (* behavior)(Particle partic
 	}
 
 	this->position = *Body::getPosition(this->body);
-
+	
 	return false;
 }
 
@@ -199,6 +199,7 @@ bool PhysicalParticle::isSubjectToGravity(Acceleration gravity __attribute__ ((u
  */
 void PhysicalParticle::reset()
 {
+	Base::reset(this);
 	Body::reset(this->body);
 }
 
