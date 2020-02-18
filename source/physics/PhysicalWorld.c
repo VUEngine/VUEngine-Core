@@ -287,6 +287,9 @@ void PhysicalWorld::update(Clock clock)
 
 	activeBodies[activeBodiesIndex] = NULL;
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+
 	for(activeBodiesIndex = 0; activeBodies[activeBodiesIndex]; activeBodiesIndex++)
 	{
 		if(isDeleted(activeBodies[activeBodiesIndex]))
@@ -296,6 +299,10 @@ void PhysicalWorld::update(Clock clock)
 
 		Body::update(activeBodies[activeBodiesIndex]);
 	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
 #ifdef __SHOW_PHYSICS_PROFILING
 	PhysicalWorld::print(this, 1, 1);

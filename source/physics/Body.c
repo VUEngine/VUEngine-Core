@@ -552,6 +552,8 @@ void Body::clampVelocity()
 // update movement over axis
 MovementResult Body::updateMovement()
 {
+	CACHE_ENABLE;
+
 	Acceleration gravity = Body::getGravity(this);
 	this->weight = Vector3D::scalarProduct(gravity, this->mass);
 
@@ -647,6 +649,8 @@ MovementResult Body::updateMovement()
 	{
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
 	}
+
+	CACHE_DISABLE;
 
 	return Body::getMovementResult(this, previousVelocity);
 }
