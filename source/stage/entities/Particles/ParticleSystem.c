@@ -552,11 +552,6 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		if(particle->expired)
-		{
-			continue;
-		}
-
 		Particle::resume(particle);
 	}
 
