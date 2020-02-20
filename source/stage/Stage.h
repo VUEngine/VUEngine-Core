@@ -45,6 +45,16 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct Streaming
+{
+	u16 loadPadding;
+	u16 unloadPadding;
+	u16 streamingAmplitude;
+	u16 particleRemovalDelayCycles;
+	bool deferred;
+
+} Streaming;
+
 // defines a game world in ROM memory
 typedef struct StageSpec
 {
@@ -83,15 +93,7 @@ typedef struct StageSpec
 	} level;
 
 	// streaming
-	struct Streaming
-	{
-		u16 loadPadding;
-		u16 unloadPadding;
-		u16 streamingAmplitude;
-		u16 particleRemovalDelayCycles;
-		bool deferred;
-
-	} streaming;
+	Streaming streaming;
 
 	// rendering
 	struct Rendering
@@ -205,6 +207,8 @@ class Stage : Container
 	VirtualList loadedStageEntities;
 	// The sounds
 	VirtualList soundWrappers;
+	// Streaming settings 
+	Streaming streaming;
 	// counter to control the streaming phases
 	int streamingCycleCounter;
 	// index for method to execute
@@ -219,9 +223,6 @@ class Stage : Container
 	u32 cameraPreviousDistance;
 	// next entity's id
 	s16 nextEntityId;
-	// load padding
-	u16 loadPadding;
-	u16 unloadPadding;
 
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);

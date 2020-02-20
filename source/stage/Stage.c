@@ -56,12 +56,12 @@
 #define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->loadPadding)
-#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->loadPadding)
-#define __LOAD_LOW_Y_LIMIT		(-this->loadPadding)
-#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->loadPadding)
-#define __LOAD_LOW_Z_LIMIT		(-this->loadPadding)
-#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->loadPadding)
+#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->streaming.loadPadding)
+#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+#define __LOAD_LOW_Y_LIMIT		(-this->streaming.loadPadding)
+#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->streaming.loadPadding)
+#define __LOAD_LOW_Z_LIMIT		(-this->streaming.loadPadding)
+#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->streaming.loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -141,8 +141,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
 	this->soundWrappers = NULL;
-	this->loadPadding = this->stageSpec->streaming.loadPadding;
-	this->unloadPadding = this->stageSpec->streaming.unloadPadding;
+	this->streaming = this->stageSpec->streaming;
 }
 
 // class's destructor
@@ -297,7 +296,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
-	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->stageSpec->streaming.particleRemovalDelayCycles);
+	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
@@ -387,7 +386,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// apply transformations
 			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
-			if(!this->stageSpec->streaming.deferred)
+			if(!this->streaming.deferred)
 			{
 				SpriteManager::writeTextures(SpriteManager::getInstance());
 			}
@@ -740,7 +739,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		Entity entity = Entity::safeCast(node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->loadPadding + this->unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity::getInternalId(entity);
 
@@ -813,7 +812,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 							cameraPosition.z * cameraPosition.z);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
-	u16 amplitude = this->stageSpec->streaming.streamingAmplitude;
+	u16 amplitude = this->streaming.streamingAmplitude;
 
 	if(this->cameraPreviousDistance != cameraDistance)
 	{
@@ -1016,12 +1015,12 @@ bool Stage::stream()
 	}
 #endif
 
-	if(Stage::purgeChildrenProgressively(this) && this->stageSpec->streaming.deferred)
+	if(Stage::purgeChildrenProgressively(this) && this->streaming.deferred)
 	{
 		return true;
 	}
 
-	if(Stage::updateEntityFactory(this) && this->stageSpec->streaming.deferred)
+	if(Stage::updateEntityFactory(this) && this->streaming.deferred)
 	{
 		return false;
 	}
@@ -1033,7 +1032,7 @@ bool Stage::stream()
 		this->streamingPhase = 0;
 	}
 
-	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
+	return _streamingPhases[this->streamingPhase](this, this->streaming.deferred);
 }
 
 void Stage::streamAll()
