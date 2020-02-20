@@ -111,7 +111,7 @@ void BgmapAnimatedSprite::writeAnimation()
 void BgmapAnimatedSprite::setFrameAnimatedMulti(u16 frame)
 {
 	int totalColumns = 64 - (this->originalTextureSource.mx / 8);
-	s32 frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
+	s32 frameColumn = Texture::getCols(this->texture) * frame;
 	this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 	this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 }
