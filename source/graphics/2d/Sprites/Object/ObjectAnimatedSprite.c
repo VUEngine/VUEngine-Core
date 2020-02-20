@@ -50,12 +50,12 @@ extern int strcmp(const char *, const char *);
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectAnimatedSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner)
+void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, Object owner)
 {
 	// construct base object
-	Base::constructor((const ObjectSpriteSpec*)objectSpriteSpec, owner);
+	Base::constructor((const ObjectSpriteSpec*)objectAnimatedSpriteSpec, owner);
 
-	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectSpriteSpec->spriteSpec.textureSpec->charSetSpec);
+	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectAnimatedSpriteSpec->spriteSpec.textureSpec->charSetSpec);
 }
 
 /**

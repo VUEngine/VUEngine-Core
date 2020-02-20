@@ -36,6 +36,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef const ObjectSpriteSpec ObjectAnimatedSpriteSpec;
+
+typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
+
+
 /// @ingroup graphics-2d-sprites-object
 class ObjectAnimatedSprite : ObjectSprite
 {
@@ -43,7 +48,7 @@ class ObjectAnimatedSprite : ObjectSprite
 	TextureSource originalTextureSource;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
+	void constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, Object owner);
 	override void writeAnimation();
 }
 
