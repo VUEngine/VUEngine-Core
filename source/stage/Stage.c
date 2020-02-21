@@ -207,26 +207,26 @@ void Stage::destructor()
 }
 
 // determine if a point is visible
-int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
+int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition)
 {
-	Vector3D spatialPosition = Vector3D::getFromScreenPixelVector(onScreenPosition);
-
-	PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(spatialPosition), 0);
+	onScreenPosition.x -= cameraPosition->x;
+	onScreenPosition.y -= cameraPosition->y;
+	onScreenPosition.z -= cameraPosition->z;
 
 	// check x visibility
-	if(position.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
+	if(onScreenPosition.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || onScreenPosition.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(position.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || position.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(onScreenPosition.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || onScreenPosition.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(position.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || position.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(onScreenPosition.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || onScreenPosition.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
@@ -680,6 +680,9 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 // load all visible entities
 void Stage::loadInitialEntities()
 {
+	extern const Vector3D* _cameraPosition;
+	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
+
 	// need a temporary list to remove and delete entities
 	VirtualNode node = this->stageEntities->head;
 
@@ -690,7 +693,7 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
@@ -855,7 +858,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				}
 
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
 				{
 					loadedEntities = true;
 
@@ -897,7 +900,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				}
 
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
 				{
 					loadedEntities = true;
 
