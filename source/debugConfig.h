@@ -41,6 +41,7 @@
 //#define __SHOW_SOUND_STATUS
 //#define __MUTE_ALL_SOUND
 //#define __DRAW_COMPLETE_BOXES
+//#undef __HACK_BGMAP_SPRITE_HEIGHT			// Use for emulators
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
