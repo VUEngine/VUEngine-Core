@@ -174,7 +174,7 @@ u32 CollisionManager::update(Clock clock)
 	{
 		Shape shape = Shape::safeCast(node->data);
 
-		if(shape->enabled)
+		if(shape->enabled && (__COLLISION_ALL_LAYERS != shape->layersToIgnore))
 		{
 			activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex++] = shape;
 		}
