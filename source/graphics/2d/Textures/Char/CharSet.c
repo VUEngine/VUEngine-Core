@@ -243,6 +243,28 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 	}
 }
 
+// TODO: if inline is allowed, the optization that GCC does makes this innefective in putPixel method
+// It is not because of O3 optimization option, the same happens with O1
+static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+{
+	const BYTE* finalSource = source + numberOfBYTES;
+
+	asm("				\n\t"      \
+		"jr end%=		\n\t"      \
+		"loop%=:		\n\t"      \
+		"ld.b 0[%1],r10	\n\t"      \
+		"st.b r10,0[%0] \n\t"      \
+		"add 1,%0		\n\t"      \
+		"add 1,%1		\n\t"      \
+		"end%=:			\n\t"      \
+		"cmp %1,%2		\n\t"      \
+		"bgt loop%=		\n\t"
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource)
+		: "r10" // regs used
+	);
+}
+
 /**
  * Write a single pixel to DRAM
  *
@@ -259,12 +281,16 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
 
-		Mem::copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
+		CharSet::copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
+
+		// TODO: review this, only works with non transparent pixels
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem::copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+//		auxChar[displacement] |= (u16)newPixelColor << pixelToReplaceDisplacement;
+
+		CharSet::copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(sizeof(BYTE) << 4));
 	}
 }
 
