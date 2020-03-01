@@ -120,7 +120,7 @@ class ParticleSystem : Entity
 	u8 maximumNumberOfAliveParticles;
 
 	/// @publicsection
-	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, s16 internalId, const char* const name);
+	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, const char* const name);
 	void setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset);
 	bool handleMessage(Telegram telegram);
 	bool isPaused();

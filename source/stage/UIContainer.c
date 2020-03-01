@@ -57,12 +57,12 @@ void UIContainer::addEntities(PositionedEntity* entities)
 {
 	ASSERT(entities, "UIContainer::addEntities: null entities");
 
-	static int internalId = 0;
+	static int id = 0;
 	int i = 0;
 
 	for(;entities && entities[i].entitySpec; i++)
 	{
-		Entity entity = Entity::loadEntity(&entities[i], internalId++);
+		Entity entity = Entity::loadEntity(&entities[i], id++);
 
 		if(entity)
 		{

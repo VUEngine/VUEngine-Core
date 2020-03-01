@@ -55,16 +55,16 @@ friend class VirtualList;
  *
  * @param entitySpec
  * @param id
- * @param internalId
+ * @param id
  * @param name
  */
-void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const char* const name)
+void Entity::constructor(EntitySpec* entitySpec, s16 id, const char* const name)
 {
 	// construct base Container
 	Base::constructor(name);
 
 	// set the ids
-	this->internalId = internalId;
+	this->id = id;
 
 	// save spec
 	this->entitySpec = entitySpec;
@@ -128,7 +128,7 @@ void Entity::iAmDeletingMyself()
  */
 s16 Entity::getInternalId()
 {
-	return this->internalId;
+	return this->id;
 }
 
 /**
@@ -148,7 +148,7 @@ Entity Entity::getChildById(s16 id)
 		{
 			Entity child = Entity::safeCast(node->data);
 
-			if(child->internalId == id)
+			if(child->id == id)
 			{
 				return this->removedChildren && VirtualList::find(this->removedChildren, child) ? NULL : child;
 			}
@@ -675,12 +675,12 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
  *
  * @param entitySpec
  * @param id
- * @param internalId
+ * @param id
  * @param name
  * @param extraInfo
  * @return					Entity instance
  */
-static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 id, s16 internalId, const char* const name, void* extraInfo)
+static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 id, const char* const name, void* extraInfo)
 {
 	ASSERT(entitySpec, "Entity::load: null spec");
 	ASSERT(entitySpec->allocator, "Entity::load: no allocator defined");
@@ -691,7 +691,7 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 id, s1
 	}
 
 	// call the appropriate allocator to support inheritance
-	Entity entity = ((Entity (*)(EntitySpec*, s16, s16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, id, internalId, name);
+	Entity entity = ((Entity (*)(EntitySpec*, s16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, id, name);
 
 	// process extra info
 	if(extraInfo)
@@ -719,7 +719,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + Container::getChildCount(this));
+		Entity child = Entity::loadEntity(&childrenSpecs[i], this->id + Container::getChildCount(this));
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
@@ -731,10 +731,10 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
  * Load an entity and instantiate all its children
  *
  * @param positionedEntity
- * @param internalId
+ * @param id
  * @return					Entity
  */
-static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromSpec: null positionedEntity");
 
@@ -743,7 +743,7 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entitySpec, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, id, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
@@ -784,7 +784,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Container::getChildCount(this));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->id + Container::getChildCount(this));
 	}
 }
 
@@ -792,10 +792,10 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
  * Load an entity and instantiate all its children, deferred
  *
  * @param positionedEntity
- * @param internalId
+ * @param id
  * @return					Entity
  */
-static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
@@ -804,7 +804,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entitySpec, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, id, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
 	if(positionedEntity->name)
@@ -830,13 +830,13 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
  * Add child entity from spec
  *
  * @param entitySpec
- * @param internalId
+ * @param id
  * @param name
  * @param position
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const EntitySpec* entitySpec, int id, const char* name, const Vector3D* position, void* extraInfo)
 {
 	ASSERT(entitySpec, "Entity::addChildEntity: null entitySpec");
 
@@ -859,7 +859,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	{
 		(EntitySpec*)entitySpec,
 		screenPixelVector,
-		this->internalId + Container::getChildCount(this),
+		this->id + Container::getChildCount(this),
 		(char*)name,
 		NULL,
 		extraInfo,
@@ -867,7 +867,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	};
 
 	// load child entity
-	Entity childEntity = Entity::loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
+	Entity childEntity = Entity::loadEntity(&positionedEntity, 0 > id ? id : positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics

@@ -368,11 +368,11 @@ Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, boo
 }
 
 // add entity to the stage
-Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
+Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 id, bool makeReady)
 {
 	if(positionedEntity)
 	{
-		Entity entity = Entity::loadEntity(positionedEntity, internalId);
+		Entity entity = Entity::loadEntity(positionedEntity, id);
 		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
 
 		if(entity)
@@ -421,7 +421,7 @@ void Stage::makeChildReady(Entity entity)
 	}
 }
 
-bool Stage::registerEntityId(s16 internalId, EntitySpec* entitySpec)
+bool Stage::registerEntityId(s16 id, EntitySpec* entitySpec)
 {
 	VirtualNode node = this->stageEntities->head;
 
@@ -431,7 +431,7 @@ bool Stage::registerEntityId(s16 internalId, EntitySpec* entitySpec)
 
 		if(entitySpec == stageEntityDescription->positionedEntity->entitySpec)
 		{
-			stageEntityDescription->internalId = internalId;
+			stageEntityDescription->id = id;
 			return true;
 		}
 	}
@@ -456,7 +456,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 	Base::removeChild(this, child, deleteChild);
 
-	s16 internalId = Entity::getInternalId(child);
+	s16 id = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -464,9 +464,9 @@ void Stage::removeChild(Container child, bool deleteChild)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(stageEntityDescription->internalId == internalId)
+		if(stageEntityDescription->id == id)
 		{
-			stageEntityDescription->internalId = -1;
+			stageEntityDescription->id = -1;
 			break;
 		}
 	}
@@ -500,7 +500,7 @@ void Stage::unloadChild(Container child)
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 
-	s16 internalId = Entity::getInternalId(child);
+	s16 id = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -508,9 +508,9 @@ void Stage::unloadChild(Container child)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(stageEntityDescription->internalId == internalId)
+		if(stageEntityDescription->id == id)
 		{
-			stageEntityDescription->internalId = -1;
+			stageEntityDescription->id = -1;
 
 			// remove from list of entities that are to be loaded by the streaming,
 			// if the entity is not to be respawned
@@ -598,7 +598,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 
 	StageEntityDescription* stageEntityDescription = new StageEntityDescription;
 
-	stageEntityDescription->internalId = -1;
+	stageEntityDescription->id = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	PixelVector environmentPosition = {0, 0, 0, 0};
@@ -690,13 +690,13 @@ void Stage::loadInitialEntities()
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(-1 == stageEntityDescription->internalId)
+		if(-1 == stageEntityDescription->id)
 		{
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
 			{
-				stageEntityDescription->internalId = this->nextEntityId++;
-				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
+				stageEntityDescription->id = this->nextEntityId++;
+				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->id, false);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -704,7 +704,7 @@ void Stage::loadInitialEntities()
 					this->streamingHeadNode = node;
 				}
 
-				stageEntityDescription->internalId = Entity::getInternalId(entity);
+				stageEntityDescription->id = Entity::getInternalId(entity);
 
 				VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 			}
@@ -744,7 +744,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		// if the entity isn't visible inside the view field, unload it
 		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
-			s16 internalId = Entity::getInternalId(entity);
+			s16 id = Entity::getInternalId(entity);
 
 			VirtualNode auxNode = this->loadedStageEntities->head;
 			StageEntityDescription* stageEntityDescription = NULL;
@@ -753,7 +753,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 			{
 				stageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-				if(stageEntityDescription->internalId == internalId)
+				if(stageEntityDescription->id == id)
 				{
 					break;
 				}
@@ -845,7 +845,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 		{
 			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-			if(0 > stageEntityDescription->internalId)
+			if(0 > stageEntityDescription->id)
 			{
 				counter++;
 
@@ -862,16 +862,16 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				{
 					loadedEntities = true;
 
-					stageEntityDescription->internalId = this->nextEntityId++;
+					stageEntityDescription->id = this->nextEntityId++;
 					VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->id);
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->id, true);
 					}
 				}
 			}
@@ -887,7 +887,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 		{
 			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-			if(0 > stageEntityDescription->internalId)
+			if(0 > stageEntityDescription->id)
 			{
 				counter++;
 
@@ -904,16 +904,16 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				{
 					loadedEntities = true;
 
-					stageEntityDescription->internalId = this->nextEntityId++;
+					stageEntityDescription->id = this->nextEntityId++;
 					VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->id);
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->id, true);
 					}
 				}
 			}
@@ -930,13 +930,13 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 	return loadedEntities;
 }
 
-Entity Stage::findChildByInternalId(s16 internalId)
+Entity Stage::findChildByInternalId(s16 id)
 {
 	VirtualNode node = this->children->head;
 
 	for(; node; node = node->next)
 	{
-		if(Entity::getInternalId(Entity::safeCast(node->data)) == internalId)
+		if(Entity::getInternalId(Entity::safeCast(node->data)) == id)
 		{
 			return Entity::safeCast(node->data);
 		}

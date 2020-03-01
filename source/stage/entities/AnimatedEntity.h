@@ -67,7 +67,7 @@ class AnimatedEntity : Entity
 	char* currentAnimationName;
 
 	/// @publicsection
-	void constructor(AnimatedEntitySpec* animatedEntitySpec, s16 id, s16 internalId, const char* const name);
+	void constructor(AnimatedEntitySpec* animatedEntitySpec, s16 id, const char* const name);
 	AnimationDescription* getAnimationDescription();
 	s16 getActualFrame();
 	int getNumberOfFrames();
