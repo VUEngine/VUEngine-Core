@@ -41,22 +41,20 @@
 /// @ingroup stage-entities
 class Entity : Container
 {
+	// Used for collisions and streaming
+	Size size;
+	// Entity's internal id, set by the engine
+	s16 internalId;
 	// Entity factory
 	EntityFactory entityFactory;
 	// sprites list
 	VirtualList sprites;
 	// Shapes for collision detection
 	VirtualList shapes;
-	// Used for collisions and streaming
-	Size size;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement
 	Vector3D* centerDisplacement;
-	// Entity's id, set by the user
-	s16 id;
-	// Entity's internal id, set by the engine
-	s16 internalId;
 	// Flag to update sprites' attributes
 	bool invalidateSprites;
 	// Flag to prevent transforming the shapes during the transformation phase

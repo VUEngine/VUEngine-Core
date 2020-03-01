@@ -64,7 +64,6 @@ void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const c
 	Base::constructor(name);
 
 	// set the ids
-	this->id = id;
 	this->internalId = internalId;
 
 	// save spec
@@ -133,16 +132,6 @@ s16 Entity::getInternalId()
 }
 
 /**
- * Retrieve instance's id as per its spec
- *
- * @return		ID
- */
-s16 Entity::getId()
-{
-	return this->id;
-}
-
-/**
  * Get child by id
  *
  * @param id
@@ -159,7 +148,7 @@ Entity Entity::getChildById(s16 id)
 		{
 			Entity child = Entity::safeCast(node->data);
 
-			if(Entity::getId(child) == id)
+			if(child->internalId == id)
 			{
 				return this->removedChildren && VirtualList::find(this->removedChildren, child) ? NULL : child;
 			}

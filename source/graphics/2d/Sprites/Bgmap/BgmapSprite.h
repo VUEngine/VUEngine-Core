@@ -99,12 +99,12 @@ class BgmapSprite : Sprite
 {
 	// 3d world position
 	DrawSpec drawSpec;
+	// pointer to function that implements the param table based effects
+	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
 	u32 param;
 	// param table offset
 	s16 paramTableRow;
-	// pointer to function that implements the param table based effects
-	ParamTableEffectMethod applyParamTableEffect;
 
 	/// @publicsection
 	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner);
