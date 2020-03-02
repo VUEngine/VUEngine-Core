@@ -355,9 +355,8 @@ void BgmapSprite::render()
 	{
 		h = _cameraFrustum->y1 - gy;
 	}
-
 #ifdef __HACK_BGMAP_SPRITE_HEIGHT
-	if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h)
+	if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h && 0 == gy)
 	{
 		if (0 >= h)
 		{
