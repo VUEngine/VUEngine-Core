@@ -1796,6 +1796,7 @@ void Entity::resume()
 
 	// force update sprites on next game's cycle
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	Entity::synchronizeGraphics(this);
 }
 
 /**

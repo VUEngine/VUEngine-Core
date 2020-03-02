@@ -332,6 +332,11 @@ void SpriteManager::disposeSprite(Sprite sprite)
 {
 	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
+	if(isDeleted(sprite))
+	{
+		return;
+	}
+
 	this->lockSpritesLists = true;
 
 	Sprite::releaseTexture(sprite);
