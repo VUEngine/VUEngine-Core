@@ -243,7 +243,7 @@ void Texture::setFrame(u16 frame)
  *
  * @param frame	Texture's frame to display
  */
-void Texture::setFrameAnimatedMulti(u16 frame __attribute__ ((unused)))
+void Texture::setFrameAnimatedMulti(u16 frame)
 {
 }
 

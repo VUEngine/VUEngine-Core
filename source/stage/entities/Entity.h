@@ -44,7 +44,7 @@ class Entity : Container
 	// Used for collisions and streaming
 	Size size;
 	// Entity's internal id, set by the engine
-	s16 id;
+	s16 internalId;
 	// Entity factory
 	EntityFactory entityFactory;
 	// sprites list
@@ -63,15 +63,15 @@ class Entity : Container
 	bool allowCollisions;
 
 	/// @publicsection
-	static Entity instantiate(const EntitySpec* const entitySpec, s16 id, const char* const name, void* extraInfo);
-	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 id);
-	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id);
+	static Entity instantiate(const EntitySpec* const entitySpec, s16 id, s16 internalId, const char* const name, void* extraInfo);
+	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
+	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
-	void constructor(EntitySpec* entitySpec, s16 id, const char* const name);
+	void constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-	Entity addChildEntity(const EntitySpec* entitySpec, int id, const char* name, const Vector3D* position, void* extraInfo);
+	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
 	bool addSpriteFromSpecAtIndex(int spriteSpecIndex);
 	bool addShapeFromSpecAtIndex(int shapeSpecIndex);
 	bool transformShapeAtSpecIndex(int shapeSpecIndex);

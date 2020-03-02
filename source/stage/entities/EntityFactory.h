@@ -121,7 +121,7 @@ typedef struct PositionedEntityDescription
 	s16 spriteSpecIndex;
 	s16 shapeSpecIndex;
 	s16 transformedShapeSpecIndex;
-	s16 id;
+	s16 internalId;
 	bool transformed;
 	bool initialized;
 } PositionedEntityDescription;
@@ -151,7 +151,7 @@ class EntityFactory : Object
 	void constructor();
 	u32 prepareEntities();
 	void prepareAllEntities();
-	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
+	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId);
 	u32 hasEntitiesPending();
 	u32 instantiateEntities();
 	u32 initializeEntities();

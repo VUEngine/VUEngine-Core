@@ -181,7 +181,7 @@ typedef struct StageEntityDescription
 	PixelRightBox pixelRightBox;
 	PositionedEntity* positionedEntity;
 	u32 distance;
-	s16 id;
+	s16 internalId;
 
 } StageEntityDescription;
 
@@ -231,7 +231,7 @@ class Stage : Container
 	void setupTimer();
 	Size getSize();
 	CameraFrustum getCameraFrustum();
-	bool registerEntityId(s16 id, EntitySpec* entitySpec);
+	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	UIContainer getUIContainer();
@@ -240,7 +240,7 @@ class Stage : Container
 	void showStreamingProfiling(int x, int y);
 	bool unloadOutOfRangeEntities(int defer);
     bool loadInRangeEntities(int defer);
-	Entity findChildByInternalId(s16 id);
+	Entity findChildByInternalId(s16 internalId);
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
 

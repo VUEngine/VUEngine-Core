@@ -51,10 +51,10 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Actor::constructor(const ActorSpec* actorSpec, s16 id, const char* const name)
+void Actor::constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, const char* const name)
 {
 	// construct base object
-	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, id, name);
+	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, id, internalId, name);
 
 	// save spec
 	this->actorSpec = actorSpec;
