@@ -46,10 +46,6 @@ class ObjectSpriteContainer : Sprite
 {
 	// object sprites
 	VirtualList objectSprites;
-	// for z sorting
-	VirtualNode node;
-	// for z sorting
-	VirtualNode previousNode;
 	// next object sprite node to defragment
 	VirtualNode objectSpriteNodeToDefragment;
 	// used for defragmentation

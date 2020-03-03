@@ -75,9 +75,6 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 
-	this->node = NULL;
-	this->previousNode = NULL;
-
 	// clear OBJ memory
 	int i = firstObjectIndex;
 
@@ -144,9 +141,6 @@ s32 ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int number
 
 		this->availableObjects -= numberOfObjects;
 
-		this->node = NULL;
-		this->previousNode = NULL;
-
 		return lastObjectIndex;
 	}
 
@@ -208,8 +202,6 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 nu
 	// remove the sprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 
-	this->node = this->previousNode = NULL;
-
 	// if was the last node
 	if(!this->objectSpriteNodeToDefragment | !this->objectSprites->head)
 	{
@@ -268,7 +260,7 @@ void ObjectSpriteContainer::defragment()
 	NM_ASSERT(!isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
 	// get the next sprite to move
-	ObjectSprite objectSprite = ObjectSprite::safeCast(VirtualNode::getData(this->objectSpriteNodeToDefragment));
+	ObjectSprite objectSprite = ObjectSprite::safeCast(this->objectSpriteNodeToDefragment->data);
 
 	ASSERT(Sprite::getTexture(objectSprite), "ObjectSpriteContainer::defragment: null texture");
 
@@ -356,16 +348,20 @@ void ObjectSpriteContainer::sort()
  */
 void ObjectSpriteContainer::sortProgressively()
 {
-	this->node = this->node ? this->previousNode ? this->node : VirtualNode::getPrevious(this->node) : this->objectSprites->tail;
+	VirtualNode node = this->objectSprites->tail;
 
-	this->previousNode = VirtualNode::getPrevious(this->node);
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
-	if(this->node)
+	for(; node; node = node->previous)
 	{
-		if(this->previousNode)
+		VirtualNode previousNode = node->previous;
+
+		if(previousNode)
 		{
-			ObjectSprite sprite = ObjectSprite::safeCast(VirtualNode::getData(this->node));
-			ObjectSprite previousSprite = ObjectSprite::safeCast(VirtualNode::getData(this->previousNode));
+			ObjectSprite sprite = ObjectSprite::safeCast(node->data);
+			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
 
 			// check if z positions are swapped
 			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
@@ -388,15 +384,17 @@ void ObjectSpriteContainer::sortProgressively()
 					}
 
 					// swap array entries
-					VirtualNode::swapData(this->node, this->previousNode);
+					VirtualNode::swapData(node, previousNode);
 
-					this->node = this->previousNode;
+					node = previousNode;
 				}
 			}
 		}
-
-		this->node = VirtualNode::getPrevious(this->node);
 	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 }
 
 /**
@@ -427,7 +425,6 @@ void ObjectSpriteContainer::render()
 	{
 		ObjectSpriteContainer::sortProgressively(this);
 	}
-
 
 	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
