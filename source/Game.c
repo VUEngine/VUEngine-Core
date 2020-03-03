@@ -821,8 +821,23 @@ void Game::synchronizeGraphics()
 	}
 #endif
 
+	// Prevent the VIPManager to modify the DRAM
+	// during the synchronization of the entities'
+	// positions with their sprites
+	VIPManager::allowDRAMAccess(this->vipManager, false);
+ 
 	// apply transformations to graphics
 	GameState::synchronizeGraphics(this->currentState);
+
+	if(VIPManager::isRenderingPending(this->vipManager))
+	{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		this->lastProcessName = "sprites";
+#endif
+		SpriteManager::render(SpriteManager::getInstance());
+	}
+	// allow the VIPManager to modify the DRAM
+	VIPManager::allowDRAMAccess(this->vipManager, true);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
