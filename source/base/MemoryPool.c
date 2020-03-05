@@ -52,7 +52,7 @@
 				__MEMORY_POOL_SECTION_ATTRIBUTE;														\
 																										\
 		/* global pointer to speed up allocation and free */											\
-		ClassName _memoryPool __MEMORY_POOL_SECTION_ATTRIBUTE = 										\
+		ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = 										\
 			&_singletonWrapper ## ClassName.instance;													\
 																										\
 		/* a flag to know when to allow construction */													\
