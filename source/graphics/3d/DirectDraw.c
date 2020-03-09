@@ -294,3 +294,124 @@ void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int color)
 		auxParallax += parallaxStep;
 	}
 }
+
+/**
+ * Draws a line between two given 2D points
+ *
+ * @param fromPoint Point 1
+ * @param toPoint	Point 2
+ * @param color		The color to draw (0-3)
+ */
+void DirectDraw::drawDebugLine(PixelVector fromPoint, PixelVector toPoint, int color)
+{
+	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+	float fromPointX = fromPoint.x;
+	float fromPointY = fromPoint.y;
+
+	float toPointX = toPoint.x;
+	float toPointY = toPoint.y;
+
+	float dx = fabs(toPointX - fromPointX);
+	float dy = fabs(toPointY - fromPointY);
+
+	if(0 == dx && 0 == dy)
+	{
+		return;
+	}
+
+	float stepX = dx ? 1 : 0;
+	float stepY = dy ? 1 : 0;
+	float parallax = fromPoint.parallax;
+	float parallaxDelta = toPoint.parallax - fromPoint.parallax;
+
+	void (*drawPixelMethod)(u32 buffer, u16 x, u16 y, int color) = DirectDraw::drawPixel;
+	// duplicating code here since it is much lighter on the cpu
+
+	if(color == __COLOR_BLACK)
+	{
+		drawPixelMethod = DirectDraw::drawBlackPixelWrapper;
+	}
+
+	float* fromCoordinate = NULL;
+	float* toCoordinate = NULL;
+	float parallaxStep = 0;
+
+	if(dy == dx || dy < dx || 0 == dy)
+	{
+		fromCoordinate = &fromPointX;
+		toCoordinate = &toPointX;
+
+		stepX = 1;
+		stepY = dy / dx;
+
+		if(toPointX < fromPointX)
+		{
+			float aux = toPointX;
+			toPointX = fromPointX;
+			fromPointX = aux;
+
+			aux = toPointY;
+			toPointY = fromPointY;
+			fromPointY = aux;
+		}
+
+		if(toPointY < fromPointY)
+		{
+			stepY = -stepY;
+		}
+
+		parallaxStep = parallaxDelta / dx;
+	}
+	else if(dx < dy || 0 == dx)
+	{
+		fromCoordinate = &fromPointY;
+		toCoordinate = &toPointY;
+
+		stepX = dx / dy;
+		stepY = 1;
+
+		if(toPointY < fromPointY)
+		{
+			float aux = toPointX;
+			toPointX = fromPointX;
+			fromPointX = aux;
+
+			aux = toPointY;
+			toPointY = fromPointY;
+			fromPointY = aux;
+		}
+
+		if(toPointX < fromPointX)
+		{
+			stepX = -stepX;
+		}
+
+		parallaxStep = parallaxDelta / dy;
+	}
+
+	float auxParallax = parallax;
+
+	while(*fromCoordinate <= *toCoordinate)
+	{
+		parallax = auxParallax;
+
+		if(_cameraFrustum->y0 < fromPointY && fromPointY < _cameraFrustum->y1)
+		{
+			if(_cameraFrustum->x0 < fromPointX - parallax && fromPointX - parallax < _cameraFrustum->x1)
+			{
+				drawPixelMethod(leftBuffer, (u16)(fromPointX - parallax), (u16)(fromPointY), color);
+			}
+
+			if(_cameraFrustum->x0 < fromPointX + parallax && fromPointX + parallax < _cameraFrustum->x1)
+			{
+				drawPixelMethod(rightBuffer, (u16)(fromPointX + parallax), (u16)(fromPointY), color);
+			}
+		}
+
+		fromPointX += stepX;
+		fromPointY += stepY;
+		auxParallax += parallaxStep;
+	}
+}

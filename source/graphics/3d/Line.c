@@ -70,14 +70,14 @@ void Line::destructor()
  */
 void Line::draw(bool calculateParallax __attribute__((unused)))
 {
-	DirectDraw::drawLine(
+	DirectDraw::drawDebugLine(
 		DirectDraw::getInstance(),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->a), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->b), 0),
 		this->color
 	);
 
-	DirectDraw::drawLine(
+	DirectDraw::drawDebugLine(
 		DirectDraw::getInstance(),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(this->a, this->b)), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)), 0),
