@@ -43,7 +43,6 @@ typedef u32 (*StreamingPhase)(void*);
 static const StreamingPhase _streamingPhases[] =
 {
 	&EntityFactory::instantiateEntities,
-	&EntityFactory::initializeEntities,
 	&EntityFactory::transformEntities,
 	&EntityFactory::makeReadyEntities
 };
@@ -62,7 +61,6 @@ void EntityFactory::constructor()
 	Base::constructor();
 
 	this->entitiesToInstantiate = new VirtualList();
-	this->entitiesToInitialize = new VirtualList();
 	this->entitiesToTransform = new VirtualList();
 	this->entitiesToMakeReady = new VirtualList();
 	this->spawnedEntities = new VirtualList();
@@ -89,23 +87,6 @@ void EntityFactory::destructor()
 
 	delete this->entitiesToInstantiate;
 	this->entitiesToInstantiate = NULL;
-
-	node = this->entitiesToInitialize->head;
-
-	for(; node; node = node->next)
-	{
-		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
-
-		if(!isDeleted(positionedEntityDescription->entity))
-		{
-			Entity::deleteMyself(positionedEntityDescription->entity);
-		}
-
-		delete positionedEntityDescription;
-	}
-
-	delete this->entitiesToInitialize;
-	this->entitiesToInitialize = NULL;
 
 	node = this->entitiesToTransform->head;
 
@@ -173,7 +154,6 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 	positionedEntityDescription->entity = NULL;
 	positionedEntityDescription->callback = callback;
 	positionedEntityDescription->internalId = internalId;
-	positionedEntityDescription->initialized = false;
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->spriteSpecIndex = 0;
 	positionedEntityDescription->shapeSpecIndex = 0;
@@ -199,7 +179,25 @@ u32 EntityFactory::instantiateEntities()
 		{
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
-				VirtualList::pushBack(this->entitiesToInitialize, positionedEntityDescription);
+				if(0 <= positionedEntityDescription->spriteSpecIndex && Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
+				else
+				{
+					positionedEntityDescription->spriteSpecIndex = -1;
+				}
+
+				if(0 <= positionedEntityDescription->shapeSpecIndex && Entity::addShapeFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->shapeSpecIndex++))
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
+				else
+				{
+					positionedEntityDescription->shapeSpecIndex = -1;
+				}
+								
+				VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
 				VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
 
 				return __ENTITY_PROCESSED;
@@ -221,75 +219,6 @@ u32 EntityFactory::instantiateEntities()
 	else
 	{
 		VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
-		delete positionedEntityDescription;
-	}
-
-	return __ENTITY_PROCESSED;
-}
-
-// initialize loaded entities
-u32 EntityFactory::initializeEntities()
-{
-	if(!this->entitiesToInitialize->head)
-	{
-		return __LIST_EMPTY;
-	}
-
-	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
-
-	NM_ASSERT(!isDeleted(positionedEntityDescription), "EntityFactory::initializeEntities: positionedEntityDescription was deleted");
-
-	if(!isDeleted(positionedEntityDescription->parent))
-	{
-		NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::initializeEntities: entity was deleted");
-
-		if(Entity::areAllChildrenInitialized(positionedEntityDescription->entity))
-		{
-			if(!positionedEntityDescription->initialized)
-			{
-				positionedEntityDescription->initialized = true;
-
-				// call ready method
-				Entity::initialize(positionedEntityDescription->entity, false);
-
-				return __ENTITY_PENDING_PROCESSING;
-			}
-
-			if(0 <= positionedEntityDescription->spriteSpecIndex && Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
-			{
-				return __ENTITY_PENDING_PROCESSING;
-			}
-			else
-			{
-				positionedEntityDescription->spriteSpecIndex = -1;
-			}
-
-			if(0 <= positionedEntityDescription->shapeSpecIndex && Entity::addShapeFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->shapeSpecIndex++))
-			{
-				return __ENTITY_PENDING_PROCESSING;
-			}
-			else
-			{
-				positionedEntityDescription->shapeSpecIndex = -1;
-			}
-
-			VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
-			VirtualList::removeElement(this->entitiesToInitialize, positionedEntityDescription);
-
-			return __ENTITY_PROCESSED;
-		}
-
-		return __ENTITY_PENDING_PROCESSING;
-	}
-	else
-	{
-		VirtualList::removeElement(this->entitiesToInitialize, positionedEntityDescription);
-
-		if(!isDeleted(positionedEntityDescription->entity))
-		{
-			Entity::deleteMyself(positionedEntityDescription->entity);
-		}
-
 		delete positionedEntityDescription;
 	}
 
@@ -466,7 +395,6 @@ u32 EntityFactory::prepareEntities()
 u32 EntityFactory::hasEntitiesPending()
 {
 	return VirtualList::getSize(this->entitiesToInstantiate) ||
-			VirtualList::getSize(this->entitiesToInitialize) ||
 			VirtualList::getSize(this->entitiesToTransform) ||
 			VirtualList::getSize(this->entitiesToMakeReady);
 }
@@ -483,11 +411,6 @@ void EntityFactory::prepareAllEntities()
 	while(this->entitiesToInstantiate->head)
 	{
 		EntityFactory::instantiateEntities(this);
-	}
-
-	while(this->entitiesToInitialize->head)
-	{
-		EntityFactory::initializeEntities(this);
 	}
 
 	while(this->entitiesToTransform->head)
@@ -519,16 +442,13 @@ void EntityFactory::showStatus(int x, int y)
 	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "2 Initialization:			", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToInitialize), x + xDisplacement, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "3 Transformation:			", x, y, NULL);
+	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "4 Make ready:			", x, y, NULL);
+	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "5 Call listeners:			", x, y, NULL);
+	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
 #endif

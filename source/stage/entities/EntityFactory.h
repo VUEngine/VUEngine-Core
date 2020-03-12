@@ -123,7 +123,6 @@ typedef struct PositionedEntityDescription
 	s16 transformedShapeSpecIndex;
 	s16 internalId;
 	bool transformed;
-	bool initialized;
 } PositionedEntityDescription;
 
 
@@ -136,8 +135,6 @@ class EntityFactory : Object
 {
 	// the EntityFactory entities to test for streaming
 	VirtualList entitiesToInstantiate;
-	// streaming's uninitialized entities
-	VirtualList entitiesToInitialize;
 	// streaming's non yet transformed entities
 	VirtualList entitiesToTransform;
 	// streaming's non yet transformed entities
@@ -154,14 +151,9 @@ class EntityFactory : Object
 	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId);
 	u32 hasEntitiesPending();
 	u32 instantiateEntities();
-	u32 initializeEntities();
 	u32 transformEntities();
 	u32 makeReadyEntities();
 	u32 callLoadedEntities();
-	u32 instantiateEntities();
-    u32 initializeEntities();
-    u32 transformEntities();
-    u32 makeReadyEntities();
 	void showStatus(int x, int y);
 }
 

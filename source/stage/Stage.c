@@ -377,14 +377,13 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 		if(entity)
 		{
-			Container::setupGraphics(entity);
-			Entity::initialize(entity, true);
+			Entity::setupGraphics(entity);
 
 			// create the entity and add it to the world
-			Container::addChild(this, Container::safeCast(entity));
+			Stage::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
-			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
+			Entity::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
 			if(!this->streaming.deferred)
 			{

@@ -871,15 +871,14 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
-	Container::setupGraphics(childEntity);
-	Entity::initialize(childEntity, true);
+	Entity::setupGraphics(childEntity);
 
 	// create the entity and add it to the world
-	Container::addChild(this, Container::safeCast(childEntity));
+	Entity::addChild(this, Container::safeCast(childEntity));
 
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
-	Container::initialTransform(childEntity, &environmentTransform, true);
+	Entity::initialTransform(childEntity, &environmentTransform, true);
 
 	// Make sure sprites are ready before calling ready
 	Entity::synchronizeGraphics(childEntity);
@@ -900,21 +899,6 @@ u32 Entity::areAllChildrenInstantiated()
 	if(this->entityFactory)
 	{
 		return __LIST_EMPTY == EntityFactory::instantiateEntities(this->entityFactory);
-	}
-
-	return true;
-}
-
-/**
- * Are all children initialized?
- *
- * @return		Boolean whether all children are initialized
- */
-u32 Entity::areAllChildrenInitialized()
-{
-	if(this->entityFactory)
-	{
-		return __LIST_EMPTY == EntityFactory::initializeEntities(this->entityFactory);
 	}
 
 	return true;
@@ -1119,25 +1103,6 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
-	}
-}
-
-/**
- * Entity is initialized
- *
- * @param recursive
- */
-void Entity::initialize(bool recursive)
-{
-	if(recursive && this->children)
-	{
-		// call ready method on children
-		VirtualNode childNode = this->children->head;
-
-		for(; childNode; childNode = childNode->next)
-		{
-			Entity::initialize(childNode->data, recursive);
-		}
 	}
 }
 

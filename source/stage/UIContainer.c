@@ -66,15 +66,14 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 		if(entity)
 		{
-			Container::setupGraphics(entity);
-			Entity::initialize(entity, true);
+			Entity::setupGraphics(entity);
 
 			// create the entity and add it to the world
-			Container::addChild(this, Container::safeCast(entity));
+			UIContainer::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
-			Container::initialTransform(entity, &environmentTransform, true);
+			Entity::initialTransform(entity, &environmentTransform, true);
 
 			SpriteManager::writeTextures(SpriteManager::getInstance());
 

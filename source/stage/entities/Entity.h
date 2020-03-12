@@ -77,7 +77,6 @@ class Entity : Container
 	bool transformShapeAtSpecIndex(int shapeSpecIndex);
 	void addSprites(SpriteSpec** spritesSpecs);
 	u32 areAllChildrenInstantiated();
-	u32 areAllChildrenInitialized();
 	u32 areAllChildrenTransformed();
 	u32 areAllChildrenReady();
 	Entity getChildById(s16 id);
@@ -108,7 +107,6 @@ class Entity : Container
 	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);
-	virtual void initialize(bool recursive);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
