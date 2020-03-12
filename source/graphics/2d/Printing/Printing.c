@@ -60,6 +60,9 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 
 	// offset of font in char memory
 	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
+
+	// CharSet
+	NULL,
 };
 
 //---------------------------------------------------------------------------------------------------------
@@ -118,6 +121,8 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	// empty list of registered fonts
 	Printing::reset(this);
 
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
+
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
 	for(i = 0; __FONTS[i]; i++)
@@ -126,6 +131,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 		FontData* fontData = new FontData;
 		fontData->fontSpec = __FONTS[i];
 		fontData->offset = 0;
+		fontData->charSet = NULL;
 
 		// preload charset for font if in list of fonts to preload
 		if(fontSpecs)
@@ -136,7 +142,8 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				// preload charset and save charset reference, if font was found
 				if(__FONTS[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
-					fontData->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec));
+					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
+					fontData->offset = CharSet::getOffset(fontData->charSet);
 				}
 			}
 		}
@@ -155,9 +162,7 @@ void Printing::setFontPage(const char* font, u16 page)
 		return;
 	}
 
-	CharSet charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontData->fontSpec->charSetSpec);
-
-	CharSet::setFrame(charSet, page);
+	CharSet::setFrame(fontData->charSet, page);
 }
 
 void Printing::loadDebugFont()
@@ -189,6 +194,24 @@ void Printing::clear()
 	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
+}
+
+void Printing::releaseFonts()
+{
+	HardwareManager::disableInterrupts();
+	VirtualNode node = VirtualList::begin(this->fonts);
+
+	for(; node; node = VirtualNode::getNext(node))
+	{
+		FontData* fontData = VirtualNode::getData(node);
+
+		while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet))
+
+		delete fontData;
+	}
+	
+	VirtualList::clear(this->fonts);
+	HardwareManager::enableInterrupts();
 }
 
 FontData* Printing::getFontByName(const char* font)
@@ -224,7 +247,8 @@ FontData* Printing::getFontByName(const char* font)
 			// if font's charset has not been preloaded, load it now
 			if(!result->offset)
 			{
-				result->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec));
+				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
+				result->offset = CharSet::getOffset(result->charSet);
 			}
 		}
 	}

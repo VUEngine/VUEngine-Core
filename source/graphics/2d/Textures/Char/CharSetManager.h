@@ -49,7 +49,7 @@ singleton class CharSetManager : Object
 	static CharSetManager getInstance();
 	void reset();
 	CharSet getCharSet(CharSetSpec* charSetSpec);
-	void releaseCharSet(CharSet charSet);
+	bool releaseCharSet(CharSet charSet);
 	void defragment();
 	void writeCharSets();
 	bool writeCharSetsProgressively();

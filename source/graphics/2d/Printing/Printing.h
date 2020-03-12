@@ -161,6 +161,9 @@ typedef struct FontData
 	/// Offset of font in char memory
 	u32 offset;
 
+	/// CharSet
+	CharSet charSet;
+
 } FontData;
 
 /**
@@ -219,6 +222,11 @@ singleton class Printing : Object
 	 * Clear printing area
 	 */
 	void clear();
+
+	/**
+	 * Release fonts, free VRAM
+	 */
+	void releaseFonts();
 
 	/**
 	 * Print a float value

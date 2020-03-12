@@ -822,13 +822,6 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 		advancing = this->cameraPreviousDistance < cameraDistance;
 	}
 
-	if(!defer)
-	{
-		this->streamingHeadNode = this->stageEntities->head;
-		advancing = true;
-		amplitude = 10000;
-	}
-
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
 
 	int counter = 0;
