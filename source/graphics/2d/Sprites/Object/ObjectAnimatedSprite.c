@@ -81,7 +81,7 @@ void ObjectAnimatedSprite::destructor()
  */
 void ObjectAnimatedSprite::writeAnimation()
 {
-	if(0 > this->objectIndex)
+	if(__OBJECT_NO_INDEX >= this->objectIndex)
 	{
 		return;
 	}

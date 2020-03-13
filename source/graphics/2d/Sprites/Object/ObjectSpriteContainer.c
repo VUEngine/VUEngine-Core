@@ -161,7 +161,7 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 nu
 	this->removingObjectSprite = true;
 
 	// hide it immdiately
-	if(0 <= objectSprite->objectIndex)
+	if(__OBJECT_NO_INDEX < objectSprite->objectIndex)
 	{
 		int i = 0;
 		for(; i < objectSprite->totalObjects; i++)
@@ -262,7 +262,7 @@ void ObjectSpriteContainer::defragment()
 	// get the next sprite to move
 	ObjectSprite objectSprite = ObjectSprite::safeCast(this->objectSpriteNodeToDefragment->data);
 
-	if(-1 == objectSprite->objectIndex)
+	if(__OBJECT_NO_INDEX >= objectSprite->objectIndex)
 	{
 		return;
 	}
@@ -368,7 +368,7 @@ void ObjectSpriteContainer::sortProgressively()
 			ObjectSprite sprite = ObjectSprite::safeCast(node->data);
 			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
 
-			if(-1 == previousSprite->objectIndex || -1 == sprite->objectIndex)
+			if(__OBJECT_NO_INDEX >= previousSprite->objectIndex || __OBJECT_NO_INDEX >= sprite->objectIndex)
 			{
 				continue;
 			}

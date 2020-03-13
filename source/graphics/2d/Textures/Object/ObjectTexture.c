@@ -46,7 +46,7 @@ void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
 	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
 
-	this->objectIndex = -1;
+	this->objectIndex = __OBJECT_NO_INDEX;
 	this->mapDisplacement = 0;
 }
 
@@ -55,7 +55,7 @@ void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
  */
 void ObjectTexture::destructor()
 {
-	this->objectIndex = -1;
+	this->objectIndex = __OBJECT_NO_INDEX;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -67,7 +67,7 @@ void ObjectTexture::destructor()
  */
 void ObjectTexture::write()
 {
-	if(-1 == this->objectIndex)
+	if(__OBJECT_NO_INDEX >= this->objectIndex)
 	{
 		return;
 	}
@@ -107,7 +107,7 @@ void ObjectTexture::write()
  */
 void ObjectTexture::setObjectIndex(int objectIndex, bool write)
 {
-	if(objectIndex != this->objectIndex && 0 <= objectIndex && objectIndex < 1024)
+	if(objectIndex != this->objectIndex && __OBJECT_NO_INDEX < objectIndex && objectIndex < 1024)
 	{
 		this->objectIndex = objectIndex;
 		this->written = false;

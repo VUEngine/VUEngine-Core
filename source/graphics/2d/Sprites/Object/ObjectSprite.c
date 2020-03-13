@@ -66,7 +66,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
 	this->head = objectSpriteSpec->display;
-	this->objectIndex = -1;
+	this->objectIndex = __OBJECT_NO_INDEX;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
 
@@ -120,6 +120,7 @@ void ObjectSprite::destructor()
 	}
 
 	this->texture = NULL;
+	this->objectIndex = __OBJECT_NO_INDEX;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -205,11 +206,11 @@ void ObjectSprite::position(const Vector3D* position)
  */
 void ObjectSprite::checkForContainer()
 {
-	if(0 > this->objectIndex && this->totalObjects)
+	if(__OBJECT_NO_INDEX >= this->objectIndex && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
 		this->objectIndex = ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
-		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
+		ASSERT(__OBJECT_NO_INDEX < this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
 }
 
@@ -357,7 +358,7 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
 	int previousObjectIndex = this->objectIndex;
 	this->objectIndex = objectIndex;
 
-	if(0 <= this->objectIndex)
+	if(__OBJECT_NO_INDEX < this->objectIndex)
 	{
 		// rewrite texture
 		if(!isDeleted(this->texture))
@@ -365,7 +366,7 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
 			ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
 		}
 
-		if(0 <= previousObjectIndex)
+		if(__OBJECT_NO_INDEX < previousObjectIndex)
 		{
 			// hide the previously used objects
 			int j = previousObjectIndex;
