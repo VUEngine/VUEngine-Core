@@ -111,11 +111,11 @@ void ObjectTexture::setObjectIndex(int objectIndex, bool write)
 	{
 		this->objectIndex = objectIndex;
 		this->written = false;
+	}
 
-		if(write)
-		{
-			ObjectTexture::write(this);
-		}
+	if(write)
+	{
+		ObjectTexture::write(this);
 	}
 }
 
