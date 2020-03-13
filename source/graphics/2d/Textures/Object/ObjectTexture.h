@@ -63,7 +63,7 @@ class ObjectTexture : Texture
 
 	/// @publicsection
 	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id);
-	void setObjectIndex(int objectIndex);
+	void setObjectIndex(int objectIndex, bool write);
 	override void write();
 	override void setFrameAnimatedMulti(u16 frame);
 }

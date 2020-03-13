@@ -67,7 +67,7 @@ void ObjectTexture::destructor()
  */
 void ObjectTexture::write()
 {
-	if(0 > this->objectIndex)
+	if(-1 == this->objectIndex)
 	{
 		return;
 	}
@@ -105,12 +105,17 @@ void ObjectTexture::write()
  *
  * @param objectIndex	OBJECT index
  */
-void ObjectTexture::setObjectIndex(int objectIndex)
+void ObjectTexture::setObjectIndex(int objectIndex, bool write)
 {
-	if(0 <= objectIndex && objectIndex < 1024)
+	if(objectIndex != this->objectIndex && 0 <= objectIndex && objectIndex < 1024)
 	{
 		this->objectIndex = objectIndex;
 		this->written = false;
+
+		if(write)
+		{
+			ObjectTexture::write(this);
+		}
 	}
 }
 

@@ -208,7 +208,7 @@ void ObjectSprite::checkForContainer()
 	if(0 > this->objectIndex && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
-		ObjectSprite::setObjectIndex(this, ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+		this->objectIndex = ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
 }
@@ -230,7 +230,7 @@ void ObjectSprite::render()
 
 	if(!this->texture->written)
 	{
-		ObjectTexture::write(this->texture);
+		ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
 	}
 
 	CACHE_ENABLE;
@@ -362,7 +362,7 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
 		// rewrite texture
 		if(!isDeleted(this->texture))
 		{
-			ObjectTexture::setObjectIndex(this->texture, this->objectIndex);
+			ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
 		}
 
 		if(0 <= previousObjectIndex)

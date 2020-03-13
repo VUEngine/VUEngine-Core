@@ -262,6 +262,11 @@ void ObjectSpriteContainer::defragment()
 	// get the next sprite to move
 	ObjectSprite objectSprite = ObjectSprite::safeCast(this->objectSpriteNodeToDefragment->data);
 
+	if(-1 == objectSprite->objectIndex)
+	{
+		return;
+	}
+
 	ASSERT(Sprite::getTexture(objectSprite), "ObjectSpriteContainer::defragment: null texture");
 
 	// move sprite back
@@ -362,6 +367,11 @@ void ObjectSpriteContainer::sortProgressively()
 		{
 			ObjectSprite sprite = ObjectSprite::safeCast(node->data);
 			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
+
+			if(-1 == previousSprite->objectIndex || -1 == sprite->objectIndex)
+			{
+				continue;
+			}
 
 			// check if z positions are swapped
 			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
