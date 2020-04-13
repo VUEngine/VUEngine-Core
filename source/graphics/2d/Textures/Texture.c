@@ -221,6 +221,7 @@ void Texture::setFrame(u16 frame)
 			}
 			break;
 
+		case __NOT_ANIMATED:
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
