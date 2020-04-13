@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -79,8 +79,8 @@ static inline Vector3D Vector3D::unit(u16 axis)
 {
 	return (Vector3D)
 	{
-		__X_AXIS & axis ? __I_TO_FIX10_6(1) : 0, 
-		__Y_AXIS & axis ? __I_TO_FIX10_6(1) : 0, 
+		__X_AXIS & axis ? __I_TO_FIX10_6(1) : 0,
+		__Y_AXIS & axis ? __I_TO_FIX10_6(1) : 0,
 		__Z_AXIS & axis ? __I_TO_FIX10_6(1) : 0
 	};
 }
@@ -130,8 +130,8 @@ static inline fix10_6_ext Vector3D::dotProduct(Vector3D vectorA, Vector3D vector
 
 static inline fix19_13 Vector3D::dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB)
 {
-	return __FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.x), __FIX10_6_TO_FIX19_13(vectorB.x)) + 
-			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.y), __FIX10_6_TO_FIX19_13(vectorB.y)) + 
+	return __FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.x), __FIX10_6_TO_FIX19_13(vectorB.x)) +
+			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.y), __FIX10_6_TO_FIX19_13(vectorB.y)) +
 			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.z), (vectorB.z));
 }
 
@@ -259,7 +259,7 @@ static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
-	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));	
+	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));
 }
 
 static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
@@ -275,7 +275,7 @@ static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 		{
 			p.x = a.x;
 		}
-		
+
 		if(a.y == b.y)
 		{
 			p.y = a.y;
@@ -289,13 +289,13 @@ static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
 		return p;
 	}
 
-	Vector3D projection = 
+	Vector3D projection =
 	{
 		a.x + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.x), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
 		a.y + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.y), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
 		a.z + __FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(__FIX10_6_TO_FIX10_6_EXT(ab.z), __FIX10_6_EXT_DIV(dotApAb, dotAbAb))),
 	};
-		
+
 	return projection;
 }
 
@@ -312,7 +312,7 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 		{
 			p.x = a.x;
 		}
-		
+
 		if(a.y == b.y)
 		{
 			p.y = a.y;
@@ -326,13 +326,13 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 		return p;
 	}
 
-	Vector3D projection = 
+	Vector3D projection =
 	{
 		a.x + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.x), __FIX19_13_DIV(dotApAb, dotAbAb))),
 		a.y + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.y), __FIX19_13_DIV(dotApAb, dotAbAb))),
 		a.z + __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(ab.z), __FIX19_13_DIV(dotApAb, dotAbAb))),
 	};
-		
+
 	return projection;
 }
 

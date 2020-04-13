@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -150,7 +150,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
-	
+
 	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
 
@@ -632,7 +632,7 @@ MovementResult Body::updateMovement()
 			this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
 		}
 	}
-	
+
 	Body::clampVelocity(this);
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
@@ -1352,7 +1352,7 @@ void Body::print(int x, int y)
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 8, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, NULL);
-	
+
 	Printing::text(Printing::getInstance(), "Direction", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.x), xDisplacement + x, y, NULL);

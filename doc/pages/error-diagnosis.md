@@ -21,7 +21,7 @@ Another good use case for this would be to check an object's class against the e
 
 ### NM_ASSERT
 
-Inserted under any compilation type (NM stands for "non maskerable"). This macro is meant to be placed in sensible parts of the code. Here's a few examples of usage in the VUEngine:
+Inserted under any compilation type (NM stands for "non maskerable"). This macro is meant to be placed in sensible parts of the code. Here's a few examples of usage in VUEngine:
 
 - **MemoryPool allocation**
   To let you know that the memory is full, otherwise extremely hard to track bugs occur

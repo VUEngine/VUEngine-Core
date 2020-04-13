@@ -4,7 +4,7 @@ Printing
 The Printing Layer
 ------------------
 
-Out of the Virtual Boy's 32 available Worlds, the VUEngine always uses the lowest available one for text 
+Out of the Virtual Boy's 32 available Worlds, VUEngine always uses the lowest available one for text
 output. It provides methods to output different variable types to this so-called *Printing Layer*.
 
 - `Printing::text`
@@ -37,14 +37,14 @@ An offset of the printing layer can be defined using the
 Font management
 ---------------
 
-The VUEngine comes with a default font for writing to the Printing Layer, but you can replace it with any number of custom fonts. To tell the engine to ignore the default font and load your custom font(s) instead, you have to define the `__CUSTOM_FONTS` macro in your game's `config.h` file.
+VUEngine comes with a default font for writing to the Printing Layer, but you can replace it with any number of custom fonts. To tell the engine to ignore the default font and load your custom font(s) instead, you have to define the `__CUSTOM_FONTS` macro in your game's `config.h` file.
 
     #define __CUSTOM_FONTS
 
 With that macro defined, the engine expects you to define a *NULL terminated* array of pointers to `FontROMDef` definitions called `__FONTS`. The following example defines a single 8x8 pixel font as a direct replacement for the built-in default font.
 
     extern BYTE font8x8Tiles[];
-    
+
     FontROMDef FONT_8x8 =
     {
 	    font8x8Tiles,			// font chars definition pointer
@@ -53,7 +53,7 @@ With that macro defined, the engine expects you to define a *NULL terminated* ar
         {1, 1},					// size of a single character (in chars) ({width, height})
         "Font8x8",				// font's name
     };
-    
+
     const FontROMDef* __FONTS[] =
     {
         &FONT_8x8,

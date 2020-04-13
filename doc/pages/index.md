@@ -1,9 +1,9 @@
 Introduction
 ------------
 
-The VUEngine has been developed to fill the gap between the developer's game logic and the hardware management 
-required to produce visual and audio results on the Nintendo Virtual Boy. The engine is a sprite based engine, 
-which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical 
+VUEngine has been developed to fill the gap between the developer's game logic and the hardware management
+required to produce visual and audio results on the Nintendo Virtual Boy. The engine is a sprite based engine,
+which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical
 and CPU's memory to hold the definitions of such images.
 
 
@@ -91,26 +91,27 @@ The engine provides the following features for the programmer to take advantage 
 
 
 > This document is a work in progress and not all functions and class attributes are documented, yet.
-> If you have any problems which this document is unable to help you resolve, please refer to the official 
+> If you have any problems which this document is unable to help you resolve, please refer to the official
 > <a href="http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0">VUEngine support forum</a>.
 
 
 License
 -------
-Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
 
-This software is licensed under the MIT License, which means you can basically you can do with it whatever 
-you want as long as you include the original copyright and license notice in any copy of the software/source. 
+© Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
+
+This software is licensed under the MIT License, which means you can basically you can do with it whatever
+you want as long as you include the original copyright and license notice in any copy of the software/source.
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 	associated documentation files (the "Software"), to deal in the Software without restriction, including
 	without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to
 	the following conditions:
-	
+
 	The above copyright notice and this permission notice shall be included in all copies or substantial
 	portions of the Software.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 	LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
 	NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,

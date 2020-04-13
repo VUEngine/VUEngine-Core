@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -74,7 +74,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
-	
+
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
 #else
@@ -171,7 +171,7 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 }
 
 /**
- * Return playback speed. 
+ * Return playback speed.
  */
 fix17_15 SoundWrapper::getSpeed()
 {
@@ -201,7 +201,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			{
 				this->playbackType = kSoundWrapperPlaybackNormal;
 			}
-			
+
 			break;
 
 		case kSoundWrapperFadeOut:
@@ -216,7 +216,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 				this->playbackType = kSoundWrapperPlaybackNormal;
 				SoundWrapper::release(this);
 			}
-			
+
 			break;
 	}
 
@@ -318,7 +318,7 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 		{
 			SoundManager::startPCMPlayback(SoundManager::getInstance());
 		}
-	}	
+	}
 
 	this->playbackType = playbackType;
 
@@ -456,7 +456,7 @@ void SoundWrapper::stop()
 	{
 		return;
 	}
-	
+
 	this->turnedOn = false;
 	this->paused = true;
 
@@ -783,7 +783,7 @@ void SoundWrapper::playMIDINote(Channel* channel, s16 leftVolumeFactor, s16 righ
 #endif
 			break;
 
-		default:				
+		default:
 
 			note += this->frequencyModifier;
 
@@ -865,7 +865,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				channel->cursor++;
 
 				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
-		
+
 				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
 			}
 
@@ -876,7 +876,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR) / 100;
 				s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
 				s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR) / 100;
-				
+
 				leftVolumeFactor = (leftDistance + verticalDistance);
 				rightVolumeFactor = (rightDistance + verticalDistance);
 			}

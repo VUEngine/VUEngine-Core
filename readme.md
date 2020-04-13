@@ -1,9 +1,9 @@
 VUEngine
 ========
 
-VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") 
-is an attempt to provide other indie developers the base functionality to facilitate the creation of 
-content for the Nintendo Virtual Boy by taking care of most hardware management tasks to create 3D games 
+VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience")
+is an attempt to provide other indie developers the base functionality to facilitate the creation of
+content for the Nintendo Virtual Boy by taking care of most hardware management tasks to create 3D games
 with 2D graphics.
 
 Features:
@@ -79,20 +79,20 @@ Features:
 LICENSE
 -------
 
-Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+© Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
 
-This software is licensed under the MIT License, which means you can basically do with it whatever you 
-want as long as you include the original copyright and license notice in any copy of the software/source. 
+This software is licensed under the MIT License, which means you can basically do with it whatever you
+want as long as you include the original copyright and license notice in any copy of the software/source.
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 	associated documentation files (the "Software"), to deal in the Software without restriction, including
 	without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to
 	the following conditions:
-	
+
 	The above copyright notice and this permission notice shall be included in all copies or substantial
 	portions of the Software.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 	LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
 	NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
@@ -138,7 +138,7 @@ Jorge Eremiev and Christian Radke are in no way affiliated with either of these 
 PATRONS
 -------
 
-A huge thank you to the following people for their financial support through our Patreon campaign (https://www.patreon.com/vuengine). 
+A huge thank you to the following people for their financial support through our Patreon campaign (https://www.patreon.com/vuengine).
 In alphabetical order:
 
 	Adam Emmons

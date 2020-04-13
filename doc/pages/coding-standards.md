@@ -1,8 +1,8 @@
 Coding Standards
 ================
 
-The VUEngine and any official demo code is being written adhering to the following coding standards to ensure a 
-consistent code appearance and high interoperability. 
+VUEngine and any official demo code is being written adhering to the following coding standards to ensure a
+consistent code appearance and high interoperability.
 
 - Tabs of size 4 must be used for indenting.
 - Method names must be declared in StudlyCaps and follow the scheme [ClassName]::[methodName].

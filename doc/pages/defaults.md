@@ -1,7 +1,7 @@
 Defaults
 ========
 
-The VUEngine includes defaults for common Virtual Boy software features.
+VUEngine includes defaults for common Virtual Boy software features.
 
 
 Splash screens

@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -119,7 +119,7 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 
 		fix19_13 topEdgeScaleX = __FIX19_13_MULT(__I_TO_FIX19_13(1) - scaleXDifference, (scaleXFactor));
 		fix19_13 bottomEdgeScaleX = __FIX19_13_MULT(__I_TO_FIX19_13(1) + scaleXDifference, (scaleXFactor));
-		
+
 		fix19_13 topEdgeScaleY = __FIX19_13_MULT(__I_TO_FIX19_13(1) - scaleYDifference, (scaleYFactor));
 		fix19_13 bottomEdgeScaleY = __FIX19_13_MULT(__I_TO_FIX19_13(1) + scaleYDifference, (scaleYFactor));
 
@@ -128,7 +128,7 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 
 		fix19_13 scaleX = topEdgeScaleX;
 		fix19_13 scaleY = topEdgeScaleY;
-		
+
 		fix10_6 parallaxIncrement = -__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(__FIX19_13_DIV((bottomEdgeSizeZ - topEdgeSizeZ), __I_TO_FIX19_13(lastRow))), _optical->distanceEyeScreen);
 		fix10_6 parallax = -__FIX10_6_MULT(__I_TO_FIX10_6(lastRow / 2), parallaxIncrement) + __FIX10_6_MULT(parallaxIncrement, __I_TO_FIX10_6(i));
 
@@ -162,7 +162,7 @@ PRINT_INT(lastRow, 1, 16);
 
 		for(;counter && i <= lastRow; i++, counter--)
 		{
-			if(0 == scaleX) 
+			if(0 == scaleX)
 			{
 				if(!scaleXIncrement)
 				{
@@ -171,14 +171,14 @@ PRINT_INT(lastRow, 1, 16);
 					affine[i].pd_y = 0;
 					affine[i].pa = 0;
 					affine[i].pc = 0;
-					
+
 					continue;
 				}
 
 				scaleX += scaleXIncrement;
 			}
 
-			if(0 == scaleY) 
+			if(0 == scaleY)
 			{
 				if(!scaleYIncrement)
 				{
@@ -187,7 +187,7 @@ PRINT_INT(lastRow, 1, 16);
 					affine[i].pd_y = 0;
 					affine[i].pa = 0;
 					affine[i].pc = 0;
-					
+
 					continue;
 				}
 
@@ -275,7 +275,7 @@ static s16 Affine::rotate(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fi
 	fix10_6 highPrecisionPb = -__FIX7_9_TO_FIX10_6(__SIN(-rotation->z));
 	fix10_6 highPrecisionPc = __FIX7_9_TO_FIX10_6(__SIN(-rotation->z));
 	fix10_6 highPrecisionPd = __FIX7_9_TO_FIX10_6(__COS(-rotation->z));
-	
+
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = __FIX10_6_TO_FIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = __FIX10_6_TO_FIX7_9(highPrecisionPc);

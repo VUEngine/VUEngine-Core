@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -231,7 +231,7 @@ void Entity::releaseGraphics()
 
 /**
  * Delete all of the Entity's sprites
- * 
+ *
  * @param forcePurgingGraphicalMemory	Calls the SpriteManager to purge graphics memory. May cause graphical corruption if done during VIP drawing
  */
 void Entity::releaseSprites(bool forcePurgingGraphicalMemory)
@@ -959,7 +959,7 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
 		if(this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-			
+
 			u16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
 
 			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement);
@@ -1062,7 +1062,7 @@ bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
 			const Scale* myScale =  SpatialObject::getScale(this);
 
 			Direction currentDirection = Entity::getDirection(this);
-	
+
 			Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, shapeSpecIndex);
 		}
 
@@ -1407,7 +1407,7 @@ void Entity::synchronizeGraphics()
 	{
 		return;
 	}
-	
+
 	if(this->children)
 	{
 		Base::synchronizeGraphics(this);
@@ -1833,7 +1833,7 @@ void Entity::activeCollisionChecks(bool active)
 void Entity::allowCollisions(bool value)
 {
 	this->allowCollisions = value;
-	
+
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;

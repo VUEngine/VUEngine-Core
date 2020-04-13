@@ -1,7 +1,7 @@
-/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+/* VUEngine - Virtual Utopia Engine <https://www.vuengine.dev>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -825,7 +825,7 @@ void Game::synchronizeGraphics()
 	// during the synchronization of the entities'
 	// positions with their sprites
 	VIPManager::allowDRAMAccess(this->vipManager, false);
- 
+
 	// apply transformations to graphics
 	GameState::synchronizeGraphics(this->currentState);
 
@@ -1129,23 +1129,23 @@ void Game::run()
 {
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
-	
+
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
-	// sync entities with their sprites	
+	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
-	// process user's input	
+	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
-	// simulate physics	
+	// simulate physics
 	Game::updatePhysics(this);
 
-	// apply transformations	
+	// apply transformations
 	Game::updateTransformations(this);
 
-	// process collisions	
+	// process collisions
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
 	// dispatch delayed messages
@@ -1155,12 +1155,12 @@ void Game::run()
 	// skip streaming if the game frame has been too busy
 	if(!skipNonCriticalProcesses)
 	{
-		// stream	
+		// stream
 		Game::stream(this);
 	}
 #endif
 
-	// update game's logic	
+	// update game's logic
 	Game::updateLogic(this);
 
 	// this is the moment to check if the game's state
@@ -1170,7 +1170,7 @@ void Game::run()
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 void Game::setLastProcessName(char* processName)
-{	
+{
 	this->lastProcessName = processName;
 }
 #endif
