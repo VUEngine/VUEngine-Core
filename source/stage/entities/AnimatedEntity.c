@@ -50,10 +50,10 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, s16 id, s16 internalId, const char* const name)
+void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, s16 internalId, const char* const name)
 {
 	// construct base object
-	Base::constructor(&animatedEntitySpec->entitySpec, id, internalId, name);
+	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
 	// save ROM spec
 	this->animatedEntitySpec = animatedEntitySpec;

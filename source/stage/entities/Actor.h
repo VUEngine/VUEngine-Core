@@ -73,7 +73,7 @@ class Actor : AnimatedEntity
 	Rotation previousRotation;
 
 	/// @publicsection
-	void constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, const char* const name);
+	void constructor(const ActorSpec* actorSpec, s16 internalId, const char* const name);
 	bool hasChangedDirection(u16 axis);
 	void changeDirectionOnAxis(u16 axis);
 	bool isInsideGame();
