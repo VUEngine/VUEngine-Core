@@ -190,6 +190,30 @@ void ParticleSystem::setLoop(bool value)
 	this->loop = value;
 }
 
+void ParticleSystem::expireAllParticles()
+{
+	ParticleSystem::processExpiredParticles(this);
+
+	VirtualNode node = this->particles->head;
+
+	for(; node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
+		{
+			continue;
+		}
+
+		Particle::expire(particle);
+		this->particleCount--;
+
+		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
+	}
+
+	ParticleSystem::processExpiredParticles(this);
+}
+
 bool ParticleSystem::getLoop()
 {
 	return this->loop;

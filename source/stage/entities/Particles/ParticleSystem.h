@@ -131,6 +131,7 @@ class ParticleSystem : Entity
 	void start();
 	bool getLoop();
 	void setLoop(bool value);
+	void expireAllParticles();
 	void setMaximumNumberOfAliveParticles(u8 maximumNumberOfAliveParticles);
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
