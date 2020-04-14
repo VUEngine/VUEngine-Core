@@ -83,7 +83,7 @@ void ObjectTexture::write()
 	int charLocation = CharSet::getOffset(this->charSet);
 	int rows = this->textureSpec->rows;
 	int cols = this->textureSpec->cols;
-	BYTE* framePointer = this->textureSpec->mapSpec + this->mapDisplacement;
+	BYTE* framePointer = this->textureSpec->mapSpec + (this->mapDisplacement << 1);
 
 	int i = 0;
 
@@ -126,6 +126,6 @@ void ObjectTexture::setObjectIndex(int objectIndex, bool write)
  */
 void ObjectTexture::setFrameAnimatedMulti(u16 frame)
 {
-	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * (frame << 1));
+	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
 	ObjectTexture::write(this);
 }

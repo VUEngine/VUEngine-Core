@@ -169,7 +169,7 @@ void BgmapTexture::writeAnimatedMulti()
 	int area = (this->textureSpec->cols * this->textureSpec->rows);
 	int charLocation = (int)CharSet::getOffset(this->charSet);
 	int frames = CharSet::getNumberOfChars(this->charSet) / area;
-	u32 mapDisplacement = this->mapDisplacement >> 1;
+	u32 mapDisplacement = this->mapDisplacement;
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
@@ -261,7 +261,7 @@ void BgmapTexture::doWrite()
 	u16 offset = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
-	u32 mapDisplacement = this->mapDisplacement >> 1;
+	u32 mapDisplacement = this->mapDisplacement;
 
 	u32 numberOfHWORDS = this->textureSpec->cols;
 

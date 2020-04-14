@@ -213,8 +213,7 @@ void Texture::setFrame(u16 frame)
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
 				// move map spec to the next frame
-				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows *
-						(frame << 1));
+				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
 
 				CharSet::setFrame(this->charSet, frame);
 				Texture::rewrite(this);
