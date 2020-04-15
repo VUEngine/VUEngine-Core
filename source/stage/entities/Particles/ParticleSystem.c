@@ -190,6 +190,23 @@ void ParticleSystem::setLoop(bool value)
 	this->loop = value;
 }
 
+void ParticleSystem::deleteAllParticles()
+{
+	VirtualNode node = this->particles->head;
+
+	for(; node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(particle), "ParticleSystem::expireAllParticles: deleted particle");
+
+		delete particle;
+	}
+
+	VirtualList::clear(this->particles);
+	this->particleCount = 0;
+}
+
 void ParticleSystem::expireAllParticles()
 {
 	ParticleSystem::processExpiredParticles(this);
