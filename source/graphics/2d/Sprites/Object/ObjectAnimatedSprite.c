@@ -53,9 +53,9 @@ extern int strcmp(const char *, const char *);
 void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, Object owner)
 {
 	// construct base object
-	Base::constructor((const ObjectSpriteSpec*)objectAnimatedSpriteSpec, owner);
+	Base::constructor(&objectAnimatedSpriteSpec->objectSpriteSpec, owner);
 
-	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectAnimatedSpriteSpec->spriteSpec.textureSpec->charSetSpec);
+	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec);
 }
 
 /**

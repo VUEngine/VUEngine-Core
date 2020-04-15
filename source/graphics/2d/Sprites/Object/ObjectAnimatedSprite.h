@@ -36,7 +36,17 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef const ObjectSpriteSpec ObjectAnimatedSpriteSpec;
+/**
+ * A ObjectSprite spec
+ *
+ * @memberof ObjectSprite
+ */
+typedef struct ObjectAnimatedSpriteSpec
+{
+	/// it has a Sprite spec at the beginning
+	ObjectSpriteSpec objectSpriteSpec;
+
+} ObjectAnimatedSpriteSpec;
 
 typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 
