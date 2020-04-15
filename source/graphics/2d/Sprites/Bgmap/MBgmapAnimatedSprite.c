@@ -37,13 +37,13 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-void MBgmapAnimatedSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner)
+void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, Object owner)
 {
-	Base::constructor(mBgmapSpriteSpec, owner);
+	Base::constructor(&mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec, owner);
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, Sprite::safeCast(this), mBgmapSpriteSpec->textureSpecs[0]->charSetSpec);
+    this->animationController = new AnimationController(owner, Sprite::safeCast(this), mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec);
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;

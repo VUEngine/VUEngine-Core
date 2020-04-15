@@ -49,14 +49,14 @@ extern int strcmp(const char *, const char *);
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapAnimatedSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner)
+void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, Object owner)
 {
 	// construct base object
-	Base::constructor(bgmapSpriteSpec, owner);
+	Base::constructor(&bgmapAnimatedSpriteSpec->bgmapSpriteSpec, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapSpriteSpec->spriteSpec.textureSpec->charSetSpec);
+    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec);
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;

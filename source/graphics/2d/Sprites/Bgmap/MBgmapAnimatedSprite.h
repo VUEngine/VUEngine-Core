@@ -34,6 +34,26 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A MBgmapAnimatedSprite spec
+ *
+ * @memberof MBgmapAnimatedSprite
+ */
+typedef struct MBgmapAnimatedSpriteSpec
+{
+	/// it has a Sprite spec at the beginning
+	MBgmapSpriteSpec mBgmapSpriteSpec;
+
+} MBgmapAnimatedSpriteSpec;
+
+/**
+ * A MBgmapAnimatedSprite spec that is stored in ROM
+ *
+ * @memberof MBgmapAnimatedSprite
+ */
+typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
+
+
 /// @ingroup graphics-2d-sprites-bgmap
 class MBgmapAnimatedSprite : MBgmapSprite
 {
@@ -41,7 +61,7 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	TextureSource originalTextureSource;
 
 	/// @publicsection
-	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner);
+	void constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, Object owner);
 	override void writeAnimation();
 }
 
