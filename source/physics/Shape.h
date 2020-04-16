@@ -230,7 +230,7 @@ abstract class Shape : Object
 	void setReady(bool ready);
 	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);
 	fix10_6 getCollidingFrictionCoefficient();
-	void resolveCollision(const CollisionInformation* collisionInformation);
+	void resolveCollision(const CollisionInformation* collisionInformation, bool registerCollidingShape);
 	u32 getLayers();
 	void setLayers(u32 layers);
 	u32 getLayersToIgnore();

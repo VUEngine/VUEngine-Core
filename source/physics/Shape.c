@@ -233,9 +233,9 @@ void Shape::updateCollision(CollisionData* collisionData)
 {
 	if(collisionData->isImpenetrableCollidingShape)
 	{
-		if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT + __PIXELS_TO_METERS(1))
 		{
-			Shape::resolveCollision(this, &collisionData->collisionInformation);
+			Shape::resolveCollision(this, &collisionData->collisionInformation, false);
 		}
 	}
 	else
@@ -309,7 +309,8 @@ CollisionData Shape::collides(Shape shape)
 		{
 			// new collision
 			collisionData.result = kEnterCollision;
-			collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
+			// Commented out because of F V, does it affect other games?
+			//collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
 		}
 
 		//return collisionData;
@@ -479,7 +480,7 @@ void Shape::displaceOwner(Vector3D displacement)
 /**
  * Solve the collision by moving owner
  */
-void Shape::resolveCollision(const CollisionInformation* collisionInformation)
+void Shape::resolveCollision(const CollisionInformation* collisionInformation, bool registerCollidingShape)
 {
 	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
 	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
@@ -498,9 +499,12 @@ void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 		// need to invalidate solution vectors for other colliding shapes
 		//Shape::checkPreviousCollisions(this, collisionInformation->collidingShape);
 
-		CollidingShapeRegistry* collidingShapeRegistry = Shape::registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
-		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");
-		collidingShapeRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->collidingShape->owner);
+		if(registerCollidingShape)
+		{
+			CollidingShapeRegistry* collidingShapeRegistry = Shape::registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
+			ASSERT(!isDeleted(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");
+			collidingShapeRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->collidingShape->owner);
+		}
 	}
 }
 
