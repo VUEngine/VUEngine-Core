@@ -875,7 +875,7 @@ void Game::updatePhysics()
 #endif
 }
 
-void Game::updateTransformations()
+void Game::focusCamera()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -894,6 +894,15 @@ void Game::updateTransformations()
 		Camera::focus(this->camera, true);
 #ifdef __TOOLS
 	}
+#endif
+
+}
+
+void Game::updateTransformations()
+{
+#ifdef __PROFILE_GAME
+	_renderingProcessTimeHelper = 0;
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1147,6 +1156,9 @@ void Game::run()
 
 	// process collisions
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
+
+	// focus the camera once collisions are resolved
+	Game::focusCamera(this);
 
 	// dispatch delayed messages
 	Game::dispatchDelayedMessages(this);
