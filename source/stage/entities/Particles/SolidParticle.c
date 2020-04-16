@@ -204,7 +204,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape::resolveCollision(collisionInformation->shape, collisionInformation);
+			Shape::resolveCollision(collisionInformation->shape, collisionInformation, false);
 
 			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
 			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));

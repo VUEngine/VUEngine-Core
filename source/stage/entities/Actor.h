@@ -94,6 +94,7 @@ class Actor : AnimatedEntity
 	virtual fix10_6 getSurroundingFrictionCoefficient();
 	virtual bool mustBounce();
 	virtual bool overrideParentingPositioningWhenBodyIsNotMoving();
+	virtual bool registerCollidingShapes();
 	override fix10_6_ext getSpeedSquare();
 	override void iAmDeletingMyself();
 	override void update(u32 elapsedTime);

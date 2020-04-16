@@ -480,6 +480,11 @@ fix10_6 Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute_
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
 
+bool Actor::registerCollidingShapes()
+{
+	return true;
+}
+
 bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
@@ -495,7 +500,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape::resolveCollision(collisionInformation->shape, collisionInformation);
+			Shape::resolveCollision(collisionInformation->shape, collisionInformation, Actor::registerCollidingShapes(this));
 
 			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
 
