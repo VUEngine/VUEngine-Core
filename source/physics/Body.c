@@ -1209,12 +1209,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	// compute bouncing velocity vector
 	Vector3D u = Vector3D::scalarProduct(bouncingPlaneNormal, Vector3D::dotProduct(velocity, bouncingPlaneNormal));
 
-	Vector3D w =
-	{
-		velocity.x - u.x,
-		velocity.y - u.y,
-		velocity.z - u.z,
-	};
+	Vector3D w = Vector3D::get(u, velocity);
 
 	bounciness += this->bounciness;
 
@@ -1239,10 +1234,10 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	// add bounciness and friction
 	// This is the physically correct computation, but causes
 	// wrong angles of bouncing
-//	u = Vector3D::scalarProduct(u, bounciness);
+	u = Vector3D::scalarProduct(u, bounciness);
 	w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
 
-	this->velocity = Vector3D::scalarProduct(Vector3D::get(u, w), bounciness);
+	this->velocity = Vector3D::get(u, w);
 
 	Body::clampVelocity(this);
 
