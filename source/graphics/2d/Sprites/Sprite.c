@@ -540,6 +540,32 @@ bool Sprite::isVisible()
 {
 	return this->visible && !this->hidden;
 }
+
+/**
+ * Is within the screen space
+ *
+ * @return visibility
+ */
+bool Sprite::isWithinScreenSpace()
+{
+	if(this->position.x + this->halfWidth < _cameraFrustum->x0 || this->position.x - this->halfWidth > _cameraFrustum->x1)
+	{
+		return false;
+	}
+
+	if(this->position.y + this->halfHeight < _cameraFrustum->y0 || this->position.y - this->halfHeight > _cameraFrustum->y1)
+	{
+		return false;
+	}
+
+	if(this->position.z < _cameraFrustum->z0 || this->position.z > _cameraFrustum->z1)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 /**
  * Update transparency
  *

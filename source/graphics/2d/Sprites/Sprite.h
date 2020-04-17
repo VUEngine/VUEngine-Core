@@ -219,6 +219,7 @@ abstract class Sprite : Object
 	void onTextureRewritten(Object eventFirer);
 	AnimationController getAnimationController();
 	bool isVisible();
+	bool isWithinScreenSpace();
 	void updateTransparency(bool evenFrame);
 	void disposed();
 	bool isDisposed();
