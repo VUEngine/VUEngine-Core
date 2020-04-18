@@ -282,9 +282,6 @@
 // total number of layers (basically the number of worlds)
 #define __TOTAL_LAYERS								{{ project.config.sprite.totalLayers }}
 
-// Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
-{% if project.config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
-		
 
 //---------------------------------------------------------------------------------------------------------
 //											TEXTURE MANAGEMENT

@@ -135,8 +135,8 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 
 	TextureSpec* textureSpec = Texture::getTextureSpec(bgmapTexture);
 
-	u16 colsPad = textureSpec->padding.cols << 1;
-	u16 rowsPad = textureSpec->padding.rows << 1;
+	u16 colsPad = (textureSpec->padding.cols << 1) + (cols < 64 ? 1 : 0);
+	u16 rowsPad = (textureSpec->padding.rows << 1) + (rows < 64 ? 1 : 0);
 
 	int area = (cols + colsPad) * (rows + rowsPad);
 
