@@ -63,7 +63,7 @@ class Entity : Container
 	bool allowCollisions;
 
 	/// @publicsection
-	static Entity instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, void* extraInfo);
+	static Entity instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
 	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
@@ -106,7 +106,7 @@ class Entity : Container
 	virtual bool updateSpriteScale();
 	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
-	virtual void setExtraInfo(void* extraInfo);
+	virtual void setExtraInfo(const PositionedEntity* const positionedEntity);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();

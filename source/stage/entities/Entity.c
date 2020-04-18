@@ -680,7 +680,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
  * @param extraInfo
  * @return					Entity instance
  */
-static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, void* extraInfo)
+static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, const PositionedEntity* const positionedEntity)
 {
 	ASSERT(entitySpec, "Entity::load: null spec");
 	ASSERT(entitySpec->allocator, "Entity::load: no allocator defined");
@@ -694,9 +694,9 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 intern
 	Entity entity = ((Entity (*)(EntitySpec*, s16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, internalId, name);
 
 	// process extra info
-	if(extraInfo)
+	if(positionedEntity->extraInfo)
 	{
-		Entity::setExtraInfo(entity, extraInfo);
+		Entity::setExtraInfo(entity, positionedEntity);
 	}
 
 	return entity;
@@ -743,7 +743,7 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entitySpec, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, internalId, positionedEntity->name, positionedEntity);
 	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
@@ -804,7 +804,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entitySpec, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, internalId, positionedEntity->name, positionedEntity);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
 	if(positionedEntity->name)
@@ -1111,7 +1111,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
  *
  * @param extraInfo
  */
-void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
+void Entity::setExtraInfo(const PositionedEntity* const positionedEntity __attribute__ ((unused)))
 {
 }
 
