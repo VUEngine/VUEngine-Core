@@ -1101,7 +1101,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 	for(; shapeSpecs[i].allocator; i++)
 	{
 		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
-		ASSERT(shape, "Entity::addSprite: sprite not created");
+		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
 }
