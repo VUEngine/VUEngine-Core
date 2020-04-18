@@ -201,6 +201,46 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 	Base::position(this, position, rotation, scale, size);
 }
 
+void LineField::addDisplacement(fix10_6 displacement)
+{
+	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
+	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
+
+	if(this->a.x < this->b.x)
+	{
+		this->rightBox.x0 = this->a.x;
+		this->rightBox.x1 = this->b.x;
+	}
+	else
+	{
+		this->rightBox.x0 = this->b.x;
+		this->rightBox.x1 = this->a.x;
+	}
+
+	if(this->a.y < this->b.y)
+	{
+		this->rightBox.y0 = this->a.y;
+		this->rightBox.y1 = this->b.y;
+	}
+	else
+	{
+		this->rightBox.y0 = this->b.y;
+		this->rightBox.y1 = this->a.y;
+	}
+
+	if(this->a.z < this->b.z)
+	{
+		this->rightBox.z0 = this->a.z;
+		this->rightBox.z1 = this->b.z;
+	}
+	else
+	{
+		this->rightBox.z0 = this->b.z;
+		this->rightBox.z1 = this->a.z;
+	}
+
+}
+
 static void LineField::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	// project this onto the current normal
