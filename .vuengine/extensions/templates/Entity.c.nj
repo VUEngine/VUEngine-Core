@@ -213,6 +213,9 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 			// sprites
 			(SpriteSpec**){{ entityName }}_SPS,
 
+			// use z displacement in projection
+			false,
+			
 			// collision shapes
 			(ShapeSpec*)NULL,
 

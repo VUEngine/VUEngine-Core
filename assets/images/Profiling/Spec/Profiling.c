@@ -218,6 +218,9 @@ EntityROMSpec PROFILING_IM =
 	// sprites
 	(SpriteSpec**)PROFILING_IM_SPS,
 
+	// use z displacement in projection
+	false,
+			
 	// collision shapes
 	NULL,
 

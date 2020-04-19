@@ -61,6 +61,9 @@ typedef struct EntitySpec
 	// sprites
 	SpriteSpec** spriteSpecs;
 
+	// use z displacement in projection
+	bool useZDisplacementInProjection;
+
 	/// collision shapes
 	ShapeSpec* shapeSpecs;
 
