@@ -107,6 +107,9 @@ typedef struct StageSpec
 		// maximum number of rows to compute on each call to the affine functions
 		int maximumAffineRowsToComputePerCall;
 
+		// bypass sprite update when writing textures
+		bool bypassSpriteUpdateWhenWritingTextures;
+
 		// color config
 		ColorConfig colorConfig;
 

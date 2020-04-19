@@ -88,6 +88,7 @@ void SpriteManager::constructor()
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
+	this->bypassSpriteUpdateWhenWritingTextures = false;
 	this->lockSpritesLists = false;
 	this->evenFrame = true;
 
@@ -174,6 +175,7 @@ void SpriteManager::reset()
 	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
+	this->bypassSpriteUpdateWhenWritingTextures = false;
 
 	SpriteManager::renderLastLayer(this);
 
@@ -268,6 +270,16 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObject
 	NM_ASSERT(suitableObjectSpriteContainer, "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	return suitableObjectSpriteContainer;
+}
+
+/**
+ * Set flag to bypass sprite update
+ *
+ * @param bypassSpriteUpdateWhenWritingTextures		bool
+ */
+void SpriteManager::bypassSpriteUpdateWhenWritingTextures(bool bypassSpriteUpdateWhenWritingTextures)
+{
+	this->bypassSpriteUpdateWhenWritingTextures = bypassSpriteUpdateWhenWritingTextures;
 }
 
 /**
@@ -676,6 +688,7 @@ void SpriteManager::render()
 	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
 	// as soon as possible
 
+	bool heavyProcessing = false;
 	bool skipNonCriticalProcesses = SpriteManager::disposeSpritesProgressively(this);
 
 	if(!skipNonCriticalProcesses)
@@ -683,14 +696,23 @@ void SpriteManager::render()
 		skipNonCriticalProcesses |= CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
 	}
 
+	heavyProcessing |= skipNonCriticalProcesses;
+	
 	// write textures
-	if(!skipNonCriticalProcesses && !SpriteManager::writeSelectedSprite(this))
+	if(!skipNonCriticalProcesses)
 	{
-		// defragment param table
-		if(!ParamTableManager::defragmentProgressively(ParamTableManager::getInstance()))
+		bool texturesWritten = SpriteManager::writeSelectedSprite(this);
+
+		heavyProcessing |= texturesWritten;
+
+		if(!texturesWritten)
 		{
-			// z sorting
-        	SpriteManager::sortProgressively(this);
+			// defragment param table
+			if(!ParamTableManager::defragmentProgressively(ParamTableManager::getInstance()))
+			{
+				// z sorting
+				SpriteManager::sortProgressively(this);
+			}
 		}
 	}
 
@@ -704,6 +726,8 @@ void SpriteManager::render()
 	{
 		this->freeLayer = (Sprite::safeCast(node->data))->worldLayer - 1;
 	}
+
+	bool bypassSpriteUpdate = this->bypassSpriteUpdateWhenWritingTextures && heavyProcessing;
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;
@@ -727,7 +751,7 @@ void SpriteManager::render()
 			}
 			else
 			{
-				if((u32)sprite->animationController)
+				if((u32)sprite->animationController && !bypassSpriteUpdate)
 				{
 					Sprite::update(sprite);
 				}
