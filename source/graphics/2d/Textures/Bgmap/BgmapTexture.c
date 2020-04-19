@@ -40,6 +40,8 @@
 static BgmapTextureManager _bgmapTextureManager = NULL;
 static SpriteManager _spriteManager = NULL;
 
+static const u16 _emptyTextureRow[64] = {0};
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S METHODS
@@ -195,6 +197,21 @@ void BgmapTexture::writeAnimatedMulti()
 				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
 				this->textureSpec->cols,
 				(palette) | (charLocation + area * (j - 1)));
+		}
+	}
+
+	if(-1 == this->remainingRowsToBeWritten)
+	{
+		int j = 1;
+		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
+		// specifying the char displacement inside the char mem
+		for(; j <= frames; j++)
+		{
+			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureSpec->cols * (j - 1)) + (this->textureSpec->rows << 6)),
+				(const HWORD*)_emptyTextureRow,
+				this->textureSpec->cols,
+				0
+			);
 		}
 	}
 
@@ -357,6 +374,16 @@ void BgmapTexture::doWrite()
 						false);
 			}
 		}
+	}
+
+	if(-1 == this->remainingRowsToBeWritten)
+	{
+		BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->textureSpec->rows << 6),
+				(const HWORD*)_emptyTextureRow,
+				numberOfHWORDS,
+				0,
+				false,
+				false);
 	}
 
 	if(disableCache)
