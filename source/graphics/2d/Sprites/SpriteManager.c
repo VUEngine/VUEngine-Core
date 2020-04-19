@@ -697,7 +697,7 @@ void SpriteManager::render()
 	}
 
 	heavyProcessing |= skipNonCriticalProcesses;
-	
+
 	// write textures
 	if(!skipNonCriticalProcesses)
 	{
