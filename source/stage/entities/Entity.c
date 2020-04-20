@@ -1283,8 +1283,6 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition && updateRotation)
 	{
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), 0);
-
 		for(; node ; node = node->next)
 		{
 			Sprite sprite = Sprite::safeCast(node->data);
@@ -1306,8 +1304,6 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition && updateScale)
 	{
-		s16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), parallax);
 
 		for(; node ; node = node->next)
 		{
@@ -1330,8 +1326,6 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition)
 	{
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), 0);
-
 		for(; node ; node = node->next)
 		{
 			Sprite sprite = Sprite::safeCast(node->data);

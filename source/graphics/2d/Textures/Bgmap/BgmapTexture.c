@@ -200,7 +200,7 @@ void BgmapTexture::writeAnimatedMulti()
 		}
 	}
 
-	if(64 > this->textureSpec->rows && -1 == this->remainingRowsToBeWritten)
+	if(this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
 	{
 		int j = 1;
 		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
@@ -376,7 +376,7 @@ void BgmapTexture::doWrite()
 		}
 	}
 
-	if(64 > this->textureSpec->rows && -1 == this->remainingRowsToBeWritten)
+	if(this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
 	{
 		BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->textureSpec->rows << 6),
 				(const HWORD*)_emptyTextureRow,
