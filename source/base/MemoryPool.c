@@ -148,8 +148,6 @@ void MemoryPool::constructor()
 
 	HardwareManager::disableInterrupts();
 
-	bool disableCache = false;
-
 	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
@@ -158,18 +156,6 @@ void MemoryPool::constructor()
 
 		int forwardDisplacement = 0;
 		int backwardDisplacement = 0;
-
-		if(!disableCache)
-		{
-			if(100 < numberOfOjects)
-			{
-				CACHE_DISABLE;
-				CACHE_CLEAR;
-				CACHE_ENABLE;
-
-				disableCache = true;
-			}
-		}
 
 		if(numberOfBytes <= blockSize)
 		{
@@ -199,12 +185,6 @@ void MemoryPool::constructor()
 					break;
 				}
 			}
-/*
-			if(blockFound)
-			{
-				break;
-			}
-*/
 			// keep looking for a free block on a bigger pool
 		}
 	}
@@ -226,13 +206,6 @@ void MemoryPool::constructor()
 	}
 
 	HardwareManager::enableInterrupts();
-
-	if(disableCache)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
-	}
 
 	// return designed address
 	return &this->poolLocation[pool][displacement];
