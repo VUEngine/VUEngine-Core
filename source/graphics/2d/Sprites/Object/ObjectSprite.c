@@ -222,11 +222,11 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-void ObjectSprite::render()
+bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 {
 	if(isDeleted(this->texture) | !this->positioned)
 	{
-		return;
+		return false;
 	}
 
 	if(!this->texture->written)
@@ -246,14 +246,6 @@ void ObjectSprite::render()
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
-
-#ifndef __FORCE_VIP_SYNC
-	while(_vipRegisters[__XPSTTS] & __XPBSYR)
-	{
-		extern int coutxx;
-		coutxx++;
-	}
-#endif
 
 	for(; i < rows; i++)
 	{
@@ -295,6 +287,8 @@ void ObjectSprite::render()
 			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
+
+	return true;
 }
 
 /**

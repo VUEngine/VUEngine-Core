@@ -271,12 +271,14 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-void BgmapSprite::render()
+bool BgmapSprite::render(u8 worldLayer)
 {
-	if(!this->texture | !this->texture->written | !this->positioned | !this->worldLayer)
+	if(!this->texture | !this->texture->written | !this->positioned)
 	{
-		return;
+		return false;
 	}
+
+	this->worldLayer = worldLayer;
 
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
@@ -332,12 +334,11 @@ void BgmapSprite::render()
 
 	if (0 >= w)
 	{
-		worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
 		worldPointer->w = 0;
 		worldPointer->h = 0;
 #endif
-		return;
+		return false;
 	}
 
 /*
@@ -357,13 +358,11 @@ void BgmapSprite::render()
 
 	if (0 >= h)
 	{
-		worldPointer->head = __WORLD_OFF;
-
 #ifdef __PROFILE_GAME
 		worldPointer->w = 0;
 		worldPointer->h = 0;
 #endif
-		return;
+		return false;
 	}
 
 	worldPointer->gx = gx;
@@ -382,6 +381,8 @@ void BgmapSprite::render()
 	// set the world size according to the zoom
 	BgmapSprite::processAffineEffects(this, gx, width, myDisplacement);
 	BgmapSprite::processHbiasEffects(this);
+
+	return true;
 }
 
 void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
@@ -625,6 +626,8 @@ void BgmapSprite::setMode(u16 display, u16 mode)
 			this->head = display | __WORLD_HBIAS;
 			break;
 	}
+
+	this->head &= ~__WORLD_END;
 }
 
 /**

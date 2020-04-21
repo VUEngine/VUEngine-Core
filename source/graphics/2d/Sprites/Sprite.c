@@ -151,11 +151,7 @@ void Sprite::hide()
 	// Make sure that I'm positioned to show up again
 	this->positioned = false;
 
-	// Prevent retention if lowering the WORLD by going off
-	if((s8)this->worldLayer)
-	{
-		_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_OFF;
-	}
+	this->worldLayer = 0;
 }
 
 /**
@@ -239,28 +235,6 @@ PixelVector Sprite::getDisplacedPosition()
 AnimationController Sprite::getAnimationController()
 {
 	return this->animationController;
-}
-
-/**
- * Set map's world layer
- *
- * @param worldLayer	World layer
- */
-void Sprite::setWorldLayer(u8 worldLayer)
-{
-	// Prevent retention if lowering the WORLD by going off
-	if(worldLayer <= (s8)this->worldLayer)
-	{
-		_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_OFF;
-	}
-
-	this->worldLayer = worldLayer;
-
-	// Don't allow to become the end WORLD
-	if(0 <= (s8)this->worldLayer)
-	{
-		_worldAttributesBaseAddress[this->worldLayer].head &= ~__WORLD_END;
-	}
 }
 
 /**
@@ -575,6 +549,8 @@ void Sprite::updateTransparency(bool evenFrame)
 {
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
 					(0x01 & (this->transparent ^ evenFrame));
+
+	this->worldLayer = !this->visible ? 0 : this->worldLayer;
 }
 
 /**
@@ -927,7 +903,7 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  */
 int Sprite::getTotalPixels()
 {
-	if(0 <= (s8)this->worldLayer)
+	if(0 < (s8)this->worldLayer)
 	{
 		return (_worldAttributesBaseAddress[this->worldLayer].w + 1) * (_worldAttributesBaseAddress[this->worldLayer].h + 1);
 	}

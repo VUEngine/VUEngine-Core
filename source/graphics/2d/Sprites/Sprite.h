@@ -193,7 +193,6 @@ abstract class Sprite : Object
 	bool isHidden();
 	void rewrite();
 	void setTransparent(u8 value);
-	void setWorldLayer(u8 worldLayer);
 	s16 getActualFrame();
 	const PixelVector* getDisplacement();
 	void setDisplacement(const PixelVector* displacement);
@@ -232,7 +231,7 @@ abstract class Sprite : Object
 	virtual u8 getWorldLayer();
 	virtual void hide();
 	virtual void position(const Vector3D* position);
-	virtual void render() = 0;
+	virtual bool render(u8 worldLayer) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

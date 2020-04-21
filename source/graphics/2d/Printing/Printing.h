@@ -426,7 +426,7 @@ singleton class Printing : Object
      *
      * @param textLayer	Number of layer (World) to set as printing layer
      */
-	void render(int textLayer);
+	void render(u8 textLayer);
 }
 
 

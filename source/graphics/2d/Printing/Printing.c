@@ -470,11 +470,10 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 	return fontSize;
 }
 
-void Printing::render(int textLayer)
+void Printing::render(u8 textLayer)
 {
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
-	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
 	_worldAttributesBaseAddress[textLayer].mx = this->mx;
 	_worldAttributesBaseAddress[textLayer].mp = this->mp;
 	_worldAttributesBaseAddress[textLayer].my = this->my;
@@ -483,6 +482,7 @@ void Printing::render(int textLayer)
 	_worldAttributesBaseAddress[textLayer].gy = this->gy;
 	_worldAttributesBaseAddress[textLayer].w = this->w;
 	_worldAttributesBaseAddress[textLayer].h = this->h;
+	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
 }
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)

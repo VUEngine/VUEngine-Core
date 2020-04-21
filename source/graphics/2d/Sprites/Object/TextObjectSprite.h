@@ -83,7 +83,7 @@ class TextObjectSprite : ObjectSprite
 	/// @publicsection
 	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
 
-	override void render();
+	override bool render(u8 worldLayer);
 }
 
 

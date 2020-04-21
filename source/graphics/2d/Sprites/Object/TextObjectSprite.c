@@ -99,18 +99,17 @@ void TextObjectSprite::destructor()
  *
  * @param evenFrame
  */
-void TextObjectSprite::render()
+bool TextObjectSprite::render(u8 worldLayer __attribute__((unused)))
 {
 	if(!this->positioned)
 	{
-		return;
+		return false;
 	}
 
 	if(!this->printed)
 	{
 		TextObjectSprite::out(this);
 	}
-
 
 	int cols = strlen(this->text);
 
@@ -174,6 +173,8 @@ void TextObjectSprite::render()
 			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
+
+	return true;
 }
 
 void TextObjectSprite::out()

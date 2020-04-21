@@ -63,6 +63,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	Base::constructor(NULL, NULL);
 
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
+	this->head &= ~__WORLD_END;
 	this->spt = spt;
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
@@ -404,29 +405,16 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-void ObjectSpriteContainer::render()
+bool ObjectSpriteContainer::render(u8 worldLayer)
 {
 	// if render flag is set
-	if(!this->worldLayer)
-	{
-		return;
-	}
+	this->worldLayer = worldLayer;
 
-	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
+	_worldAttributesBaseAddress[this->worldLayer].head = this->head;
 #ifdef __PROFILE_GAME
 	_worldAttributesBaseAddress[this->worldLayer].w = __SCREEN_WIDTH;
 	_worldAttributesBaseAddress[this->worldLayer].h = __SCREEN_HEIGHT;
 #endif
-
-	// defragmentation takes priority over z sorting
-	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
-	{
-		ObjectSpriteContainer::defragment(this);
-	}
-	else
-	{
-		ObjectSpriteContainer::sortProgressively(this);
-	}
 
 	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
@@ -468,10 +456,22 @@ void ObjectSpriteContainer::render()
 					Sprite::update(sprite);
 				}
 
-				Sprite::render(sprite);
+				Sprite::render(sprite, 0);
 			}
 		}
 	}
+
+	// defragmentation takes priority over z sorting
+	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
+	{
+		ObjectSpriteContainer::defragment(this);
+	}
+	else if(!VIPManager::hasFramestarted(VIPManager::getInstance()))
+	{
+		ObjectSpriteContainer::sortProgressively(this);
+	}
+
+	return true;
 }
 
 /**

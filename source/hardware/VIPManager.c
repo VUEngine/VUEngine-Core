@@ -90,6 +90,7 @@ void VIPManager::constructor()
 	this->postProcessingEffects = new VirtualList();
 	this->currentDrawingFrameBufferSet = 0;
 	this->drawingEnded = false;
+	this->frameStarted = false;
 	this->processingXPEND = false;
 	this->renderingCompleted = false;
 	this->allowDRAMAccess = false;
@@ -137,6 +138,14 @@ void VIPManager::disableDrawing()
 bool VIPManager::isDrawingAllowed()
 {
 	return _vipRegisters[__XPSTTS] & __XPEN ? true : false;
+}
+
+/**
+ * Return true if FRAMESTART happened during XPEND's processing
+ */
+bool VIPManager::hasFramestarted()
+{
+	return this->frameStarted;
 }
 
 /**
@@ -211,6 +220,8 @@ static void VIPManager::interruptHandler()
 	{
 		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 	}
+
+	_vipManager->frameStarted = false;
 }
 
 /**
@@ -244,6 +255,8 @@ void VIPManager::processInterrupt(u16 interrupt)
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
 				Game::nextFrameStarted(Game::getInstance(), __GAME_FRAME_DURATION);
+
+				this->frameStarted = true;
 
 				if(!_vipManager->processingXPEND)
 				{
@@ -354,7 +367,7 @@ void VIPManager::processFrameBuffers()
 	// check if the current frame buffer set is valid
 	VirtualNode node = this->postProcessingEffects->tail;
 
-	for(; node; node = node->previous)
+	for(; !this->frameStarted && node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}

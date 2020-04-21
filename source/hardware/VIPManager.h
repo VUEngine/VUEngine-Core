@@ -282,6 +282,7 @@ singleton class VIPManager : Object
 	bool drawingEnded;
 	bool renderingCompleted;
 	bool allowDRAMAccess;
+	bool frameStarted;
 
 	/// @publicsection
 	static VIPManager getInstance();
@@ -311,6 +312,7 @@ singleton class VIPManager : Object
 	void allowDRAMAccess(bool allowDRAMAccess);
 	bool isRenderingPending();
 	bool isDrawingAllowed();
+	bool hasFramestarted();
 }
 
 

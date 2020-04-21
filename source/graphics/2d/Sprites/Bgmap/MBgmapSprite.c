@@ -326,22 +326,19 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-void MBgmapSprite::render()
+bool MBgmapSprite::render(u8 worldLayer)
 {
 	if(!this->texture || !this->texture->written)
 	{
-		return;
+		return false;
 	}
 
 	if(!this->positioned)
 	{
-		return;
+		return false;
 	}
 
-	if(!this->worldLayer)
-	{
-		return;
-	}
+	this->worldLayer = worldLayer;
 
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
@@ -394,12 +391,11 @@ void MBgmapSprite::render()
 
 		if(0 >= w)
 		{
-			worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
 			worldPointer->w = 0;
 			worldPointer->h = 0;
 #endif
-			return;
+			return false;
 		}
 	}
 	else
@@ -421,13 +417,11 @@ void MBgmapSprite::render()
 
 		if (0 >= h)
 		{
-			worldPointer->head = __WORLD_OFF;
-
 #ifdef __PROFILE_GAME
 			worldPointer->w = 0;
 			worldPointer->h = 0;
 #endif
-			return;
+			return false;
 		}
 	}
 	else
@@ -454,6 +448,8 @@ void MBgmapSprite::render()
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
 	BgmapSprite::processHbiasEffects(this);
+
+	return true;
 }
 
 /**

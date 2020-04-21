@@ -446,17 +446,6 @@ bool SpriteManager::sortProgressively()
 			// check if z positions are swapped
 			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
-				Sprite sprite = Sprite::safeCast(node->data);
-				Sprite nextSprite = Sprite::safeCast(nextNode->data);
-
-				// get each entity's layer
-				u8 worldLayer1 = sprite->worldLayer;
-				u8 worldLayer2 = nextSprite->worldLayer;
-
-				// don't render inmediately, it causes glitches
-				Sprite::setWorldLayer(nextSprite, worldLayer1);
-				Sprite::setWorldLayer(sprite, worldLayer2);
-
 				// swap nodes' data
 				VirtualNode::swapData(node, nextNode);
 
@@ -482,8 +471,6 @@ void SpriteManager::registerSprite(Sprite sprite)
 
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
-		s8 layer = 0;
-
 		VirtualNode alreadyLoadedSpriteNode = VirtualList::find(this->sprites, sprite);
 
 		NM_ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::registerSprite: sprite already registered");
@@ -491,21 +478,6 @@ void SpriteManager::registerSprite(Sprite sprite)
 		if(!alreadyLoadedSpriteNode)
 		{
 			this->lockSpritesLists = true;
-
-			// retrieve the next free layer, taking into account
-			// if there are layers being freed up by the recovery algorithm
-			layer = __TOTAL_LAYERS - 1;
-
-			VirtualNode head = this->sprites->head;
-
-			if(head)
-			{
-				layer = (Sprite::safeCast(head->data))->worldLayer - 1;
-			}
-
-			NM_ASSERT(0 < layer, "SpriteManager::registerSprite: no more layers");
-
-			Sprite::setWorldLayer(sprite, layer);
 
 			// add to the front: last element corresponds to the 31 WORLD
 			VirtualList::pushFront(this->sprites, sprite);
@@ -528,41 +500,11 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
 		ASSERT(__GET_CAST(BgmapSprite, sprite), "SpriteManager::unregisterSprite: non bgmap sprite");
-		NM_ASSERT(VirtualList::find(this->sprites, sprite), "SpriteManager::unregisterSprite: sprite not found");
+
+		NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 
 		// check if exists
 		VirtualList::removeElement(this->sprites, sprite);
-
-		u8 spriteLayer = sprite->worldLayer;
-
-		VirtualNode node = this->sprites->head;
-
-		for(; node;)
-		{
-			// search for the next sprite with the closest layer to the freed layer
-			if(spriteLayer < (Sprite::safeCast(node->data))->worldLayer)
-			{
-				node = node->previous;
-				break;
-			}
-
-			node = node->next;
-
-			if(!node)
-			{
-				node = this->sprites->tail;
-				break;
-			}
-		}
-
-		for(; node; node = node->previous)
-		{
-			Sprite sprite = Sprite::safeCast(node->data);
-			ASSERT(spriteLayer-- == sprite->worldLayer + 1, "SpriteManager::unregisterSprite: wrong layers");
-
-			// move the sprite to the freed layer
-			Sprite::setWorldLayer(sprite, sprite->worldLayer + 1);
-		}
 	}
 }
 
@@ -571,8 +513,8 @@ void SpriteManager::unregisterSprite(Sprite sprite)
  */
 void SpriteManager::renderLastLayer()
 {
-	ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderLastLayer: no more layers");
-	ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderLastLayer: no more free layers");
+	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderLastLayer: no more layers");
+	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderLastLayer: no more free layers");
 
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
@@ -671,63 +613,30 @@ bool SpriteManager::writeSelectedSprite()
 /**
  * Write WORLD data to DRAM
  */
-
 void SpriteManager::render()
 {
 	// switch between even and odd frame
 	this->evenFrame = !this->evenFrame;
 
+	VIPManager vipManager = VIPManager::getInstance();
+
 	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
 	// as soon as possible
+	SpriteManager::disposeSpritesProgressively(this);
 
-	bool heavyProcessing = false;
-	bool skipNonCriticalProcesses = SpriteManager::disposeSpritesProgressively(this);
+	SpriteManager::sortProgressively(this);
 
-	if(!skipNonCriticalProcesses)
-	{
-		skipNonCriticalProcesses |= CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
-	}
+	VirtualNode node = this->sprites->tail;
 
-	heavyProcessing |= skipNonCriticalProcesses;
+	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	// write textures
-	if(!skipNonCriticalProcesses)
-	{
-		bool texturesWritten = SpriteManager::writeSelectedSprite(this);
-
-		heavyProcessing |= texturesWritten;
-
-		if(!texturesWritten)
-		{
-			// defragment param table
-			if(!ParamTableManager::defragmentProgressively(ParamTableManager::getInstance()))
-			{
-				// z sorting
-				SpriteManager::sortProgressively(this);
-			}
-		}
-	}
-
-	VirtualNode node = this->sprites->head;
-
-	if(!node)
-	{
-		this->freeLayer = __TOTAL_LAYERS - 1;
-	}
-	else if(!this->lockSpritesLists)
-	{
-		this->freeLayer = (Sprite::safeCast(node->data))->worldLayer - 1;
-	}
-
-	bool bypassSpriteUpdate = this->bypassSpriteUpdateWhenWritingTextures && heavyProcessing;
-
-	for(; node; node = node->next)
+	for(; node; node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite->hidden | sprite->disposed)
 		{
-			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+			continue;
 		}
 		else
 		{
@@ -735,16 +644,19 @@ void SpriteManager::render()
 
 			if(!sprite->visible)
 			{
-				_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+				continue;
 			}
 			else
 			{
-				if((u32)sprite->animationController && !bypassSpriteUpdate)
+				if((u32)sprite->animationController && !VIPManager::hasFramestarted(vipManager))
 				{
 					Sprite::update(sprite);
 				}
 
-				Sprite::render(sprite);
+				if(Sprite::render(sprite, this->freeLayer))
+				{
+					this->freeLayer--;
+				}
 			}
 		}
 	}
@@ -756,18 +668,25 @@ void SpriteManager::render()
 	}
 #endif
 
-
 	// configure printing layer and shutdown unused layers
 	SpriteManager::renderLastLayer(this);
+
+	if(!VIPManager::hasFramestarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
+	{
+		if(!VIPManager::hasFramestarted(vipManager) && !SpriteManager::writeSelectedSprite(this))
+		{
+			ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
+		}
+	}
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
 	{
-		static int counter = __TARGET_FPS;
+		static int counter = __TARGET_FPS / 10;
 
 		if(0 >= --counter)
 		{
-			counter = __TARGET_FPS;
+			counter = __TARGET_FPS / 10;
 			SpriteManager::print(this, 1, 15, true);
 		}
 	}
