@@ -356,6 +356,23 @@ bool BgmapSprite::render(u8 worldLayer)
 		h = _cameraFrustum->y1 - gy;
 	}
 
+#ifdef __HACK_BGMAP_SPRITE_HEIGHT
+	if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h && 0 == gy)
+	{
+		if (0 >= h)
+		{
+			worldPointer->head = __WORLD_OFF;
+ 
+#ifdef __PROFILE_GAME
+			worldPointer->w = 0;
+			worldPointer->h = 0;
+#endif
+			return false;
+		}
+
+		my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
+	}
+#else
 	if (0 >= h)
 	{
 #ifdef __PROFILE_GAME
@@ -364,6 +381,7 @@ bool BgmapSprite::render(u8 worldLayer)
 #endif
 		return false;
 	}
+#endif
 
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
