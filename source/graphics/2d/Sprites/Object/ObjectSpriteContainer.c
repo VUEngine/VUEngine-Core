@@ -416,6 +416,16 @@ bool ObjectSpriteContainer::render(u8 worldLayer)
 	_worldAttributesBaseAddress[this->worldLayer].h = __SCREEN_HEIGHT;
 #endif
 
+	// defragmentation takes priority over z sorting
+	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
+	{
+		ObjectSpriteContainer::defragment(this);
+	}
+	else if(!VIPManager::hasFramestarted(VIPManager::getInstance()))
+	{
+		ObjectSpriteContainer::sortProgressively(this);
+	}
+
 	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
 	VirtualNode node = this->objectSprites->head;
@@ -459,16 +469,6 @@ bool ObjectSpriteContainer::render(u8 worldLayer)
 				Sprite::render(sprite, 0);
 			}
 		}
-	}
-
-	// defragmentation takes priority over z sorting
-	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
-	{
-		ObjectSpriteContainer::defragment(this);
-	}
-	else if(!VIPManager::hasFramestarted(VIPManager::getInstance()))
-	{
-		ObjectSpriteContainer::sortProgressively(this);
 	}
 
 	return true;
