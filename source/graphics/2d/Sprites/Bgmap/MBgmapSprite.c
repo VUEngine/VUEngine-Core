@@ -440,10 +440,6 @@ void MBgmapSprite::render()
 		}
 	}
 
-#ifndef __FORCE_VIP_SYNC
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
-#endif
-
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 	worldPointer->gp = gp;

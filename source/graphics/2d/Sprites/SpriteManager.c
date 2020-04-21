@@ -434,10 +434,6 @@ bool SpriteManager::sortProgressively()
 
 	VirtualNode node = this->sprites->head;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	for(; node; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
@@ -470,10 +466,6 @@ bool SpriteManager::sortProgressively()
 			}
 		}
 	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
 
 	return swapped;
 }
@@ -729,10 +721,6 @@ void SpriteManager::render()
 
 	bool bypassSpriteUpdate = this->bypassSpriteUpdateWhenWritingTextures && heavyProcessing;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	for(; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -757,14 +745,9 @@ void SpriteManager::render()
 				}
 
 				Sprite::render(sprite);
-				CACHE_DISABLE;
 			}
 		}
 	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))

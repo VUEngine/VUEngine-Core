@@ -289,7 +289,6 @@ void BgmapSprite::render()
 		return;
 	}
 */
-	CACHE_ENABLE;
 
 	// get coordinates
 	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
@@ -366,11 +365,6 @@ void BgmapSprite::render()
 #endif
 		return;
 	}
-
-	// set the head
-#ifndef __FORCE_VIP_SYNC
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
-#endif
 
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;

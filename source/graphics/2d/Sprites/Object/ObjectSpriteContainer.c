@@ -355,10 +355,6 @@ void ObjectSpriteContainer::sortProgressively()
 {
 	VirtualNode node = this->objectSprites->tail;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	for(; node; node = node->previous)
 	{
 		VirtualNode previousNode = node->previous;
@@ -401,10 +397,6 @@ void ObjectSpriteContainer::sortProgressively()
 			}
 		}
 	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
 }
 
 /**
@@ -439,14 +431,6 @@ void ObjectSpriteContainer::render()
 	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
 	VirtualNode node = this->objectSprites->head;
-
-	bool manageCache = 24 <= this->totalObjects - this->availableObjects;
-
-	if(manageCache)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-	}
 
 	for(; node; node = node->next)
 	{
@@ -488,14 +472,6 @@ void ObjectSpriteContainer::render()
 			}
 		}
 	}
-
-	if(manageCache)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-	}
-
-	CACHE_ENABLE;
 }
 
 /**
