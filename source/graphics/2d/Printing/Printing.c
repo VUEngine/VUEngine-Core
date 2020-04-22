@@ -97,12 +97,7 @@ void Printing::destructor()
 
 void Printing::reset()
 {
-	VirtualNode node = VirtualList::begin(this->fonts);
-
-	for(; node; node = VirtualNode::getNext(node))
-	{
-		delete VirtualNode::getData(node);
-	}
+	Printing::releaseFonts(this);
 
 	VirtualList::clear(this->fonts);
 
@@ -118,8 +113,12 @@ void Printing::reset()
 
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
+	// Since fonts' charsets will be released, there is no reason to keep 
+	// anything in the printing area
+	Printing::clear(Printing::getInstance());
+
 	// empty list of registered fonts
-	Printing::reset(this);
+	Printing::releaseFonts(this);
 
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
@@ -205,7 +204,10 @@ void Printing::releaseFonts()
 	{
 		FontData* fontData = VirtualNode::getData(node);
 
-		while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet))
+		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
+		{
+			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
+		}
 
 		delete fontData;
 	}

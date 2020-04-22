@@ -630,7 +630,7 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	for(; node; node = node->previous)
+	for(; node && 0 < this->freeLayer; node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
