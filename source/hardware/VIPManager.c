@@ -143,9 +143,9 @@ bool VIPManager::isDrawingAllowed()
 /**
  * Return true if FRAMESTART happened during XPEND's processing
  */
-bool VIPManager::hasFramestarted()
+bool VIPManager::hasFrameStarted()
 {
-	return this->frameStarted;
+	return (_vipRegisters[__XPSTTS] & __XPBSYR) || this->frameStarted;
 }
 
 /**
@@ -367,7 +367,7 @@ void VIPManager::processFrameBuffers()
 	// check if the current frame buffer set is valid
 	VirtualNode node = this->postProcessingEffects->tail;
 
-	for(; !this->frameStarted && node; node = node->previous)
+	for(; !VIPManager::hasFrameStarted(this) && node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}

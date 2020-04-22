@@ -312,7 +312,7 @@ singleton class VIPManager : Object
 	void allowDRAMAccess(bool allowDRAMAccess);
 	bool isRenderingPending();
 	bool isDrawingAllowed();
-	bool hasFramestarted();
+	bool hasFrameStarted();
 }
 
 

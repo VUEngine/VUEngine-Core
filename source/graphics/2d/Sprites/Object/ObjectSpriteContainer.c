@@ -421,7 +421,7 @@ bool ObjectSpriteContainer::render(u8 worldLayer)
 	{
 		ObjectSpriteContainer::defragment(this);
 	}
-	else if(!VIPManager::hasFramestarted(VIPManager::getInstance()))
+	else if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
 	{
 		ObjectSpriteContainer::sortProgressively(this);
 	}

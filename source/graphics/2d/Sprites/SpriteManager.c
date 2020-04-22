@@ -648,7 +648,7 @@ void SpriteManager::render()
 			}
 			else
 			{
-				if((u32)sprite->animationController && !VIPManager::hasFramestarted(vipManager))
+				if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
 				{
 					Sprite::update(sprite);
 				}
@@ -671,9 +671,9 @@ void SpriteManager::render()
 	// configure printing layer and shutdown unused layers
 	SpriteManager::renderLastLayer(this);
 
-	if(!VIPManager::hasFramestarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
+	if(!VIPManager::hasFrameStarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
-		if(!VIPManager::hasFramestarted(vipManager) && !SpriteManager::writeSelectedSprite(this))
+		if(!VIPManager::hasFrameStarted(vipManager) && !SpriteManager::writeSelectedSprite(this))
 		{
 			ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 		}
