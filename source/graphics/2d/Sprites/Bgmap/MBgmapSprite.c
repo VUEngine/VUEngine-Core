@@ -426,7 +426,7 @@ bool MBgmapSprite::render(u8 worldLayer)
 				worldPointer->w = 0;
 				worldPointer->h = 0;
 #endif
-				return;
+				return false;
 			}
 
 			my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
