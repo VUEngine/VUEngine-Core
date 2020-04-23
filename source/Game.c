@@ -400,21 +400,18 @@ void Game::start(GameState state)
 
 		while(true)
 		{
-			if(this->nextFrameStarted)
+			Game::currentFrameStarted(this);
+
+			Game::updateFrameRate(this);
+
+			Game::run(this);
+
+			Game::debug(this);
+
+			// This breaks PCM playback but reports torn frames more accurately
+			if(!Game::updateSpecialProcesses(this) && !this->nextFrameStarted)
 			{
-				Game::currentFrameStarted(this);
-
-				Game::updateFrameRate(this);
-
-				Game::run(this);
-
-				Game::debug(this);
-
-				Game::currentFrameEnded(this);
-			}
-			else
-			{
-				if(!Game::updateSpecialProcesses(this))
+				while(!this->nextFrameStarted)
 				{
 					HardwareManager::halt();
 				}
@@ -1121,7 +1118,7 @@ void Game::currentFrameEnded()
 #ifdef __ALERT_FOR_TORN_FRAMES
 	if(this->nextFrameStarted)
 	{
-		PRINT_TEXT("Torn Frames:    ", 1, 27);
+//		PRINT_TEXT("Torn Frames:    ", 1, 27);
 		PRINT_INT(++_tornGameFrameCount, 13, 27);
 	}
 #endif
@@ -1174,6 +1171,9 @@ void Game::run()
 
 	// update game's logic
 	Game::updateLogic(this);
+
+	// frame logic is done
+	Game::currentFrameEnded(this);
 
 	// this is the moment to check if the game's state
 	// needs to be changed
