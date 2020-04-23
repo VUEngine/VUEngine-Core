@@ -88,7 +88,6 @@ void SpriteManager::constructor()
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
-	this->bypassSpriteUpdateWhenWritingTextures = false;
 	this->lockSpritesLists = false;
 	this->evenFrame = true;
 
@@ -175,7 +174,6 @@ void SpriteManager::reset()
 	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
-	this->bypassSpriteUpdateWhenWritingTextures = false;
 
 	SpriteManager::renderLastLayer(this);
 
@@ -270,16 +268,6 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObject
 	NM_ASSERT(suitableObjectSpriteContainer, "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	return suitableObjectSpriteContainer;
-}
-
-/**
- * Set flag to bypass sprite update
- *
- * @param bypassSpriteUpdateWhenWritingTextures		bool
- */
-void SpriteManager::bypassSpriteUpdateWhenWritingTextures(bool bypassSpriteUpdateWhenWritingTextures)
-{
-	this->bypassSpriteUpdateWhenWritingTextures = bypassSpriteUpdateWhenWritingTextures;
 }
 
 /**

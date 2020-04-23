@@ -90,8 +90,6 @@ singleton class SpriteManager : Object
 	s8 deferParamTableEffects;
 	// delay before writing again
 	s8 waitToWriteSpriteTextures;
-	// flag to reduce load during frames where texture writing happens
-	bool bypassSpriteUpdateWhenWritingTextures;
 
 	/// @publicsection
 	static SpriteManager getInstance();
@@ -117,7 +115,6 @@ singleton class SpriteManager : Object
 	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
-	void bypassSpriteUpdateWhenWritingTextures(bool bypassSpriteUpdateWhenWritingTextures);
 	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
 	void showLayer(u8 layer);

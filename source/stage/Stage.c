@@ -1176,7 +1176,6 @@ void Stage::prepareGraphics()
 	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
-	SpriteManager::bypassSpriteUpdateWhenWritingTextures(SpriteManager::getInstance(), this->stageSpec->rendering.bypassSpriteUpdateWhenWritingTextures);
 }
 
 void Stage::setupSounds()
