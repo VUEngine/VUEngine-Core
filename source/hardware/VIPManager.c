@@ -145,7 +145,11 @@ bool VIPManager::isDrawingAllowed()
  */
 bool VIPManager::hasFrameStarted()
 {
+#ifdef __FORCE_VIP_SYNC
+	return this->frameStarted;
+#else
 	return (_vipRegisters[__XPSTTS] & __XPBSYR) || this->frameStarted;
+#endif
 }
 
 /**
