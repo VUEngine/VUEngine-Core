@@ -172,7 +172,6 @@ u32 CharSet::getNumberOfChars()
 void CharSet::write()
 {
 	s16 numberOfWORDS = __BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD);
-
 	bool disableCache = false;
 
 	if(numberOfWORDS >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)

@@ -302,13 +302,13 @@ void VIPManager::processInterrupt(u16 interrupt)
 						this->renderingCompleted = true;
 					}
 
+					// Write to the frame buffers
+					VIPManager::processFrameBuffers(this);
+
 #ifdef __FORCE_VIP_SYNC
 					// allow VIP's drawing operations
 					VIPManager::enableDrawing(this);
 #endif
-
-					// Write to the frame buffers
-					VIPManager::processFrameBuffers(this);
 
 					// flag completions
 					this->drawingEnded = true;
