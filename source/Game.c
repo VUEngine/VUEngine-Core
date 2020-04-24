@@ -1015,6 +1015,17 @@ void Game::updateFrameRate()
 
 	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
 	{
+
+#ifdef __ALERT_FOR_TORN_FRAMES
+		static int previousTornGameFrameCount = 0;
+		if(_tornGameFrameCount != previousTornGameFrameCount)
+		{
+			previousTornGameFrameCount = _tornGameFrameCount;
+			PRINT_TEXT("Torn Frames:    ", 1, 27);
+			PRINT_INT(_tornGameFrameCount, 13, 27);
+		}
+#endif
+
 #ifdef __SHOW_GAME_PROFILING
 		if(_updateProfiling)
 		{
@@ -1118,8 +1129,7 @@ void Game::currentFrameEnded()
 #ifdef __ALERT_FOR_TORN_FRAMES
 	if(this->nextFrameStarted)
 	{
-//		PRINT_TEXT("Torn Frames:    ", 1, 27);
-		PRINT_INT(++_tornGameFrameCount, 13, 27);
+		++_tornGameFrameCount;
 	}
 #endif
 #endif
