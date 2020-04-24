@@ -154,6 +154,9 @@ void Texture::rewrite()
 	this->written = false;
 
 	Texture::write(this);
+
+	// propagate event
+	Object::fireEvent(this, kEventTextureRewritten);
 }
 
 /**
@@ -426,20 +429,7 @@ u16 Texture::getId()
  */
 void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	switch(CharSet::getAllocationType(this->charSet))
-	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-			this->written = false;
-			break;
-
-		default:
-			// write again
-			Texture::rewrite(this);
-			break;
-	}
-
-	// propagate event
-	Object::fireEvent(this, kEventTextureRewritten);
+	Texture::rewrite(this);
 }
 
 /**

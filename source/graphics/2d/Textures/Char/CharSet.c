@@ -201,18 +201,7 @@ void CharSet::write()
  */
 void CharSet::rewrite()
 {
-	switch(this->charSetSpec->allocationType)
-	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-			break;
-
-		default:
-			// write again
-			CharSet::write(this);
-			break;
-	}
+	CharSet::write(this);
 
 	// propagate event
 	Object::fireEvent(this, kEventCharSetRewritten);

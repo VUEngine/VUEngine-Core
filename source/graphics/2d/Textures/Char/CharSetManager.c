@@ -28,6 +28,7 @@
 #include <VirtualList.h>
 #include <VIPManager.h>
 #include <Mem.h>
+#include <HardwareManager.h>
 #include <debugUtilities.h>
 
 
@@ -65,6 +66,7 @@ void CharSetManager::constructor()
 	this->charSets = new VirtualList();
 	this->charSetsPendingWriting = new VirtualList();
 	this->freedOffset = 1;
+	this->preventDefragmentation = false;
 }
 
 /**
@@ -89,6 +91,8 @@ void CharSetManager::destructor()
  */
 void CharSetManager::reset()
 {
+	this->preventDefragmentation = true;
+
 	if(this->charSets)
 	{
 		VirtualNode node = this->charSets->head;
@@ -104,6 +108,7 @@ void CharSetManager::reset()
 	VirtualList::clear(this->charSetsPendingWriting);
 
 	this->freedOffset = 1;
+	this->preventDefragmentation = false;
 }
 
 /**
@@ -192,6 +197,8 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	if(CharSet::decreaseUsageCount(charSet))
 	{
+		this->preventDefragmentation = true;
+
 		VirtualList::removeElement(this->charSets, charSet);
 		VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 
@@ -203,6 +210,8 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 		}
 
 		delete charSet;
+
+		this->preventDefragmentation = false;
 
 		return true;
 	}
@@ -236,14 +245,13 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = new CharSet(charSetSpec, offset);
 
+		this->preventDefragmentation = true;
+
 		VirtualList::pushBack(this->charSets, charSet);
 		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
+
+		this->preventDefragmentation = false;
 		return charSet;
-	}
-
-	if(1 < this->freedOffset)
-	{
-
 	}
 
 	// if there isn't enough memory thrown an exception
@@ -257,6 +265,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
  */
 void CharSetManager::writeCharSets()
 {
+	this->preventDefragmentation = true;
 	CharSetManager::defragment(this);
 
 	VirtualNode node = this->charSetsPendingWriting->head;
@@ -267,6 +276,8 @@ void CharSetManager::writeCharSets()
 	}
 
 	VirtualList::clear(this->charSetsPendingWriting);
+
+	this->preventDefragmentation = false;
 }
 
 /**
@@ -274,6 +285,11 @@ void CharSetManager::writeCharSets()
  */
 bool CharSetManager::writeCharSetsProgressively()
 {
+	if(this->preventDefragmentation)
+	{
+		return false;
+	}
+
 	CharSet charSet = VirtualList::front(this->charSetsPendingWriting);
 
 	if(charSet)
@@ -292,10 +308,14 @@ bool CharSetManager::writeCharSetsProgressively()
  */
 void CharSetManager::defragment()
 {
+	this->preventDefragmentation = true;
+	
 	while(1 < this->freedOffset)
 	{
 		CharSetManager::defragmentProgressively(this);
 	}
+
+	this->preventDefragmentation = false;
 }
 
 /**
@@ -319,7 +339,7 @@ bool CharSetManager::defragmentProgressively()
 				return false;
 			}
 */
-			if(this->freedOffset < CharSet::getOffset(charSet))
+			if(!isDeleted(charSet) && this->freedOffset < CharSet::getOffset(charSet))
 			{
 				CharSet::setOffset(charSet, this->freedOffset);
 
@@ -328,7 +348,7 @@ bool CharSetManager::defragmentProgressively()
 				this->freedOffset += CharSet::getNumberOfChars(charSet);
 
 				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
-				return true;
+			//	return true;
 			}
 		}
 
