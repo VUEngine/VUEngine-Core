@@ -209,6 +209,8 @@ void Printing::releaseFonts()
 
 	VirtualList::clear(this->fonts);
 	HardwareManager::enableInterrupts();
+
+	CharSetManager::defragment(CharSetManager::getInstance());
 }
 
 FontData* Printing::getFontByName(const char* font)
