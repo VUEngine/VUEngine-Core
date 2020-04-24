@@ -158,9 +158,6 @@ typedef struct FontData
 	/// Font spec
 	const struct FontSpec* fontSpec;
 
-	/// Offset of font in char memory
-	u32 offset;
-
 	/// CharSet
 	CharSet charSet;
 

@@ -58,9 +58,6 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 	// font spec
 	(FontSpec*)&DEFAULT_FONT,
 
-	// offset of font in char memory
-	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
-
 	// CharSet
 	NULL,
 };
@@ -129,7 +126,6 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 		// instance and initialize a new fontdata instance
 		FontData* fontData = new FontData;
 		fontData->fontSpec = __FONTS[i];
-		fontData->offset = 0;
 		fontData->charSet = NULL;
 
 		// preload charset for font if in list of fonts to preload
@@ -142,7 +138,6 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				if(__FONTS[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
-					fontData->offset = CharSet::getOffset(fontData->charSet);
 				}
 			}
 		}
@@ -167,7 +162,7 @@ void Printing::setFontPage(const char* font, u16 page)
 void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
-		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
+		(u8*)(__CHAR_SPACE_BASE_ADDRESS + ((__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE) << 4)),
 		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
 		VUENGINE_DEBUG_FONT_SIZE << 4
 	);
@@ -247,10 +242,9 @@ FontData* Printing::getFontByName(const char* font)
 			}
 
 			// if font's charset has not been preloaded, load it now
-			if(!result->offset)
+			if(NULL == result->charSet)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
-				result->offset = CharSet::getOffset(result->charSet);
 			}
 		}
 	}
@@ -514,6 +508,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	}
 
 	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+	u32 offset = CharSet::getOffset(fontData->charSet);
 
 	// print text
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
@@ -557,7 +552,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
-									fontData->offset +
+									offset +
 
 									// offset of character in charset
 									((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +

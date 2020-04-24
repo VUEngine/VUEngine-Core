@@ -189,6 +189,8 @@ void TextObjectSprite::out()
 		return;
 	}
 
+	u32 offset = CharSet::getOffset(fontData->charSet);
+
 	// print text
 	while(this->text[i])
 	{
@@ -206,7 +208,7 @@ void TextObjectSprite::out()
 
 							u16 charNumber =
 								// offset of charset in char memory
-								fontData->offset +
+								offset +
 
 								// offset of character in charset
 								((u8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +

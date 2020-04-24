@@ -104,6 +104,8 @@ void BgmapPrinting::out(u8 x, u8 y, const char* string, const char* font)
 
 	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
+	u32 offset = CharSet::getOffset(fontData->charSet);
+
 	// print text
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
@@ -146,7 +148,7 @@ void BgmapPrinting::out(u8 x, u8 y, const char* string, const char* font)
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
-									fontData->offset +
+									offset +
 
 									// offset of character in charset
 									((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
