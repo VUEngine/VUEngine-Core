@@ -689,6 +689,10 @@ void Sprite::setActualFrame(s16 actualFrame)
 	{
 		this->writeAnimationFrame |= AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
+	else
+	{
+		Texture::setFrame(this->texture, actualFrame);
+	}
 }
 
 /**
