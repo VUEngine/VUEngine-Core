@@ -51,6 +51,8 @@ extern FontROMSpec DEFAULT_FONT;
 // horizontal tab size in chars
 #define __TAB_SIZE	4
 
+#define VUENGINE_DEBUG_FONT_CHARSET_OFFSET		(__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE)
+
 // fontdata for debug output
 #define VUENGINE_DEBUG_FONT_SIZE	160
 FontROMData VUENGINE_DEBUG_FONT_DATA =
@@ -162,7 +164,7 @@ void Printing::setFontPage(const char* font, u16 page)
 void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
-		(u8*)(__CHAR_SPACE_BASE_ADDRESS + ((__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE) << 4)),
+		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
 		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
 		VUENGINE_DEBUG_FONT_SIZE << 4
 	);
@@ -170,6 +172,7 @@ void Printing::loadDebugFont()
 
 void Printing::setDebugMode()
 {
+	Printing::clear(this);
 	Printing::resetCoordinates(this);
 	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
@@ -510,7 +513,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	}
 
 	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
-	u32 offset = CharSet::getOffset(fontData->charSet);
+	u32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
 	// print text
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
