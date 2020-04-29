@@ -327,6 +327,9 @@ void GameState::streamAll()
 
 		// Froce graphics to get ready
 		GameState::synchronizeGraphics(this);
+
+		// Clean up
+		SpriteManager::disposeSprites(SpriteManager::getInstance());
 	}
 	while(Stage::stream(this->stage));
 
