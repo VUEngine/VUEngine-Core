@@ -348,7 +348,7 @@ bool CharSetManager::defragmentProgressively()
 				this->freedOffset += CharSet::getNumberOfChars(charSet);
 
 				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
-			//	return true;
+				return true;
 			}
 		}
 

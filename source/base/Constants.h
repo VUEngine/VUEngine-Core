@@ -206,6 +206,7 @@ enum DefaulCollisionLayers
 
 #define __PIXELS_PER_METER_2_POWER				4
 #define __PIXELS_TO_METERS(pixels)				(fix10_6)(__I_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
+#define __REAL_PIXELS_TO_METERS(pixels)			(fix10_6)(__F_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
 #define __METERS_TO_PIXELS(meters)				__FIX10_6_TO_I(((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER)
 #define __METERS_TO_PIXELS_ROUNDED(meters)		__FIX10_6_TO_I(__05F_FIX10_6 + (((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER))
 

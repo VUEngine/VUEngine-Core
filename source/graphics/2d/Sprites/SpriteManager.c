@@ -525,9 +525,9 @@ void SpriteManager::selectSpritePendingTextureWriting()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(!isDeleted(sprite) && ! Sprite::areTexturesWritten(sprite))
+		if(!isDeleted(sprite) && !Sprite::areTexturesWritten(sprite))
 		{
-			bool areTexturesWritten =  Sprite::writeTextures(sprite);
+			bool areTexturesWritten = Sprite::writeTextures(sprite);
 
 			this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
 			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
@@ -574,9 +574,9 @@ bool SpriteManager::writeSelectedSprite()
 	{
 		if(this->spritePendingTextureWriting)
 		{
-			if(!isDeleted(this->spritePendingTextureWriting) && ! Sprite::areTexturesWritten(this->spritePendingTextureWriting))
+			if(!isDeleted(this->spritePendingTextureWriting) && !Sprite::areTexturesWritten(this->spritePendingTextureWriting))
 			{
-				this->spritePendingTextureWriting =  Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
+				this->spritePendingTextureWriting = Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
 				this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
 				textureWritten = true;
 			}
