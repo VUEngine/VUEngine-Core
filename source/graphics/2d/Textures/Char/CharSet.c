@@ -227,7 +227,11 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 {
 	if(newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
-		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 4));
+		Mem::copyWORD(
+			(WORD*)(__CHAR_SPACE_BASE_ADDRESS + ((((u32)this->offset) << 4) + (charToReplace << 4))),
+			(WORD*)newChar,
+			__BYTES_PER_CHARS(1) / sizeof(WORD)
+		);
 	}
 }
 
