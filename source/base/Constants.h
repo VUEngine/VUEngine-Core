@@ -146,6 +146,8 @@ enum DefaulCollisionLayers
 };
 
 #ifndef __RELEASE
+#define __REGISTER_LAST_PROCESS_NAME
+
 void HardwareManager_printStackStatus(int x, int y, bool resumed);
 
 #define __CHECK_STACK_STATUS																				\
