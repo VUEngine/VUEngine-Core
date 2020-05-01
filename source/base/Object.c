@@ -360,8 +360,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (u32)object, 18, 15, 8, NULL);
 	*/
-		_lp = lp;
-		_sp = sp;
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
 	}
 

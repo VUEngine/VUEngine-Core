@@ -71,6 +71,8 @@
 // alert vip's overtime
 {% if project.config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __ALERT_VIP_OVERTIME
 
+// stack headroom
+#define __STACK_HEADROOM								{{ project.config.debug.stackHeadroom }}
 
 //---------------------------------------------------------------------------------------------------------
 //											DEBUGGING TOOLS

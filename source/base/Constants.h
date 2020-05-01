@@ -145,6 +145,30 @@ enum DefaulCollisionLayers
     kLayerNone = 0,
 };
 
+#ifndef __RELEASE
+void HardwareManager_printStackStatus(int x, int y, bool resumed);
+
+#define __CHECK_STACK_STATUS																				\
+	extern bool _stackHeadroomViolation;																	\
+	if(!_stackHeadroomViolation)																			\
+	{																										\
+		int _vuengineStackPointer;																			\
+		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));													\
+																											\
+		if((0x05000000 & _vuengineStackPointer) &&															\
+			_vuengineStackPointer - __STACK_HEADROOM < (int)&_bss_end)										\
+		{																									\
+			_stackHeadroomViolation = true;																	\
+			Printing_setDebugMode(Printing_getInstance());													\
+			Printing_clear(Printing_getInstance());															\
+			HardwareManager_printStackStatus(1, 15, false);													\
+			NM_ASSERT(false, "HardwareManager_checkStack: surpassed headroom boundary!");					\
+		}																									\
+	}
+#else
+	#define __CHECK_STACK_STATUS
+#endif
+
 #undef NM_ASSERT
 
 #ifndef __RELEASE
@@ -153,8 +177,8 @@ enum DefaulCollisionLayers
 	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
-		asm(" mov sp,%0  ": "=r" (_sp));																\
-		asm(" mov lp,%0  ": "=r" (_lp));																\
+		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));												\
+		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));												\
 																										\
 		/* thrown exception */																			\
 		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
@@ -189,8 +213,8 @@ enum DefaulCollisionLayers
 	if(!(Statement) && !_triggeringException) 															\
 	{																									\
 		_triggeringException = true;																	\
-		asm(" mov sp,%0  ": "=r" (_sp));																\
-		asm(" mov lp,%0  ": "=r" (_lp));																\
+		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));																\
+		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));																\
 																										\
 		/* thrown exception */																			\
 		Error_triggerException(Error_getInstance(), Message, NULL);										\

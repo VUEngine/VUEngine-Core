@@ -448,10 +448,6 @@ static void TimerManager::interruptHandler()
 	TimerManager::enable(_timerManager, false);
 	TimerManager::clearStat(_timerManager);
 
-#ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager::checkStackStatus(HardwareManager::getInstance());
-#endif
-
 	u32 elapsedMilliseconds = 0;
 
 	// update clocks

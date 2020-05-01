@@ -148,7 +148,7 @@ mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 # Inject this pointer
 #sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
 #sed -i.b 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
-sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE 
+sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{__CHECK_STACK_STATUS '"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE 
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 

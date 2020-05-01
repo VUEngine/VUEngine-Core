@@ -84,7 +84,8 @@
 		"profileGameStateDuringVipInterrupt": false,
 		"profileStreaming": false,
 		"showGameProfiling": false,
-		"showStreamingProfiling": false
+		"showStreamingProfiling": false,
+		"stackHeadroom": 1000
 	},
 	"exception":
 	{

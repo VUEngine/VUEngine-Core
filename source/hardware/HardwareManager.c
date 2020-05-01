@@ -47,15 +47,13 @@ extern u32 croVector;
 extern u32 comVector;
 extern u32 vipVector;
 
-#ifdef __ALERT_STACK_OVERFLOW
-extern u32 _bss_end;
-#endif
-
 extern u32 _dram_bss_end;
 extern u32 _dram_data_start;
 
-int _lp = 0;
-int _sp = 0;
+int _vuengineLinkPointer = 0;
+int _vuengineStackPointer = 0;
+bool _stackHeadroomViolation = false;
+
 
 typedef const struct ROMInfo
 {
@@ -431,23 +429,6 @@ void HardwareManager::print(int x, int y)
 //	Printing::hex(Printing::getInstance(), HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
 }
 
-#ifdef __ALERT_STACK_OVERFLOW
-
-/**
- * Check for stack overflows
- */
-static void HardwareManager::checkStackStatus()
-{
-	int sp;
-	asm(" mov sp,%0  ": "=r" (sp));
-
-	if((0x05000000 & sp) && sp < (int)&_bss_end)
-	{
-		HardwareManager::printStackStatus(HardwareManager::getInstance(), 1, 15, false);
-		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
-	}
-}
-
 /**
  * Print the Stack Pointer's status
  *
@@ -455,7 +436,7 @@ static void HardwareManager::checkStackStatus()
  * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info
  */
-void HardwareManager::printStackStatus(int x, int y, bool resumed)
+static void HardwareManager::printStackStatus(int x, int y, bool resumed)
 {
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
@@ -497,4 +478,3 @@ void HardwareManager::printStackStatus(int x, int y, bool resumed)
 		Printing::int(Printing::getInstance(), lowestRoom, x + 10, y, NULL);
 	}
 }
-#endif

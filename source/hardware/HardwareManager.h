@@ -82,7 +82,7 @@ singleton class HardwareManager : Object
     static inline int getLinkPointer();
     static inline int getPSW();
 	static void checkMemoryMap();
-	static void checkStackStatus();
+	static void printStackStatus(int x, int y, bool resumed);
 	void clearScreen();
 	void disableKeypad();
 	void disableRendering();
@@ -98,7 +98,6 @@ singleton class HardwareManager : Object
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
 	bool isDrawingAllowed();
-	void printStackStatus(int x, int y, bool resumed);
 
 	static inline void halt();
 }

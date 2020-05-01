@@ -95,8 +95,8 @@ void Error::destructor()
 #ifndef __RELEASE
 int Error::triggerException(char* message, char* detail)
 {
-	int lp = _lp;
-	int sp = _sp;
+	int lp = _vuengineLinkPointer;
+	int sp = _vuengineStackPointer;
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
@@ -170,7 +170,7 @@ int Error::triggerException(char* message, char* detail)
 	}
 
 #ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager::printStackStatus(HardwareManager::getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+	HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 
 	// error display message
