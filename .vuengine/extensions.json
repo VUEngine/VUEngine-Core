@@ -132,6 +132,34 @@
 			"target": "config.make"
 		},
 		{
+			"file": "extensions/templates/vb.ld.nj",
+			"config": [
+				"config"
+			],
+			"target": "lib/compiler/linker/vb_release.ld"
+		},
+		{
+			"file": "extensions/templates/vb.ld.nj",
+			"config": [
+				"config"
+			],
+			"target": "lib/compiler/linker/vb_beta.ld"
+		},
+		{
+			"file": "extensions/templates/vb_tools.ld.nj",
+			"config": [
+				"config"
+			],
+			"target": "lib/compiler/linker/vb_tools.ld"
+		},
+		{
+			"file": "extensions/templates/vb_tools.ld.nj",
+			"config": [
+				"config"
+			],
+			"target": "lib/compiler/linker/vb_debug.ld"
+		},
+		{
 			"file": "extensions/templates/GameEvents.h.nj",
 			"config": [
 				"enums"

@@ -31,19 +31,19 @@ USE_PROLOG_FUNCTIONS			= {% if project.config.compiler.prologFunctions %}1{% els
 # the WORLD attributes start.
 
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-MEMORY_POOL_SECTION			 	= {{ project.config.sections.memoryPool }}
+MEMORY_POOL_SECTION			 	= {{ project.config.memory.usage.memoryPool }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-NON_INITIALIZED_DATA_SECTION	= {{ project.config.sections.uninitializedData }}
+NON_INITIALIZED_DATA_SECTION	= {{ project.config.memory.usage.uninitializedData }}
 # valid options are [/.data/.sdata/.dram_data/.sram_data]
-INITIALIZED_DATA_SECTION		= {{ project.config.sections.initializedData }}
+INITIALIZED_DATA_SECTION		= {{ project.config.memory.usage.initializedData }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-STATIC_SINGLETONS_DATA_SECTION	= {{ project.config.sections.staticSingletons }}
+STATIC_SINGLETONS_DATA_SECTION	= {{ project.config.memory.usage.staticSingletons }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-VIRTUAL_TABLES_DATA_SECTION		= {{ project.config.sections.virtualTables }}
+VIRTUAL_TABLES_DATA_SECTION		= {{ project.config.memory.usage.virtualTables }}
 
 # Size of variables to be loaded in the .sdata section
 # Not working properly because rosdata is used instead of rodata section
 # MSDA_SIZE						= 0
 
 # Scramble binary
-SCRAMBLE_BINARY                 = {% if project.config.compiler.scrambleBinary %}1{% else %}0{% endif %}
+SCRAMBLE_BINARY					= {% if project.config.compiler.scrambleBinary %}1{% else %}0{% endif %}
