@@ -34,7 +34,7 @@ ifeq ($(PAD_ROM), 1)
 endif
 
 # linker script
-LINKER_SCRIPT = $(shell pwd)/lib/compiler/linker/vb.ld
+LINKER_SCRIPT = $(shell pwd)/lib/compiler/linker/vb_$(TYPE).ld
 
 # the target file
 TARGET_FILE = output
