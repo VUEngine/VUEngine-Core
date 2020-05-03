@@ -22,6 +22,8 @@
 #ifndef STAGE_EDITOR_STATE_H_
 #define STAGE_EDITOR_STATE_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -44,4 +46,5 @@ singleton class StageEditorState : ToolState
 }
 
 
+#endif
 #endif

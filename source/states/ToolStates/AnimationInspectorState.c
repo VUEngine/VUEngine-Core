@@ -20,6 +20,9 @@
  */
 
 
+#ifdef __TOOLS
+
+
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -77,3 +80,5 @@ bool AnimationInspectorState::isKeyCombination(UserInput userInput)
 {
 	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RR));
 }
+
+#endif

@@ -22,6 +22,8 @@
 #ifndef STAGE_EDITOR_H_
 #define STAGE_EDITOR_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -80,4 +82,5 @@ singleton class StageEditor : Tool
 }
 
 
+#endif
 #endif

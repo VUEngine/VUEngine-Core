@@ -19,6 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -176,3 +178,5 @@ void Profiler::end()
 {
 	Profiler::reset(this);
 }
+
+#endif

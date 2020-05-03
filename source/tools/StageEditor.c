@@ -19,6 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -1081,3 +1083,5 @@ void StageEditor::printTranslationStepSize(u8 x, u8 y)
 	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
 }
+
+#endif

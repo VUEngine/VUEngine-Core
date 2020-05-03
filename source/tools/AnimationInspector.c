@@ -19,6 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -930,3 +932,5 @@ void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((u
 		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
 	}
 }
+
+#endif

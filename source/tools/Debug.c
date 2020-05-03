@@ -19,6 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -1521,3 +1523,5 @@ void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribu
 	// mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }
+
+#endif

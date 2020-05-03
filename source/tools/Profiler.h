@@ -22,6 +22,8 @@
 #ifndef PROFILER_H_
 #define PROFILER_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -61,4 +63,5 @@ singleton class Profiler : Object
 }
 
 
+#endif
 #endif

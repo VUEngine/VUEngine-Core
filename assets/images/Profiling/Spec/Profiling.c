@@ -19,6 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -234,3 +236,5 @@ EntityROMSpec PROFILING_IM =
 	// physical specification
 	NULL,
 };
+
+#endif

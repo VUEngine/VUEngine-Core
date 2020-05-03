@@ -53,6 +53,7 @@
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
+#include <Profiler.h>
 #include <debugConfig.h>
 
 #ifdef __DEBUG_TOOLS
@@ -231,7 +232,6 @@ void Game::constructor()
 	this->vipManager = VIPManager::getInstance();
 	this->timerManager = TimerManager::getInstance();
 	this->communicationManager = CommunicationManager::getInstance();
-	this->profiler = Profiler::getInstance();
 	this->frameRate = FrameRate::getInstance();
 	this->soundManager = SoundManager::getInstance();
 
@@ -2002,7 +2002,9 @@ long Game::getRandomSeed()
 	return this->randomSeed;
 }
 
+#ifdef __TOOLS
 void Game::startProfiling()
 {
-	Profiler::initialize(this->profiler);
+	Profiler::initialize(Profiler::getInstance());
 }
+#endif

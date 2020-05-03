@@ -36,7 +36,6 @@
 #include <PhysicalWorld.h>
 #include <VIPManager.h>
 #include <CommunicationManager.h>
-#include <Profiler.h>
 #include <SoundManager.h>
 
 
@@ -71,8 +70,6 @@ singleton class Game : Object
 	Object saveDataManager;
 	//
 	FrameRate frameRate;
-	//
-	Profiler profiler;
 	//
 	Camera camera;
 	// game's next state

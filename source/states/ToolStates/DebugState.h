@@ -22,6 +22,8 @@
 #ifndef DEBUG_STATE_H_
 #define DEBUG_STATE_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -43,5 +45,7 @@ singleton class DebugState : ToolState
 	override bool isKeyCombination(UserInput userInput);
 }
 
+
+#endif
 
 #endif

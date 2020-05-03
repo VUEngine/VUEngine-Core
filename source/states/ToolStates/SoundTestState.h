@@ -23,6 +23,8 @@
 #ifndef SOUND_TEST_STATE_H_
 #define SOUND_TEST_STATE_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
@@ -49,5 +51,7 @@ singleton class SoundTestState : ToolState
 	override bool isKeyCombination(UserInput userInput);
 }
 
+
+#endif
 
 #endif

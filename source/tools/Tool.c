@@ -94,3 +94,17 @@ void Tool::lightUpGame()
 {
 	Stage::setupPalettes(GameState::getStage(this->gameState));
 }
+
+#ifndef __TOOLS
+
+void Profiler_setVTable(){}
+void SoundTest_setVTable(){}
+void StageEditor_setVTable(){}
+void AnimationInspector_setVTable(){}
+void Debug_setVTable(){}
+void DebugState_setVTable(){}
+void SoundTestState_setVTable(){}
+void AnimationInspectorState_setVTable(){}
+void StageEditorState_setVTable(){}
+
+#endif

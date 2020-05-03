@@ -22,6 +22,8 @@
 #ifndef ANIMATION_INSPECTOR_STATE_H_
 #define ANIMATION_INSPECTOR_STATE_H_
 
+#ifdef __TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -44,4 +46,5 @@ singleton class AnimationInspectorState : ToolState
 }
 
 
+#endif
 #endif

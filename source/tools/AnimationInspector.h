@@ -22,6 +22,7 @@
 #ifndef ANIMATION_INSPECTOR_H_
 #define ANIMATION_INSPECTOR_H_
 
+#ifdef __TOOLS
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -84,5 +85,5 @@ singleton class AnimationInspector : Tool
 	override void processUserInput(u16 pressedKey);
 }
 
-
+#endif
 #endif
