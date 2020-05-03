@@ -1,4 +1,4 @@
-{% include('./base/header.c.nj') %}
+{% include('./base/header.ld.nj') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */

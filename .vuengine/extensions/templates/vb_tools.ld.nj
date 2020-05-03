@@ -1,4 +1,6 @@
-{% include('./base/header.c.nj') %}
+{% include('./base/header.ld.nj') %}
+
+{%- set extraDram = 3 %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */
@@ -9,7 +11,7 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-    dram    (!r)    : ORIGIN = {{ ((project.config.memory.sections.dram.origin | HexToInt) + 3*1024) | IntToHex }}, LENGTH = {{ project.config.memory.sections.dram.length + 3 }}k
+    dram    (!r)    : ORIGIN = {{ ((project.config.memory.sections.dram.origin | HexToInt) + extraDram*1024) | IntToHex }}, LENGTH = {{ project.config.memory.sections.dram.length + extraDram }}k /* Add additional KB needed for debug tools */
     wram    (!r)    : ORIGIN = {{ project.config.memory.sections.wram.origin }}, LENGTH = {{ project.config.memory.sections.wram.length }}k
     exp     (r)     : ORIGIN = {{ project.config.memory.sections.exp.origin }}, LENGTH = {{ project.config.memory.sections.exp.length }}M
     sram    (!r)    : ORIGIN = {{ project.config.memory.sections.sram.origin }}, LENGTH = {{ project.config.memory.sections.sram.length }}M
