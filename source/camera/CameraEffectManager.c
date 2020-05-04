@@ -396,11 +396,11 @@ void CameraEffectManager::fxFadeAsync()
 	// note: need to cast brightness registers to u8 because only their lower 8 bits are valid
 
 	// fade light red
-	if((u8)_vipRegisters[__BRTC] < this->fxFadeTargetBrightness.brightRed)
+	if((u8)_vipRegisters[__BRTC] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.brightRed)
 	{
 		_vipRegisters[__BRTC] += __CAMERA_EFFECT_FADE_INCREMENT;
 	}
-	else if((u8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
+	else if((u8)_vipRegisters[__BRTC] - __CAMERA_EFFECT_FADE_INCREMENT > this->fxFadeTargetBrightness.brightRed)
 	{
 		_vipRegisters[__BRTC] -= __CAMERA_EFFECT_FADE_INCREMENT;
 	}
@@ -414,11 +414,11 @@ void CameraEffectManager::fxFadeAsync()
 
 	for(i = 0; i < 2; i++)
 	{
-		if((u8)_vipRegisters[__BRTB] < this->fxFadeTargetBrightness.mediumRed)
+		if((u8)_vipRegisters[__BRTB] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.mediumRed)
 		{
 			_vipRegisters[__BRTB] += __CAMERA_EFFECT_FADE_INCREMENT;
 		}
-		else if((u8)_vipRegisters[__BRTB] > this->fxFadeTargetBrightness.mediumRed)
+		else if((u8)_vipRegisters[__BRTB] - __CAMERA_EFFECT_FADE_INCREMENT> this->fxFadeTargetBrightness.mediumRed)
 		{
 			_vipRegisters[__BRTB] -= __CAMERA_EFFECT_FADE_INCREMENT;
 		}
@@ -429,11 +429,11 @@ void CameraEffectManager::fxFadeAsync()
 	}
 
 	// fade dark red
-	if((u8)_vipRegisters[__BRTA] < this->fxFadeTargetBrightness.darkRed)
+	if((u8)_vipRegisters[__BRTA] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.darkRed)
 	{
 		_vipRegisters[__BRTA] += __CAMERA_EFFECT_FADE_INCREMENT;
 	}
-	else if((u8)_vipRegisters[__BRTA] > this->fxFadeTargetBrightness.darkRed)
+	else if((u8)_vipRegisters[__BRTA] - __CAMERA_EFFECT_FADE_INCREMENT > this->fxFadeTargetBrightness.darkRed)
 	{
 		_vipRegisters[__BRTA] -= __CAMERA_EFFECT_FADE_INCREMENT;
 	}
