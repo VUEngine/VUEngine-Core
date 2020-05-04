@@ -26,6 +26,8 @@
 
 #include <Object.h>
 #include <VirtualList.h>
+#include <Utilities.h>
+#include <MessageDispatcher.h>
 #include <debugConfig.h>
 
 
@@ -397,6 +399,58 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	}
 
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
+}
+
+/**
+ * Send message to object
+ *
+ * @param receiver
+ * @param message
+ * @param delay
+ * @param randomDelay
+ */
+void Object::sendMessageTo(Object receiver, u32 message, u32 delay, u32 randomDelay)
+{
+	MessageDispatcher::dispatchMessage(
+		delay + (randomDelay ? Utilities::random(Utilities::randomSeed(), randomDelay) : 0), 
+		Object::safeCast(this), 
+		Object::safeCast(receiver), 
+		message, 
+		NULL
+	);
+}
+
+/**
+ * Send message to self
+ *
+ * @param receiver
+ * @param message
+ * @param delay
+ * @param randomDelay
+ */
+void Object::sendMessageToSelf(u32 message, u32 delay, u32 randomDelay)
+{
+	Object::sendMessageTo(this, this, message, delay, randomDelay);
+}
+
+/**
+ * Discard all delayed messages that I sent
+ *
+ * @param targetClassGetClassMethod
+ */
+void Object::discardAllMessages()
+{
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
+}
+
+/**
+ * Discard a delayed messages that I sent
+ *
+ * @param message
+ */
+void Object::discardMessages(u32 message)
+{
+	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), message);
 }
 
 /**

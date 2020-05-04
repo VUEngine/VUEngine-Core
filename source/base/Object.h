@@ -80,8 +80,12 @@ abstract class Object : Object
 	void removeAllEventListeners(u32 eventCode);
 	bool hasActiveEventListeners();
 	void fireEvent(u32 eventCode);
-	const void* getVTable();
+	void sendMessageTo(Object receiver, u32 message, u32 delay, u32 randomDelay);
+	void sendMessageToSelf(u32 message, u32 delay, u32 randomDelay);
+	void discardAllMessages();
+	void discardMessages(u32 message);
 	virtual bool handleMessage(Telegram telegram);
+	const void* getVTable();
 }
 
 
