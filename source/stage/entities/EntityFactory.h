@@ -72,7 +72,7 @@ typedef struct EntitySpec
 	PixelSize pixelSize;
 
 	/// object's in-game type
-	u32 inGameType;
+	u8 inGameType;
 
 	/// physical specification
 	PhysicalSpecification* physicalSpecification;

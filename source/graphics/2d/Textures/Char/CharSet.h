@@ -75,10 +75,10 @@ typedef struct CharSetSpec
 	/// __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
 	/// __ANIMATED_MULTI: sum of chars of all animation frames
 	/// __NOT_ANIMATED: number of chars of whole image
-	u32 numberOfChars;
+	u16 numberOfChars;
 
 	/// the way its chars and bgtexture will be allocated in graphic memory
-	u32 allocationType;
+	u8 allocationType;
 
 	/// pointer to the char spec in ROM
 	BYTE* charSpec;

@@ -50,19 +50,19 @@ typedef struct TextureSpec
 	BYTE* mapSpec;
 
 	/// x size, 1 column represents 8 pixels
-	u32 cols;
+	u8 cols;
 
 	/// y size, 1 row represents 8 pixels
-	u32 rows;
+	u8 rows;
 
 	/// padding for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
 	/// number of frames
-	u32 numberOfFrames;
+	u8 numberOfFrames;
 
 	/// palette index to use
-	u32 palette;
+	u8 palette;
 
 	/// recyclable
 	bool recyclable;
