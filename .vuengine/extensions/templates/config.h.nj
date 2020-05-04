@@ -387,6 +387,8 @@
 // default delay between steps in fade effect
 #define __FADE_DELAY								{{ project.config.colors.brightness.fadeDelay }}
 
+// defaul step increment in fade transitions
+#define __CAMERA_EFFECT_FADE_INCREMENT				{{ project.config.colors.brightness.fadeIncrement }}
 
 //---------------------------------------------------------------------------------------------------------
 //											COLOR PALETTES

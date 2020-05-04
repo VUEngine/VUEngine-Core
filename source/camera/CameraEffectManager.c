@@ -398,11 +398,11 @@ void CameraEffectManager::fxFadeAsync()
 	// fade light red
 	if((u8)_vipRegisters[__BRTC] < this->fxFadeTargetBrightness.brightRed)
 	{
-		_vipRegisters[__BRTC] += 1;
+		_vipRegisters[__BRTC] += __CAMERA_EFFECT_FADE_INCREMENT;
 	}
 	else if((u8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
 	{
-		_vipRegisters[__BRTC] -= 1;
+		_vipRegisters[__BRTC] -= __CAMERA_EFFECT_FADE_INCREMENT;
 	}
 	else
 	{
@@ -416,11 +416,11 @@ void CameraEffectManager::fxFadeAsync()
 	{
 		if((u8)_vipRegisters[__BRTB] < this->fxFadeTargetBrightness.mediumRed)
 		{
-			_vipRegisters[__BRTB] += 1;
+			_vipRegisters[__BRTB] += __CAMERA_EFFECT_FADE_INCREMENT;
 		}
 		else if((u8)_vipRegisters[__BRTB] > this->fxFadeTargetBrightness.mediumRed)
 		{
-			_vipRegisters[__BRTB] -= 1;
+			_vipRegisters[__BRTB] -= __CAMERA_EFFECT_FADE_INCREMENT;
 		}
 		else
 		{
@@ -431,11 +431,11 @@ void CameraEffectManager::fxFadeAsync()
 	// fade dark red
 	if((u8)_vipRegisters[__BRTA] < this->fxFadeTargetBrightness.darkRed)
 	{
-		_vipRegisters[__BRTA] += 1;
+		_vipRegisters[__BRTA] += __CAMERA_EFFECT_FADE_INCREMENT;
 	}
 	else if((u8)_vipRegisters[__BRTA] > this->fxFadeTargetBrightness.darkRed)
 	{
-		_vipRegisters[__BRTA] -= 1;
+		_vipRegisters[__BRTA] -= __CAMERA_EFFECT_FADE_INCREMENT;
 	}
 	else
 	{

@@ -16,6 +16,7 @@
 			"brightRed": 128,
 			"darkRed": 32,
 			"fadeDelay": 8,
+			"fadeIncrement": 1,
 			"mediumRed": 6
 		},
 		"palettes": {
