@@ -137,78 +137,64 @@ void MemoryPool::constructor()
 
 	int lp = HardwareManager::getLinkPointer();
 
-	int i = 0;
-	int j = 0;
-	int numberOfOjects = 0;
 	int pool = __MEMORY_POOLS;
-	int blockSize = this->poolSizes[pool][eBlockSize];
-	int displacement = 0;
-
-	bool blockFound = false;
 
 	HardwareManager::disableInterrupts();
 
-	while(!blockFound && pool--)
+	while(pool--)
 	{
-		// search for the smallest pool which can hold the data
-		blockSize = this->poolSizes[pool][eBlockSize];
-		numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
-
-		int forwardDisplacement = 0;
-		int backwardDisplacement = 0;
+		int blockSize = this->poolSizes[pool][eBlockSize];
+		int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
 		if(numberOfBytes <= blockSize)
 		{
-			for(i = this->poolSizes[pool][eLastFreeBlockIndex],
-				j = i,
-				forwardDisplacement = backwardDisplacement = i * blockSize;
-				!blockFound && (i < numberOfOjects || 0 <= j);
+			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
+			BYTE* poolLocation1 = poolLocation0;
+
+			int i = 0;
+			int j = 0;
+
+			for(i = this->poolSizes[pool][eLastFreeBlockIndex] + 1, j = this->poolSizes[pool][eLastFreeBlockIndex] - 1,
+				poolLocation0 += blockSize, poolLocation1 -= blockSize;
+				((i < numberOfOjects) | (0 <= j));
 				i++, j--,
-				forwardDisplacement += blockSize, backwardDisplacement -= blockSize
+				poolLocation0 += blockSize,
+				poolLocation1 -= blockSize
 			)
 			{
-				if(i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][forwardDisplacement]))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation0) && i < numberOfOjects)
 				{
-					*((u32*)&this->poolLocation[pool][forwardDisplacement]) = __MEMORY_USED_BLOCK_FLAG;
-					displacement = forwardDisplacement;
+					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
-					blockFound = true;
-					break;
+					HardwareManager::enableInterrupts();
+					return poolLocation0;
 				}
 
-				if(0 <= j && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][backwardDisplacement]))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation1) && 0 <= j)
 				{
-					*((u32*)&this->poolLocation[pool][backwardDisplacement]) = __MEMORY_USED_BLOCK_FLAG;
-					displacement = backwardDisplacement;
+					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
-					blockFound = true;
-					break;
+					HardwareManager::enableInterrupts();
+					return poolLocation1;
 				}
 			}
 			// keep looking for a free block on a bigger pool
 		}
 	}
 
-	if(!blockFound)
-	{
-		Printing::setDebugMode(Printing::getInstance());
-		Printing::clear(Printing::getInstance());
-		MemoryPool::printDetailedUsage(this, 1, 8);
-		Printing::text(Printing::getInstance(), "Pool's size: ", 20, 12, NULL);
-		Printing::int(Printing::getInstance(), blockSize, 44, 12, NULL);
-		Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
-		Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
-		Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
+	Printing::setDebugMode(Printing::getInstance());
+	Printing::clear(Printing::getInstance());
+	MemoryPool::printDetailedUsage(this, 1, 8);
+	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
+	Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
 
-		Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
+	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
 
-		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
-	}
-
-	HardwareManager::enableInterrupts();
+	NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 
 	// return designed address
-	return &this->poolLocation[pool][displacement];
+	return NULL;
 }
 
 /**

@@ -172,7 +172,6 @@ void Printing::loadDebugFont()
 
 void Printing::setDebugMode()
 {
-	Printing::clear(this);
 	Printing::resetCoordinates(this);
 	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
