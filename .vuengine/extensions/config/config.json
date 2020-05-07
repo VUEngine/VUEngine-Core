@@ -137,8 +137,8 @@
 	"memory": {
 		"sections": {
 			"dram": {
-				"length": 12,
-				"origin": "0x0003A000"
+				"length": 16,
+				"origin": "0x0003D800"
 			},
 			"exp": {
 				"length": 16,

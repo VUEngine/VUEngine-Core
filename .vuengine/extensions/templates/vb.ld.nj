@@ -9,7 +9,8 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-    dram    (!r)    : ORIGIN = {{ project.config.memory.sections.dram.origin }}, LENGTH = {{ project.config.memory.sections.dram.length }}k
+    {%- set dramLength = project.config.memory.sections.dram.length %}
+    dram    (!r)    : ORIGIN = {{ ((project.config.memory.sections.dram.origin | HexToInt) - dramLength*1024) | IntToHex }}, LENGTH = {{ dramLength }}k
     wram    (!r)    : ORIGIN = {{ project.config.memory.sections.wram.origin }}, LENGTH = {{ project.config.memory.sections.wram.length }}k
     exp     (r)     : ORIGIN = {{ project.config.memory.sections.exp.origin }}, LENGTH = {{ project.config.memory.sections.exp.length }}M
     sram    (!r)    : ORIGIN = {{ project.config.memory.sections.sram.origin }}, LENGTH = {{ project.config.memory.sections.sram.length }}M
