@@ -83,6 +83,37 @@ void UIContainer::addEntities(PositionedEntity* entities)
 	}
 }
 
+// add entity to the stage
+Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntity)
+{
+	if(positionedEntity)
+	{
+		Entity entity = Entity::loadEntity(positionedEntity, !isDeleted(this->children ? VirtualList::getSize(this->children) : 0));
+		ASSERT(entity, "UIContainer::doAddChildEntity: entity not loaded");
+
+		if(entity)
+		{
+			Entity::setupGraphics(entity);
+
+			// create the entity and add it to the world
+			UIContainer::addChild(this, Container::safeCast(entity));
+
+			// apply transformations
+			Transformation environmentTransform = Container::getEnvironmentTransform(this);
+			Entity::initialTransform(entity, &environmentTransform, true);
+
+			SpriteManager::writeTextures(SpriteManager::getInstance());
+
+			Entity::synchronizeGraphics(entity);
+			Entity::ready(entity, true);
+		}
+
+		return entity;
+	}
+
+	return NULL;
+}
+
 void UIContainer::synchronizeGraphics()
 {
 	Camera camera = Camera::getInstance();
