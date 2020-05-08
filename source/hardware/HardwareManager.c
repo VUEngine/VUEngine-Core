@@ -443,13 +443,6 @@ static void HardwareManager::printStackStatus(int x, int y, bool resumed)
 
 	int room = sp - (int)&_bss_end;
 
-	static int lowestRoom = 65536;
-
-	if(room < lowestRoom)
-	{
-		lowestRoom = room;
-	}
-
 	if(resumed)
 	{
 		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities::intLength(room) + 13)
@@ -462,19 +455,21 @@ static void HardwareManager::printStackStatus(int x, int y, bool resumed)
 	}
 	else
 	{
-		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities::intLength(room) + 10)
+		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities::intLength(room) + 15)
 		{
 			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities::intLength(room) - 11;
 		}
 
 		Printing::text(Printing::getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
-		Printing::text(Printing::getInstance(), "Pointer:" , x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), sp, x + 10, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int)&_bss_end, x + 10, y, 4, NULL);
-		Printing::text(Printing::getInstance(), "Room:           " , x, ++y, NULL);
-		Printing::int(Printing::getInstance(), room, x + 10, y, NULL);
-		Printing::text(Printing::getInstance(), "Lowest Room:           " , x, ++y, NULL);
-		Printing::int(Printing::getInstance(), lowestRoom, x + 10, y, NULL);
+		Printing::hex(Printing::getInstance(), (int)&_bss_end, x + 15, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "Stack Pointer:" , x, ++y, NULL);
+		Printing::hex(Printing::getInstance(), sp, x + 15, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "Minimum Room:           " , x, ++y, NULL);
+		Printing::int(Printing::getInstance(), __STACK_HEADROOM, x + 15, y, NULL);
+		Printing::text(Printing::getInstance(), "Actual Room:           " , x, ++y, NULL);
+		Printing::int(Printing::getInstance(), room, x + 15, y, NULL);
+		Printing::text(Printing::getInstance(), "Overflow:           " , x, ++y, NULL);
+		Printing::int(Printing::getInstance(), __STACK_HEADROOM - room, x + 15, y, NULL);
 	}
 }
