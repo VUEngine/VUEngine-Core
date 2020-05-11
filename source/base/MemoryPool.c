@@ -154,8 +154,8 @@ void MemoryPool::constructor()
 			int i = 0;
 			int j = 0;
 
-			for(i = this->poolSizes[pool][eLastFreeBlockIndex] + 1, j = this->poolSizes[pool][eLastFreeBlockIndex] - 1,
-				poolLocation0 += blockSize, poolLocation1 -= blockSize;
+			for(i = this->poolSizes[pool][eLastFreeBlockIndex], j = i - 1,
+				poolLocation1 -= blockSize;
 				((i < numberOfOjects) | (0 <= j));
 				i++, j--,
 				poolLocation0 += blockSize,
