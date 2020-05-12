@@ -51,9 +51,9 @@ class AnimationController : Object
 	// previous animation's frame shown
 	s16 previousFrame;
 	// the number of game cycles that an animation frame is shown
-	s8 frameDuration;
+	u8 frameDuration;
 	// frame delay decrement update cycle
-	s8 frameCycleDecrement;
+	u8 frameCycleDecrement;
 	// flag to know if playing an animation
 	u8 playing;
 	// frame changed flag
@@ -65,7 +65,7 @@ class AnimationController : Object
 	s16 getActualFrameIndex();
 	u8 getCols();
 	u8 getFrameCycleDecrement();
-	s8 getFrameDuration();
+	u8 getFrameDuration();
 	int getMapType();
 	int getNumberOfFrames();
 	const AnimationFunction* getPlayingAnimationFunction();

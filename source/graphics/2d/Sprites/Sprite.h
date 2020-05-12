@@ -196,7 +196,7 @@ abstract class Sprite : Object
 	s16 getActualFrame();
 	const PixelVector* getDisplacement();
 	void setDisplacement(const PixelVector* displacement);
-	s8 getFrameDuration();
+	u8 getFrameDuration();
 	int getHalfHeight();
 	int getHalfWidth();
 	bool isAffine();

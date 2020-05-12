@@ -724,7 +724,7 @@ void Sprite::previousFrame()
  *
  * @return		Frame delay
  */
-s8 Sprite::getFrameDuration()
+u8 Sprite::getFrameDuration()
 {
 	if(this->animationController)
 	{

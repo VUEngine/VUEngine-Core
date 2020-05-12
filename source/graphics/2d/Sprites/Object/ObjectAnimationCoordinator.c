@@ -99,7 +99,7 @@ void ObjectAnimationCoordinator::removeAnimationController(AnimationController a
 			{
 				AnimationController::playAnimationFunction(firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController));
 				s16 currentFrame = AnimationController::getActualFrame(firstAnimationController);
-				s8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
+				u8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
 				AnimationController::setActualFrame(firstAnimationController, currentFrame);
 				AnimationController::setFrameDuration(firstAnimationController, frameDuration);
 				AnimationController::stop(animationController);

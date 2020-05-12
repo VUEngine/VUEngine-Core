@@ -160,7 +160,7 @@ bool AnimationController::setActualFrame(s16 actualFrame)
  * @private
  * @return		Frame duration in game cycles
  */
-s8 AnimationController::getFrameDuration()
+u8 AnimationController::getFrameDuration()
 {
 	return this->frameDuration;
 }
@@ -212,7 +212,6 @@ bool AnimationController::updateAnimation()
 		return false;
 	}
 
-
 	// if the actual frame was set to -1
 	// it means that a non looping animation has been completed
 	if(-1 == this->actualFrame)
@@ -220,10 +219,18 @@ bool AnimationController::updateAnimation()
 		return false;
 	}
 
-	this->frameDuration -= this->frameCycleDecrement;
+	// reduce frame delay count
+	if(this->frameDuration > this->frameCycleDecrement)
+	{
+		this->frameDuration -= this->frameCycleDecrement;
+	}
+	else
+	{
+		this->frameDuration = 0;
+	}
 
 	// reduce frame delay count
-	if(0 >= this->frameDuration)
+	if(0 == this->frameDuration)
 	{
 		this->previousFrame = this->actualFrame;
 
@@ -276,11 +283,6 @@ void AnimationController::resetFrameDuration()
 	if(0 == this->frameDuration)
 	{
 		this->frameDuration = 1;
-	}
-	else if(0 > this->frameDuration)
-	{
-		// pick up a random delay
-		this->frameDuration = 1 + Utilities::random(_gameRandomSeed, __ABS(this->frameDuration));
 	}
 }
 
