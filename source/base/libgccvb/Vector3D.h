@@ -232,6 +232,32 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, s16 
 	return projection;
 }
 
+static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector3D, s16 parallax)
+{
+	extern const Optical* _optical;
+	extern const Vector3D* _cameraPosition;
+
+	fix10_6_ext x = (fix10_6_ext)(vector3D.x - _cameraPosition->x);
+	fix10_6_ext y = (fix10_6_ext)(vector3D.y - _cameraPosition->y);
+	fix10_6_ext z = (fix10_6_ext)(vector3D.z - _cameraPosition->z);
+
+	PixelVector projection =
+	{
+		__METERS_TO_PIXELS(x),
+		__METERS_TO_PIXELS(y),
+		__METERS_TO_PIXELS(z),
+		parallax
+	};
+
+	if(0 != z)
+	{
+		projection.x -= __METERS_TO_PIXELS(__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);
+		projection.y -= __METERS_TO_PIXELS(__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);
+	}
+
+	return projection;
+}
+
 static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 {
 	return (Vector3D)

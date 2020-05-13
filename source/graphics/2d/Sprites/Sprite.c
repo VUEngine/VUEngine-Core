@@ -171,7 +171,7 @@ bool Sprite::isHidden()
  */
 void Sprite::position(const Vector3D* position)
 {
-	this->position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(*position), this->position.parallax);
+	this->position = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
 
 	this->positioned = true;
 }

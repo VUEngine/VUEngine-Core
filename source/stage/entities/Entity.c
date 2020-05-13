@@ -1250,7 +1250,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 		return;
 	}
 
-	Vector3D relativeGlobalPosition = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
+	Vector3D relativeGlobalPosition = this->transformation.globalPosition;
 
 	updatePosition |= updateRotation;
 	updatePosition |= updateProjection;
@@ -1268,7 +1268,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 
 			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1292,7 +1292,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 
 			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1314,7 +1314,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 
 			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1335,7 +1335,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 
 			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1372,7 +1372,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	if(updatePosition && updateRotation && updateScale)
 	{
 		s16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), parallax);
+		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
 
 		for(; node ; node = node->next)
 		{
@@ -1390,7 +1390,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition && updateRotation)
 	{
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), 0);
+		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, 0);
 
 		for(; node ; node = node->next)
 		{
@@ -1408,7 +1408,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	else if(updatePosition && updateScale)
 	{
 		s16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), parallax);
+		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
 
 		for(; node ; node = node->next)
 		{
@@ -1423,7 +1423,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition)
 	{
-		PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(this->transformation.globalPosition), 0);
+		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, 0);
 
 		for(; node ; node = node->next)
 		{

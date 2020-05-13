@@ -51,6 +51,11 @@ static class Optics : Object
  */
 static inline s16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
+	if(0 == z)
+	{
+		return 0;
+	}
+	
 	fix10_6 leftEyePoint, rightEyePoint;
 	fix10_6 leftEyeGx, rightEyeGx;
 
