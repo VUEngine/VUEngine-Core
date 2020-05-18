@@ -144,10 +144,11 @@ void MemoryPool::constructor()
 	while(pool--)
 	{
 		int blockSize = this->poolSizes[pool][eBlockSize];
-		int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
 		if(numberOfBytes <= blockSize)
 		{
+			int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+
 			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
 			BYTE* poolLocation1 = poolLocation0;
 
@@ -156,7 +157,7 @@ void MemoryPool::constructor()
 
 			for(i = this->poolSizes[pool][eLastFreeBlockIndex], j = i - 1,
 				poolLocation1 -= blockSize;
-				((i < numberOfOjects) | (0 <= j));
+				((i < numberOfOjects) || (0 <= j));
 				i++, j--,
 				poolLocation0 += blockSize,
 				poolLocation1 -= blockSize
