@@ -150,18 +150,12 @@ void MemoryPool::constructor()
 			int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
 			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
-			BYTE* poolLocation1 = poolLocation0;
+			BYTE* poolLocation1 = poolLocation0 - blockSize;
 
-			int i = 0;
-			int j = 0;
+			int i = this->poolSizes[pool][eLastFreeBlockIndex];
+			int j = i - 1;
 
-			for(i = this->poolSizes[pool][eLastFreeBlockIndex], j = i - 1,
-				poolLocation1 -= blockSize;
-				((i < numberOfOjects) || (0 <= j));
-				i++, j--,
-				poolLocation0 += blockSize,
-				poolLocation1 -= blockSize
-			)
+			do
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation0) && i < numberOfOjects)
 				{
@@ -178,7 +172,13 @@ void MemoryPool::constructor()
 					HardwareManager::enableInterrupts();
 					return poolLocation1;
 				}
+
+				poolLocation0 += blockSize;
+				poolLocation1 -= blockSize;
+				++i;
+				--j;
 			}
+			while((i < numberOfOjects) || (0 <= j));
 			// keep looking for a free block on a bigger pool
 		}
 	}
