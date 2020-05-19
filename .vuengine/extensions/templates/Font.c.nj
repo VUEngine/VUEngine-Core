@@ -12,7 +12,7 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE {{ currentItem.image | basename }}Tiles[];
+extern BYTE {{ currentItem.image | basename(false) }}Tiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ CharSetROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT_CH =
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ currentItem.image | basename }}Tiles,
+	{{ currentItem.image | basename(false) }}Tiles,
 };
 
 FontROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT =
