@@ -86,14 +86,15 @@ void ObjectTexture::write()
 	BYTE* framePointer = this->textureSpec->mapSpec + (this->mapDisplacement << 1);
 
 	int i = 0;
+	int displacement = 0;
 
-	for(; i < rows; i++)
+	for(; i < rows; i++, displacement += cols)
 	{
 		int j = 0;
 		for(; j < cols; j++)
 		{
-			s32 objectIndex = this->objectIndex + i * cols + j;
-			s32 charNumberIndex = (i * cols + j) << 1;
+			s32 objectIndex = this->objectIndex + displacement + j;
+			s32 charNumberIndex = (displacement + j) << 1;
 			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			_objectAttributesBaseAddress[(objectIndex << 2) + 3] = palette | (charNumber);
 		}

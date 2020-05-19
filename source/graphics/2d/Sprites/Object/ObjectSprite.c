@@ -234,44 +234,66 @@ bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 		ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
 	}
 
-	int cols = this->texture->textureSpec->cols;
-	int rows = this->texture->textureSpec->rows;
+	s16 cols = this->texture->textureSpec->cols;
+	s16 rows = this->texture->textureSpec->rows;
 
-	int xDirection = this->head & 0x2000 ? -1 : 1;
-	int yDirection = this->head & 0x1000 ? -1 : 1;
+	s16 xDisplacementIncrement = 8;
+	s16 yDisplacementIncrement = 8;
 
-	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
-	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
+	s16 halfWith = this->halfWidth;
+	s16 halfHeight = this->halfHeight;
 
-	int i = 0;
+	s16 xDisplacementDelta = 0;
+	s16 yDisplacementDelta = 0;
+
+	if(this->head & 0x2000)
+	{
+		xDisplacementIncrement = -8;
+		halfWith = -halfWith;
+		xDisplacementDelta = __FLIP_X_DISPLACEMENT;
+	}
+
+	if(this->head & 0x1000)
+	{
+		yDisplacementIncrement = -8;
+		halfHeight = -halfHeight;
+		yDisplacementDelta = __FLIP_Y_DISPLACEMENT;
+	}
+
+	s16 x = this->position.x - halfWith + this->displacement.x - xDisplacementDelta;
+	s16 y = this->position.y - halfHeight + this->displacement.y - yDisplacementDelta;
+
+	s16 i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
-	for(; i < rows; i++)
+	s16 yDisplacement = 0;
+	s16 jDisplacement = 0;
+
+	for(; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
-		int outputY = y + (i << 3) * yDirection;
-		int jDisplacement = i * cols;
+		s16 outputY = y + yDisplacement;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
-			int j = 0;
+			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s32 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
+				s16 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
-
 			continue;
 		}
 
-		int j = 0;
+		s16 j = 0;
+		s16 xDisplacement = 0;
 
-		for(; j < cols; j++)
+		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s32 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
+			s16 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
 
-			int outputX = x + (j << 3) * xDirection;
+			s16 outputX = x + xDisplacement;
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
