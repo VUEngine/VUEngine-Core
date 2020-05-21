@@ -107,11 +107,18 @@ void Particle::addSprite()
  *
  * @param animationName		Char*
  */
-void Particle::setAnimationName(const char* animationName)
+void Particle::changeAnimation(const char* animationName)
 {
-	if(animationName && this->animationName != animationName && !isDeleted(this->sprite))
+	if(!isDeleted(this->sprite) && animationName)
 	{
-		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
+		if(this->animationName != animationName)
+		{
+			Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
+		}
+		else
+		{
+			Sprite::setActualFrame(this->sprite, 0);
+		}
 	}
 
 	this->animationName = animationName;
@@ -234,11 +241,6 @@ void Particle::show()
 	Particle::synchronizeGraphics(this);
 
 	Sprite::show(this->sprite);
-
-	if(this->animationName && this->particleSpec->animationDescription)
-	{
-		Sprite::setActualFrame(this->sprite, 0);
-	}
 }
 
 /**
@@ -316,7 +318,7 @@ void Particle::reset()
 void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const char* animationName)
 {
 	Particle::reset(this);
-	Particle::setAnimationName(this, animationName);
+	Particle::changeAnimation(this, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);

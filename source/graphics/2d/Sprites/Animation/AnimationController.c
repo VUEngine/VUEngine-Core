@@ -362,7 +362,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	for(; animationDescription->animationFunctions[i]; i++ )
 	{
 		// compare function's names
-		if(!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name))
+		if(!strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// remove previous listeners
 			if(this->animationFunction && this->animationFunction->onAnimationComplete)
@@ -373,8 +373,11 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
-			// register event callback
-			Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+			if(this->animationFunction && this->animationFunction->onAnimationComplete)
+			{
+				// register event callback
+				Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+			}
 
 			// force frame writing in the next update
 			this->previousFrame = 0;
