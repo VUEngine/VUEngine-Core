@@ -146,7 +146,7 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
  *
  * @param updateSpritePosition
  */
-void Particle::synchronizeGraphics(bool updateSpritePosition __attribute__ ((unused)))
+void Particle::synchronizeGraphics()
 {
 	NM_ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
@@ -226,7 +226,7 @@ void Particle::show()
 {
 	ASSERT(this->sprite, "Particle::show: null sprite");
 
-	Particle::synchronizeGraphics(this, __INVALIDATE_TRANSFORMATION);
+	Particle::synchronizeGraphics(this);
 
 	Sprite::show(this->sprite);
 
@@ -253,7 +253,7 @@ void Particle::hide(const Vector3D* position)
 {
 	NM_ASSERT(this->sprite, "Particle::hide: null sprite");
 
-	Particle::setPosition(this, position);
+//	Particle::setPosition(this, position);
 
 	Sprite::hide(this->sprite);
 }
@@ -315,7 +315,12 @@ void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force,
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);
-	Particle::addForce(this, force, movementType);
+
+	if(force->x | force->y | force->z)
+	{
+		Particle::addForce(this, force, movementType);
+	}
+	
 	Particle::show(this);
 }
 

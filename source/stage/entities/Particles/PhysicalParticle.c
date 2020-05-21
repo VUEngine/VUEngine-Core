@@ -88,15 +88,21 @@ void PhysicalParticle::destructor()
  */
 bool PhysicalParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 {
-	if(0 <= this->lifeSpan && Base::update(this, elapsedTime, behavior))
+	if(Base::update(this, elapsedTime, behavior))
 	{
 		Body::stopMovement(this->body, __ALL_AXIS);
 		return true;
 	}
 
-	this->position = *Body::getPosition(this->body);
-
 	return false;
+}
+
+/**
+ * Transform
+ */
+void PhysicalParticle::transform()
+{
+	this->position = *Body::getPosition(this->body);
 }
 
 /**
@@ -201,14 +207,4 @@ void PhysicalParticle::reset()
 {
 	Base::reset(this);
 	Body::reset(this->body);
-}
-
-/**
- * Update Visual Representation
- *
- * @param updateSpritePosition
- */
-void PhysicalParticle::synchronizeGraphics(bool updateSpritePosition)
-{
-	Base::synchronizeGraphics(this, updateSpritePosition || Body::getMovementOnAllAxis(this->body));
 }

@@ -492,10 +492,6 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-	ParticleSystem::processExpiredParticles(this);
-
-	this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this);
-
 	VirtualNode node = this->particles->head;
 
 	for(; node; node = node->next)
@@ -525,8 +521,6 @@ void ParticleSystem::synchronizeGraphics()
 
 	VirtualNode node = this->particles->head;
 
-	bool updateSprites = this->invalidateSprites ? true : false;
-
 	for(; node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -536,10 +530,8 @@ void ParticleSystem::synchronizeGraphics()
 			continue;
 		}
 
-		Particle::synchronizeGraphics(particle, updateSprites);
+		Particle::synchronizeGraphics(particle);
 	}
-
-	this->invalidateSprites = 0;
 }
 
 /**

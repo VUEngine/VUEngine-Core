@@ -110,26 +110,15 @@ void SolidParticle::destructor()
 	Base::destructor();
 }
 
+
 /**
- * Update
- *
- * @param elapsedTime
- * @param behavior
- * @return				Boolean
+ * Transform
  */
-bool SolidParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
+void SolidParticle::transform()
 {
-	bool expired = Base::update(this, elapsedTime, behavior);
+	Base::transform(this);
 
-	if(0 <= this->lifeSpan)
-	{
-		SolidParticle::transformShape(this);
-	}
-
-//	Body::print(this->body, 1, 1);
-//	Shape::print(this->shape, 21, 6);
-
-	return expired;
+	SolidParticle::transformShape(this);
 }
 
 /**
@@ -265,14 +254,6 @@ bool SolidParticle::handleMessage(Telegram telegram)
 	}
 
 	return false;
-}
-
-/**
- * Transform
- */
-void SolidParticle::transform()
-{
-	SolidParticle::transformShape(this);
 }
 
 /**
