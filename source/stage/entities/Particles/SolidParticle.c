@@ -110,7 +110,6 @@ void SolidParticle::destructor()
 	Base::destructor();
 }
 
-
 /**
  * Transform
  */

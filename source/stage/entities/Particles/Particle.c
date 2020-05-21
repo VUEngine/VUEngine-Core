@@ -109,6 +109,11 @@ void Particle::addSprite()
  */
 void Particle::setAnimationName(const char* animationName)
 {
+	if(animationName && this->animationName != animationName && !isDeleted(this->sprite))
+	{
+		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
+	}
+
 	this->animationName = animationName;
 }
 
@@ -232,7 +237,7 @@ void Particle::show()
 
 	if(this->animationName && this->particleSpec->animationDescription)
 	{
-		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)this->animationName);
+		Sprite::setActualFrame(this->sprite, 0);
 	}
 }
 
