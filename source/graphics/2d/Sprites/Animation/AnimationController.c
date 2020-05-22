@@ -338,7 +338,7 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
 /**
  * Play an animation given an AnimationDescription and the name of an AnimationFunction
  *
- * @private
+ * @public
  * @param animationDescription		Animation description holding the animation function
  * @param functionName				Name of the animation function's to play
  * @return							True if the animation started playing
@@ -393,6 +393,43 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	{
 		// register event callback
 		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+	}
+
+	// force frame writing in the next update
+	this->previousFrame = 0;
+
+	// reset frame to play
+	this->actualFrame = 0;
+
+	// Reset frame duration
+	AnimationController::resetFrameDuration(this);
+
+	// it's playing now
+	this->playing = true;
+
+	return true;
+}
+
+/**
+ * Replay the last animation if any
+ *
+ * @public
+ * @param animationDescription		Animation description holding the animation function
+ * @return							True if the animation started playing
+ */
+bool AnimationController::replay(const AnimationDescription* animationDescription)
+{
+	if(NULL == this->animationFunction)
+	{
+		return false;
+	}
+
+	if(this->animationCoordinator)
+	{
+		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationDescription, this->animationFunction->name))
+		{
+			return false;
+		}
 	}
 
 	// force frame writing in the next update

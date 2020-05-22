@@ -206,7 +206,8 @@ abstract class Sprite : Object
 	bool isPlayingFunction(char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	void play(AnimationDescription* animationDescription, char* functionName);
+	void play(const AnimationDescription* animationDescription, char* functionName);
+	void replay(const AnimationDescription* animationDescription);
 	void previousFrame();
 	void setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameDelayDelta);

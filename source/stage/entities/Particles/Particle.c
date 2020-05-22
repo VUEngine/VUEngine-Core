@@ -117,7 +117,7 @@ void Particle::changeAnimation(const char* animationName)
 		}
 		else
 		{
-			Sprite::setActualFrame(this->sprite, 0);
+			Sprite::replay(this->sprite, this->particleSpec->animationDescription);
 		}
 	}
 
@@ -137,14 +137,14 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 	{
 		this->lifeSpan -= elapsedTime;
 
-		if(behavior)
-		{
-			behavior(this);
-		}
-
 		if(0 > this->lifeSpan)
 		{
 			return true;
+		}
+
+		if(behavior)
+		{
+			behavior(this);
 		}
 
 		Sprite::updateAnimation(this->sprite);
@@ -238,8 +238,6 @@ void Particle::show()
 {
 	ASSERT(this->sprite, "Particle::show: null sprite");
 
-	Particle::synchronizeGraphics(this);
-
 	Sprite::show(this->sprite);
 }
 
@@ -259,8 +257,6 @@ void Particle::expire()
 void Particle::hide(const Vector3D* position)
 {
 	NM_ASSERT(this->sprite, "Particle::hide: null sprite");
-
-//	Particle::setPosition(this, position);
 
 	Sprite::hide(this->sprite);
 }
@@ -322,6 +318,7 @@ void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force,
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);
+	Particle::synchronizeGraphics(this);
 
 	if(force->x | force->y | force->z)
 	{

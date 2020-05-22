@@ -607,7 +607,7 @@ void Sprite::pause(bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-void Sprite::play(AnimationDescription* animationDescription, char* functionName)
+void Sprite::play(const AnimationDescription* animationDescription, char* functionName)
 {
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
@@ -615,6 +615,21 @@ void Sprite::play(AnimationDescription* animationDescription, char* functionName
 	if(this->animationController)
 	{
 		this->writeAnimationFrame |= AnimationController::play(this->animationController, animationDescription, functionName);
+	}
+}
+
+/**
+ * Replay the last animation
+ *
+ * @param animationDescription	AnimationDescription
+ */
+void Sprite::replay(const AnimationDescription* animationDescription)
+{
+	ASSERT(animationDescription, "Sprite::replay: null animationDescription");
+
+	if(this->animationController)
+	{
+		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationDescription);
 	}
 }
 

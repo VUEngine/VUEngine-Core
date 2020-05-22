@@ -76,6 +76,7 @@ class AnimationController : Object
 	void nextFrame();
 	void pause(bool pause);
 	bool play(const AnimationDescription* animationDescription, const char* functionName);
+	bool replay(const AnimationDescription* animationDescription);
 	void playAnimationFunction(const AnimationFunction* animationFunction);
 	void previousFrame();
 	bool setActualFrame(s16 actualFrame);
