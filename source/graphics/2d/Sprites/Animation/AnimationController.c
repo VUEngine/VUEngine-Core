@@ -356,46 +356,58 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		}
 	}
 
-	int i = 0;
+	bool addEventListener = false;
 
-	// search for the animation function
-	for(; animationDescription->animationFunctions[i]; i++ )
+	if(NULL == this->animationFunction || strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
-		// compare function's names
-		if(!strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		int i = 0;
+
+		// search for the animation function
+		for(; animationDescription->animationFunctions[i]; i++ )
 		{
-			// remove previous listeners
-			if(this->animationFunction && this->animationFunction->onAnimationComplete)
+			// compare function's names
+			if(!strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
-				Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+				// remove previous listeners
+				if(this->animationFunction && this->animationFunction->onAnimationComplete)
+				{
+					Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+				}
+
+				this->animationFunction = animationDescription->animationFunctions[i];
+
+				addEventListener = true;
+
+				break;
 			}
-
-			// setup animation frame
-			this->animationFunction = animationDescription->animationFunctions[i];
-
-			if(this->animationFunction && this->animationFunction->onAnimationComplete)
-			{
-				// register event callback
-				Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
-			}
-
-			// force frame writing in the next update
-			this->previousFrame = 0;
-
-			// reset frame to play
-			this->actualFrame = 0;
-
-			// Reset frame duration
-			AnimationController::resetFrameDuration(this);
-
-			// it's playing now
-			this->playing = true;
-
-			return true;
 		}
 	}
 
-	return false;
+	if(NULL == this->animationFunction)
+	{
+		return false;
+	}
+
+	// setup animation frame
+	if(addEventListener && this->animationFunction->onAnimationComplete)
+	{
+		// register event callback
+		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+	}
+
+	// force frame writing in the next update
+	this->previousFrame = 0;
+
+	// reset frame to play
+	this->actualFrame = 0;
+
+	// Reset frame duration
+	AnimationController::resetFrameDuration(this);
+
+	// it's playing now
+	this->playing = true;
+
+	return true;
 }
 
 /**
