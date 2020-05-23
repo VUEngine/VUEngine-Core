@@ -187,41 +187,6 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 	this->position.z = position->z;
 }
 
-
-/**
- * Sort the object sprites within this container according to their z coordinates
- *
- * @private
- */
-void ObjectSpriteContainer::sort()
-{
-	// Commented out because this causes lots of errors
-/*	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-		VirtualNode auxNode = node;
-
-		for(VirtualNode nextNode = node->next; nextNode; nextNode = nextNode->next)
-		{
-			ObjectSprite nextSprite = ObjectSprite::safeCast(nextNode->data);
-
-			// check if z positions are swapped
-			if(nextSprite->position.z + (Sprite::safeCast(nextSprite))->displacement.z < objectSprite->position.z + (Sprite::safeCast(objectSprite))->displacement.z)
-			{
-				auxNode = nextNode;
-			}
-		}
-
-		if(auxNode != node)
-		{
-				ObjectSprite auxSprite = ObjectSprite::safeCast(auxNode->data);
-
-				VirtualNode::swapData(node, auxNode);
-		}
-	}
-*/
-}
-
 /**
  * Sort the object sprites within this container according to their z coordinates
  *
