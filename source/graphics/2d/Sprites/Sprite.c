@@ -248,14 +248,6 @@ u8 Sprite::getWorldLayer()
 }
 
 /**
- * Sort internally
- *
- */
-void Sprite::sort()
-{
-}
-
-/**
  * Release texture
  *
  */
