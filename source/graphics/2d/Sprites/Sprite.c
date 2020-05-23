@@ -529,19 +529,6 @@ bool Sprite::isWithinScreenSpace()
 }
 
 /**
- * Update transparency
- *
- * @param evenFrame
- */
-void Sprite::updateTransparency(bool evenFrame)
-{
-	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					(0x01 & (this->transparent ^ evenFrame));
-
-	this->index = !this->visible ? 0 : this->index;
-}
-
-/**
  * Get Sprite's transparency mode
  *
  * @return		Transparency mode

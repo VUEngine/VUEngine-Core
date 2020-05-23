@@ -70,9 +70,6 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->firstObjectIndex = firstObjectIndex;
 	this->lastRenderedObjectIndex = this->firstObjectIndex;
 	this->objectSprites = new VirtualList();
-	this->objectSpriteNodeToDefragment = NULL;
-	this->freedObjectIndex = 0;
-	this->removingObjectSprite = false;
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
@@ -136,7 +133,7 @@ bool ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int numbe
 	}
 
 	NM_ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
-	NM_ASSERT(this->availableObjects >= numberOfObjects, "ObjectSpriteContainer::removeObjectSprite: not enough OBJECTS");
+	NM_ASSERT(this->availableObjects >= numberOfObjects, "ObjectSpriteContainer::addObjectSprite: not enough OBJECTS");
 	return false;
 }
 
@@ -151,62 +148,10 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 nu
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: null objectSprite");
 	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: null found");
 
-	this->removingObjectSprite = true;
-
-	// hide it immdiately
-	if(__OBJECT_NO_INDEX < objectSprite->objectIndex)
-	{
-		int i = 0;
-		for(; i < objectSprite->totalObjects; i++)
-		{
-			_objectAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
-		}
-	}
-
-	if(this->objectSpriteNodeToDefragment)
-	{
-		int objectSpritePosition = VirtualList::getDataPosition(this->objectSprites, objectSprite);
-		int objectSpriteNodeToDefragmentPosition = VirtualList::getNodePosition(this->objectSprites, this->objectSpriteNodeToDefragment);
-		ASSERT(0 <= objectSpriteNodeToDefragmentPosition, "ObjectSpriteContainer::removeObjectSprite: position not found");
-
-		if(0 <= objectSpriteNodeToDefragmentPosition && objectSpritePosition <= objectSpriteNodeToDefragmentPosition)
-		{
-			this->objectSpriteNodeToDefragment = VirtualList::find(this->objectSprites, objectSprite);
-			this->freedObjectIndex = objectSprite->objectIndex;
-
-			ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteNodeToDefragment");
-
-			// move forward before deframenting
-			this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
-		}
-	}
-	else
-	{
-		// find the node to remove to defragment object memory
-		this->objectSpriteNodeToDefragment = VirtualList::find(this->objectSprites, objectSprite);
-		this->freedObjectIndex = objectSprite->objectIndex;
-
-		ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteNodeToDefragment");
-
-		// move forward before deframenting
-		this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
-	}
-
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 
-	// if was the last node
-	if(!this->objectSpriteNodeToDefragment | !this->objectSprites->head)
-	{
-		// just update the measures
-		this->objectSpriteNodeToDefragment = NULL;
-		this->availableObjects += numberOfObjects;
-		this->freedObjectIndex = 0;
-	}
-
-	ASSERT(!this->objectSpriteNodeToDefragment || !isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
-
-	this->removingObjectSprite = false;
+	this->availableObjects += numberOfObjects;
 }
 
 /**
@@ -242,49 +187,6 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 	this->position.z = position->z;
 }
 
-/**
- * Defragment the ObjectSpriteContainer's OBJECT segment
- *
- * @private
- */
-void ObjectSpriteContainer::defragment()
-{
-	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
-	NM_ASSERT(!isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
-
-	// get the next objectSprite to move
-	ObjectSprite objectSprite = ObjectSprite::safeCast(this->objectSpriteNodeToDefragment->data);
-
-	if(__OBJECT_NO_INDEX >= objectSprite->objectIndex)
-	{
-		return;
-	}
-
-	ASSERT(Sprite::getTexture(objectSprite), "ObjectSpriteContainer::defragment: null texture");
-
-	// set new index to the end of the current objectSprite
-	this->freedObjectIndex += objectSprite->totalObjects;
-
-	// move to the next objectSprite to move
-	this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
-
-	if(!this->objectSpriteNodeToDefragment)
-	{
-		this->freedObjectIndex = 0;
-
-		VirtualNode node = this->objectSprites->tail;
-
-		if(node)
-		{
-			ObjectSprite lastObjectSprite = ObjectSprite::safeCast(node->data);
-			this->availableObjects = this->totalObjects - (-this->firstObjectIndex + lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
-		}
-		else
-		{
-			this->availableObjects = this->totalObjects;
-		}
-	}
-}
 
 /**
  * Sort the object sprites within this container according to their z coordinates
@@ -314,19 +216,6 @@ void ObjectSpriteContainer::sort()
 		{
 				ObjectSprite auxSprite = ObjectSprite::safeCast(auxNode->data);
 
-				// swap
-				s16 previousObjectIndex = auxSprite->objectIndex;
-
-				ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
-				s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
-
-				int i = 0;
-				for(; i < objectSprite->totalObjects; i++)
-				{
-					_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
-				}
-
-				// swap array entries
 				VirtualNode::swapData(node, auxNode);
 		}
 	}
@@ -351,11 +240,6 @@ void ObjectSpriteContainer::sortProgressively()
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
 
-			if(__OBJECT_NO_INDEX >= previousSprite->objectIndex || __OBJECT_NO_INDEX >= objectSprite->objectIndex)
-			{
-				continue;
-			}
-
 			// check if z positions are swapped
 			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > objectSprite->position.z + (Sprite::safeCast(objectSprite))->displacement.z)
 			{
@@ -375,7 +259,7 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-bool ObjectSpriteContainer::render(u16 index)
+bool ObjectSpriteContainer::render(u16 index, bool evenFrame)
 {
 	// if render flag is set
 	this->index = index;
@@ -386,17 +270,10 @@ bool ObjectSpriteContainer::render(u16 index)
 	_worldAttributesBaseAddress[this->index].h = __SCREEN_HEIGHT;
 #endif
 
-	// defragmentation takes priority over z sorting
-	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
-	{
-		ObjectSpriteContainer::defragment(this);
-	}
-	else if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
+	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
 	{
 		ObjectSpriteContainer::sortProgressively(this);
 	}
-
-	bool evenFrame = SpriteManager::isEvenFrame(SpriteManager::getInstance());
 
 	VirtualNode node = this->objectSprites->head;
 
@@ -412,19 +289,14 @@ bool ObjectSpriteContainer::render(u16 index)
 		}
 		else
 		{
-			ObjectSprite::updateTransparency(objectSprite, evenFrame);
-
-			if(objectSprite->visible)
+			if((u32)objectSprite->animationController)
 			{
-				if((u32)objectSprite->animationController)
-				{
-					ObjectSprite::update(objectSprite);
-				}
+				ObjectSprite::update(objectSprite);
+			}
 
-				if(ObjectSprite::render(objectSprite, objectIndex))
-				{
-					objectIndex += objectSprite->totalObjects;
-				}
+			if(ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+			{
+				objectIndex += objectSprite->totalObjects;
 			}
 		}
 	}
@@ -514,15 +386,6 @@ int ObjectSpriteContainer::getTotalUsedObjects()
  */
 int ObjectSpriteContainer::getNextFreeObjectIndex()
 {
-	if(this->objectSprites->head)
-	{
-		ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
-
-		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
-
-		return lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
-	}
-
 	return 0;
 }
 

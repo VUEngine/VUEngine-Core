@@ -326,7 +326,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-bool MBgmapSprite::render(u16 index)
+bool MBgmapSprite::render(u16 index, bool evenFrame)
 {
 	if(!this->texture || !this->texture->written)
 	{
@@ -338,7 +338,15 @@ bool MBgmapSprite::render(u16 index)
 		return false;
 	}
 
-	this->index = index;
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					(0x01 & (this->transparent ^ evenFrame));
+
+	this->index = !this->visible ? 0 : index;
+
+	if(!this->visible)
+	{
+		return false;
+	}
 
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->index];

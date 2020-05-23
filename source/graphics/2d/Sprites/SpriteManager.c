@@ -628,23 +628,14 @@ void SpriteManager::render()
 		}
 		else
 		{
-			Sprite::updateTransparency(sprite, this->evenFrame);
-
-			if(!sprite->visible)
+			if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
 			{
-				continue;
+				Sprite::update(sprite);
 			}
-			else
-			{
-				if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
-				{
-					Sprite::update(sprite);
-				}
 
-				if(Sprite::render(sprite, this->freeLayer))
-				{
-					this->freeLayer--;
-				}
+			if(Sprite::render(sprite, this->freeLayer, this->evenFrame))
+			{
+				this->freeLayer--;
 			}
 		}
 	}

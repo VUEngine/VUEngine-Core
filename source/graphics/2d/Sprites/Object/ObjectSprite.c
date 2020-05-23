@@ -209,7 +209,7 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-bool ObjectSprite::render(u16 index)
+bool ObjectSprite::render(u16 index, bool evenFrame)
 {
 	if(isDeleted(this->texture) || !this->positioned)
 	{
@@ -222,6 +222,17 @@ bool ObjectSprite::render(u16 index)
 	}
 
 	if(isDeleted(this->texture->charSet))
+	{
+		return false;
+	}
+
+	// if render flag is set
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					(0x01 & (this->transparent ^ evenFrame));
+
+	this->index = !this->visible ? 0 : index;
+
+	if(!this->visible)
 	{
 		return false;
 	}

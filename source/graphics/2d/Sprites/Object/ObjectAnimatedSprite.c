@@ -81,10 +81,5 @@ void ObjectAnimatedSprite::destructor()
  */
 void ObjectAnimatedSprite::writeAnimation()
 {
-	if(__OBJECT_NO_INDEX >= this->objectIndex)
-	{
-		return;
-	}
-
 	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 }

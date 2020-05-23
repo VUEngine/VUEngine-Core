@@ -115,9 +115,9 @@ void Particle::changeAnimation(const char* animationName)
 		{
 			Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
 		}
-	}
 
-	this->animationName = animationName;
+		this->animationName = animationName;
+	}
 }
 
 /**

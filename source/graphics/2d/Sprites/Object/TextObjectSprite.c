@@ -99,7 +99,7 @@ void TextObjectSprite::destructor()
  *
  * @param evenFrame
  */
-bool TextObjectSprite::render(u16 index __attribute__((unused)))
+bool TextObjectSprite::render(u16 index, bool evenFrame)
 {
 	if(!this->positioned)
 	{
@@ -108,7 +108,17 @@ bool TextObjectSprite::render(u16 index __attribute__((unused)))
 
 	if(!this->printed)
 	{
-		TextObjectSprite::out(this);
+		TextObjectSprite::out(this, index);
+	}
+
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					(0x01 & (this->transparent ^ evenFrame));
+
+	this->index = !this->visible ? 0 : index;
+
+	if(!this->visible)
+	{
+		return false;
 	}
 
 	int cols = strlen(this->text);
@@ -141,7 +151,7 @@ bool TextObjectSprite::render(u16 index __attribute__((unused)))
 			int j = 0;
 			for(; j < cols; j++)
 			{
-				s32 objectIndex = (this->objectIndex + j) << 2;
+				s32 objectIndex = (index + j) << 2;
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
@@ -153,7 +163,7 @@ bool TextObjectSprite::render(u16 index __attribute__((unused)))
 
 		for(; j < cols; j++)
 		{
-			s32 objectIndex = (this->objectIndex + j) << 2;
+			s32 objectIndex = (index + j) << 2;
 
 			// TODO: Account for character's size
 //			int outputX = x + (j * fontData->fontSpec->fontSize.x) * xDirection;
@@ -177,7 +187,7 @@ bool TextObjectSprite::render(u16 index __attribute__((unused)))
 	return true;
 }
 
-void TextObjectSprite::out()
+void TextObjectSprite::out(s16 index)
 {
 	u32 i = 0;
 	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
@@ -204,7 +214,7 @@ void TextObjectSprite::out()
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							s32 objectIndex = (this->objectIndex + i) << 2;
+							s32 objectIndex = (index + i) << 2;
 
 							u16 charNumber =
 								// offset of charset in char memory

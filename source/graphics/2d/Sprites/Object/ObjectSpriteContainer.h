@@ -46,10 +46,6 @@ class ObjectSpriteContainer : Sprite
 {
 	// object sprites
 	VirtualList objectSprites;
-	// next object sprite node to defragment
-	VirtualNode objectSpriteNodeToDefragment;
-	// used for defragmentation
-	int freedObjectIndex;
 	// first object index
 	int firstObjectIndex;
 	// last rendered object index
@@ -60,8 +56,6 @@ class ObjectSpriteContainer : Sprite
 	int availableObjects;
 	// spt index
 	int spt;
-	// flag to halt defragmentation while sprite removal is taking place
-	bool removingObjectSprite;
 
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
@@ -75,7 +69,7 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override void sort();
-	override bool render(u16 index);
+	override bool render(u16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void show();
 	override void hide();
