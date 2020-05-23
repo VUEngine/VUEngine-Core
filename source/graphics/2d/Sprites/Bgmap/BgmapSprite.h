@@ -118,11 +118,12 @@ class BgmapSprite : Sprite
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 	void processAffineEffects(int gx, int width, int myDisplacement);
 	void processHbiasEffects();
+	void onTextureRewritten(Object eventFirer);
+	void applyAffineTransformations();
+	void applyHbiasEffects();
 	override bool render(u8 worldLayer);
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
-	override void applyAffineTransformations();
-	override void applyHbiasEffects();
 	override void resize(Scale scale, fix10_6 z);
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);

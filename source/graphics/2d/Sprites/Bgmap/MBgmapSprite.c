@@ -114,7 +114,7 @@ void MBgmapSprite::releaseTextures()
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
-			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		}
 
 		delete this->textures;
@@ -190,7 +190,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 
-	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 	VirtualList::pushBack(this->textures, bgmapTexture);
 }

@@ -70,7 +70,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 
 	if(this->texture)
 	{
-		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
 		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
@@ -131,12 +131,24 @@ void BgmapSprite::destructor()
 	Base::destructor();
 }
 
+/**
+ * Process event
+ *
+ * @param eventFirer
+ */
+void BgmapSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
+{
+	BgmapSprite::applyAffineTransformations(this);
+	BgmapSprite::applyHbiasEffects(this);
+	this->writeAnimationFrame = true;
+}
+
 void BgmapSprite::releaseTexture()
 {
 	// free the texture
 	if(!isDeleted(this->texture))
 	{
-		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 

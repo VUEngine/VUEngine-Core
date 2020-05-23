@@ -216,7 +216,6 @@ abstract class Sprite : Object
 	void updateAnimation();
 	void putChar(Point* texturePixel, BYTE* newChar);
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
-	void onTextureRewritten(Object eventFirer);
 	AnimationController getAnimationController();
 	bool isVisible();
 	bool isWithinScreenSpace();
@@ -225,8 +224,6 @@ abstract class Sprite : Object
 	bool isDisposed();
 	void calculateParallax(fix10_6 z);
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
-	virtual void applyAffineTransformations();
-	virtual void applyHbiasEffects();
 	virtual bool areTexturesWritten();
 	virtual Scale getScale();
 	virtual u8 getWorldLayer();

@@ -69,13 +69,6 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	this->objectIndex = __OBJECT_NO_INDEX;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
-
-	// clear position
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.z = 0;
-	this->position.parallax = 0;
-
 	this->didHide = false;
 
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
@@ -87,7 +80,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
-		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
@@ -115,7 +108,7 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
-		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 		delete this->texture;
 	}
 
@@ -125,6 +118,11 @@ void ObjectSprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void ObjectSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
+{
+	this->writeAnimationFrame = true;
 }
 
 /**

@@ -425,18 +425,6 @@ void Sprite::rewrite()
 }
 
 /**
- * Process event
- *
- * @param eventFirer
- */
-void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
-{
-	Sprite::applyAffineTransformations(this);
-	Sprite::applyHbiasEffects(this);
-	this->writeAnimationFrame = true;
-}
-
-/**
  * Get displacement
  *
  * @return
