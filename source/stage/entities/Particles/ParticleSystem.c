@@ -328,9 +328,9 @@ void ParticleSystem::update(u32 elapsedTime)
 	// check if it is time to spawn new particles
 	this->nextSpawnTime -= elapsedTime;
 
-	if(0 > this->nextSpawnTime)
+	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{
-		if(this->particleCount < this->maximumNumberOfAliveParticles)
+		do 
 		{
 			++this->totalSpawnedParticles;
 
@@ -355,6 +355,7 @@ void ParticleSystem::update(u32 elapsedTime)
 			this->particleCount++;
 			this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 		}
+		while(0 == this->particleSystemSpec->minimumSpawnDelay && this->particleCount < this->maximumNumberOfAliveParticles);
 	}
 }
 
