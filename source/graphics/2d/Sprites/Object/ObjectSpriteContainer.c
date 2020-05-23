@@ -425,8 +425,6 @@ bool ObjectSpriteContainer::render(u16 index)
 				{
 					objectIndex += objectSprite->totalObjects;
 				}
-
-				CACHE_DISABLE;
 			}
 		}
 	}
