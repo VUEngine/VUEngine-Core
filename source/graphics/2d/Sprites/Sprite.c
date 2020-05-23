@@ -55,7 +55,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	Base::constructor();
 
 	// clear values
-	this->worldLayer = 0;
+	this->index = 0;
 	this->head = 0;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
@@ -151,7 +151,7 @@ void Sprite::hide()
 	// Make sure that I'm positioned to show up again
 	this->positioned = false;
 
-	this->worldLayer = 0;
+	this->index = 0;
 }
 
 /**
@@ -244,7 +244,7 @@ AnimationController Sprite::getAnimationController()
  */
 u8 Sprite::getWorldLayer()
 {
-	return this->worldLayer;
+	return this->index;
 }
 
 /**
@@ -320,7 +320,7 @@ u16 Sprite::getMode()
  */
 u32 Sprite::getWorldHead()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->head;
 }
 
@@ -331,7 +331,7 @@ u32 Sprite::getWorldHead()
  */
 s16 Sprite::getWorldGX()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->gx;
 }
 
@@ -342,7 +342,7 @@ s16 Sprite::getWorldGX()
  */
 s16 Sprite::getWorldGY()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->gy;
 }
 
@@ -353,7 +353,7 @@ s16 Sprite::getWorldGY()
  */
 s16 Sprite::getWorldGP()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->gp;
 }
 
@@ -364,7 +364,7 @@ s16 Sprite::getWorldGP()
  */
 s16 Sprite::getWorldMX()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->mx;
 }
 
@@ -375,7 +375,7 @@ s16 Sprite::getWorldMX()
  */
 s16 Sprite::getWorldMY()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->my;
 }
 
@@ -386,7 +386,7 @@ s16 Sprite::getWorldMY()
  */
 s16 Sprite::getWorldMP()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->mp;
 }
 
@@ -397,7 +397,7 @@ s16 Sprite::getWorldMP()
  */
 u16 Sprite::getWorldWidth()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->w;
 }
 
@@ -408,7 +408,7 @@ u16 Sprite::getWorldWidth()
  */
 u16 Sprite::getWorldHeight()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 	return worldPointer->h;
 }
 
@@ -538,7 +538,7 @@ void Sprite::updateTransparency(bool evenFrame)
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
 					(0x01 & (this->transparent ^ evenFrame));
 
-	this->worldLayer = !this->visible ? 0 : this->worldLayer;
+	this->index = !this->visible ? 0 : this->index;
 }
 
 /**
@@ -611,14 +611,18 @@ void Sprite::play(const AnimationDescription* animationDescription, char* functi
  *
  * @param animationDescription	AnimationDescription
  */
-void Sprite::replay(const AnimationDescription* animationDescription)
+bool Sprite::replay(const AnimationDescription* animationDescription)
 {
 	ASSERT(animationDescription, "Sprite::replay: null animationDescription");
 
 	if(this->animationController)
 	{
 		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationDescription);
+
+		return this->writeAnimationFrame;
 	}
+
+	return false;
 }
 
 /**
@@ -796,7 +800,7 @@ void Sprite::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Layer: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->worldLayer, x + 18, y, NULL);
+	Printing::int(Printing::getInstance(), this->index, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
@@ -910,9 +914,9 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  */
 int Sprite::getTotalPixels()
 {
-	if(0 < (s8)this->worldLayer)
+	if(0 < (s8)this->index)
 	{
-		return (_worldAttributesBaseAddress[this->worldLayer].w + 1) * (_worldAttributesBaseAddress[this->worldLayer].h + 1);
+		return (_worldAttributesBaseAddress[this->index].w + 1) * (_worldAttributesBaseAddress[this->index].h + 1);
 	}
 
 	return 0;

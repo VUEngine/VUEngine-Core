@@ -99,7 +99,7 @@ void TextObjectSprite::destructor()
  *
  * @param evenFrame
  */
-bool TextObjectSprite::render(u8 worldLayer __attribute__((unused)))
+bool TextObjectSprite::render(u16 index __attribute__((unused)))
 {
 	if(!this->positioned)
 	{

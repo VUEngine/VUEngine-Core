@@ -159,7 +159,7 @@ abstract class Sprite : Object
 	// Head spec for world entry setup
 	u16 head;
 	// World layer where to render the texture
-	u8 worldLayer;
+	u16 index;
 	// Flag for making it transparent
 	u8 transparent;
 	// Disposed flag
@@ -207,7 +207,7 @@ abstract class Sprite : Object
 	void nextFrame();
 	void pause(bool pause);
 	void play(const AnimationDescription* animationDescription, char* functionName);
-	void replay(const AnimationDescription* animationDescription);
+	bool replay(const AnimationDescription* animationDescription);
 	void previousFrame();
 	void setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameDelayDelta);
@@ -229,7 +229,7 @@ abstract class Sprite : Object
 	virtual u8 getWorldLayer();
 	virtual void hide();
 	virtual void position(const Vector3D* position);
-	virtual bool render(u8 worldLayer) = 0;
+	virtual bool render(u16 index) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

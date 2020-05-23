@@ -326,7 +326,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-bool MBgmapSprite::render(u8 worldLayer)
+bool MBgmapSprite::render(u16 index)
 {
 	if(!this->texture || !this->texture->written)
 	{
@@ -338,10 +338,10 @@ bool MBgmapSprite::render(u8 worldLayer)
 		return false;
 	}
 
-	this->worldLayer = worldLayer;
+	this->index = index;
 
 	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	worldPointer = &_worldAttributesBaseAddress[this->index];
 
 	// TODO: check if required, causes that the sprite is turned off
 	// when changing the texture spec

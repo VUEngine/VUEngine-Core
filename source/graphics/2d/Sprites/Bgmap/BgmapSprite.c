@@ -283,17 +283,17 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-bool BgmapSprite::render(u8 worldLayer)
+bool BgmapSprite::render(u16 index)
 {
 	if(!this->texture | !this->texture->written | !this->positioned)
 	{
 		return false;
 	}
 
-	this->worldLayer = worldLayer;
+	this->index = index;
 
 	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	worldPointer = &_worldAttributesBaseAddress[this->index];
 
 	// TODO: check if required, causes that the sprite is turned off when changing the texture spec
 /*
@@ -426,7 +426,7 @@ void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
     	}
 
 		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+    	worldPointer = &_worldAttributesBaseAddress[this->index];
 
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
@@ -470,7 +470,7 @@ void BgmapSprite::processHbiasEffects()
     	}
 
 		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+    	worldPointer = &_worldAttributesBaseAddress[this->index];
 
  		ASSERT(0 <= ((signed)this->param - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
 
@@ -507,12 +507,12 @@ void BgmapSprite::displacement()
 	{
 		if(this->hidden)
 		{
-			WORLD_HEAD(this->worldLayer, 0x0000);
+			WORLD_HEAD(this->index, 0x0000);
 			return;
 		}
 
 		static WorldAttributes* worldPointer = NULL;
-		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+		worldPointer = &_worldAttributesBaseAddress[this->index];
 
 		// set the world camera position
 		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);

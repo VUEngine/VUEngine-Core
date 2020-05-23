@@ -65,13 +65,9 @@ typedef const ObjectTextureSpec ObjectTextureROMSpec;
 /// @ingroup graphics-2d-textures-object
 class ObjectTexture : Texture
 {
-	// Object index
-	int objectIndex;
-
 	/// @publicsection
 	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id);
-	void setObjectIndex(int objectIndex, bool write);
-	override void write();
+
 	override void setFrameAnimatedMulti(u16 frame);
 }
 

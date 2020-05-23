@@ -704,7 +704,7 @@ void SpriteManager::showLayer(u8 layer)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->worldLayer != layer)
+		if(sprite->index != layer)
 		{
 			Sprite::hide(sprite);
 		}
@@ -715,7 +715,7 @@ void SpriteManager::showLayer(u8 layer)
 
 		Sprite::setPosition(sprite, &sprite->position);
 
-		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
+		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 }
 
@@ -733,7 +733,7 @@ void SpriteManager::recoverLayers()
 
 		Sprite::setPosition(sprite, &sprite->position);
 
-		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
+		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
 	SpriteManager::renderLastLayer(this);
@@ -753,7 +753,7 @@ Sprite SpriteManager::getSpriteAtLayer(u8 layer)
 
 	for(; node; node = node->next)
 	{
-		if((Sprite::safeCast(node->data))->worldLayer == layer)
+		if((Sprite::safeCast(node->data))->index == layer)
 		{
 			return Sprite::safeCast(node->data);
 		}
@@ -954,7 +954,7 @@ void SpriteManager::print(int x, int y, bool resumed)
 		Printing::int(Printing::getInstance(), Sprite::getWorldLayer(sprite), auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
-//		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
+//		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 //		Printing::int(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
 		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)

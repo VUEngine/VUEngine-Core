@@ -111,13 +111,9 @@ void Particle::changeAnimation(const char* animationName)
 {
 	if(!isDeleted(this->sprite) && animationName)
 	{
-		if(this->animationName != animationName)
+		if(this->animationName != animationName || !Sprite::replay(this->sprite, this->particleSpec->animationDescription))
 		{
 			Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
-		}
-		else
-		{
-			Sprite::replay(this->sprite, this->particleSpec->animationDescription);
 		}
 	}
 

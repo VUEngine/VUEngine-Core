@@ -45,9 +45,6 @@ void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
 {
 	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
-
-	this->objectIndex = __OBJECT_NO_INDEX;
-	this->mapDisplacement = 0;
 }
 
 /**
@@ -55,69 +52,9 @@ void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
  */
 void ObjectTexture::destructor()
 {
-	this->objectIndex = __OBJECT_NO_INDEX;
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
-}
-
-/**
- * Write the texture to DRAM
- */
-void ObjectTexture::write()
-{
-	if(__OBJECT_NO_INDEX >= this->objectIndex)
-	{
-		return;
-	}
-
-	Base::write(this);
-
-	if(!this->charSet)
-	{
-		return;
-	}
-
-	int palette = this->palette << 14;
-	int charLocation = CharSet::getOffset(this->charSet);
-	int rows = this->textureSpec->rows;
-	int cols = this->textureSpec->cols;
-	BYTE* framePointer = this->textureSpec->mapSpec + (this->mapDisplacement << 1);
-
-	int i = 0;
-	int displacement = 0;
-
-	for(; i < rows; i++, displacement += cols)
-	{
-		int j = 0;
-		for(; j < cols; j++)
-		{
-			s32 objectIndex = this->objectIndex + displacement + j;
-			s32 charNumberIndex = (displacement + j) << 1;
-			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
-			_objectAttributesBaseAddress[(objectIndex << 2) + 3] = palette | (charNumber);
-		}
-	}
-}
-
-/**
- * Set the start OBJECT index
- *
- * @param objectIndex	OBJECT index
- */
-void ObjectTexture::setObjectIndex(int objectIndex, bool write)
-{
-	if(objectIndex != this->objectIndex && __OBJECT_NO_INDEX < objectIndex && objectIndex < 1024)
-	{
-		this->objectIndex = objectIndex;
-		this->written = false;
-	}
-
-	if(write)
-	{
-		ObjectTexture::write(this);
-	}
 }
 
 /**

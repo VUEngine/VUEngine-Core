@@ -52,6 +52,8 @@ class ObjectSpriteContainer : Sprite
 	int freedObjectIndex;
 	// first object index
 	int firstObjectIndex;
+	// last rendered object index
+	int lastRenderedObjectIndex;
 	// total objects
 	int totalObjects;
 	// OBJs available
@@ -63,7 +65,7 @@ class ObjectSpriteContainer : Sprite
 
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
-	s32 addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
+	bool addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
 	int getAvailableObjects();
 	int getFirstObjectIndex();
 	int getLastObjectIndex();
@@ -73,7 +75,7 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override void sort();
-	override bool render(u8 worldLayer);
+	override bool render(u16 index);
 	override void setPosition(const PixelVector* position);
 	override void show();
 	override void hide();

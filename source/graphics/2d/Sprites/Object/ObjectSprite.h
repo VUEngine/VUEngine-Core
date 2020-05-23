@@ -83,23 +83,18 @@ class ObjectSprite : Sprite
 	s16 objectIndex;
 	// number of objects
 	s16 totalObjects;
-	bool didHide;
 
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
-	s16 getObjectIndex();
 	s16 getTotalObjects();
-	void setObjectIndex(s16 objectIndex);
 	void invalidateObjectSpriteContainer();
-	override bool render(u8 worldLayer);
+	override bool render(u16 index);
 	override void setPosition(const PixelVector* position);
 	override void position(const Vector3D* position3D);
 	override void rotate(const Rotation* rotation);
 	override u8 getWorldLayer();
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);
-	override void show();
-	override void hide();
 }
 
 

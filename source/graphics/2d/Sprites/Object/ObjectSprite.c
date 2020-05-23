@@ -66,10 +66,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
 	this->head = objectSpriteSpec->display;
-	this->objectIndex = __OBJECT_NO_INDEX;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
-	this->didHide = false;
 
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
 	this->halfWidth = 0;
@@ -80,7 +78,6 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
-		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
@@ -108,21 +105,14 @@ void ObjectSprite::destructor()
 
 	if(!isDeleted(this->texture))
 	{
-		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 		delete this->texture;
 	}
 
 	this->texture = NULL;
-	this->objectIndex = __OBJECT_NO_INDEX;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
-}
-
-void ObjectSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
-{
-	this->writeAnimationFrame = true;
 }
 
 /**
@@ -204,11 +194,10 @@ void ObjectSprite::position(const Vector3D* position)
  */
 void ObjectSprite::checkForContainer()
 {
-	if(__OBJECT_NO_INDEX >= this->objectIndex && this->totalObjects)
+	if(NULL == this->objectSpriteContainer && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
-		this->objectIndex = ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
-		ASSERT(__OBJECT_NO_INDEX < this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
+		ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 }
 
@@ -220,20 +209,26 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
+bool ObjectSprite::render(u16 index)
 {
-	if(isDeleted(this->texture) | !this->positioned)
+	if(isDeleted(this->texture) || !this->positioned)
 	{
 		return false;
 	}
 
 	if(!this->texture->written)
 	{
-		ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
+		ObjectTexture::write(this->texture);
+	}
+
+	if(isDeleted(this->texture->charSet))
+	{
+		return false;
 	}
 
 	s16 cols = this->texture->textureSpec->cols;
 	s16 rows = this->texture->textureSpec->rows;
+	int charLocation = CharSet::getOffset(this->texture->charSet);
 
 	s16 xDisplacementIncrement = 8;
 	s16 yDisplacementIncrement = 8;
@@ -263,10 +258,12 @@ bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 
 	s16 i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
-	u16 fourthWordValue = (this->head & 0x3000);
+	u16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 
 	s16 yDisplacement = 0;
 	s16 jDisplacement = 0;
+
+	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
 
 	for(; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
@@ -277,7 +274,7 @@ bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
+				s16 objectIndex = (index + jDisplacement + j) << 2;
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
@@ -289,7 +286,7 @@ bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
+			s16 objectIndex = (index + jDisplacement + j) << 2;
 
 			s16 outputX = x + xDisplacement;
 
@@ -304,7 +301,10 @@ bool ObjectSprite::render(u8 worldLayer __attribute__((unused)))
 			_objectAttributesBaseAddress[objectIndex] = outputX;
 			_objectAttributesBaseAddress[objectIndex + 1] = secondWordValue;
 			_objectAttributesBaseAddress[objectIndex + 2] = outputY;
-			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
+
+			s32 charNumberIndex = (jDisplacement + j) << 1;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			_objectAttributesBaseAddress[objectIndex + 3] = fourthWordValue | charNumber;
 		}
 	}
 
@@ -324,95 +324,6 @@ s16 ObjectSprite::getTotalObjects()
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
 	return this->totalObjects;
-}
-
-/**
- * Retrieved the OBJECT index
- *
- * @memberof			ObjectSprite
- * @public
- *
- * @return				Number of used OBJECTs
- */
-s16 ObjectSprite::getObjectIndex()
-{
-	return this->objectIndex;
-}
-
-/**
- * Show
- *
- * @memberof			ObjectSprite
- * @public
- */
-void ObjectSprite::show()
-{
-	Base::show(this);
-	this->didHide = false;
-}
-
-/**
- * Hide
- *
- * @memberof			ObjectSprite
- * @public
- */
-void ObjectSprite::hide()
-{
-	Base::hide(this);
-	this->didHide = false;
-}
-
-/**
- * Set the OBJECT index
- *
- * @memberof				ObjectSprite
- * @public
- *
- * @param objectIndex		Set the OBJECT index
- */
-void ObjectSprite::setObjectIndex(s16 objectIndex)
-{
-	int previousObjectIndex = this->objectIndex;
-	this->objectIndex = objectIndex;
-
-	if(__OBJECT_NO_INDEX < this->objectIndex)
-	{
-		// rewrite texture
-		if(!isDeleted(this->texture))
-		{
-			ObjectTexture::setObjectIndex(this->texture, this->objectIndex, true);
-		}
-
-		if(__OBJECT_NO_INDEX < previousObjectIndex)
-		{
-			// hide the previously used objects
-			int j = previousObjectIndex;
-			for(; j < previousObjectIndex + this->totalObjects; j++)
-			{
-				_objectAttributesBaseAddress[(j << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
-			}
-
-			if(!this->hidden)
-			{
-				Sprite::show(this);
-
-				// turn off previous OBJs' to avoid ghosting
-				if(this->objectIndex < previousObjectIndex)
-				{
-					int counter = 0;
-					int j = previousObjectIndex + this->totalObjects - 1;
-					for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
-					{
-						_objectAttributesBaseAddress[(j << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
-					}
-				}
-				else
-				{
-				}
-			}
-		}
-	}
 }
 
 /**
