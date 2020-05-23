@@ -106,7 +106,7 @@ class Particle : SpatialObject
 	virtual void reset();
 	virtual void setMass(fix10_6 mass);
 	virtual void changeMass();
-	virtual void hide(const Vector3D* position);
+	virtual void hide();
 	virtual void show();
 	void setAnimationName(const char* animationName);
 	override bool isSubjectToGravity(Acceleration gravity);

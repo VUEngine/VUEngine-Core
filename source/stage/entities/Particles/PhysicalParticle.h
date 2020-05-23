@@ -77,7 +77,7 @@ class PhysicalParticle : Particle
 	override bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
 	override void setMass(fix10_6 mass);
-	override void hide(const Vector3D* position);
+	override void hide();
 	override void reset();
 	override void changeMass();
 }

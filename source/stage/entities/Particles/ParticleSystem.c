@@ -573,7 +573,7 @@ void ParticleSystem::hide()
 
 	for(; node; node = node->next)
 	{
-		Particle::hide(Particle::safeCast(node->data), &this->transformation.globalPosition);
+		Particle::hide(Particle::safeCast(node->data));
 	}
 }
 

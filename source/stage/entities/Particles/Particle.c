@@ -244,13 +244,13 @@ void Particle::expire()
 {
 	this->expired = true;
 
-	Particle::hide(this, &this->position);
+	Particle::hide(this);
 }
 
 /**
  * Make Particle invisible
  */
-void Particle::hide(const Vector3D* position)
+void Particle::hide()
 {
 	NM_ASSERT(this->sprite, "Particle::hide: null sprite");
 
