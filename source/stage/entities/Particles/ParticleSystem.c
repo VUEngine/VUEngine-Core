@@ -330,6 +330,7 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{
+		u16 spawnedParticles = 0;
 		do 
 		{
 			++this->totalSpawnedParticles;
@@ -355,7 +356,7 @@ void ParticleSystem::update(u32 elapsedTime)
 			this->particleCount++;
 			this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 		}
-		while(0 == this->particleSystemSpec->minimumSpawnDelay && this->particleCount < this->maximumNumberOfAliveParticles);
+		while(++spawnedParticles < this->particleSystemSpec->maximumNumberOfParticlesToSpawnPerCycle && 0 == this->particleSystemSpec->minimumSpawnDelay && this->particleCount < this->maximumNumberOfAliveParticles);
 	}
 }
 

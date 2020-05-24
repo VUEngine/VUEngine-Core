@@ -50,8 +50,11 @@ typedef struct ParticleSystemSpec
 	/// generation delay delta in milliseconds
 	u16 spawnDelayDelta;
 
-	/// maximum total particles
+	/// maximum number of alive particles
 	u8 maximumNumberOfAliveParticles;
+
+	/// maximum number of particles to spawn in each cycle
+	u8 maximumNumberOfParticlesToSpawnPerCycle;
 
 	/// array of sprites to select randomly
 	const SpriteSpec** spriteSpecs;
