@@ -120,7 +120,7 @@ class ParticleSystem : Entity
 	u8 maximumNumberOfAliveParticles;
 
 	/// @publicsection
-	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 internalId, const char* const name);
+	void constructor(const ParticleSystemSpec* particleSystemSpec,  s16 internalId, const char* const name);
 	void setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset);
 	bool handleMessage(Telegram telegram);
 	bool isPaused();
@@ -140,6 +140,7 @@ class ParticleSystem : Entity
 	override void resume();
 	override void suspend();
 	override void hide();
+	virtual Vector3D getParticleSpawnPosition();
 }
 
 

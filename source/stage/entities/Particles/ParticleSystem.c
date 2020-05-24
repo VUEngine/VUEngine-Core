@@ -54,10 +54,10 @@ friend class VirtualList;
  * @param internalId
  * @param name
  */
-void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 internalId, const char* const name)
+void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s16 internalId, const char* const name)
 {
 	// construct base
-	Base::constructor(&particleSystemSpec->entitySpec, internalId, name);
+	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
 	this->particles = NULL;
 
