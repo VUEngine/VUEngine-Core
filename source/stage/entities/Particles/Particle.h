@@ -93,7 +93,7 @@ class Particle : SpatialObject
 	bool isVisible();
 	void setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
 	void expire();
-	void synchronizeGraphics();
+	virtual void synchronizeGraphics();
 	virtual void addForce(const Force* force, u32 movementType);
 	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();

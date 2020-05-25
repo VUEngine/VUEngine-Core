@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern fix10_6 _currentWorldFriction;
-extern fix10_6 _currentElapsedTime;
+extern fix10_6 _currentPhysicsElapsedTime;
 extern const Acceleration* _currentGravity;
 
 

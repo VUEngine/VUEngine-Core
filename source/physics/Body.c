@@ -73,7 +73,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 
 fix10_6 _currentWorldFriction = 0;
-fix10_6 _currentElapsedTime = 0;
+fix10_6 _currentPhysicsElapsedTime = 0;
 const Acceleration* _currentGravity = 0;
 
 static void Body::setCurrentWorldFrictionCoefficient(fix10_6 currentWorldFriction)
@@ -83,7 +83,7 @@ static void Body::setCurrentWorldFrictionCoefficient(fix10_6 currentWorldFrictio
 
 static void Body::setCurrentElapsedTime(fix10_6 currentElapsedTime)
 {
-	_currentElapsedTime = currentElapsedTime;
+	_currentPhysicsElapsedTime = currentElapsedTime;
 }
 
 static void Body::setCurrentGravity(const Acceleration* currentGravity)
@@ -558,7 +558,7 @@ MovementResult Body::updateMovement()
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
 
-	fix10_6 elapsedTime = _currentElapsedTime;
+	fix10_6 elapsedTime = _currentPhysicsElapsedTime;
 	Velocity previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
