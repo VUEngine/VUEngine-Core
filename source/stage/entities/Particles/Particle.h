@@ -77,31 +77,27 @@ class Particle : SpatialObject
 {
 	// Particle's life span in milliseconds
 	Vector3D position;
-	// Particle's spec
-	const ParticleSpec* particleSpec;
+	// To optimizize parallax computation
+	fix10_6 previousZ;
 	// Particle's SpriteSpec
 	const SpriteSpec* spriteSpec;
 	// sprite
 	Sprite sprite;
 	// Particle's life span in milliseconds
-	int lifeSpan;
-	// To optimizize parallax computation
-	fix10_6 previousZ;
-	// Animation name
-	const char* animationName;
+	s16 lifeSpan;
 	bool expired;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
-	void setLifeSpan(int lifeSpan);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
+	void setLifeSpan(s16 lifeSpan);
 	bool isVisible();
-	void setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const char* animationName);
+	void setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName);
 	void expire();
 	void synchronizeGraphics();
 	virtual void addForce(const Force* force, u32 movementType);
 	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
-	virtual void resume();
+	virtual void resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName);
 	virtual void suspend();
 	virtual void reset();
 	virtual void setMass(fix10_6 mass);

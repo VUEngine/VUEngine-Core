@@ -50,7 +50,7 @@
  * @param lifeSpan
  * @param mass
  */
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, lifeSpan);

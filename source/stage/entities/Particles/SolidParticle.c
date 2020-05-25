@@ -53,7 +53,7 @@ friend class Shape;
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, lifeSpan);

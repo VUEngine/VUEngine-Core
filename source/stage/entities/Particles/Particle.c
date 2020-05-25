@@ -49,21 +49,19 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor();
 
-	this->particleSpec = particleSpec;
 	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
 	this->position = Vector3D::zero();
 	this->previousZ = 0;
-	this->animationName = this->particleSpec->initialAnimation;
 	this->expired = false;
 
-	Particle::addSprite(this);
+	Particle::addSprite(this, spriteSpec, particleSpec->animationDescription, particleSpec->initialAnimation);
 }
 
 /**
@@ -87,19 +85,22 @@ void Particle::destructor()
  *
  * @private
  */
-void Particle::addSprite()
+void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName)
 {
-	ASSERT(this->spriteSpec->allocator, "Particle::load: no sprite allocator");
+	ASSERT(spriteSpec->allocator, "Particle::load: no sprite allocator");
 
-	// call the appropriate allocator to support inheritance
-	this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)this->spriteSpec, Object::safeCast(this));
-
-	if(this->animationName && this->particleSpec->animationDescription)
+	if(spriteSpec)
 	{
-		Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)this->animationName);
-	}
+		// call the appropriate allocator to support inheritance
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this));
 
-	ASSERT(this->sprite, "Particle::addSprite: sprite not created");
+		if(animationName && animationDescription)
+		{
+			Sprite::play(this->sprite, animationDescription, (char*)animationName);
+		}
+		
+		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
+	}
 }
 
 /**
@@ -107,16 +108,14 @@ void Particle::addSprite()
  *
  * @param animationName		Char*
  */
-void Particle::changeAnimation(const char* animationName)
+void Particle::changeAnimation(const AnimationDescription* animationDescription, const char* animationName)
 {
 	if(!isDeleted(this->sprite) && animationName)
 	{
-		if(this->animationName != animationName || !Sprite::replay(this->sprite, this->particleSpec->animationDescription))
+		if(!Sprite::replay(this->sprite, animationDescription))
 		{
-			Sprite::play(this->sprite, this->particleSpec->animationDescription, (char*)animationName);
+			Sprite::play(this->sprite, animationDescription, (char*)animationName);
 		}
-
-		this->animationName = animationName;
 	}
 }
 
@@ -185,7 +184,7 @@ void Particle::addForce(const Force* force __attribute__ ((unused)), u32 movemen
  *
  * @param lifeSpan
  */
-void Particle::setLifeSpan(int lifeSpan)
+void Particle::setLifeSpan(s16 lifeSpan)
 {
 	this->lifeSpan = lifeSpan;
 }
@@ -277,9 +276,9 @@ void Particle::transform()
 /**
  * Resume
  */
-void Particle::resume()
+void Particle::resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName)
 {
-	Particle::addSprite(this);
+	Particle::addSprite(this, spriteSpec, animationDescription, animationName);
 
 	// Force parallax computation
 	this->previousZ = 0;
@@ -307,10 +306,10 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const char* animationName)
+void Particle::setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName)
 {
 	Particle::reset(this);
-	Particle::changeAnimation(this, animationName);
+	Particle::changeAnimation(this, animationDescription, animationName);
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);

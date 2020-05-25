@@ -89,7 +89,7 @@ class SolidParticle : PhysicalParticle
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
+	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
 	Shape getShape();
 	override fix10_6 getWidth();
 	override fix10_6 getHeight();

@@ -104,7 +104,7 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
 /**
  * Class setup
  */
-void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
+void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 {
 	// save spec
 	this->particleSystemSpec = particleSystemSpec;
@@ -376,9 +376,9 @@ bool ParticleSystem::recycleParticle()
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 			Force force = ParticleSystem::getParticleSpawnForce(this);
-			int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
+			s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
-			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->animationName);
+			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->animationName);
 
 			return true;
 		}
@@ -451,14 +451,12 @@ void ParticleSystem::spawnAllParticles()
 	}
 }
 
-/**
- * Spawn a particle
- *
- * @private
- */
-Particle ParticleSystem::spawnParticle()
+const SpriteSpec* ParticleSystem::getSpriteSpec()
 {
-	int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+	if(NULL == this->particleSystemSpec || NULL == this->particleSystemSpec->spriteSpecs[0])
+	{
+		return NULL;
+	}
 
 	int spriteSpecIndex = 0;
 
@@ -467,8 +465,19 @@ Particle ParticleSystem::spawnParticle()
 		spriteSpecIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
 	}
 
+	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex];
+}
+/**
+ * Spawn a particle
+ *
+ * @private
+ */
+Particle ParticleSystem::spawnParticle()
+{
+	s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex], lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
@@ -587,7 +596,7 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume(particle);
+		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->animationName);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
