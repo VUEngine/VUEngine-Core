@@ -55,8 +55,6 @@
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)			((n) << 4)
 
-#define DRM_WRINTING_PASSES_TO_ENABLE_CACHE	64
-
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
