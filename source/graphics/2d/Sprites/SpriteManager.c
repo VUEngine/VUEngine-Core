@@ -628,14 +628,14 @@ void SpriteManager::render()
 		}
 		else
 		{
-			if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
-			{
-				Sprite::update(sprite);
-			}
-
 			if(Sprite::render(sprite, this->freeLayer, this->evenFrame))
 			{
 				this->freeLayer--;
+
+				if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
+				{
+					Sprite::update(sprite);
+				}
 			}
 		}
 	}

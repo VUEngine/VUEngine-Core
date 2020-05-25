@@ -254,14 +254,14 @@ bool ObjectSpriteContainer::render(u16 index, bool evenFrame)
 		}
 		else
 		{
-			if((u32)objectSprite->animationController)
-			{
-				ObjectSprite::update(objectSprite);
-			}
-
 			if(ObjectSprite::render(objectSprite, objectIndex, evenFrame))
 			{
 				objectIndex += objectSprite->totalObjects;
+
+				if((u32)objectSprite->animationController)
+				{
+					ObjectSprite::update(objectSprite);
+				}
 			}
 		}
 	}
