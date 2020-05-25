@@ -521,6 +521,11 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	this->transformed = true;
 
+	ParticleSystem::transformParticles(this);
+}
+
+void ParticleSystem::transformParticles()
+{
 	VirtualNode node = this->particles->head;
 
 	for(; node; node = node->next)
