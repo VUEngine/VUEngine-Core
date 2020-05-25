@@ -383,7 +383,7 @@ bool ParticleSystem::recycleParticle()
 
 			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation, this->animationChanged);
 
-			ParticleSystem::particleRecyled(this, particle);
+			ParticleSystem::particleRecycled(this, particle);
 
 			return true;
 		}
@@ -473,7 +473,11 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex];
 }
 
-void ParticleSystem::particleSpawned(Particle particle)
+void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
+{
+}
+
+void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused)))
 {
 }
 
