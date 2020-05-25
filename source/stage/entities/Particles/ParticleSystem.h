@@ -121,6 +121,7 @@ class ParticleSystem : Entity
 	// Particles' animation name
 	u8 maximumNumberOfAliveParticles;
 	bool transformed;
+	bool animationChanged;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  s16 internalId, const char* const name);

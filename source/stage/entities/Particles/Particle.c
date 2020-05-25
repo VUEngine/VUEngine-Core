@@ -108,11 +108,11 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
  *
  * @param animationName		Char*
  */
-void Particle::changeAnimation(const AnimationDescription* animationDescription, const char* animationName)
+void Particle::changeAnimation(const AnimationDescription* animationDescription, const char* animationName, bool force)
 {
 	if(!isDeleted(this->sprite) && animationName)
 	{
-		if(!Sprite::replay(this->sprite, animationDescription))
+		if(force || !Sprite::replay(this->sprite, animationDescription))
 		{
 			Sprite::play(this->sprite, animationDescription, (char*)animationName);
 		}
@@ -306,10 +306,10 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName)
+void Particle::setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation)
 {
 	Particle::reset(this);
-	Particle::changeAnimation(this, animationDescription, animationName);
+	Particle::changeAnimation(this, animationDescription, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);

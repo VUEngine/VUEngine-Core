@@ -69,6 +69,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
 	this->transformed = false;
+	this->animationChanged = true;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -97,6 +98,7 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
 	}
 	else if(particleSystemSpec && particleSystemSpec != this->particleSystemSpec)
 	{
+		this->animationChanged = this->particleSystemSpec->particleSpec->initialAnimation != particleSystemSpec->particleSpec->initialAnimation;
 		this->particleSystemSpec = particleSystemSpec;
 		ParticleSystem::configure(this);
 	}
@@ -107,6 +109,8 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
  */
 void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 {
+	this->animationChanged = NULL == this->particleSystemSpec || this->particleSystemSpec->particleSpec->initialAnimation != particleSystemSpec->particleSpec->initialAnimation;
+
 	// save spec
 	this->particleSystemSpec = particleSystemSpec;
 
@@ -377,7 +381,7 @@ bool ParticleSystem::recycleParticle()
 			Force force = ParticleSystem::getParticleSpawnForce(this);
 			s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
-			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
+			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation, this->animationChanged);
 
 			return true;
 		}

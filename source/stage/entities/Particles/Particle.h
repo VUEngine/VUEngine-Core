@@ -91,7 +91,7 @@ class Particle : SpatialObject
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
 	void setLifeSpan(s16 lifeSpan);
 	bool isVisible();
-	void setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName);
+	void setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
 	void expire();
 	void synchronizeGraphics();
 	virtual void addForce(const Force* force, u32 movementType);
