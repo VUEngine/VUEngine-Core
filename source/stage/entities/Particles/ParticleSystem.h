@@ -145,7 +145,7 @@ class ParticleSystem : Entity
 	override void suspend();
 	override void hide();
 	virtual void particleSpawned(Particle particle);
-	virtual void particleRecicled(Particle particle);
+	virtual void particleRecycled(Particle particle);
 }
 
 
