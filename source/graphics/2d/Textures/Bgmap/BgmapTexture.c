@@ -175,16 +175,6 @@ void BgmapTexture::writeAnimatedMulti()
 
 	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
-	bool disableCache = false;
-
-	if(area / counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
-	{
-		disableCache = true;
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
-	}
-
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -213,13 +203,6 @@ void BgmapTexture::writeAnimatedMulti()
 				0
 			);
 		}
-	}
-
-	if(disableCache)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
 	}
 }
 
@@ -289,14 +272,6 @@ void BgmapTexture::doWrite()
 	{
 		if(this->textureSpec->verticalFlip)
 		{
-			if(numberOfHWORDS * counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
-			{
-				disableCache = true;
-				CACHE_DISABLE;
-				CACHE_CLEAR;
-				CACHE_ENABLE;
-			}
-
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
@@ -310,14 +285,6 @@ void BgmapTexture::doWrite()
 		}
 		else
 		{
-			if(numberOfHWORDS * counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
-			{
-				disableCache = true;
-				CACHE_DISABLE;
-				CACHE_CLEAR;
-				CACHE_ENABLE;
-			}
-
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
@@ -334,14 +301,6 @@ void BgmapTexture::doWrite()
 	{
 		if(this->textureSpec->verticalFlip)
 		{
-			if(numberOfHWORDS * counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
-			{
-				disableCache = true;
-				CACHE_DISABLE;
-				CACHE_CLEAR;
-				CACHE_ENABLE;
-			}
-
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
@@ -355,14 +314,6 @@ void BgmapTexture::doWrite()
 		}
 		else
 		{
-			if(numberOfHWORDS * counter >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
-			{
-				disableCache = true;
-				CACHE_DISABLE;
-				CACHE_CLEAR;
-				CACHE_ENABLE;
-			}
-
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
@@ -384,13 +335,6 @@ void BgmapTexture::doWrite()
 				0,
 				false,
 				false);
-	}
-
-	if(disableCache)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
 	}
 }
 
