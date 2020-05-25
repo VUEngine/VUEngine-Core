@@ -383,6 +383,8 @@ bool ParticleSystem::recycleParticle()
 
 			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation, this->animationChanged);
 
+			ParticleSystem::particleRecyled(this, particle);
+
 			return true;
 		}
 	}
@@ -470,6 +472,11 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 
 	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex];
 }
+
+void ParticleSystem::particleSpawned(Particle particle)
+{
+}
+
 /**
  * Spawn a particle
  *
@@ -485,6 +492,8 @@ Particle ParticleSystem::spawnParticle()
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
 	Particle::addForce(particle, &force, this->particleSystemSpec->movementType);
+
+	ParticleSystem::particleSpawned(this, particle);
 
 	return particle;
 }
