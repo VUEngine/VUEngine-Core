@@ -593,9 +593,9 @@ void Container::changeEnvironment(Transformation* environmentTransform)
 void Container::initialTransform(const Transformation* environmentTransform, u32 recursive)
 {
 	// concatenate transformation
-	Container::applyEnvironmentToPosition(this, environmentTransform);
 	Container::applyEnvironmentToRotation(this, environmentTransform);
 	Container::applyEnvironmentToScale(this, environmentTransform);
+	Container::applyEnvironmentToPosition(this, environmentTransform);
 
 	Container::invalidateGlobalTransformation(this);
 
@@ -623,9 +623,9 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
  */
 void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
 {
-	Container::applyEnvironmentToPosition(this, environmentTransform);
 	Container::applyEnvironmentToRotation(this, environmentTransform);
 	Container::applyEnvironmentToScale(this, environmentTransform);
+	Container::applyEnvironmentToPosition(this, environmentTransform);
 }
 
 /**
@@ -699,11 +699,6 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 void Container::transformNonVirtual(const Transformation* environmentTransform)
 {
 	// apply environment transformation
-	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
-	}
-
 	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 	{
 		Container::applyEnvironmentToRotation(this, environmentTransform);
@@ -712,6 +707,11 @@ void Container::transformNonVirtual(const Transformation* environmentTransform)
 	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 	{
 		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+	{
+		Container::applyEnvironmentToPosition(this, environmentTransform);
 	}
 
 	// if I have children
@@ -744,12 +744,6 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	// apply environment transformation
-	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
-	}
-
 	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 	{
 		Container::applyEnvironmentToRotation(this, environmentTransform);
@@ -758,6 +752,12 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 	{
 		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	// apply environment transformation
+	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+	{
+		Container::applyEnvironmentToPosition(this, environmentTransform);
 	}
 
 	Container::transformChildren(this, invalidateTransformationFlag);
