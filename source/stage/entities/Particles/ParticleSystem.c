@@ -68,6 +68,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s
 	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
+	this->transformed = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -129,8 +130,6 @@ void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 
 void ParticleSystem::configure()
 {
-	this->animationName = this->particleSystemSpec->particleSpec->initialAnimation;
-
 	// set size from spec
 	this->size.x += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x);
 	this->size.y += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y);
@@ -279,12 +278,7 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(u32 elapsedTime)
 {
-	if(ParticleSystem::isPaused(this))
-	{
-		return;
-	}
-
-	if(this->hidden)
+	if(ParticleSystem::isPaused(this) || !this->transformed)
 	{
 		return;
 	}
@@ -296,6 +290,11 @@ void ParticleSystem::update(u32 elapsedTime)
 	VirtualNode node = this->particles->head;
 
 	if(NULL == node && this->paused)
+	{
+		return;
+	}
+
+	if(this->hidden)
 	{
 		return;
 	}
@@ -378,7 +377,7 @@ bool ParticleSystem::recycleParticle()
 			Force force = ParticleSystem::getParticleSpawnForce(this);
 			s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
-			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->animationName);
+			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
 
 			return true;
 		}
@@ -503,6 +502,8 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
+	this->transformed = true;
+
 	VirtualNode node = this->particles->head;
 
 	for(; node; node = node->next)
@@ -596,7 +597,7 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->animationName);
+		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -643,6 +644,7 @@ void ParticleSystem::start()
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
+	this->transformed = false;
 	ParticleSystem::show(this);
 }
 
@@ -654,6 +656,7 @@ void ParticleSystem::pause()
 void ParticleSystem::unpause()
 {
 	this->paused = false;
+	this->transformed = false;
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 }
 

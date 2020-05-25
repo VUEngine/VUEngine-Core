@@ -119,8 +119,8 @@ class ParticleSystem : Entity
 	Vector3DFlag spawnPositionDisplacement;
 	Vector3DFlag spawnForceDelta;
 	// Particles' animation name
-	const char* animationName;
 	u8 maximumNumberOfAliveParticles;
+	bool transformed;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  s16 internalId, const char* const name);
