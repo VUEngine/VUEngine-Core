@@ -262,7 +262,6 @@ bool ObjectSpriteContainer::writeSelectedSprite()
 	{
 		if(!isDeleted(this->spritePendingTextureWriting))
 		{
-			PRINT_TIME(10, 10);
 			Sprite::writeTextures(this->spritePendingTextureWriting);
 			textureWritten = true;
 			this->spritePendingTextureWriting = NULL;
