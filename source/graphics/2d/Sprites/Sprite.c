@@ -84,7 +84,7 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-bool Sprite::tryToRender(u16 index, bool evenFrame)
+bool Sprite::render(u16 index, bool evenFrame)
 {
 	this->index = 0;
 

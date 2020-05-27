@@ -218,7 +218,7 @@ abstract class Sprite : Object
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	bool tryToRender(u16 index, bool evenFrame);
+	bool render(u16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();

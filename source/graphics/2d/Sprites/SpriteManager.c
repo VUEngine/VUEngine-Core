@@ -479,7 +479,7 @@ void SpriteManager::render()
 		}
 		else
 		{
-			if(!Sprite::tryToRender(sprite, this->freeLayer--, this->evenFrame))
+			if(!Sprite::render(sprite, this->freeLayer--, this->evenFrame))
 			{
 				++this->freeLayer;
 			}

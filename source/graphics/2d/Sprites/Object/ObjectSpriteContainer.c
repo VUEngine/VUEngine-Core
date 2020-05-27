@@ -265,7 +265,7 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 		}
 		else
 		{
-			if(ObjectSprite::tryToRender(objectSprite, objectIndex, evenFrame))
+			if(ObjectSprite::render(objectSprite, objectIndex, evenFrame))
 			{
 				objectIndex += objectSprite->totalObjects;
 			}

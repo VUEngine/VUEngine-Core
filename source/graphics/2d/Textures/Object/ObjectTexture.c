@@ -65,5 +65,4 @@ void ObjectTexture::destructor()
 void ObjectTexture::setFrameAnimatedMulti(u16 frame)
 {
 	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
-	ObjectTexture::write(this);
 }
