@@ -115,7 +115,6 @@ void SpriteManager::cleanUp()
 
 		for(; node; node = node->next)
 		{
-			VirtualList::removeElement(this->objectSpriteContainers, node->data);
 			delete node->data;
 		}
 
@@ -125,13 +124,6 @@ void SpriteManager::cleanUp()
 
 	if(this->objectSpriteContainers)
 	{
-		VirtualNode node = this->objectSpriteContainers->head;
-
-		for(; node; node = node->next)
-		{
-			delete node->data;
-		}
-
 		delete this->objectSpriteContainers;
 		this->objectSpriteContainers = NULL;
 	}
@@ -422,7 +414,6 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 void SpriteManager::renderTextWorld()
 {
 	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderTextWorld: no more layers");
-	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderTextWorld: no more free layers");
 
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
