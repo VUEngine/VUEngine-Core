@@ -279,7 +279,7 @@ void Sprite::releaseTexture()
  */
 bool Sprite::writeTextures()
 {
-	if(!this->texture)
+	if(isDeleted(this->texture))
 	{
 		return true;
 	}

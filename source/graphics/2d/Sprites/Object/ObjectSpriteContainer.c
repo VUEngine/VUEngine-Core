@@ -248,9 +248,7 @@ void ObjectSpriteContainer::selectSpritePendingTextureWriting()
 
 		if(!isDeleted(objectSprite) && !ObjectSprite::areTexturesWritten(objectSprite))
 		{
-			bool areTexturesWritten = ObjectSprite::writeTextures(objectSprite);
-
-			this->spritePendingTextureWriting = !areTexturesWritten ? objectSprite : NULL;
+			this->spritePendingTextureWriting = objectSprite;
 			break;
 		}
 	}
@@ -262,13 +260,11 @@ bool ObjectSpriteContainer::writeSelectedSprite()
 
 	if(this->spritePendingTextureWriting)
 	{
-		if(!isDeleted(this->spritePendingTextureWriting) && !Sprite::areTexturesWritten(this->spritePendingTextureWriting))
+		if(!isDeleted(this->spritePendingTextureWriting))
 		{
-			this->spritePendingTextureWriting = Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
+			PRINT_TIME(10, 10);
+			Sprite::writeTextures(this->spritePendingTextureWriting);
 			textureWritten = true;
-		}
-		else
-		{
 			this->spritePendingTextureWriting = NULL;
 		}
 	}
