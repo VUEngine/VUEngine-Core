@@ -244,13 +244,13 @@ void ObjectSpriteContainer::selectSpritePendingTextureWriting()
 
 	for(; node; node = node->next)
 	{
-		Sprite sprite = Sprite::safeCast(node->data);
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		if(!isDeleted(sprite) && !Sprite::areTexturesWritten(sprite))
+		if(!isDeleted(objectSprite) && !ObjectSprite::areTexturesWritten(objectSprite))
 		{
-			bool areTexturesWritten = Sprite::writeTextures(sprite);
+			bool areTexturesWritten = ObjectSprite::writeTextures(objectSprite);
 
-			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
+			this->spritePendingTextureWriting = !areTexturesWritten ? objectSprite : NULL;
 			break;
 		}
 	}
