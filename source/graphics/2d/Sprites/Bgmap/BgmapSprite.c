@@ -320,6 +320,8 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 	int my = this->drawSpec.textureSource.my;
 	int mp = this->drawSpec.textureSource.mp;
 
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
+
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
@@ -343,7 +345,6 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 
 	if (__WORLD_SIZE_DISPLACEMENT >= w)
 	{
-		worldPointer->w = 0;
 		return false;
 	}
 
@@ -367,9 +368,6 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 	{
 		if (__WORLD_SIZE_DISPLACEMENT >= h)
 		{
-			worldPointer->head = __WORLD_OFF;
- 
-			worldPointer->h = 0;
 			return false;
 		}
 
@@ -378,7 +376,6 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 #else
 	if (__WORLD_SIZE_DISPLACEMENT >= h)
 	{
-		worldPointer->h = 0;
 		return false;
 	}
 #endif

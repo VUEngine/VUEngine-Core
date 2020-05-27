@@ -379,10 +379,6 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 
 		if(0 >= w)
 		{
-#ifdef __PROFILE_GAME
-			worldPointer->w = 0;
-			worldPointer->h = 0;
-#endif
 			return false;
 		}
 	}
@@ -408,12 +404,6 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 		{
 			if (0 >= h)
 			{
-				worldPointer->head = __WORLD_OFF;
-
-#ifdef __PROFILE_GAME
-				worldPointer->w = 0;
-				worldPointer->h = 0;
-#endif
 				return false;
 			}
 
@@ -422,10 +412,6 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 #else
 		if (0 >= h)
 		{
-#ifdef __PROFILE_GAME
-			worldPointer->w = 0;
-			worldPointer->h = 0;
-#endif
 			return false;
 		}
 #endif

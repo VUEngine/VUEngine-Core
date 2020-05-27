@@ -1334,11 +1334,6 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 		SpriteManager::hideSprites(SpriteManager::getInstance());
 		Sprite sprite = SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), this->currentSprite);
 		Sprite::show(sprite);
-
-		// Wait for the sprite to be rendered before printing it since
-		// some of its attributes are invalid until rendered
-		TimerManager::wait(TimerManager::getInstance(), 50);
-
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}

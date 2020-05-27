@@ -31,6 +31,7 @@
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <BgmapTexture.h>
+#include <TimerManager.h>
 #include <debugUtilities.h>
 
 
@@ -85,6 +86,8 @@ void Sprite::destructor()
 
 bool Sprite::tryToRender(u16 index, bool evenFrame)
 {
+	this->index = 0;
+
 	if((this->texture && (isDeleted(this->texture)) && !this->texture->written) || !this->positioned)
 	{
 		return false;
@@ -93,14 +96,16 @@ bool Sprite::tryToRender(u16 index, bool evenFrame)
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
 					(0x01 & (this->transparent ^ evenFrame));
 
-	this->index = !this->visible ? 0 : index;
-
 	if(!this->visible)
 	{
 		return false;
 	}
 
-	return Sprite::doRender(this, index, evenFrame);
+	this->index = index;
+
+	this->index = !Sprite::doRender(this, this->index, evenFrame) ? 0 : this->index;
+
+	return 0 < this->index;
 }
 
 /**
@@ -787,6 +792,14 @@ bool Sprite::isObject()
  */
 void Sprite::print(int x, int y)
 {
+	// Allow normal rendering once for WORLD values to populate properly
+	u8 transparent = this->transparent;
+	this->transparent = __TRANSPARENCY_NONE;
+
+	// Wait for the sprite to be rendered before printing it since
+	// some of its attributes are invalid until rendered
+	TimerManager::wait(TimerManager::getInstance(), 100);
+
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), this), x + 18, y, NULL);
@@ -814,9 +827,8 @@ void Sprite::print(int x, int y)
 	}
 
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
-	u8 spriteTransparency = Sprite::getTransparent(this);
-	Printing::text(Printing::getInstance(), (spriteTransparency > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), (spriteTransparency == 1) ? "(Even)" : (spriteTransparency == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->position.x, x + 18, y, NULL);
@@ -860,6 +872,8 @@ void Sprite::print(int x, int y)
 		Printing::int(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
 		Printing::int(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
 	}
+
+	this->transparent = transparent;
 }
 
 

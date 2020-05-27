@@ -275,10 +275,6 @@ bool ObjectSpriteContainer::writeSelectedSprite()
 bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	_worldAttributesBaseAddress[this->index].head = this->head;
-#ifdef __PROFILE_GAME
-	_worldAttributesBaseAddress[this->index].w = __SCREEN_WIDTH;
-	_worldAttributesBaseAddress[this->index].h = __SCREEN_HEIGHT;
-#endif
 
 	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
 	{
@@ -326,41 +322,6 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 	}
 
 	return true;
-}
-
-/**
- * Show
- */
-void ObjectSpriteContainer::show()
-{
-	VirtualNode node = this->objectSprites->head;
-
-	for(; node; node = node->next)
-	{
-		Sprite::show(node->data);
-	}
-
-	this->hidden = false;
-}
-
-/**
- * Hide
- */
-void ObjectSpriteContainer::hide()
-{
-	// must check list, because the Sprite's destructor calls this method
-	if(this->objectSprites)
-	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
-		{
-			Sprite::hide(node->data);
-		}
-	}
-
-	// I can never be hidden, otherwise the OBJ rendering gets messed up
-	this->hidden = false;
 }
 
 /**
