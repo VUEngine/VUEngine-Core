@@ -127,9 +127,6 @@ void BgmapSprite::destructor()
 
 	BgmapSprite::releaseTexture(this);
 
-	// force stop rendering
-	this->head = __WORLD_OFF;
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
