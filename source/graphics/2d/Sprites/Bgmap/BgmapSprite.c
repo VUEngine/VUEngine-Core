@@ -320,8 +320,6 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 	int my = this->drawSpec.textureSource.my;
 	int mp = this->drawSpec.textureSource.mp;
 
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
