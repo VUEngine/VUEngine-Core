@@ -90,14 +90,14 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	if(!this->positioned)
 	{
-		return false;
+		return 0;
 	}
 
 	if(this->texture)
 	{
 		if(isDeleted(this->texture))
 		{
-			return false;
+			return 0;
 		}
 
 		if(!this->texture->written)
@@ -106,7 +106,7 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 			if(!this->texture->written)
 			{
-				return false;
+				return 0;
 			}
 		}
 	}
@@ -116,7 +116,7 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	if(!this->visible)
 	{
-		return false;
+		return 0;
 	}
 
 	this->index = Sprite::doRender(this, index, evenFrame);

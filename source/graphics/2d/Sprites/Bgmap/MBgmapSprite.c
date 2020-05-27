@@ -439,7 +439,7 @@ u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
-	BgmapSprite::processHbiasEffects(this, index);
+	MBgmapSprite::processHbiasEffects(this, index);
 
 	return index;
 }
