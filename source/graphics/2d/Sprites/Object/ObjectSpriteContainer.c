@@ -74,7 +74,6 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
-	this->spritePendingTextureWriting = NULL;
 	this->lockSpritesLists = false;
 
 	// clear OBJ memory
@@ -238,43 +237,6 @@ void ObjectSpriteContainer::sortProgressively()
 	}
 }
 
-void ObjectSpriteContainer::selectSpritePendingTextureWriting()
-{
-	VirtualNode node = this->objectSprites->head;
-
-	for(; node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(!isDeleted(objectSprite) && !ObjectSprite::areTexturesWritten(objectSprite))
-		{
-			this->spritePendingTextureWriting = objectSprite;
-			break;
-		}
-	}
-}
-
-bool ObjectSpriteContainer::writeSelectedSprite()
-{
-	bool textureWritten = false;
-
-	if(this->spritePendingTextureWriting)
-	{
-		if(!isDeleted(this->spritePendingTextureWriting))
-		{
-			Sprite::writeTextures(this->spritePendingTextureWriting);
-			textureWritten = true;
-			this->spritePendingTextureWriting = NULL;
-		}
-	}
-	else
-	{
-		ObjectSpriteContainer::selectSpritePendingTextureWriting(this);
-	}
-
-	return textureWritten;
-}
-
 /**
  * Write WORLD data to DRAM
  *
@@ -318,11 +280,6 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 	}
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
-
-	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
-	{
-		ObjectSpriteContainer::writeSelectedSprite(this);
-	}
 
 	return true;
 }

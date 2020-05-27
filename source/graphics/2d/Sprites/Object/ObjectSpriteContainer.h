@@ -46,8 +46,6 @@ class ObjectSpriteContainer : Sprite
 {
 	// object sprites
 	VirtualList objectSprites;
-	// sprite to write
-	ObjectSprite spritePendingTextureWriting;
 	// first object index
 	int firstObjectIndex;
 	// last rendered object index

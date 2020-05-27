@@ -80,6 +80,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
+		Texture::write(this->texture);
+
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
 
