@@ -73,6 +73,8 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
+	this->positioned = true;
+	this->spritePendingTextureWriting = NULL;
 
 	// clear OBJ memory
 	int i = firstObjectIndex;
@@ -87,6 +89,8 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 
 	// must setup the STP registers regardless of the totalObjects
 	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 
 /**
@@ -94,6 +98,8 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
  */
 void ObjectSpriteContainer::destructor()
 {
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
 	VirtualNode node = this->objectSprites->head;
@@ -118,9 +124,9 @@ void ObjectSpriteContainer::destructor()
  * @param objectSprite		Sprite to add
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-bool ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int numberOfObjects)
+bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int numberOfObjects)
 {
-	ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
+	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
 
 	if(objectSprite && this->availableObjects >= numberOfObjects)
 	{
@@ -132,8 +138,8 @@ bool ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int numbe
 		return true;
 	}
 
-	NM_ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
-	NM_ASSERT(this->availableObjects >= numberOfObjects, "ObjectSpriteContainer::addObjectSprite: not enough OBJECTS");
+	NM_ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
+	NM_ASSERT(this->availableObjects >= numberOfObjects, "ObjectSpriteContainer::registerSprite: not enough OBJECTS");
 	return false;
 }
 
@@ -143,10 +149,10 @@ bool ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int numbe
  * @param objectSprite		Sprite to remove
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects)
+void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects)
 {
-	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: null objectSprite");
-	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: null found");
+	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
+	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
 
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
@@ -219,6 +225,48 @@ void ObjectSpriteContainer::sortProgressively()
 	}
 }
 
+void ObjectSpriteContainer::selectSpritePendingTextureWriting()
+{
+	VirtualNode node = this->objectSprites->head;
+
+	for(; node; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(!isDeleted(sprite) && !Sprite::areTexturesWritten(sprite))
+		{
+			bool areTexturesWritten = Sprite::writeTextures(sprite);
+
+			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
+			break;
+		}
+	}
+}
+
+bool ObjectSpriteContainer::writeSelectedSprite()
+{
+	bool textureWritten = false;
+
+	if(this->spritePendingTextureWriting)
+	{
+		if(!isDeleted(this->spritePendingTextureWriting) && !Sprite::areTexturesWritten(this->spritePendingTextureWriting))
+		{
+			this->spritePendingTextureWriting = Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
+			textureWritten = true;
+		}
+		else
+		{
+			this->spritePendingTextureWriting = NULL;
+		}
+	}
+	else
+	{
+		ObjectSpriteContainer::selectSpritePendingTextureWriting(this);
+	}
+
+	return textureWritten;
+}
+
 /**
  * Write WORLD data to DRAM
  *
@@ -226,9 +274,6 @@ void ObjectSpriteContainer::sortProgressively()
  */
 bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	// if render flag is set
-	this->index = index;
-
 	_worldAttributesBaseAddress[this->index].head = this->head;
 #ifdef __PROFILE_GAME
 	_worldAttributesBaseAddress[this->index].w = __SCREEN_WIDTH;
@@ -248,7 +293,7 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		if(objectSprite->hidden | objectSprite->disposed)
+		if(objectSprite->hidden)
 		{
 			continue;
 		}
@@ -274,6 +319,11 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 	}
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
+
+	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
+	{
+		ObjectSpriteContainer::writeSelectedSprite(this);
+	}
 
 	return true;
 }

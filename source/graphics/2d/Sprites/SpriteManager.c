@@ -79,7 +79,6 @@ void SpriteManager::constructor()
 	this->totalPixelsDrawn = 0;
 
 	this->sprites = NULL;
-	this->spritesToDispose = NULL;
 	this->objectSpriteContainers = NULL;
 
 	this->spritePendingTextureWriting = NULL;
@@ -110,12 +109,6 @@ void SpriteManager::destructor()
  */
 void SpriteManager::cleanUp()
 {
-	if(this->spritesToDispose)
-	{
-		delete this->spritesToDispose;
-		this->spritesToDispose = NULL;
-	}
-
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -165,7 +158,6 @@ void SpriteManager::reset()
 	}
 
 	this->sprites = new VirtualList();
-	this->spritesToDispose = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
@@ -208,7 +200,7 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 	{
 		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
 
-		if(0 <= size[i])
+		if(0 < size[i])
 		{
 			availableObjects -= size[i];
 			NM_ASSERT(0 <= availableObjects, "SpriteManager::setupObjectSpriteContainers: OBJs depleted");
@@ -217,12 +209,11 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 
 			PixelVector position =
 			{
-					0, 0, z[i], 0
+				0, 0, z[i], 0
 			};
 
 			if(size[i])
 			{
-				SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainer));
 				ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
 			}
 
@@ -311,14 +302,8 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, Object owner)
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
-	this->lockSpritesLists = true;
-
 	Sprite sprite = ((Sprite (*)(SpriteSpec*, Object)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
-
-	SpriteManager::registerSprite(this, sprite);
-
-	this->lockSpritesLists = false;
 
 	return sprite;
 }
@@ -337,66 +322,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
 		return;
 	}
 
-	this->lockSpritesLists = true;
-
-	Sprite::releaseTexture(sprite);
-
-	if(!__GET_CAST(ObjectSprite, sprite))
-	{
-		if(sprite && !VirtualList::find(this->spritesToDispose, sprite))
-		{
-			VirtualList::pushBack(this->spritesToDispose, sprite);
-
-			Sprite::disposed(sprite);
-		}
-	}
-	else
-	{
-		delete sprite;
-	}
-
-	this->lockSpritesLists = false;
-}
-
-/**
- * Delete disposable sprites progressively
- *
- * @return 		True if there were a sprite to delete
- */
-bool SpriteManager::disposeSpritesProgressively()
-{
-	if(!this->lockSpritesLists && this->spritesToDispose->head)
-	{
-		this->lockSpritesLists = true;
-
-		Sprite sprite = Sprite::safeCast(VirtualList::popFront(this->spritesToDispose));
-
-		SpriteManager::unregisterSprite(this, sprite);
-
-		delete sprite;
-
-		this->spritePendingTextureWriting = !isDeleted(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
-
-		this->lockSpritesLists = false;
-
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Delete disposable sprites
- *
- * @return 		True if there were a sprite to delete
- */
-void SpriteManager::disposeSprites()
-{
-	if(this->spritesToDispose)
-	{
-		this->lockSpritesLists = false;
-		while(SpriteManager::disposeSpritesProgressively(this));
-	}
+	delete sprite;
 }
 
 /**
@@ -485,15 +411,13 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
-	if(!__GET_CAST(ObjectSprite, sprite))
-	{
-		ASSERT(__GET_CAST(BgmapSprite, sprite), "SpriteManager::unregisterSprite: non bgmap sprite");
+	this->lockSpritesLists = true;
 
-		NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
+	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 
-		// check if exists
-		VirtualList::removeElement(this->sprites, sprite);
-	}
+	VirtualList::removeElement(this->sprites, sprite);
+
+	this->lockSpritesLists = false;
 }
 
 /**
@@ -613,10 +537,6 @@ void SpriteManager::render()
 
 	VIPManager vipManager = VIPManager::getInstance();
 
-	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
-	// as soon as possible
-	SpriteManager::disposeSpritesProgressively(this);
-
 	SpriteManager::sortProgressively(this);
 
 	VirtualNode node = this->sprites->tail;
@@ -627,7 +547,7 @@ void SpriteManager::render()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->hidden | sprite->disposed)
+		if(sprite->hidden)
 		{
 			sprite->index = 0;
 			continue;
@@ -851,9 +771,6 @@ void SpriteManager::prepareAll()
 	// Prevent VIP's interrupt from calling render during this process
 	HardwareManager::disableRendering(HardwareManager::getInstance());
 
-	// Clean up
-	SpriteManager::disposeSprites(this);
-
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(this, false);
 
@@ -938,8 +855,6 @@ void SpriteManager::print(int x, int y, bool resumed)
 	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - 1 - VirtualList::getSize(this->sprites), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Disposed sprites:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->spritesToDispose ? VirtualList::getSize(this->spritesToDispose) : 0, x + 18, y, NULL);
 
 	if(resumed)
 	{

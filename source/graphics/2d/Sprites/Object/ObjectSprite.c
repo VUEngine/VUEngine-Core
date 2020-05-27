@@ -105,7 +105,7 @@ void ObjectSprite::destructor()
 	// and the VPU triggers a new render cycle
 	if(this->objectSpriteContainer)
 	{
-		ObjectSpriteContainer::removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
+		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
 	if(!isDeleted(this->texture))
@@ -202,7 +202,7 @@ void ObjectSprite::checkForContainer()
 	if(NULL == this->objectSpriteContainer && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
-		ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
+		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 }
 
@@ -216,12 +216,7 @@ void ObjectSprite::checkForContainer()
  */
 bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	if(!this->texture->written)
-	{
-		ObjectTexture::write(this->texture);
-	}
-
-	if(isDeleted(this->texture->charSet))
+	if(isDeleted(this->texture) || isDeleted(this->texture->charSet))
 	{
 		return false;
 	}

@@ -162,8 +162,6 @@ abstract class Sprite : Object
 	u16 index;
 	// Flag for making it transparent
 	u8 transparent;
-	// Disposed flag
-	bool disposed : 1;
 	// Hidden flag
 	bool hidden : 1;
 	// Update animation
@@ -219,7 +217,6 @@ abstract class Sprite : Object
 	AnimationController getAnimationController();
 	bool isVisible();
 	bool isWithinScreenSpace();
-	void disposed();
 	bool isDisposed();
 	bool tryToRender(u16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);

@@ -67,10 +67,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
 		NM_ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
-	else
-	{
-		NM_ASSERT(this->texture, "BgmapSprite::constructor: null texture spec");
-	}
 
 	if(this->texture)
 	{
@@ -106,6 +102,8 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
+
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 
 /**
@@ -116,6 +114,8 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
  */
 void BgmapSprite::destructor()
 {
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
 	// if affine or bgmap
@@ -343,10 +343,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 
 	if (__WORLD_SIZE_DISPLACEMENT >= w)
 	{
-#ifdef __PROFILE_GAME
 		worldPointer->w = 0;
-		worldPointer->h = 0;
-#endif
 		return false;
 	}
 
@@ -372,10 +369,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 		{
 			worldPointer->head = __WORLD_OFF;
  
-#ifdef __PROFILE_GAME
-			worldPointer->w = 0;
 			worldPointer->h = 0;
-#endif
 			return false;
 		}
 
@@ -384,10 +378,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 #else
 	if (__WORLD_SIZE_DISPLACEMENT >= h)
 	{
-#ifdef __PROFILE_GAME
-		worldPointer->w = 0;
 		worldPointer->h = 0;
-#endif
 		return false;
 	}
 #endif

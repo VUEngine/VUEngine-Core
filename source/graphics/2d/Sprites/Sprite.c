@@ -69,7 +69,6 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
-	this->disposed = false;
 }
 
 /**
@@ -86,7 +85,7 @@ void Sprite::destructor()
 
 bool Sprite::tryToRender(u16 index, bool evenFrame)
 {
-	if((this->texture && (isDeleted(this->texture)) | !this->texture->written) || !this->positioned)
+	if((this->texture && (isDeleted(this->texture)) && !this->texture->written) || !this->positioned)
 	{
 		return false;
 	}
@@ -142,16 +141,6 @@ void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute_
 Texture Sprite::getTexture()
 {
 	return this->texture;
-}
-
-/**
- * Set disposed
- */
-void Sprite::disposed()
-{
-	Sprite::hide(this);
-
-	this->disposed = true;
 }
 
 /**

@@ -66,8 +66,6 @@ singleton class SpriteManager : Object
 {
 	// list of sprites to render
 	VirtualList sprites;
-	// list of sprites to delete
-	VirtualList spritesToDispose;
 	// list of object sprite containers
 	VirtualList objectSpriteContainers;
 	// sprite's texture writing
@@ -94,6 +92,8 @@ singleton class SpriteManager : Object
 	/// @publicsection
 	static SpriteManager getInstance();
 	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
+	void registerSprite(Sprite sprite);
+	void unregisterSprite(Sprite sprite);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);

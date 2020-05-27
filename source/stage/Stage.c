@@ -1037,7 +1037,6 @@ void Stage::streamAll()
 
 	Stage::unloadOutOfRangeEntities(this, false);
 	Stage::purgeChildren(this);
-	SpriteManager::disposeSprites(SpriteManager::getInstance());
 	Stage::loadInRangeEntities(this, false);
 	while(EntityFactory::prepareEntities(this->entityFactory));
 //	EntityFactory::prepareAllEntities(this->entityFactory);			// Seems it is buggy

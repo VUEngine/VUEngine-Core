@@ -46,6 +46,8 @@ class ObjectSpriteContainer : Sprite
 {
 	// object sprites
 	VirtualList objectSprites;
+	// sprite to write
+	ObjectSprite spritePendingTextureWriting;
 	// first object index
 	int firstObjectIndex;
 	// last rendered object index
@@ -59,7 +61,7 @@ class ObjectSpriteContainer : Sprite
 
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
-	bool addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
+	bool registerSprite(ObjectSprite objectSprite, int numberOfObjects);
 	int getAvailableObjects();
 	int getFirstObjectIndex();
 	int getLastObjectIndex();
@@ -67,7 +69,7 @@ class ObjectSpriteContainer : Sprite
 	int getTotalUsedObjects();
 	bool hasRoomFor(s32 numberOfObjects);
 	void position(const Vector3D* position);
-	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
+	void unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override bool doRender(u16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void show();

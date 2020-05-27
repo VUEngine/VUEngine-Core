@@ -250,11 +250,6 @@ void Entity::releaseSprites(bool forcePurgingGraphicalMemory)
 		// delete the sprites
 		delete this->sprites;
 		this->sprites = NULL;
-
-		if(forcePurgingGraphicalMemory)
-		{
-			SpriteManager::disposeSprites(SpriteManager::getInstance());
-		}
 	}
 }
 
