@@ -259,6 +259,7 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 	s16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
+	bool rendered = false;
 
 	for(; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
@@ -300,10 +301,12 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 			s32 charNumberIndex = (jDisplacement + j) << 1;
 			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			_objectAttributesBaseAddress[objectIndex + 3] = fourthWordValue | charNumber;
+
+			rendered = true;
 		}
 	}
 
-	return true;
+	return rendered;
 }
 
 /**

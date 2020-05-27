@@ -378,15 +378,12 @@ void SpriteManager::registerSprite(Sprite sprite)
 	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
 	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
-	if(!VirtualList::find(this->sprites, sprite))
-	{
-		this->lockSpritesLists = true;
+	this->lockSpritesLists = true;
 
-		// add to the front: last element corresponds to the 31 WORLD
-		VirtualList::pushFront(this->sprites, sprite);
+	// add to the front: last element corresponds to the 31 WORLD
+	VirtualList::pushFront(this->sprites, sprite);
 
-		this->lockSpritesLists = false;
-	}
+	this->lockSpritesLists = false;
 }
 
 /**

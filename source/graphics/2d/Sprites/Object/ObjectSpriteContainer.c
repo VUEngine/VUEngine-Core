@@ -128,6 +128,8 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int number
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
 
+	NM_ASSERT(!VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::registerSprite: already registered");
+
 	if(objectSprite && this->availableObjects >= numberOfObjects)
 	{
 		this->lockSpritesLists = true;
@@ -155,7 +157,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int number
 void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
-	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
+	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
 
 	this->lockSpritesLists = true;
 

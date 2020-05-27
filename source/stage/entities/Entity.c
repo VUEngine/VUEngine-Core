@@ -232,7 +232,6 @@ void Entity::releaseGraphics()
 /**
  * Delete all of the Entity's sprites
  *
- * @param forcePurgingGraphicalMemory	Calls the SpriteManager to purge graphics memory. May cause graphical corruption if done during VIP drawing
  */
 void Entity::releaseSprites()
 {
