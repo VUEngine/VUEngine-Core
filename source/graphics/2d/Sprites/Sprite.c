@@ -499,10 +499,10 @@ int Sprite::getHalfHeight()
  */
 void Sprite::update()
 {
-	if(this->animationController && this->texture)
+	if(this->animationController)
 	{
 		// first animate the frame
-		if(this->writeAnimationFrame && this->visible)
+		if(this->writeAnimationFrame)
 		{
 			Sprite::writeAnimation(this);
 			this->writeAnimationFrame = false;

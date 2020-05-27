@@ -100,7 +100,6 @@ class MBgmapSprite : BgmapSprite
 	override void setMode(u16 display, u16 mode);
 	override bool writeTextures();
 	override void releaseTexture();
-	override bool areTexturesWritten();
 }
 
 
