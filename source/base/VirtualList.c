@@ -365,6 +365,60 @@ void* VirtualList::getObject(void* const dataPointer)
  * Remove a node
  *
  * @param node		Node to be removed from list
+ */
+bool VirtualList::doRemoveNode(VirtualNode node)
+{
+	if(NULL == node)
+	{
+		return false;
+	}
+
+	// if the node is the head of the list
+	if(node == this->head)
+	{
+		if(node->next)
+		{
+			// move head to next element
+			this->head = node->next;
+
+			// move head's previous pointer
+			this->head->previous = NULL;
+		}
+		else
+		{
+			// set head
+			this->head = this->tail = NULL;
+		}
+	}
+	else
+	{
+		// if node isn't the last in the list
+		if(node == this->tail)
+		{
+			// set the tail
+			this->tail = this->tail->previous;
+
+			this->tail->next = NULL;
+		}
+		else
+		{
+			// join the previous and next nodes
+			node->previous->next = node->next;
+
+			node->next->previous = node->previous;
+		}
+	}
+
+	// free dynamic memory
+	delete node;
+
+	return true;
+}
+
+/**
+ * Remove a node
+ *
+ * @param node		Node to be removed from list
  * @return				Flag whether action was successful or not
  */
 bool VirtualList::removeNode(VirtualNode node)
@@ -372,46 +426,7 @@ bool VirtualList::removeNode(VirtualNode node)
 	// if node isn't null
 	if(VirtualList::checkThatNodeIsPresent(this, node))
 	{
-		// if the node is the head of the list
-		if(node == this->head)
-		{
-			if(node->next)
-			{
-				// move head to next element
-				this->head = node->next;
-
-				// move head's previous pointer
-				this->head->previous = NULL;
-			}
-			else
-			{
-				// set head
-				this->head = this->tail = NULL;
-			}
-		}
-		else
-		{
-			// if node isn't the last in the list
-			if(node == this->tail)
-			{
-				// set the tail
-				this->tail = this->tail->previous;
-
-				this->tail->next = NULL;
-			}
-			else
-			{
-				// join the previous and next nodes
-				node->previous->next = node->next;
-
-				node->next->previous = node->previous;
-			}
-		}
-
-		// free dynamic memory
-		delete node;
-
-		return true;
+		return VirtualList::doRemoveNode(this, node);
 	}
 
 	return false;
@@ -472,7 +487,7 @@ int VirtualList::getNodePosition(VirtualNode node)
  */
 bool VirtualList::removeElement(const void* const dataPointer)
 {
-	return VirtualList::removeNode(this, VirtualList::find(this, dataPointer));
+	return VirtualList::doRemoveNode(this, VirtualList::find(this, dataPointer));
 }
 
 /**
@@ -671,9 +686,10 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
  */
 VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 {
-#ifdef __DEBUG
-	VirtualList::checkThatNodeIsPresent(this, node);
-#endif
+	if(!VirtualList::checkThatNodeIsPresent(this, node))
+	{
+		return NULL;
+	}
 
 	VirtualNode newNode = NULL;
 

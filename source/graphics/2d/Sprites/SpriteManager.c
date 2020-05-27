@@ -383,21 +383,17 @@ void SpriteManager::registerSprite(Sprite sprite)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	if(!__GET_CAST(ObjectSprite, sprite))
+	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
+	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
+
+	if(!VirtualList::find(this->sprites, sprite))
 	{
-		VirtualNode alreadyLoadedSpriteNode = VirtualList::find(this->sprites, sprite);
+		this->lockSpritesLists = true;
 
-		NM_ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::registerSprite: sprite already registered");
+		// add to the front: last element corresponds to the 31 WORLD
+		VirtualList::pushFront(this->sprites, sprite);
 
-		if(!alreadyLoadedSpriteNode)
-		{
-			this->lockSpritesLists = true;
-
-			// add to the front: last element corresponds to the 31 WORLD
-			VirtualList::pushFront(this->sprites, sprite);
-
-			this->lockSpritesLists = false;
-		}
+		this->lockSpritesLists = false;
 	}
 }
 
@@ -557,11 +553,6 @@ void SpriteManager::render()
 			if(Sprite::tryToRender(sprite, this->freeLayer, this->evenFrame))
 			{
 				this->freeLayer--;
-
-				if((u32)sprite->animationController && !VIPManager::hasFrameStarted(vipManager))
-				{
-					Sprite::update(sprite);
-				}
 			}
 		}
 	}

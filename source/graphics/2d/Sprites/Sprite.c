@@ -103,7 +103,9 @@ bool Sprite::tryToRender(u16 index, bool evenFrame)
 
 	this->index = index;
 
-	this->index = !Sprite::doRender(this, this->index, evenFrame) ? 0 : this->index;
+	this->index = !Sprite::doRender(this, index, evenFrame) ? 0 : this->index;
+
+	Sprite::update(this);
 
 	return 0 < this->index;
 }

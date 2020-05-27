@@ -58,6 +58,8 @@ class ObjectSpriteContainer : Sprite
 	int availableObjects;
 	// spt index
 	int spt;
+	// semaphore to prevent manipulation of VirtualList during interrupt
+	bool lockSpritesLists;
 
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);

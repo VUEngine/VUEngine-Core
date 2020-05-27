@@ -75,6 +75,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
 	this->spritePendingTextureWriting = NULL;
+	this->lockSpritesLists = false;
 
 	// clear OBJ memory
 	int i = firstObjectIndex;
@@ -130,10 +131,13 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int number
 
 	if(objectSprite && this->availableObjects >= numberOfObjects)
 	{
+		this->lockSpritesLists = true;
 
 		VirtualList::pushBack(this->objectSprites, objectSprite);
 
 		this->availableObjects -= numberOfObjects;
+
+		this->lockSpritesLists = false;
 
 		return true;
 	}
@@ -154,10 +158,14 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numb
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
 	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
 
+	this->lockSpritesLists = true;
+
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 
 	this->availableObjects += numberOfObjects;
+
+	this->lockSpritesLists = false;
 }
 
 /**
@@ -200,6 +208,11 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  */
 void ObjectSpriteContainer::sortProgressively()
 {
+	if(this->lockSpritesLists)
+	{
+		return;
+	}
+
 	VirtualNode node = this->objectSprites->tail;
 
 	for(; node; node = node->previous)
@@ -298,11 +311,6 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 			if(ObjectSprite::tryToRender(objectSprite, objectIndex, evenFrame))
 			{
 				objectIndex += objectSprite->totalObjects;
-
-				if((u32)objectSprite->animationController)
-				{
-					ObjectSprite::update(objectSprite);
-				}
 			}
 		}
 	}
