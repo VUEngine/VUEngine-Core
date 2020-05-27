@@ -221,7 +221,7 @@ static void VIPManager::interruptHandler()
 		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 	}
 
-	_vipManager->frameStarted = false;
+	_vipManager->frameStarted = _vipManager->processingXPEND;
 }
 
 /**
@@ -344,8 +344,8 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 				{
 					static u32 count = 0;
-					PRINT_TEXT("VIP Overtime!    (   )", 0, 27);
-					PRINT_INT(++count, 18, 27);
+					PRINT_TEXT("VIP Overtime!    (   )", 10, 27);
+					PRINT_INT(++count, 28, 27);
 				}
 
 				break;
