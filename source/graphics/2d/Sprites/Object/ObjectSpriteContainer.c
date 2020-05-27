@@ -433,13 +433,3 @@ bool ObjectSpriteContainer::writeTextures()
 {
 	return true;
 }
-
-/**
- * Check if all textures are written
- *
- * @return			true it all textures are written
- */
-bool ObjectSpriteContainer::areTexturesWritten()
-{
-	return true;
-}

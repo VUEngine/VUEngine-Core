@@ -546,31 +546,4 @@ bool MBgmapSprite::writeTextures()
 	return !node;
 }
 
-/**
- * Check if all textures are written
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @return			true it all textures are written
- */
-bool MBgmapSprite::areTexturesWritten()
-{
-	if(!this->textures)
-	{
-		return true;
-	}
-
-	VirtualNode node = this->textures->head;
-
-	for(; node; node = node->next)
-	{
-		if(!(Texture::safeCast(node->data))->written)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
 

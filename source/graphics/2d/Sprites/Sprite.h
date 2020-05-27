@@ -223,7 +223,6 @@ abstract class Sprite : Object
 	void hide();
 	void show();
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
-	virtual bool areTexturesWritten();
 	virtual Scale getScale();
 	virtual u8 getWorldLayer();
 	virtual void position(const Vector3D* position);

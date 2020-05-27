@@ -75,7 +75,6 @@ class ObjectSpriteContainer : Sprite
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);
 	override bool writeTextures();
-	override bool areTexturesWritten();
 	override void print(int x, int y);
 	override int getTotalPixels();
 }

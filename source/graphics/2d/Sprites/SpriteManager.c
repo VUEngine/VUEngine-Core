@@ -431,28 +431,6 @@ int SpriteManager::getNumberOfSprites()
 }
 
 /**
- * Select the sprite to write
- */
-void SpriteManager::selectSpritePendingTextureWriting()
-{
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(!isDeleted(sprite) && !Sprite::areTexturesWritten(sprite))
-		{
-			bool areTexturesWritten = Sprite::writeTextures(sprite);
-
-			this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
-			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
-			break;
-		}
-	}
-}
-
-/**
  * Write textures to DRAM
  */
 void SpriteManager::writeTextures()
@@ -472,46 +450,6 @@ void SpriteManager::writeTextures()
 	}
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
-}
-
-/**
- * Write selected texture to DRAM
- */
-bool SpriteManager::writeSelectedSprite()
-{
-	if(this->lockSpritesLists)
-	{
-		return false;
-	}
-
-	bool textureWritten = false;
-
-	if(!this->waitToWriteSpriteTextures)
-	{
-		if(this->spritePendingTextureWriting)
-		{
-			if(!isDeleted(this->spritePendingTextureWriting) && !Sprite::areTexturesWritten(this->spritePendingTextureWriting))
-			{
-				this->spritePendingTextureWriting = Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
-				this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
-				textureWritten = true;
-			}
-			else
-			{
-				this->spritePendingTextureWriting = NULL;
-			}
-		}
-		else
-		{
-			SpriteManager::selectSpritePendingTextureWriting(this);
-		}
-	}
-	else
-	{
-		this->waitToWriteSpriteTextures--;
-	}
-
-	return textureWritten;
 }
 
 /**
@@ -560,7 +498,7 @@ void SpriteManager::render()
 
 	if(!VIPManager::hasFrameStarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
-		if(!VIPManager::hasFrameStarted(vipManager) && !SpriteManager::writeSelectedSprite(this))
+		if(!VIPManager::hasFrameStarted(vipManager))
 		{
 			ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 		}

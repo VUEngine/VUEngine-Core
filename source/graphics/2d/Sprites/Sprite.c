@@ -88,7 +88,25 @@ bool Sprite::tryToRender(u16 index, bool evenFrame)
 {
 	this->index = 0;
 
-	if((this->texture && (isDeleted(this->texture)) && !this->texture->written) || !this->positioned)
+	if(this->texture)
+	{
+		if(isDeleted(this->texture))
+		{
+			return false;
+		}
+
+		if(!this->texture->written)
+		{
+			Texture::write(this->texture);
+
+			if(!this->texture->written)
+			{
+				return false;
+			}
+		}
+	}
+
+	if(!this->positioned)
 	{
 		return false;
 	}
@@ -290,16 +308,6 @@ bool Sprite::writeTextures()
 	}
 
 	return this->texture->written;
-}
-
-/**
- * Check if all textures are written
- *
- * @return			true it all textures are written
- */
-bool Sprite::areTexturesWritten()
-{
-	return !this->texture ? true : this->texture->written;
 }
 
 /**
