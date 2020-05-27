@@ -84,9 +84,14 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-bool Sprite::render(u16 index, bool evenFrame)
+u16 Sprite::render(u16 index, bool evenFrame)
 {
 	this->index = 0;
+
+	if(!this->positioned)
+	{
+		return false;
+	}
 
 	if(this->texture)
 	{
@@ -106,11 +111,6 @@ bool Sprite::render(u16 index, bool evenFrame)
 		}
 	}
 
-	if(!this->positioned)
-	{
-		return false;
-	}
-
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
 					(0x01 & (this->transparent ^ evenFrame));
 
@@ -119,13 +119,11 @@ bool Sprite::render(u16 index, bool evenFrame)
 		return false;
 	}
 
-	this->index = index;
-
-	this->index = !Sprite::doRender(this, index, evenFrame) ? 0 : this->index;
+	this->index = Sprite::doRender(this, index, evenFrame);
 
 	Sprite::update(this);
 
-	return 0 < this->index;
+	return this->index;
 }
 
 /**

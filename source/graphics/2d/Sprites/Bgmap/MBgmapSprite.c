@@ -326,10 +326,10 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
 	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[this->index];
+	worldPointer = &_worldAttributesBaseAddress[index];
 
 	// TODO: check if required, causes that the sprite is turned off
 	// when changing the texture spec
@@ -379,7 +379,7 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 
 		if(0 >= w)
 		{
-			return false;
+			return 0;
 		}
 	}
 	else
@@ -404,7 +404,7 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 		{
 			if (0 >= h)
 			{
-				return false;
+				return 0;
 			}
 
 			my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
@@ -412,7 +412,7 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 #else
 		if (0 >= h)
 		{
-			return false;
+			return 0;
 		}
 #endif
 	}
@@ -439,9 +439,9 @@ bool MBgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
-	BgmapSprite::processHbiasEffects(this);
+	BgmapSprite::processHbiasEffects(this, index);
 
-	return true;
+	return index;
 }
 
 /**

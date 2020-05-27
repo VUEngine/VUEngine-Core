@@ -214,11 +214,11 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
 	if(isDeleted(this->texture) || isDeleted(this->texture->charSet))
 	{
-		return false;
+		return 0;
 	}
 
 	s16 cols = this->texture->textureSpec->cols;
@@ -259,7 +259,7 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 	s16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
-	bool rendered = false;
+	u16 result = 0;
 
 	for(; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
@@ -270,7 +270,7 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = (this->index + jDisplacement + j) << 2;
+				s16 objectIndex = (index + jDisplacement + j) << 2;
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
@@ -282,7 +282,7 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = (this->index + jDisplacement + j) << 2;
+			s16 objectIndex = (index + jDisplacement + j) << 2;
 
 			s16 outputX = x + xDisplacement;
 
@@ -302,11 +302,11 @@ bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __
 			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			_objectAttributesBaseAddress[objectIndex + 3] = fourthWordValue | charNumber;
 
-			rendered = true;
+			result = index;
 		}
 	}
 
-	return rendered;
+	return result;
 }
 
 /**

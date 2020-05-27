@@ -218,7 +218,7 @@ abstract class Sprite : Object
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	bool render(u16 index, bool evenFrame);
+	u16 render(u16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();
@@ -226,7 +226,7 @@ abstract class Sprite : Object
 	virtual Scale getScale();
 	virtual u8 getWorldLayer();
 	virtual void position(const Vector3D* position);
-	virtual bool doRender(u16 index, bool evenFrame) = 0;
+	virtual u16 doRender(u16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

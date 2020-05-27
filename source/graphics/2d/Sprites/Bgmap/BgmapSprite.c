@@ -287,10 +287,10 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
 	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[this->index];
+	worldPointer = &_worldAttributesBaseAddress[index];
 
 	// TODO: check if required, causes that the sprite is turned off when changing the texture spec
 /*
@@ -343,7 +343,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 
 	if (__WORLD_SIZE_DISPLACEMENT >= w)
 	{
-		return false;
+		return 0;
 	}
 
 /*
@@ -366,7 +366,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 	{
 		if (__WORLD_SIZE_DISPLACEMENT >= h)
 		{
-			return false;
+			return 0;
 		}
 
 		my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
@@ -374,7 +374,7 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 #else
 	if (__WORLD_SIZE_DISPLACEMENT >= h)
 	{
-		return false;
+		return 0;
 	}
 #endif
 
@@ -392,13 +392,13 @@ bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __a
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// set the world size according to the zoom
-	BgmapSprite::processAffineEffects(this, gx, width, myDisplacement);
-	BgmapSprite::processHbiasEffects(this);
+	BgmapSprite::processAffineEffects(this, index, gx, width, myDisplacement);
+	BgmapSprite::processHbiasEffects(this, index);
 
-	return true;
+	return index;
 }
 
-void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
+void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDisplacement)
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
@@ -409,7 +409,7 @@ void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
     	}
 
 		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[this->index];
+    	worldPointer = &_worldAttributesBaseAddress[index];
 
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
@@ -442,7 +442,7 @@ void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
 
 }
 
-void BgmapSprite::processHbiasEffects()
+void BgmapSprite::processHbiasEffects(u16 index)
 {
 	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
@@ -453,7 +453,7 @@ void BgmapSprite::processHbiasEffects()
     	}
 
 		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[this->index];
+    	worldPointer = &_worldAttributesBaseAddress[index];
 
  		ASSERT(0 <= ((signed)this->param - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
 
@@ -490,12 +490,12 @@ void BgmapSprite::displacement()
 	{
 		if(this->hidden)
 		{
-			WORLD_HEAD(this->index, 0x0000);
+			WORLD_HEAD(index, 0x0000);
 			return;
 		}
 
 		static WorldAttributes* worldPointer = NULL;
-		worldPointer = &_worldAttributesBaseAddress[this->index];
+		worldPointer = &_worldAttributesBaseAddress[index];
 
 		// set the world camera position
 		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);

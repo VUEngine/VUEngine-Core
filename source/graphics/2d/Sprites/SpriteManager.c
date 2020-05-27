@@ -467,15 +467,16 @@ void SpriteManager::render()
 
 		if(sprite->hidden)
 		{
-			sprite->index = 0;
 			continue;
 		}
 		else
 		{
-			if(!Sprite::render(sprite, this->freeLayer--, this->evenFrame))
+			if(this->freeLayer != Sprite::render(sprite, this->freeLayer, this->evenFrame))
 			{
-				++this->freeLayer;
+				continue;
 			}
+
+			this->freeLayer--;
 		}
 	}
 

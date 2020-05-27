@@ -244,9 +244,9 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	_worldAttributesBaseAddress[this->index].head = this->head;
+	_worldAttributesBaseAddress[index].head = this->head;
 
 	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
 	{
@@ -267,10 +267,12 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 		}
 		else
 		{
-			if(ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+			if(objectIndex != ObjectSprite::render(objectSprite, objectIndex, evenFrame))
 			{
-				objectIndex += objectSprite->totalObjects;
+				continue;
 			}
+
+			objectIndex += objectSprite->totalObjects;
 		}
 	}
 
@@ -283,7 +285,7 @@ bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool eve
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
 
-	return true;
+	return index;
 }
 
 /**
