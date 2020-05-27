@@ -121,7 +121,10 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	this->index = Sprite::doRender(this, index, evenFrame);
 
-	Sprite::update(this);
+	if(0 < this->index)
+	{
+		Sprite::update(this);
+	}
 
 	return this->index;
 }
