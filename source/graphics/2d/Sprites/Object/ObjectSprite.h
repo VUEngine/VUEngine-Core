@@ -86,7 +86,7 @@ class ObjectSprite : Sprite
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
 	s16 getTotalObjects();
 	void invalidateObjectSpriteContainer();
-	override bool render(u16 index, bool evenFrame);
+	override bool doRender(u16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void position(const Vector3D* position3D);
 	override void rotate(const Rotation* rotation);

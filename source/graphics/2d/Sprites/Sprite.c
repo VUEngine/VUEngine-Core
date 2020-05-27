@@ -29,6 +29,7 @@
 #include <Camera.h>
 #include <VIPManager.h>
 #include <Optics.h>
+#include <SpriteManager.h>
 #include <BgmapTexture.h>
 #include <debugUtilities.h>
 
@@ -81,6 +82,26 @@ void Sprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+bool Sprite::tryToRender(u16 index, bool evenFrame)
+{
+	if((this->texture && (isDeleted(this->texture)) | !this->texture->written) || !this->positioned)
+	{
+		return false;
+	}
+
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					(0x01 & (this->transparent ^ evenFrame));
+
+	this->index = !this->visible ? 0 : index;
+
+	if(!this->visible)
+	{
+		return false;
+	}
+
+	return Sprite::doRender(this, index, evenFrame);
 }
 
 /**
@@ -390,7 +411,7 @@ s16 Sprite::getWorldMP()
 u16 Sprite::getWorldWidth()
 {
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
-	return worldPointer->w;
+	return 0 > (s16)worldPointer->w ? 0 : worldPointer->w;
 }
 
 /**
@@ -401,7 +422,7 @@ u16 Sprite::getWorldWidth()
 u16 Sprite::getWorldHeight()
 {
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
-	return worldPointer->h;
+	return 0 > (s16)worldPointer->h ? 0 : worldPointer->h;
 }
 
 /**
@@ -778,8 +799,8 @@ bool Sprite::isObject()
 void Sprite::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Layer: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->index, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
@@ -895,7 +916,7 @@ int Sprite::getTotalPixels()
 {
 	if(0 < (s8)this->index)
 	{
-		return (_worldAttributesBaseAddress[this->index].w + 1) * (_worldAttributesBaseAddress[this->index].h + 1);
+		return Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this);
 	}
 
 	return 0;

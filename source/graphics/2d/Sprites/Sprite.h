@@ -221,6 +221,7 @@ abstract class Sprite : Object
 	bool isWithinScreenSpace();
 	void disposed();
 	bool isDisposed();
+	bool tryToRender(u16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual bool areTexturesWritten();
@@ -228,7 +229,7 @@ abstract class Sprite : Object
 	virtual u8 getWorldLayer();
 	virtual void hide();
 	virtual void position(const Vector3D* position);
-	virtual bool render(u16 index, bool evenFrame) = 0;
+	virtual bool doRender(u16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

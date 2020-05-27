@@ -265,7 +265,6 @@ void BgmapTexture::doWrite()
 
 	u32 numberOfHWORDS = this->textureSpec->cols;
 
-	bool disableCache = false;
 	u16 flip = ((this->textureSpec->horizontalFlip << 1) | this->textureSpec->verticalFlip) << 12;
 
 	if(this->textureSpec->horizontalFlip)

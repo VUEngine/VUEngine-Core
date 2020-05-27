@@ -224,7 +224,7 @@ void ObjectSpriteContainer::sortProgressively()
  *
  * @param evenFrame
  */
-bool ObjectSpriteContainer::render(u16 index, bool evenFrame)
+bool ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	// if render flag is set
 	this->index = index;
@@ -254,7 +254,7 @@ bool ObjectSpriteContainer::render(u16 index, bool evenFrame)
 		}
 		else
 		{
-			if(ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+			if(ObjectSprite::tryToRender(objectSprite, objectIndex, evenFrame))
 			{
 				objectIndex += objectSprite->totalObjects;
 
@@ -401,8 +401,8 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
 void ObjectSpriteContainer::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Layer: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->index, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);

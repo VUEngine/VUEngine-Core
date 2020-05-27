@@ -68,7 +68,7 @@ class ObjectSpriteContainer : Sprite
 	bool hasRoomFor(s32 numberOfObjects);
 	void position(const Vector3D* position);
 	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
-	override bool render(u16 index, bool evenFrame);
+	override bool doRender(u16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void show();
 	override void hide();

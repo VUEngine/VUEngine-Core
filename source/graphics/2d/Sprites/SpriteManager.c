@@ -175,7 +175,7 @@ void SpriteManager::reset()
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
 
-	SpriteManager::renderLastLayer(this);
+	SpriteManager::renderTextWorld(this);
 
 	this->lockSpritesLists = false;
 	this->evenFrame = true;
@@ -499,10 +499,10 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 /**
  * Render the WORLD destined to printing output
  */
-void SpriteManager::renderLastLayer()
+void SpriteManager::renderTextWorld()
 {
-	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderLastLayer: no more layers");
-	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderLastLayer: no more free layers");
+	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderTextWorld: no more layers");
+	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderTextWorld: no more free layers");
 
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
@@ -512,6 +512,11 @@ void SpriteManager::renderLastLayer()
 	{
 		_worldAttributesBaseAddress[this->freeLayer - 1].head = __WORLD_END;
 	}
+}
+
+int SpriteManager::getNumberOfSprites()
+{
+	return VirtualList::getSize(this->sprites);
 }
 
 /**
@@ -624,11 +629,12 @@ void SpriteManager::render()
 
 		if(sprite->hidden | sprite->disposed)
 		{
+			sprite->index = 0;
 			continue;
 		}
 		else
 		{
-			if(Sprite::render(sprite, this->freeLayer, this->evenFrame))
+			if(Sprite::tryToRender(sprite, this->freeLayer, this->evenFrame))
 			{
 				this->freeLayer--;
 
@@ -648,7 +654,7 @@ void SpriteManager::render()
 #endif
 
 	// configure printing layer and shutdown unused layers
-	SpriteManager::renderLastLayer(this);
+	SpriteManager::renderTextWorld(this);
 
 	if(!VIPManager::hasFrameStarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
@@ -687,33 +693,24 @@ u8 SpriteManager::getFreeLayer()
  *
  * @param layer		WORLD layer to show
  */
-void SpriteManager::showLayer(u8 layer)
+void SpriteManager::hideSprites()
 {
-	VirtualNode node = this->sprites->tail;
+	VirtualNode node = this->sprites->head;
 
-	for(; node; node = node->previous)
+	for(; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->index != layer)
-		{
-			Sprite::hide(sprite);
-		}
-		else
-		{
-			Sprite::show(sprite);
-		}
+		Sprite::hide(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
-
-		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 }
 
 /**
  * Show all WORLD layers
  */
-void SpriteManager::recoverLayers()
+void SpriteManager::showSprites()
 {
 	VirtualNode node = this->sprites->tail;
 	for(; node; node = node->previous)
@@ -727,7 +724,7 @@ void SpriteManager::recoverLayers()
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
-	SpriteManager::renderLastLayer(this);
+	SpriteManager::renderTextWorld(this);
 }
 
 /**
@@ -736,21 +733,42 @@ void SpriteManager::recoverLayers()
  * @param layer		WORLD layer to show
  * @return			Sprite with the given WORLD layer
  */
-Sprite SpriteManager::getSpriteAtLayer(u8 layer)
+Sprite SpriteManager::getSpriteAtPosition(s16 position)
 {
-	ASSERT((unsigned)layer < __TOTAL_LAYERS, "SpriteManager::getSpriteAtLayer: invalid layer");
+	if(0 > position || position >= VirtualList::getSize(this->sprites))
+	{
+		return NULL;
+	}
 
 	VirtualNode node = this->sprites->head;
 
-	for(; node; node = node->next)
+	int counter = 0;
+
+	for(; node; node = node->next, counter++)
 	{
-		if((Sprite::safeCast(node->data))->index == layer)
+		if(counter == position)
 		{
 			return Sprite::safeCast(node->data);
 		}
 	}
 
 	return NULL;
+}
+
+/**
+ * Retrieve the Sprite assigned to the given WORLD
+ *
+ * @param layer		WORLD layer to show
+ * @return			Sprite with the given WORLD layer
+ */
+s16 SpriteManager::getSpritePosition(Sprite sprite)
+{
+	if(isDeleted(sprite) || !VirtualList::find(this->sprites, sprite))
+	{
+		return -1;
+	}
+
+	return VirtualList::getDataPosition(this->sprites, sprite);
 }
 
 /**
@@ -931,9 +949,10 @@ void SpriteManager::print(int x, int y, bool resumed)
 	int auxY = y + 2;
 	int auxX = x;
 
-	VirtualNode node = this->sprites->head;
+	int counter = __TOTAL_LAYERS - 1;
+	VirtualNode node = this->sprites->tail;
 
-	for(; node; node = node->next)
+	for(; node; node = node->previous, counter--)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -942,7 +961,7 @@ void SpriteManager::print(int x, int y, bool resumed)
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
 
-		Printing::int(Printing::getInstance(), Sprite::getWorldLayer(sprite), auxX, auxY, NULL);
+		Printing::int(Printing::getInstance(), counter, auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 //		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);

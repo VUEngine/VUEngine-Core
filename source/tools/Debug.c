@@ -155,7 +155,7 @@ void Debug::constructor()
 
 	this->gameState = NULL;
 
-	this->currentLayer = __TOTAL_LAYERS - 1;
+	this->currentSprite = -1;
 	this->bgmapSegment = 0;
 	this->objectSegment = 0;
 	this->charSegment = 0;
@@ -228,7 +228,7 @@ void Debug::render()
 void Debug::show()
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
 	Debug::showPage(this, 0);
@@ -241,7 +241,7 @@ void Debug::hide()
 {
 	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 }
 
 /**
@@ -256,7 +256,7 @@ u8 Debug::getCurrentPageNumber()
 
 void Debug::setBlackBackground()
 {
-	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
+	SpriteManager::hideSprites(SpriteManager::getInstance());
 }
 
 /**
@@ -305,7 +305,7 @@ void Debug::processUserInput(u16 pressedKey)
  */
 void Debug::showPreviousPage()
 {
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -322,7 +322,7 @@ void Debug::showPreviousPage()
  */
 void Debug::showNextPage()
 {
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 
 	this->currentPage = this->currentPage->next;
 
@@ -400,7 +400,7 @@ void Debug::showPage(int increment)
 		this->update = NULL;
 
 		VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		SpriteManager::showSprites(SpriteManager::getInstance());
 
 		Debug::printHeader(this);
 		Printing::text(Printing::getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
@@ -1263,7 +1263,8 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
+			SpriteManager::hideSprites(SpriteManager::getInstance());
+			Sprite::show(objectSpriteContainer);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
@@ -1297,7 +1298,7 @@ void Debug::spritesPage(int increment __attribute__ ((unused)), int x __attribut
 	VirtualList::pushBack(this->subPages, &Debug_spritesShowStatus);
 	this->currentSubPage = this->subPages->head;
 
-	this->currentLayer = __TOTAL_LAYERS;
+	this->currentSprite = -1;
 
 	Debug::showSubPage(this, 0);
 }
@@ -1312,32 +1313,39 @@ void Debug::spritesPage(int increment __attribute__ ((unused)), int x __attribut
  */
 void Debug::spritesShowStatus(int increment, int x, int y)
 {
-	this->currentLayer -= increment;
+	this->currentSprite -= increment;
 
 	Debug::dimmGame(this);
 
-	if(this->currentLayer > __TOTAL_LAYERS)
+	int numberOfSprites = SpriteManager::getNumberOfSprites(SpriteManager::getInstance());
+
+	if(this->currentSprite > numberOfSprites)
 	{
-		this->currentLayer = SpriteManager::getFreeLayer(SpriteManager::getInstance()) + 1;
+		this->currentSprite = 0;
 	}
 
-	if(__TOTAL_LAYERS == this->currentLayer)
+	if(numberOfSprites == this->currentSprite)
 	{
 		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
-	else if(SpriteManager::getFreeLayer(SpriteManager::getInstance()) < this->currentLayer)
+	else if(0 <= this->currentSprite && this->currentSprite < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtLayer(SpriteManager::getInstance(), this->currentLayer);
+		SpriteManager::hideSprites(SpriteManager::getInstance());
+		Sprite sprite = SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), this->currentSprite);
+		Sprite::show(sprite);
 
-		SpriteManager::showLayer(SpriteManager::getInstance(), this->currentLayer);
+		// Wait for the sprite to be rendered before printing it since
+		// some of its attributes are invalid until rendered
+		TimerManager::wait(TimerManager::getInstance(), 50);
 
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}
 	else
 	{
-		this->currentLayer = __TOTAL_LAYERS;
+		this->currentSprite = numberOfSprites;
+
 		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
@@ -1392,7 +1400,7 @@ void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
 
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 	Debug::dimmGame(this);
 }
 

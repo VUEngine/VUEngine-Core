@@ -135,7 +135,8 @@ void Profiler::initialize()
 			this->profilingSprite = !isDeleted(uiContainer) ? VirtualList::front(Entity::getSprites(profilingEntity)) : NULL;
 
 			NM_ASSERT(!isDeleted(this->profilingSprite), "ERROR");
-			SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(this->profilingSprite));
+			SpriteManager::hideSprites(SpriteManager::getInstance());
+			Sprite::show(this->profilingSprite);
 
 			this->initialized = true;
 		}

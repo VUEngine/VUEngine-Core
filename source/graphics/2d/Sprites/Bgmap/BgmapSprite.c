@@ -65,7 +65,11 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	if(bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
-		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
+		NM_ASSERT(this->texture, "BgmapSprite::constructor: null texture");
+	}
+	else
+	{
+		NM_ASSERT(this->texture, "BgmapSprite::constructor: null texture spec");
 	}
 
 	if(this->texture)
@@ -283,23 +287,8 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-bool BgmapSprite::render(u16 index, bool evenFrame)
+bool BgmapSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	if(!this->texture | !this->texture->written | !this->positioned)
-	{
-		return false;
-	}
-
-	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					(0x01 & (this->transparent ^ evenFrame));
-
-	this->index = !this->visible ? 0 : index;
-
-	if(!this->visible)
-	{
-		return false;
-	}
-
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->index];
 
@@ -352,7 +341,7 @@ bool BgmapSprite::render(u16 index, bool evenFrame)
 		w = _cameraFrustum->x1 - gx + auxGp;
 	}
 
-	if (0 >= w)
+	if (__WORLD_SIZE_DISPLACEMENT >= w)
 	{
 #ifdef __PROFILE_GAME
 		worldPointer->w = 0;
@@ -379,7 +368,7 @@ bool BgmapSprite::render(u16 index, bool evenFrame)
 #ifdef __HACK_BGMAP_SPRITE_HEIGHT
 	if (__MINIMUM_BGMAP_SPRITE_HEIGHT >= h && 0 == gy)
 	{
-		if (0 >= h)
+		if (__WORLD_SIZE_DISPLACEMENT >= h)
 		{
 			worldPointer->head = __WORLD_OFF;
  
@@ -393,7 +382,7 @@ bool BgmapSprite::render(u16 index, bool evenFrame)
 		my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
 	}
 #else
-	if (0 >= h)
+	if (__WORLD_SIZE_DISPLACEMENT >= h)
 	{
 #ifdef __PROFILE_GAME
 		worldPointer->w = 0;

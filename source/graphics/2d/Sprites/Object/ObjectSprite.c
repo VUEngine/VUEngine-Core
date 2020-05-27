@@ -78,6 +78,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
+		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
@@ -85,6 +86,10 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 		this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
+	}
+	else
+	{
+		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture spec");
 	}
 }
 
@@ -209,30 +214,14 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-bool ObjectSprite::render(u16 index, bool evenFrame)
+bool ObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	if(isDeleted(this->texture) || !this->positioned)
-	{
-		return false;
-	}
-
 	if(!this->texture->written)
 	{
 		ObjectTexture::write(this->texture);
 	}
 
 	if(isDeleted(this->texture->charSet))
-	{
-		return false;
-	}
-
-	// if render flag is set
-	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					(0x01 & (this->transparent ^ evenFrame));
-
-	this->index = !this->visible ? 0 : index;
-
-	if(!this->visible)
 	{
 		return false;
 	}
@@ -285,7 +274,7 @@ bool ObjectSprite::render(u16 index, bool evenFrame)
 			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = (index + jDisplacement + j) << 2;
+				s16 objectIndex = (this->index + jDisplacement + j) << 2;
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
@@ -297,7 +286,7 @@ bool ObjectSprite::render(u16 index, bool evenFrame)
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = (index + jDisplacement + j) << 2;
+			s16 objectIndex = (this->index + jDisplacement + j) << 2;
 
 			s16 outputX = x + xDisplacement;
 

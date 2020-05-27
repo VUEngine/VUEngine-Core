@@ -67,7 +67,7 @@ singleton class Debug : Tool
 	// current sub page
 	VirtualNode currentSubPage;
 	// current layer
-	u8 currentLayer;
+	s8 currentSprite;
 	// part of bgmap memory current viewed
 	u8 viewedMapPart;
 	// current bgmap

@@ -160,8 +160,8 @@ void AnimationInspector::update()
 	{
 		Sprite::updateAnimation(this->animatedSprite);
 		Sprite::update(this->animatedSprite);
-		Sprite::applyAffineTransformations(this->animatedSprite);
-		Sprite::applyHbiasEffects(this->animatedSprite);
+		//Sprite::applyAffineTransformations(this->animatedSprite);
+		//Sprite::applyHbiasEffects(this->animatedSprite);
 	}
 }
 
@@ -201,8 +201,9 @@ void AnimationInspector::show()
 
 	this->mode = kFirstMode + 1;
 	AnimationInspector::setupMode(this);
-	SpriteManager::showLayer(SpriteManager::getInstance(), SpriteManager::getFreeLayer(SpriteManager::getInstance()));
-
+	SpriteManager::hideSprites(SpriteManager::getInstance());
+	Sprite::show(SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0));
+	
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
@@ -243,7 +244,7 @@ void AnimationInspector::hide()
 
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance());
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 }
 
