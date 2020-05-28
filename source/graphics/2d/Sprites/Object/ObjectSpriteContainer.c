@@ -261,17 +261,8 @@ u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool even
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		if(objectSprite->hidden)
+		if(!objectSprite->hidden && objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
 		{
-			continue;
-		}
-		else
-		{
-			if(objectIndex != ObjectSprite::render(objectSprite, objectIndex, evenFrame))
-			{
-				continue;
-			}
-
 			objectIndex += objectSprite->totalObjects;
 		}
 	}

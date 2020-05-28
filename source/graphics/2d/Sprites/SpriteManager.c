@@ -372,6 +372,7 @@ void SpriteManager::registerSprite(Sprite sprite)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
+	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::registerSprite: exceding available WORLDS");
 	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
 	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
@@ -466,17 +467,8 @@ void SpriteManager::render()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->hidden)
+		if(!sprite->hidden && this->freeLayer == Sprite::render(sprite, this->freeLayer, this->evenFrame))
 		{
-			continue;
-		}
-		else
-		{
-			if(this->freeLayer != Sprite::render(sprite, this->freeLayer, this->evenFrame))
-			{
-				continue;
-			}
-
 			this->freeLayer--;
 		}
 	}
