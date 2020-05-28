@@ -123,6 +123,9 @@ void SpriteManager::cleanUp()
 	}
 
 	NM_ASSERT(0 == VirtualList::getSize(this->sprites), "SpriteManager::cleanUp: sprites list not empty");
+
+	delete this->sprites;
+	this->sprites = NULL;
 }
 
 /**
