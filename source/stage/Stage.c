@@ -513,7 +513,7 @@ void Stage::unloadChild(Container child)
 
 			// remove from list of entities that are to be loaded by the streaming,
 			// if the entity is not to be respawned
-			if(! Entity::respawn(child))
+			if(!Entity::respawn(child))
 			{
 				VirtualList::removeElement(this->stageEntities, node->data);
 			}
@@ -615,9 +615,9 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 // register the stage's spec entities in the streaming list
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
-	if(this->stageEntities)
+	if(!isDeleted(this->stageEntities))
 	{
-		delete this->stageEntities;
+		return;
 	}
 
 	this->stageEntities = new VirtualList();
