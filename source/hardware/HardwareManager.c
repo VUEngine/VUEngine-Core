@@ -132,7 +132,7 @@ void HardwareManager::destructor()
 /**
  * Check that the memory map is sane
  */
-void HardwareManager::checkMemoryMap()
+static void HardwareManager::checkMemoryMap()
 {
 	if((u32)&_dram_data_start < __WORLD_SPACE_BASE_ADDRESS && (u32)&_dram_bss_end >= __WORLD_SPACE_BASE_ADDRESS)
 	{
