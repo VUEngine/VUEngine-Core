@@ -87,34 +87,30 @@ void Sprite::destructor()
 u16 Sprite::render(u16 index, bool evenFrame)
 {
 	this->index = 0;
+	this->visible = false;
 
 	if(!this->positioned)
 	{
 		return 0;
 	}
 
-	if(this->texture)
+	if(!this->texture)
 	{
-		if(isDeleted(this->texture))
-		{
-			return 0;
-		}
+		this->index = Sprite::doRender(this, index, evenFrame);
 
-		if(!this->texture->written)
-		{
-			Texture::write(this->texture);
+		this->visible = 0 < this->index;
 
-			if(!this->texture->written)
-			{
-				return 0;
-			}
-		}
+		return this->index;
 	}
 
-	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					(0x01 & (this->transparent ^ evenFrame));
+	if(!this->texture->written)
+	{
+		Texture::write(this->texture);
 
-	if(!this->visible)
+		return 0;
+	}
+
+	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
 		return 0;
 	}
@@ -123,6 +119,7 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	if(0 < this->index)
 	{
+		this->visible = true;
 		Sprite::update(this);
 	}
 
@@ -528,17 +525,17 @@ bool Sprite::isVisible()
  */
 bool Sprite::isWithinScreenSpace()
 {
-	if(this->position.x + this->halfWidth < _cameraFrustum->x0 || this->position.x - this->halfWidth > _cameraFrustum->x1)
+	if(!((unsigned)(this->position.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
 	{
 		return false;
 	}
 
-	if(this->position.y + this->halfHeight < _cameraFrustum->y0 || this->position.y - this->halfHeight > _cameraFrustum->y1)
+	if(!((unsigned)(this->position.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
 	{
 		return false;
 	}
 
-	if(this->position.z < _cameraFrustum->z0 || this->position.z > _cameraFrustum->z1)
+	if(!((unsigned)(this->position.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
 	{
 		return false;
 	}
