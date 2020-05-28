@@ -329,6 +329,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
 		return;
 	}
 
+	Sprite::hide(sprite);
 	delete sprite;
 }
 

@@ -89,7 +89,7 @@ u16 Sprite::render(u16 index, bool evenFrame)
 	this->index = 0;
 	this->visible = false;
 
-	if(!this->positioned)
+	if(this->hidden || !this->positioned)
 	{
 		return 0;
 	}
@@ -185,6 +185,7 @@ void Sprite::hide()
 	this->positioned = false;
 
 	this->index = 0;
+	this->visible = false;
 }
 
 /**
