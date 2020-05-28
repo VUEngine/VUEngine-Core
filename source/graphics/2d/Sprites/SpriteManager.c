@@ -109,7 +109,7 @@ void SpriteManager::destructor()
  */
 void SpriteManager::cleanUp()
 {
-	if(this->objectSpriteContainers)
+	if(!isDeleted(this->objectSpriteContainers))
 	{
 		VirtualNode node = this->objectSpriteContainers->head;
 
@@ -124,8 +124,11 @@ void SpriteManager::cleanUp()
 
 	NM_ASSERT(0 == VirtualList::getSize(this->sprites), "SpriteManager::cleanUp: sprites list not empty");
 
-	delete this->sprites;
-	this->sprites = NULL;
+	if(!isDeleted(this->sprites))
+	{
+		delete this->sprites;
+		this->sprites = NULL;
+	}
 }
 
 /**
