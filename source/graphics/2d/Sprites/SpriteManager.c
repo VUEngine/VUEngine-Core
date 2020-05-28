@@ -122,10 +122,22 @@ void SpriteManager::cleanUp()
 		this->objectSpriteContainers = NULL;
 	}
 
-	NM_ASSERT(0 == VirtualList::getSize(this->sprites), "SpriteManager::cleanUp: sprites list not empty");
-
 	if(!isDeleted(this->sprites))
 	{
+		NM_ASSERT(0 == VirtualList::getSize(this->sprites), "SpriteManager::cleanUp: sprites list not empty");
+
+		VirtualList sprites = new VirtualList();
+		VirtualList::copy(sprites, this->sprites);
+
+		VirtualNode node = sprites->head;
+
+		for(; node; node = node->next)
+		{
+			delete node->data;
+		}
+
+		delete sprites;
+
 		delete this->sprites;
 		this->sprites = NULL;
 	}
@@ -478,6 +490,8 @@ void SpriteManager::render()
 			this->freeLayer--;
 		}
 	}
+
+	NM_ASSERT(NULL == node, "SpriteManager::render: more sprites than WORLDs");
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))

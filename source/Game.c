@@ -874,11 +874,6 @@ void Game::updatePhysics()
 
 void Game::focusCamera()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "camera";
 #endif
@@ -1220,19 +1215,22 @@ Clock Game::getClock()
 // retrieve in game clock
 Clock Game::getMessagingClock()
 {
-	return GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getMessagingClock(GameState::safeCast(state));
 }
 
 // retrieve animations' clock
 Clock Game::getUpdateClock()
 {
-	return GameState::getUpdateClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getUpdateClock(GameState::safeCast(state));
 }
 
 // retrieve in physics' clock
 Clock Game::getPhysicsClock()
 {
-	return GameState::getPhysicsClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getPhysicsClock(GameState::safeCast(state));
 }
 
 // retrieve last process' name
@@ -1352,13 +1350,15 @@ Stage Game::getStage()
 		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getStage(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
 }
 
 // retrieve current state
 GameState Game::getCurrentState()
 {
-	return GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 
 PhysicalWorld Game::getPhysicalWorld()
@@ -1368,7 +1368,8 @@ PhysicalWorld Game::getPhysicalWorld()
 		return GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
 }
 
 CollisionManager Game::getCollisionManager()
@@ -1378,7 +1379,8 @@ CollisionManager Game::getCollisionManager()
 		return GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getCollisionManager(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
 }
 
 // pause

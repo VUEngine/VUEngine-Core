@@ -232,6 +232,7 @@ class Stage : Container
 	Size getSize();
 	CameraFrustum getCameraFrustum();
 	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);
+	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	UIContainer getUIContainer();
