@@ -216,11 +216,6 @@ void ObjectSprite::checkForContainer()
  */
 u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
-	if(isDeleted(this->texture) || isDeleted(this->texture->charSet))
-	{
-		return 0;
-	}
-
 	s16 cols = this->texture->textureSpec->cols;
 	s16 rows = this->texture->textureSpec->rows;
 	int charLocation = CharSet::getOffset(this->texture->charSet);
