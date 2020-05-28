@@ -125,140 +125,6 @@ void MemoryPool::constructor()
 	Base::destructor();
 }
 
-/**
- * Allocate a given amount of bytes in one of the memory pools
- *
- * @param numberOfBytes		Number of bytes to allocate
- * @return					Pointer to the memory pool entry allocated
- */
- BYTE* MemoryPool::allocate(int numberOfBytes)
-{
-	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
-
-	int lp = HardwareManager::getLinkPointer();
-
-	int pool = __MEMORY_POOLS;
-
-	HardwareManager::disableInterrupts();
-
-	while(pool--)
-	{
-		int blockSize = this->poolSizes[pool][eBlockSize];
-
-		if(numberOfBytes <= blockSize)
-		{
-			int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
-
-			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
-			BYTE* poolLocation1 = poolLocation0 - blockSize;
-
-			int i = this->poolSizes[pool][eLastFreeBlockIndex];
-			int j = i - 1;
-
-			do
-			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation0) && i < numberOfOjects)
-				{
-					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
-					this->poolSizes[pool][eLastFreeBlockIndex] = i;
-					HardwareManager::enableInterrupts();
-					return poolLocation0;
-				}
-
-				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation1) && 0 <= j)
-				{
-					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
-					this->poolSizes[pool][eLastFreeBlockIndex] = j;
-					HardwareManager::enableInterrupts();
-					return poolLocation1;
-				}
-
-				poolLocation0 += blockSize;
-				poolLocation1 -= blockSize;
-				++i;
-				--j;
-			}
-			while((i < numberOfOjects) || (0 <= j));
-			// keep looking for a free block on a bigger pool
-		}
-	}
-
-	Printing::setDebugMode(Printing::getInstance());
-	Printing::clear(Printing::getInstance());
-	MemoryPool::printDetailedUsage(this, 1, 8);
-	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
-	Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
-	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
-
-	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
-
-	NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
-
-	// return designed address
-	return NULL;
-}
-
-/**
- * Free the memory pool entry were the given object is allocated
- *
- * @param object	Pointer to the memory pool entry to free
- */
-void MemoryPool::free(BYTE* object)
-{
-	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
-
-	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
-	{
-		return;
-	}
-
-#ifdef __DEBUG
-
-	int i;
-	int pool = 0;
-	int displacement = 0;
-	int numberOfOjects = 0;
-
-	if(!object)
-	{
-		return;
-	}
-
-	// look for the pool containing the object
-	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
-
-	// look for the registry in which the object is
-	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
-
-	// move one pool back since the above loop passed the target by one
-	pool--;
-
-	// get the total objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
-
-	HardwareManager::disableInterrupts();
-
-	// search for the pool in which it is allocated
-	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
-	{
-		// if the object has been found
-		if(object == &this->poolLocation[pool][displacement])
-		{
-			// free the block
-			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-			HardwareManager::enableInterrupts();
-			return;
-		}
-	}
-
-	// thrown exception
-	ASSERT(false, "MemoryPool::free: deleting something not allocated");
-
-#endif
-
-	// set address as free
-	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-}
 
 /**
  * Clear all memory pool
@@ -445,3 +311,146 @@ void MemoryPool::printResumedUsage(int x, int y)
 	Printing::int(printing, totalUsedBytes, x + 12 - Utilities::intLength(totalUsedBytes), y++, NULL);
 }
 
+/**
+ * Free the memory pool entry were the given object is allocated
+ *
+ * @param object	Pointer to the memory pool entry to free
+ */
+void MemoryPool::free(BYTE* object)
+{
+	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
+
+	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
+	{
+		return;
+	}
+
+#ifdef __DEBUG
+
+	int i;
+	int pool = 0;
+	int displacement = 0;
+	int numberOfOjects = 0;
+
+	if(!object)
+	{
+		return;
+	}
+
+	// look for the pool containing the object
+	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
+
+	// look for the registry in which the object is
+	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
+
+	// move one pool back since the above loop passed the target by one
+	pool--;
+
+	// get the total objects in the pool
+	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+
+	HardwareManager::disableInterrupts();
+
+	// search for the pool in which it is allocated
+	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
+	{
+		// if the object has been found
+		if(object == &this->poolLocation[pool][displacement])
+		{
+			// free the block
+			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
+			HardwareManager::enableInterrupts();
+			return;
+		}
+	}
+
+	// thrown exception
+	ASSERT(false, "MemoryPool::free: deleting something not allocated");
+
+#endif
+
+	// set address as free
+	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
+}
+
+// Have to undefine these in order for the lp to not get corrupted by the checks on the this pointer
+#undef ASSERT
+#undef NM_ASSERT
+#undef __SAFE_CAST
+
+#define ASSERT(Statement, ...)
+#define NM_ASSERT(Statement, ...)
+#define __SAFE_CAST(ClassName, object) (ClassName)object
+
+/**
+ * Allocate a given amount of bytes in one of the memory pools
+ *
+ * @param numberOfBytes		Number of bytes to allocate
+ * @return					Pointer to the memory pool entry allocated
+ */
+ BYTE* MemoryPool::allocate(int numberOfBytes)
+{
+	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
+
+	int lp = HardwareManager::getLinkPointer();
+
+	int pool = __MEMORY_POOLS;
+
+	HardwareManager::disableInterrupts();
+
+	while(pool--)
+	{
+		int blockSize = this->poolSizes[pool][eBlockSize];
+
+		if(numberOfBytes <= blockSize)
+		{
+			int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+
+			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
+			BYTE* poolLocation1 = poolLocation0 - blockSize;
+
+			int i = this->poolSizes[pool][eLastFreeBlockIndex];
+			int j = i - 1;
+
+			do
+			{
+				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation0) && i < numberOfOjects)
+				{
+					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
+					this->poolSizes[pool][eLastFreeBlockIndex] = i;
+					HardwareManager::enableInterrupts();
+					return poolLocation0;
+				}
+
+				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation1) && 0 <= j)
+				{
+					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
+					this->poolSizes[pool][eLastFreeBlockIndex] = j;
+					HardwareManager::enableInterrupts();
+					return poolLocation1;
+				}
+
+				poolLocation0 += blockSize;
+				poolLocation1 -= blockSize;
+				++i;
+				--j;
+			}
+			while((i < numberOfOjects) || (0 <= j));
+			// keep looking for a free block on a bigger pool
+		}
+	}
+
+	Printing::setDebugMode(Printing::getInstance());
+	Printing::clear(Printing::getInstance());
+	MemoryPool::printDetailedUsage(this, 1, 8);
+	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
+	Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
+
+	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
+
+	NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
+
+	// return designed address
+	return NULL;
+}
