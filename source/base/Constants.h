@@ -183,7 +183,7 @@ void HardwareManager_printStackStatus(int x, int y, bool resumed);
 		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));												\
 																										\
 		/* thrown exception */																			\
-		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
+		Error_triggerException(__MAKE_STRING(__VA_ARGS__), NULL);										\
 	}
 #else
 	#define NM_ASSERT(Statement, ...)
@@ -199,7 +199,7 @@ void HardwareManager_printStackStatus(int x, int y, bool resumed);
 		_triggeringException = true;																	\
 																										\
 		/* thrown exception */																			\
-		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
+		Error_triggerException(__MAKE_STRING(__VA_ARGS__), NULL);										\
 	}
 #else
 	#define NM_CAST_ASSERT(Statement, ...)
@@ -215,11 +215,11 @@ void HardwareManager_printStackStatus(int x, int y, bool resumed);
 	if(!(Statement) && !_triggeringException) 															\
 	{																									\
 		_triggeringException = true;																	\
-		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));																\
-		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));																\
+		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));												\
+		asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));												\
 																										\
 		/* thrown exception */																			\
-		Error_triggerException(Error_getInstance(), Message, NULL);										\
+		Error_triggerException(Message, NULL);															\
 	}
 
 	#undef __FORCE_PRINTING_LAYER

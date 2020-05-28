@@ -39,7 +39,7 @@ singleton class Error : Object
 {
 	/// @publicsection
 	static Error getInstance();
-	int triggerException(char* message, char* detail);
+	static int triggerException(char* message, char* detail);
 }
 
 

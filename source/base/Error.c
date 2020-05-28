@@ -93,8 +93,17 @@ void Error::destructor()
  * @param detail
  */
 #ifndef __RELEASE
-int Error::triggerException(char* message, char* detail)
+static int Error::triggerException(char* message, char* detail)
 {
+	static bool processingException = false;
+
+	if(processingException)
+	{
+		return 0;
+	}
+
+	processingException = true;
+
 	int lp = _vuengineLinkPointer;
 	int sp = _vuengineStackPointer;
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
@@ -195,6 +204,8 @@ int Error::triggerException(char* message, char* detail)
 	_vipRegisters[__JPLT1] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
+
+	HardwareManager::disableInterrupts();
 
 	// trap the game here
 	while(true);
