@@ -243,8 +243,6 @@ u32 EntityFactory::transformEntities()
 		{
 			positionedEntityDescription->transformed = true;
 
-			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
-
 			Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
 
 			Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
@@ -304,6 +302,8 @@ u32 EntityFactory::makeReadyEntities()
 
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
+
+			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
 			VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);
