@@ -86,7 +86,6 @@ class Entity : Container
 	s16 getInternalId();
 	VirtualList getSprites();
 	void transformShapes();
-	void releaseSprites();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
