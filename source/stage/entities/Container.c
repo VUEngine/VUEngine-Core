@@ -293,6 +293,11 @@ void Container::removeChild(Container child, bool deleteChild)
 		// set no parent
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
+
+		if(deleteChild)
+		{
+			Container::releaseGraphics(child);
+		}
 	}
 #ifndef __RELEASE
 	else

@@ -146,6 +146,8 @@ abstract class Sprite : Object
 {
 	// Projected position based on optics configuration
 	PixelVector position;
+	// Flag for making it transparent
+	u8 transparent;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
 	// AnimationController
@@ -160,16 +162,14 @@ abstract class Sprite : Object
 	u16 head;
 	// World layer where to render the texture
 	u16 index;
-	// Flag for making it transparent
-	u8 transparent;
 	// Hidden flag
-	bool hidden : 1;
+	bool hidden;
 	// Update animation
-	bool writeAnimationFrame : 1;
+	bool writeAnimationFrame;
 	// Flag for transparency control
-	bool visible : 1;
+	bool visible;
 	// Flag to allow rendering
-	bool positioned : 1;
+	bool positioned;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
