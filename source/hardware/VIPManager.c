@@ -220,8 +220,6 @@ static void VIPManager::interruptHandler()
 	{
 		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 	}
-
-	_vipManager->frameStarted = _vipManager->processingXPEND;
 }
 
 /**
@@ -256,7 +254,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 				Game::nextFrameStarted(Game::getInstance(), __GAME_FRAME_DURATION);
 
-				this->frameStarted = true;
+				this->frameStarted = _vipManager->processingXPEND;
 
 				if(!_vipManager->processingXPEND)
 				{
