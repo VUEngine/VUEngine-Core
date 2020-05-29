@@ -101,23 +101,23 @@ class ParticleSystem : Entity
 	const ParticleSystemSpec* particleSystemSpec;
 	// particle list
 	VirtualList particles;
+	// Flags to speed up particle spawning
+	Vector3DFlag spawnPositionDisplacement;
+	Vector3DFlag spawnForceDelta;
 	// next spawn time
 	int nextSpawnTime;
-	// particle count
-	int particleCount;
 	// particles' life span increment
 	s16 particleLifeSpanIncrement;
 	// number of sprite specs
 	s16 numberOfSpriteSpecs;
+	// particle count
+	s8 particleCount;
 	// pause flag
 	bool paused;
 	// Flag to keep spawning particles
 	bool loop;
 	// Counter of total spawned particles
-	u16 totalSpawnedParticles;
-	// Flags to speed up particle spawning
-	Vector3DFlag spawnPositionDisplacement;
-	Vector3DFlag spawnForceDelta;
+	s8 totalSpawnedParticles;
 	// Particles' animation name
 	u8 maximumNumberOfAliveParticles;
 	bool transformed;
