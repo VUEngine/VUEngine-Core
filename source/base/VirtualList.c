@@ -396,9 +396,9 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 		if(node == this->tail)
 		{
 			// set the tail
-			this->tail = this->tail->previous;
+			this->tail->previous->next = NULL;
 
-			this->tail->next = NULL;
+			this->tail = this->tail->previous;
 		}
 		else
 		{
