@@ -92,6 +92,8 @@ void Entity::destructor()
 {
 	Entity::destroyShapes(this);
 
+	Entity::releaseSprites(this);
+
 	if(this->centerDisplacement)
 	{
 		delete this->centerDisplacement;
@@ -101,8 +103,6 @@ void Entity::destructor()
 	{
 		delete this->entityFactory;
 	}
-
-	Entity::releaseSprites(this);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -217,16 +217,6 @@ void Entity::setupShapes()
 	}
 
 	Entity::transformShapes(this);
-}
-
-/**
- * Release sprites
- */
-void Entity::releaseGraphics()
-{
-	Base::releaseGraphics(this);
-
-	Entity::releaseSprites(this);
 }
 
 /**

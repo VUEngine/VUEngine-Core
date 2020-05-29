@@ -111,6 +111,7 @@ class Entity : Container
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
 	virtual void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
+	virtual void releaseSprites();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
@@ -118,7 +119,6 @@ class Entity : Container
 	override void setLocalRotation(const Rotation* rotation);
 	override void setupGraphics();
 	override void setupShapes();
-	override void releaseGraphics();
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
 	override const Rotation* getRotation();

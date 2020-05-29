@@ -178,9 +178,9 @@ void Container::deleteMyself()
 
 	if(!isDeleted(this->parent))
 	{
+		Container::hide(this);
 		Container::removeChild(this->parent, this, true);
 		Container::iAmDeletingMyself(this);
-		Container::releaseGraphics(this);
 	}
 	else
 	{
@@ -293,11 +293,6 @@ void Container::removeChild(Container child, bool deleteChild)
 		// set no parent
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
-
-		if(deleteChild)
-		{
-			Container::releaseGraphics(child);
-		}
 	}
 #ifndef __RELEASE
 	else
@@ -339,21 +334,6 @@ void Container::setupShapes()
 		for(; node ; node = node->next)
 		{
 			Container::setupShapes(node->data);
-		}
-	}
-}
-
-void Container::releaseGraphics()
-{
-	// if I have children
-	if(this->children)
-	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node ; node = node->next)
-		{
-			Container::releaseGraphics(node->data);
 		}
 	}
 }
