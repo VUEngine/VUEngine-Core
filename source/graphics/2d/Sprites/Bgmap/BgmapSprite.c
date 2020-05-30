@@ -289,15 +289,6 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[index];
 
-	// TODO: check if required, causes that the sprite is turned off when changing the texture spec
-/*
-	if(!this->texture->written)
-	{
-		worldPointer->head = 0x0000;
-		return;
-	}
-*/
-
 	// get coordinates
 	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
 	s16 gy = this->position.y + this->displacement.y - this->halfHeight;
