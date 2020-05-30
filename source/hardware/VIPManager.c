@@ -365,10 +365,7 @@ void VIPManager::processFrameBuffers()
 	// draw 3d objects
 	WireframeManager::drawWireframes(_wireframeManager);
 
-	// check if the current frame buffer set is valid
-	VirtualNode node = this->postProcessingEffects->tail;
-
-	for(; !VIPManager::hasFrameStarted(this) && node; node = node->previous)
+	for(VirtualNode node = this->postProcessingEffects->tail; !VIPManager::hasFrameStarted(this) && node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}

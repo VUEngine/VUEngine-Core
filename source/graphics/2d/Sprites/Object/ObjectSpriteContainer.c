@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainer.h>
+#include <Mem.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Camera.h>
@@ -238,10 +239,7 @@ void ObjectSpriteContainer::sortProgressively()
 
 void ObjectSpriteContainer::writeDRAM()
 {
-	for(int i = this->firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
-	{
-		_objectAttributesBaseAddress[i] = _objectAttributesCache[i];
-	}
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjects) >> 2);
 }
 
 /**

@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include <SpriteManager.h>
+#include <Mem.h>
 #include <Game.h>
 #include <VIPManager.h>
 #include <ParamTableManager.h>
@@ -475,14 +476,9 @@ void SpriteManager::writeTextures()
 
 void SpriteManager::writeDRAM()
 {
-	for(int i = __TOTAL_LAYERS - 1; this->freeLayer < i; i--)
-	{
-		_worldAttributesBaseAddress[i] = _worldAttributesCache[i];
-	}
+	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer + 1), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer + 1)) >> 2);
 
-	VirtualNode node = this->objectSpriteContainers->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
 	{
 		ObjectSpriteContainer::writeDRAM(ObjectSpriteContainer::safeCast(node->data));
 	}
