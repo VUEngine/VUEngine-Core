@@ -171,11 +171,29 @@ u32 CharSet::getNumberOfChars()
  */
 void CharSet::write()
 {
+	s16 numberOfWORDS = __BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD);
+	bool disableCache = false;
+
+	if(numberOfWORDS >= DRM_WRINTING_PASSES_TO_ENABLE_CACHE)
+	{
+		disableCache = true;
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
+
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
-		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
+		numberOfWORDS
 	);
+
+	if(disableCache)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
 }
 
 /**

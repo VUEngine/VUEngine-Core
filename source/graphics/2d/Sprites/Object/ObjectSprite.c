@@ -65,7 +65,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 {
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
-	this->head = objectSpriteSpec->display;
+	this->head = objectSpriteSpec->display & __OBJECT_CHAR_SHOW_MASK;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
 
@@ -155,6 +155,8 @@ void ObjectSprite::rotate(const Rotation* rotation)
 		this->head &= 0xEFFF;
 	}
 
+	this->head &= __OBJECT_CHAR_SHOW_MASK;
+
 	if(!isDeleted(this->texture))
 	{
 		this->texture->written = false;
@@ -216,15 +218,16 @@ void ObjectSprite::checkForContainer()
  */
 u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
-	s16 cols = this->texture->textureSpec->cols;
-	s16 rows = this->texture->textureSpec->rows;
 	int charLocation = CharSet::getOffset(this->texture->charSet);
 
 	s16 xDisplacementIncrement = 8;
 	s16 yDisplacementIncrement = 8;
 
-	s16 halfWith = this->halfWidth;
+	s16 halfWidth = this->halfWidth;
 	s16 halfHeight = this->halfHeight;
+
+	s16 cols = halfWidth >> 2;
+	s16 rows = halfHeight >> 2;
 
 	s16 xDisplacementDelta = 0;
 	s16 yDisplacementDelta = 0;
@@ -232,7 +235,7 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	if(this->head & 0x2000)
 	{
 		xDisplacementIncrement = -8;
-		halfWith = -halfWith;
+		halfWidth = -halfWidth;
 		xDisplacementDelta = __FLIP_X_DISPLACEMENT;
 	}
 
@@ -243,11 +246,10 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 		yDisplacementDelta = __FLIP_Y_DISPLACEMENT;
 	}
 
-	s16 x = this->position.x - halfWith + this->displacement.x - xDisplacementDelta;
+	s16 x = this->position.x - halfWidth + this->displacement.x - xDisplacementDelta;
 	s16 y = this->position.y - halfHeight + this->displacement.y - yDisplacementDelta;
 
-	s16 i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
 	u16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 
 	s16 yDisplacement = 0;
@@ -256,16 +258,18 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
 	u16 result = 0;
 
-	for(; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
+	for(s16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
 		s16 outputY = y + yDisplacement;
+
+		s16 objectIndexStart = (index + jDisplacement) << 2;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
 			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = (index + jDisplacement + j) << 2;
+				s16 objectIndex = objectIndexStart + (j << 2);
 
 				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
@@ -277,7 +281,7 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = (index + jDisplacement + j) << 2;
+			s16 objectIndex = objectIndexStart + (j << 2);
 
 			s16 outputX = x + xDisplacement;
 

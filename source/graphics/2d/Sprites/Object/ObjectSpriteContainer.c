@@ -211,11 +211,6 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  */
 void ObjectSpriteContainer::sortProgressively()
 {
-	if(this->lockSpritesLists)
-	{
-		return;
-	}
-
 	VirtualNode node = this->objectSprites->tail;
 
 	for(; node; node = node->previous)
@@ -249,11 +244,6 @@ void ObjectSpriteContainer::sortProgressively()
 u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	_worldAttributesBaseAddress[index].head = this->head;
-
-	if(!VIPManager::hasFrameStarted(VIPManager::getInstance()))
-	{
-		ObjectSpriteContainer::sortProgressively(this);
-	}
 
 	VirtualNode node = this->objectSprites->head;
 

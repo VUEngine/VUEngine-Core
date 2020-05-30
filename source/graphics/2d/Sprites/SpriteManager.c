@@ -347,11 +347,6 @@ void SpriteManager::sort()
  */
 bool SpriteManager::sortProgressively()
 {
-	if(this->lockSpritesLists)
-	{
-		return false;
-	}
-
 	bool swapped = false;
 
 	VirtualNode node = this->sprites->head;
@@ -375,6 +370,18 @@ bool SpriteManager::sortProgressively()
 
 				swapped = true;
 			}
+		}
+	}
+
+	if(!isDeleted(this->objectSpriteContainers))
+	{
+		VirtualNode node = this->objectSpriteContainers->head;
+
+		for(; node; node = node->next)
+		{
+			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+			ObjectSpriteContainer::sortProgressively(objectSpriteContainer);
 		}
 	}
 
@@ -476,13 +483,12 @@ void SpriteManager::render()
 
 	VIPManager vipManager = VIPManager::getInstance();
 
-	SpriteManager::sortProgressively(this);
-
 	VirtualNode node = this->sprites->tail;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	for(; node && 0 < this->freeLayer; node = node->previous)
+//	for(; node && 0 < this->freeLayer; node = node->previous)
+	for(; node && 0 < this->freeLayer && !VIPManager::hasFrameStarted(vipManager); node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -492,7 +498,7 @@ void SpriteManager::render()
 		}
 	}
 
-	NM_ASSERT(NULL == node, "SpriteManager::render: more sprites than WORLDs");
+//	NM_ASSERT(NULL == node, "SpriteManager::render: more sprites than WORLDs");
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
@@ -777,10 +783,8 @@ void SpriteManager::print(int x, int y, bool resumed)
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Last free layer:     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->freeLayer, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Free layers:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - 1 - VirtualList::getSize(this->sprites), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Used layers::     ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
 

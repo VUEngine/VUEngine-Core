@@ -68,6 +68,7 @@ class ObjectSpriteContainer : Sprite
 	int getNextFreeObjectIndex();
 	int getTotalUsedObjects();
 	bool hasRoomFor(s32 numberOfObjects);
+	void sortProgressively();
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override u16 doRender(u16 index, bool evenFrame);
