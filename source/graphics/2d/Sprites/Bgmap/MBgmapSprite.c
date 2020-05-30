@@ -328,8 +328,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  */
 u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
-	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
 	s16 gx = this->position.x + this->displacement.x - this->halfWidth;

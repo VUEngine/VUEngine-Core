@@ -149,11 +149,24 @@ typedef struct WorldAttributes
 
 } WorldAttributes;
 
+typedef struct ObjectAttributes
+{
+	s16 jx;
+	s16 head;
+	s16 jy;
+	s16 tile;
+
+} ObjectAttributes;
+
 // pointers to access the VRAM base address
-static WorldAttributes* const _worldAttributesBaseAddress	=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-static u16* const	_columnTableBaseAddressLeft			 	=	(u16*)0x0003DC00; // base address of Column Table (Left Eye)
-static u16* const	_columnTableBaseAddressRight			=	(u16*)0x0003DE00; // base address of Column Table (Right Eye)
-static u16* const	_objectAttributesBaseAddress			=	(u16*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress
+extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
+extern ObjectAttributes _objectAttributesCache[1024];
+
+static WorldAttributes* const _worldAttributesBaseAddress		=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+static ObjectAttributes* const	_objectAttributesBaseAddress	=	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress
+
+static u16* const	_columnTableBaseAddressLeft			 		=	(u16*)0x0003DC00; // base address of Column Table (Left Eye)
+static u16* const	_columnTableBaseAddressRight				=	(u16*)0x0003DE00; // base address of Column Table (Right Eye)
 
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)

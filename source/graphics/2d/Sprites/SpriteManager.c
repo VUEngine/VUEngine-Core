@@ -157,10 +157,10 @@ void SpriteManager::reset()
 	for(; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
 		_vipRegisters[__SPT3 - i] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 0] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 1] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 2] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
+		_objectAttributesCache[i].jx = 0;
+		_objectAttributesCache[i].head = 0;
+		_objectAttributesCache[i].jy = 0;
+		_objectAttributesCache[i].tile = 0;
 	}
 
 	this->sprites = new VirtualList();
@@ -473,22 +473,36 @@ void SpriteManager::writeTextures()
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
 }
 
+void SpriteManager::writeDRAM()
+{
+	for(int i = __TOTAL_LAYERS - 1; this->freeLayer < i; i--)
+	{
+		_worldAttributesBaseAddress[i] = _worldAttributesCache[i];
+	}
+
+	VirtualNode node = this->objectSpriteContainers->head;
+
+	for(; node; node = node->next)
+	{
+		ObjectSpriteContainer::writeDRAM(ObjectSpriteContainer::safeCast(node->data));
+	}
+
+	SpriteManager::renderTextWorld(this);
+}
+
 /**
  * Write WORLD data to DRAM
  */
 void SpriteManager::render()
 {
+	SpriteManager::sortProgressively(this);
+
 	// switch between even and odd frame
 	this->evenFrame = !this->evenFrame;
 
-	VIPManager vipManager = VIPManager::getInstance();
-
-	VirtualNode node = this->sprites->tail;
-
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-//	for(; node && 0 < this->freeLayer; node = node->previous)
-	for(; node && 0 < this->freeLayer && !VIPManager::hasFrameStarted(vipManager); node = node->previous)
+	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -498,7 +512,7 @@ void SpriteManager::render()
 		}
 	}
 
-//	NM_ASSERT(NULL == node, "SpriteManager::render: more sprites than WORLDs");
+	NM_ASSERT(0 < this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
@@ -507,15 +521,9 @@ void SpriteManager::render()
 	}
 #endif
 
-	// configure printing layer and shutdown unused layers
-	SpriteManager::renderTextWorld(this);
-
-	if(!VIPManager::hasFrameStarted(vipManager) && !CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
+	if(!CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
-		if(!VIPManager::hasFrameStarted(vipManager))
-		{
-			ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
-		}
+		ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 	}
 
 #ifdef __SHOW_SPRITES_PROFILING

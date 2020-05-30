@@ -336,7 +336,7 @@ u16 Sprite::getMode()
  */
 u32 Sprite::getWorldHead()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->head;
 }
 
@@ -347,7 +347,7 @@ u32 Sprite::getWorldHead()
  */
 s16 Sprite::getWorldGX()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gx;
 }
 
@@ -358,7 +358,7 @@ s16 Sprite::getWorldGX()
  */
 s16 Sprite::getWorldGY()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gy;
 }
 
@@ -369,7 +369,7 @@ s16 Sprite::getWorldGY()
  */
 s16 Sprite::getWorldGP()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gp;
 }
 
@@ -380,7 +380,7 @@ s16 Sprite::getWorldGP()
  */
 s16 Sprite::getWorldMX()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->mx;
 }
 
@@ -391,7 +391,7 @@ s16 Sprite::getWorldMX()
  */
 s16 Sprite::getWorldMY()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->my;
 }
 
@@ -402,7 +402,7 @@ s16 Sprite::getWorldMY()
  */
 s16 Sprite::getWorldMP()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->mp;
 }
 
@@ -413,7 +413,7 @@ s16 Sprite::getWorldMP()
  */
 u16 Sprite::getWorldWidth()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return 0 > (s16)worldPointer->w ? 0 : worldPointer->w;
 }
 
@@ -424,7 +424,7 @@ u16 Sprite::getWorldWidth()
  */
 u16 Sprite::getWorldHeight()
 {
-	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return 0 > (s16)worldPointer->h ? 0 : worldPointer->h;
 }
 

@@ -81,10 +81,10 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 
 	for(; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
-		_objectAttributesBaseAddress[(i << 2) + 0] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 1] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 2] = 0;
-		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
+		_objectAttributesCache[i].jx = 0;
+		_objectAttributesCache[i].head = 0;
+		_objectAttributesCache[i].jy = 0;
+		_objectAttributesCache[i].tile = 0;
 	}
 
 	// must setup the STP registers regardless of the totalObjects
@@ -236,6 +236,14 @@ void ObjectSpriteContainer::sortProgressively()
 	}
 }
 
+void ObjectSpriteContainer::writeDRAM()
+{
+	for(int i = this->firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
+	{
+		_objectAttributesBaseAddress[i] = _objectAttributesCache[i];
+	}
+}
+
 /**
  * Write WORLD data to DRAM
  *
@@ -243,7 +251,7 @@ void ObjectSpriteContainer::sortProgressively()
  */
 u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	_worldAttributesBaseAddress[index].head = this->head;
+	_worldAttributesCache[index].head = this->head;
 
 	VirtualNode node = this->objectSprites->head;
 
@@ -263,7 +271,7 @@ u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool even
 
 	for(; objectIndex < this->lastRenderedObjectIndex; objectIndex++)
 	{
-		_objectAttributesBaseAddress[((objectIndex) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesCache[objectIndex].head = __OBJECT_CHAR_HIDE_MASK;
 	}
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;

@@ -122,6 +122,8 @@ singleton class SpriteManager : Object
 	void writeTextures();
 	void prepareAll();
 	bool isEvenFrame();
+	void writeDRAM();
+
 }
 
 

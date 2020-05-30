@@ -124,6 +124,7 @@ u16 TextObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
+	ObjectAttributes* objectPointer = NULL;
 
 	for(; i < rows; i++)
 	{
@@ -136,9 +137,10 @@ u16 TextObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame
 			int j = 0;
 			for(; j < cols; j++)
 			{
-				s32 objectIndex = (index + j) << 2;
+				s32 objectIndex = index + j;
 
-				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer = &_objectAttributesCache[objectIndex];
+				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			continue;
@@ -148,7 +150,7 @@ u16 TextObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame
 
 		for(; j < cols; j++)
 		{
-			s32 objectIndex = (index + j) << 2;
+			s32 objectIndex = index + j;
 
 			// TODO: Account for character's size
 //			int outputX = x + (j * fontData->fontSpec->fontSize.x) * xDirection;
@@ -158,14 +160,16 @@ u16 TextObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
 				continue;
 			}
 
-			_objectAttributesBaseAddress[objectIndex] = outputX;
-			_objectAttributesBaseAddress[objectIndex + 1] = secondWordValue;
-			_objectAttributesBaseAddress[objectIndex + 2] = outputY;
-			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
+			objectPointer = &_objectAttributesCache[objectIndex];
+
+			objectPointer->jx = outputX;
+			objectPointer->head = secondWordValue;
+			objectPointer->jy = outputY;
+			objectPointer->tile |= fourthWordValue;
 		}
 	}
 
@@ -199,7 +203,7 @@ void TextObjectSprite::out(u16 index)
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							s32 objectIndex = (index + i) << 2;
+							s32 objectIndex = index + i;
 
 							u16 charNumber =
 								// offset of charset in char memory
@@ -217,7 +221,9 @@ void TextObjectSprite::out(u16 index)
 								// respective char of character
 								charOffset;
 
-							_objectAttributesBaseAddress[objectIndex + 3] = this->palette | (charNumber & 0x7FF);
+							ObjectAttributes* objectPointer = &_objectAttributesCache[objectIndex];
+
+							objectPointer->tile = this->palette | (charNumber & 0x7FF);
 						}
 					}
 				}

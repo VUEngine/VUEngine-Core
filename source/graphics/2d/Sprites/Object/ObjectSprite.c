@@ -258,20 +258,23 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
 	u16 result = 0;
 
+	ObjectAttributes* objectPointer = NULL;
+
 	for(s16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
 		s16 outputY = y + yDisplacement;
 
-		s16 objectIndexStart = (index + jDisplacement) << 2;
+		s16 objectIndexStart = index + jDisplacement;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
 			s16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = objectIndexStart + (j << 2);
+				s16 objectIndex = objectIndexStart + j;
 
-				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer = &_objectAttributesCache[objectIndex];
+				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
 			}
 			continue;
 		}
@@ -281,7 +284,8 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = objectIndexStart + (j << 2);
+			s16 objectIndex = objectIndexStart + j;
+			objectPointer = &_objectAttributesCache[objectIndex];
 
 			s16 outputX = x + xDisplacement;
 
@@ -289,17 +293,17 @@ u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
 				continue;
 			}
 
-			_objectAttributesBaseAddress[objectIndex] = outputX;
-			_objectAttributesBaseAddress[objectIndex + 1] = secondWordValue;
-			_objectAttributesBaseAddress[objectIndex + 2] = outputY;
+			objectPointer->jx = outputX;
+			objectPointer->head = secondWordValue;
+			objectPointer->jy = outputY;
 
 			s32 charNumberIndex = (jDisplacement + j) << 1;
 			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
-			_objectAttributesBaseAddress[objectIndex + 3] = fourthWordValue | charNumber;
+			objectPointer->tile = fourthWordValue | charNumber;
 
 			result = index;
 		}

@@ -43,6 +43,9 @@
 //											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
+WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
+ObjectAttributes _objectAttributesCache[1024] __attribute__((section(".dram_bss")));
+
 volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
 u32* _currentDrawingFrameBufferSet = NULL;
 
@@ -295,7 +298,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 					if(this->allowDRAMAccess)
 					{
 						// Write to DRAM
-						SpriteManager::render(_spriteManager);
+						SpriteManager::writeDRAM(_spriteManager);
 
 						this->renderingCompleted = true;
 					}
@@ -451,6 +454,21 @@ void VIPManager::clearScreen()
 	Mem::clear ((BYTE*) __CHAR_SEGMENT_1_BASE_ADDRESS, 8192);
 	Mem::clear ((BYTE*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
 	Mem::clear ((BYTE*) __CHAR_SEGMENT_3_BASE_ADDRESS, 8192);
+
+	for(int i = 0; i < __TOTAL_LAYERS; i++)
+	{
+		_worldAttributesCache[i].head = 0;
+		_worldAttributesCache[i].gx = 0;
+		_worldAttributesCache[i].gp = 0;
+		_worldAttributesCache[i].gy = 0;
+		_worldAttributesCache[i].mx = 0;
+		_worldAttributesCache[i].mp = 0;
+		_worldAttributesCache[i].my = 0;
+		_worldAttributesCache[i].w = 0;
+		_worldAttributesCache[i].h = 0;
+		_worldAttributesCache[i].param = 0;
+		_worldAttributesCache[i].ovr = 0;
+	}
 }
 
 /**

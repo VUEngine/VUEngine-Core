@@ -286,8 +286,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  */
 u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
-	static WorldAttributes* worldPointer = NULL;
-	worldPointer = &_worldAttributesBaseAddress[index];
+	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
 	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
@@ -393,8 +392,7 @@ void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDispl
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[index];
+		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
 
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
@@ -431,8 +429,7 @@ void BgmapSprite::processHbiasEffects(u16 index)
 {
 	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		static WorldAttributes* worldPointer = NULL;
-    	worldPointer = &_worldAttributesBaseAddress[index];
+		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
 
  		ASSERT(0 <= ((signed)this->param - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
 
@@ -473,8 +470,7 @@ void BgmapSprite::displacement()
 			return;
 		}
 
-		static WorldAttributes* worldPointer = NULL;
-		worldPointer = &_worldAttributesBaseAddress[index];
+		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
 
 		// set the world camera position
 		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
