@@ -389,8 +389,11 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// set the world size according to the zoom
-	BgmapSprite::processAffineEffects(this, index, gx, width, myDisplacement);
-	BgmapSprite::processHbiasEffects(this, index);
+	if(this->param)
+	{
+		BgmapSprite::processAffineEffects(this, index, gx, width, myDisplacement);
+		BgmapSprite::processHbiasEffects(this, index);
+	}
 
 	return index;
 }
@@ -399,12 +402,6 @@ void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDispl
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		if(!this->param)
-		{
-			// allocate param table space
-			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-    	}
-
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[index];
 
@@ -443,12 +440,6 @@ void BgmapSprite::processHbiasEffects(u16 index)
 {
 	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		if(!this->param)
-		{
-			// allocate param table space
-			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-    	}
-
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[index];
 
@@ -626,7 +617,7 @@ void BgmapSprite::setMode(u16 display, u16 mode)
 
 			// set map head
 			this->head = display | __WORLD_AFFINE;
-
+			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 			this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
 			break;
 
@@ -634,6 +625,7 @@ void BgmapSprite::setMode(u16 display, u16 mode)
 
 			// set map head
 			this->head = display | __WORLD_HBIAS;
+			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
 			break;
 	}
 
