@@ -88,7 +88,7 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 {
 	if(positionedEntity)
 	{
-		Entity entity = Entity::loadEntity(positionedEntity, !isDeleted(this->children ? VirtualList::getSize(this->children) : 0));
+		Entity entity = Entity::loadEntity(positionedEntity, !isDeleted(this->children) ? VirtualList::getSize(this->children) : 0);
 		ASSERT(entity, "UIContainer::doAddChildEntity: entity not loaded");
 
 		if(entity)
