@@ -71,6 +71,9 @@ void PhysicalWorld::constructor()
 
 	this->frictionCoefficient = 0;
 	this->timeScale = __1I_FIX10_6;
+
+	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
+	PhysicalWorld::setTimeScale(this, __1I_FIX10_6);
 }
 
 /**
@@ -92,7 +95,6 @@ void PhysicalWorld::destructor()
 	// delete lists
 	delete this->bodies;
 	delete this->activeBodies;
-
 
 	this->bodies = NULL;
 	this->activeBodies = NULL;
@@ -322,10 +324,6 @@ void PhysicalWorld::reset()
 	VirtualList::clear(this->activeBodies);
 
 	this->bodyToCheckForGravityNode = NULL;
-
-	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
-
-	PhysicalWorld::setTimeScale(this, __1I_FIX10_6);
 }
 
 /**

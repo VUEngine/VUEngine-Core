@@ -51,8 +51,8 @@ void GameState::constructor()
 	this->physicsClock = new Clock();
 
 	// construct the physical world and collision manager
-	this->physicalWorld = new PhysicalWorld(this->physicsClock);
-	this->collisionManager = new CollisionManager();
+	this->physicalWorld = NULL;
+	this->collisionManager = NULL;
 
 	this->cameraPosition.x = 0;
 	this->cameraPosition.y = 0;
@@ -85,11 +85,17 @@ void GameState::destructor()
 	}
 
 	// must delete these after deleting the stage
-	delete this->physicalWorld;
-	delete this->collisionManager;
+	if(!isDeleted(this->physicalWorld))
+	{
+		delete this->physicalWorld;
+		this->physicalWorld = NULL;
+	}
 
-	this->physicalWorld = NULL;
-	this->collisionManager = NULL;
+	if(!isDeleted(this->collisionManager))
+	{
+		delete this->collisionManager;
+		this->collisionManager = NULL;
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -150,14 +156,22 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 		delete this->stage;
 	}
 
+	if(!isDeleted(this->physicalWorld))
+	{
+		delete this->physicalWorld;
+		this->physicalWorld = NULL;
+	}
+
+	if(!isDeleted(this->collisionManager))
+	{
+		delete this->collisionManager;
+		this->collisionManager = NULL;
+	}
+
 	this->stage = NULL;
 
 	// stop my clocks
 	GameState::stopClocks(this);
-
-	// make sure that all my bodies and colliders get deleted
-	PhysicalWorld::reset(this->physicalWorld);
-	CollisionManager::reset(this->collisionManager);
 }
 
 /**
@@ -407,7 +421,7 @@ void GameState::synchronizeGraphics()
  */
 void GameState::updatePhysics()
 {
-	if(!this->updatePhysics)
+	if(!this->updatePhysics || isDeleted(this->physicalWorld))
 	{
 		return;
 	}
@@ -422,7 +436,7 @@ void GameState::updatePhysics()
  */
 u32 GameState::processCollisions()
 {
-	if(!this->processCollisions)
+	if(!this->processCollisions || isDeleted(this->collisionManager))
 	{
 		return false;
 	}
@@ -446,9 +460,6 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 		// destroy the stage
 		delete this->stage;
 	}
-
-	PhysicalWorld::reset(this->physicalWorld);
-	CollisionManager::reset(this->collisionManager);
 
 	// Reset the engine state
 	Game::reset(Game::getInstance());
@@ -625,6 +636,11 @@ void GameState::pausePhysics(bool pause)
  */
 PhysicalWorld GameState::getPhysicalWorld()
 {
+	if(NULL == this->physicalWorld)
+	{
+		this->physicalWorld = new PhysicalWorld(this->physicsClock);
+	}
+
 	return this->physicalWorld;
 }
 
@@ -635,6 +651,11 @@ PhysicalWorld GameState::getPhysicalWorld()
  */
 CollisionManager GameState::getCollisionManager()
 {
+	if(NULL == this->collisionManager)
+	{
+		this->collisionManager = new CollisionManager();
+	}
+
 	return this->collisionManager;
 }
 

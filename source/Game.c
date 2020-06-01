@@ -1367,7 +1367,8 @@ PhysicalWorld Game::getPhysicalWorld()
 {
 	if(Game::isInSpecialMode(this))
 	{
-		return GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
+		State state = StateMachine::getPreviousState(this->stateMachine);
+		return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
 	}
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
@@ -1378,7 +1379,8 @@ CollisionManager Game::getCollisionManager()
 {
 	if(Game::isInSpecialMode(this))
 	{
-		return GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
+		State state = StateMachine::getPreviousState(this->stateMachine);
+		return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
 	}
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
