@@ -825,6 +825,14 @@ void Game::synchronizeGraphics()
 
 	SpriteManager::render(SpriteManager::getInstance());
 
+	if(VIPManager::isRenderingPending(this->vipManager))
+	{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		this->lastProcessName = "sprites";
+#endif
+		SpriteManager::writeDRAM(SpriteManager::getInstance());
+	}
+
 	VIPManager::allowDRAMAccess(this->vipManager, true);
 
 	// apply transformations to graphics
