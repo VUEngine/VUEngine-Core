@@ -295,8 +295,11 @@
 // total number of bgmap segments
 #define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			{{ project.config.texture.totalBgmapSegments }}
 
+// number of segments for param tables
+#define __PARAM_TABLE_SEGMENTS						{{ project.config.texture.paramTableSegments }}
+
 // bgmap segments to use (leave 2 to allocate param table, 1 for printing)
-#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS - 1)
 
 // number of bgmap specs in each bgmap segment
 #define __NUM_BGMAPS_PER_SEGMENT 					{{ project.config.texture.bgmapsPerSegments }}

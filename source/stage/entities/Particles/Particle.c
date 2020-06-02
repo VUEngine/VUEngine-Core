@@ -54,7 +54,6 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	// construct base Container
 	Base::constructor();
 
-	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
 	this->position = Vector3D::zero();

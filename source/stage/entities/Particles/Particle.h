@@ -79,8 +79,6 @@ class Particle : SpatialObject
 	Vector3D position;
 	// To optimizize parallax computation
 	fix10_6 previousZ;
-	// Particle's SpriteSpec
-	const SpriteSpec* spriteSpec;
 	// sprite
 	Sprite sprite;
 	// Particle's life span in milliseconds
