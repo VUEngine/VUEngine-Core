@@ -457,7 +457,7 @@ int SpriteManager::getNumberOfSprites()
  */
 void SpriteManager::writeTextures()
 {
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	while(CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()));
 
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
@@ -728,6 +728,9 @@ void SpriteManager::prepareAll()
 
 	// Render sprites as soon as possible
 	SpriteManager::render(this);
+
+	// Write render data
+	SpriteManager::writeDRAM(this);
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);
