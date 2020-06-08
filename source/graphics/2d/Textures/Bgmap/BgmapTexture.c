@@ -275,7 +275,7 @@ void BgmapTexture::doWrite()
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
 				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + ((this->remainingRowsToBeWritten) << 6) + numberOfHWORDS - 1,
-						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
 						numberOfHWORDS,
 						offset,
 						flip,
