@@ -110,16 +110,24 @@ void Printing::reset()
 	this->h = __SCREEN_HEIGHT - 1;
 }
 
+void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
+{
+	Printing::fireEvent(this, kEventFontRewritten);
+}
+
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
+	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
+
+	// Prevent VIP's interrupt from calling render during this process
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+
 	// Since fonts' charsets will be released, there is no reason to keep 
 	// anything in the printing area
 	Printing::clear(Printing::getInstance());
 
 	// empty list of registered fonts
 	Printing::releaseFonts(this);
-
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
@@ -140,12 +148,24 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				if(__FONTS[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
+
+					CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+					CharSet::addEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				}
 			}
 		}
 
 		// add fontdata to internal list
 		VirtualList::pushBack(this->fonts, fontData);
+	}
+
+	SpriteManager::writeTextures(SpriteManager::getInstance());
+
+	if(isDrawingAllowed)
+	{
+		// Restore drawing
+		HardwareManager::enableRendering(HardwareManager::getInstance());
+		while(VIPManager::isRenderingPending(VIPManager::getInstance()));
 	}
 }
 
@@ -194,7 +214,8 @@ void Printing::clear()
 
 void Printing::releaseFonts()
 {
-	HardwareManager::disableInterrupts();
+	Printing::removeAllEventListeners(this, kEventFontRewritten);
+
 	VirtualNode node = VirtualList::begin(this->fonts);
 
 	for(; node; node = VirtualNode::getNext(node))
@@ -203,6 +224,8 @@ void Printing::releaseFonts()
 
 		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
 		{
+			CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+
 			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 		}
 
@@ -210,9 +233,6 @@ void Printing::releaseFonts()
 	}
 
 	VirtualList::clear(this->fonts);
-	HardwareManager::enableInterrupts();
-
-	CharSetManager::defragment(CharSetManager::getInstance());
 }
 
 FontData* Printing::getFontByName(const char* font)
@@ -249,6 +269,9 @@ FontData* Printing::getFontByName(const char* font)
 			if(NULL == result->charSet)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
+
+				CharSet::removeEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::addEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 			}
 		}
 	}

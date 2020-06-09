@@ -53,6 +53,7 @@ enum Events
 	kEventTextureSetFrame,
 	kEventCharSetRewritten,
 	kEventCharSetDeleted,
+	kEventFontRewritten,
 
 	kEventEffectFadeComplete,
 	kEventEffectFadeStart,
