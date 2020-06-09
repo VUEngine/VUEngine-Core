@@ -344,9 +344,7 @@ void GameState::streamAll()
 	}
 	while(Stage::stream(this->stage));
 
-	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance(), false);
-
+	// Stream in and out all relevant entities
 	Stage::streamAll(this->stage);
 
 	// Transformation everything definitively

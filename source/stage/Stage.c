@@ -385,11 +385,6 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// apply transformations
 			Entity::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
-			if(!this->streaming.deferred)
-			{
-				SpriteManager::writeTextures(SpriteManager::getInstance());
-			}
-
 			if(makeReady)
 			{
 				Stage::makeChildReady(this, entity);
@@ -731,6 +726,8 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
 #endif
 
+	bool unloadedEntities = false;
+
 	// need a temporary list to remove and delete entities
 	VirtualNode node = this->children->head;
 
@@ -779,6 +776,8 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 				unloaded = true;
 			}
 
+			unloadedEntities = unloadedEntities || unloaded;
+
 			if(unloaded && defer)
 			{
 #ifdef __PROFILE_STREAMING
@@ -795,7 +794,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 
-	return true;
+	return unloadedEntities;
 }
 
 bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
@@ -1017,7 +1016,7 @@ bool Stage::stream()
 
 	if(Stage::updateEntityFactory(this) && this->streaming.deferred)
 	{
-		return false;
+		return true;
 	}
 
 	int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
@@ -1032,15 +1031,7 @@ bool Stage::stream()
 
 void Stage::streamAll()
 {
-	// must make sure there are not pending entities for removal
-	Container::purgeChildren(this);
-
-	Stage::unloadOutOfRangeEntities(this, false);
-	Stage::purgeChildren(this);
-	Stage::loadInRangeEntities(this, false);
-	while(EntityFactory::prepareEntities(this->entityFactory));
-//	EntityFactory::prepareAllEntities(this->entityFactory);			// Seems it is buggy
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	while(Stage::stream(this));
 }
 
 // execute stage's logic

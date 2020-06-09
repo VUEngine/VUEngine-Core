@@ -404,7 +404,7 @@ int EntityFactory::getPhase()
 	return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
 }
 
-/*
+
 // Something is not working properly
 void EntityFactory::prepareAllEntities()
 {
@@ -425,7 +425,6 @@ void EntityFactory::prepareAllEntities()
 
 	EntityFactory::cleanUp(this);
 }
-*/
 
 #ifdef __PROFILE_STREAMING
 void EntityFactory::showStatus(int x, int y)
