@@ -457,7 +457,7 @@ int SpriteManager::getNumberOfSprites()
  */
 void SpriteManager::writeTextures()
 {
-	while(CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()));
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
@@ -739,6 +739,7 @@ void SpriteManager::prepareAll()
 	{
 		// Restore drawing
 		HardwareManager::enableRendering(HardwareManager::getInstance());
+		while(VIPManager::isRenderingPending(VIPManager::getInstance()));
 	}
 }
 

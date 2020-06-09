@@ -133,6 +133,8 @@ void VIPManager::enableDrawing()
 void VIPManager::disableDrawing()
 {
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
+	this->renderingCompleted = false;
+	this->drawingEnded = true;
 }
 
 /**
