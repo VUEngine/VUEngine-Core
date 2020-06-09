@@ -152,6 +152,7 @@ class Container : SpatialObject
 	virtual int passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args);
 	virtual bool isTransformed();
 
+	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
 }
 

@@ -830,6 +830,26 @@ const Vector3D* Container::getPosition()
  *
  * @param position	Pointer to position
  */
+void Container::setPosition(const Vector3D* position)
+{
+	Vector3D displacement = Vector3D::get(this->transformation.globalPosition, *position);
+
+	this->transformation.localPosition = Vector3D::sum(this->transformation.localPosition, displacement);
+	this->transformation.globalPosition = *position;
+
+	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+
+	if(displacement.z)
+	{
+		this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+	}
+}
+
+/**
+ * Set local position
+ *
+ * @param position	Pointer to position
+ */
 void Container::setLocalPosition(const Vector3D* position)
 {
 	// force global position calculation on the next transformation cycle

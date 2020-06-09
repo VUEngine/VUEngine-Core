@@ -667,21 +667,11 @@ void Actor::initialTransform(const Transformation* environmentTransform, u32 rec
 // set position
 void Actor::setPosition(const Vector3D* position)
 {
-	Vector3D displacement = Vector3D::get(*position, this->transformation.globalPosition);
-
-	this->transformation.localPosition = Vector3D::get(this->transformation.localPosition, displacement);
-	this->transformation.globalPosition = *position;
+	Base::setPosition(this, position);
 
 	if(this->body)
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
-	}
-
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
-
-	if(displacement.z)
-	{
-		this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 	}
 
 	Actor::transformShapes(this);
