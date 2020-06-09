@@ -330,6 +330,9 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
+	// Make sure that the focus entity is transformed before focusing the camera
+	GameState::transform(this);
+
 	// Move the camera to its initial position
 	Camera::focus(Camera::getInstance(), false);
 
