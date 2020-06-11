@@ -356,8 +356,6 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		}
 	}
 
-	bool addEventListener = false;
-
 	if(NULL == this->animationFunction || strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		int i = 0;
@@ -376,8 +374,6 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 
 				this->animationFunction = animationDescription->animationFunctions[i];
 
-				addEventListener = true;
-
 				break;
 			}
 		}
@@ -389,7 +385,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	}
 
 	// setup animation frame
-	if(addEventListener && this->animationFunction->onAnimationComplete)
+	if(this->animationFunction->onAnimationComplete)
 	{
 		// register event callback
 		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
