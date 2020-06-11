@@ -377,8 +377,6 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 		if(entity)
 		{
-			Entity::setupGraphics(entity);
-
 			// create the entity and add it to the world
 			Stage::addChild(this, Container::safeCast(entity));
 

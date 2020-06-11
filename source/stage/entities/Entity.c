@@ -193,16 +193,6 @@ void Entity::destroyShapes()
 }
 
 /**
- * Add sprites
- */
-void Entity::setupGraphics()
-{
-	Base::setupGraphics(this);
-
-	Entity::addSprites(this, this->entitySpec->spriteSpecs);
-}
-
-/**
  * Add shapes
  */
 void Entity::setupShapes()
@@ -735,6 +725,8 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	// set spatial position
 	Container::setLocalPosition(entity, &position);
 
+	Entity::addSprites(entity, entity->entitySpec->spriteSpecs);
+
 	// add children if defined
 	if(positionedEntity->childrenSpecs)
 	{
@@ -855,7 +847,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
-	Entity::setupGraphics(childEntity);
+	Entity::addSprites(childEntity, childEntity->entitySpec->spriteSpecs);
 
 	// create the entity and add it to the world
 	Entity::addChild(this, Container::safeCast(childEntity));

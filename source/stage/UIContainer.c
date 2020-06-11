@@ -66,8 +66,6 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 		if(entity)
 		{
-			Entity::setupGraphics(entity);
-
 			// create the entity and add it to the world
 			UIContainer::addChild(this, Container::safeCast(entity));
 
@@ -93,8 +91,6 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 
 		if(entity)
 		{
-			Entity::setupGraphics(entity);
-
 			// create the entity and add it to the world
 			UIContainer::addChild(this, Container::safeCast(entity));
 

@@ -308,21 +308,6 @@ void Container::removeChild(Container child, bool deleteChild)
 #endif
 }
 
-void Container::setupGraphics()
-{
-	// if I have children
-	if(this->children)
-	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node ; node = node->next)
-		{
-			Container::setupGraphics(node->data);
-		}
-	}
-}
-
 void Container::setupShapes()
 {
 	// if I have children
