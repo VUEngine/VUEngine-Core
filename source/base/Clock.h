@@ -64,7 +64,7 @@ class Clock : Object
 	void setTimeInSeconds(float totalSeconds);
 	void start();
 	void stop();
-	virtual void update(u32 millisecondsElapsed);
+	void update(u32 millisecondsElapsed);
 }
 
 

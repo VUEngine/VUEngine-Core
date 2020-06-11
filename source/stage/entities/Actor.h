@@ -82,10 +82,10 @@ class Actor : AnimatedEntity
 	void stopAllMovement();
 	void resetCollisionStatus();
 	Body getBody();
+	void takeHitFrom(Actor other);
 	virtual void addForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(u16 axis);
-	virtual void takeHitFrom(Actor other);
 	virtual void syncPositionWithBody();
 	virtual void syncRotationWithBody();
 	virtual void syncRotationWithBodyAfterBouncing(SpatialObject collidingObject);

@@ -1278,12 +1278,6 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	}
 }
 
-// take a hit
-void Body::takeHitFrom(Body other __attribute__ ((unused)))
-{
-	//TODO:
-}
-
 void Body::setMaximumVelocity(Velocity maximumVelocity)
 {
 	this->maximumVelocity = maximumVelocity;

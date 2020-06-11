@@ -683,17 +683,6 @@ const Vector3D* Actor::getPosition()
 	return this->body ? Body::getPosition(this->body) : Base::getPosition(this);
 }
 
-// take hit
-void Actor::takeHitFrom(Actor other)
-{
-	ASSERT(Actor::safeCast(other), "Actor::takeHitFrom: other is not actor");
-
-	if(this->body && other->body)
-	{
-		Body::takeHitFrom(this->body, other->body);
-	}
-}
-
 // get bounciness
 fix10_6 Actor::getBounciness()
 {
