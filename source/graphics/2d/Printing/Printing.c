@@ -29,10 +29,12 @@
 #include <CharSetManager.h>
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
+#include <SpriteManager.h>
 #include <Utilities.h>
 #include <Mem.h>
 #include <VirtualList.h>
 #include <Printing.h>
+#include <config.h>
 #include <debugConfig.h>
 
 
@@ -209,7 +211,7 @@ void Printing::clear()
 {
 	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
+	Mem::clear((BYTE*)__BGMAP_SEGMENT(printingBgmap + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
 }
 
 void Printing::releaseFonts()
@@ -360,7 +362,7 @@ void Printing::setWorldCoordinates(s16 gx __attribute__ ((unused)), s16 gy __att
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
 	this->mx = 0;
-	this->my = 0;
+	this->my = __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = 0;
 }
 
@@ -387,7 +389,7 @@ void Printing::setWorldCoordinates(s16 gx, s16 gy, s8 gp)
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
 	this->mx = mx <= 64 * 8 ? mx : 0;
-	this->my = my <= 64 * 8 ? my : 0;
+	this->my = my + __PRINTING_BGMAP_Y_OFFSET <= 64 * 8 ? my + __PRINTING_BGMAP_Y_OFFSET : __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = mp;
 }
 
@@ -420,7 +422,7 @@ void Printing::resetCoordinates()
 	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
 	this->mx = 0;
-	this->my = 0;
+	this->my = __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = 0;
 
 	this->w = __SCREEN_WIDTH;
@@ -576,7 +578,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
+							bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
 									offset +

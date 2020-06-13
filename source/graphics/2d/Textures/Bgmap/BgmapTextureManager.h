@@ -66,8 +66,6 @@ singleton class BgmapTextureManager : Object
 	s8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];
 	// 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment
 	s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];
-	// Next free bgmap used for text printing
-	s16 freeBgmapSegment;
 	// The textures allocated
 	BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];
 	// Number of available bgmap segments

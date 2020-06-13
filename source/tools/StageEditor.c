@@ -187,7 +187,7 @@ void StageEditor::show()
 void StageEditor::hide()
 {
 	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseShape(this);
 	this->currentEntityNode = NULL;
@@ -265,7 +265,7 @@ void StageEditor::printHeader()
  */
 void StageEditor::setupMode()
 {
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	StageEditor::printHeader(this);
 	StageEditor::removePreviousSprite(this);
 

@@ -82,15 +82,16 @@ void BgmapTextureManager::reset()
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
 	int i = 0;
-	int j = 0;
 
 	// clear each bgmap segment usage
 	for(; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
 		this->numberOfChars[i] = 0;
 
+		int j = 0;
+
 		// clear the offsets
-		for(j = 0;j<__NUM_BGMAPS_PER_SEGMENT; j++)
+		for(j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
 		{
 			this->xOffset[i][j] = 0;
 			this->yOffset[i][j] = 0;
@@ -111,8 +112,6 @@ void BgmapTextureManager::reset()
 
 		this->bgmapTextures[i] = NULL;
 	}
-
-	this->freeBgmapSegment = 0;
 }
 
 /**
@@ -153,6 +152,8 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 	{
 		for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += mustLiveAtEvenSegment ? 2 : 1)
 		{
+			int maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
+			
 			// if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
 			if((int)(4096 - this->numberOfChars[i]) >= (int)area )
@@ -164,7 +165,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 					// determine the y offset inside the bgmap segment
 					if(!this->yOffset[i][j + 1])
 					{
-						aux = 64;
+						aux = maximumRow;
 					}
 					else
 					{
@@ -174,7 +175,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 					// determine if there is still mem space (columns) in the current y offset
 					if(rows + rowsPad <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
 					{
-						if(rows + rowsPad <= 64 - this->yOffset[i][j])
+						if(rows + rowsPad <= maximumRow - this->yOffset[i][j])
 						{
 							if(cols + colsPad <= 64 - this->xOffset[i][j])
 							{
@@ -200,11 +201,6 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 								
 								// update the number of chars defined inside the bgmap segment
 								this->numberOfChars[i] += area;
-
-								if(this->availableBgmapSegmentsForTextures >= __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i + 1 > this->freeBgmapSegment)
-								{
-									this->freeBgmapSegment = i + 1;
-								}
 
 								// if there is a free bgmap segment
 								return true;
@@ -235,42 +231,6 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 
 	return false;
 }
-
-/**
- * Allocate a BGMAP memory space for text
- *
- * @private
- * @param bgmapTexture		Texture to allocate space for
- */
-/*
-void BgmapTextureManager::allocateText(BgmapTexture bgmapTexture)
-{
-	//int xDisplacement = 0;
-	int yDisplacement = 0;
-
-	u32 length = Texture::getCols(bgmapTexture);
-
-	// if there is space in the first row
-	// calculate y displacement
-	// offset/64->chars per row inside a bgmap
-	yDisplacement = (this->xOffset[this->freeBgmapSegment][0] + length) >> 6;
-
-	// move to the next row
-	if(this->xOffset[this->freeBgmapSegment][0] < 64 * yDisplacement)
-	{
-		this->xOffset[this->freeBgmapSegment][0] = 64 * yDisplacement;
-	}
-
-	// offset%/64->chars per row inside a bgmap
-	//xDisplacement = (this->xOffset[this->freeBgmapSegment][0]) % 64;
-
-	// set next offset entry to modify within the free bgmap segment
-	this->xOffset[this->freeBgmapSegment][0] += length;
-
-	// if there are no more rows in the segment thrown an exception
-	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 64, "BgmapTextureManager::allocateText: mem depleted (TextBox)");
-}
-*/
 
 /**
  * Release a previously allocated Texture
@@ -534,7 +494,9 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
 	u32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
 
-	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
+	this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
+
+	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment + 1;
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{

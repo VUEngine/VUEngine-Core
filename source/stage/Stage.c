@@ -554,7 +554,9 @@ void Stage::preloadAssets()
 			{
 				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs[i], 0, false);
 
-				if(bgmapTexture)
+				NM_ASSERT(!isDeleted(bgmapTexture), "Stage::preloadAssets: failed to load bgmapTexture");
+
+				if(!isDeleted(bgmapTexture))
 				{
 					if(this->stageSpec->assets.textureSpecs[i]->recyclable)
 					{

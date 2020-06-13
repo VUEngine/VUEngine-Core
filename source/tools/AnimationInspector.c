@@ -214,7 +214,7 @@ void AnimationInspector::show()
  */
 void AnimationInspector::hide()
 {
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 
 	AnimationInspector::removePreviousSprite(this);
 
@@ -257,7 +257,7 @@ void AnimationInspector::setupMode()
 {
 	Printing printing = Printing::getInstance();
 
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
 	Printing::text(printing, "             ", 39, 2, NULL);

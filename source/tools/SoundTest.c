@@ -117,7 +117,7 @@ void SoundTest::show()
 {
 	SoundManager::reset(SoundManager::getInstance());
 
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	SpriteManager::hideSprites(SpriteManager::getInstance());
 	Sprite::show(SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0));
 	Printing::resetCoordinates(Printing::getInstance());
@@ -137,7 +137,7 @@ void SoundTest::show()
 void SoundTest::hide()
 {
 	SoundTest::releaseSoundWrapper(this);
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance());
 	SoundTest::lightUpGame(this);
 }

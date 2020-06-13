@@ -227,7 +227,7 @@ void Debug::render()
  */
 void Debug::show()
 {
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance());
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
@@ -240,7 +240,7 @@ void Debug::show()
 void Debug::hide()
 {
 	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
-	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance());
 }
 
@@ -399,7 +399,7 @@ void Debug::showPage(int increment)
 	{
 		this->update = NULL;
 
-		VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+		Printing::clear(Printing::getInstance());
 		SpriteManager::showSprites(SpriteManager::getInstance());
 
 		Debug::printHeader(this);
@@ -424,7 +424,7 @@ void Debug::showSubPage(int increment)
 	{
 		this->update = NULL;
 
-		VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+		Printing::clear(Printing::getInstance());
 
 		Debug::printHeader(this);
 		Printing::text(Printing::getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
