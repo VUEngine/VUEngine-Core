@@ -556,11 +556,13 @@ void Stage::preloadAssets()
 
 				if(bgmapTexture)
 				{
-					Texture::write(bgmapTexture);
-
 					if(this->stageSpec->assets.textureSpecs[i]->recyclable)
 					{
 						VirtualList::pushBack(recyclableTextures, bgmapTexture);
+					}
+					else
+					{
+						Texture::write(bgmapTexture);
 					}
 				}
 			}
