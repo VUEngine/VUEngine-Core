@@ -298,7 +298,7 @@
 // number of segments for param tables
 #define __PARAM_TABLE_SEGMENTS						{{ project.config.texture.paramTableSegments }}
 
-// bgmap segments to use (leave 2 to allocate param table, 1 for printing)
+// bgmap segments to use (1 for printing)
 #define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS - 1)
 
 // number of bgmap specs in each bgmap segment
@@ -320,25 +320,6 @@
 
 // maximum number of rows to write on each call to affine calculation functions
 #define __MAXIMUM_AFFINE_ROWS_PER_CALL				{{ project.config.affine.maxRowsPerCall }}
-
-
-//---------------------------------------------------------------------------------------------------------
-//												STREAMING
-//---------------------------------------------------------------------------------------------------------
-
-// number of total calls to the streaming method which completes a cycle
-// there are 4 parts for the streaming algorithm:
-// 1) unload entities
-// 2) select the next entity to load
-// 3) create the selected entity
-// 4) initialize the loaded entity
-#define __STREAM_CYCLE_DURATION						{{ project.config.streaming.cycleDuration }}
-
-// padding to determine if an entity must be loaded/unloaded
-// • load pad must always be lower than unload pad!
-// • too close values will put the streaming under heavy usage!
-#define __ENTITY_LOAD_PAD 							{{ project.config.streaming.loadPad }}
-#define __ENTITY_UNLOAD_PAD 						{{ project.config.streaming.unloadPad }}
 
 
 //---------------------------------------------------------------------------------------------------------

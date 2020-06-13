@@ -177,11 +177,6 @@
 	"sram": {
 		"totalSram": 8192
 	},
-	"streaming": {
-		"cycleDuration": 24,
-		"loadPad": 256,
-		"unloadPad": 312
-	},
 	"texture": {
 		"bgmapsPerSegments": 16,
 		"printing": {
