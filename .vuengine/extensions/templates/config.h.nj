@@ -293,20 +293,23 @@
 //---------------------------------------------------------------------------------------------------------
 
 // total number of bgmap segments
-#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			{{ project.config.texture.totalBgmapSegments }}
+{%- set dramLength = project.config.memory.sections.dram.length %}
+{%- set bgmapEndAddress = ((project.config.memory.sections.dram.origin | HexToInt) + dramLength*1024) %}
+{%- set bgmapStartAddress = ("0x20000") | HexToInt %}
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			{{ (bgmapEndAddress - bgmapStartAddress) / 8192}}
 
 // number of segments for param tables
 #define __PARAM_TABLE_SEGMENTS						{{ project.config.texture.paramTableSegments }}
 
 // bgmap segments to use (1 for printing)
-#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS - 1)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS)
 
 // number of bgmap specs in each bgmap segment
 #define __NUM_BGMAPS_PER_SEGMENT 					{{ project.config.texture.bgmapsPerSegments }}
 
 // printing area
 #define __PRINTING_BGMAP_X_OFFSET					{{ project.config.texture.printing.offset.x }}
-#define __PRINTING_BGMAP_Y_OFFSET					{{ project.config.texture.printing.offset.y }}
+#define __PRINTING_BGMAP_Y_OFFSET					(64 * 8 - __SCREEN_HEIGHT)
 #define __PRINTING_BGMAP_PARALLAX_OFFSET			{{ project.config.texture.printing.offset.parallax }}
 #define __PRINTABLE_BGMAP_AREA 						{{ project.config.texture.printing.printableArea }}
 
