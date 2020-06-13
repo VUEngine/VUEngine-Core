@@ -197,16 +197,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 								{
 									this->yOffset[i][j + 1] = this->yOffset[i][j] + rows + rowsPad;
 								}
-								else
-								{
-									// there must be at least 2 columns free
-									if(this->xOffset[i][j] >= 64)
-									{
-										// TODO: this was commented, don't know why
-										// this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;
-									}
-								}
-
+								
 								// update the number of chars defined inside the bgmap segment
 								this->numberOfChars[i] += area;
 
@@ -359,7 +350,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	{
 		BgmapTexture bgmapTexture = this->bgmapTextures[i];
 
-		if(bgmapTexture && !BgmapTexture::getUsageCount(bgmapTexture))
+		if(bgmapTexture && 0 == BgmapTexture::getUsageCount(bgmapTexture))
 		{
 			u16 id = Texture::getId(bgmapTexture);
 			u16 cols = this->offset[id][kCols];
@@ -372,16 +363,15 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 				textureSpec->rows <= rows
 			)
 			{
-				if(!selectedBgmapTexture)
+				if(textureSpec->cols == cols && textureSpec->rows == rows)
 				{
 					selectedBgmapTexture = bgmapTexture;
-					selectedTextureSpec = allocatedTextureSpec;
-				}
-				else if(textureSpec->cols == cols && textureSpec->rows == rows)
-				{
-					selectedBgmapTexture = bgmapTexture;
-					selectedTextureSpec = allocatedTextureSpec;
 					break;
+				}
+				else if(!selectedBgmapTexture)
+				{
+					selectedBgmapTexture = bgmapTexture;
+					selectedTextureSpec = allocatedTextureSpec;
 				}
 				else if(cols <= selectedTextureSpec->cols && rows <= selectedTextureSpec->rows)
 				{
