@@ -102,9 +102,9 @@ void Printing::reset()
 
 	VirtualList::clear(this->fonts);
 
-	this->gx = __PRINTING_BGMAP_X_OFFSET;
-	this->gy = __PRINTING_BGMAP_Y_OFFSET;
-	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+	this->gx = 0;
+	this->gy = 0;
+	this->gp = 0;
 	this->mx = __PRINTING_BGMAP_X_OFFSET;
 	this->my = __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = 0;
@@ -361,7 +361,7 @@ void Printing::setWorldCoordinates(s16 gx __attribute__ ((unused)), s16 gy __att
 
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
-	this->mx = 0;
+	this->mx = __PRINTING_BGMAP_X_OFFSET;
 	this->my = __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = 0;
 }
@@ -417,13 +417,13 @@ s16 Printing::getWorldCoordinatesP()
 
 void Printing::resetCoordinates()
 {
-	this->gx = __PRINTING_BGMAP_X_OFFSET;
-	this->gy = __PRINTING_BGMAP_Y_OFFSET;
-	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+	this->gx = 0;
+	this->gy = 0;
+	this->gp = 0;
 
-	this->mx = 0;
+	this->mx = __PRINTING_BGMAP_X_OFFSET;
 	this->my = __PRINTING_BGMAP_Y_OFFSET;
-	this->mp = 0;
+	this->mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
 	this->w = __SCREEN_WIDTH;
 	this->h = __SCREEN_HEIGHT;
