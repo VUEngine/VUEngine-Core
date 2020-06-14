@@ -73,8 +73,6 @@ void UIContainer::addEntities(PositionedEntity* entities)
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			Entity::initialTransform(entity, &environmentTransform, true);
 
-			SpriteManager::writeTextures(SpriteManager::getInstance());
-
 			Entity::synchronizeGraphics(entity);
 			Entity::ready(entity, true);
 		}
@@ -97,8 +95,6 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			Entity::initialTransform(entity, &environmentTransform, true);
-
-			SpriteManager::writeTextures(SpriteManager::getInstance());
 
 			Entity::synchronizeGraphics(entity);
 			Entity::ready(entity, true);

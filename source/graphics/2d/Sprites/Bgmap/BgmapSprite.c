@@ -286,6 +286,8 @@ DrawSpec BgmapSprite::getDrawSpec()
  */
 u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
+	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
+
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates

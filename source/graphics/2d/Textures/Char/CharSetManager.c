@@ -266,6 +266,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 void CharSetManager::writeCharSets()
 {
 	this->preventDefragmentation = true;
+
 	CharSetManager::defragment(this);
 
 	VirtualNode node = this->charSetsPendingWriting->head;
@@ -297,6 +298,10 @@ bool CharSetManager::writeCharSetsProgressively()
 		CharSet::write(charSet);
 		VirtualList::popFront(this->charSetsPendingWriting);
 		return true;
+	}
+	else
+	{
+		NM_ASSERT(0 == VirtualList::front(this->charSetsPendingWriting), "SSS");
 	}
 
 	// do some defragmenting

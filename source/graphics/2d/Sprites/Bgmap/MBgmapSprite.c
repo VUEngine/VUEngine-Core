@@ -328,6 +328,8 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  */
 u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
+	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
+
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates

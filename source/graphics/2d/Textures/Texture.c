@@ -138,7 +138,7 @@ void Texture::write()
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
 	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
 
-	if(!this->charSet)
+	if(isDeleted(this->charSet))
 	{
 		Texture::loadCharSet(this);
 	}
@@ -351,7 +351,7 @@ u32 Texture::getNumberOfFrames()
  */
 CharSet Texture::getCharSet(u32 loadIfNeeded)
 {
-	if(!this->charSet && loadIfNeeded)
+	if(isDeleted(this->charSet) && loadIfNeeded)
 	{
 		Texture::loadCharSet(this);
 	}

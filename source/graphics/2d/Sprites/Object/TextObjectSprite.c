@@ -101,6 +101,8 @@ void TextObjectSprite::destructor()
  */
 u16 TextObjectSprite::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
+	NM_ASSERT(!isDeleted(this->texture), "TextObjectSprite::doRender: null texture");
+
 	if(!this->printed)
 	{
 		TextObjectSprite::out(this, index);

@@ -218,6 +218,8 @@ void ObjectSprite::checkForContainer()
  */
 u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 {
+	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
+
 	int charLocation = CharSet::getOffset(this->texture->charSet);
 
 	s16 xDisplacementIncrement = 8;

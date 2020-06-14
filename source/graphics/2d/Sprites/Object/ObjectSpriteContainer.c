@@ -424,5 +424,15 @@ void ObjectSpriteContainer::setMode(u16 display __attribute__ ((unused)), u16 mo
  */
 bool ObjectSpriteContainer::writeTextures()
 {
+	if(!isDeleted(this->objectSprites))
+	{
+		VirtualNode node = this->objectSprites->head;
+
+		for(; node; node = node->next)
+		{
+			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data));
+		}
+	}
+
 	return true;
 }
