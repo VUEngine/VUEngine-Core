@@ -256,15 +256,12 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// stop all sounds
 	SoundManager::stopAllSounds(SoundManager::getInstance());
 
+	Camera::reset(Camera::getInstance());
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
+
 	if(overrideCameraPosition)
 	{
-		Camera::reset(Camera::getInstance());
-		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition));
-	}
-	else
-	{
-		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 	}
 
 	Camera::setCameraFrustum(Camera::getInstance(), this->stageSpec->level.cameraFrustum);
