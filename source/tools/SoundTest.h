@@ -22,8 +22,6 @@
 #ifndef SOUND_TEST_H_
 #define SOUND_TEST_H_
 
-#ifdef __TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -59,6 +57,4 @@ singleton class SoundTest : Tool
 	override void processUserInput(u16 pressedKey);
 }
 
-
-#endif
 #endif

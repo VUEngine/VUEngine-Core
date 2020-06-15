@@ -23,8 +23,6 @@
 #ifndef SOUND_TEST_STATE_H_
 #define SOUND_TEST_STATE_H_
 
-#ifdef __TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
@@ -50,8 +48,5 @@ singleton class SoundTestState : ToolState
 	override void enter(void* owner);
 	override bool isKeyCombination(UserInput userInput);
 }
-
-
-#endif
 
 #endif

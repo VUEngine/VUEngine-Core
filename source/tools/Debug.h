@@ -22,8 +22,6 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#ifdef __TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -90,5 +88,4 @@ singleton class Debug : Tool
 	override void processUserInput(u16 pressedKey);
 }
 
-#endif
 #endif

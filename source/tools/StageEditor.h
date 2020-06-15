@@ -22,8 +22,6 @@
 #ifndef STAGE_EDITOR_H_
 #define STAGE_EDITOR_H_
 
-#ifdef __TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -81,6 +79,4 @@ singleton class StageEditor : Tool
 	override void processUserInput(u16 pressedKey);
 }
 
-
-#endif
 #endif
