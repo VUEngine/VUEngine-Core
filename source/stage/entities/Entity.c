@@ -118,6 +118,9 @@ void Entity::iAmDeletingMyself()
 
 	// destroy collision shapes
 	Entity::allowCollisions(this, false);
+
+	// release graphic resources as soon as possible
+	Entity::releaseSprites(this);
 //	Entity::destroyShapes(this);
 }
 
