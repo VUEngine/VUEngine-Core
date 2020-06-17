@@ -332,7 +332,7 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 	if (__WORLD_SIZE_DISPLACEMENT >= w)
 	{
-		return 0;
+		return __NO_RENDER_INDEX;
 	}
 
 /*
@@ -355,7 +355,7 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	{
 		if (__WORLD_SIZE_DISPLACEMENT >= h)
 		{
-			return 0;
+			return __NO_RENDER_INDEX;
 		}
 
 		my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
@@ -363,7 +363,7 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 #else
 	if (__WORLD_SIZE_DISPLACEMENT >= h)
 	{
-		return 0;
+		return __NO_RENDER_INDEX;
 	}
 #endif
 

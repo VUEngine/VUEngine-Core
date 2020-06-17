@@ -38,15 +38,17 @@
 //											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __UPDATE_HEAD		0x0F
-#define __UPDATE_G			0x01
-#define __UPDATE_PARAM		0x02
-#define __UPDATE_SIZE		0x04
-#define __UPDATE_M			0x08
+#define __UPDATE_HEAD				0x0F
+#define __UPDATE_G					0x01
+#define __UPDATE_PARAM				0x02
+#define __UPDATE_SIZE				0x04
+#define __UPDATE_M					0x08
 
-#define __TRANSPARENCY_NONE	0
-#define __TRANSPARENCY_ODD	1
-#define __TRANSPARENCY_EVEN	2
+#define __TRANSPARENCY_NONE			0
+#define __TRANSPARENCY_ODD			1
+#define __TRANSPARENCY_EVEN			2
+
+#define __NO_RENDER_INDEX	-1
 
 
 //---------------------------------------------------------------------------------------------------------

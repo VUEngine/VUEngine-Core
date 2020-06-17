@@ -370,7 +370,7 @@ u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 		if(0 >= w)
 		{
-			return 0;
+			return __NO_RENDER_INDEX;
 		}
 	}
 	else
@@ -395,7 +395,7 @@ u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 		{
 			if (0 >= h)
 			{
-				return 0;
+				return __NO_RENDER_INDEX;
 			}
 
 			my -= __MINIMUM_BGMAP_SPRITE_HEIGHT - h;
@@ -403,7 +403,7 @@ u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 #else
 		if (0 >= h)
 		{
-			return 0;
+			return __NO_RENDER_INDEX;
 		}
 #endif
 	}
