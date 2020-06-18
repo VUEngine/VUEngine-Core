@@ -302,6 +302,9 @@ void VIPManager::processInterrupt(u16 interrupt)
 						// Write to DRAM
 						SpriteManager::writeDRAM(_spriteManager);
 
+#ifndef __RELEASE
+						SpriteManager::render(SpriteManager::getInstance());
+#endif
 						this->renderingCompleted = true;
 					}
 
