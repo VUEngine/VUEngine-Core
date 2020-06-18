@@ -880,6 +880,13 @@ const Rotation* Container::getLocalRotation()
  */
 void Container::setLocalRotation(const Rotation* rotation)
 {
+	bool invalidateRotation = 
+		this->transformation.localRotation.x != rotation->x
+		||
+		this->transformation.localRotation.y != rotation->y
+		||
+		this->transformation.localRotation.z != rotation->z;
+
 	this->transformation.localRotation = *rotation;
 
 	this->transformation.localRotation.x = __MODULO(rotation->x, 512);
@@ -901,7 +908,10 @@ void Container::setLocalRotation(const Rotation* rotation)
 		this->transformation.localRotation.z += 512;
 	}
 
-	Container::invalidateGlobalRotation(this);
+	if(invalidateRotation)
+	{
+		Container::invalidateGlobalRotation(this);
+	}
 }
 
 /**
