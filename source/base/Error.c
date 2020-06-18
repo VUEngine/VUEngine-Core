@@ -182,18 +182,11 @@ static int Error::triggerException(char* message, char* detail)
 	HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 
+	// Prevent VIP's interrupts
+	HardwareManager::disableInterrupts();
+
 	// error display message
-	int textLayer = __EXCEPTIONS_WORLD;
-	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | __EXCEPTIONS_BGMAP;
-	_worldAttributesBaseAddress[textLayer].mx = 0;
-	_worldAttributesBaseAddress[textLayer].mp = 0;
-	_worldAttributesBaseAddress[textLayer].my = 0;
-	_worldAttributesBaseAddress[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
-	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
-	_worldAttributesBaseAddress[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
-	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH;
-	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;
-	_worldAttributesBaseAddress[textLayer - 1].head = __WORLD_END;
+	Printing::render(Printing::getInstance(), __EXCEPTIONS_WORLD);
 
 	// dimm game
 	_vipRegisters[__GPLT0] = 0xE4;
@@ -204,8 +197,6 @@ static int Error::triggerException(char* message, char* detail)
 	_vipRegisters[__JPLT1] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
 	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
-
-	HardwareManager::disableInterrupts();
 
 	// trap the game here
 	while(true);
