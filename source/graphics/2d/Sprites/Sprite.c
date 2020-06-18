@@ -57,7 +57,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	Base::constructor();
 
 	// clear values
-	this->index = 0;
+	this->index = __NO_RENDER_INDEX;
 	this->head = 0;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
@@ -90,7 +90,7 @@ void Sprite::processEffects()
 
 u16 Sprite::render(u16 index, bool evenFrame)
 {
-	this->index = 0;
+	this->index = __NO_RENDER_INDEX;
 	this->visible = false;
 
 	if(this->hidden || !this->positioned)
@@ -188,7 +188,7 @@ void Sprite::hide()
 	// Make sure that I'm positioned to show up again
 	this->positioned = false;
 
-	this->index = 0;
+	this->index = __NO_RENDER_INDEX;
 	this->visible = false;
 }
 
@@ -808,8 +808,6 @@ void Sprite::print(int x, int y)
 	// Allow normal rendering once for WORLD values to populate properly
 	u8 transparent = this->transparent;
 	this->transparent = __TRANSPARENCY_NONE;
-
-	Sprite::render(this, 31, 0);
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);

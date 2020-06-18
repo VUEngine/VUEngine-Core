@@ -1334,6 +1334,7 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 		SpriteManager::hideSprites(SpriteManager::getInstance());
 		Sprite sprite = SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), this->currentSprite);
 		Sprite::show(sprite);
+		Sprite::render(sprite, 31, 0);
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
 	}
