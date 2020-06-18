@@ -247,23 +247,24 @@ void Actor::doSyncRotationWithBody()
 		}
 		else
 		{
+			Rotation localRotation = this->transformation.localRotation;
+
 			switch(this->actorSpec->axisForSynchronizationWithBody)
 			{
 				case __X_AXIS:
-					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
+					localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
 					break;
 
 				case __Y_AXIS:
-					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
+					localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
 					break;
 
 				case __Z_AXIS:
-					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
+					localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
 					break;
-
 			}
 
-			Base::setLocalRotation(this, &this->transformation.localRotation);
+			Base::setLocalRotation(this, &localRotation);
 		}
 	}
 }

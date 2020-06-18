@@ -155,8 +155,6 @@ void ObjectSprite::rotate(const Rotation* rotation)
 		this->head &= 0xEFFF;
 	}
 
-	this->head &= __OBJECT_CHAR_SHOW_MASK;
-
 	if(!isDeleted(this->texture))
 	{
 		this->texture->written = false;
