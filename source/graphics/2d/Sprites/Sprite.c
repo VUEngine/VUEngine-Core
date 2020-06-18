@@ -91,7 +91,7 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	if(this->hidden || !this->positioned)
 	{
-		return 0;
+		return this->index;
 	}
 
 	if(!this->texture)
@@ -107,12 +107,12 @@ u16 Sprite::render(u16 index, bool evenFrame)
 	{
 		Texture::write(this->texture);
 
-		return 0;
+		return this->index;
 	}
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
-		return 0;
+		return this->index;
 	}
 
 	this->index = Sprite::doRender(this, index, evenFrame);
@@ -526,17 +526,17 @@ bool Sprite::isVisible()
  */
 bool Sprite::isWithinScreenSpace()
 {
-	if(!((unsigned)(this->position.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->position.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->position.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
+	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
 	{
 		return false;
 	}
@@ -805,9 +805,7 @@ void Sprite::print(int x, int y)
 	u8 transparent = this->transparent;
 	this->transparent = __TRANSPARENCY_NONE;
 
-	// Wait for the sprite to be rendered before printing it since
-	// some of its attributes are invalid until rendered
-	TimerManager::wait(TimerManager::getInstance(), 100);
+	Sprite::render(this, 31, 0);
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
@@ -838,6 +836,8 @@ void Sprite::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
+	Printing::text(Printing::getInstance(), "Hidden:                         ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), (this->hidden > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->position.x, x + 18, y, NULL);
