@@ -76,6 +76,7 @@ void Shape::constructor(SpatialObject owner)
 	this->collidingShapes = NULL;
 	this->isVisible = true;
 	this->moved = false;
+	this->registerCollisions = true;
 }
 
 /**
@@ -309,8 +310,11 @@ CollisionData Shape::collides(Shape shape)
 		{
 			// new collision
 			collisionData.result = kEnterCollision;
-			// Commented out because of F V, does it affect other games?
-			//collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
+
+			if(this->registerCollisions)
+			{
+				collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
+			}
 		}
 
 		//return collisionData;
@@ -822,6 +826,10 @@ void Shape::setLayersToIgnore(u32 layersToIgnore)
 	this->layersToIgnore = layersToIgnore;
 }
 
+void Shape::registerCollisions(bool value)
+{
+	this->registerCollisions = value;
+}
 
 // show me
 void Shape::show()

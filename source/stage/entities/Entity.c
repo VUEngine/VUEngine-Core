@@ -1441,7 +1441,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 	Base::initialTransform(this, environmentTransform, recursive);
 
 	this->transformShapes = true;
-	Container::setupShapes(this);
+	Entity::setupShapes(this);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
@@ -1928,6 +1928,25 @@ void Entity::activeCollisionChecks(bool active)
 			Shape shape = Shape::safeCast(node->data);
 
 			Shape::activeCollisionChecks(shape, active);
+		}
+	}
+}
+
+/**
+ * Set whether shapes must register shapes against which they have collided
+ * in order to receive update and exit collision notifications
+ */
+void Entity::registerCollisions(bool value)
+{
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = Shape::safeCast(node->data);
+
+			Shape::registerCollisions(shape, value);
 		}
 	}
 }

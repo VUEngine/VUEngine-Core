@@ -89,6 +89,7 @@ class Entity : Container
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
+	void registerCollisions(bool value);
 	bool doesAllowCollisions();
 	bool hasShapes();
 	void showShapes();

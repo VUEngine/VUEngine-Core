@@ -212,6 +212,8 @@ abstract class Shape : Object
 	u8 checkForCollisions;
 	// flag to cull off shapes outside the screen
 	u8 isVisible;
+	// flag to allow registration of colliding shapes
+	bool registerCollisions;
 
 	/// @publicsection
 	void constructor(SpatialObject owner);
@@ -235,6 +237,7 @@ abstract class Shape : Object
 	void setLayers(u32 layers);
 	u32 getLayersToIgnore();
 	void setLayersToIgnore(u32 layersToIgnore);
+	void registerCollisions(bool value);
 	void show();
 	void hide();
 	virtual void setup(u32 layers, u32 layersToIgnore);
