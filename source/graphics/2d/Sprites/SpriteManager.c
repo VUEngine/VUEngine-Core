@@ -626,7 +626,7 @@ s16 SpriteManager::getSpritePosition(Sprite sprite)
 		return -1;
 	}
 
-	return VirtualList::getDataPosition(this->sprites, sprite);
+	return (__TOTAL_LAYERS - VirtualList::getSize(this->sprites)) + VirtualList::getDataPosition(this->sprites, sprite);
 }
 
 /**
