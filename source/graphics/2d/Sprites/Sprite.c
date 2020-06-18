@@ -84,6 +84,10 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
+void Sprite::processEffects()
+{
+}
+
 u16 Sprite::render(u16 index, bool evenFrame)
 {
 	this->index = 0;

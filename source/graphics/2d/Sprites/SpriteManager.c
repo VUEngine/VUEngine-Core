@@ -81,6 +81,7 @@ void SpriteManager::constructor()
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
+	this->specialSprites = NULL;
 
 	this->spritePendingTextureWriting = NULL;
 	this->cyclesToWaitForSpriteTextureWriting = 0;
@@ -142,6 +143,12 @@ void SpriteManager::cleanUp()
 		delete this->sprites;
 		this->sprites = NULL;
 	}
+
+	if(!isDeleted(this->specialSprites))
+	{
+		delete this->specialSprites;
+		this->specialSprites = NULL;
+	}
 }
 
 /**
@@ -166,6 +173,7 @@ void SpriteManager::reset()
 
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
+	this->specialSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -394,8 +402,9 @@ bool SpriteManager::sortProgressively()
  *
  * @private
  * @param sprite	Sprite to assign the WORLD layer
+ * @param hasEffects	Flag to signal that the sprite has special effects applied to it
  */
-void SpriteManager::registerSprite(Sprite sprite)
+void SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
@@ -408,6 +417,11 @@ void SpriteManager::registerSprite(Sprite sprite)
 	// add to the front: last element corresponds to the 31 WORLD
 	VirtualList::pushFront(this->sprites, sprite);
 
+	if(hasEffects)
+	{
+		VirtualList::pushFront(this->specialSprites, sprite);
+	}
+
 	this->lockSpritesLists = false;
 }
 
@@ -415,9 +429,10 @@ void SpriteManager::registerSprite(Sprite sprite)
  * Remove a registered Sprite and get back the WORLD layer previously assigned to it
  *
  * @private
- * @param sprite	Sprite to assign the WORLD layer
+ * @param sprite		Sprite to assign the WORLD layer
+ * @param hasEffects	Flag to signal that the sprite has special effects applied to it
  */
-void SpriteManager::unregisterSprite(Sprite sprite)
+void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
@@ -426,6 +441,13 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 
 	VirtualList::removeElement(this->sprites, sprite);
+
+#ifdef __RELEASE
+	if(hasEffects)
+#endif
+	{
+		VirtualList::removeElement(this->specialSprites, sprite);
+	}
 
 	this->lockSpritesLists = false;
 }
@@ -476,6 +498,13 @@ void SpriteManager::writeTextures()
 
 void SpriteManager::writeDRAM()
 {
+	VirtualNode node = this->specialSprites->head;
+
+	for(; node; node = node->next)
+	{
+		Sprite::processEffects(node->data);
+	}
+
 	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer + 1), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer + 1)) >> 2);
 
 	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)

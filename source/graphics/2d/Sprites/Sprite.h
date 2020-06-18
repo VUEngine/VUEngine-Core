@@ -228,6 +228,7 @@ abstract class Sprite : Object
 	virtual Scale getScale();
 	virtual u8 getWorldLayer();
 	virtual void position(const Vector3D* position);
+	virtual void processEffects();
 	virtual u16 doRender(u16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);

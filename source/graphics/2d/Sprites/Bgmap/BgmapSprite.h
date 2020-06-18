@@ -122,6 +122,7 @@ class BgmapSprite : Sprite
 	void applyAffineTransformations();
 	void applyHbiasEffects();
 	override u16 doRender(u16 index, bool evenFrame);
+	override void processEffects();
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
 	override void resize(Scale scale, fix10_6 z);

@@ -103,7 +103,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
 
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 < this->param);
 }
 
 /**
@@ -114,7 +114,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
  */
 void BgmapSprite::destructor()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 < this->param);
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
@@ -379,15 +379,23 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
+	worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 
+	return index;
+}
+
+void BgmapSprite::processEffects()
+{
 	// set the world size according to the zoom
 	if(this->param)
 	{
-		BgmapSprite::processAffineEffects(this, index, gx, width, myDisplacement);
-		BgmapSprite::processHbiasEffects(this, index);
-	}
+		s16 gx = this->position.x + this->displacement.x - this->halfWidth;
+		s16 width = this->halfWidth << 1;
+		s16 myDisplacement = 0;
 
-	return index;
+		BgmapSprite::processAffineEffects(this, this->index, gx, width, myDisplacement);
+		BgmapSprite::processHbiasEffects(this, this->index);
+	}
 }
 
 void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDisplacement)
@@ -424,19 +432,12 @@ void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDispl
 			}
 		}
 	}
-
 }
 
 void BgmapSprite::processHbiasEffects(u16 index)
 {
 	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
-
- 		ASSERT(0 <= ((signed)this->param - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
-
-		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
-
 		if(0 <= this->paramTableRow)
 		{
 			// apply hbias effects
