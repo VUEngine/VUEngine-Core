@@ -116,6 +116,11 @@ u16 Sprite::render(u16 index, bool evenFrame)
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
+		if(this->writeAnimationFrame)
+		{
+			Sprite::update(this);
+		}
+		
 		return this->index;
 	}
 
@@ -124,6 +129,10 @@ u16 Sprite::render(u16 index, bool evenFrame)
 	if(0 < this->index)
 	{
 		this->visible = true;
+		Sprite::update(this);
+	}
+	else if(this->writeAnimationFrame)
+	{
 		Sprite::update(this);
 	}
 
