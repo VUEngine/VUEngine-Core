@@ -103,7 +103,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
 
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 < this->param);
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & bgmapSpriteSpec->bgmapMode));
 }
 
 /**
@@ -114,7 +114,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
  */
 void BgmapSprite::destructor()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 < this->param);
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & this->head));
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
@@ -387,7 +387,7 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 void BgmapSprite::processEffects()
 {
 	// set the world size according to the zoom
-	if(this->param)
+	if(0 < this->param)
 	{
 		s16 gx = this->position.x + this->displacement.x - this->halfWidth;
 		s16 width = this->halfWidth << 1;
