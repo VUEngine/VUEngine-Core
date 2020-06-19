@@ -467,6 +467,31 @@ void VIPManager::clearScreen()
 		_worldAttributesCache[i].h = 0;
 		_worldAttributesCache[i].param = 0;
 		_worldAttributesCache[i].ovr = 0;
+
+		_worldAttributesBaseAddress[i].head = 0;
+		_worldAttributesBaseAddress[i].gx = 0;
+		_worldAttributesBaseAddress[i].gp = 0;
+		_worldAttributesBaseAddress[i].gy = 0;
+		_worldAttributesBaseAddress[i].mx = 0;
+		_worldAttributesBaseAddress[i].mp = 0;
+		_worldAttributesBaseAddress[i].my = 0;
+		_worldAttributesBaseAddress[i].w = 0;
+		_worldAttributesBaseAddress[i].h = 0;
+		_worldAttributesBaseAddress[i].param = 0;
+		_worldAttributesBaseAddress[i].ovr = 0;
+	}
+
+	for(int i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	{
+		_objectAttributesCache[i].jx = 0;
+		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesCache[i].jy = 0;
+		_objectAttributesCache[i].tile = 0;
+
+		_objectAttributesBaseAddress[i].jx = 0;
+		_objectAttributesBaseAddress[i].head = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesBaseAddress[i].jy = 0;
+		_objectAttributesBaseAddress[i].tile = 0;
 	}
 }
 

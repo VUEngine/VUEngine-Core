@@ -69,7 +69,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
 	this->firstObjectIndex = firstObjectIndex;
-	this->lastRenderedObjectIndex = this->firstObjectIndex;
+	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
 	this->objectSprites = new VirtualList();
 	this->hidden = false;
 	this->visible = true;
@@ -83,7 +83,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	for(; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = 0;
+		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
 		_objectAttributesCache[i].jy = 0;
 		_objectAttributesCache[i].tile = 0;
 	}
