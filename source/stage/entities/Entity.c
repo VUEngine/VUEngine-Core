@@ -700,7 +700,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
-		Container::addChild(this, Container::safeCast(child));
+		Entity::addChild(this, Container::safeCast(child));
 	}
 }
 
@@ -849,14 +849,12 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	Entity childEntity = Entity::loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
-	// must add graphics
-	Entity::addSprites(childEntity, childEntity->entitySpec->spriteSpecs);
-
 	// create the entity and add it to the world
 	Entity::addChild(this, Container::safeCast(childEntity));
 
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
+	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
 	Entity::initialTransform(childEntity, &environmentTransform, true);
 
 	// Make sure sprites are ready before calling ready
@@ -1815,6 +1813,9 @@ void Entity::show()
  */
 void Entity::hide()
 {
+	// This is called from the initialTransformation method
+	// causing a call to transform that messes up the localPosition
+/*
 	// update transformation before hiding
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
@@ -1822,7 +1823,7 @@ void Entity::hide()
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity::synchronizeGraphics(this);
-
+*/
 	Base::hide(this);
 
 	// hide all sprites

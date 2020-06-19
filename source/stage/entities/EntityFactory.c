@@ -300,10 +300,11 @@ u32 EntityFactory::makeReadyEntities()
 			// Maybe it is needed another list and phase for this
 			Entity::synchronizeGraphics(positionedEntityDescription->entity);
 
+			// Must add the child to its parent before making it ready
+			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
+
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
-
-			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
 			VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);

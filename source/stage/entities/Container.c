@@ -243,7 +243,9 @@ void Container::addChild(Container child)
 		{
 			Container::removeChild(child->parent, child, false);
 
-			Container::changeEnvironment(child, &this->transformation);
+			Transformation environmentTransform = Container::getEnvironmentTransform(this);
+			Container::concatenateTransform(this, &environmentTransform, &this->transformation);
+			Container::changeEnvironment(child, &environmentTransform);
 		}
 
 		// set new parent
@@ -880,38 +882,43 @@ const Rotation* Container::getLocalRotation()
  */
 void Container::setLocalRotation(const Rotation* rotation)
 {
-	bool invalidateRotation = 
-		this->transformation.localRotation.x != rotation->x
-		||
-		this->transformation.localRotation.y != rotation->y
-		||
-		this->transformation.localRotation.z != rotation->z;
-
-	this->transformation.localRotation = *rotation;
-
-	this->transformation.localRotation.x = __MODULO(rotation->x, 512);
-	this->transformation.localRotation.y = __MODULO(rotation->y, 512);
-	this->transformation.localRotation.z = __MODULO(rotation->z, 512);
-
-	if(0 > this->transformation.localRotation.x)
+	Rotation auxRotation = 
 	{
-		this->transformation.localRotation.x += 512;
+		__MODULO(rotation->x, 512),
+		__MODULO(rotation->y, 512),
+		__MODULO(rotation->z, 512)
+	};
+
+	if(0 > auxRotation.x)
+	{
+		auxRotation.x += 512;
 	}
 
-	if(0 > this->transformation.localRotation.y)
+	if(0 > auxRotation.y)
 	{
-		this->transformation.localRotation.y += 512;
+		auxRotation.y += 512;
 	}
 
-	if(0 > this->transformation.localRotation.z)
+	if(0 > auxRotation.z)
 	{
-		this->transformation.localRotation.z += 512;
+		auxRotation.z += 512;
 	}
 
-	if(invalidateRotation)
+	if(this->transformation.localRotation.z != auxRotation.z)
 	{
 		Container::invalidateGlobalRotation(this);
 	}
+	else if(this->transformation.localRotation.x != auxRotation.x)
+	{
+		Container::invalidateGlobalRotation(this);
+	}
+	else if(this->transformation.localRotation.y != auxRotation.y)
+	{
+		Container::invalidateGlobalRotation(this);
+	}
+
+	this->transformation.localRotation = auxRotation;
+
 }
 
 /**
@@ -931,9 +938,27 @@ const Scale* Container::getLocalScale()
  */
 void Container::setLocalScale(const Scale* scale)
 {
-	this->transformation.localScale = *scale;
+	if(scale == &this->transformation.localScale)
+	{
+		Container::invalidateGlobalScale(this);
+	}
+	else
+	{
+		if(this->transformation.localScale.z != scale->z)
+		{
+			Container::invalidateGlobalRotation(this);
+		}
+		else if(this->transformation.localScale.x != scale->x)
+		{
+			Container::invalidateGlobalRotation(this);
+		}
+		else if(this->transformation.localScale.y != scale->y)
+		{
+			Container::invalidateGlobalRotation(this);
+		}
 
-	Container::invalidateGlobalScale(this);
+		this->transformation.localScale = *scale;
+	}
 }
 
 /**
