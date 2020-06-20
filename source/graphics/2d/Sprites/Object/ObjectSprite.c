@@ -335,11 +335,11 @@ s16 ObjectSprite::getTotalObjects()
  *
  * @return 		World layer
  */
-u8 ObjectSprite::getWorldLayer()
+u8 ObjectSprite::getIndex()
 {
-	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
+	ASSERT(this->objectSpriteContainer, "ObjectSprite::getIndex: null objectSpriteContainer");
 
-	return this->objectSpriteContainer ?  Sprite::getWorldLayer(this->objectSpriteContainer) : 0;
+	return this->objectSpriteContainer ?  Sprite::getIndex(this->objectSpriteContainer) : 0;
 }
 
 /**

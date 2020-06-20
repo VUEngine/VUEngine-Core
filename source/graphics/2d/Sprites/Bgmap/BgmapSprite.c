@@ -302,7 +302,6 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	s16 height = this->halfHeight << 1;
 	s16 w = width;
 	s16 h = height;
-	s16 myDisplacement = 0;
 
 	// set the head
 	int mx = this->drawSpec.textureSource.mx;
@@ -321,7 +320,6 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 	{
 		my += (_cameraFrustum->y0 - gy);
 		h -= (_cameraFrustum->y0 - gy);
-		myDisplacement = (_cameraFrustum->y0 - gy);
 		gy = _cameraFrustum->y0;
 	}
 
@@ -387,22 +385,19 @@ u16 BgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 void BgmapSprite::processEffects()
 {
 	// set the world size according to the zoom
-	if(0 < this->param)
+	if(0 < this->param && (u8)__NO_RENDER_INDEX != this->index)
 	{
-		s16 gx = this->position.x + this->displacement.x - this->halfWidth;
-		s16 width = this->halfWidth << 1;
-		s16 myDisplacement = 0;
-
-		BgmapSprite::processAffineEffects(this, this->index, gx, width, myDisplacement);
-		BgmapSprite::processHbiasEffects(this, this->index);
+		BgmapSprite::processAffineEffects(this);
+		BgmapSprite::processHbiasEffects(this);
 	}
 }
 
-void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDisplacement)
+void BgmapSprite::processAffineEffects()
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
+		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+//		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
 
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
@@ -411,10 +406,18 @@ void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDispl
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
 		// un-cap x coordinate in affine mode
-		if(_cameraFrustum->x0 > gx)
+		if(_cameraFrustum->x0 > worldPointer->gx)
 		{
-			worldPointer->gx = gx;
-			worldPointer->w = width;
+			worldPointer->gx = this->position.x + this->displacement.x - this->halfWidth;
+			worldPointer->w = this->halfWidth << 1;
+		}
+
+		s16 myDisplacement = 0;
+		s16 gy = this->position.y + this->displacement.y - this->halfHeight;
+
+		if(_cameraFrustum->y0 > gy)
+		{
+			myDisplacement = (_cameraFrustum->y0 - gy);
 		}
 
 		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
@@ -434,7 +437,7 @@ void BgmapSprite::processAffineEffects(u16 index, int gx, int width, int myDispl
 	}
 }
 
-void BgmapSprite::processHbiasEffects(u16 index)
+void BgmapSprite::processHbiasEffects()
 {
 	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{

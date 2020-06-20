@@ -226,7 +226,7 @@ abstract class Sprite : Object
 	void show();
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual Scale getScale();
-	virtual u8 getWorldLayer();
+	virtual u8 getIndex();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
 	virtual u16 doRender(u16 index, bool evenFrame) = 0;

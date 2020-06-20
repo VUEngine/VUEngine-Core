@@ -289,7 +289,7 @@ AnimationController Sprite::getAnimationController()
  *
  * @return 		World layer
  */
-u8 Sprite::getWorldLayer()
+u8 Sprite::getIndex()
 {
 	return this->index;
 }

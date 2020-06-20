@@ -432,7 +432,7 @@ u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
 
 	if(this->param)
 	{
-		MBgmapSprite::processHbiasEffects(this, index);
+		MBgmapSprite::processHbiasEffects(this);
 	}
 
 	return index;
