@@ -94,6 +94,12 @@ TextureROMSpec PROFILING_IM_TX =
 
 	// horizontal flip
 	false,
+
+	// vertical flip
+	false,
+
+	// horizontal flip
+	false,
 };
 
 
@@ -138,6 +144,12 @@ TextureROMSpec PROFILING_IM_SHADOW_TX =
 	__PROFILING_SHADOW_PALETTE,
 
 	// recyclable
+	false,
+
+	// vertical flip
+	false,
+
+	// horizontal flip
 	false,
 
 	// vertical flip
@@ -220,6 +232,9 @@ EntityROMSpec PROFILING_IM =
 	// sprites
 	(SpriteSpec**)PROFILING_IM_SPS,
 
+	// use z displacement in projection
+	false,
+			
 	// use z displacement in projection
 	false,
 			

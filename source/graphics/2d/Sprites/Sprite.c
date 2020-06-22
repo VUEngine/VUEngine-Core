@@ -70,6 +70,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
+	this->hasEffects = false;
 }
 
 /**
@@ -98,43 +99,28 @@ u16 Sprite::render(u16 index, bool evenFrame)
 		return this->index;
 	}
 
-	if(!this->texture)
+	if(isDeleted(this->texture))
 	{
 		this->index = Sprite::doRender(this, index, evenFrame);
 
-		this->visible = 0 < this->index;
+		this->visible = __NO_RENDER_INDEX != this->index;
 
 		return this->index;
 	}
 
 	if(!this->texture->written)
 	{
-		Texture::write(this->texture);
-
 		return this->index;
 	}
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
-		if(this->writeAnimationFrame)
-		{
-			Sprite::update(this);
-		}
-		
 		return this->index;
 	}
 
 	this->index = Sprite::doRender(this, index, evenFrame);
 
-	if(0 < this->index)
-	{
-		this->visible = true;
-		Sprite::update(this);
-	}
-	else if(this->writeAnimationFrame)
-	{
-		Sprite::update(this);
-	}
+	this->visible = __NO_RENDER_INDEX != this->index;
 
 	return this->index;
 }

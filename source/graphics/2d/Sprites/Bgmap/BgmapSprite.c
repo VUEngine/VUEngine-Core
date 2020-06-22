@@ -103,7 +103,9 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
 
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & bgmapSpriteSpec->bgmapMode));
+	this->hasEffects = 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & bgmapSpriteSpec->bgmapMode);
+
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 
 /**
@@ -114,7 +116,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
  */
 void BgmapSprite::destructor()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & this->head));
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 

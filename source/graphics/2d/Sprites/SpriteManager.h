@@ -68,8 +68,6 @@ singleton class SpriteManager : Object
 	VirtualList sprites;
 	// list of object sprite containers
 	VirtualList objectSpriteContainers;
-	// list of sprites with special effects
-	VirtualList specialSprites;
 	// sprite's texture writing
 	Sprite spritePendingTextureWriting;
 	// pixels drawn
@@ -93,9 +91,11 @@ singleton class SpriteManager : Object
 
 	/// @publicsection
 	static SpriteManager getInstance();
+	static void writeGraphicsToDRAM(VirtualList sprites);
+
 	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
-	void registerSprite(Sprite sprite, bool hasEffects);
-	void unregisterSprite(Sprite sprite, bool hasEffects);
+	void registerSprite(Sprite sprite);
+	void unregisterSprite(Sprite sprite);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);
