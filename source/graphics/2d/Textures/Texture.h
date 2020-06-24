@@ -36,10 +36,11 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TEXTURE_PENDING_WRITING			0
-#define __TEXTURE_WRITTEN					1
-#define __TEXTURE_FRAME_CHANGED				2
-
+#define __TEXTURE_PENDING_WRITING			1
+#define __TEXTURE_PENDING_REWRITING			2
+#define __TEXTURE_FRAME_CHANGED				3
+#define __TEXTURE_WRITTEN					4
+#define __TEXTURE_INVALID					5
 
 /**
  * A Texture spec
@@ -107,8 +108,8 @@ abstract class Texture : Object
 	u16 frame;
 	// Color palette
 	u8 palette;
-	// Written flag
-	u8 written;
+	// Status flag
+	u8 status;
 
 	/// @publicsection
 	void constructor(TextureSpec* textureSpec, u16 id);
@@ -134,7 +135,7 @@ abstract class Texture : Object
 	void setMapDisplacement(u32 mapDisplacement);
 	void setFrame(u16 frame);
 	void update();
-	virtual void write();
+	virtual bool write();
 	virtual void rewrite();
 	virtual void setFrameAnimatedMulti(u16 frame);
 }

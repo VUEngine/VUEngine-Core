@@ -76,7 +76,7 @@ class BgmapTexture : Texture
 	u8 getUsageCount();
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	override void write();
+	override bool write();
 	override void rewrite();
 }
 

@@ -157,7 +157,7 @@ void ObjectSprite::rotate(const Rotation* rotation)
 
 	if(!isDeleted(this->texture))
 	{
-		this->texture->written = __TEXTURE_PENDING_WRITING;
+		Texture::rewrite(this->texture);
 	}
 }
 
@@ -217,6 +217,7 @@ void ObjectSprite::checkForContainer()
 u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
+	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
 	int charLocation = CharSet::getOffset(this->texture->charSet);
 

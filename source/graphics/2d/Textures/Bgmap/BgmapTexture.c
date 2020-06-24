@@ -100,7 +100,7 @@ void BgmapTexture::rewrite()
 /**
  * Write the texture to DRAM
  */
-void BgmapTexture::write()
+bool BgmapTexture::write()
 {
 	if(!this->charSet)
 	{
@@ -108,12 +108,9 @@ void BgmapTexture::write()
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
-	Base::write(this);
-
-	if(!this->charSet)
+	if(!Base::write(this))
 	{
-		this->written = __TEXTURE_PENDING_WRITING;
-		return;
+		return false;
 	}
 
 	if(0 >= this->remainingRowsToBeWritten)
@@ -144,7 +141,9 @@ void BgmapTexture::write()
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 
-	this->written = 0 >= this->remainingRowsToBeWritten ? __TEXTURE_WRITTEN : __TEXTURE_PENDING_WRITING;
+	this->status = 0 >= this->remainingRowsToBeWritten ? __TEXTURE_WRITTEN : __TEXTURE_PENDING_WRITING;
+
+	return true;
 }
 
 /**

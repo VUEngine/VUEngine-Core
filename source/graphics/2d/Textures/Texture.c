@@ -57,7 +57,7 @@ void Texture::constructor(TextureSpec* textureSpec, u16 id)
 	this->charSet = NULL;
 	// set the palette
 	this->palette = textureSpec->palette;
-	this->written = __TEXTURE_PENDING_WRITING;
+	this->status = __TEXTURE_PENDING_WRITING;
 	this->frame = 0;
 }
 
@@ -84,7 +84,9 @@ void Texture::loadCharSet()
 
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
-	// if the char spec is NULL, it must be a text
+
+	this->status = __TEXTURE_PENDING_WRITING;
+
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 }
@@ -128,13 +130,13 @@ void Texture::releaseCharSet()
 		this->charSet = NULL;
 	}
 
-	this->written = __TEXTURE_PENDING_WRITING;
+	this->status = __TEXTURE_PENDING_WRITING;
 }
 
 /**
  * Write the map to DRAM
  */
-void Texture::write()
+bool Texture::write()
 {
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
 	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
@@ -144,14 +146,21 @@ void Texture::write()
 		Texture::loadCharSet(this);
 	}
 
-	this->written = __TEXTURE_WRITTEN;
+	if(isDeleted(this->charSet))
+	{
+		this->status = __TEXTURE_INVALID;
+		return false;
+	}
+
+	this->status = __TEXTURE_WRITTEN;
+	return true;
 }
 
 void Texture::update()
 {
-	switch(this->written)
+	switch(this->status)
 	{
-		case __TEXTURE_PENDING_WRITING:
+		case __TEXTURE_PENDING_REWRITING:
 
 			Texture::write(this);
 			break;
@@ -170,40 +179,37 @@ void Texture::updateFrame()
 		return;
 	}
 
-	if(__TEXTURE_WRITTEN != this->written)
+	// write according to the allocation type
+	switch(CharSet::getAllocationType(this->charSet))
 	{
-		// write according to the allocation type
-		switch(CharSet::getAllocationType(this->charSet))
-		{
-			case __ANIMATED_SINGLE_OPTIMIZED:
-				{
-					// move map spec to the next frame
-					Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
-					CharSet::setFrame(this->charSet, this->frame);
-					this->written = __TEXTURE_PENDING_WRITING;
-					Texture::write(this);
-				}
-				break;
-
-			case __NOT_ANIMATED:
-			case __ANIMATED_SINGLE:
-			case __ANIMATED_SHARED:
-			case __ANIMATED_SHARED_COORDINATED:
-
+		case __ANIMATED_SINGLE_OPTIMIZED:
+			{
+				// move map spec to the next frame
+				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
 				CharSet::setFrame(this->charSet, this->frame);
-				this->written = __TEXTURE_WRITTEN;
-				break;
+				this->status = __TEXTURE_PENDING_WRITING;
+				Texture::write(this);
+			}
+			break;
 
-			case __ANIMATED_MULTI:
+		case __NOT_ANIMATED:
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 
-				Texture::setFrameAnimatedMulti(this, this->frame);
-				this->written = __TEXTURE_WRITTEN;
-				break;
-		}
+			CharSet::setFrame(this->charSet, this->frame);
+			this->status = __TEXTURE_WRITTEN;
+			break;
 
-		// propagate event
-		Object::fireEvent(this, kEventTextureRewritten);
+		case __ANIMATED_MULTI:
+
+			Texture::setFrameAnimatedMulti(this, this->frame);
+			this->status = __TEXTURE_WRITTEN;
+			break;
 	}
+
+	// propagate event
+	Object::fireEvent(this, kEventTextureRewritten);
 }
 
 /**
@@ -211,7 +217,7 @@ void Texture::updateFrame()
  */
 void Texture::rewrite()
 {
-	this->written = __TEXTURE_PENDING_WRITING;
+	this->status = this->status > __TEXTURE_PENDING_REWRITING ? __TEXTURE_PENDING_REWRITING : this->status;
 }
 
 /**
@@ -266,7 +272,7 @@ void Texture::setFrame(u16 frame)
 	}
 
 	this->frame = frame;
-	this->written = __TEXTURE_FRAME_CHANGED;
+	this->status = this->status > __TEXTURE_FRAME_CHANGED ? __TEXTURE_FRAME_CHANGED : this->status;
 }
 
 /**
@@ -511,7 +517,7 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
  */
 bool Texture::isWritten()
 {
-	return this->written;
+	return this->status;
 }
 
 /**

@@ -530,7 +530,7 @@ bool MBgmapSprite::writeTextures()
 	{
 		Texture texture = Texture::safeCast(node->data);
 
-		if(__TEXTURE_PENDING_WRITING == texture->written)
+		if(__TEXTURE_PENDING_WRITING == texture->status)
 		{
 			Texture::write(texture);
 			break;

@@ -495,7 +495,7 @@ static void SpriteManager::writeGraphicsToDRAM(VirtualList sprites)
 			continue;
 		}
 
-		if(__TEXTURE_WRITTEN != sprite->texture->written)
+		if(__TEXTURE_PENDING_WRITING < sprite->texture->status && __TEXTURE_WRITTEN > sprite->texture->status)
 		{
 			Texture::update(sprite->texture);
 		}
