@@ -316,7 +316,7 @@ bool Sprite::writeTextures()
 		return true;
 	}
 
-	if(__TEXTURE_PENDING_WRITING == this->texture->written)
+	if(__TEXTURE_PENDING_WRITING == this->texture->status)
 	{
 		Texture::write(this->texture);
 	}
