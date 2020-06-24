@@ -172,8 +172,6 @@ abstract class Sprite : Object
 	bool visible;
 	// Flag to allow rendering
 	bool positioned;
-	// Flag for affine and hbias effects
-	bool hasEffects;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);

@@ -36,11 +36,15 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TEXTURE_PENDING_WRITING			1
-#define __TEXTURE_PENDING_REWRITING			2
-#define __TEXTURE_FRAME_CHANGED				3
-#define __TEXTURE_WRITTEN					4
-#define __TEXTURE_INVALID					5
+enum TextureStatus
+{
+	kTexturePendingWriting = 1,
+	kTextureSpecChanged,
+	kTexturePendingRewriting,
+	kTextureFrameChanged,
+	kTextureWritten,
+	kTextureInvalid
+};
 
 /**
  * A Texture spec
@@ -134,6 +138,7 @@ abstract class Texture : Object
 	bool isWritten();
 	void setMapDisplacement(u32 mapDisplacement);
 	void setFrame(u16 frame);
+	bool prepare();
 	void update();
 	virtual bool write();
 	virtual void rewrite();

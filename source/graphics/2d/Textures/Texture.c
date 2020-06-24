@@ -27,7 +27,7 @@
 #include <Texture.h>
 #include <CharSetManager.h>
 #include <Optics.h>
-#include <VirtualList.h>
+#include <SpriteManager.h>
 #include <debugUtilities.h>
 
 
@@ -57,7 +57,7 @@ void Texture::constructor(TextureSpec* textureSpec, u16 id)
 	this->charSet = NULL;
 	// set the palette
 	this->palette = textureSpec->palette;
-	this->status = __TEXTURE_PENDING_WRITING;
+	this->status = kTexturePendingWriting;
 	this->frame = 0;
 }
 
@@ -85,7 +85,7 @@ void Texture::loadCharSet()
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 
-	this->status = __TEXTURE_PENDING_WRITING;
+	this->status = kTexturePendingWriting;
 
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
@@ -100,9 +100,16 @@ void Texture::setSpec(TextureSpec* textureSpec)
 {
 	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
 
-	this->textureSpec = textureSpec;
+	if(NULL == this->textureSpec)
+	{
+		this->status = kTexturePendingWriting;
+	}
+	else if(this->textureSpec != textureSpec)
+	{
+		this->status = this->status > kTextureSpecChanged ? kTextureSpecChanged : this->status;
+	}
 
-	Texture::releaseCharSet(this);
+	this->textureSpec = textureSpec;
 }
 
 /**
@@ -130,7 +137,7 @@ void Texture::releaseCharSet()
 		this->charSet = NULL;
 	}
 
-	this->status = __TEXTURE_PENDING_WRITING;
+	this->status = kTexturePendingWriting;
 }
 
 /**
@@ -148,31 +155,68 @@ bool Texture::write()
 
 	if(isDeleted(this->charSet))
 	{
-		this->status = __TEXTURE_INVALID;
+		this->status = kTextureInvalid;
 		return false;
 	}
 
-	this->status = __TEXTURE_WRITTEN;
+	this->status = kTextureWritten;
 	return true;
 }
 
-void Texture::update()
+bool Texture::prepare()
 {
 	switch(this->status)
 	{
-		case __TEXTURE_PENDING_REWRITING:
+		case kTexturePendingWriting:
 
+			// Non written textures can be written at any time 
+			// since they are not visible yet
 			Texture::write(this);
 			break;
 
-		case __TEXTURE_FRAME_CHANGED:
+		case kTexturePendingRewriting:
 
-			Texture::updateFrame(this);
+			Texture::write(this);
+			return true;
+			break;
+
+		case kTextureFrameChanged:
+
+			if(isDeleted(this->charSet))
+			{
+				this->status = kTextureInvalid;
+			}
+			else
+			{
+				// write according to the allocation type
+				switch(CharSet::getAllocationType(this->charSet))
+				{
+					case __ANIMATED_SINGLE_OPTIMIZED:
+
+						SpriteManager::updateTexture(SpriteManager::getInstance(), this);
+						
+						this->status = kTextureWritten;
+						break;
+
+					default:
+
+						Texture::update(this);
+						break;
+				}
+			}
+
+			break;
+
+		case kTextureSpecChanged:
+
+			SpriteManager::updateTexture(SpriteManager::getInstance(), this);
 			break;
 	}
+
+	return kTextureWritten == this->status;
 }
 
-void Texture::updateFrame()
+void Texture::update()
 {
 	if(isDeleted(this->charSet))
 	{
@@ -184,11 +228,15 @@ void Texture::updateFrame()
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
-				// move map spec to the next frame
 				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
-				CharSet::setFrame(this->charSet, this->frame);
-				this->status = __TEXTURE_PENDING_WRITING;
+
+				if(kTextureSpecChanged == this->status)
+				{
+					Texture::releaseCharSet(this);
+				}
+
 				Texture::write(this);
+				CharSet::setFrame(this->charSet, this->frame);
 			}
 			break;
 
@@ -197,19 +245,31 @@ void Texture::updateFrame()
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 
+			if(kTextureSpecChanged == this->status)
+			{
+				Texture::releaseCharSet(this);
+				Texture::write(this);
+			}
+
 			CharSet::setFrame(this->charSet, this->frame);
-			this->status = __TEXTURE_WRITTEN;
+			this->status = kTextureWritten;
 			break;
 
 		case __ANIMATED_MULTI:
 
+			if(kTextureSpecChanged == this->status)
+			{
+				Texture::releaseCharSet(this);
+				Texture::write(this);
+			}
+
 			Texture::setFrameAnimatedMulti(this, this->frame);
-			this->status = __TEXTURE_WRITTEN;
+			this->status = kTextureWritten;
 			break;
 	}
 
 	// propagate event
-	Object::fireEvent(this, kEventTextureRewritten);
+	Texture::fireEvent(this, kEventTextureRewritten);
 }
 
 /**
@@ -217,7 +277,7 @@ void Texture::updateFrame()
  */
 void Texture::rewrite()
 {
-	this->status = this->status > __TEXTURE_PENDING_REWRITING ? __TEXTURE_PENDING_REWRITING : this->status;
+	this->status = this->status > kTexturePendingRewriting ? kTexturePendingRewriting : this->status;
 }
 
 /**
@@ -272,7 +332,7 @@ void Texture::setFrame(u16 frame)
 	}
 
 	this->frame = frame;
-	this->status = this->status > __TEXTURE_FRAME_CHANGED ? __TEXTURE_FRAME_CHANGED : this->status;
+	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 }
 
 /**
@@ -527,5 +587,7 @@ bool Texture::isWritten()
  */
 void Texture::setMapDisplacement(u32 mapDisplacement)
 {
+	this->status = this->mapDisplacement != mapDisplacement ? kTexturePendingWriting : this->status;
+
 	this->mapDisplacement = mapDisplacement;
 }

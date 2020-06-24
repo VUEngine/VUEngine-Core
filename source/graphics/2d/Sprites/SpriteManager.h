@@ -64,12 +64,14 @@ typedef struct SpritesList
 /// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
-	// list of sprites to render
+	// Sprites to render
 	VirtualList sprites;
-	// list of object sprite containers
+	// Object sprite containers
 	VirtualList objectSpriteContainers;
-	// sprite's texture writing
-	Sprite spritePendingTextureWriting;
+	// Sprites with special effects
+	VirtualList specialSprites;
+	// Textures pending update during writeDRAM
+	VirtualList texturesPendingUpdate;
 	// pixels drawn
 	int totalPixelsDrawn;
 	// number of rows to write in affine transformations
@@ -91,11 +93,11 @@ singleton class SpriteManager : Object
 
 	/// @publicsection
 	static SpriteManager getInstance();
-	static void writeGraphicsToDRAM(VirtualList sprites);
 
 	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
-	void registerSprite(Sprite sprite);
-	void unregisterSprite(Sprite sprite);
+	void registerSprite(Sprite sprite, bool hasEffects);
+	void unregisterSprite(Sprite sprite, bool hasEffects);
+	void updateTexture(Texture texture);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);

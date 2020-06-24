@@ -141,7 +141,7 @@ bool BgmapTexture::write()
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 
-	this->status = 0 >= this->remainingRowsToBeWritten ? __TEXTURE_WRITTEN : __TEXTURE_PENDING_WRITING;
+	this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
 
 	return true;
 }

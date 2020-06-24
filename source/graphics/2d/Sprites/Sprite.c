@@ -70,7 +70,6 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
-	this->hasEffects = false;
 }
 
 /**
@@ -108,18 +107,17 @@ s16 Sprite::render(s16 index, bool evenFrame)
 		return this->index;
 	}
 
-	if(__TEXTURE_INVALID == this->texture->status)
+	if(kTextureInvalid == this->texture->status)
 	{
 		return this->index;
 	}
 
-	if(__TEXTURE_PENDING_WRITING == this->texture->status)
+	if(kTextureWritten != this->texture->status)
 	{
-		// Non written textures can be written at any time 
-		// since they are not visible yet
-		Texture::write(this->texture);
-
-		return this->index;
+		if(!Texture::prepare(this->texture))
+		{
+			return this->index;
+		}
 	}
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
@@ -316,12 +314,12 @@ bool Sprite::writeTextures()
 		return true;
 	}
 
-	if(__TEXTURE_PENDING_WRITING == this->texture->status)
+	if(kTexturePendingWriting == this->texture->status)
 	{
 		Texture::write(this->texture);
 	}
 
-	return __TEXTURE_PENDING_WRITING != this->texture->status;
+	return kTexturePendingWriting != this->texture->status;
 }
 
 /**

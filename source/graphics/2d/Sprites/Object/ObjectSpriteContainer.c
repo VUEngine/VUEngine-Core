@@ -91,7 +91,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	// must setup the STP registers regardless of the totalObjects
 	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
 
 /**
@@ -99,7 +99,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
  */
 void ObjectSpriteContainer::destructor()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
@@ -239,8 +239,6 @@ void ObjectSpriteContainer::sortProgressively()
 
 void ObjectSpriteContainer::writeDRAM()
 {
-	SpriteManager::writeGraphicsToDRAM(this->objectSprites);
-
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjects) >> 2);
 }
 
