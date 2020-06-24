@@ -127,6 +127,8 @@ static int Error::triggerException(char* message, char* detail)
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
 
+	VIPManager::setBackgroundColor(VIPManager::getInstance(), __COLOR_BLACK);
+
 	// make sure there are fonts to show the exception
 	Printing::setDebugMode(Printing::getInstance());
 
@@ -187,6 +189,7 @@ static int Error::triggerException(char* message, char* detail)
 
 	// error display message
 	Printing::render(Printing::getInstance(), __EXCEPTIONS_WORLD);
+	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 
 	// dimm game
 	_vipRegisters[__GPLT0] = 0xE4;
