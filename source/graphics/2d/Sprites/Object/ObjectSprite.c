@@ -157,7 +157,7 @@ void ObjectSprite::rotate(const Rotation* rotation)
 
 	if(!isDeleted(this->texture))
 	{
-		this->texture->written = false;
+		this->texture->written = __TEXTURE_PENDING_WRITING;
 	}
 }
 
@@ -214,7 +214,7 @@ void ObjectSprite::checkForContainer()
  *
  * @param evenFrame
  */
-u16 ObjectSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
+u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 

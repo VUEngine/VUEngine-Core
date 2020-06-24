@@ -57,7 +57,8 @@ void Texture::constructor(TextureSpec* textureSpec, u16 id)
 	this->charSet = NULL;
 	// set the palette
 	this->palette = textureSpec->palette;
-	this->written = false;
+	this->written = __TEXTURE_PENDING_WRITING;
+	this->frame = 0;
 }
 
 /**
@@ -127,7 +128,7 @@ void Texture::releaseCharSet()
 		this->charSet = NULL;
 	}
 
-	this->written = false;
+	this->written = __TEXTURE_PENDING_WRITING;
 }
 
 /**
@@ -143,7 +144,66 @@ void Texture::write()
 		Texture::loadCharSet(this);
 	}
 
-	this->written = true;
+	this->written = __TEXTURE_WRITTEN;
+}
+
+void Texture::update()
+{
+	switch(this->written)
+	{
+		case __TEXTURE_PENDING_WRITING:
+
+			Texture::write(this);
+			break;
+
+		case __TEXTURE_FRAME_CHANGED:
+
+			Texture::updateFrame(this);
+			break;
+	}
+}
+
+void Texture::updateFrame()
+{
+	if(isDeleted(this->charSet))
+	{
+		return;
+	}
+
+	if(__TEXTURE_WRITTEN != this->written)
+	{
+		// write according to the allocation type
+		switch(CharSet::getAllocationType(this->charSet))
+		{
+			case __ANIMATED_SINGLE_OPTIMIZED:
+				{
+					// move map spec to the next frame
+					Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
+					CharSet::setFrame(this->charSet, this->frame);
+					this->written = __TEXTURE_PENDING_WRITING;
+					Texture::write(this);
+				}
+				break;
+
+			case __NOT_ANIMATED:
+			case __ANIMATED_SINGLE:
+			case __ANIMATED_SHARED:
+			case __ANIMATED_SHARED_COORDINATED:
+
+				CharSet::setFrame(this->charSet, this->frame);
+				this->written = __TEXTURE_WRITTEN;
+				break;
+
+			case __ANIMATED_MULTI:
+
+				Texture::setFrameAnimatedMulti(this, this->frame);
+				this->written = __TEXTURE_WRITTEN;
+				break;
+		}
+
+		// propagate event
+		Object::fireEvent(this, kEventTextureRewritten);
+	}
 }
 
 /**
@@ -151,12 +211,7 @@ void Texture::write()
  */
 void Texture::rewrite()
 {
-	this->written = false;
-
-	Texture::write(this);
-
-	// propagate event
-	Object::fireEvent(this, kEventTextureRewritten);
+	this->written = __TEXTURE_PENDING_WRITING;
 }
 
 /**
@@ -205,41 +260,14 @@ TextureSpec* Texture::getTextureSpec()
  */
 void Texture::setFrame(u16 frame)
 {
-	if(!this->charSet)
+	if(frame == this->frame)
 	{
 		return;
 	}
 
-	// write according to the allocation type
-	switch(CharSet::getAllocationType(this->charSet))
-	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-			{
-				// move map spec to the next frame
-				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
-
-				CharSet::setFrame(this->charSet, frame);
-				Texture::rewrite(this);
-			}
-			break;
-
-		case __NOT_ANIMATED:
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-			{
-				CharSet::setFrame(this->charSet, frame);
-			}
-			break;
-
-		case __ANIMATED_MULTI:
-			{
-				Texture::setFrameAnimatedMulti(this, frame);
-			}
-			break;
-	}
+	this->frame = frame;
+	this->written = __TEXTURE_FRAME_CHANGED;
 }
-
 
 /**
  * Set Texture's frame

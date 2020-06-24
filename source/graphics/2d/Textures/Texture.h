@@ -36,6 +36,11 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+#define __TEXTURE_PENDING_WRITING			0
+#define __TEXTURE_WRITTEN					1
+#define __TEXTURE_FRAME_CHANGED				2
+
+
 /**
  * A Texture spec
  *
@@ -99,6 +104,7 @@ abstract class Texture : Object
 	u32 mapDisplacement;
 	// Texture's id
 	u16 id;
+	u16 frame;
 	// Color palette
 	u8 palette;
 	// Written flag
@@ -127,6 +133,7 @@ abstract class Texture : Object
 	bool isWritten();
 	void setMapDisplacement(u32 mapDisplacement);
 	void setFrame(u16 frame);
+	void update();
 	virtual void write();
 	virtual void rewrite();
 	virtual void setFrameAnimatedMulti(u16 frame);

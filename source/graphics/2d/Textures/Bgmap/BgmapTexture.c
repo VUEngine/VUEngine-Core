@@ -92,10 +92,9 @@ void BgmapTexture::destructor()
  */
 void BgmapTexture::rewrite()
 {
-	this->written = false;
-	this->remainingRowsToBeWritten = this->textureSpec->rows;
+	Base::rewrite(this);
 
-	BgmapTexture::write(this);
+	this->remainingRowsToBeWritten = this->textureSpec->rows;
 }
 
 /**
@@ -113,7 +112,7 @@ void BgmapTexture::write()
 
 	if(!this->charSet)
 	{
-		this->written = false;
+		this->written = __TEXTURE_PENDING_WRITING;
 		return;
 	}
 
@@ -145,7 +144,7 @@ void BgmapTexture::write()
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 
-	this->written = 0 >= this->remainingRowsToBeWritten;
+	this->written = 0 >= this->remainingRowsToBeWritten ? __TEXTURE_WRITTEN : __TEXTURE_PENDING_WRITING;
 }
 
 /**

@@ -249,7 +249,7 @@ void ObjectSpriteContainer::writeDRAM()
  *
  * @param evenFrame
  */
-u16 ObjectSpriteContainer::doRender(u16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	_worldAttributesCache[index].head = this->head;
 
@@ -401,7 +401,7 @@ void ObjectSpriteContainer::print(int x, int y)
 
 int ObjectSpriteContainer::getTotalPixels()
 {
-	if(0 <= (s8)this->index)
+	if(__NO_RENDER_INDEX != this->index)
 	{
 		return ObjectSpriteContainer::getAvailableObjects(this) * 8 * 8;
 	}

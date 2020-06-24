@@ -326,7 +326,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-u16 MBgmapSprite::doRender(u16 index, bool evenFrame __attribute__((unused)))
+u16 MBgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 
@@ -530,7 +530,7 @@ bool MBgmapSprite::writeTextures()
 	{
 		Texture texture = Texture::safeCast(node->data);
 
-		if(!texture->written)
+		if(__TEXTURE_PENDING_WRITING == texture->written)
 		{
 			Texture::write(texture);
 			break;

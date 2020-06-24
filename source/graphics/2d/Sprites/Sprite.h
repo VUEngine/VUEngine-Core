@@ -163,7 +163,7 @@ abstract class Sprite : Object
 	// Head spec for world entry setup
 	u16 head;
 	// World layer where to render the texture
-	u16 index;
+	s16 index;
 	// Hidden flag
 	bool hidden;
 	// Update animation
@@ -222,7 +222,7 @@ abstract class Sprite : Object
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	u16 render(u16 index, bool evenFrame);
+	s16 render(s16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();
@@ -231,7 +231,7 @@ abstract class Sprite : Object
 	virtual u8 getIndex();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
-	virtual u16 doRender(u16 index, bool evenFrame) = 0;
+	virtual u16 doRender(s16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(u16 display, u16 mode) = 0;

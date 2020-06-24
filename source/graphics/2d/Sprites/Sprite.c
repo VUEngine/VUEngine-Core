@@ -89,7 +89,7 @@ void Sprite::processEffects()
 {
 }
 
-u16 Sprite::render(u16 index, bool evenFrame)
+s16 Sprite::render(s16 index, bool evenFrame)
 {
 	this->index = __NO_RENDER_INDEX;
 	this->visible = false;
@@ -108,19 +108,26 @@ u16 Sprite::render(u16 index, bool evenFrame)
 		return this->index;
 	}
 
-	if(!this->texture->written)
+	if(__TEXTURE_PENDING_WRITING == this->texture->written)
 	{
 		return this->index;
 	}
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
+		Sprite::update(this);
+
 		return this->index;
 	}
 
 	this->index = Sprite::doRender(this, index, evenFrame);
 
 	this->visible = __NO_RENDER_INDEX != this->index;
+
+	if(this->visible && this->writeAnimationFrame)
+	{
+		Sprite::update(this);
+	}
 
 	return this->index;
 }
@@ -300,12 +307,12 @@ bool Sprite::writeTextures()
 		return true;
 	}
 
-	if(!this->texture->written)
+	if(__TEXTURE_PENDING_WRITING == this->texture->written)
 	{
 		Texture::write(this->texture);
 	}
 
-	return this->texture->written;
+	return __TEXTURE_PENDING_WRITING != this->texture->written;
 }
 
 /**
@@ -923,7 +930,7 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  */
 int Sprite::getTotalPixels()
 {
-	if(0 < (s8)this->index)
+	if(__NO_RENDER_INDEX != this->index)
 	{
 		return Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this);
 	}

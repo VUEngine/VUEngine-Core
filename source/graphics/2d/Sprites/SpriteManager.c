@@ -72,6 +72,7 @@ friend class VirtualList;
  *
  * @private
  */
+VirtualList textures = NULL;
 void SpriteManager::constructor()
 {
 	// construct base object
@@ -81,6 +82,7 @@ void SpriteManager::constructor()
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
+	textures = NULL;
 
 	this->spritePendingTextureWriting = NULL;
 	this->cyclesToWaitForSpriteTextureWriting = 0;
@@ -166,6 +168,7 @@ void SpriteManager::reset()
 
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
+	textures = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -492,16 +495,9 @@ static void SpriteManager::writeGraphicsToDRAM(VirtualList sprites)
 			continue;
 		}
 
-		if(sprite->writeAnimationFrame)
+		if(__TEXTURE_WRITTEN != sprite->texture->written)
 		{
-			Sprite::update(sprite);
-		}
-		
-		if(!sprite->texture->written)
-		{
-			Texture::write(sprite->texture);
-
-			continue;
+			Texture::update(sprite->texture);
 		}
 
 		if(sprite->hasEffects)

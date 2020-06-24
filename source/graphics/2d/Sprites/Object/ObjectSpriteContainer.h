@@ -72,7 +72,7 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	void writeDRAM();
-	override u16 doRender(u16 index, bool evenFrame);
+	override u16 doRender(s16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(u16 display, u16 mode);

@@ -83,7 +83,7 @@ class TextObjectSprite : ObjectSprite
 	/// @publicsection
 	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
 
-	override u16 doRender(u16 index, bool evenFrame);
+	override u16 doRender(s16 index, bool evenFrame);
 }
 
 
