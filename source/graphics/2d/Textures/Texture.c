@@ -100,7 +100,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 {
 	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
 
-	if(NULL == this->textureSpec)
+	if(NULL == this->textureSpec || isDeleted(this->charSet))
 	{
 		this->status = kTexturePendingWriting;
 	}
@@ -127,7 +127,7 @@ TextureSpec* Texture::getSpec()
  */
 void Texture::releaseCharSet()
 {
-	if(this->charSet)
+	if(!isDeleted(this->charSet))
 	{
 		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
@@ -194,8 +194,8 @@ bool Texture::prepare()
 					case __ANIMATED_SINGLE_OPTIMIZED:
 
 						SpriteManager::updateTexture(SpriteManager::getInstance(), this);
-						
-						this->status = kTextureWritten;
+
+						return true;
 						break;
 
 					default:
@@ -223,21 +223,20 @@ void Texture::update()
 		return;
 	}
 
+	if(kTextureSpecChanged == this->status)
+	{
+		Texture::loadCharSet(this);
+		Texture::write(this);
+	}
+
 	// write according to the allocation type
 	switch(CharSet::getAllocationType(this->charSet))
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
-			{
-				Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
 
-				if(kTextureSpecChanged == this->status)
-				{
-					Texture::releaseCharSet(this);
-				}
-
-				Texture::write(this);
-				CharSet::setFrame(this->charSet, this->frame);
-			}
+			CharSet::setFrame(this->charSet, this->frame);
+			Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
+			Texture::write(this);
 			break;
 
 		case __NOT_ANIMATED:
@@ -245,23 +244,11 @@ void Texture::update()
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 
-			if(kTextureSpecChanged == this->status)
-			{
-				Texture::releaseCharSet(this);
-				Texture::write(this);
-			}
-
 			CharSet::setFrame(this->charSet, this->frame);
 			this->status = kTextureWritten;
 			break;
 
 		case __ANIMATED_MULTI:
-
-			if(kTextureSpecChanged == this->status)
-			{
-				Texture::releaseCharSet(this);
-				Texture::write(this);
-			}
 
 			Texture::setFrameAnimatedMulti(this, this->frame);
 			this->status = kTextureWritten;
