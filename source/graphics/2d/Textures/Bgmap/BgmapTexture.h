@@ -61,8 +61,6 @@ class BgmapTexture : Texture
 {
 	// Segment
 	s8 segment;
-	// How many textures are using me
-	u8 usageCount;
 	// Remaining rows to be written
 	s8 remainingRowsToBeWritten;
 
@@ -73,9 +71,6 @@ class BgmapTexture : Texture
 	s16 getYOffset();
 	s8 getSegment();
 	void setSegment(s8 segment);
-	u8 getUsageCount();
-	void increaseUsageCount();
-	bool decreaseUsageCount();
 	override bool write();
 	override void rewrite();
 }

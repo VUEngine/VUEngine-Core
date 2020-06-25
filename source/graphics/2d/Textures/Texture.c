@@ -51,6 +51,7 @@ void Texture::constructor(TextureSpec* textureSpec, u16 id)
 	this->id = id;
 
 	this->mapDisplacement = 0;
+	this->usageCount = 1;
 
 	// save the bgmap spec's address
 	this->textureSpec = textureSpec;
@@ -66,11 +67,49 @@ void Texture::constructor(TextureSpec* textureSpec, u16 id)
  */
 void Texture::destructor()
 {
+	// make sure that I'm not destroyed again
+	this->usageCount = 0;
+
 	Texture::releaseCharSet(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+
+
+/**
+ * Retrieve the count usage for this Texture
+ *
+ * @return				Texture's count usage
+ */
+u8 Texture::getUsageCount()
+{
+	return this->usageCount;
+}
+
+/**
+ * Increase the count usage for this Texture
+ */
+void Texture::increaseUsageCount()
+{
+	this->usageCount++;
+}
+
+/**
+ * Decrease the count usage for this Texture
+ *
+ * @return				True if count usage reached zero
+ */
+bool Texture::decreaseUsageCount()
+{
+	if(this->usageCount)
+	{
+		this->usageCount--;
+	}
+
+	return 0 == this->usageCount;
 }
 
 /**
@@ -100,12 +139,16 @@ void Texture::setSpec(TextureSpec* textureSpec)
 {
 	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
 
-	if(NULL == this->textureSpec || isDeleted(this->charSet))
+	if(0 == this->usageCount || NULL == this->textureSpec || isDeleted(this->charSet))
 	{
+		// Since the texture cannot be used without a spec or a charSet
+		// it is safe to assume that it is not being displayed and can be written
+		// outside XPEND
 		this->status = kTexturePendingWriting;
 	}
 	else if(this->textureSpec != textureSpec)
 	{
+		// Since the texture
 		this->status = this->status > kTextureSpecChanged ? kTextureSpecChanged : this->status;
 	}
 

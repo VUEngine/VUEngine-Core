@@ -60,7 +60,6 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id)
 	Base::constructor((TextureSpec*)bgmapTextureSpec, id);
 
 	this->segment = -1;
-	this->usageCount = 1;
 	this->remainingRowsToBeWritten = 0;
 
 	if(!_bgmapTextureManager)
@@ -79,9 +78,6 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id)
  */
 void BgmapTexture::destructor()
 {
-	// make sure that I'm not destroyed again
-	this->usageCount = 0;
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -409,38 +405,5 @@ void BgmapTexture::setSegment(s8 segment)
 s8 BgmapTexture::getSegment()
 {
 	return this->segment;
-}
-
-/**
- * Retrieve the count usage for this Texture
- *
- * @return				Texture's count usage
- */
-u8 BgmapTexture::getUsageCount()
-{
-	return this->usageCount;
-}
-
-/**
- * Increase the count usage for this Texture
- */
-void BgmapTexture::increaseUsageCount()
-{
-	this->usageCount++;
-}
-
-/**
- * Decrease the count usage for this Texture
- *
- * @return				True if count usage reached zero
- */
-bool BgmapTexture::decreaseUsageCount()
-{
-	if(this->usageCount)
-	{
-		this->usageCount--;
-	}
-
-	return 0 == this->usageCount;
 }
 

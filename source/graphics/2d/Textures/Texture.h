@@ -114,6 +114,8 @@ abstract class Texture : Object
 	u8 palette;
 	// Status flag
 	u8 status;
+	// How many sprites are using me
+	u8 usageCount;
 
 	/// @publicsection
 	void constructor(TextureSpec* textureSpec, u16 id);
@@ -133,6 +135,9 @@ abstract class Texture : Object
 	u32 getRows();
 	u32 getCols();
 	u16 getId();
+	u8 getUsageCount();
+	void increaseUsageCount();
+	bool decreaseUsageCount();
 	void putChar(Point* texturePixel, BYTE* newChar);
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	bool isWritten();
