@@ -160,8 +160,7 @@ void AnimationInspector::update()
 	{
 		Sprite::updateAnimation(this->animatedSprite);
 		Sprite::update(this->animatedSprite);
-		//Sprite::applyAffineTransformations(this->animatedSprite);
-		//Sprite::applyHbiasEffects(this->animatedSprite);
+		Sprite::processEffects(this->animatedSprite);
 	}
 }
 
@@ -762,7 +761,7 @@ void AnimationInspector::createSprite()
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
 	Sprite::setPosition(this->animatedSprite, &spritePosition);
-	Sprite::applyAffineTransformations(this->animatedSprite);
+	Sprite::processEffects(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};

@@ -485,6 +485,8 @@ int SpriteManager::getNumberOfSprites()
  */
 void SpriteManager::writeTextures()
 {
+	CharSetManager::writeCharSets(CharSetManager::getInstance());
+
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
 	// allow complete texture writing

@@ -161,6 +161,25 @@ void AnimatedEntity::playAnimation(char* animationName)
 	}
 }
 
+// play an animation
+void AnimatedEntity::stopAnimation()
+{
+	if(!this->sprites)
+	{
+		return;
+	}
+
+	this->currentAnimationName = NULL;
+
+	VirtualNode node = this->sprites->head;
+
+	// play animation on each sprite
+	for(; node && this->sprites; node = node->next)
+	{
+		Sprite::stop(node->data);
+	}
+}
+
 // skip to next frame
 void AnimatedEntity::nextFrame()
 {
@@ -240,6 +259,8 @@ void AnimatedEntity::setActualFrame(s16 frame)
 void AnimatedEntity::setAnimationDescription(AnimationDescription* animationDescription)
 {
 	this->animationDescription = animationDescription;
+
+	AnimatedEntity::stopAnimation(this);
 }
 
 // resume method

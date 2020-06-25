@@ -623,6 +623,18 @@ void Sprite::play(const AnimationDescription* animationDescription, char* functi
 }
 
 /**
+ * Stop any playing animation
+ *
+ */
+void Sprite::stop()
+{
+	if(this->animationController)
+	{
+		AnimationController::stop(this->animationController);
+	}
+}
+
+/**
  * Replay the last animation
  *
  * @param animationDescription	AnimationDescription

@@ -132,6 +132,7 @@ void VIPManager::enableDrawing()
  */
 void VIPManager::disableDrawing()
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
 	this->renderingCompleted = false;
 	this->drawingEnded = true;
