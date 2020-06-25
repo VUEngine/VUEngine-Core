@@ -151,7 +151,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 		Texture::releaseCharSet(this);
 
 		// Since the texture
-		this->status = this->status > kTextureSpecChanged ? kTextureSpecChanged : this->status;
+		this->status = kTextureSpecChanged;
 	}
 
 	this->textureSpec = textureSpec;
@@ -254,7 +254,8 @@ bool Texture::prepare()
 
 		case kTextureSpecChanged:
 
-			SpriteManager::updateTexture(SpriteManager::getInstance(), this);
+			Texture::loadCharSet(this);
+			Texture::update(this);
 			break;
 	}
 
