@@ -148,6 +148,8 @@ void Texture::setSpec(TextureSpec* textureSpec)
 	}
 	else if(this->textureSpec != textureSpec)
 	{
+		Texture::releaseCharSet(this);
+
 		// Since the texture
 		this->status = this->status > kTextureSpecChanged ? kTextureSpecChanged : this->status;
 	}
@@ -263,13 +265,8 @@ void Texture::update()
 {
 	if(isDeleted(this->charSet))
 	{
-		return;
-	}
-
-	if(kTextureSpecChanged == this->status)
-	{
-		Texture::loadCharSet(this);
 		Texture::write(this);
+		return;
 	}
 
 	// write according to the allocation type
