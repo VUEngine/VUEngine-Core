@@ -551,12 +551,12 @@ void SpriteManager::writeDRAM()
  */
 void SpriteManager::render()
 {
-	VirtualList::clear(this->texturesPendingUpdate);
-
 	if(!CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
 		ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 	}
+
+	VirtualList::clear(this->texturesPendingUpdate);
 
 	SpriteManager::sortProgressively(this);
 
