@@ -222,6 +222,7 @@ bool Texture::prepare()
 		case kTexturePendingRewriting:
 
 			Texture::write(this);
+			Texture::fireEvent(this, kEventTextureRewritten);
 			return true;
 			break;
 
@@ -295,9 +296,6 @@ void Texture::update()
 			this->status = kTextureWritten;
 			break;
 	}
-
-	// propagate event
-	Texture::fireEvent(this, kEventTextureRewritten);
 }
 
 /**

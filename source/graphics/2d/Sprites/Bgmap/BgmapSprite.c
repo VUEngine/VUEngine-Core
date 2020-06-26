@@ -144,9 +144,7 @@ bool BgmapSprite::hasSpecialEffects()
  */
 void BgmapSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	BgmapSprite::applyAffineTransformations(this);
-	BgmapSprite::applyHbiasEffects(this);
-	this->writeAnimationFrame = true;
+	BgmapSprite::processEffects(this);
 }
 
 void BgmapSprite::releaseTexture()
