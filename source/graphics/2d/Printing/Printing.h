@@ -206,6 +206,8 @@ singleton class Printing : Object
 	u8 mode;
 	// Palette to use for printing
 	u8 palette;
+	// Bgmap segment for printing
+	u8 printingBgmapSegment;
 
 	/// @publicsection
 

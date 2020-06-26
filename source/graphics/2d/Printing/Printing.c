@@ -84,6 +84,7 @@ void Printing::constructor()
 	this->fonts = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
+	this->printingBgmapSegment = 0;
 
 	Printing::reset(this);
 }
@@ -119,6 +120,8 @@ void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
 
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+
 	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
 
 	// Prevent VIP's interrupt from calling render during this process
@@ -197,6 +200,7 @@ void Printing::setDebugMode()
 	Printing::resetCoordinates(this);
 	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
+	this->printingBgmapSegment = __EXCEPTIONS_BGMAP;
 }
 
 void Printing::setPalette(u8 palette)
@@ -209,9 +213,7 @@ void Printing::setPalette(u8 palette)
 
 void Printing::clear()
 {
-	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-
-	Mem::clear((BYTE*)__BGMAP_SEGMENT(printingBgmap + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
+	Mem::clear((BYTE*)__BGMAP_SEGMENT(this->printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
 }
 
 void Printing::releaseFonts()
@@ -499,8 +501,6 @@ void Printing::render(u8 textLayer)
 {
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
-	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-
 	_worldAttributesBaseAddress[textLayer].mx = this->mx;
 	_worldAttributesBaseAddress[textLayer].mp = this->mp;
 	_worldAttributesBaseAddress[textLayer].my = this->my;
@@ -509,7 +509,7 @@ void Printing::render(u8 textLayer)
 	_worldAttributesBaseAddress[textLayer].gy = this->gy;
 	_worldAttributesBaseAddress[textLayer].w = this->w;
 	_worldAttributesBaseAddress[textLayer].h = this->h;
-	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | printingBgmap;
+	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
 }
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
@@ -529,7 +529,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	u32 position = 0;
 	u32 startColumn = x;
 	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
-	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	u32 printingBgmap = this->printingBgmapSegment;
 
 	FontData* fontData = Printing::getFontByName(this, font);
 

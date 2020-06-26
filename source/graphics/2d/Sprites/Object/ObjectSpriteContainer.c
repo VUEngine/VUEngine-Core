@@ -251,11 +251,9 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 {
 	_worldAttributesCache[index].head = this->head;
 
-	VirtualNode node = this->objectSprites->head;
-
 	u16 objectIndex = this->firstObjectIndex;
 
-	for(; node && objectIndex < this->firstObjectIndex + this->totalObjects; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; node && objectIndex < this->firstObjectIndex + this->totalObjects; node = node->next)
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 

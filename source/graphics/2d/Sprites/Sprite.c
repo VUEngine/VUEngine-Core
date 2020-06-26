@@ -122,8 +122,6 @@ s16 Sprite::render(s16 index, bool evenFrame)
 
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
 	{
-		Sprite::update(this);
-
 		return this->index;
 	}
 
