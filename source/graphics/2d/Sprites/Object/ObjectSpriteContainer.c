@@ -257,7 +257,14 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		if(!objectSprite->hidden && objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+		// Saves on method calls quite a bit when there are lots of
+		// sprites. Don't remove.
+		if(objectSprite->hidden | !objectSprite->positioned)
+		{
+			continue;
+		}
+
+		if(objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
 		{
 			objectIndex += objectSprite->totalObjects;
 		}

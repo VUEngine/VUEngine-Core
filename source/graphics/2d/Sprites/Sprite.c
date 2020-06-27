@@ -93,11 +93,15 @@ s16 Sprite::render(s16 index, bool evenFrame)
 	this->index = __NO_RENDER_INDEX;
 	this->visible = false;
 
+	// If the client code makes these checks before calling this method,
+	// it saves on method calls quite a bit when there are lots of
+	// sprites. Don't uncomment.
+/*
 	if(this->hidden || !this->positioned)
 	{
 		return this->index;
 	}
-
+*/
 	if(isDeleted(this->texture))
 	{
 		this->index = Sprite::doRender(this, index, evenFrame);
@@ -546,12 +550,12 @@ bool Sprite::isWithinScreenSpace()
 	{
 		return false;
 	}
-
+/*
 	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
 	{
 		return false;
 	}
-
+*/
 	return true;
 }
 

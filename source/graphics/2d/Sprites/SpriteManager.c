@@ -569,7 +569,14 @@ void SpriteManager::render()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(!sprite->hidden && this->freeLayer == Sprite::render(sprite, this->freeLayer, this->evenFrame))
+		// Saves on method calls quite a bit when there are lots of
+		// sprites. Don't remove.
+		if(sprite->hidden | !sprite->positioned)
+		{
+			continue;
+		}
+
+		if(this->freeLayer == Sprite::render(sprite, this->freeLayer, this->evenFrame))
 		{
 			this->freeLayer--;
 		}
