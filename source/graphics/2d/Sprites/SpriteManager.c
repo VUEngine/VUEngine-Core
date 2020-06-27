@@ -373,6 +373,12 @@ bool SpriteManager::sortProgressively()
 		if(nextNode)
 		{
 			Sprite sprite = Sprite::safeCast(node->data);
+
+			if(sprite->hidden | !sprite->positioned)
+			{
+				continue;
+			}
+
 			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 			// check if z positions are swapped

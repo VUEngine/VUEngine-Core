@@ -221,6 +221,12 @@ void ObjectSpriteContainer::sortProgressively()
 		if(previousNode)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+			if(objectSprite->hidden | !objectSprite->positioned)
+			{
+				continue;
+			}
+
 			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
 
 			// check if z positions are swapped
