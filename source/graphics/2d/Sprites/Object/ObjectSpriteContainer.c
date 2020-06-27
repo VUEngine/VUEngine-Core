@@ -248,7 +248,7 @@ void ObjectSpriteContainer::writeDRAM()
 {
 	// TODO: previousLastRenderedObjectIndex causes graphical glitches on emulators but
 	// works just fine on hardware.
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->previousLastRenderedObjectIndex - this->firstObjectIndex + 1) >> 2);
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->previousLastRenderedObjectIndex - this->firstObjectIndex) >> 2);
 }
 
 /**
