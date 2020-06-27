@@ -90,7 +90,7 @@ void SpriteManager::constructor()
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
-	this->evenFrame = true;
+	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	SpriteManager::reset(this);
 }
@@ -191,7 +191,7 @@ void SpriteManager::reset()
 	SpriteManager::renderTextWorld(this);
 
 	this->lockSpritesLists = false;
-	this->evenFrame = true;
+	this->evenFrame = __TRANSPARENCY_EVEN;
 }
 
 /**
@@ -374,7 +374,7 @@ bool SpriteManager::sortProgressively()
 		{
 			Sprite sprite = Sprite::safeCast(node->data);
 
-			if(sprite->hidden | !sprite->positioned)
+			if(!sprite->positioned)
 			{
 				continue;
 			}
@@ -567,7 +567,7 @@ void SpriteManager::render()
 	SpriteManager::sortProgressively(this);
 
 	// switch between even and odd frame
-	this->evenFrame = !this->evenFrame;
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -578,6 +578,11 @@ void SpriteManager::render()
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
 		if(sprite->hidden | !sprite->positioned)
+		{
+			continue;
+		}
+
+		if(sprite->transparent & this->evenFrame)
 		{
 			continue;
 		}

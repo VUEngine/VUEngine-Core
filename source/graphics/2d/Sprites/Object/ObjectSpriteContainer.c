@@ -222,7 +222,7 @@ void ObjectSpriteContainer::sortProgressively()
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-			if(objectSprite->hidden | !objectSprite->positioned)
+			if(!objectSprite->positioned)
 			{
 				continue;
 			}
@@ -265,7 +265,12 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(objectSprite->hidden | !objectSprite->positioned)
+		if(objectSprite->hidden || !objectSprite->positioned)
+		{
+			continue;
+		}
+
+		if(objectSprite->transparent & evenFrame)
 		{
 			continue;
 		}

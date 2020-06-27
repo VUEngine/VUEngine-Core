@@ -124,7 +124,16 @@ s16 Sprite::render(s16 index, bool evenFrame)
 		}
 	}
 
+	// If the client code makes these checks before calling this method,
+	// it saves on method calls quite a bit when there are lots of
+	// sprites. Don't uncomment.
+/*
 	if(!(((this->transparent == __TRANSPARENCY_NONE) || (0x01 & (this->transparent ^ evenFrame))) && Sprite::isWithinScreenSpace(this)))
+	{
+		return this->index;
+	}
+*/
+	if(!Sprite::isWithinScreenSpace(this))
 	{
 		return this->index;
 	}
