@@ -50,6 +50,7 @@ class ObjectSpriteContainer : Sprite
 	int firstObjectIndex;
 	// last rendered object index
 	int lastRenderedObjectIndex;
+	int previousLastRenderedObjectIndex;
 	// total objects
 	int totalObjects;
 	// OBJs available

@@ -70,6 +70,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->availableObjects = this->totalObjects;
 	this->firstObjectIndex = firstObjectIndex;
 	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
+	this->previousLastRenderedObjectIndex = this->lastRenderedObjectIndex;
 	this->objectSprites = new VirtualList();
 	this->hidden = false;
 	this->visible = true;
@@ -245,7 +246,9 @@ void ObjectSpriteContainer::sortProgressively()
 
 void ObjectSpriteContainer::writeDRAM()
 {
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjects) >> 2);
+	// TODO: previousLastRenderedObjectIndex causes graphical glitches on emulators but
+	// works just fine on hardware.
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->previousLastRenderedObjectIndex - this->firstObjectIndex + 1) >> 2);
 }
 
 /**
@@ -287,6 +290,8 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 	{
 		_objectAttributesCache[objectIndex].head = __OBJECT_CHAR_HIDE_MASK;
 	}
+
+	this->previousLastRenderedObjectIndex = lastRenderedObjectIndex > this->lastRenderedObjectIndex ? lastRenderedObjectIndex : this->lastRenderedObjectIndex;
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
 
