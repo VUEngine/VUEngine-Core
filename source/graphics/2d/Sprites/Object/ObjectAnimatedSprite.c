@@ -65,12 +65,6 @@ void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAni
  */
 void ObjectAnimatedSprite::destructor()
 {
-	if(this->animationController)
-	{
-		delete this->animationController;
-		this->animationController = NULL;
-	}
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();

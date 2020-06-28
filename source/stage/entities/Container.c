@@ -161,7 +161,8 @@ void Container::destructor()
 
 	if(this->events)
 	{
-		Object::fireEvent(this, kEventContainerDeleted);
+		Container::fireEvent(this, kEventContainerDeleted);
+		NM_ASSERT(!isDeleted(this), "Container::destructor: deteled this during kEventContainerDeleted");
 	}
 
 	// destroy the super Container

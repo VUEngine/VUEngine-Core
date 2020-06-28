@@ -491,6 +491,7 @@ void SoundWrapper::release()
 	if(this->events)
 	{
 		SoundWrapper::fireEvent(this, kEventSoundReleased);
+		NM_ASSERT(!isDeleted(this), "SoundWrapper::release: deteled this during kEventSoundReleased");
 	}
 }
 
@@ -711,6 +712,7 @@ void SoundWrapper::completedPlayback()
 	if(this->events)
 	{
 		SoundWrapper::fireEvent(this, kEventSoundFinished);
+		NM_ASSERT(!isDeleted(this), "SoundWrapper::completedPlayback: deteled this during kEventSoundFinished");
 	}
 
 	if(!this->sound->loop)

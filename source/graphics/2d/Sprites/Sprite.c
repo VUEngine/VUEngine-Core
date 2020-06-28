@@ -79,6 +79,12 @@ void Sprite::destructor()
 {
 	ASSERT(this, "Sprite::destructor: null cast");
 
+	if(!isDeleted(this->animationController))
+	{
+		delete this->animationController;
+		this->animationController = NULL;
+	}
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -522,7 +528,7 @@ int Sprite::getHalfHeight()
  */
 void Sprite::update()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		// first animate the frame
 		if(this->writeAnimationFrame)
@@ -594,7 +600,7 @@ void Sprite::setTransparent(u8 value)
  */
 void Sprite::updateAnimation()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
@@ -608,7 +614,7 @@ void Sprite::updateAnimation()
  */
 void Sprite::pause(bool pause)
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
@@ -627,7 +633,7 @@ void Sprite::play(const AnimationDescription* animationDescription, char* functi
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
 
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		this->writeAnimationFrame |= AnimationController::play(this->animationController, animationDescription, functionName);
 	}
@@ -639,7 +645,7 @@ void Sprite::play(const AnimationDescription* animationDescription, char* functi
  */
 void Sprite::stop()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		AnimationController::stop(this->animationController);
 	}
@@ -654,7 +660,7 @@ bool Sprite::replay(const AnimationDescription* animationDescription)
 {
 	ASSERT(animationDescription, "Sprite::replay: null animationDescription");
 
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationDescription);
 
@@ -671,7 +677,7 @@ bool Sprite::replay(const AnimationDescription* animationDescription)
  */
 bool Sprite::isPlaying()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		// first animate the frame
 		return AnimationController::isPlaying(this->animationController);
@@ -688,7 +694,7 @@ bool Sprite::isPlaying()
  */
 bool Sprite::isPlayingFunction(char* functionName)
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		return AnimationController::isPlayingFunction(this->animationController, functionName);
 	}
@@ -703,7 +709,7 @@ bool Sprite::isPlayingFunction(char* functionName)
  */
 void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		AnimationController::setFrameCycleDecrement(this->animationController, frameCycleDecrement);
 	}
@@ -716,7 +722,7 @@ void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
  */
 s16 Sprite::getActualFrame()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		return AnimationController::getActualFrame(this->animationController);
 	}
@@ -731,7 +737,7 @@ s16 Sprite::getActualFrame()
  */
 void Sprite::setActualFrame(s16 actualFrame)
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		this->writeAnimationFrame |= AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
@@ -746,7 +752,7 @@ void Sprite::setActualFrame(s16 actualFrame)
  */
 void Sprite::nextFrame()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		AnimationController::nextFrame(this->animationController);
 		this->writeAnimationFrame = true;
@@ -758,7 +764,7 @@ void Sprite::nextFrame()
  */
 void Sprite::previousFrame()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		AnimationController::previousFrame(this->animationController);
 		this->writeAnimationFrame = true;
@@ -772,7 +778,7 @@ void Sprite::previousFrame()
  */
 u8 Sprite::getFrameDuration()
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		return AnimationController::getFrameDuration(this->animationController);
 	}
@@ -787,7 +793,7 @@ u8 Sprite::getFrameDuration()
  */
 void Sprite::setFrameDuration(u8 frameDuration)
 {
-	if(this->animationController)
+	if(!isDeleted(this->animationController))
 	{
 		AnimationController::setFrameDuration(this->animationController, frameDuration);
 	}

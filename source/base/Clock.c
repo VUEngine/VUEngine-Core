@@ -111,7 +111,8 @@ void Clock::update(u32 millisecondsElapsed)
 	{
 		this->previousSecond = currentSecond;
 
-		Object::fireEvent(this, kEventSecondChanged);
+		Clock::fireEvent(this, kEventSecondChanged);
+		NM_ASSERT(!isDeleted(this), "Clock::update: deteled this during kEventSecondChanged");
 
 		u32 currentMinute = Clock::getMinutes(this);
 
@@ -119,7 +120,8 @@ void Clock::update(u32 millisecondsElapsed)
 		{
 			this->previousMinute = currentMinute;
 
-			Object::fireEvent(this, kEventMinuteChanged);
+			Clock::fireEvent(this, kEventMinuteChanged);
+			NM_ASSERT(!isDeleted(this), "Clock::update: deteled this during kEventMinuteChanged");
 		}
 	}
 }

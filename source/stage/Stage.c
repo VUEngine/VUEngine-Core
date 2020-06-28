@@ -483,7 +483,8 @@ void Stage::unloadChild(Container child)
 	}
 
 	Base::removeChild(this, child, true);
-	Object::fireEvent(child, kEventStageChildStreamedOut);
+	Container::fireEvent(child, kEventStageChildStreamedOut);
+	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deteled child during kEventStageChildStreamedOut");
 	Object::removeAllEventListeners(child, kEventStageChildStreamedOut);
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));

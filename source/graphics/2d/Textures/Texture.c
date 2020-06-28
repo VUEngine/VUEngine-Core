@@ -223,6 +223,7 @@ bool Texture::prepare()
 
 			Texture::write(this);
 			Texture::fireEvent(this, kEventTextureRewritten);
+			NM_ASSERT(!isDeleted(this), "Texture::prepare: deteled this during kEventTextureRewritten");
 			return true;
 			break;
 

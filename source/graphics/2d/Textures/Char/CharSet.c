@@ -61,7 +61,8 @@ void CharSet::constructor(CharSetSpec* charSetSpec, u16 offset)
  */
 void CharSet::destructor()
 {
-	Object::fireEvent(this, kEventCharSetDeleted);
+	CharSet::fireEvent(this, kEventCharSetDeleted);
+	NM_ASSERT(!isDeleted(this), "CharSet::destructor: deteled this during kEventCharSetDeleted");
 
 	// make sure that I'm not destroyed again
 	this->usageCount = 00;
@@ -186,7 +187,8 @@ void CharSet::rewrite()
 	CharSet::write(this);
 
 	// propagate event
-	Object::fireEvent(this, kEventCharSetRewritten);
+	CharSet::fireEvent(this, kEventCharSetRewritten);
+	NM_ASSERT(!isDeleted(this), "CharSet::rewrite: deteled this during kEventCharSetRewritten");
 }
 
 /**

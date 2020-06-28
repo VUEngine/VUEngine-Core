@@ -515,6 +515,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
 
 				Actor::fireEvent(this, kEventActorBounced);
+				NM_ASSERT(!isDeleted(this), "Actor::enterCollision: deteled this during kEventActorBounced");
 			}
 			else
 			{

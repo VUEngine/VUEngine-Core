@@ -116,6 +116,7 @@ void Printing::reset()
 void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
 {
 	Printing::fireEvent(this, kEventFontRewritten);
+	NM_ASSERT(!isDeleted(this), "Printing::onFontCharSetRewritten: deteled this during kEventFontRewritten");
 }
 
 void Printing::loadFonts(FontSpec** fontSpecs)
