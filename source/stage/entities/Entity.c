@@ -199,8 +199,6 @@ void Entity::destroyShapes()
  */
 void Entity::setupShapes()
 {
-	Base::setupShapes(this);
-
 	// this method can be called multiple times so only add shapes
 	// if not already done
 	if(!this->shapes)

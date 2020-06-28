@@ -117,7 +117,7 @@ class Entity : Container
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
-	override void setupShapes();
+	void setupShapes();
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
 	override const Rotation* getRotation();

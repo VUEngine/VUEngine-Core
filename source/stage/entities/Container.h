@@ -133,7 +133,6 @@ class Container : SpatialObject
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
 	virtual void update(u32 elapsedTime);
-	virtual void setupShapes();
 	virtual void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	virtual void transformChildren(u8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
