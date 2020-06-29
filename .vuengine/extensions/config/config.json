@@ -192,13 +192,6 @@
 		},
 		"paramTableSegments": 1
 	},
-	"sections": {
-		"initializedData": ".sdata",
-		"memoryPool": ".sdata",
-		"staticSingletons": ".dram_bss",
-		"uninitializedData": ".sbss",
-		"virtualTables": ".dram_bss"
-	},
 	"hacks": {
 		"mednafen": {
 			"objectMemoryCleanup": true
