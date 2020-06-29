@@ -147,8 +147,8 @@ static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numbe
 		"end%=:				\n\t"      \
 		"cmp %1,%2			\n\t"      \
 		"bgt loop%=			\n\t"      \
-    : // No Output
-    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
 		: "r10", "sp", "lp" // regs used
     );
 }
