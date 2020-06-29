@@ -104,52 +104,7 @@
 	"game": [],
 	"memoryPools": {
 		"cleanUp": false,
-		"pools": [
-			{
-				"objects": 460,
-				"size": 16
-			},
-			{
-				"objects": 300,
-				"size": 20
-			},
-			{
-				"objects": 850,
-				"size": 24
-			},
-			{
-				"objects": 160,
-				"size": 28
-			},
-			{
-				"objects": 100,
-				"size": 40
-			},
-			{
-				"objects": 70,
-				"size": 64
-			},
-			{
-				"objects": 60,
-				"size": 96
-			},
-			{
-				"objects": 25,
-				"size": 116
-			},
-			{
-				"objects": 16,
-				"size": 152
-			},
-			{
-				"objects": 4,
-				"size": 176
-			},
-			{
-				"objects": 9,
-				"size": 316
-			}
-		],
+		"pools": [],
 		"warningThreshold": 85
 	},
 	"optics": {
