@@ -232,7 +232,7 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
 		"bgt loop%=			\n\t"      \
     : // No Output
     : "r" (destination), "r" (source), "r" (finalSource), "r" (offset), "r" (flip), "r" (increment)
-	: "r10" // regs used
+	: "r10", "sp", "lp" // regs used
     );
 }
 

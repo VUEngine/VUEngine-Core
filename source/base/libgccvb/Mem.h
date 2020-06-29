@@ -53,6 +53,8 @@ static class Mem : Object
 	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
 }
 
+// TODO: input registers should not be modified according to GCC's docs
+
 // Copy a block of data from one area in memory to another.
 static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 {
@@ -86,7 +88,7 @@ static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numb
 		"bgt loop%=		\n\t"
 		: // No Output
 		: "r" (destination), "r" (source), "r" (finalSource)
-		: "r10" // regs used
+		: "r10", "sp", "lp" // regs used
 	);
 }
 
@@ -106,7 +108,7 @@ static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 n
 		"bgt loop%=		\n\t"
 		: // No Output
 		: "r" (destination), "r" (source), "r" (finalSource)
-		: "r10" // regs used
+		: "r10", "sp", "lp" // regs used
 	);
 }
 
@@ -126,7 +128,7 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, u32 numb
 		"bgt loop%=		\n\t"
 		: // No Output
 		: "r" (destination), "r" (source), "r" (finalSource)
-		: "r10" // regs used
+		: "r10", "sp", "lp" // regs used
 	);
 }
 
@@ -147,7 +149,7 @@ static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numbe
 		"bgt loop%=			\n\t"      \
     : // No Output
     : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
-	: "r10" // regs used
+		: "r10", "sp", "lp" // regs used
     );
 }
 
