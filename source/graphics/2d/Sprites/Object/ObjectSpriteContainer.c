@@ -289,12 +289,19 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 		_objectAttributesCache[objectIndex].head = __OBJECT_CHAR_HIDE_MASK;
 	}
 
+
 #ifdef __MEDNAFEN_HACK
 	// totalObjectsToWriteToDRAM causes graphical glitches on Mednafnen but
 	// works just fine on hardware.
 	this->totalObjectsToWriteToDRAM = this->totalObjects;
 #else
+#ifndef __RELEASE
+	// totalObjectsToWriteToDRAM causes graphical glitches on Mednafnen but
+	// works just fine on hardware.
+	this->totalObjectsToWriteToDRAM = this->totalObjects;
+#else
 	this->totalObjectsToWriteToDRAM = (lastRenderedObjectIndex > this->lastRenderedObjectIndex ? lastRenderedObjectIndex : this->lastRenderedObjectIndex) - this->firstObjectIndex;
+#endif
 #endif
 
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
