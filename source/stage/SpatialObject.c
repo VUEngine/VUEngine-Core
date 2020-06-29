@@ -55,11 +55,6 @@ void SpatialObject::destructor()
 	Base::destructor();
 }
 
-bool SpatialObject::isMoving()
-{
-	return false;
-}
-
 // defaults to true
 bool SpatialObject::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 {
@@ -172,19 +167,9 @@ fix10_6 SpatialObject::getSpeed()
 	return 0;
 }
 
-fix10_6_ext SpatialObject::getSpeedSquare()
-{
-	return 0;
-}
-
 fix10_6 SpatialObject::getMaximumSpeed()
 {
 	return 0;
-}
-
-bool SpatialObject::isAffectedByRelativity()
-{
-	return false;
 }
 
 bool SpatialObject::enterCollision(const CollisionInformation* collisionInformation __attribute__ ((unused)))
@@ -202,24 +187,6 @@ void SpatialObject::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 void SpatialObject::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
 {}
-
-u16 SpatialObject::getMovementState()
-{
-	return 0;
-}
-
-/**
- * Retrieve shapes list
- *
- * @memberof	SpatialObject
- * @public
- *
- * @return		SpatialObject's Shape list
- */
-VirtualList SpatialObject::getShapes()
-{
-	return NULL;
-}
 
 /**
  * Retrieve shapes list

@@ -980,7 +980,6 @@ void Entity::transformShapes()
 	if(this->shapes && this->transformShapes)
 	{
 		// setup shape
-		//	bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
 		const Vector3D* myPosition =  SpatialObject::getPosition(this);
 		const Rotation* myRotation =  SpatialObject::getRotation(this);
 		const Scale* myScale =  SpatialObject::getScale(this);
@@ -1030,7 +1029,6 @@ bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
 
 		if(!isDeleted(shape))
 		{
-			//	bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
 			const Vector3D* myPosition =  SpatialObject::getPosition(this);
 			const Rotation* myRotation =  SpatialObject::getRotation(this);
 			const Scale* myScale =  SpatialObject::getScale(this);

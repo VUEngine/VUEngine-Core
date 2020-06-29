@@ -704,14 +704,9 @@ fix10_6 Actor::getSpeed()
 	return this->body ? Body::getSpeed(this->body) : Base::getSpeed(this);
 }
 
-fix10_6_ext Actor::getSpeedSquare()
-{
-	return this->body ? Body::getSpeedSquare(this->body) : 0;
-}
-
 fix10_6 Actor::getMaximumSpeed()
 {
-	return this->body ? Body::getMaximumSpeed(this->body) : Base::getMaximumSpeed(this);
+	return this->body ? Body::getMaximumSpeed(this->body) : 0;
 }
 
 void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)

@@ -444,7 +444,7 @@ void SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
  * @param sprite		Sprite to assign the WORLD layer
  * @param hasEffects	Flag to signal that the sprite has special effects applied to it
  */
-void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects)
+void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute__((unused)))
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 

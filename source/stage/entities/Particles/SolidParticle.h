@@ -91,6 +91,7 @@ class SolidParticle : PhysicalParticle
 	/// @publicsection
 	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
 	Shape getShape();
+	VirtualList getShapes();
 	override fix10_6 getWidth();
 	override fix10_6 getHeight();
 	override fix10_6 getDepth();
@@ -99,7 +100,6 @@ class SolidParticle : PhysicalParticle
 	override bool handleMessage(Telegram telegram);
 	override void transform();
 	override void setPosition(const Vector3D* position);
-	override VirtualList getShapes();
 	override u32 getInGameType();
 	override Velocity getVelocity();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);

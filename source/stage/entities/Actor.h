@@ -83,6 +83,8 @@ class Actor : AnimatedEntity
 	void resetCollisionStatus();
 	Body getBody();
 	void takeHitFrom(Actor other);
+	bool isMoving();
+	u16 getMovementState();
 	virtual void addForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(u16 axis);
@@ -95,15 +97,13 @@ class Actor : AnimatedEntity
 	virtual bool mustBounce();
 	virtual bool overrideParentingPositioningWhenBodyIsNotMoving();
 	virtual bool registerCollidingShapes();
-	override fix10_6_ext getSpeedSquare();
+	virtual fix10_6 getMaximumSpeed();
 	override void iAmDeletingMyself();
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
 	override void resume();
 	override bool handleMessage(Telegram telegram);
-	override bool isMoving();
-	override u16 getMovementState();
 	override void setLocalPosition(const Vector3D* position);
 	override fix10_6 getBounciness();
 	override const Vector3D* getPosition();
@@ -111,7 +111,6 @@ class Actor : AnimatedEntity
 	override bool isSubjectToGravity(Acceleration gravity);
 	override Velocity getVelocity();
 	override fix10_6 getSpeed();
-	override fix10_6 getMaximumSpeed();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);

@@ -101,6 +101,8 @@ class Entity : Container
 	void setShapesLayersToIgnore(u32 layersToIgnore);
 	void setTransparent(u8 transparent);
 	bool isSpriteVisible(Sprite sprite, int pad);
+	void setupShapes();
+	VirtualList getShapes();
 	virtual bool updateSpritePosition();
 	virtual bool updateSpriteRotation();
 	virtual bool updateSpriteScale();
@@ -117,7 +119,6 @@ class Entity : Container
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
-	void setupShapes();
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
 	override const Rotation* getRotation();
@@ -125,7 +126,6 @@ class Entity : Container
 	override fix10_6 getWidth();
 	override fix10_6 getHeight();
 	override fix10_6 getDepth();
-	override VirtualList getShapes();
 	override void suspend();
 	override void resume();
 	override bool isSubjectToGravity(Acceleration gravity);

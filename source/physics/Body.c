@@ -217,11 +217,6 @@ fix10_6 Body::getSpeed()
 	return this->speed;
 }
 
-fix10_6_ext Body::getSpeedSquare()
-{
-	return __FIX10_6_MULT(this->speed, this->speed);
-}
-
 void Body::modifyVelocity(const Velocity* modifier)
 {
 	ASSERT(modifier, "Body::modifyVelocity: null multiplier");

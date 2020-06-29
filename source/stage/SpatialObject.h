@@ -42,8 +42,6 @@ class SpatialObject : Object
 	/// @publicsection
 	void constructor();
 	void destructor();
-	virtual VirtualList getShapes();
-	virtual bool isMoving();
 	virtual bool isSubjectToGravity(Acceleration gravity);
 	virtual fix10_6 getRadius();
 	virtual fix10_6 getWidth();
@@ -59,14 +57,10 @@ class SpatialObject : Object
 	virtual fix10_6 getFrictionCoefficient();
 	virtual Velocity getVelocity();
 	virtual fix10_6 getSpeed();
-	virtual fix10_6_ext getSpeedSquare();
-	virtual fix10_6 getMaximumSpeed();
-	virtual bool isAffectedByRelativity();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
 	virtual void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	virtual void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	virtual u16 getMovementState();
 	virtual u32 getInGameType();
 }
 
