@@ -228,6 +228,14 @@ static void VIPManager::interruptHandler()
 	}
 }
 
+void VIPManager::writeDRAM()
+{
+	this->renderingCompleted = true;
+
+	// Write to DRAM
+	SpriteManager::writeDRAM(_spriteManager);
+}
+
 /**
  * Process interrupt method
  */
@@ -272,7 +280,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 			case __XPEND:
 
 				this->processingXPEND = true;
-				this->renderingCompleted = false;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 				Game::saveProcessNameDuringXPEND(Game::getInstance());
@@ -298,12 +305,9 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// graphical glitches when the VIP
 					// finishes drawing while the CPU is
 					// still syncronizing the graphics
-					if(this->allowDRAMAccess)
+					if(!this->renderingCompleted && this->allowDRAMAccess)
 					{
-						// Write to DRAM
-						SpriteManager::writeDRAM(_spriteManager);
-
-						this->renderingCompleted = true;
+						VIPManager::writeDRAM(this);
 					}
 
 					// Write to the frame buffers

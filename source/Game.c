@@ -828,9 +828,9 @@ void Game::synchronizeGraphics()
 	if(VIPManager::isRenderingPending(this->vipManager))
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = "sprites";
+		this->lastProcessName = "DRAM";
 #endif
-		SpriteManager::writeDRAM(SpriteManager::getInstance());
+		VIPManager::writeDRAM(this->vipManager);
 	}
 
 	VIPManager::allowDRAMAccess(this->vipManager, true);
@@ -1140,14 +1140,14 @@ bool Game::hasCurrentFrameEnded()
 
 void Game::run()
 {
+	// sync entities with their sprites
+	Game::synchronizeGraphics(this);
+
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
-
-	// sync entities with their sprites
-	Game::synchronizeGraphics(this);
 
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);

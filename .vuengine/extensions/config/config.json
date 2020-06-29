@@ -69,7 +69,7 @@
 	},
 	"compiler": {
 		"framePointer": false,
-		"optimization": "Ofast",
+		"optimization": "O2",
 		"output": "c",
 		"prologFunctions": false,
 		"scrambleBinary": false
@@ -86,10 +86,10 @@
 		"profileStreaming": false,
 		"showGameProfiling": false,
 		"showStreamingProfiling": false,
-		"stackHeadroom": 1000
+		"stackHeadroom": 1000,
+		"alertForTornFrames": false
 	},
-	"exception":
-	{
+	"exception": {
 		"position": {
 			"x": 0,
 			"y": 0
@@ -104,7 +104,52 @@
 	"game": [],
 	"memoryPools": {
 		"cleanUp": false,
-		"pools": [],
+		"pools": [
+			{
+				"objects": 460,
+				"size": 16
+			},
+			{
+				"objects": 300,
+				"size": 20
+			},
+			{
+				"objects": 850,
+				"size": 24
+			},
+			{
+				"objects": 160,
+				"size": 28
+			},
+			{
+				"objects": 100,
+				"size": 40
+			},
+			{
+				"objects": 70,
+				"size": 64
+			},
+			{
+				"objects": 60,
+				"size": 96
+			},
+			{
+				"objects": 25,
+				"size": 116
+			},
+			{
+				"objects": 16,
+				"size": 152
+			},
+			{
+				"objects": 4,
+				"size": 176
+			},
+			{
+				"objects": 9,
+				"size": 316
+			}
+		],
 		"warningThreshold": 85
 	},
 	"optics": {
@@ -127,8 +172,8 @@
 		"gravity": 19.6,
 		"maximumBouncinessCoefficient": 1,
 		"stopBouncingVelocityThreshold": 48,
-		"stopVelocityThreshold": 8,
-		"timeElapsedDivisor": 2
+		"stopVelocityThreshold": 1,
+		"timeElapsedDivisor": 1
 	},
 	"random": {
 		"addUserInputAndTimeToRandomSeed": false,
@@ -159,7 +204,7 @@
 		},
 		"usage": {
 			"initializedData": ".sdata",
-			"memoryPool": ".sbss",
+			"memoryPool": ".sdata",
 			"staticSingletons": ".dram_bss",
 			"uninitializedData": ".sbss",
 			"virtualTables": ".dram_bss"
@@ -169,10 +214,12 @@
 		"leftEarCenter": 96,
 		"rightEarCenter": 288,
 		"stereoHorizontalAttenuationFactor": 50,
-		"stereoVerticalAttenuationFactor": 50
+		"stereoVerticalAttenuationFactor": 50,
+		"stereoAttenuationFactor": 75
 	},
 	"sprite": {
-		"totalLayers": 32
+		"totalLayers": 32,
+		"hackBgmapSpriteHeight": true
 	},
 	"sram": {
 		"totalSram": 8192
@@ -183,9 +230,23 @@
 			"offset": {
 				"parallax": 0,
 				"x": 0,
-				"y": 0
+				"y": 0,
+				"z": 0
 			},
 			"printableArea": 1792
+		},
+		"paramTableSegments": 1
+	},
+	"sections": {
+		"initializedData": ".sdata",
+		"memoryPool": ".sdata",
+		"staticSingletons": ".dram_bss",
+		"uninitializedData": ".sbss",
+		"virtualTables": ".dram_bss"
+	},
+	"hacks": {
+		"mednafen": {
+			"objectMemoryCleanup": true
 		}
 	}
 }
