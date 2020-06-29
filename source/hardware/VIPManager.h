@@ -326,6 +326,7 @@ singleton class VIPManager : Object
 	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStarted();
+	void writeDRAM();
 }
 
 
