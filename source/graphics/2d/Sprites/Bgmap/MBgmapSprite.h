@@ -99,7 +99,6 @@ class MBgmapSprite : BgmapSprite
 	override void resize(Scale scale, fix10_6 z);
 	override void setMode(u16 display, u16 mode);
 	override bool writeTextures();
-	override void releaseTexture();
 }
 
 

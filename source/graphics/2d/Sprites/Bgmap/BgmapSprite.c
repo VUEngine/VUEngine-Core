@@ -565,22 +565,6 @@ void BgmapSprite::displacement()
 */
 
 /**
- * Add displacement to position
- *
- * @memberof				BgmapSprite
- * @public
- *
- * @param displacement		2D position displacement
- */
-void BgmapSprite::addDisplacement(const PixelVector* displacement)
-{
-	this->position.x += displacement->x;
-	this->position.y += displacement->y;
-	this->position.z += displacement->z;
-	this->position.parallax += displacement->parallax;
-}
-
-/**
  * Set Sprite's render mode
  *
  * @memberof		BgmapSprite

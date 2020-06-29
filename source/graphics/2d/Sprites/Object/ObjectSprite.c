@@ -329,37 +329,6 @@ s16 ObjectSprite::getTotalObjects()
 }
 
 /**
- * Get WORLD layer
- *
- * @memberof	Sprite
- * @public
- *
- * @return 		World layer
- */
-u8 ObjectSprite::getIndex()
-{
-	ASSERT(this->objectSpriteContainer, "ObjectSprite::getIndex: null objectSpriteContainer");
-
-	return this->objectSpriteContainer ?  Sprite::getIndex(this->objectSpriteContainer) : 0;
-}
-
-/**
- * Add displacement to position
- *
- * @memberof				ObjectSprite
- * @public
- *
- * @param displacement		2D position displacement
- */
-void ObjectSprite::addDisplacement(const PixelVector* displacement)
-{
-	this->position.x += displacement->x;
-	this->position.y += displacement->y;
-	this->position.z += displacement->z;
-	this->position.parallax += displacement->parallax;
-}
-
-/**
  * Set Sprite's render mode
  *
  * @memberof		ObjectSprite

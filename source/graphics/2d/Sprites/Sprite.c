@@ -156,6 +156,24 @@ s16 Sprite::render(s16 index, bool evenFrame)
 	return this->index;
 }
 
+
+
+/**
+ * Add displacement to position
+ *
+ * @memberof				Sprite
+ * @public
+ *
+ * @param displacement		2D position displacement
+ */
+void Sprite::addDisplacement(const PixelVector* displacement)
+{
+	this->position.x += displacement->x;
+	this->position.y += displacement->y;
+	this->position.z += displacement->z;
+	this->position.parallax += displacement->parallax;
+}
+
 /**
  * Get scale
  *
@@ -309,14 +327,6 @@ AnimationController Sprite::getAnimationController()
 u8 Sprite::getIndex()
 {
 	return this->index;
-}
-
-/**
- * Release texture
- *
- */
-void Sprite::releaseTexture()
-{
 }
 
 /**

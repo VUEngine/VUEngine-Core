@@ -225,9 +225,9 @@ abstract class Sprite : Object
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();
-	virtual void addDisplacement(const PixelVector* displacement) = 0;
+	u8 getIndex();
+	virtual void addDisplacement(const PixelVector* displacement);
 	virtual Scale getScale();
-	virtual u8 getIndex();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
 	virtual u16 doRender(s16 index, bool evenFrame) = 0;
@@ -239,7 +239,6 @@ abstract class Sprite : Object
 	virtual bool writeTextures();
 	virtual void print(int x, int y);
 	virtual int getTotalPixels();
-	virtual void releaseTexture();
 }
 
 
