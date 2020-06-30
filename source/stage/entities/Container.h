@@ -122,7 +122,6 @@ class Container : SpatialObject
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
-	void transformNonVirtual(const Transformation* environmentTransform);
 	void setInheritEnvironment(bool inheritEnvironment);
 	void updateChildren(u32 elapsedTime);
 	void updateBehaviors(u32 elapsedTime);

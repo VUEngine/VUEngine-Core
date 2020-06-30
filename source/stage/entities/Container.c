@@ -665,49 +665,6 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 }
 
 /**
- * Initial transformation but without calling the virtual method
- *
- * @param environmentTransform
- */
-void Container::transformNonVirtual(const Transformation* environmentTransform)
-{
-	// apply environment transformation
-	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToRotation(this, environmentTransform);
-	}
-
-	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToScale(this, environmentTransform);
-	}
-
-	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
-	}
-
-	// if I have children
-	if(this->children)
-	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-
-			Container::transformNonVirtual(child, &this->transformation);
-		}
-	}
-
-	// don't update position on next transformation cycle
-	this->invalidateGlobalTransformation = 0;
-}
-
-/**
  * Initial transformation
  *
  * @param environmentTransform
