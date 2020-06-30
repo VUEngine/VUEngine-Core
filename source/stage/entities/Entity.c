@@ -1472,7 +1472,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 	}
 	else if(this->children)
 	{
-		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+		Entity::transformChildren(this, invalidateTransformationFlag);
 	}
 }
 
