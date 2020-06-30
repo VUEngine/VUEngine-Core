@@ -171,6 +171,9 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numb
 	this->availableObjects += numberOfObjects;
 
 	this->lockSpritesLists = false;
+
+	// Make sure to clean OBJECT memory next cycle	
+	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
 }
 
 /**
