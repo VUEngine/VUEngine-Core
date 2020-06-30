@@ -275,28 +275,12 @@ void PhysicalWorld::update(Clock clock)
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
 
-	NM_ASSERT(__TOTAL_USABLE_BODIES >= VirtualList::getSize(this->activeBodies), "PhysicalWorld::update: too many active bodies");
-
-	Body activeBodies[__TOTAL_USABLE_BODIES];
-	int activeBodiesIndex = 0;
-
-	VirtualNode node = this->activeBodies->head;
-
-	for(activeBodiesIndex = 0, node = this->activeBodies->head; node; node = node->next, activeBodiesIndex++)
+	for(VirtualNode node = this->activeBodies->head; node; node = node->next)
 	{
-		activeBodies[activeBodiesIndex] = Body::safeCast(node->data);
-	}
+		Body body = Body::safeCast(node->data);
 
-	activeBodies[activeBodiesIndex] = NULL;
 
-	for(activeBodiesIndex = 0; activeBodies[activeBodiesIndex]; activeBodiesIndex++)
-	{
-		if(isDeleted(activeBodies[activeBodiesIndex]))
-		{
-			continue;
-		}
-
-		Body::update(activeBodies[activeBodiesIndex]);
+		Body::update(body);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING

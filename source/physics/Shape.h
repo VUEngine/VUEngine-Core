@@ -214,6 +214,8 @@ abstract class Shape : Object
 	u8 isVisible;
 	// flag to allow registration of colliding shapes
 	bool registerCollisions;
+	// the rectangle
+	RightBox rightBox;
 
 	/// @publicsection
 	void constructor(SpatialObject owner);
@@ -240,13 +242,13 @@ abstract class Shape : Object
 	void registerCollisions(bool value);
 	void show();
 	void hide();
+	RightBox getSurroundingRightBox();
 	virtual void setup(u32 layers, u32 layersToIgnore);
 	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	virtual void setPosition(const Vector3D* position);
 	virtual Vector3D getNormal();
 	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
 	virtual Vector3D getPosition() = 0;
-	virtual RightBox getSurroundingRightBox() = 0;
 	virtual void configureWireframe() = 0;
 	virtual void print(int x, int y) = 0;
 }

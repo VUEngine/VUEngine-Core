@@ -126,29 +126,35 @@ u32 CollisionManager::update(Clock clock)
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
 
-	// cull off outside of camera bounds shapes
-	VirtualNode node = this->shapes->head;
-
-	for(; node; node = node->next)
+	// check the shapes
+	for(VirtualNode auxNode = this->shapes->head; auxNode; auxNode = auxNode->next)
 	{
-		// load the current shape
-		Shape shape = Shape::safeCast(node->data);
-		shape->isVisible = true;
+		// load the current shape to check against
+		Shape shapeToCheck = Shape::safeCast(auxNode->data);
+
+		// compare only different ready, different shapes against it other if
+		// the layer of the shapeToCheck are not excluded by the current shape
+		if(isDeleted(shapeToCheck) || !shapeToCheck->enabled || !shapeToCheck->ready)
+		{
+			continue;
+		}
+
+		shapeToCheck->isVisible = true;
 
 		extern const Vector3D* _cameraPosition;
 
-		RightBox surroundingRightBox =  Shape::getSurroundingRightBox(shape);
-
 		// not ready for collision checks if out of the camera
 		if(
-			surroundingRightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
-			surroundingRightBox.x1 - _cameraPosition->x < 0 ||
-			surroundingRightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
-			surroundingRightBox.y1 - _cameraPosition->y < 0
+			shapeToCheck->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
+			shapeToCheck->rightBox.x1 - _cameraPosition->x < 0 ||
+			shapeToCheck->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
+			shapeToCheck->rightBox.y1 - _cameraPosition->y < 0
 		)
 		{
-			shape->isVisible = false;
+			shapeToCheck->isVisible = false;
 		}
+
+		shapeToCheck->moved = false;
 
 #ifdef __DRAW_SHAPES
 		if(shape->enabled && shape->isVisible)
@@ -161,86 +167,35 @@ u32 CollisionManager::update(Clock clock)
 		}
 #endif
 
-		shape->moved = false;
-	}
-
-	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList::getSize(this->activeForCollisionCheckingShapes), "CollisionManager::update: too many moving shapes");
-
-	Shape activeForCollisionCheckingShapes[__TOTAL_USABLE_SHAPES];
-	int activeForCollisionCheckingShapesIndex = 0;
-
-	// check the active shapes
-	for(activeForCollisionCheckingShapesIndex = 0, node = this->activeForCollisionCheckingShapes->head; node; node = node->next)
-	{
-		Shape shape = Shape::safeCast(node->data);
-
-		if(shape->enabled && (__COLLISION_ALL_LAYERS != shape->layersToIgnore))
-		{
-			activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex++] = shape;
-		}
-	}
-
-	activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex] = NULL;
-
-	Shape enabledShapes[__TOTAL_USABLE_SHAPES];
-	int enabledShapesIndex = 0;
-
-	// check the enabled shapes
-	for(enabledShapesIndex = 0, node = this->shapes->head; node; node = node->next)
-	{
-		Shape shape = Shape::safeCast(node->data);
-
-		if(shape->enabled)
-		{
-			enabledShapes[enabledShapesIndex++] = shape;
-		}
-	}
-
-	enabledShapes[enabledShapesIndex] = NULL;
-
-	// check the shapes
-	for(activeForCollisionCheckingShapesIndex = 0; activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]; activeForCollisionCheckingShapesIndex++)
-	{
-		if(isDeleted(activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]))
+		if(!shapeToCheck->isVisible)
 		{
 			continue;
 		}
 
-		// load the current shape
-		Shape shape = Shape::safeCast(activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]);
-
-		if(shape->ready && shape->checkForCollisions && shape->isVisible)
+		// check the shapes
+		for(VirtualNode node = this->activeForCollisionCheckingShapes->head; node; node = node->next)
 		{
-			// check the shapes
-			for(enabledShapesIndex = 0; enabledShapes[enabledShapesIndex]; enabledShapesIndex++)
+			Shape shape = Shape::safeCast(node->data);
+
+			if(isDeleted(shape) || !shape->enabled || (__COLLISION_ALL_LAYERS == shape->layersToIgnore))
 			{
-				if(isDeleted(enabledShapes[enabledShapesIndex]))
-				{
-					continue;
-				}
+				continue;
+			}
 
-				// load the current shape to check against
-				Shape shapeToCheck = Shape::safeCast(enabledShapes[enabledShapesIndex]);
+			// load the current shape
+			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || shape == shapeToCheck || (shape->layersToIgnore & shapeToCheck->layers))
+			{
+				continue;
+			}
 
-				if(!shapeToCheck->enabled)
-				{
-					continue;
-				}
+			this->lastCycleCollisionChecks++;
 
-				// compare only different ready, different shapes against it other if
-				// the layer of the shapeToCheck are not excluded by the current shape
-				if(shape != shapeToCheck && shapeToCheck->ready && shapeToCheck->isVisible && !(shape->layersToIgnore & shapeToCheck->layers))
-				{
-					this->lastCycleCollisionChecks++;
+			CollisionData collisionData = Shape::collides(shape, shapeToCheck);
 
-					CollisionData collisionData = Shape::collides(shape, shapeToCheck);
-
-					// check if shapes overlap
-					if(kNoCollision != collisionData.result)
-					{
-						this->lastCycleCollisions++;
-					}
-				}
+			// check if shapes overlap
+			if(kNoCollision != collisionData.result)
+			{
+				this->lastCycleCollisions++;
 			}
 		}
 	}

@@ -51,8 +51,6 @@ class Box : Shape
 	Normals* normals;
 	// for rotation purposes
 	Vector3D rotationVertexDisplacement;
-	// the rectangle
-	RightBox rightBox;
 
 	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max);
@@ -63,7 +61,6 @@ class Box : Shape
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();
-	override RightBox getSurroundingRightBox();
 	override void configureWireframe();
 	override void print(int x, int y);
 }

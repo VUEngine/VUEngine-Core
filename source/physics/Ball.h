@@ -50,7 +50,6 @@ class Ball : Shape
 	override void setPosition(const Vector3D* position);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();
-	override RightBox getSurroundingRightBox();
 	override void configureWireframe();
 	override void print(int x, int y);
 }

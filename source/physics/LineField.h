@@ -44,7 +44,6 @@
 /// @ingroup physics
 class LineField : Shape
 {
-	RightBox rightBox;
 	Vector3D normal;
 	Vector3D a;
 	Vector3D b;
@@ -58,7 +57,6 @@ class LineField : Shape
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();
-	override RightBox getSurroundingRightBox();
 	override Vector3D getNormal();
 	override void configureWireframe();
 	override void print(int x, int y);

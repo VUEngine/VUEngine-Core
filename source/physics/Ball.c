@@ -79,7 +79,20 @@ void Ball::position(const Vector3D* position, const Rotation* rotation __attribu
 		this->radius = size->y >> 1;
 	}
 
+	Ball::updateRightBox(this);
+
 	Base::position(this, position, rotation, scale, size);
+}
+
+void Ball::updateRightBox()
+{
+	this->rightBox.x0 = this->center.x - this->radius;
+	this->rightBox.y0 = this->center.y - this->radius;
+	this->rightBox.z0 = this->center.z - this->radius;
+
+	this->rightBox.x1 = this->center.x + this->radius;
+	this->rightBox.y1 = this->center.y + this->radius;
+	this->rightBox.z1 = this->center.z + this->radius;
 }
 
 /**
@@ -90,6 +103,8 @@ void Ball::position(const Vector3D* position, const Rotation* rotation __attribu
 void Ball::setPosition(const Vector3D* position)
 {
 	this->center = *position;
+
+	Ball::updateRightBox(this);
 }
 
 static void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
@@ -133,20 +148,6 @@ CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, 
 Vector3D Ball::getPosition()
 {
 	return this->center;
-}
-
-RightBox Ball::getSurroundingRightBox()
-{
-	return (RightBox)
-	{
-		this->center.x - this->radius,
-		this->center.y - this->radius,
-		this->center.z - this->radius,
-
-		this->center.x + this->radius,
-		this->center.y + this->radius,
-		this->center.z + this->radius,
-	};
 }
 
 // configure Polyhedron

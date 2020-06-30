@@ -52,15 +52,6 @@ void LineField::constructor(SpatialObject owner)
 	this->b = Vector3D::zero();
 	this->normal = Vector3D::zero();
 	this->normalLength = __I_TO_FIX7_9(1);
-
-	this->rightBox.x1 = __I_TO_FIX7_9(1);
-	this->rightBox.y1 = __I_TO_FIX7_9(1);
-	this->rightBox.z1 = __I_TO_FIX7_9(1);
-
-	this->rightBox.x0 = __I_TO_FIX7_9(-1);
-	this->rightBox.y0 = __I_TO_FIX7_9(-1);
-	this->rightBox.z0 = __I_TO_FIX7_9(-1);
-
 }
 
 // class's destructor
@@ -268,11 +259,6 @@ CollisionInformation LineField::testForCollision(Shape shape __attribute__((unus
 Vector3D LineField::getPosition()
 {
 	return Vector3D::intermediate(this->a, this->b);
-}
-
-RightBox LineField::getSurroundingRightBox()
-{
-	return this->rightBox;
 }
 
 // configure Polyhedron

@@ -77,6 +77,14 @@ void Shape::constructor(SpatialObject owner)
 	this->isVisible = true;
 	this->moved = false;
 	this->registerCollisions = true;
+
+	this->rightBox.x1 = __I_TO_FIX7_9(1);
+	this->rightBox.y1 = __I_TO_FIX7_9(1);
+	this->rightBox.z1 = __I_TO_FIX7_9(1);
+
+	this->rightBox.x0 = __I_TO_FIX7_9(-1);
+	this->rightBox.y0 = __I_TO_FIX7_9(-1);
+	this->rightBox.z0 = __I_TO_FIX7_9(-1);
 }
 
 /**
@@ -170,6 +178,11 @@ void Shape::setup(u32 layers, u32 layersToIgnore)
 	}
 }
 
+RightBox Shape::getSurroundingRightBox()
+{
+	return this->rightBox;
+}
+
 /**
  * Position
  *
@@ -198,6 +211,8 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
 
 	this->ready = true;
 	this->moved = true;
+
+	// TODO: must update the rightbox
 }
 
 /**
@@ -208,6 +223,8 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
 void Shape::setPosition(const Vector3D* position __attribute__((unused)))
 {
 	this->moved = true;
+
+	// TODO: must update the rightbox
 }
 
 /**

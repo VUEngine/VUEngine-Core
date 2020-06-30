@@ -484,11 +484,6 @@ Vector3D Box::getPosition()
 	return position;
 }
 
-RightBox Box::getSurroundingRightBox()
-{
-	return this->rightBox;
-}
-
 // configure Polyhedron
 void Box::configureWireframe()
 {
