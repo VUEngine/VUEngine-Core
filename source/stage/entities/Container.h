@@ -125,6 +125,7 @@ class Container : SpatialObject
 	void setInheritEnvironment(bool inheritEnvironment);
 	void updateChildren(u32 elapsedTime);
 	void updateBehaviors(u32 elapsedTime);
+	void synchronizeChildrenGraphics(this);
 
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);

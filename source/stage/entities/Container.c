@@ -721,6 +721,11 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 
 void Container::synchronizeGraphics()
 {
+	Container::synchronizeChildrenGraphics(this);
+}
+
+void Container::synchronizeChildrenGraphics()
+{
 	// if I have children
 	if(this->children)
 	{

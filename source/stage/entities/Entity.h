@@ -103,6 +103,7 @@ class Entity : Container
 	bool isSpriteVisible(Sprite sprite, int pad);
 	void setupShapes();
 	VirtualList getShapes();
+	void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
 	virtual bool updateSpritePosition();
 	virtual bool updateSpriteRotation();
 	virtual bool updateSpriteScale();
@@ -112,7 +113,6 @@ class Entity : Container
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
-	virtual void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
 	virtual void releaseSprites();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
