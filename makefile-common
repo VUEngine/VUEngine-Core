@@ -110,7 +110,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
-preprocessClasses: dirs $(PREPROCESS_ENGINE) preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
+preprocessClasses: printClassPreprocessingInfo dirs $(PREPROCESS_ENGINE) preprocessPlugins preprocessHeaderFiles
 	@touch $(CLASSES_HIERARCHY_FILE)
 	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
@@ -239,6 +239,7 @@ clean:
 
 # Create necessary directories
 #DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 )
+# Making the check to fail handles new folders without trouble
 DIRS_EXIST=0
 
 createEngineDirs:
@@ -270,7 +271,7 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
-dirs: $(CREATE_ENGINE_DIRS) createPluginDirs printDirsInfo
+dirs: printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
