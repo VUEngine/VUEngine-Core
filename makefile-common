@@ -238,7 +238,8 @@ clean:
 	@echo "Cleaning done."
 
 # Create necessary directories
-DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 )
+#DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 )
+DIRS_EXIST=0
 
 createEngineDirs:
 ifeq ($(DIRS_EXIST), 0)
