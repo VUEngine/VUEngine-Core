@@ -484,8 +484,6 @@ void SoundWrapper::release()
 
 	this->sound = NULL;
 
-	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
-
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
 	if(this->events)

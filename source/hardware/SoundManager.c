@@ -831,6 +831,8 @@ void SoundManager::onQueuedSoundRelease(Object eventFirer)
 				delete queuedSound;
 			}
 		}
+
+		SoundManager::releaseSoundWrapper(this, soundWrapper);
 	}
 }
 
