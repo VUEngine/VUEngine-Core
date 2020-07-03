@@ -421,7 +421,7 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundReleased, Object::safeCast(this));
+	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, Object::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
 
@@ -457,7 +457,7 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 	}
 }
 
-void SoundTest::onSoundReleased(Object eventFirer __attribute__((unused)))
+void SoundTest::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
 {
 	this->soundWrapper = NULL;
 }

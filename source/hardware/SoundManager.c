@@ -324,11 +324,10 @@ void SoundManager::tryToPlayQueuedSounds()
 
 	if(!isDeleted(queuedSound))
 	{
-		SoundWrapper queuedSoundWrapper = SoundManager::getSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
+		SoundWrapper queuedSoundWrapper = SoundManager::doGetSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
 
 		if(!isDeleted(queuedSoundWrapper))
 		{
-			SoundWrapper::addEventListener(queuedSoundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
 			SoundWrapper::play(queuedSoundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
 
 			VirtualList::popFront(this->queuedSounds);
@@ -803,7 +802,6 @@ void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position
 
 	if(!isDeleted(soundWrapper))
 	{
-		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
 		SoundWrapper::play(soundWrapper, position, playbackType);
 	}
 	else
@@ -821,7 +819,7 @@ void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position
 	}
 }
 
-void SoundManager::onQueuedSoundRelease(Object eventFirer)
+void SoundManager::onSoundWrapperReleased(Object eventFirer)
 {
 	SoundWrapper releasedSoundWrapper = SoundWrapper::safeCast(eventFirer);
 
@@ -838,7 +836,17 @@ void SoundManager::onQueuedSoundRelease(Object eventFirer)
  */
 SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
 {
-	if(this->lock || NULL == sound)
+	if(this->lock)
+	{
+		return NULL;
+	}
+
+	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope);
+}
+
+SoundWrapper SoundManager::doGetSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
+{
+	if(NULL == sound)
 	{
 		return NULL;
 	}
@@ -865,7 +873,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 
 	SoundWrapper soundWrapper = NULL;
 
-		/* TODO
+	/* TODO
 	if(forceAllChannels)
 	{
 	}
@@ -926,6 +934,8 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 	if(!isDeleted(soundWrapper))
 	{
 		this->hasPCMSounds |= soundWrapper->hasPCMTracks;
+
+		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onSoundWrapperReleased, kEventSoundReleased);
 	}
 
 	return soundWrapper;
