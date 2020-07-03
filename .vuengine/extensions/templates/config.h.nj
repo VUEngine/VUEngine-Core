@@ -39,14 +39,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 // print memory pool's status
-{% if project.config.debug.printMemoryPoolStatus %}#define{% else %}#undef{% endif %} __PRINT_MEMORY_POOL_STATUS
-{% if project.config.debug.printDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __PRINT_DETAILED_MEMORY_POOL_STATUS
+{% if project.config.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
+{% if project.config.debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
 
 // print frame rate
 {% if project.config.debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
 
 // alert stack overflows
-{% if project.config.debug.alertStackOverflow %}#define{% else %}#undef{% endif %} __ALERT_STACK_OVERFLOW
+{% if project.config.debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
 
 // enable detailed profiling of each of the game's main processes
 // • it is more useful when __TIMER_RESOLUTION approaches 1
@@ -69,7 +69,7 @@
 {% if project.config.debug.profileGameStateDuringVipInterrupt %}#define{% else %}#undef{% endif %} __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 
 // alert vip's overtime
-{% if project.config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __ALERT_VIP_OVERTIME
+{% if project.config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
 
 // stack headroom
 #define __STACK_HEADROOM								{{ project.config.debug.stackHeadroom }}

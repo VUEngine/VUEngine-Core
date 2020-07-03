@@ -180,7 +180,7 @@ static int Error::triggerException(char* message, char* detail)
 		}
 	}
 
-#ifdef __ALERT_STACK_OVERFLOW
+#ifdef __SHOW_STACK_OVERFLOW_ALERT
 	HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 

@@ -169,7 +169,7 @@ void Camera::focus(u32 checkIfFocusEntityIsMoving)
 
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
-#ifdef __PRINT_CAMERA_STATUS
+#ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1);
 #endif
 }

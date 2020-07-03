@@ -49,14 +49,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 // Print memory pool's status
-#undef __PRINT_MEMORY_POOL_STATUS
-#undef __PRINT_DETAILED_MEMORY_POOL_STATUS
+#undef __SHOW_MEMORY_POOL_STATUS
+#undef __SHOW_DETAILED_MEMORY_POOL_STATUS
 
 // Print frame rate
 #undef __PRINT_FRAMERATE
 
 // Alert stack overflows
-#undef __ALERT_STACK_OVERFLOW
+#undef __SHOW_STACK_OVERFLOW_ALERT
 
 /* Enable detailed profiling of each of the game's main processes
  * it is more useful when __TIMER_RESOLUTION approaches 1
@@ -82,7 +82,7 @@
 #undef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 
 // Alert VIP's overtime
-#define __ALERT_VIP_OVERTIME
+#define __SHOW_VIP_OVERTIME_COUNT
 
 
 //---------------------------------------------------------------------------------------------------------

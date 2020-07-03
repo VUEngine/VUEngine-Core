@@ -75,12 +75,12 @@
 		"scrambleBinary": false
 	},
 	"debug": {
-		"alertStackOverflow": false,
+		"showStackOverflowAlert": false,
 		"alertVipOvertime": false,
 		"dimmForProfiling": false,
-		"printDetailedMemoryPoolStatus": false,
+		"showDetailedMemoryPoolStatus": false,
 		"printFramerate": false,
-		"printMemoryPoolStatus": false,
+		"showMemoryPoolStatus": false,
 		"profileGame": false,
 		"profileGameStateDuringVipInterrupt": false,
 		"profileStreaming": false,

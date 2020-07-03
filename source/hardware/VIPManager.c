@@ -163,7 +163,7 @@ void VIPManager::enableInterrupts(u16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-#ifdef __ALERT_VIP_OVERTIME
+#ifdef __SHOW_VIP_OVERTIME_COUNT
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
 #else
 	_vipRegisters[__INTENB]= interruptCode;
@@ -347,7 +347,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 				this->processingXPEND = false;
 				break;
 
-#ifdef __ALERT_VIP_OVERTIME
+#ifdef __SHOW_VIP_OVERTIME_COUNT
 			case __TIMEERR:
 
 				{
