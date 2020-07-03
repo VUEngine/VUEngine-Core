@@ -279,7 +279,6 @@ void PhysicalWorld::update(Clock clock)
 	{
 		Body body = Body::safeCast(node->data);
 
-
 		Body::update(body);
 	}
 

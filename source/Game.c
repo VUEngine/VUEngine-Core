@@ -171,7 +171,7 @@ static s16 _previousProcessCollisionsHighestTime = 0;
 static s16 _previousGameFrameTotalTime = 0;
 #else
 
-#ifdef __ALERT_FOR_TORN_FRAMES
+#ifdef __SHOW_TORN_FRAMES_COUNT
 
 s16 _tornGameFrameCount = 0;
 
@@ -323,7 +323,7 @@ void Game::debug()
 	}
 #endif
 
-#ifdef __PRINT_WIREFRAME_MANAGER_STATUS
+#ifdef __SHOW_WIREFRAME_MANAGER_STATUS
 		WireframeManager::print(WireframeManager::getInstance(), 1, 1);
 #endif
 
@@ -554,7 +554,7 @@ void Game::setNextState(GameState state)
 #ifdef __PROFILE_GAME
 	_tornGameFrameCount = 0;
 #else
-#ifdef __ALERT_FOR_TORN_FRAMES
+#ifdef __SHOW_TORN_FRAMES_COUNT
 	_tornGameFrameCount = 0;
 #endif
 #endif
@@ -1013,7 +1013,7 @@ void Game::updateFrameRate()
 	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
 	{
 
-#ifdef __ALERT_FOR_TORN_FRAMES
+#ifdef __SHOW_TORN_FRAMES_COUNT
 		static int previousTornGameFrameCount = 0;
 		if(_tornGameFrameCount != previousTornGameFrameCount)
 		{
@@ -1066,12 +1066,12 @@ void Game::updateFrameRate()
 		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
 #endif
 
-#ifdef __PRINT_MEMORY_POOL_STATUS
+#ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!Game::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 
-#ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
+#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
 			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
 #else
 			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
@@ -1079,7 +1079,7 @@ void Game::updateFrameRate()
 		}
 #endif
 
-#ifdef __ALERT_STACK_OVERFLOW
+#ifdef __SHOW_STACK_OVERFLOW_ALERT
 		if(!Game::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
@@ -1123,7 +1123,7 @@ void Game::currentFrameEnded()
 		_tornGameFrameCount++;
 	}
 #else
-#ifdef __ALERT_FOR_TORN_FRAMES
+#ifdef __SHOW_TORN_FRAMES_COUNT
 	if(this->nextFrameStarted)
 	{
 		++_tornGameFrameCount;
@@ -1150,7 +1150,7 @@ void Game::run()
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
 	// process user's input
-	bool skipNonCriticalProcesses = Game::processUserInput(this);
+	Game::processUserInput(this);
 
 	// simulate physics
 	Game::updatePhysics(this);
@@ -1159,7 +1159,7 @@ void Game::run()
 	Game::updateTransformations(this);
 
 	// process collisions
-	skipNonCriticalProcesses |= Game::updateCollisions(this);
+	Game::updateCollisions(this);
 
 	// focus the camera once collisions are resolved
 	Game::focusCamera(this);
@@ -1167,14 +1167,8 @@ void Game::run()
 	// dispatch delayed messages
 	Game::dispatchDelayedMessages(this);
 
-#ifndef __DISABLE_STREAMING
-	// skip streaming if the game frame has been too busy
-	if(!skipNonCriticalProcesses)
-	{
-		// stream
-		Game::stream(this);
-	}
-#endif
+	// stream
+	Game::stream(this);
 
 	// update game's logic
 	Game::updateLogic(this);
