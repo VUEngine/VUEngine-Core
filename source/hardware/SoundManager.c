@@ -167,18 +167,6 @@ void SoundManager::purgeReleasedSoundWrappers()
 		{
 			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-			if(!isDeleted(soundWrapper))
-			{
-				VirtualNode auxNode = soundWrapper->channels->head;
-
-				for(; auxNode; auxNode = auxNode->next)
-				{
-					Channel* channel = (Channel*)auxNode->data;
-
-					SoundManager::releaseSoundChannel(this, channel);
-				}
-			}
-
 			this->soundWrapperMIDINode = NULL;
 
 			VirtualList::removeElement(this->soundWrappers, soundWrapper);
@@ -330,6 +318,25 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
+void SoundManager::tryToPlayQueuedSounds()
+{
+	QueuedSound* queuedSound = (QueuedSound*)VirtualList::front(this->queuedSounds);
+
+	if(!isDeleted(queuedSound))
+	{
+		SoundWrapper queuedSoundWrapper = SoundManager::getSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
+
+		if(!isDeleted(queuedSoundWrapper))
+		{
+			SoundWrapper::addEventListener(queuedSoundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
+			SoundWrapper::play(queuedSoundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
+
+			VirtualList::popFront(this->queuedSounds);
+			delete queuedSound;
+		}
+	}
+}
+
 bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
@@ -371,6 +378,10 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 			}
 		}
 	}
+
+	SoundManager::purgeReleasedSoundWrappers(this);
+
+	SoundManager::tryToPlayQueuedSounds(this);
 
 	return true;
 }
@@ -812,27 +823,11 @@ void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position
 
 void SoundManager::onQueuedSoundRelease(Object eventFirer)
 {
-	SoundWrapper soundWrapper = SoundWrapper::safeCast(eventFirer);
+	SoundWrapper releasedSoundWrapper = SoundWrapper::safeCast(eventFirer);
 
-	if(!isDeleted(soundWrapper))
+	if(!isDeleted(releasedSoundWrapper))
 	{
-		QueuedSound* queuedSound = (QueuedSound*)VirtualList::front(this->queuedSounds);
-
-		if(!isDeleted(queuedSound))
-		{
-			SoundWrapper soundWrapper = SoundManager::getSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onQueuedSoundRelease, kEventSoundReleased);
-				SoundWrapper::play(soundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
-
-				VirtualList::popFront(this->queuedSounds);
-				delete queuedSound;
-			}
-		}
-
-		SoundManager::releaseSoundWrapper(this, soundWrapper);
+		SoundManager::releaseSoundWrapper(this, releasedSoundWrapper);
 	}
 }
 
@@ -843,8 +838,6 @@ void SoundManager::onQueuedSoundRelease(Object eventFirer)
  */
 SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	if(this->lock || NULL == sound)
 	{
 		return NULL;
@@ -953,6 +946,16 @@ void SoundManager::releaseSoundWrapper(SoundWrapper soundWrapper)
 
 	if(!VirtualList::find(this->releasedSoundWrappers, soundWrapper))
 	{
+		// Release soundWrapper's channels
+		VirtualNode auxNode = soundWrapper->channels->head;
+
+		for(; auxNode; auxNode = auxNode->next)
+		{
+			Channel* channel = (Channel*)auxNode->data;
+
+			SoundManager::releaseSoundChannel(this, channel);
+		}
+
 		VirtualList::pushBack(this->releasedSoundWrappers, soundWrapper);
 	}
 }
