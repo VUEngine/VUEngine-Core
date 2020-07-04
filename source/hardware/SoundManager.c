@@ -336,6 +336,13 @@ void SoundManager::tryToPlayQueuedSounds()
 	}
 }
 
+void SoundManager::update()
+{
+	SoundManager::purgeReleasedSoundWrappers(this);
+
+	SoundManager::tryToPlayQueuedSounds(this);
+}
+
 bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
@@ -377,10 +384,6 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 			}
 		}
 	}
-
-	SoundManager::purgeReleasedSoundWrappers(this);
-
-	SoundManager::tryToPlayQueuedSounds(this);
 
 	return true;
 }

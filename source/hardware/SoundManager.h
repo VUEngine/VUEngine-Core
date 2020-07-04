@@ -122,6 +122,8 @@ singleton class SoundManager : Object
 
 	void setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate);
 
+	void update();
+
 	bool playMIDISounds(u32 elapsedMicroseconds);
 	bool playPCMSounds();
 	void stopAllSounds();

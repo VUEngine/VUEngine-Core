@@ -318,6 +318,13 @@ void Object::fireEvent(u32 eventCode)
 			// safe check in case that I have been deleted during the previous event
 			if(isDeleted(this))
 			{
+#ifndef __RELEASE
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::clear(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "Method: ", 1, 13, NULL);
+				Printing::hex(Printing::getInstance(), (int)event->method, 10, 14, 8, NULL);
+				NM_ASSERT(!isDeleted(this), "Object::fireEvent: deleted during event listening");
+#endif
 				break;
 			}
 		}

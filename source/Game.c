@@ -112,6 +112,7 @@ static s16 _waitForFrameStartTotalTime = 0;
 s16 _renderingTotalTime = 0;
 static s16 _synchronizeGraphicsTotalTime = 0;
 static s16 _updateLogicTotalTime = 0;
+static s16 _updateSoundTotalTime = 0;
 static s16 _updatePhysicsTotalTime = 0;
 static s16 _updateTransformationsTotalTime = 0;
 static s16 _streamingTotalTime = 0;
@@ -121,6 +122,7 @@ static s16 _dispatchDelayedMessageTotalTime = 0;
 s16 _renderingHighestTime = 0;
 static s16 _synchronizeGraphicsHighestTime = 0;
 static s16 _updateLogicHighestTime = 0;
+static s16 _updateSoundHighestTime = 0;
 static s16 _streamingHighestTime = 0;
 static s16 _updatePhysicsHighestTime = 0;
 static s16 _updateTransformationsHighestTime = 0;
@@ -133,6 +135,7 @@ s16 _renderingProcessTimeHelper = 0;
 s16 _renderingProcessTime = 0;
 static s16 _synchronizeGraphicsProcessTime = 0;
 static s16 _updateLogicProcessTime = 0;
+static s16 _updateSoundProcessTime = 0;
 static s16 _streamingProcessTime = 0;
 static s16 _updatePhysicsProcessTime = 0;
 static s16 _updateTransformationsProcessTime = 0;
@@ -151,6 +154,7 @@ static s16 _previousWaitForFrameStartTotalTime = 0;
 static s16 _previousRenderingTotalTime = 0;
 static s16 _previousUpdateVisualsTotalTime = 0;
 static s16 _previousUpdateLogicTotalTime = 0;
+static s16 _previousUpdateSoundTotalTime = 0;
 static s16 _previousUpdatePhysicsTotalTime = 0;
 static s16 _previousUpdateTransformationsTotalTime = 0;
 static s16 _previousStreamingTotalTime = 0;
@@ -160,6 +164,7 @@ static s16 _previousDispatchDelayedMessageTotalTime = 0;
 static s16 _previousRenderingHighestTime = 0;
 static s16 _previousUpdateVisualsHighestTime = 0;
 static s16 _previousUpdateLogicHighestTime = 0;
+static s16 _previousUpdateSoundHighestTime = 0;
 static s16 _previousStreamingHighestTime = 0;
 static s16 _previousUpdatePhysicsHighestTime = 0;
 static s16 _previousUpdateTransformationsHighestTime = 0;
@@ -799,6 +804,30 @@ void Game::updateLogic()
 #endif
 }
 
+	// Update sound related logic
+void Game::updateSound()
+{
+#ifdef __PROFILE_GAME
+	_renderingProcessTimeHelper = 0;
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
+#endif
+
+	SoundManager::update(this->soundManager);
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = "sound";
+#endif
+
+#ifdef __PROFILE_GAME
+	if(_updateProfiling)
+	{
+		_updateSoundProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_updateSoundTotalTime += _updateSoundProcessTime;
+		_updateSoundHighestTime = _updateSoundHighestTime < _updateSoundProcessTime ? _updateSoundProcessTime : _updateSoundHighestTime;
+	}
+#endif
+}
+
 // update game's rendering subsystem
 void Game::synchronizeGraphics()
 {
@@ -1172,6 +1201,9 @@ void Game::run()
 
 	// update game's logic
 	Game::updateLogic(this);
+
+	// Update sound related logic
+	Game::updateSound(this);
 
 	// frame logic is done
 	Game::currentFrameEnded(this);
@@ -1839,6 +1871,11 @@ void Game::showLastGameFrameProfiling(int x __attribute__ ((unused)), int y __at
 	Printing::int(printing, _previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
 	Printing::int(printing, _previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
+	Printing::text(printing, "Updating sound:     ", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateSoundTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateSoundHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
 	Printing::text(printing, "Processing messages:", x, y, NULL);
 	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
 	Printing::int(printing, _previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
@@ -1852,8 +1889,8 @@ void Game::showLastGameFrameProfiling(int x __attribute__ ((unused)), int y __at
 	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
 	Printing::text(printing, "Real processing time:", x, ++y, NULL);
 	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing::int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousUpdateSoundTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousUpdateSoundHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
 	Printing::text(printing, "Effective processing time:", x, ++y, NULL);
 	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
@@ -1914,6 +1951,7 @@ void Game::resetProfiling()
 	_previousRenderingTotalTime = _renderingTotalTime;
 	_previousUpdateVisualsTotalTime = _synchronizeGraphicsTotalTime;
 	_previousUpdateLogicTotalTime = _updateLogicTotalTime;
+	_previousUpdateSoundTotalTime = _updateSoundTotalTime;
 	_previousUpdatePhysicsTotalTime = _updatePhysicsTotalTime;
 	_previousUpdateTransformationsTotalTime = _updateTransformationsTotalTime;
 	_previousStreamingTotalTime = _streamingTotalTime;
@@ -1924,6 +1962,7 @@ void Game::resetProfiling()
 	_previousRenderingHighestTime = _renderingHighestTime;
 	_previousUpdateVisualsHighestTime = _synchronizeGraphicsHighestTime;
 	_previousUpdateLogicHighestTime = _updateLogicHighestTime;
+	_previousUpdateSoundHighestTime = _updateSoundHighestTime;
 	_previousUpdatePhysicsHighestTime = _updatePhysicsHighestTime;
 	_previousUpdateTransformationsHighestTime = _updateTransformationsHighestTime;
 	_previousStreamingHighestTime = _streamingHighestTime;
@@ -1941,6 +1980,7 @@ void Game::resetProfiling()
 	_renderingTotalTime = 0;
 	_synchronizeGraphicsTotalTime = 0;
 	_updateLogicTotalTime = 0;
+	_updateSoundTotalTime = 0;
 	_updatePhysicsTotalTime = 0;
 	_updateTransformationsTotalTime = 0;
 	_streamingTotalTime = 0;
