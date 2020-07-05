@@ -677,9 +677,12 @@ void ParticleSystem::pause()
 
 void ParticleSystem::unpause()
 {
-	this->paused = false;
-	this->transformed = false;
-	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+	if(this->paused)
+	{
+		this->paused = false;
+		this->transformed = false;
+		this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+	}
 }
 
 bool ParticleSystem::isPaused()
