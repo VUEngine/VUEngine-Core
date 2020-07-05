@@ -1855,14 +1855,20 @@ void Entity::resume()
 		Entity::addSprites(this, this->entitySpec->spriteSpecs);
 	}
 
-	if(this->hidden)
-	{
-		Entity::hide(this);
-	}
-
 	// force update sprites on next game's cycle
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity::synchronizeGraphics(this);
+
+	if(this->hidden)
+	{
+		// Force syncronization even if hidden
+		this->hidden = false;
+		Entity::synchronizeGraphics(this);
+		Entity::hide(this);
+	}
+	else
+	{
+		Entity::synchronizeGraphics(this);
+	}
 }
 
 /**
