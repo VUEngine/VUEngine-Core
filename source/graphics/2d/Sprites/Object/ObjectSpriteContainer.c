@@ -216,32 +216,30 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  */
 void ObjectSpriteContainer::sortProgressively()
 {
-	VirtualNode node = this->objectSprites->tail;
+	VirtualNode node = this->objectSprites->head;
 
-	for(; node; node = node->previous)
+	for(; node; node = node->next)
 	{
-		VirtualNode previousNode = node->previous;
+		VirtualNode nextNode = node->next;
 
-		if(previousNode)
+		if(nextNode)
 		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
-			if(!objectSprite->positioned)
+			if(!sprite->positioned)
 			{
 				continue;
 			}
 
-			ObjectSprite previousSprite = ObjectSprite::safeCast(previousNode->data);
+			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 			// check if z positions are swapped
-			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > objectSprite->position.z + (Sprite::safeCast(objectSprite))->displacement.z)
+			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
-				if(this->availableObjects >= objectSprite->totalObjects)
-				{
-					VirtualNode::swapData(node, previousNode);
+				// swap nodes' data
+				VirtualNode::swapData(node, nextNode);
 
-					node = previousNode;
-				}
+				node = nextNode;
 			}
 		}
 	}
