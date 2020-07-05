@@ -228,12 +228,6 @@ void Sprite::show()
 void Sprite::hide()
 {
 	this->hidden = true;
-
-	// Make sure that I'm positioned to show up again
-	this->positioned = false;
-
-	this->index = __NO_RENDER_INDEX;
-	this->visible = false;
 }
 
 /**
