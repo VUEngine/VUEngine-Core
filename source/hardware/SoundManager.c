@@ -318,21 +318,40 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
+void SoundManager::flushQueuedSounds()
+{
+	for(VirtualNode node = this->queuedSounds->head; node; node = node->next)
+	{
+		delete node->data;
+	}
+
+	VirtualList::clear(this->queuedSounds);
+}
+
 void SoundManager::tryToPlayQueuedSounds()
 {
-	QueuedSound* queuedSound = (QueuedSound*)VirtualList::front(this->queuedSounds);
-
-	if(!isDeleted(queuedSound))
+	for(VirtualNode node = this->queuedSounds->head; node;)
 	{
-		SoundWrapper queuedSoundWrapper = SoundManager::doGetSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
+		QueuedSound* queuedSound = (QueuedSound*)node->data;
 
-		if(!isDeleted(queuedSoundWrapper))
+		if(!isDeleted(queuedSound))
 		{
-			SoundWrapper::play(queuedSoundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
+			SoundWrapper queuedSoundWrapper = SoundManager::doGetSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
 
-			VirtualList::popFront(this->queuedSounds);
-			delete queuedSound;
+			if(!isDeleted(queuedSoundWrapper))
+			{
+				SoundWrapper::play(queuedSoundWrapper, queuedSound->isPositionValid ? &queuedSound->position : NULL, queuedSound->playbackType);
+
+				VirtualNode auxNode = node;
+				node = node->next;
+				VirtualList::removeNode(this->queuedSounds, auxNode);
+				delete queuedSound;
+
+				continue;
+			}
 		}
+
+		node = node->next;
 	}
 }
 
@@ -796,6 +815,9 @@ void SoundManager::unlock()
 
 void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
 {
+	SoundManager::purgeReleasedSoundWrappers(this);
+	SoundManager::tryToPlayQueuedSounds(this);
+
 	if(this->lock || NULL == sound)
 	{
 		return;

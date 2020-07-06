@@ -127,6 +127,7 @@ singleton class SoundManager : Object
 	bool playMIDISounds(u32 elapsedMicroseconds);
 	bool playPCMSounds();
 	void stopAllSounds();
+	void flushQueuedSounds();
 
 	void playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope);
 	SoundWrapper getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope);
