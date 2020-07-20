@@ -94,12 +94,6 @@ TextureROMSpec PROFILING_IM_TX =
 
 	// horizontal flip
 	false,
-
-	// vertical flip
-	false,
-
-	// horizontal flip
-	false,
 };
 
 
