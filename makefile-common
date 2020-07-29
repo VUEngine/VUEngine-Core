@@ -112,8 +112,8 @@ FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
 preprocessClasses: printClassPreprocessingInfo dirs $(PREPROCESS_ENGINE) preprocessPlugins preprocessHeaderFiles
 	@touch $(CLASSES_HIERARCHY_FILE)
-	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
-	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
+#	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
+#	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
@@ -121,7 +121,7 @@ preprocessClasses: printClassPreprocessingInfo dirs $(PREPROCESS_ENGINE) preproc
 printClassPreprocessingInfo:
 	@echo
 	@echo -e "\033[1mPreprocessing $(BASENAME) \033[0m"
-	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
+#	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
 ENGINE_CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(ENGINE_CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
@@ -271,14 +271,14 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
-dirs: printDirsInfo
+dirs:
 ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/hashes/$(NAME)
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
-	@echo " done"
+#	@echo " done"
 #	@$(eval CHECKING_DIRS_END_TIME=$(shell date +%s))
 #	@echo "Total time:" $$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) / 60 ))" min. "$$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) % 60 ))" sec."
 endif

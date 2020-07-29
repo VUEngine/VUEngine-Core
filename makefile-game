@@ -100,6 +100,7 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(VUENGINE) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
+	@echo
 	@du -h build/*.a
 	@echo
 
