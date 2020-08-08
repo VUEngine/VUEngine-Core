@@ -221,8 +221,7 @@ bool Texture::prepare()
 
 		case kTexturePendingRewriting:
 
-			Texture::write(this);
-			Texture::fireEvent(this, kEventTextureRewritten);
+			SpriteManager::updateTexture(SpriteManager::getInstance(), this);
 			NM_ASSERT(!isDeleted(this), "Texture::prepare: deteled this during kEventTextureRewritten");
 			return true;
 			break;
@@ -235,21 +234,9 @@ bool Texture::prepare()
 			}
 			else
 			{
-				// write according to the allocation type
-				switch(CharSet::getAllocationType(this->charSet))
-				{
-					case __ANIMATED_SINGLE_OPTIMIZED:
 
-						SpriteManager::updateTexture(SpriteManager::getInstance(), this);
 
-						return true;
-						break;
-
-					default:
-
-						Texture::update(this);
-						break;
-				}
+				return true;
 			}
 
 			break;
@@ -266,35 +253,50 @@ bool Texture::prepare()
 
 void Texture::update()
 {
-	if(isDeleted(this->charSet))
+	switch(this->status)
 	{
-		Texture::write(this);
-		return;
-	}
+		case kTexturePendingRewriting:
 
-	// write according to the allocation type
-	switch(CharSet::getAllocationType(this->charSet))
-	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-
-			CharSet::setFrame(this->charSet, this->frame);
-			Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
 			Texture::write(this);
+			Texture::fireEvent(this, kEventTextureRewritten);
+			return;
 			break;
 
-		case __NOT_ANIMATED:
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
+		default:
 
-			CharSet::setFrame(this->charSet, this->frame);
-			this->status = kTextureWritten;
-			break;
+			if(isDeleted(this->charSet))
+			{
+				Texture::write(this);
+			}
+			else
+			{
+				// write according to the allocation type
+				switch(CharSet::getAllocationType(this->charSet))
+				{
+					case __ANIMATED_SINGLE_OPTIMIZED:
 
-		case __ANIMATED_MULTI:
+						CharSet::setFrame(this->charSet, this->frame);
+						Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
+						Texture::write(this);
+						break;
 
-			Texture::setFrameAnimatedMulti(this, this->frame);
-			this->status = kTextureWritten;
+					case __NOT_ANIMATED:
+					case __ANIMATED_SINGLE:
+					case __ANIMATED_SHARED:
+					case __ANIMATED_SHARED_COORDINATED:
+
+						CharSet::setFrame(this->charSet, this->frame);
+						this->status = kTextureWritten;
+						break;
+
+					case __ANIMATED_MULTI:
+
+						Texture::setFrameAnimatedMulti(this, this->frame);
+						this->status = kTextureWritten;
+						break;
+				}
+			}
+
 			break;
 	}
 }
@@ -360,6 +362,22 @@ void Texture::setFrame(u16 frame)
 
 	this->frame = frame;
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
+
+	if(kTextureFrameChanged == this->status)
+	{
+		SpriteManager::updateTexture(SpriteManager::getInstance(), this);
+	}
+}
+
+
+/**
+ * Get Texture's frame
+ *
+ * @return 	Texture's frame to display
+ */
+u16 Texture::getFrame()
+{
+	return this->frame;
 }
 
 /**

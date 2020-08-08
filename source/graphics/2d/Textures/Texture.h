@@ -143,6 +143,7 @@ abstract class Texture : Object
 	bool isWritten();
 	void setMapDisplacement(u32 mapDisplacement);
 	void setFrame(u16 frame);
+	u16 getFrame();
 	bool prepare();
 	void update();
 	virtual bool write();
