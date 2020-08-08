@@ -81,6 +81,7 @@ void SpriteManager::constructor()
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
+	this->texturesToUpdate = NULL;
 	this->texturesPendingUpdate = NULL;
 	this->specialSprites = NULL;
 
@@ -144,6 +145,12 @@ void SpriteManager::cleanUp()
 		this->sprites = NULL;
 	}
 
+	if(!isDeleted(this->texturesToUpdate))
+	{
+		delete this->texturesToUpdate;
+		this->texturesToUpdate = NULL;
+	}
+
 	if(!isDeleted(this->texturesPendingUpdate))
 	{
 		delete this->texturesPendingUpdate;
@@ -179,6 +186,7 @@ void SpriteManager::reset()
 
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
+	this->texturesToUpdate = new VirtualList();
 	this->texturesPendingUpdate = new VirtualList();
 	this->specialSprites = new VirtualList();
 
@@ -520,7 +528,7 @@ void SpriteManager::updateTexture(Texture texture)
 
 void SpriteManager::writeGraphicsToDRAM()
 {
-	for(VirtualNode node = this->texturesPendingUpdate->head; node; node = node->next)
+	for(VirtualNode node = this->texturesToUpdate->head; node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
 
@@ -531,6 +539,8 @@ void SpriteManager::writeGraphicsToDRAM()
 
 		Texture::update(texture);
 	}
+
+	VirtualList::clear(this->texturesToUpdate);
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{
@@ -557,12 +567,13 @@ void SpriteManager::writeDRAM()
  */
 void SpriteManager::render()
 {
+	VirtualList::copy(this->texturesToUpdate, this->texturesPendingUpdate);
+	VirtualList::clear(this->texturesPendingUpdate);
+
 	if(!CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
 	{
 		ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 	}
-
-	VirtualList::clear(this->texturesPendingUpdate);
 
 	SpriteManager::sortProgressively(this);
 

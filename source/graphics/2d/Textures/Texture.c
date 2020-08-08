@@ -222,7 +222,6 @@ bool Texture::prepare()
 		case kTexturePendingRewriting:
 
 			SpriteManager::updateTexture(SpriteManager::getInstance(), this);
-			NM_ASSERT(!isDeleted(this), "Texture::prepare: deteled this during kEventTextureRewritten");
 			return true;
 			break;
 
@@ -234,8 +233,6 @@ bool Texture::prepare()
 			}
 			else
 			{
-
-
 				return true;
 			}
 
@@ -258,7 +255,13 @@ void Texture::update()
 		case kTexturePendingRewriting:
 
 			Texture::write(this);
-			Texture::fireEvent(this, kEventTextureRewritten);
+
+			if(kTextureWritten == this->status)
+			{
+				Texture::fireEvent(this, kEventTextureRewritten);
+			
+				NM_ASSERT(!isDeleted(this), "Texture::prepare: deteled this during kEventTextureRewritten");
+			}
 			return;
 			break;
 

@@ -72,6 +72,9 @@ singleton class SpriteManager : Object
 	VirtualList specialSprites;
 	// Textures pending update during writeDRAM
 	VirtualList texturesPendingUpdate;
+	// Needs a second list to prevent race conditions from causing
+	// the texturesPendingUpdate to by cleared while being modified 
+	VirtualList texturesToUpdate;
 	// pixels drawn
 	int totalPixelsDrawn;
 	// number of rows to write in affine transformations

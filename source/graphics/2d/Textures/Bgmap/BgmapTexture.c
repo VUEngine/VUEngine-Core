@@ -103,6 +103,8 @@ bool BgmapTexture::write()
 		// make sure to force full writing if no char set
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
+	
+	u8 status = this->status;
 
 	if(!Base::write(this))
 	{
@@ -137,7 +139,14 @@ bool BgmapTexture::write()
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 
-	this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
+	if(kTexturePendingRewriting == status)
+	{
+		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingRewriting;
+	}
+	else
+	{
+		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
+	}
 
 	return true;
 }
