@@ -293,8 +293,6 @@ singleton class VIPManager : Object
 	u32 currentDrawingFrameBufferSet;
 	bool processingXPEND;
 	bool drawingEnded;
-	bool renderingCompleted;
-	bool allowDRAMAccess;
 	bool frameStarted;
 
 	/// @publicsection
@@ -322,7 +320,6 @@ singleton class VIPManager : Object
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffects();
 	void registerCurrentDrawingFrameBufferSet();
-	void allowDRAMAccess(bool allowDRAMAccess);
 	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStarted();

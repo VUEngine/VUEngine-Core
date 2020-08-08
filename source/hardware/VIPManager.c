@@ -95,8 +95,6 @@ void VIPManager::constructor()
 	this->drawingEnded = false;
 	this->frameStarted = false;
 	this->processingXPEND = false;
-	this->renderingCompleted = false;
-	this->allowDRAMAccess = false;
 
 	_vipManager = this;
 	_timerManager = TimerManager::getInstance();
@@ -134,7 +132,6 @@ void VIPManager::disableDrawing()
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
-	this->renderingCompleted = false;
 	this->drawingEnded = true;
 }
 
@@ -180,23 +177,13 @@ void VIPManager::disableInterrupts()
 }
 
 /**
- * Enable / disable DRAM writing
- *
- * @param allowDRAMAccess		Flag's value
- */
-void VIPManager::allowDRAMAccess(bool allowDRAMAccess)
-{
-	this->allowDRAMAccess = allowDRAMAccess;
-}
-
-/**
  * Check if rendering is pending
  *
  * @return						True if XPEND already happened but DRAM writing didn't take place
  */
 bool VIPManager::isRenderingPending()
 {
-	return this->drawingEnded && !this->renderingCompleted;
+	return this->drawingEnded;
 }
 
 /**
@@ -226,14 +213,6 @@ static void VIPManager::interruptHandler()
 	{
 		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 	}
-}
-
-void VIPManager::writeDRAM()
-{
-	this->renderingCompleted = true;
-
-	// Write to DRAM
-	SpriteManager::writeDRAM(_spriteManager);
 }
 
 /**
@@ -273,8 +252,9 @@ void VIPManager::processInterrupt(u16 interrupt)
 				if(!_vipManager->processingXPEND)
 				{
 					this->drawingEnded = false;
-					this->renderingCompleted = false;
 				}
+
+				SpriteManager::render(_spriteManager);
 				break;
 
 			case __XPEND:
@@ -305,10 +285,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// graphical glitches when the VIP
 					// finishes drawing while the CPU is
 					// still syncronizing the graphics
-					if(!this->renderingCompleted && this->allowDRAMAccess)
-					{
-						VIPManager::writeDRAM(this);
-					}
+					SpriteManager::writeDRAM(_spriteManager);
 
 					// Write to the frame buffers
 					VIPManager::processFrameBuffers(this);
