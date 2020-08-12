@@ -142,44 +142,61 @@ A huge thank you to the following people for their financial support through our
 In alphabetical order:
 
 	Adam Emmons
+	Adam Hunter
 	Adam Nelson
+	Alec Kafka
 	Amos Bieler
 	Andres Gaetan
+	Austin Hoople
 	Benjamin Stevens
 	Bernardo Compagnoni
 	Bnjmn Mrph
+	Brandon Dixon
 	Braxton Mott
 	Brie Hebert
 	Candi's Classic Game Shrine
 	Cesar Henzelin
+	chairodactyl 
 	Chris
 	Daniel Lhota
 	Dave Sheldon
 	David Baisley
 	David Green
 	Domenic Umberto Raso
-	Eckart Sauerbrey
 	Eric Freeman
-	Eric Luke
 	Graham Dawes
+	Griffin Robinson
+	IanelGreenleaf 
+	Jeffrey Kauffman
 	Jesse Levine
 	Jon Zrostlik
 	Jordan Carriere
 	Jose Zagal
 	Kevin L Mellott
 	Larry Anderson
-	Marcus
-	Marten Rei�
+	Luke Gerhardt
+	Marten Reiß
+	Massih Naisan
+	Mattison Mozingo
 	Michael Ortega
 	Mike Boodle
+	NeGiZON 
 	Nektarios Moulianakis
-	NeGiZON
-	norty
+	norty 
+	NyTR0S96 
 	Patrick Fenton
+	Patrick-VB
+	Peter Fields
 	Randy Jeffery
+	Reed T.
+	Ren Amamiya
 	Richard Corlett
+	Schwanck
 	Sean Machan
+	Simon Williams
 	Steven Hagelgans
 	Tero Piiroinen
-	Tony
-	VectrexRoli
+	Tony 
+	Troy Bonneau
+	tydyedsyko
+	VectrexRoli 
