@@ -219,13 +219,13 @@ static void VIPManager::interruptHandler()
 
 	HardwareManager::enableMultiplexedInterrupts();
 
-	// handle the interrupt
-	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
-
 	if(_vipManager->events)
 	{
 		VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
 	}
+
+	// handle the interrupt
+	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
 	HardwareManager::disableMultiplexedInterrupts();
 
