@@ -292,6 +292,7 @@ singleton class VIPManager : Object
 	VirtualList postProcessingEffects;
 	u32 currentDrawingFrameBufferSet;
 	u16 customInterrupts;
+	u16 currrentInterrupt;
 	bool processingXPEND;
 	bool drawingEnded;
 	bool frameStarted;

@@ -67,6 +67,8 @@ enum Events
 	kEventSoundFinished,
 	kEventSoundReleased,
 
+	kEventVIPManagerInterrupt,
+
 	// do not remove me
 	kEventEngineLast
 };

@@ -96,6 +96,7 @@ void VIPManager::constructor()
 	this->frameStarted = false;
 	this->processingXPEND = false;
 	this->customInterrupts = 0;
+	this->currrentInterrupt = 0;
 
 	_vipManager = this;
 	_timerManager = TimerManager::getInstance();
@@ -120,6 +121,7 @@ void VIPManager::destructor()
 void VIPManager::reset()
 {
 	this->customInterrupts = 0;
+	this->currrentInterrupt = 0;
 }
 
 void VIPManager::enableCustomInterrupts(u16 customInterrupts)
@@ -199,13 +201,18 @@ bool VIPManager::isRenderingPending()
 	return this->drawingEnded;
 }
 
+u16 VIPManager::getCurrentInterrupt()
+{
+	return this->currrentInterrupt;
+}
+
 /**
  * VIP's interrupt handler
  */
 static void VIPManager::interruptHandler()
 {
 	// save the interrupt event
-	u16 interrupt = _vipRegisters[__INTPND];
+	_vipManager->currrentInterrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
@@ -213,7 +220,7 @@ static void VIPManager::interruptHandler()
 	HardwareManager::enableMultiplexedInterrupts();
 
 	// handle the interrupt
-	VIPManager::processInterrupt(_vipManager, interrupt);
+	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
 	if(_vipManager->events)
 	{

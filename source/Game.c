@@ -591,6 +591,7 @@ void Game::reset()
 	KeypadManager::reset(this->keypadManager);
 
 	// the order of reset for the graphics managers must not be changed!
+	VIPManager::reset(this->vipManager);
 	SpriteManager::reset(SpriteManager::getInstance());
 	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	CharSetManager::reset(CharSetManager::getInstance());
