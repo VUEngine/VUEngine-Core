@@ -260,7 +260,7 @@ void Texture::update()
 			{
 				Texture::fireEvent(this, kEventTextureRewritten);
 			
-				NM_ASSERT(!isDeleted(this), "Texture::prepare: deteled this during kEventTextureRewritten");
+				NM_ASSERT(!isDeleted(this), "Texture::prepare: deleted this during kEventTextureRewritten");
 			}
 			return;
 			break;

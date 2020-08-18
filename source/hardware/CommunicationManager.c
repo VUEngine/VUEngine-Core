@@ -432,7 +432,7 @@ void CommunicationManager::processInterrupt()
 
 			this->connected = true;
 			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
-			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deteled this during kEventCommunicationsConnected");
+			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
 			CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
 
 		default:
@@ -463,7 +463,7 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deteled this during kEventCommunicationsTransmissionCompleted");
+					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					delete this->receivedData;
 					this->receivedData = this->asyncReceivedByte = NULL;
@@ -490,7 +490,7 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deteled this during kEventCommunicationsTransmissionCompleted");
+					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					delete this->sentData;
 					this->sentData = this->asyncSentByte = NULL;
@@ -521,7 +521,7 @@ void CommunicationManager::processInterrupt()
 				else
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
-					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deteled this during kEventCommunicationsTransmissionCompleted");
+					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					delete this->sentData;
 					delete this->receivedData;

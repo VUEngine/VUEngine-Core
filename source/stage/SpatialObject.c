@@ -47,7 +47,7 @@ void SpatialObject::destructor()
 	if(this->events)
 	{
 		SpatialObject::fireEvent(this, kEventSpatialObjectDeleted);
-		NM_ASSERT(!isDeleted(this), "SpatialObject::destructor: deteled this during kEventSpatialObjectDeleted");
+		NM_ASSERT(!isDeleted(this), "SpatialObject::destructor: deleted this during kEventSpatialObjectDeleted");
 	}
 
 	// destroy the super SpatialObject

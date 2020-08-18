@@ -217,7 +217,7 @@ void BgmapTexture::writeAnimatedMulti()
 void BgmapTexture::setFrameAnimatedMulti(u16 frame __attribute__((unused)))
 {
 	BgmapTexture::fireEvent(this, kEventTextureSetFrame);
-	NM_ASSERT(!isDeleted(this), "BgmapTexture::setFrameAnimatedMulti: deteled this during kEventTextureSetFrame");
+	NM_ASSERT(!isDeleted(this), "BgmapTexture::setFrameAnimatedMulti: deleted this during kEventTextureSetFrame");
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations

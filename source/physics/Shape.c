@@ -100,7 +100,7 @@ void Shape::destructor()
 	if(this->events)
 	{
 		Shape::fireEvent(this, kEventShapeDeleted);
-		NM_ASSERT(!isDeleted(this), "Shape::destructor: deteled this during kEventShapeDeleted");
+		NM_ASSERT(!isDeleted(this), "Shape::destructor: deleted this during kEventShapeDeleted");
 	}
 
 	if(this->collidingShapes)
@@ -174,7 +174,7 @@ void Shape::setup(u32 layers, u32 layersToIgnore)
 	if(this->events)
 	{
 		Shape::fireEvent(this, kEventShapeChanged);
-		NM_ASSERT(!isDeleted(this), "Shape::setup: deteled this during kEventShapeChanged");
+		NM_ASSERT(!isDeleted(this), "Shape::setup: deleted this during kEventShapeChanged");
 	}
 }
 
@@ -206,7 +206,7 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
 	if(this->enabled && this->events)
 	{
 		Shape::fireEvent(this, kEventShapeChanged);
-		NM_ASSERT(!isDeleted(this), "Shape::position: deteled this during kEventShapeChanged");
+		NM_ASSERT(!isDeleted(this), "Shape::position: deleted this during kEventShapeChanged");
 	}
 
 	this->ready = true;

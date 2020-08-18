@@ -95,6 +95,7 @@ void VIPManager::constructor()
 	this->drawingEnded = false;
 	this->frameStarted = false;
 	this->processingXPEND = false;
+	this->customInterrupts = 0;
 
 	_vipManager = this;
 	_timerManager = TimerManager::getInstance();
@@ -114,6 +115,16 @@ void VIPManager::destructor()
 
 	// allow a new construct
 	Base::destructor();
+}
+
+void VIPManager::reset()
+{
+	this->customInterrupts = 0;
+}
+
+void VIPManager::enableCustomInterrupts(u16 customInterrupts)
+{
+	this->customInterrupts = customInterrupts;
 }
 
 /**
@@ -160,6 +171,8 @@ void VIPManager::enableInterrupts(u16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
+	interruptCode |= this->customInterrupts;
+
 #ifdef __SHOW_VIP_OVERTIME_COUNT
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
 #else
@@ -201,6 +214,11 @@ static void VIPManager::interruptHandler()
 
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, interrupt);
+
+	if(_vipManager->events)
+	{
+		VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
+	}
 
 	HardwareManager::disableMultiplexedInterrupts();
 
