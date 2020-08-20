@@ -656,13 +656,13 @@ bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBy
 
 	if(sendingData)
 	{
-		this->sentData = this->asyncSentByte = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = this->asyncSentByte = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 		Mem::copyBYTE((BYTE*)this->asyncSentByte, data, numberOfBytes);
 		CommunicationManager::sendPayload(this, *this->asyncSentByte, true);
 	}
 	else
 	{
-		this->receivedData = this->asyncReceivedByte = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = this->asyncReceivedByte = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 		CommunicationManager::receivePayload(this, true);
 	}
 
@@ -695,8 +695,8 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(BYTE* data, i
 		Object::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
-	this->sentData = this->asyncSentByte = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
-	this->receivedData = this->asyncReceivedByte = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	this->sentData = this->asyncSentByte = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	this->receivedData = this->asyncReceivedByte = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	Mem::copyBYTE((BYTE*)this->asyncSentByte, data, numberOfBytes);
@@ -710,9 +710,14 @@ bool CommunicationManager::sendAndReceiveDataAsync(BYTE* data, int numberOfBytes
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, data, numberOfBytes, eventLister, scope);
 }
 
-const BYTE* CommunicationManager::getData()
+const BYTE* CommunicationManager::getReceivedData()
 {
 	return (const BYTE*)this->receivedData;
+}
+
+const BYTE* CommunicationManager::getSentData()
+{
+	return (const BYTE*)this->sentData;
 }
 
 void CommunicationManager::startSyncCycle()

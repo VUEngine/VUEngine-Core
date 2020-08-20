@@ -65,7 +65,8 @@ singleton class CommunicationManager : Object
 	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
 	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
 	bool sendAndReceiveDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
-	const BYTE* getData();
+	const BYTE* getReceivedData();
+	const BYTE* getSentData();
 	void startSyncCycle();
 	void printStatus(int x, int y);
 }
