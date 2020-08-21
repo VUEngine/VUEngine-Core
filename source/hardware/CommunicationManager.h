@@ -61,10 +61,12 @@ singleton class CommunicationManager : Object
 	bool isMaster();
 	bool sendData(BYTE* data, int numberOfBytes);
 	bool receiveData(BYTE* data, int numberOfBytes);
-	bool sendAndReceiveData(BYTE* sentData, BYTE* receivedData, int numberOfBytes);
+	bool sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes);
 	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
 	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
-	bool sendAndReceiveDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
+	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
+	WORD getReceivedMessage();
+	WORD getSentMessage();
 	const BYTE* getReceivedData();
 	const BYTE* getSentData();
 	void startSyncCycle();

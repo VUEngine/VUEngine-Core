@@ -130,6 +130,7 @@ enum MessagesTypes
 
 	// Communication messages
 	kMessageCheckIfRemoteIsReady,
+	kMessageLastCommunicationMessage,
 
 	// don't place messages below this
 	kMessageLastEngine
