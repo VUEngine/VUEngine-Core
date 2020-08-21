@@ -217,6 +217,11 @@ void CommunicationManager::endCommunications()
 
 bool CommunicationManager::cancelCommunications()
 {
+	if(!this->connected)
+	{
+		return;
+	}
+	
 	CommunicationManager::endCommunications(this);
 
 	if(NULL != this->sentData)

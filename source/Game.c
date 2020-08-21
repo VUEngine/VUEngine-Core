@@ -300,6 +300,12 @@ void Game::initialize()
 
 	// start the game's general clock
 	Clock::start(this->clock);
+
+	// Enable interrupts
+	HardwareManager::enableInterrupts();
+
+	// Enable communications
+	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
 }
 
 bool Game::updateSpecialProcesses()
@@ -589,6 +595,7 @@ void Game::reset()
 	SoundManager::reset(this->soundManager);
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
+	CommunicationManager::cancelCommunications(this->communicationManager);
 
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
