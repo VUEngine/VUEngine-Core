@@ -198,7 +198,7 @@ void VIPManager::disableInterrupts()
  */
 bool VIPManager::isRenderingPending()
 {
-	return this->drawingEnded;
+	return !this->drawingEnded;
 }
 
 u16 VIPManager::getCurrentInterrupt()
