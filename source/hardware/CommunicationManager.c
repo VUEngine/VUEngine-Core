@@ -219,7 +219,7 @@ bool CommunicationManager::cancelCommunications()
 {
 	if(!this->connected)
 	{
-		return;
+		return false;
 	}
 	
 	CommunicationManager::endCommunications(this);
