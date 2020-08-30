@@ -387,7 +387,7 @@ void VIPManager::displayOn()
 {
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__FRMCYC] = __FRAME_CYCLE;
-	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
+	_vipRegisters[__DPCTRL] = (_vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP)) & ~__LOCK;
 }
 
 /**
@@ -556,7 +556,7 @@ void VIPManager::useInternalColumnTable(bool useInternal)
 	else
 	{
 		// unset lock bit
-		_vipRegisters[__DPCTRL] &= __LOCK;
+		_vipRegisters[__DPCTRL] &= ~__LOCK;
 	}
 }
 
