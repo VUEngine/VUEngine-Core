@@ -35,11 +35,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ENABLE_PROFILER_TOTAL_PROCESSES				9
-#define __CHAR_PROFILING						"\x90"
-#define __PROFILING_PALETTE						3
-#define __PROFILING_SHADOW_PALETTE				2
-#define __ENABLE_PROFILER_SKIP_FRAMES					10
+#define __ENABLE_PROFILER_SKIP_FRAMES					25
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -58,6 +54,7 @@ singleton class Profiler : Object
 	bool initialized;
 	bool printedProcessesNames;
 	u8 skipFrames;
+	u8 lastLapIndex;
 
 	/// @publicsection
 	static Profiler getInstance();

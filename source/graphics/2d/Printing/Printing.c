@@ -85,6 +85,7 @@ void Printing::constructor()
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
 	this->printingBgmapSegment = 0;
+	this->orientation = kPrintingOrientationHorizontal;
 
 	Printing::reset(this);
 }
@@ -111,6 +112,24 @@ void Printing::reset()
 	this->mp = 0;
 	this->w = __SCREEN_WIDTH - 1;
 	this->h = __SCREEN_HEIGHT - 1;
+}
+
+void Printing::setOrientation(u32 value)
+{
+	this->orientation = value;
+
+	switch(this->orientation)
+	{
+		case kPrintingOrientationHorizontal:
+		case kPrintingOrientationVertical:
+
+			break;
+		
+		default:
+
+			this->orientation = kPrintingOrientationHorizontal;
+			break;
+	}
 }
 
 void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
@@ -284,7 +303,7 @@ FontData* Printing::getFontByName(const char* font)
 	return result;
 }
 
-void Printing::int(int value, u8 x, u8 y, const char* font)
+void Printing::number(int value, u8 x, u8 y, const char* font)
 {
 	if(value < 0)
 	{
@@ -299,49 +318,73 @@ void Printing::int(int value, u8 x, u8 y, const char* font)
 	}
 }
 
+void Printing::int(int value, u8 x, u8 y, const char* font)
+{
+	Printing::number(this, value, x, y, font);
+
+	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+}
+
 void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 {
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
+
+	Printing::setOrientation(this, kPrintingOrientationHorizontal);
 }
 
 void Printing::float(float value, u8 x, u8 y, const char* font)
 {
+	char string[48];
+	char* integer = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(value))), 10, Utilities::getDigitCount(value));
+
+	int i = 0;
+
 	if(0 > value)
 	{
-		value = -value;
-		Printing::text(this, "-", x++, y, font);
+		string[i] = '-';
+		i++;
 	}
 
-	int integer = (int)__FIX19_13_TO_I(__F_TO_FIX19_13(value));
+	for(int j = 0; integer[j]; i++, j++)
+	{
+		string[i] = integer[j];
+	}
+
 	int decimal = (int)(((float)__FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 100.f);
-	int length = Utilities::intLength(__ABS(integer)) + (0 > value ? 1 : 0);
+	//int length = Utilities::intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
-	Printing::int(this, integer, x, y, font);
-
-	Printing::text(this, ".", x + length, y, font);
+	string[i++] = '.'; 
 
 	if(decimal)
 	{
 		int auxDecimal = decimal;
 		int displacement = 0;
+
 		while(0 == (auxDecimal / 10))
 		{
 			auxDecimal *= 10;
-			Printing::int(this, 0, x + length + 1 + displacement++, y, font);
+			string[i++] = '0'; 
 		}
 
 		auxDecimal = decimal;
+
 		while(0 == (auxDecimal % 10))
 		{
 			auxDecimal /= 10;
+			string[i++] = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(auxDecimal))), 10, 1)[0]; 
 		}
-
-		Printing::int(this, auxDecimal, x + length + 1 + displacement, y, font);
 	}
 	else
 	{
-		Printing::int(this, 0, x + length + 1, y, font);
+		string[i++] = '0'; 
 	}
+
+	string[i++] = 0; 
+
+	Printing::text(this, string, x, y, font);
+
+	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+
 }
 
 void Printing::text(const char* string, int x, int y, const char* font)
@@ -351,6 +394,7 @@ void Printing::text(const char* string, int x, int y, const char* font)
 #else
 	Printing::out(this, x, y, string, font);
 #endif
+	Printing::setOrientation(this, kPrintingOrientationHorizontal);
 }
 
 #ifdef __FORCE_PRINTING_LAYER
@@ -613,6 +657,12 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 				if(x >= 48)
 				{
 					// wrap around when outside of the visible area
+					y += fontData->fontSpec->fontSize.y;
+					x = startColumn;
+				}
+
+				if(kPrintingOrientationVertical == this->orientation)
+				{
 					y += fontData->fontSpec->fontSize.y;
 					x = startColumn;
 				}

@@ -394,7 +394,7 @@ void TimerManager::initialize()
 {
 	TimerManager::enableInterrupt(this, false);
 	TimerManager::setTimerResolution(this);
-	TimerManager::setTimerCounter(this);
+	TimerManager::configureTimerCounter(this);
 
 	TimerManager::clearStat(this);
 	TimerManager::enable(this, true);
@@ -531,7 +531,7 @@ u32 TimerManager::resetMilliseconds()
  *
  * @param time		New time
  */
-void TimerManager::setTimerCounter()
+void TimerManager::configureTimerCounter()
 {
 	u16 timerCounter = TimerManager::computeTimerCounter(this);
 	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);

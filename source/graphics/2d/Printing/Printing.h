@@ -103,6 +103,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
+ * Print oritentation
+ */
+enum PrintingOrientation
+{
+	kPrintingOrientationHorizontal = 0,
+	kPrintingOrientationVertical
+};
+
+/**
  * Size of a font's characters (in chars)
  *
  * @memberof 	Printing
@@ -186,6 +195,8 @@ singleton class Printing : Object
 
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
+	// printing orientation
+	u32 orientation;
 	// x coordinate for printing WORLD
 	s16 gx;
 	// y coordinate for printing WORLD
@@ -306,6 +317,12 @@ singleton class Printing : Object
      * Empties internal virtual list of registered fonts
      */
 	void reset();
+
+	/**
+     * Sets the orientation for the following call to print.
+	 * Resets its self automatically to horizonal.
+     */
+	void setOrientation(u32 value);
 
 	/**
 	 * Reset the coordinates of the WORLD used for printing

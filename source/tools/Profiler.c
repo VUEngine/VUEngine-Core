@@ -19,27 +19,39 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __ENABLE_PROFILER
+//#ifdef __ENABLE_PROFILER
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <debugConfig.h>
 #include <Profiler.h>
 #include <Game.h>
-#include <GameState.h>
-#include <UIContainer.h>
-#include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+static BrightnessRepeatSpec profileBrightnessRepeatSpec =
+{
+	// mirror spec?
+	false,
+
+	// brightness repeat values
+	{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	}
+};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -88,6 +100,12 @@ void Profiler::reset()
 	this->timeProportion = this->timePerInterruptInMS / (float)this->timerCounter;
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->totalTime = 0;
+	this->lastLapIndex = 0;
+
+	for(int i = 0; i < 96; i++)
+	{
+		profileBrightnessRepeatSpec.brightnessRepeat[i] = 2;
+	}
 }
 
 /**
@@ -98,6 +116,18 @@ void Profiler::initialize()
 	Profiler::reset(this);
 
 	this->initialized = true;
+/*
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x54;
+	_vipRegisters[__GPLT3] = 0x54;
+	_vipRegisters[__JPLT0] = 0x54;
+	_vipRegisters[__JPLT1] = 0x54;
+	_vipRegisters[__JPLT2] = 0x54;
+	_vipRegisters[__JPLT3] = 0x54;
+
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+	*/
 }
 
 void Profiler::start()
@@ -114,23 +144,40 @@ void Profiler::start()
 
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
-	if(0 < this->currentProfilingProcess)
-	{
-		this->printedProcessesNames = true;
+	Printing::clear(Printing::getInstance());
+	PRINT_TEXT("PROFILER", 1, 0);
 
-		PRINT_TEXT("Total time", 1, ++this->currentProfilingProcess + 10 + 1);
-		PRINT_FLOAT(this->totalTime, 18, this->currentProfilingProcess + 10 + 1);
-		PRINT_FLOAT((this->totalTime * 100) / this->timePerInterruptInMS, 23, this->currentProfilingProcess + 10 + 1);
-	}
+	this->printedProcessesNames = true;
+
+	PRINT_TEXT("Total time  ms    %", 25, 1);
+	PRINT_FLOAT(this->totalTime, 25 + 11, 2);
+	PRINT_FLOAT((this->totalTime * 100) / this->timePerInterruptInMS, 25 + 11 + 5, 2);
 
 	this->currentProfilingProcess = 0;
 	this->previousTimerCounter = this->timerCounter;
 	this->totalTime = 0;
+	this->lastLapIndex = 0;
 
 	TimerManager::enable(this->timerManager, false);
-	TimerManager::setTimerCounter(this->timerManager);
+	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
+}
 
+void Profiler::end()
+{
+	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
+	{
+		return;
+	}
+
+	__SET_BRIGHT(2, 2, 2);
+
+	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
+
+	for(int i = 0; i < 96; i++)
+	{
+		profileBrightnessRepeatSpec.brightnessRepeat[i] = 2;
+	}
 }
 
 void Profiler::lap(const char* processName)
@@ -145,14 +192,6 @@ void Profiler::lap(const char* processName)
 
 	TimerManager::enable(this->timerManager, true);
 
-	if(!this->printedProcessesNames && NULL != processName)
-	{
-		PRINT_TEXT("PROFILER", 1, 7);
-		PRINT_TEXT("                  ms    %", 1, 9);
-		PRINT_TEXT("                    ", 1, this->currentProfilingProcess + 10);
-		PRINT_TEXT(processName, 1, this->currentProfilingProcess + 10);
-	}
-
 	if(this->previousTimerCounter < currentTimerCounter)
 	{
 		this->previousTimerCounter += this->timerCounter;
@@ -160,16 +199,52 @@ void Profiler::lap(const char* processName)
 
 	u32 elapsedTicks = this->previousTimerCounter - currentTimerCounter;
 	float elapsedTime = elapsedTicks * this->timeProportion;
+	float gameFrameTimePercentaje = (elapsedTime * 100) / this->timePerInterruptInMS;
 
 	this->totalTime += elapsedTime;
 
-	PRINT_TEXT("          ", 18, this->currentProfilingProcess + 10);
-	PRINT_FLOAT(elapsedTime, 18, this->currentProfilingProcess + 10);
-	PRINT_FLOAT((elapsedTime * 100) / this->timePerInterruptInMS, 23, this->currentProfilingProcess + 10);
+	int columnTableEntries = 96;
+	u8 value = 0;
+	
+	if(this->currentProfilingProcess % 2)
+	{
+		value = 8;
+	}
+	else
+	{
+		value = 12;
+	}
+	
+	int entries = (int)(((columnTableEntries * gameFrameTimePercentaje) / (float)100) + 0.5f) * 4;
+
+	entries = (entries + (entries % 8)) / 4;
+
+	if(2 > entries)
+	{
+		entries = 2;
+	}
+
+	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i < columnTableEntries; i++)
+	{
+		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
+	}
+
+	int printingColumn = this->lastLapIndex / 2;
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	PRINT_TEXT(processName, printingColumn, 4);
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	PRINT_FLOAT(elapsedTime, printingColumn, 17);
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	PRINT_FLOAT(gameFrameTimePercentaje, printingColumn, 22);
+
+	this->lastLapIndex += entries;
 
 	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
 }
 
 
-#endif
+//#endif

@@ -554,7 +554,7 @@ u32 Game::processUserInput()
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), "User input");
+		Profiler::lap(Profiler::getInstance(), "Input");
 #endif
 		return false;
 	}
@@ -580,7 +580,7 @@ u32 Game::processUserInput()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "User input");
+	Profiler::lap(Profiler::getInstance(), "Input");
 #endif
 
 	return userInput.pressedKey | userInput.releasedKey;
@@ -605,7 +605,7 @@ void Game::dispatchDelayedMessages()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Messaging");
+	Profiler::lap(Profiler::getInstance(), "Messages");
 #endif
 
 #endif
@@ -668,7 +668,7 @@ void Game::synchronizeGraphics()
 	GameState::synchronizeGraphics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Sync graphics");
+	Profiler::lap(Profiler::getInstance(), "Graphics");
 #endif
 }
 
@@ -719,7 +719,7 @@ void Game::updateTransformations()
 	GameState::transform(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Transformations");
+	Profiler::lap(Profiler::getInstance(), "Transforms");
 #endif
 }
 
@@ -938,6 +938,10 @@ void Game::run()
 	// this is the moment to check if the game's state
 	// needs to be changed
 	Game::checkForNewState(this);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::end(Profiler::getInstance());
+#endif
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
