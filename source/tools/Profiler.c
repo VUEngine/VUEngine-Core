@@ -19,7 +19,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//#ifdef __ENABLE_PROFILER
+#ifdef __ENABLE_PROFILER
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -247,4 +247,4 @@ void Profiler::lap(const char* processName)
 }
 
 
-//#endif
+#endif
