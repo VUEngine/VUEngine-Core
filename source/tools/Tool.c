@@ -97,14 +97,18 @@ void Tool::lightUpGame()
 
 #ifndef __TOOLS
 
-void Profiler_setVTable(){}
-void SoundTest_setVTable(){}
-void StageEditor_setVTable(){}
-void AnimationInspector_setVTable(){}
-void Debug_setVTable(){}
-void DebugState_setVTable(){}
-void SoundTestState_setVTable(){}
-void AnimationInspectorState_setVTable(){}
-void StageEditorState_setVTable(){}
+void SoundTest::setVTable(){}
+void StageEditor::setVTable(){}
+void AnimationInspector::setVTable(){}
+void Debug::setVTable(){}
+void DebugState::setVTable(){}
+void SoundTestState::setVTable(){}
+void AnimationInspectorState::setVTable(){}
+void StageEditorState::setVTable(){}
 
 #endif
+
+#ifndef __ENABLE_PROFILER
+void Profiler::setVTable(){}
+#endif
+

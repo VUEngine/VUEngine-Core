@@ -42,21 +42,17 @@
 {% if project.config.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
 {% if project.config.debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
 
+// Enable profiler
+{% if project.config.debug.enableProfiler %}#define{% else %}#undef{% endif %} __ENABLE_PROFILER
+
 // print frame rate
 {% if project.config.debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
 
 // alert stack overflows
 {% if project.config.debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
 
-// enable detailed profiling of each of the game's main processes
-// • it is more useful when __TIMER_RESOLUTION approaches 1
-{% if project.config.debug.profileGame %}#define{% else %}#undef{% endif %} __PROFILE_GAME
-
 // enable streaming's profiling
 {% if project.config.debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
-
-// show games's profiling during game
-{% if project.config.debug.showGameProfiling %}#define{% else %}#undef{% endif %} __SHOW_GAME_PROFILING
 
 // show streaming's profiling during game
 {% if project.config.debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
@@ -64,15 +60,12 @@
 // dimm screen to make it easier to read the profiling output
 {% if project.config.debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
 
-// print the game's current process while the VIP's frame start and idle interrupts are fired, but the
-// game frame is still pending processes to complete
-{% if project.config.debug.profileGameStateDuringVipInterrupt %}#define{% else %}#undef{% endif %} __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-
 // alert vip's overtime
 {% if project.config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
 
 // stack headroom
 #define __STACK_HEADROOM								{{ project.config.debug.stackHeadroom }}
+
 
 //---------------------------------------------------------------------------------------------------------
 //											DEBUGGING TOOLS
@@ -105,13 +98,6 @@
 #ifndef __TOOLS
 #define __TOOLS
 #endif
-
-// enable detailed profiling of each of the game's main processes
-// • it is more useful when __TIMER_RESOLUTION approaches 1
-#define __PROFILE_GAME
-
-// enable streaming's profiling
-#define __PROFILE_STREAMING
 
 #endif
 

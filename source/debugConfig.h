@@ -9,11 +9,7 @@
 // define / undefine as you see fit
 //#define __PRINT_FRAMERATE
 //#define __PRINT_DEBUG_ALERT
-//#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
-//#define __SHOW_GAME_PROFILING
-//#define __SHOW_GAME_DETAILED_PROFILING
-//#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
@@ -39,9 +35,6 @@
 //#define __MUTE_ALL_SOUND
 //#define __DRAW_COMPLETE_BOXES
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-
-//#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						10
 
 
 //#undef __SAFE_CAST
@@ -73,39 +66,19 @@
 #endif
 
 // show games's profiling during game
-#ifdef __SHOW_GAME_DETAILED_PROFILING
-#undef __PRINT_FRAMERATE
-#undef __SHOW_GAME_PROFILING
-#define __SHOW_GAME_PROFILING
-#endif
-
-#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-#undef __PROFILE_GAME
-#define __PROFILE_GAME
-#endif
-
-// show games's profiling during game
-#ifdef __SHOW_GAME_PROFILING
-#undef __PROFILE_GAME
-#define __PROFILE_GAME
+#ifdef __ENABLE_PROFILER
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
 #endif
 
 // show streaming's profiling during game
 #ifdef __SHOW_STREAMING_PROFILING
-#undef __PROFILE_GAME
-#define __PROFILE_GAME
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
-#undef __PROFILE_STREAMING
-#define __PROFILE_STREAMING
 #endif
 
 // show sprites's profiling during game
 #ifdef __SHOW_SPRITES_PROFILING
-#undef __PROFILE_GAME
-#define __PROFILE_GAME
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
 #undef __FORCE_PRINTING_LAYER
@@ -113,9 +86,7 @@
 #endif
 
 // enable game profiling when checking the VIP interrupt
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-#undef __PROFILE_GAME
-#define __PROFILE_GAME
+#ifdef __ENABLE_PROFILER
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
 #undef __FORCE_PRINTING_LAYER
@@ -136,48 +107,6 @@
 #define __FORCE_PRINTING_LAYER
 #endif
 
-#ifdef __SHOW_STACK_OVERFLOW_ALERT
-#undef __PRINT_PROFILING_INFO
-#define __PRINT_PROFILING_INFO
-#endif
-
-#ifdef __PRINT_FRAMERATE
-#ifndef __PRINT_PROFILING_INFO
-#define __PRINT_PROFILING_INFO
-#endif
-#else
-#ifdef __PROFILE_GAME
-#ifndef __PRINT_PROFILING_INFO
-#define __PRINT_PROFILING_INFO
-#endif
-#else
-#ifdef __SHOW_MEMORY_POOL_STATUS
-#ifndef __PRINT_PROFILING_INFO
-#define __PRINT_PROFILING_INFO
-#endif
-#else
-#ifdef __SHOW_STREAMING_PROFILING
-#ifndef __PRINT_PROFILING_INFO
-#define __PRINT_PROFILING_INFO
-#endif
-#endif
-#endif
-#endif
-#endif
-
-#ifdef __SHOW_GAME_PROFILING
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
-#endif
-
 #endif
 #undef __DIMM_FOR_PROFILING
 
-#ifdef __PROFILE_GAME
-#undef __REGISTER_LAST_PROCESS_NAME
-#define __REGISTER_LAST_PROCESS_NAME
-#undef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-#define __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-#undef __REGISTER_PROCESS_NAME_DURING_XPEND
-#define __REGISTER_PROCESS_NAME_DURING_XPEND
-#endif

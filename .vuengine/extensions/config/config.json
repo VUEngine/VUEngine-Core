@@ -75,16 +75,14 @@
 		"scrambleBinary": false
 	},
 	"debug": {
+		"enableProfiler": false,
 		"showStackOverflowAlert": false,
 		"alertVipOvertime": false,
 		"dimmForProfiling": false,
 		"showDetailedMemoryPoolStatus": false,
 		"printFramerate": false,
 		"showMemoryPoolStatus": false,
-		"profileGame": false,
-		"profileGameStateDuringVipInterrupt": false,
 		"profileStreaming": false,
-		"showGameProfiling": false,
 		"showStreamingProfiling": false,
 		"stackHeadroom": 1000,
 		"alertForTornFrames": false

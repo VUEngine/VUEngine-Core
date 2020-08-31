@@ -324,13 +324,19 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	{
 		int auxDecimal = decimal;
 		int displacement = 0;
-		while(!(auxDecimal / 10))
+		while(0 == (auxDecimal / 10))
 		{
 			auxDecimal *= 10;
 			Printing::int(this, 0, x + length + 1 + displacement++, y, font);
 		}
 
-		Printing::int(this, decimal, x + length + 1 + displacement, y, font);
+		auxDecimal = decimal;
+		while(0 == (auxDecimal % 10))
+		{
+			auxDecimal /= 10;
+		}
+
+		Printing::int(this, auxDecimal, x + length + 1 + displacement, y, font);
 	}
 	else
 	{

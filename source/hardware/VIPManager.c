@@ -32,6 +32,7 @@
 #include <FrameRate.h>
 #include <SpriteManager.h>
 #include <WireframeManager.h>
+#include <Profiler.h>
 #include <Mem.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
@@ -294,55 +295,34 @@ void VIPManager::processInterrupt(u16 interrupt)
 				//Game::setLastProcessName(Game::getInstance(), "VIP interrupt");
 #endif
 
-#ifdef __PROFILE_GAME
-				{
-					s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(_timerManager);
-#endif
-
-					// Prevent VIP's drawing operations
+				// Prevent VIP's drawing operations
 #ifdef __FORCE_VIP_SYNC
-					VIPManager::disableDrawing(this);
+				VIPManager::disableDrawing(this);
 #endif
-					// Allow frame start interrupt
-					VIPManager::enableInterrupts(this, __FRAMESTART);
+				// Allow frame start interrupt
+				VIPManager::enableInterrupts(this, __FRAMESTART);
 
-					// Do not remove this, it prevents
-					// graphical glitches when the VIP
-					// finishes drawing while the CPU is
-					// still syncronizing the graphics
-					SpriteManager::writeDRAM(_spriteManager);
+				// Do not remove this, it prevents
+				// graphical glitches when the VIP
+				// finishes drawing while the CPU is
+				// still syncronizing the graphics
+				SpriteManager::writeDRAM(_spriteManager);
 
-					// Write to the frame buffers
-					VIPManager::processFrameBuffers(this);
+				// Write to the frame buffers
+				VIPManager::processFrameBuffers(this);
 
 #ifdef __FORCE_VIP_SYNC
-					// allow VIP's drawing operations
-					VIPManager::enableDrawing(this);
+				// allow VIP's drawing operations
+				VIPManager::enableDrawing(this);
 #endif
 
-					// flag completions
-					this->drawingEnded = true;
+				// flag completions
+				this->drawingEnded = true;
 
 #ifdef __DEBUG_TOOLS
-					if(Game::isInDebugMode(Game::getInstance()))
-					{
-						Debug::render(Debug::getInstance());
-					}
-#endif
-
-#ifdef __PROFILE_GAME
-					extern s16 _renderingHighestTime;
-					extern s16 _renderingProcessTimeHelper;
-					extern s16 _renderingProcessTime;
-					extern s16 _renderingTotalTime;
-					extern bool _updateProfiling;
-
-					if(_updateProfiling)
-					{
-						_renderingProcessTimeHelper = _renderingProcessTime = TimerManager::getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
-						_renderingTotalTime += _renderingProcessTime;
-						_renderingHighestTime = _renderingHighestTime < _renderingProcessTime ? _renderingProcessTime : _renderingHighestTime;
-					}
+				if(Game::isInDebugMode(Game::getInstance()))
+				{
+					Debug::render(Debug::getInstance());
 				}
 #endif
 

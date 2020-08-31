@@ -19,7 +19,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __TOOLS
+#ifdef __ENABLE_PROFILER
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,6 +32,8 @@
 #include <GameState.h>
 #include <UIContainer.h>
 #include <SpriteManager.h>
+#include <HardwareManager.h>
+#include <TimerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,8 +64,6 @@ void Profiler::constructor()
 {
 	Base::constructor();
 
-	this->initialized = false;
-	this->profilingSprite = NULL;
 	Profiler::reset(this);
 }
 
@@ -78,22 +78,16 @@ void Profiler::destructor()
 
 void Profiler::reset()
 {
-	this->paletteValues[0] = 0b01000000;
-	this->paletteValues[1] = 0b01010000;
-	this->paletteValues[2] = 0b01010100;
-	this->paletteValues[3] = 0b10010100;
-	this->paletteValues[4] = 0b10100100;
-	this->paletteValues[5] = 0b10101000;
-	this->paletteValues[6] = 0b11101000;
-	this->paletteValues[7] = 0b11111000;
-	this->paletteValues[8] = 0b11111100;
-
-	this->currentPeletteIndex = 0;
-
-	if(this->initialized)
-	{
-		_vipRegisters[__GPLT0 + __PROFILING_PALETTE] = 0b00000000;
-	}
+	this->timerManager = TimerManager::getInstance();
+	this->initialized = false;
+	this->previousTimerCounter = 0;
+	this->currentProfilingProcess = 0;
+	this->printedProcessesNames = false;
+	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
+	this->timePerInterruptInMS = TimerManager::getTimePerInterruptInMS(this->timerManager);
+	this->timeProportion = this->timePerInterruptInMS / (float)this->timerCounter;
+	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
+	this->totalTime = 0;
 }
 
 /**
@@ -101,83 +95,81 @@ void Profiler::reset()
  */
 void Profiler::initialize()
 {
-	/*
-	Printing::resetCoordinates(Printing::getInstance());
+	Profiler::reset(this);
 
-	int i = 0;
-	int j = 1;
-
-	for(; i < __SCREEN_HEIGHT_IN_CHARS; i++)
-	{
-		PRINT_TEXT(__CHAR_PROFILING, j, i);
-		PRINT_TEXT(__CHAR_PROFILING, j, i);
-	}
-	*/
-
-	Stage stage = GameState::getStage(Game::getCurrentState(Game::getInstance()));
-
-	if(!isDeleted(stage))
-	{
-		UIContainer uiContainer = Stage::getUIContainer(stage);
-
-		if(!isDeleted(uiContainer))
-		{
-			extern EntitySpec PROFILING_IM;
-
-			PositionedEntity entities[] =
-			{
-				{&PROFILING_IM, {__SCREEN_WIDTH / 2 -64, 112, -128, 0}, 0, "Profile", NULL, NULL, true},
-				{NULL, {0,0,0,0}, 0, NULL, NULL, NULL, false}
-			};
-
-			UIContainer::addEntities(uiContainer, entities);
-			Entity profilingEntity = !isDeleted(uiContainer) ? Entity::safeCast(UIContainer::getChildByName(uiContainer, "Profile", true)) : NULL;
-			this->profilingSprite = !isDeleted(uiContainer) ? VirtualList::front(Entity::getSprites(profilingEntity)) : NULL;
-
-			NM_ASSERT(!isDeleted(this->profilingSprite), "ERROR");
-			SpriteManager::hideSprites(SpriteManager::getInstance());
-			Sprite::show(this->profilingSprite);
-
-			this->initialized = true;
-		}
-	}
+	this->initialized = true;
 }
 
 void Profiler::start()
 {
-/*	static s16 previousBlock = 0;
-	s16 currentBlock = VIPManager::getCurrentBlockBeingDrawn(VIPManager::getInstance());
-
-//	if(__PROFILER_TOTAL_AVAILABLE_PALETTES - 1 < ++this->currentPeletteIndex)
-	{
-		PRINT_TEXT("              ", 1, 1 + this->currentPeletteIndex);
-		PRINT_INT(currentBlock, 1, 1 + this->currentPeletteIndex);
-	}
-
-	if(this->currentPeletteIndex)
-	PRINT_INT(currentBlock - previousBlock, 7, 1 + this->currentPeletteIndex);
-
-
-	if(__PROFILER_TOTAL_AVAILABLE_PALETTES <= this->currentPeletteIndex)
-	{
-		//this->currentPeletteIndex = 0;
-		previousBlock = 0;
-	}
-
-	previousBlock = currentBlock;
-*/
-
-	if(!this->initialized || __PROFILER_TOTAL_AVAILABLE_PALETTES <= this->currentPeletteIndex)
+	if(!this->initialized)
 	{
 		return;
 	}
 
-	_vipRegisters[__GPLT0 + __PROFILING_PALETTE] = this->paletteValues[this->currentPeletteIndex++];
+	if(0 < --this->skipFrames)
+	{
+		return;
+	}
+
+	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
+
+	if(0 < this->currentProfilingProcess)
+	{
+		this->printedProcessesNames = true;
+
+		PRINT_TEXT("Total time", 1, ++this->currentProfilingProcess + 10 + 1);
+		PRINT_FLOAT(this->totalTime, 18, this->currentProfilingProcess + 10 + 1);
+		PRINT_FLOAT((this->totalTime * 100) / this->timePerInterruptInMS, 23, this->currentProfilingProcess + 10 + 1);
+	}
+
+	this->currentProfilingProcess = 0;
+	this->previousTimerCounter = this->timerCounter;
+	this->totalTime = 0;
+
+	TimerManager::enable(this->timerManager, false);
+	TimerManager::setTimerCounter(this->timerManager);
+	TimerManager::enable(this->timerManager, true);
+
 }
 
-void Profiler::end()
+void Profiler::lap(const char* processName)
 {
-	Profiler::reset(this);
+	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
+	{
+		return;
+	}
+
+	TimerManager::enable(this->timerManager, false);
+	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+
+	TimerManager::enable(this->timerManager, true);
+
+	if(!this->printedProcessesNames && NULL != processName)
+	{
+		PRINT_TEXT("PROFILER", 1, 7);
+		PRINT_TEXT("                  ms    %", 1, 9);
+		PRINT_TEXT("                    ", 1, this->currentProfilingProcess + 10);
+		PRINT_TEXT(processName, 1, this->currentProfilingProcess + 10);
+	}
+
+	if(this->previousTimerCounter < currentTimerCounter)
+	{
+		this->previousTimerCounter += this->timerCounter;
+	}
+
+	u32 elapsedTicks = this->previousTimerCounter - currentTimerCounter;
+	float elapsedTime = elapsedTicks * this->timeProportion;
+
+	this->totalTime += elapsedTime;
+
+	PRINT_TEXT("          ", 18, this->currentProfilingProcess + 10);
+	PRINT_FLOAT(elapsedTime, 18, this->currentProfilingProcess + 10);
+	PRINT_FLOAT((elapsedTime * 100) / this->timePerInterruptInMS, 23, this->currentProfilingProcess + 10);
+
+	this->previousTimerCounter = currentTimerCounter;
+	this->currentProfilingProcess++;
 }
+
 
 #endif

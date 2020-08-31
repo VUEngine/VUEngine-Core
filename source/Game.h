@@ -120,7 +120,6 @@ singleton class Game : Object
 	void reset();
 	void resetProfiling();
 	void setOptical(Optical optical);
-	void showLastGameFrameProfiling(int x, int y);
 	void start(GameState state);
 	void unpause(GameState pauseState);
 	void wait(u32 milliSeconds);

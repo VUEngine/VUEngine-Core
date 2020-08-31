@@ -866,7 +866,8 @@ void Debug::gameProfilingPage(int increment __attribute__ ((unused)), int x __at
 {
 	Debug::removeSubPages(this);
 
-	Game::showLastGameFrameProfiling(Game::getInstance(), x, y);
+	// TODO: show profiler
+	PRINT_TEXT("Show profiler", 1, 10);
 }
 
 /**

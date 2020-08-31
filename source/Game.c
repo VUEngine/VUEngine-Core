@@ -97,90 +97,10 @@ static char* _processNameDuringFRAMESTART = NULL;
 static char* _processNameDuringXPEND = NULL;
 #endif
 
-#ifdef __PROFILE_GAME
-
-bool _updateProfiling = false;
-
-static s16 _gameFrameRealDuration = 0;
-static s16 _gameFrameDurationAverage = 0;
-static s16 _gameFrameEffectiveDuration = 0;
-static s16 _gameFrameEffectiveDurationAverage = 0;
-static s16 _gameFrameHighestEffectiveDuration = 0;
-s16 _tornGameFrameCount = 0;
-
-static s16 _waitForFrameStartTotalTime = 0;
-s16 _renderingTotalTime = 0;
-static s16 _synchronizeGraphicsTotalTime = 0;
-static s16 _updateLogicTotalTime = 0;
-static s16 _updateSoundTotalTime = 0;
-static s16 _updatePhysicsTotalTime = 0;
-static s16 _updateTransformationsTotalTime = 0;
-static s16 _streamingTotalTime = 0;
-static s16 _processUserInputTotalTime = 0;
-static s16 _dispatchDelayedMessageTotalTime = 0;
-
-s16 _renderingHighestTime = 0;
-static s16 _synchronizeGraphicsHighestTime = 0;
-static s16 _updateLogicHighestTime = 0;
-static s16 _updateSoundHighestTime = 0;
-static s16 _streamingHighestTime = 0;
-static s16 _updatePhysicsHighestTime = 0;
-static s16 _updateTransformationsHighestTime = 0;
-static s16 _processUserInputHighestTime = 0;
-static s16 _dispatchDelayedMessageHighestTime = 0;
-static s16 _processingCollisionsTotalTime = 0;
-static s16 _processingCollisionsHighestTime = 0;
-
-s16 _renderingProcessTimeHelper = 0;
-s16 _renderingProcessTime = 0;
-static s16 _synchronizeGraphicsProcessTime = 0;
-static s16 _updateLogicProcessTime = 0;
-static s16 _updateSoundProcessTime = 0;
-static s16 _streamingProcessTime = 0;
-static s16 _updatePhysicsProcessTime = 0;
-static s16 _updateTransformationsProcessTime = 0;
-static s16 _processUserInputProcessTime = 0;
-static s16 _dispatchDelayedMessageProcessTime = 0;
-static s16 _processingCollisionsProcessTime = 0;
-
-static s16 _previousGameFrameRealDuration = 0;
-static s16 _previousGameFrameDurationAverage = 0;
-static s16 _previousGameFrameEffectiveDuration = 0;
-static s16 _previousGameFrameEffectiveDurationAverage = 0;
-static s16 _previousGameFrameHighestEffectiveDuration = 0;
-static s16 _previousTornGameFrameCount = 0;
-
-static s16 _previousWaitForFrameStartTotalTime = 0;
-static s16 _previousRenderingTotalTime = 0;
-static s16 _previousUpdateVisualsTotalTime = 0;
-static s16 _previousUpdateLogicTotalTime = 0;
-static s16 _previousUpdateSoundTotalTime = 0;
-static s16 _previousUpdatePhysicsTotalTime = 0;
-static s16 _previousUpdateTransformationsTotalTime = 0;
-static s16 _previousStreamingTotalTime = 0;
-static s16 _previousHandleInputTotalTime = 0;
-static s16 _previousDispatchDelayedMessageTotalTime = 0;
-
-static s16 _previousRenderingHighestTime = 0;
-static s16 _previousUpdateVisualsHighestTime = 0;
-static s16 _previousUpdateLogicHighestTime = 0;
-static s16 _previousUpdateSoundHighestTime = 0;
-static s16 _previousStreamingHighestTime = 0;
-static s16 _previousUpdatePhysicsHighestTime = 0;
-static s16 _previousUpdateTransformationsHighestTime = 0;
-static s16 _previousHandleInputHighestTime = 0;
-static s16 _previousDispatchDelayedMessageHighestTime = 0;
-static s16 _previousProcessCollisionsTotalTime = 0;
-static s16 _previousProcessCollisionsHighestTime = 0;
-
-static s16 _previousGameFrameTotalTime = 0;
-#else
-
 #ifdef __SHOW_TORN_FRAMES_COUNT
 
 s16 _tornGameFrameCount = 0;
 
-#endif
 #endif
 
 
@@ -319,73 +239,12 @@ bool Game::updateSpecialProcesses()
 
 void Game::debug()
 {
-#ifdef __PROFILE_GAME
-	u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
-
-	if(_updateProfiling)
-	{
-		static u32 cycleCount = 0;
-		static u32 totalGameFrameDuration = 0;
-		totalGameFrameDuration += elapsedTime;
-
-		_gameFrameEffectiveDuration = elapsedTime;
-		_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
-		_gameFrameHighestEffectiveDuration = (s16)elapsedTime > _gameFrameHighestEffectiveDuration ? (s16)elapsedTime : _gameFrameHighestEffectiveDuration;
-	}
-#endif
-
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
 		WireframeManager::print(WireframeManager::getInstance(), 1, 1);
 #endif
 
-#ifdef __PROFILE_GAME
-		_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "end frame";
-#endif
-
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		static u32 cycleCount = 0;
-		s32 gameFrameDuration = _waitForFrameStartTotalTime +
-							_renderingProcessTime +
-							_synchronizeGraphicsProcessTime +
-							_updateLogicProcessTime +
-							_streamingProcessTime +
-							_updatePhysicsProcessTime +
-							_updateTransformationsProcessTime +
-							_processUserInputProcessTime +
-							_dispatchDelayedMessageProcessTime +
-							_processingCollisionsProcessTime;
-
-		static s32 totalGameFrameRealDuration = 0;
-		totalGameFrameRealDuration += gameFrameDuration;
-
-		_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
-		_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
-
-		if(cycleCount >= (0x000000001 < (sizeof(u32) * 7)))
-		{
-			totalGameFrameRealDuration = 0;
-			cycleCount = 0;
-		}
-	}
-#endif
-
-#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-	// Skip the rest of the cycle if already late
-	if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
-	{
-		PRINT_TIME(20, 0);
-		Game::showCurrentGameFrameProfiling(this, 1, 0);
-	}
-#endif
-
-#ifdef __PROFILE_GAME
-	_updateProfiling = !Game::isInSpecialMode(this);
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
@@ -562,12 +421,8 @@ void Game::setNextState(GameState state)
 	// Fire event
 	Object::fireEvent(this, kEventNextStateSet);
 
-#ifdef __PROFILE_GAME
-	_tornGameFrameCount = 0;
-#else
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	_tornGameFrameCount = 0;
-#endif
 #endif
 }
 
@@ -576,6 +431,10 @@ void Game::reset()
 {
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool::cleanUp(MemoryPool::getInstance());
+#endif
+
+#ifdef __ENABLE_PROFILER
+	Profiler::reset(Profiler::getInstance());
 #endif
 
 	HardwareManager::disableInterrupts();
@@ -605,9 +464,6 @@ void Game::reset()
 	ParamTableManager::reset(ParamTableManager::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 	Printing::reset(Printing::getInstance());
-
-	// reset profiling
-	Game::resetProfiling(this);
 
 	// Enable timer
 	TimerManager::enable(this->timerManager, true);
@@ -697,13 +553,11 @@ u32 Game::processUserInput()
 {
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
+#ifdef __ENABLE_PROFILER
+		Profiler::lap(Profiler::getInstance(), "User input");
+#endif
 		return false;
 	}
-
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "input";
@@ -725,25 +579,15 @@ u32 Game::processUserInput()
 		GameState::processUserInput(Game::getCurrentState(this), userInput);
 	}
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_processUserInputProcessTime =  -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_processUserInputTotalTime += _processUserInputProcessTime;
-		_processUserInputHighestTime = _processUserInputHighestTime < _processUserInputProcessTime ? _processUserInputProcessTime : _processUserInputHighestTime;
-	}
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "User input");
 #endif
 
 	return userInput.pressedKey | userInput.releasedKey;
 }
 
-u32 Game::dispatchDelayedMessages()
+void Game::dispatchDelayedMessages()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "messages";
 #endif
@@ -755,36 +599,21 @@ u32 Game::dispatchDelayedMessages()
 	{
 #endif
 
-#ifdef __PROFILE_GAME
-		u32 dispatchedMessages = MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
-
-		if(_updateProfiling)
-		{
-			_dispatchDelayedMessageProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-			_dispatchDelayedMessageTotalTime += _dispatchDelayedMessageProcessTime;
-			_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageHighestTime < _dispatchDelayedMessageProcessTime ? _dispatchDelayedMessageProcessTime : _dispatchDelayedMessageHighestTime;
-		}
-
-		return dispatchedMessages;
-#else
-		return MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
-#endif
+	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
 
-	return false;
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Messaging");
+#endif
+
 #endif
 }
 
 // update game's logic subsystem
 void Game::updateLogic()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __TOOLS
 	if(!Game::isInSpecialMode(this))
 	{
@@ -802,48 +631,28 @@ void Game::updateLogic()
 	// update the game's logic
 	StateMachine::update(this->stateMachine);
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_updateLogicProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_updateLogicTotalTime += _updateLogicProcessTime;
-		_updateLogicHighestTime = _updateLogicHighestTime < _updateLogicProcessTime ? _updateLogicProcessTime : _updateLogicHighestTime;
-	}
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Logic");
 #endif
 }
 
 	// Update sound related logic
 void Game::updateSound()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 	SoundManager::update(this->soundManager);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "sound";
 #endif
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_updateSoundProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_updateSoundTotalTime += _updateSoundProcessTime;
-		_updateSoundHighestTime = _updateSoundHighestTime < _updateSoundProcessTime ? _updateSoundProcessTime : _updateSoundHighestTime;
-	}
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Sounds");
 #endif
 }
 
 // update game's rendering subsystem
 void Game::synchronizeGraphics()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "graphics";
 #endif
@@ -858,25 +667,14 @@ void Game::synchronizeGraphics()
 	// apply transformations to graphics
 	GameState::synchronizeGraphics(this->currentState);
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_synchronizeGraphicsTotalTime += _synchronizeGraphicsProcessTime;
-		_synchronizeGraphicsHighestTime = _synchronizeGraphicsHighestTime < _synchronizeGraphicsProcessTime ? _synchronizeGraphicsProcessTime : _synchronizeGraphicsHighestTime;
-	}
-
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Sync graphics");
 #endif
 }
 
 // update game's physics subsystem
 void Game::updatePhysics()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "physics";
 #endif
@@ -884,13 +682,8 @@ void Game::updatePhysics()
 	// simulate physics
 	GameState::updatePhysics(this->currentState);
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_updatePhysicsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_updatePhysicsTotalTime += _updatePhysicsProcessTime;
-		_updatePhysicsHighestTime = _updatePhysicsHighestTime < _updatePhysicsProcessTime ? _updatePhysicsProcessTime : _updatePhysicsHighestTime;
-	}
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Physics");
 #endif
 }
 
@@ -910,15 +703,14 @@ void Game::focusCamera()
 	}
 #endif
 
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Camera");
+#endif
+
 }
 
 void Game::updateTransformations()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "transforms";
 #endif
@@ -926,69 +718,36 @@ void Game::updateTransformations()
 	// apply world transformations
 	GameState::transform(this->currentState);
 
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_updateTransformationsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_updateTransformationsTotalTime += _updateTransformationsProcessTime;
-		_updateTransformationsHighestTime = _updateTransformationsHighestTime < _updateTransformationsProcessTime ? _updateTransformationsProcessTime : _updateTransformationsHighestTime;
-	}
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Transformations");
 #endif
 }
 
-u32 Game::updateCollisions()
+void Game::updateCollisions()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "collisions";
 #endif
 
 	// process collisions
-#ifdef __PROFILE_GAME
-	u32 processedCollisions = GameState::processCollisions(this->currentState);
+	GameState::processCollisions(this->currentState);
 
-	if(_updateProfiling)
-	{
-		_processingCollisionsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_processingCollisionsTotalTime += _processingCollisionsProcessTime;
-		_processingCollisionsHighestTime = _processingCollisionsHighestTime < _processingCollisionsProcessTime ? _processingCollisionsProcessTime : _processingCollisionsHighestTime;
-	}
-
-	return processedCollisions;
-#else
-	return GameState::processCollisions(this->currentState);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Collisions");
 #endif
 }
 
-bool Game::stream()
+void Game::stream()
 {
-#ifdef __PROFILE_GAME
-	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "streaming";
 #endif
 
-#ifdef __PROFILE_GAME
-	u32 streamProcessed = GameState::stream(this->currentState);
+	GameState::stream(this->currentState);
 
-	if(_updateProfiling)
-	{
-		_streamingProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_streamingTotalTime += _streamingProcessTime;
-		_streamingHighestTime = _streamingHighestTime < _streamingProcessTime ? _streamingProcessTime : _streamingHighestTime;
-	}
-
-	return streamProcessed;
-#else
-	return GameState::stream(this->currentState);
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), "Streaming");
 #endif
 }
 
@@ -1043,20 +802,6 @@ void Game::updateFrameRate()
 		}
 #endif
 
-#ifdef __SHOW_GAME_PROFILING
-		if(_updateProfiling)
-		{
-			Game::showProfiling(this, 1, 0);
-			Game::resetProfiling(this);
-			FrameRate::print(FrameRate::getInstance(), 29, 0);
-		}
-#else
-#ifdef __PROFILE_GAME
-		if(_updateProfiling)
-		{
-			Game::resetProfiling(this);
-		}
-#endif
 #ifdef __SHOW_STREAMING_PROFILING
 
 		if(!Game::isInSpecialMode(this))
@@ -1066,7 +811,6 @@ void Game::updateFrameRate()
 		}
 #endif
 
-#endif
 		this->gameFrameTotalTime = 0;
 
 #ifdef __DEBUG
@@ -1108,10 +852,6 @@ void Game::updateFrameRate()
 #endif
 		//reset frame rate counters
 		FrameRate::reset(this->frameRate);
-
-#ifdef __PROFILE_GAME
-		Game::resetCurrentFrameProfiling(this, TimerManager::getMillisecondsElapsed(this->timerManager));
-#endif
 	}
 
 	// Increase the fps counter
@@ -1137,18 +877,11 @@ void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
 
-#ifdef __PROFILE_GAME
-	if(this->nextFrameStarted)
-	{
-		_tornGameFrameCount++;
-	}
-#else
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	if(this->nextFrameStarted)
 	{
 		++_tornGameFrameCount;
 	}
-#endif
 #endif
 }
 
@@ -1160,6 +893,9 @@ bool Game::hasCurrentFrameEnded()
 
 void Game::run()
 {
+#ifdef __ENABLE_PROFILER
+	Profiler::start(Profiler::getInstance());
+#endif
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
@@ -1511,492 +1247,7 @@ void Game::saveProcessNameDuringXPEND()
 	}
 #endif
 }
-
 #endif
-
-#ifdef __SHOW_GAME_PROFILING
-void Game::showProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
-{
-	ASSERT(this, "Game::showProfiling: this null");
-
-	_updateProfiling = false;
-
-	int xDisplacement = 32;
-
-	Printing printing = Printing::getInstance();
-
-	Printing::resetCoordinates(printing);
-
-	Printing::text(printing, "PROFILING", x, y++, NULL);
-
-	Printing::text(printing, "Last game frame's info        (ms)", x, ++y, NULL);
-	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Real duration:", x, ++y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameRealDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Average real duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameDurationAverage, x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Average effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Highest effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Torn frames count:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _tornGameFrameCount, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "                                                ", x, y, NULL);
-	if(_processNameDuringFRAMESTART)
-	{
-		Printing::text(printing, "Process during FRAMESTART:", x, y, NULL);
-		Printing::text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
-	}
-	Printing::text(printing, "                                                ", x, y, NULL);
-	if(_processNameDuringXPEND)
-	{
-		Printing::text(printing, "Process during XPEND:", x, y, NULL);
-		Printing::text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
-	}
-
-	int xDisplacement2 = 7;
-
-#ifdef __SHOW_GAME_DETAILED_PROFILING
-
-	Printing::text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
-
-	Printing::text(printing, "                              total highest", x, ++y, NULL);
-
-	int processNumber = 1;
-	Printing::text(printing, "  Rendering:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _renderingTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _renderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Updating visuals:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _synchronizeGraphicsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _synchronizeGraphicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Handling input:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _processUserInputTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _processUserInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Updating physics:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Transforming:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Processing collisions:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Updating logic:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Processing messages:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "  Streaming:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _streamingTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-#endif
-
-	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing::text(printing, "Real processing time:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _waitForFrameStartTotalTime + _renderingTotalTime + _synchronizeGraphicsTotalTime + _processUserInputTotalTime + _dispatchDelayedMessageTotalTime + _updateLogicTotalTime + _streamingTotalTime + _updatePhysicsTotalTime + _updateTransformationsTotalTime + _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _renderingHighestTime + _synchronizeGraphicsHighestTime + _updateLogicHighestTime + _streamingHighestTime + _updatePhysicsHighestTime + _updateTransformationsHighestTime + _processUserInputHighestTime + _dispatchDelayedMessageHighestTime + _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
-
-	Printing::text(printing, "Effective processing time:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, this->gameFrameTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
-}
-#endif
-
-#ifdef __PROFILE_GAME
-void Game::showCurrentGameFrameProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
-{
-	ASSERT(this, "Game::showCurrentGameFrameProfiling: this null");
-
-	_updateProfiling = false;
-
-	Printing printing = Printing::getInstance();
-
-	int xDisplacement = 32;
-
-	Printing::resetCoordinates(printing);
-
-	Printing::text(printing, "PROFILING", x, y++, NULL);
-
-	Printing::text(printing, "Current game frame's info        (ms)", x, ++y, NULL);
-	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Process during FRAMESTART:", x, y, NULL);
-
-	if(_processNameDuringFRAMESTART)
-	{
-		Printing::text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
-	}
-	else
-	{
-		Printing::text(printing, "                      ", x + xDisplacement, y++, NULL);
-	}
-
-	Printing::text(printing, "                                                ", x, y, NULL);
-
-	Printing::text(printing, "Process during XPEND:", x, y, NULL);
-
-	if(_processNameDuringXPEND)
-	{
-		Printing::text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
-	}
-	else
-	{
-		Printing::text(printing, "                      ", x + xDisplacement, y++, NULL);
-	}
-
-	Printing::text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
-
-	int processNumber = 1;
-	Printing::text(printing, "  Rendering:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _renderingProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Updating visuals:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _synchronizeGraphicsProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Handling input:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _processUserInputProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Updating physics:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updatePhysicsProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Transforming:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updateTransformationsProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Processing collisions:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _processingCollisionsProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Updating logic:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _updateLogicProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Processing messages:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _dispatchDelayedMessageProcessTime, x + xDisplacement, y, NULL);
-
-	Printing::text(printing, "  Streaming:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, processNumber, x, y, NULL);
-	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing::int(printing, _streamingProcessTime, x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing::text(printing, "Real processing time:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _renderingProcessTime +
-							_synchronizeGraphicsProcessTime +
-							_processUserInputProcessTime +
-							_updatePhysicsProcessTime +
-							_updateTransformationsProcessTime +
-							_processingCollisionsProcessTime +
-							_updateLogicProcessTime +
-							_dispatchDelayedMessageProcessTime +
-							_streamingProcessTime,
-							x + xDisplacement, y, NULL);
-
-
-#ifdef __DIMM_FOR_PROFILING
-		_vipRegisters[__GPLT0] = 0x50;
-		_vipRegisters[__GPLT1] = 0x50;
-		_vipRegisters[__GPLT2] = 0x54;
-		_vipRegisters[__GPLT3] = 0x54;
-		_vipRegisters[__JPLT0] = 0x54;
-		_vipRegisters[__JPLT1] = 0x54;
-		_vipRegisters[__JPLT2] = 0x54;
-		_vipRegisters[__JPLT3] = 0x54;
-
-		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-#endif
-}
-#endif
-
-void Game::showLastGameFrameProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
-{
-	ASSERT(this, "Game::showLastGameFrameProfiling: this null");
-
-#ifdef __PROFILE_GAME
-
-	int xDisplacement = 32;
-
-	Printing printing = Printing::getInstance();
-
-	Printing::text(printing, "PROFILING", x, y++, NULL);
-
-	Printing::text(printing, "Last game frame's info (ms)", x, ++y, NULL);
-	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Real duration:", x, ++y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameRealDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Average real duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Average effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Highest effective duration:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing::text(printing, "Torn frames count:", x, y, NULL);
-	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousTornGameFrameCount, x + xDisplacement, y++, NULL);
-
-	Printing::text(printing, "Processes' duration (ms in sec)", x, ++y, NULL);
-
-	int xDisplacement2 = 7;
-
-	Printing::text(printing, "                              total highest", x, ++y, NULL);
-
-	Printing::text(printing, "Rendering:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousRenderingTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousRenderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Updating visuals:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Handling input:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousHandleInputTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Updating physics:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Transforming:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Processing collisions:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Updating logic:     ", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Updating sound:     ", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateSoundTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousUpdateSoundHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Processing messages:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Streaming:", x, y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousStreamingTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing::text(printing, "Real processing time:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousUpdateSoundTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousUpdateSoundHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
-
-	Printing::text(printing, "Effective processing time:", x, ++y, NULL);
-	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameTotalTime, x + xDisplacement, y, NULL);
-	Printing::int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
-#endif
-}
-
-void Game::resetCurrentFrameProfiling(s32 gameFrameDuration __attribute__ ((unused)))
-{
-	ASSERT(this, "Game::showProfiling: this null");
-
-#ifdef __PROFILE_GAME
-/*
-	if(_gameFrameHighestEffectiveDuration < gameFrameDuration)
-	{
-	//	_renderingHighestTime = _renderingProcessTime;
-		_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageProcessTime;
-		_processUserInputHighestTime = _processUserInputProcessTime;
-		_updateLogicHighestTime = _updateLogicProcessTime;
-		_synchronizeGraphicsHighestTime = _synchronizeGraphicsProcessTime;
-		_updatePhysicsHighestTime = _updatePhysicsProcessTime;
-		_updateTransformationsHighestTime = _updateTransformationsProcessTime;
-		_processingCollisionsHighestTime = _processingCollisionsProcessTime;
-		_streamingHighestTime = _streamingProcessTime;
-	}
-*/
-	_renderingProcessTimeHelper = 0;
-	_renderingProcessTime = 0;
-	_synchronizeGraphicsProcessTime = 0;
-	_updateLogicProcessTime = 0;
-	_streamingProcessTime = 0;
-	_updatePhysicsProcessTime = 0;
-	_updateTransformationsProcessTime = 0;
-	_processUserInputProcessTime = 0;
-	_dispatchDelayedMessageProcessTime = 0;
-	_processingCollisionsProcessTime = 0;
-
-#endif
-}
-
-void Game::resetProfiling()
-{
-	ASSERT(this, "Game::resetProfiling: this null");
-
-#ifdef __PROFILE_GAME
-
-	_previousGameFrameTotalTime = this->gameFrameTotalTime;
-	_previousGameFrameHighestEffectiveDuration = _gameFrameHighestEffectiveDuration;
-
-	_previousGameFrameRealDuration = _gameFrameRealDuration;
-	_previousGameFrameDurationAverage = _gameFrameDurationAverage;
-	_previousGameFrameEffectiveDuration = _gameFrameEffectiveDuration;
-	_previousGameFrameEffectiveDurationAverage = _gameFrameEffectiveDurationAverage;
-	_previousTornGameFrameCount = _tornGameFrameCount;
-
-	_previousWaitForFrameStartTotalTime = _waitForFrameStartTotalTime;
-	_previousRenderingTotalTime = _renderingTotalTime;
-	_previousUpdateVisualsTotalTime = _synchronizeGraphicsTotalTime;
-	_previousUpdateLogicTotalTime = _updateLogicTotalTime;
-	_previousUpdateSoundTotalTime = _updateSoundTotalTime;
-	_previousUpdatePhysicsTotalTime = _updatePhysicsTotalTime;
-	_previousUpdateTransformationsTotalTime = _updateTransformationsTotalTime;
-	_previousStreamingTotalTime = _streamingTotalTime;
-	_previousHandleInputTotalTime = _processUserInputTotalTime;
-	_previousDispatchDelayedMessageTotalTime = _dispatchDelayedMessageTotalTime;
-	_previousProcessCollisionsTotalTime = _processingCollisionsTotalTime;
-
-	_previousRenderingHighestTime = _renderingHighestTime;
-	_previousUpdateVisualsHighestTime = _synchronizeGraphicsHighestTime;
-	_previousUpdateLogicHighestTime = _updateLogicHighestTime;
-	_previousUpdateSoundHighestTime = _updateSoundHighestTime;
-	_previousUpdatePhysicsHighestTime = _updatePhysicsHighestTime;
-	_previousUpdateTransformationsHighestTime = _updateTransformationsHighestTime;
-	_previousStreamingHighestTime = _streamingHighestTime;
-	_previousHandleInputHighestTime = _processUserInputHighestTime;
-	_previousDispatchDelayedMessageHighestTime = _dispatchDelayedMessageHighestTime;
-	_previousProcessCollisionsHighestTime = _processingCollisionsHighestTime;
-
-	_gameFrameRealDuration = 0;
-	_gameFrameDurationAverage = 0;
-	_gameFrameEffectiveDuration = 0;
-	_gameFrameEffectiveDurationAverage = 0;
-	_tornGameFrameCount = 0;
-
-	_waitForFrameStartTotalTime = 0;
-	_renderingTotalTime = 0;
-	_synchronizeGraphicsTotalTime = 0;
-	_updateLogicTotalTime = 0;
-	_updateSoundTotalTime = 0;
-	_updatePhysicsTotalTime = 0;
-	_updateTransformationsTotalTime = 0;
-	_streamingTotalTime = 0;
-	_processUserInputTotalTime = 0;
-	_dispatchDelayedMessageTotalTime = 0;
-	_processingCollisionsTotalTime = 0;
-
-	_renderingHighestTime = 0;
-	_synchronizeGraphicsHighestTime = 0;
-	_updateLogicHighestTime = 0;
-	_updatePhysicsHighestTime = 0;
-	_updateTransformationsHighestTime = 0;
-	_streamingHighestTime = 0;
-	_processUserInputHighestTime = 0;
-	_dispatchDelayedMessageHighestTime = 0;
-	_processingCollisionsHighestTime = 0;
-
-	_renderingProcessTime = 0;
-
-	_gameFrameHighestEffectiveDuration = 0;
-
-	_processNameDuringFRAMESTART = NULL;
-	_processNameDuringXPEND = NULL;
-#endif
-}
 
 /**
  * Register the current auto pause state. Use NULL if no state.
@@ -2033,7 +1284,7 @@ long Game::getRandomSeed()
 	return this->randomSeed;
 }
 
-#ifdef __TOOLS
+#ifdef __ENABLE_PROFILER
 void Game::startProfiling()
 {
 	Profiler::initialize(Profiler::getInstance());

@@ -19,7 +19,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __TOOLS
+#ifdef __ENABLE_PROFILER
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,10 +70,10 @@ TextureROMSpec PROFILING_IM_TX =
 	ProfilingMap,
 
 	// cols (max 64)
-	1,
+	32,
 
 	// rows (max 64)
-	28,
+	20,
 
 	// padding for affine/hbias transformations (cols, rows)
 	{0, 0},
@@ -121,7 +121,7 @@ TextureROMSpec PROFILING_IM_SHADOW_TX =
 	ProfilingShadowMap,
 
 	// cols (max 64)
-	3,
+	48,
 
 	// rows (max 64)
 	28,
@@ -138,12 +138,6 @@ TextureROMSpec PROFILING_IM_SHADOW_TX =
 	__PROFILING_SHADOW_PALETTE,
 
 	// recyclable
-	false,
-
-	// vertical flip
-	false,
-
-	// horizontal flip
 	false,
 
 	// vertical flip
@@ -211,7 +205,7 @@ BgmapSpriteROMSpec PROFILING_IM_SHADOW_SP =
 SpriteROMSpec* const PROFILING_IM_SPS[] =
 {
 	(SpriteROMSpec*)&PROFILING_IM_SP,
-	(SpriteROMSpec*)&PROFILING_IM_SHADOW_SP,
+//	(SpriteROMSpec*)&PROFILING_IM_SHADOW_SP,
 	NULL
 };
 
@@ -226,9 +220,6 @@ EntityROMSpec PROFILING_IM =
 	// sprites
 	(SpriteSpec**)PROFILING_IM_SPS,
 
-	// use z displacement in projection
-	false,
-			
 	// use z displacement in projection
 	false,
 			

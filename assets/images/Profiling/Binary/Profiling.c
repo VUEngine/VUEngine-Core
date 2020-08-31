@@ -6,6 +6,12 @@ const unsigned int ProfilingTiles[] __attribute__((aligned(4))) =
 {
 //	321321321
 //	1111 1010 1010 0101
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+
+
 	0xFAA5FAA5,
 	0xFAA5FAA5,
 	0xFAA5FAA5,

@@ -28,18 +28,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Sprite.h>
+#include <TimerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PROFILER_TOTAL_AVAILABLE_PALETTES		9
+#define __ENABLE_PROFILER_TOTAL_PROCESSES				9
 #define __CHAR_PROFILING						"\x90"
 #define __PROFILING_PALETTE						3
 #define __PROFILING_SHADOW_PALETTE				2
-
+#define __ENABLE_PROFILER_SKIP_FRAMES					10
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -48,16 +48,23 @@
 /// @ingroup hardware
 singleton class Profiler : Object
 {
-	Sprite profilingSprite;
-	u8 paletteValues[__PROFILER_TOTAL_AVAILABLE_PALETTES];
-	u8 currentPeletteIndex;
+	TimerManager timerManager;
+	float timeProportion;
+	float totalTime;
+	u32 timePerInterruptInMS;
+	u16 timerCounter;
+	u16 previousTimerCounter;
+	u8 currentProfilingProcess;
 	bool initialized;
+	bool printedProcessesNames;
+	u8 skipFrames;
 
 	/// @publicsection
 	static Profiler getInstance();
 	void initialize();
+	void reset();
 	void start();
-	void end();
+	void lap(const char* processName);
 }
 
 #endif
