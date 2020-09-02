@@ -358,7 +358,6 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	if(decimal)
 	{
 		int auxDecimal = decimal;
-		int displacement = 0;
 
 		while(0 == (auxDecimal / 10))
 		{
