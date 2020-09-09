@@ -847,7 +847,7 @@ void Game::updateFrameRate()
 		if(!Game::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
-			HardwareManager::printStackStatus(HardwareManager::getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 		}
 #endif
 		//reset frame rate counters
