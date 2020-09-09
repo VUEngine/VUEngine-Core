@@ -146,7 +146,6 @@ In alphabetical order:
 	Adam Nelson
 	Alec Kafka
 	Amos Bieler
-	Andres Gaetan
 	Austin Hoople
 	Benjamin Stevens
 	Bernardo Compagnoni
@@ -156,17 +155,18 @@ In alphabetical order:
 	Brie Hebert
 	Candi's Classic Game Shrine
 	Cesar Henzelin
-	chairodactyl 
-	Chris
+	chairodactyl
+	Chris Garland
 	Daniel Lhota
 	Dave Sheldon
 	David Baisley
 	David Green
 	Domenic Umberto Raso
+	eatberries
 	Eric Freeman
 	Graham Dawes
 	Griffin Robinson
-	IanelGreenleaf 
+	IanelGreenleaf
 	Jeffrey Kauffman
 	Jesse Levine
 	Jon Zrostlik
@@ -180,10 +180,10 @@ In alphabetical order:
 	Mattison Mozingo
 	Michael Ortega
 	Mike Boodle
-	NeGiZON 
+	NeGiZON
 	Nektarios Moulianakis
-	norty 
-	NyTR0S96 
+	norty
+	NyTR0S96
 	Patrick Fenton
 	Patrick-VB
 	Peter Fields
@@ -196,7 +196,8 @@ In alphabetical order:
 	Simon Williams
 	Steven Hagelgans
 	Tero Piiroinen
-	Tony 
+	Tony
 	Troy Bonneau
 	tydyedsyko
-	VectrexRoli 
+	VectrexRoli
+
