@@ -310,6 +310,10 @@ void Texture::update()
 void Texture::rewrite()
 {
 	this->status = this->status > kTexturePendingRewriting ? kTexturePendingRewriting : this->status;
+
+	// Prepare the texture right away just in case the call initiates
+	// at a defragmentation process
+	Texture::prepare(this);
 }
 
 /**

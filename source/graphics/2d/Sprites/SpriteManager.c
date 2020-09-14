@@ -82,7 +82,6 @@ void SpriteManager::constructor()
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
 	this->texturesToUpdate = NULL;
-	this->texturesPendingUpdate = NULL;
 	this->specialSprites = NULL;
 
 	this->cyclesToWaitForSpriteTextureWriting = 0;
@@ -151,12 +150,6 @@ void SpriteManager::cleanUp()
 		this->texturesToUpdate = NULL;
 	}
 
-	if(!isDeleted(this->texturesPendingUpdate))
-	{
-		delete this->texturesPendingUpdate;
-		this->texturesPendingUpdate = NULL;
-	}
-
 	if(!isDeleted(this->specialSprites))
 	{
 		delete this->specialSprites;
@@ -187,7 +180,6 @@ void SpriteManager::reset()
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
 	this->texturesToUpdate = new VirtualList();
-	this->texturesPendingUpdate = new VirtualList();
 	this->specialSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
@@ -520,14 +512,16 @@ void SpriteManager::writeTextures()
 
 void SpriteManager::updateTexture(Texture texture)
 {
-	if(!isDeleted(texture) && !VirtualList::find(this->texturesPendingUpdate, texture))
+	if(!isDeleted(texture) && !VirtualList::find(this->texturesToUpdate, texture))
 	{
-		VirtualList::pushBack(this->texturesPendingUpdate, texture);
+		VirtualList::pushBack(this->texturesToUpdate, texture);
 	}
 }
 
 void SpriteManager::writeGraphicsToDRAM()
 {
+	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
+
 	for(VirtualNode node = this->texturesToUpdate->head; node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
@@ -567,13 +561,7 @@ void SpriteManager::writeDRAM()
  */
 void SpriteManager::render()
 {
-	VirtualList::copy(this->texturesToUpdate, this->texturesPendingUpdate);
-	VirtualList::clear(this->texturesPendingUpdate);
-
-	if(!CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance()))
-	{
-		ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
-	}
+	ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 
 	SpriteManager::sortProgressively(this);
 
