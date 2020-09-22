@@ -49,6 +49,7 @@ class VirtualCircularList : Object
 	VirtualNode begin();
 	void clear();
 	void copy(VirtualCircularList sourceList);
+	void reverse(VirtualCircularList sourceList);
 	VirtualNode end();
 	VirtualNode find(const void* const dataPointer);
 	void* front();

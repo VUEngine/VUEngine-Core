@@ -565,6 +565,32 @@ void VirtualList::substract(VirtualList sourceList)
 }
 
 /**
+ * Copy source list's elements in reverse order
+ *
+ * @param sourceList
+ */
+void VirtualList::reverse(VirtualList sourceList)
+{
+#ifdef __DEBUG
+	int counter = 0;
+#endif
+
+	VirtualNode node = sourceList->head;
+
+	VirtualList::clear(this);
+
+	while(node)
+	{
+		// add next node
+		VirtualList::pushFront(this, node->data);
+		// move to next node
+		node = node->next;
+
+		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
+	}
+}
+
+/**
  * Retrieve list's head's address
  *
  * @return			Node
