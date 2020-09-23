@@ -225,7 +225,9 @@ void Game::initialize()
 	HardwareManager::enableInterrupts();
 
 	// Enable communications
+#ifdef __ENABLE_COMMUNICATIONS
 	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
+#endif
 }
 
 bool Game::updateSpecialProcesses()
