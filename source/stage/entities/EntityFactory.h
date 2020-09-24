@@ -83,7 +83,7 @@ typedef const EntitySpec EntityROMSpec;
 
 
 // an entity associated with a position
-typedef const struct PositionedEntity
+typedef struct PositionedEntity
 {
 	// pointer to the entity spec in ROM
 	EntitySpec* entitySpec;
