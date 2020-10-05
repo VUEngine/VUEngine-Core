@@ -35,7 +35,19 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ENABLE_PROFILER_SKIP_FRAMES					25
+#define PROFILER_PROCESS_NAME_CAMERA				"CAMERA"
+#define PROFILER_PROCESS_NAME_COLLISIONS			"COLLISIONS"
+#define PROFILER_PROCESS_NAME_GRAPHICS				"GRAPHICS"
+#define PROFILER_PROCESS_NAME_INPUT					"INPUT"
+#define PROFILER_PROCESS_NAME_LOGIC					"LOGIC"
+#define PROFILER_PROCESS_NAME_MESSAGES				"MESSAGES"
+#define PROFILER_PROCESS_NAME_PHYSICS				"PHYSICS"
+#define PROFILER_PROCESS_NAME_SOUNDS				"SOUNDS"
+#define PROFILER_PROCESS_NAME_STREAMING				"STREAMING"
+#define PROFILER_PROCESS_NAME_TRANSFORMS			"TRANSFORMS"
+
+#define __ENABLE_PROFILER_SKIP_FRAMES				25
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION

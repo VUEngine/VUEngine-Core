@@ -145,6 +145,8 @@ void Profiler::start()
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
 	Printing::clear(Printing::getInstance());
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 27, NULL);
 	PRINT_TEXT("PROFILER", 1, 0);
 
 	this->printedProcessesNames = true;
@@ -199,23 +201,23 @@ void Profiler::lap(const char* processName)
 
 	u32 elapsedTicks = this->previousTimerCounter - currentTimerCounter;
 	float elapsedTime = elapsedTicks * this->timeProportion;
-	float gameFrameTimePercentaje = (elapsedTime * 100) / this->timePerInterruptInMS;
+	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerInterruptInMS;
 
 	this->totalTime += elapsedTime;
 
 	int columnTableEntries = 96;
 	u8 value = 0;
-	
+
 	if(this->currentProfilingProcess % 2)
 	{
-		value = 8;
+		value = 1;
 	}
 	else
 	{
-		value = 12;
+		value = 16;
 	}
-	
-	int entries = (int)(((columnTableEntries * gameFrameTimePercentaje) / (float)100) + 0.5f) * 4;
+
+	int entries = (int)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
 
 	entries = (entries + (entries % 8)) / 4;
 
@@ -232,13 +234,24 @@ void Profiler::lap(const char* processName)
 	int printingColumn = this->lastLapIndex / 2;
 
 	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	PRINT_TEXT(processName, printingColumn, 4);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), processName, printingColumn, 26, "Profiler");
 
 	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	PRINT_FLOAT(elapsedTime, printingColumn, 17);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::float(Printing::getInstance(), elapsedTime, printingColumn, 14 + (elapsedTime >= 10), "Profiler");
 
 	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	PRINT_FLOAT(gameFrameTimePercentaje, printingColumn, 22);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), ":;", printingColumn, 11, "Profiler"); // "ms"
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::float(Printing::getInstance(), gameFrameTimePercentage, printingColumn, 8 + (gameFrameTimePercentage >= 10), "Profiler");
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), "/", printingColumn, 5, "Profiler"); // "%"
 
 	this->lastLapIndex += entries;
 

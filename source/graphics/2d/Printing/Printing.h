@@ -112,6 +112,15 @@ enum PrintingOrientation
 };
 
 /**
+ * Print direction
+ */
+enum PrintingDirection
+{
+	kPrintingDirectionLTR = 0,
+	kPrintingDirectionRTL
+};
+
+/**
  * Size of a font's characters (in chars)
  *
  * @memberof 	Printing
@@ -195,30 +204,32 @@ singleton class Printing : Object
 
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
-	// printing orientation
-	u32 orientation;
 	// x coordinate for printing WORLD
 	s16 gx;
 	// y coordinate for printing WORLD
 	s16 gy;
-	// parallax value for printing WORLD
-	s8 gp;
 	// x coordinate for printing BGMAP
 	s16 mx;
 	// y coordinate for printing BGMAP
 	s16 my;
-	// parallax value for printing BGMAP
-	s8 mp;
 	// print WORLD's width
 	u16 w;
 	// print WORLD's height
 	u16 h;
+	// parallax value for printing WORLD
+	s8 gp;
+	// parallax value for printing BGMAP
+	s8 mp;
 	// Printing mode (Default or Debug)
 	u8 mode;
 	// Palette to use for printing
 	u8 palette;
 	// Bgmap segment for printing
 	u8 printingBgmapSegment;
+	// printing orientation
+	u8 orientation;
+	// printing direction
+	u8 direction;
 
 	/// @publicsection
 
@@ -322,7 +333,13 @@ singleton class Printing : Object
      * Sets the orientation for the following call to print.
 	 * Resets its self automatically to horizonal.
      */
-	void setOrientation(u32 value);
+	void setOrientation(u8 value);
+
+	/**
+     * Sets the direction for the following call to print.
+	 * Resets its self automatically to LTR (Left to Right).
+     */
+	void setDirection(u8 value);
 
 	/**
 	 * Reset the coordinates of the WORLD used for printing

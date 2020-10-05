@@ -87,7 +87,7 @@ void Tool::dimmGame()
 	_vipRegisters[__JPLT2] = 0x50;
 	_vipRegisters[__JPLT3] = 0x50;
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0x90;
 }
 
 void Tool::lightUpGame()

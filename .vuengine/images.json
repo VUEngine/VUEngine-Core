@@ -2,6 +2,9 @@
 	"folders": {
 		"VUEngineFont": {
 			"template": "font"
+		},
+		"VUEngineProfilerFont": {
+			"template": "font"
 		}
 	},
 	"templates": {

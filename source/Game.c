@@ -556,7 +556,7 @@ u32 Game::processUserInput()
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), "Input");
+		Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_INPUT);
 #endif
 		return false;
 	}
@@ -582,7 +582,7 @@ u32 Game::processUserInput()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Input");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_INPUT);
 #endif
 
 	return userInput.pressedKey | userInput.releasedKey;
@@ -607,7 +607,7 @@ void Game::dispatchDelayedMessages()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Messages");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_MESSAGES);
 #endif
 
 #endif
@@ -634,7 +634,7 @@ void Game::updateLogic()
 	StateMachine::update(this->stateMachine);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Logic");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_LOGIC);
 #endif
 }
 
@@ -648,7 +648,7 @@ void Game::updateSound()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Sounds");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_SOUNDS);
 #endif
 }
 
@@ -670,7 +670,7 @@ void Game::synchronizeGraphics()
 	GameState::synchronizeGraphics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Graphics");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_GRAPHICS);
 #endif
 }
 
@@ -685,7 +685,7 @@ void Game::updatePhysics()
 	GameState::updatePhysics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Physics");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_PHYSICS);
 #endif
 }
 
@@ -706,7 +706,7 @@ void Game::focusCamera()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Camera");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_CAMERA);
 #endif
 
 }
@@ -721,7 +721,7 @@ void Game::updateTransformations()
 	GameState::transform(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Transforms");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_TRANSFORMS);
 #endif
 }
 
@@ -736,7 +736,7 @@ void Game::updateCollisions()
 	GameState::processCollisions(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Collisions");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_COLLISIONS);
 #endif
 }
 
@@ -749,7 +749,7 @@ void Game::stream()
 	GameState::stream(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Streaming");
+	Profiler::lap(Profiler::getInstance(), PROFILER_PROCESS_NAME_STREAMING);
 #endif
 }
 
