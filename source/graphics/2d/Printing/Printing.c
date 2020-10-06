@@ -611,7 +611,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
 		// do not allow printing outside of the visible area, since that would corrupt the param table
-		if(y >= 28)
+		if(y > 27/* || y < 0*/)
 		{
 			break;
 		}
@@ -628,7 +628,14 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 			// tab
 			case 9:
 
-				x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
+				if(kPrintingOrientationHorizontal == this->orientation)
+				{
+					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
+				}
+				else
+				{
+					y = (y / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.y;
+				}
 				break;
 
 			// carriage return
@@ -671,23 +678,24 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 					}
 				}
 
-				temp = fontData->fontSpec->fontSize.x;
-				x = (this->direction == kPrintingDirectionLTR)
-					? x + temp
-					: x - temp;
-
-				if(x >= 48 || x < 0)
+				if(kPrintingOrientationHorizontal == this->orientation)
 				{
-					// wrap around when outside of the visible area
+					temp = fontData->fontSpec->fontSize.x;
+					x = (this->direction == kPrintingDirectionLTR)
+						? x + temp
+						: x - temp;
+				}
+				else
+				{
 					temp = fontData->fontSpec->fontSize.y;
 					y = (this->direction == kPrintingDirectionLTR)
 						? y + temp
 						: y - temp;
-					x = startColumn;
 				}
 
-				if(kPrintingOrientationVertical == this->orientation)
+				if(x >= 48/* || x < 0*/)
 				{
+					// wrap around when outside of the visible area
 					temp = fontData->fontSpec->fontSize.y;
 					y = (this->direction == kPrintingDirectionLTR)
 						? y + temp

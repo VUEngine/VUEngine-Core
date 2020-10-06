@@ -30,6 +30,7 @@
 #include <Game.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <Utilities.h>
 #include <debugConfig.h>
 
 
@@ -235,7 +236,7 @@ void Profiler::lap(const char* processName)
 
 	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
 	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::text(Printing::getInstance(), processName, printingColumn, 26, "Profiler");
+	Printing::text(Printing::getInstance(), /*Utilities::toUppercase(*/processName/*)*/, printingColumn, 26, "Profiler");
 
 	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
 	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
