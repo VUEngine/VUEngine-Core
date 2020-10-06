@@ -184,7 +184,7 @@ void Game::constructor()
 #endif
 
 	// to make debugging easier
-	this->lastProcessName = "start up";
+	this->lastProcessName = PROCESS_NAME_START_UP;
 
 	this->nextStateOperation = kSwapState;
 
@@ -246,7 +246,7 @@ void Game::debug()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = "end frame";
+		this->lastProcessName = PROCESS_NAME_END_FRAME;
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
@@ -361,7 +361,7 @@ void Game::setNextState(GameState state)
 		case kSwapState:
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "swapping state";
+			this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
 			if(this->currentState)
@@ -378,7 +378,7 @@ void Game::setNextState(GameState state)
 		case kPushState:
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "pushing state";
+			this->lastProcessName = PROCESS_NAME_STATE_PUSH;
 #endif
 			// Setup new state
 			StateMachine::pushState(this->stateMachine, (State)state);
@@ -387,7 +387,7 @@ void Game::setNextState(GameState state)
 		case kPopState:
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "popping state";
+			this->lastProcessName = PROCESS_NAME_STATE_POP;
 #endif
 
 			if(this->currentState)
@@ -556,13 +556,13 @@ u32 Game::processUserInput()
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), "Input");
+		Profiler::lap(Profiler::getInstance(), PROCESS_NAME_INPUT);
 #endif
 		return false;
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "input";
+	this->lastProcessName = PROCESS_NAME_INPUT;
 #endif
 
 	// poll the user's input
@@ -582,7 +582,7 @@ u32 Game::processUserInput()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Input");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_INPUT);
 #endif
 
 	return userInput.pressedKey | userInput.releasedKey;
@@ -591,7 +591,7 @@ u32 Game::processUserInput()
 void Game::dispatchDelayedMessages()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "messages";
+	this->lastProcessName = PROCESS_NAME_MESSAGES;
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
@@ -607,7 +607,7 @@ void Game::dispatchDelayedMessages()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Messages");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_MESSAGES);
 #endif
 
 #endif
@@ -627,14 +627,14 @@ void Game::updateLogic()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "logic";
+	this->lastProcessName = PROCESS_NAME_LOGIC;
 #endif
 
 	// update the game's logic
 	StateMachine::update(this->stateMachine);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Logic");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_LOGIC);
 #endif
 }
 
@@ -644,11 +644,11 @@ void Game::updateSound()
 	SoundManager::update(this->soundManager);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "sound";
+	this->lastProcessName = PROCESS_NAME_SOUND;
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Sounds");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_SOUND);
 #endif
 }
 
@@ -656,7 +656,7 @@ void Game::updateSound()
 void Game::synchronizeGraphics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "graphics";
+	this->lastProcessName = PROCESS_NAME_GRAPHICS;
 #endif
 
 #ifdef __TOOLS
@@ -670,7 +670,7 @@ void Game::synchronizeGraphics()
 	GameState::synchronizeGraphics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Graphics");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_GRAPHICS);
 #endif
 }
 
@@ -678,21 +678,21 @@ void Game::synchronizeGraphics()
 void Game::updatePhysics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "physics";
+	this->lastProcessName = PROCESS_NAME_PHYSICS;
 #endif
 
 	// simulate physics
 	GameState::updatePhysics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Physics");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_PHYSICS);
 #endif
 }
 
 void Game::focusCamera()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "camera";
+	this->lastProcessName = PROCESS_NAME_CAMERA;
 #endif
 
 #ifdef __TOOLS
@@ -706,7 +706,7 @@ void Game::focusCamera()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Camera");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_CAMERA);
 #endif
 
 }
@@ -714,14 +714,14 @@ void Game::focusCamera()
 void Game::updateTransformations()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "transforms";
+	this->lastProcessName = PROCESS_NAME_TRANSFORMS;
 #endif
 
 	// apply world transformations
 	GameState::transform(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Transforms");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_TRANSFORMS);
 #endif
 }
 
@@ -729,27 +729,27 @@ void Game::updateCollisions()
 {
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "collisions";
+	this->lastProcessName = PROCESS_NAME_COLLISIONS;
 #endif
 
 	// process collisions
 	GameState::processCollisions(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Collisions");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_COLLISIONS);
 #endif
 }
 
 void Game::stream()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "streaming";
+	this->lastProcessName = PROCESS_NAME_STREAMING;
 #endif
 
 	GameState::stream(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), "Streaming");
+	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_STREAMING);
 #endif
 }
 
@@ -758,7 +758,7 @@ void Game::checkForNewState()
 	if(this->nextState)
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = "new state";
+		this->lastProcessName = PROCESS_NAME_NEW_STATE;
 #endif
 		Game::setNextState(this, this->nextState);
 

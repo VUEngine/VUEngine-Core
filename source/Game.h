@@ -40,6 +40,28 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define PROCESS_NAME_CAMERA					"CAMERA"
+#define PROCESS_NAME_COLLISIONS				"COLLISIONS"
+#define PROCESS_NAME_END_FRAME				"END FRAME"
+#define PROCESS_NAME_GRAPHICS				"GRAPHICS"
+#define PROCESS_NAME_INPUT					"INPUT"
+#define PROCESS_NAME_LOGIC					"LOGIC"
+#define PROCESS_NAME_MESSAGES				"MESSAGES"
+#define PROCESS_NAME_NEW_STATE				"NEW STATE"
+#define PROCESS_NAME_PHYSICS				"PHYSICS"
+#define PROCESS_NAME_SOUND					"SOUND"
+#define PROCESS_NAME_STATE_POP				"POP STATE"
+#define PROCESS_NAME_STATE_PUSH				"PUSH STATE"
+#define PROCESS_NAME_STATE_SWAP				"SWAP STATE"
+#define PROCESS_NAME_START_UP				"START UP"
+#define PROCESS_NAME_STREAMING				"STREAMING"
+#define PROCESS_NAME_TRANSFORMS				"TRANSFORMS"
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 

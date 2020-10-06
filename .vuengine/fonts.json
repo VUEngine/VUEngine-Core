@@ -9,5 +9,16 @@
 			"x": 1,
 			"y": 1
 		}
+	},
+	{
+		"name": "Profiler",
+		"image": "VUEngineProfilerFont/VUEngineProfilerFont",
+		"offset": 46,
+		"characterCount": 45,
+		"charactersPerLine": 45,
+		"size": {
+			"x": 1,
+			"y": 1
+		}
 	}
 ]

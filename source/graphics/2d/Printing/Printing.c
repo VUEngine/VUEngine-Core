@@ -66,15 +66,10 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 	NULL,
 };
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 void Printing::constructor()
 {
@@ -86,6 +81,7 @@ void Printing::constructor()
 	this->palette = __PRINTING_PALETTE;
 	this->printingBgmapSegment = 0;
 	this->orientation = kPrintingOrientationHorizontal;
+	this->direction = kPrintingDirectionLTR;
 
 	Printing::reset(this);
 }
@@ -114,7 +110,7 @@ void Printing::reset()
 	this->h = __SCREEN_HEIGHT - 1;
 }
 
-void Printing::setOrientation(u32 value)
+void Printing::setOrientation(u8 value)
 {
 	this->orientation = value;
 
@@ -124,10 +120,28 @@ void Printing::setOrientation(u32 value)
 		case kPrintingOrientationVertical:
 
 			break;
-		
+
 		default:
 
 			this->orientation = kPrintingOrientationHorizontal;
+			break;
+	}
+}
+
+void Printing::setDirection(u8 value)
+{
+	this->direction = value;
+
+	switch(this->direction)
+	{
+		case kPrintingDirectionLTR:
+		case kPrintingDirectionRTL:
+
+			break;
+
+		default:
+
+			this->direction = kPrintingDirectionLTR;
 			break;
 	}
 }
@@ -147,7 +161,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	// Prevent VIP's interrupt from calling render during this process
 	HardwareManager::disableRendering(HardwareManager::getInstance());
 
-	// Since fonts' charsets will be released, there is no reason to keep 
+	// Since fonts' charsets will be released, there is no reason to keep
 	// anything in the printing area
 	Printing::clear(Printing::getInstance());
 
@@ -323,6 +337,7 @@ void Printing::int(int value, u8 x, u8 y, const char* font)
 	Printing::number(this, value, x, y, font);
 
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
@@ -330,6 +345,7 @@ void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
 
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 void Printing::float(float value, u8 x, u8 y, const char* font)
@@ -353,7 +369,7 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	int decimal = (int)(((float)__FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 100.f);
 	//int length = Utilities::intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
-	string[i++] = '.'; 
+	string[i++] = '.';
 
 	if(decimal)
 	{
@@ -362,7 +378,7 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 		while(0 == (auxDecimal / 10))
 		{
 			auxDecimal *= 10;
-			string[i++] = '0'; 
+			string[i++] = '0';
 		}
 
 		auxDecimal = decimal;
@@ -370,19 +386,20 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 		while(0 == (auxDecimal % 10))
 		{
 			auxDecimal /= 10;
-			string[i++] = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(auxDecimal))), 10, 1)[0]; 
+			string[i++] = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(auxDecimal))), 10, 1)[0];
 		}
 	}
 	else
 	{
-		string[i++] = '0'; 
+		string[i++] = '0';
 	}
 
-	string[i++] = 0; 
+	string[i++] = 0;
 
 	Printing::text(this, string, x, y, font);
 
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+	Printing::setDirection(this, kPrintingDirectionLTR);
 
 }
 
@@ -394,6 +411,7 @@ void Printing::text(const char* string, int x, int y, const char* font)
 	Printing::out(this, x, y, string, font);
 #endif
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 #ifdef __FORCE_PRINTING_LAYER
@@ -564,10 +582,10 @@ void Printing::render(u8 textLayer)
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
 {
-#ifdef __DEFAUL_FONT
+#ifdef __DEFAULT_FONT
 	if(NULL == font)
 	{
-		font = __DEFAUL_FONT;
+		font = __DEFAULT_FONT;
 	}
 #endif
 
@@ -575,9 +593,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	font = __FORCE_FONT;
 #endif
 
-	u32 i = 0;
-	u32 position = 0;
-	u32 startColumn = x;
+	u32 i = 0, position = 0, startColumn = x, temp = 0;
 	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 	u32 printingBgmap = this->printingBgmapSegment;
 
@@ -595,7 +611,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
 		// do not allow printing outside of the visible area, since that would corrupt the param table
-		if(y >= 28)
+		if(y > 27/* || y < 0*/)
 		{
 			break;
 		}
@@ -612,13 +628,23 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 			// tab
 			case 9:
 
-				x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
+				if(kPrintingOrientationHorizontal == this->orientation)
+				{
+					x = (x / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.x;
+				}
+				else
+				{
+					y = (y / __TAB_SIZE + 1) * __TAB_SIZE * fontData->fontSpec->fontSize.y;
+				}
 				break;
 
 			// carriage return
 			case 10:
 
-				y += fontData->fontSpec->fontSize.y;
+				temp = fontData->fontSpec->fontSize.y;
+				y = (this->direction == kPrintingDirectionLTR)
+					? y + temp
+					: y - temp;
 				x = startColumn;
 				break;
 
@@ -652,17 +678,28 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 					}
 				}
 
-				x += fontData->fontSpec->fontSize.x;
-				if(x >= 48)
+				if(kPrintingOrientationHorizontal == this->orientation)
 				{
-					// wrap around when outside of the visible area
-					y += fontData->fontSpec->fontSize.y;
-					x = startColumn;
+					temp = fontData->fontSpec->fontSize.x;
+					x = (this->direction == kPrintingDirectionLTR)
+						? x + temp
+						: x - temp;
+				}
+				else
+				{
+					temp = fontData->fontSpec->fontSize.y;
+					y = (this->direction == kPrintingDirectionLTR)
+						? y + temp
+						: y - temp;
 				}
 
-				if(kPrintingOrientationVertical == this->orientation)
+				if(x >= 48/* || x < 0*/)
 				{
-					y += fontData->fontSpec->fontSize.y;
+					// wrap around when outside of the visible area
+					temp = fontData->fontSpec->fontSize.y;
+					y = (this->direction == kPrintingDirectionLTR)
+						? y + temp
+						: y - temp;
 					x = startColumn;
 				}
 
