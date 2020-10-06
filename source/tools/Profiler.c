@@ -45,12 +45,12 @@ static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 
 	// brightness repeat values
 	{
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+		16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	}
 };
 
@@ -105,7 +105,7 @@ void Profiler::reset()
 
 	for(int i = 0; i < 96; i++)
 	{
-		profileBrightnessRepeatSpec.brightnessRepeat[i] = 2;
+		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
 }
 
@@ -117,18 +117,18 @@ void Profiler::initialize()
 	Profiler::reset(this);
 
 	this->initialized = true;
-/*
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x54;
-	_vipRegisters[__GPLT3] = 0x54;
-	_vipRegisters[__JPLT0] = 0x54;
-	_vipRegisters[__JPLT1] = 0x54;
-	_vipRegisters[__JPLT2] = 0x54;
-	_vipRegisters[__JPLT3] = 0x54;
+	/**/
+	_vipRegisters[__GPLT0] = 0b01010000;
+	_vipRegisters[__GPLT1] = 0b01010000;
+	_vipRegisters[__GPLT2] = 0b01010000;
+	_vipRegisters[__GPLT3] = 0b01010000;
+	_vipRegisters[__JPLT0] = 0b01010000;
+	_vipRegisters[__JPLT1] = 0b01010000;
+	_vipRegisters[__JPLT2] = 0b01010000;
+	_vipRegisters[__JPLT3] = 0b01010000;
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-	*/
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0b11100000;
+	/**/
 }
 
 void Profiler::start()
@@ -146,15 +146,11 @@ void Profiler::start()
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
 	Printing::clear(Printing::getInstance());
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 27, NULL);
-	PRINT_TEXT("PROFILER", 1, 0);
+	Printing::text(Printing::getInstance(), "================================================", 0, 27, "Profiler");
 
 	this->printedProcessesNames = true;
 
-	PRINT_TEXT("Total time  ms    %", 25, 1);
-	PRINT_FLOAT(this->totalTime, 25 + 11, 2);
-	PRINT_FLOAT((this->totalTime * 100) / this->timePerInterruptInMS, 25 + 11 + 5, 2);
+	Profiler::printValue(this, "TOTAL", this->totalTime, (this->totalTime * 100) / this->timePerInterruptInMS, 47);
 
 	this->currentProfilingProcess = 0;
 	this->previousTimerCounter = this->timerCounter;
@@ -179,8 +175,42 @@ void Profiler::end()
 
 	for(int i = 0; i < 96; i++)
 	{
-		profileBrightnessRepeatSpec.brightnessRepeat[i] = 2;
+		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
+}
+
+void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage, u8 column)
+{
+
+	if (column > 0)
+	{
+		Printing::text(Printing::getInstance(), ">", (column - 1), 27, "Profiler");
+	}
+	Printing::text(Printing::getInstance(), "<", column, 27, "Profiler");
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), "????????????????????", column, 26, "Profiler"); // "..."
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::float(Printing::getInstance(), elapsedTime, column, 14 + (elapsedTime >= 10), "Profiler");
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), ":;", column, 11, "Profiler"); // "ms"
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::float(Printing::getInstance(), gameFrameTimePercentage, column, 7 + (gameFrameTimePercentage >= 10) + (gameFrameTimePercentage >= 100), "Profiler");
+
+	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
+	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
+	Printing::text(Printing::getInstance(), "/", column, 4, "Profiler"); // "%"
 }
 
 void Profiler::lap(const char* processName)
@@ -206,12 +236,12 @@ void Profiler::lap(const char* processName)
 
 	this->totalTime += elapsedTime;
 
-	int columnTableEntries = 96;
+	int columnTableEntries = 96 - 2;
 	u8 value = 0;
 
 	if(this->currentProfilingProcess % 2)
 	{
-		value = 1;
+		value = 6;
 	}
 	else
 	{
@@ -232,27 +262,9 @@ void Profiler::lap(const char* processName)
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}
 
-	int printingColumn = this->lastLapIndex / 2;
+	u8 printingColumn = this->lastLapIndex / 2;
 
-	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::text(Printing::getInstance(), /*Utilities::toUppercase(*/processName/*)*/, printingColumn, 26, "Profiler");
-
-	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::float(Printing::getInstance(), elapsedTime, printingColumn, 14 + (elapsedTime >= 10), "Profiler");
-
-	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::text(Printing::getInstance(), ":;", printingColumn, 11, "Profiler"); // "ms"
-
-	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::float(Printing::getInstance(), gameFrameTimePercentage, printingColumn, 8 + (gameFrameTimePercentage >= 10), "Profiler");
-
-	Printing::setOrientation(Printing::getInstance(), kPrintingOrientationVertical);
-	Printing::setDirection(Printing::getInstance(), kPrintingDirectionRTL);
-	Printing::text(Printing::getInstance(), "/", printingColumn, 5, "Profiler"); // "%"
+	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
 
 	this->lastLapIndex += entries;
 
