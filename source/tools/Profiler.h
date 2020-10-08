@@ -48,14 +48,18 @@ singleton class Profiler : Object
 	TimerManager timerManager;
 	float timeProportion;
 	float totalTime;
-	u32 timePerInterruptInMS;
+	u32 timePerGameFrameInMS;
 	u16 timerCounter;
 	u16 previousTimerCounter;
 	u8 currentProfilingProcess;
+	bool started;
 	bool initialized;
 	bool printedProcessesNames;
 	u8 skipFrames;
 	u8 lastLapIndex;
+	bool xpend;
+	bool playedMIDISounds;
+	bool processedCommunications;
 
 	/// @publicsection
 	static Profiler getInstance();
@@ -63,6 +67,9 @@ singleton class Profiler : Object
 	void reset();
 	void start();
 	void lap(const char* processName);
+	void xpend();
+	void playedMIDISounds();
+	void processedCommunications();
 }
 
 #endif

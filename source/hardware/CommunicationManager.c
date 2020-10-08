@@ -31,6 +31,7 @@
 #include <Utilities.h>
 #include <VIPManager.h>
 #include <MessageDispatcher.h>
+#include <Profiler.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif
@@ -491,6 +492,9 @@ void CommunicationManager::processInterrupt()
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 					delete this->receivedData;
 					this->receivedData = this->asyncReceivedByte = NULL;
+#ifdef __ENABLE_PROFILER
+					Profiler::processedCommunications(Profiler::getInstance());
+#endif
 				}
 			}
 
@@ -519,6 +523,9 @@ void CommunicationManager::processInterrupt()
 					delete this->sentData;
 					this->sentData = NULL;
 					this->asyncSentByte = NULL;
+#ifdef __ENABLE_PROFILER
+					Profiler::processedCommunications(Profiler::getInstance());
+#endif
 				}
 			}
 
@@ -554,6 +561,10 @@ void CommunicationManager::processInterrupt()
 					this->receivedData = NULL;
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
+
+#ifdef __ENABLE_PROFILER
+					Profiler::processedCommunications(Profiler::getInstance());
+#endif
 				}
 			}
 

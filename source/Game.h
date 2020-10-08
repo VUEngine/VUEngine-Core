@@ -59,6 +59,7 @@
 #define PROCESS_NAME_START_UP				"START UP"
 #define PROCESS_NAME_STREAMING				"STREAMING"
 #define PROCESS_NAME_TRANSFORMS				"TRANSFORMS"
+#define PROCESS_NAME_RENDER					"RENDER"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -867,6 +867,13 @@ void Game::nextFrameStarted(u16 gameFrameDuration)
 {
 	this->nextFrameStarted = true;
 	this->gameFrameTotalTime += gameFrameDuration;
+
+#ifdef __ENABLE_PROFILER
+	if(this->currentFrameEnded)
+	{
+		Profiler::start(Profiler::getInstance());
+	}
+#endif
 }
 
 void Game::currentFrameStarted()
@@ -895,9 +902,6 @@ bool Game::hasCurrentFrameEnded()
 
 void Game::run()
 {
-#ifdef __ENABLE_PROFILER
-	Profiler::start(Profiler::getInstance());
-#endif
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 

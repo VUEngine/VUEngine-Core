@@ -64,6 +64,11 @@ extern BrightnessRepeatROMSpec DEFAULT_BRIGHTNESS_REPEAT;
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __ENABLE_PROFILER
+#undef __FORCE_VIP_SYNC
+#define __FORCE_VIP_SYNC
+#endif
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -281,6 +286,10 @@ void VIPManager::processInterrupt(u16 interrupt)
 				}
 
 				SpriteManager::render(_spriteManager);
+
+#ifdef __ENABLE_PROFILER
+				Profiler::lap(Profiler::getInstance(), PROCESS_NAME_RENDER);
+#endif
 				break;
 
 			case __XPEND:
@@ -324,6 +333,10 @@ void VIPManager::processInterrupt(u16 interrupt)
 				{
 					Debug::render(Debug::getInstance());
 				}
+#endif
+
+#ifdef __ENABLE_PROFILER
+				Profiler::xpend(Profiler::getInstance());
 #endif
 
 				this->processingXPEND = false;
