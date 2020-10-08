@@ -187,7 +187,7 @@ void Profiler::end()
 		return;
 	}
 
-	Profiler::finalLap(this, "HEADROOM");
+	Profiler::computeLap(this, "HEADROOM", true);
 
 	__SET_BRIGHT(2, 2, 2);
 
@@ -216,7 +216,7 @@ void Profiler::processedCommunications()
 	this->processedCommunications = true;
 }
 
-void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage, u8 column)
+void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage __attribute__((unused)), u8 column)
 {
 	if (column > 0)
 	{
@@ -284,69 +284,10 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 void Profiler::lap(const char* processName)
 {
-	if(!this->started)
-	{
-		return;
-	}
-
-	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
-	{
-		return;
-	}
-
-	TimerManager::enable(this->timerManager, false);
-	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
-
-	TimerManager::enable(this->timerManager, true);
-
-	if(this->previousTimerCounter < currentTimerCounter)
-	{
-		this->previousTimerCounter += this->timerCounter;
-	}
-
-	u32 elapsedTicks = this->previousTimerCounter - currentTimerCounter;
-	float elapsedTime = elapsedTicks * this->timeProportion;
-	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
-
-	this->totalTime += elapsedTime;
-
-	int columnTableEntries = 96 - 2;
-	u8 value = 0;
-
-	if(this->currentProfilingProcess % 2)
-	{
-		value = 6;
-	}
-	else
-	{
-		value = 16;
-	}
-
-	int entries = (int)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
-
-	entries = (entries + (entries % 8)) / 4;
-
-	if(2 > entries)
-	{
-		entries = 2;
-	}
-
-	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i < columnTableEntries; i++)
-	{
-		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
-	}
-
-	u8 printingColumn = this->lastLapIndex / 2;
-
-	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
-
-	this->lastLapIndex += entries;
-
-	this->previousTimerCounter = currentTimerCounter;
-	this->currentProfilingProcess++;
+	Profiler::computeLap(this, processName, false);
 }
 
-void Profiler::finalLap(const char* processName)
+void Profiler::computeLap(const char* processName, bool isHeadroom)
 {
 	if(!this->started)
 	{
@@ -368,7 +309,14 @@ void Profiler::finalLap(const char* processName)
 		this->previousTimerCounter += this->timerCounter;
 	}
 
-	float elapsedTime = 20 - this->totalTime;
+	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
+
+	if(!isHeadroom)
+	{
+		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
+		this->totalTime += elapsedTime;
+	}
+
 	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
 
 	int columnTableEntries = 96 - 2;
