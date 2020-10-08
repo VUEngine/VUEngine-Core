@@ -364,9 +364,6 @@ void VIPManager::processInterrupt(u16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-	// draw 3d objects
-	WireframeManager::drawWireframes(_wireframeManager);
-
 	for(VirtualNode node = this->postProcessingEffects->tail; !VIPManager::hasFrameStarted(this) && node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);

@@ -26,6 +26,8 @@
 
 #include <WireframeManager.h>
 #include <VirtualList.h>
+#include <SpatialObject.h>
+#include <Game.h>
 #include <debugUtilities.h>
 
 
@@ -97,6 +99,9 @@ void WireframeManager::register(Wireframe wireframe)
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
 		VirtualList::pushBack(this->wireframes, wireframe);
+
+		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+		Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
 	}
 }
 
@@ -110,6 +115,11 @@ void WireframeManager::remove(Wireframe wireframe)
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
 	VirtualList::removeElement(this->wireframes, wireframe);
+
+	if(0 == VirtualList::getSize(this->wireframes))
+	{
+		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+	}
 }
 
 /**
@@ -118,13 +128,17 @@ void WireframeManager::remove(Wireframe wireframe)
 void WireframeManager::reset()
 {
 	VirtualList::clear(this->wireframes);
+
+	Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
 }
 
 /**
  * Draw the wireframes to the frame buffers
  */
-void WireframeManager::drawWireframes()
+static void WireframeManager::drawWireframes(u32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
 {
+	WireframeManager this = WireframeManager::getInstance();
+
 	// comparing against the other shapes
 	VirtualNode node = this->wireframes->head;
 
