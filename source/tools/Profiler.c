@@ -218,11 +218,6 @@ void Profiler::processedCommunications()
 
 void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage, u8 column)
 {
-	if (column > 0)
-	{
-		Printing::text(_printing, ">", (column - 1), 27, "Profiler");
-	}
-
 	if(NULL == processName)
 	{
 		Printing::text(_printing, "<", column, 27, "Profiler");
@@ -231,37 +226,9 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 	{
 		Printing::text(_printing, "<", column, 27, "Profiler");
 
-//		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-//		Printing::setDirection(_printing, kPrintingDirectionRTL);
-//		Printing::text(_printing, "????????????????????", column, 26, "Profiler"); // "..."
-
-
-		int processNameRow = 26;
-
-		if(this->xpend)
-		{
-			//Printing::text(_printing, "X", column, processNameRow, "Profiler");
-			processNameRow--;
-			this->xpend = false;
-		}
-		
-		if(this->playedMIDISounds)
-		{
-			//Printing::text(_printing, "S", column, processNameRow, "Profiler");
-			processNameRow--;
-			this->playedMIDISounds = false;
-		}
-
-		if(this->processedCommunications)
-		{
-			//Printing::text(_printing, "C", column, processNameRow, "Profiler");
-			processNameRow--;
-			this->processedCommunications = false;
-		}
-		
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
-		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, processNameRow, "Profiler");
+		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
@@ -270,6 +237,30 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		Printing::text(_printing, ":;", column, 11, "Profiler"); // "ms"
+
+		u8 indicatorRow = 9;
+
+		if(this->xpend)
+		{
+			Printing::text(_printing, ">", column, indicatorRow, "Profiler"); // "(x)"
+			indicatorRow--;
+			this->xpend = false;
+		}
+
+		if(this->playedMIDISounds)
+		{
+			Printing::text(_printing, "?", column, indicatorRow, "Profiler"); // "(s)"
+			indicatorRow--;
+			this->playedMIDISounds = false;
+		}
+
+		if(this->processedCommunications)
+		{
+			Printing::text(_printing, "@", column, indicatorRow, "Profiler"); // "(c)"
+			indicatorRow--;
+			this->processedCommunications = false;
+		}
+
 /*
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
@@ -278,7 +269,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		Printing::text(_printing, "/", column, 4, "Profiler"); // "%"
-		*/
+*/
 	}
 }
 
