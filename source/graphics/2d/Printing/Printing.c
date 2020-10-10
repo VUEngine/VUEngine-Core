@@ -82,6 +82,7 @@ void Printing::constructor()
 	this->printingBgmapSegment = 0;
 	this->orientation = kPrintingOrientationHorizontal;
 	this->direction = kPrintingDirectionLTR;
+	this->lastUsedFontData = NULL;
 
 	Printing::reset(this);
 }
@@ -274,6 +275,8 @@ void Printing::releaseFonts()
 	}
 
 	VirtualList::clear(this->fonts);
+
+	this->lastUsedFontData = NULL;
 }
 
 FontData* Printing::getFontByName(const char* font)
@@ -286,6 +289,14 @@ FontData* Printing::getFontByName(const char* font)
 	}
 	else if(this->fonts)
 	{
+		if(NULL != this->lastUsedFontData)
+		{
+			if(!strcmp(this->lastUsedFontData->fontSpec->name, font))
+			{
+				return this->lastUsedFontData;
+			}
+		}
+
 		// set first defined font as default
 		result = VirtualList::front(this->fonts);
 
@@ -317,6 +328,8 @@ FontData* Printing::getFontByName(const char* font)
 		}
 	}
 
+	this->lastUsedFontData = result;
+	
 	return result;
 }
 

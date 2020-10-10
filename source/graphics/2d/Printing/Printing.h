@@ -204,6 +204,8 @@ singleton class Printing : Object
 
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
+	// Cache the last used font to speed up searchs
+	FontData* lastUsedFontData;
 	// x coordinate for printing WORLD
 	s16 gx;
 	// y coordinate for printing WORLD
