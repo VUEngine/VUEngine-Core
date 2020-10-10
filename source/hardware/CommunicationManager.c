@@ -493,7 +493,7 @@ void CommunicationManager::processInterrupt()
 					delete this->receivedData;
 					this->receivedData = this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
-					Profiler::processedCommunications(Profiler::getInstance());
+					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -524,7 +524,7 @@ void CommunicationManager::processInterrupt()
 					this->sentData = NULL;
 					this->asyncSentByte = NULL;
 #ifdef __ENABLE_PROFILER
-					Profiler::processedCommunications(Profiler::getInstance());
+					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}
@@ -563,7 +563,7 @@ void CommunicationManager::processInterrupt()
 					this->asyncReceivedByte = NULL;
 
 #ifdef __ENABLE_PROFILER
-					Profiler::processedCommunications(Profiler::getInstance());
+					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
 				}
 			}

@@ -37,6 +37,14 @@
 
 #define __ENABLE_PROFILER_SKIP_FRAMES				25
 
+enum ProfilerLapTypes
+{
+	kProfilerLapTypeNormalProcess 					= 0x00000001 << 0,
+	kProfilerLapTypeVIPInterruptProcess				= 0x00000001 << 1,
+	kProfilerLapTypeTimerInterruptProcess			= 0x00000001 << 2,
+	kProfilerLapTypeCommunicationsInterruptProcess	= 0x00000001 << 3,
+
+};
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -60,16 +68,15 @@ singleton class Profiler : Object
 	bool xpend;
 	bool playedMIDISounds;
 	bool processedCommunications;
+	u32 lapTypeFlags;
 
 	/// @publicsection
 	static Profiler getInstance();
 	void initialize();
 	void reset();
 	void start();
-	void lap(const char* processName);
-	void xpend();
-	void playedMIDISounds();
-	void processedCommunications();
+	void end();
+	void lap(u32 lapType, const char* processName);
 }
 
 #endif

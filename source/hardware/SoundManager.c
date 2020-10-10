@@ -405,10 +405,6 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 		}
 	}
 
-#ifdef __ENABLE_PROFILER
-	Profiler::playedMIDISounds(Profiler::getInstance());
-#endif
-
 	return true;
 }
 

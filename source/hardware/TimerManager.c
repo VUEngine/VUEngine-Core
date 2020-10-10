@@ -31,6 +31,7 @@
 #include <SoundManager.h>
 #include <SoundTest.h>
 #include <Game.h>
+#include <Profiler.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -491,6 +492,10 @@ static void TimerManager::interruptHandler()
 
 	// enable
 	TimerManager::enable(_timerManager, true);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
+#endif
 }
 
 /**

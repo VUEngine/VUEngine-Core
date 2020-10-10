@@ -285,7 +285,11 @@ void Game::start(GameState state)
 			{
 				while(!this->nextFrameStarted)
 				{
+					// Halting the CPU seems to only affect the profiling in Mednafen
+					// But still haven't tested it on hardware
+#ifndef __ENABLE_PROFILER
 					HardwareManager::halt();
+#endif
 				}
 			}
 		}
@@ -556,7 +560,7 @@ u32 Game::processUserInput()
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 #ifdef __ENABLE_PROFILER
-		Profiler::lap(Profiler::getInstance(), PROCESS_NAME_INPUT);
+		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 		return false;
 	}
@@ -582,7 +586,7 @@ u32 Game::processUserInput()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_INPUT);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
 
 	return userInput.pressedKey | userInput.releasedKey;
@@ -607,7 +611,7 @@ void Game::dispatchDelayedMessages()
 	}
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_MESSAGES);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 
 #endif
@@ -634,7 +638,7 @@ void Game::updateLogic()
 	StateMachine::update(this->stateMachine);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_LOGIC);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
 #endif
 }
 
@@ -644,11 +648,11 @@ void Game::updateSound()
 	SoundManager::update(this->soundManager);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_SOUND;
+	this->lastProcessName = PROCESS_NAME_SOUND_SETUP;
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_SOUND);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_SOUND_SETUP);
 #endif
 }
 
@@ -670,7 +674,7 @@ void Game::synchronizeGraphics()
 	GameState::synchronizeGraphics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_GRAPHICS);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_GRAPHICS);
 #endif
 }
 
@@ -685,7 +689,7 @@ void Game::updatePhysics()
 	GameState::updatePhysics(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_PHYSICS);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
 #endif
 }
 
@@ -706,7 +710,7 @@ void Game::focusCamera()
 #endif
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_CAMERA);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
 #endif
 
 }
@@ -721,7 +725,7 @@ void Game::updateTransformations()
 	GameState::transform(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_TRANSFORMS);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
 #endif
 }
 
@@ -736,7 +740,7 @@ void Game::updateCollisions()
 	GameState::processCollisions(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_COLLISIONS);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
 #endif
 }
 
@@ -749,7 +753,7 @@ void Game::stream()
 	GameState::stream(this->currentState);
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), PROCESS_NAME_STREAMING);
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 }
 
@@ -871,7 +875,12 @@ void Game::nextFrameStarted(u16 gameFrameDuration)
 #ifdef __ENABLE_PROFILER
 	if(this->currentFrameEnded)
 	{
+		Profiler::end(Profiler::getInstance());
 		Profiler::start(Profiler::getInstance());
+	}
+	else
+	{
+		Profiler::end(Profiler::getInstance());
 	}
 #endif
 }
@@ -944,10 +953,6 @@ void Game::run()
 	// this is the moment to check if the game's state
 	// needs to be changed
 	Game::checkForNewState(this);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::end(Profiler::getInstance());
-#endif
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

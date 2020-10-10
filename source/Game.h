@@ -52,7 +52,7 @@
 #define PROCESS_NAME_MESSAGES				"MESSAGES"
 #define PROCESS_NAME_NEW_STATE				"NEW STATE"
 #define PROCESS_NAME_PHYSICS				"PHYSICS"
-#define PROCESS_NAME_SOUND					"SOUND"
+#define PROCESS_NAME_SOUND_SETUP			"SOUND SET"
 #define PROCESS_NAME_STATE_POP				"POP STATE"
 #define PROCESS_NAME_STATE_PUSH				"PUSH STATE"
 #define PROCESS_NAME_STATE_SWAP				"SWAP STATE"
@@ -60,6 +60,9 @@
 #define PROCESS_NAME_STREAMING				"STREAMING"
 #define PROCESS_NAME_TRANSFORMS				"TRANSFORMS"
 #define PROCESS_NAME_RENDER					"RENDER"
+#define PROCESS_NAME_VRAM_WRITE				"VRAM WRITE"
+#define PROCESS_NAME_SOUND_PLAY				"SOUND PLAY"
+#define PROCESS_NAME_COMMUNICATIONS			"COMMS"
 
 
 //---------------------------------------------------------------------------------------------------------

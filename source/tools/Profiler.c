@@ -95,9 +95,7 @@ void Profiler::destructor()
 
 void Profiler::reset()
 {
-	this->xpend = false;
-	this->playedMIDISounds = false;
-	this->processedCommunications = false;
+	this->lapTypeFlags = 0;
 	this->started = false;
 	this->timerManager = TimerManager::getInstance();
 	this->initialized = false;
@@ -157,9 +155,7 @@ void Profiler::start()
 	}
 
 	this->started = true;
-	this->xpend = false;
-	this->playedMIDISounds = false;
-	this->processedCommunications = false;
+	this->lapTypeFlags = 0;
 
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
@@ -201,21 +197,6 @@ void Profiler::end()
 	this->started = false;
 }
 
-void Profiler::xpend()
-{
-	this->xpend = true;
-}
-
-void Profiler::playedMIDISounds()
-{
-	this->playedMIDISounds = true;
-}
-
-void Profiler::processedCommunications()
-{
-	this->processedCommunications = true;
-}
-
 void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage __attribute__((unused)), u8 column)
 {
 	if(NULL == processName)
@@ -240,25 +221,25 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 		u8 indicatorRow = 9;
 
-		if(this->xpend)
+		if(kProfilerLapTypeVIPInterruptProcess & this->lapTypeFlags)
 		{
 			Printing::text(_printing, ">", column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
-			this->xpend = false;
+			this->lapTypeFlags &= ~kProfilerLapTypeVIPInterruptProcess;
 		}
 
-		if(this->playedMIDISounds)
+		if(kProfilerLapTypeTimerInterruptProcess & this->lapTypeFlags)
 		{
 			Printing::text(_printing, "?", column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
-			this->playedMIDISounds = false;
+			this->lapTypeFlags &= ~kProfilerLapTypeTimerInterruptProcess;
 		}
 
-		if(this->processedCommunications)
+		if(kProfilerLapTypeCommunicationsInterruptProcess & this->lapTypeFlags)
 		{
 			Printing::text(_printing, "@", column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
-			this->processedCommunications = false;
+			this->lapTypeFlags &= ~kProfilerLapTypeCommunicationsInterruptProcess;
 		}
 
 /*
@@ -273,8 +254,9 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 	}
 }
 
-void Profiler::lap(const char* processName)
+void Profiler::lap(u32 lapType, const char* processName)
 {
+	this->lapTypeFlags |= lapType;
 	Profiler::computeLap(this, processName, false);
 }
 
@@ -289,6 +271,8 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	{
 		return;
 	}
+
+	HardwareManager::disableInterrupts();
 
 	TimerManager::enable(this->timerManager, false);
 	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
@@ -338,12 +322,15 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 
 	u8 printingColumn = this->lastLapIndex / 2;
 
+//	Profiler::printValue(this, processName, currentTimerCounter, gameFrameTimePercentage, printingColumn);
 	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
 
 	this->lastLapIndex += entries;
 
 	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
+
+	HardwareManager::enableInterrupts();
 }
 
 #endif

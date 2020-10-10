@@ -66,7 +66,7 @@ extern BrightnessRepeatROMSpec DEFAULT_BRIGHTNESS_REPEAT;
 
 #ifdef __ENABLE_PROFILER
 #undef __FORCE_VIP_SYNC
-#define __FORCE_VIP_SYNC
+//#define __FORCE_VIP_SYNC
 #endif
 
 friend class VirtualNode;
@@ -288,7 +288,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 				SpriteManager::render(_spriteManager);
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), PROCESS_NAME_RENDER);
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_RENDER);
 #endif
 				break;
 
@@ -336,7 +336,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 #endif
 
 #ifdef __ENABLE_PROFILER
-				Profiler::xpend(Profiler::getInstance());
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
 
 				this->processingXPEND = false;
