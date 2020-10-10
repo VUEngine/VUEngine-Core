@@ -154,6 +154,8 @@ void Profiler::start()
 		return;
 	}
 
+	Printing::resetCoordinates(Printing::getInstance());
+
 	this->started = true;
 	this->lapTypeFlags = 0;
 
@@ -213,7 +215,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
-		Printing::float(_printing, elapsedTime, column, 14 + (elapsedTime >= 10), "Profiler");
+		Printing::float(_printing, elapsedTime, column, 14 + ((int)elapsedTime >= 10), "Profiler");
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);

@@ -351,7 +351,7 @@ void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 void Printing::float(float value, u8 x, u8 y, const char* font)
 {
 	char string[48];
-	char* integer = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(value))), 10, Utilities::getDigitCount(value));
+	char* integer = Utilities::itoa((int)value, 10, Utilities::getDigitCount((int)value));
 
 	int i = 0;
 
@@ -386,7 +386,7 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 		while(0 == (auxDecimal % 10))
 		{
 			auxDecimal /= 10;
-			string[i++] = Utilities::itoa((int)(__FIX19_13_TO_I(__F_TO_FIX19_13(auxDecimal))), 10, 1)[0];
+			string[i++] = Utilities::itoa((int)auxDecimal, 10, 1)[0];
 		}
 	}
 	else
