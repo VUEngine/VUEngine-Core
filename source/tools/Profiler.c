@@ -258,8 +258,8 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 void Profiler::lap(u32 lapType, const char* processName)
 {
-	this->lapTypeFlags |= lapType;
 	Profiler::computeLap(this, processName, false);
+	this->lapTypeFlags |= lapType;
 }
 
 void Profiler::computeLap(const char* processName, bool isHeadroom)
