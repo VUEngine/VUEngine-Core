@@ -211,14 +211,9 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
+		
 		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
-
-		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		Printing::float(_printing, elapsedTime, column, 14 + ((int)elapsedTime >= 10), "Profiler");
-
-		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		Printing::text(_printing, ":;", column, 11, "Profiler"); // "ms"
 
 		u8 indicatorRow = 9;
@@ -244,15 +239,8 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			this->lapTypeFlags &= ~kProfilerLapTypeCommunicationsInterruptProcess;
 		}
 
-/*
-		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-		Printing::setDirection(_printing, kPrintingDirectionRTL);
-		Printing::float(_printing, gameFrameTimePercentage, column, 7 + (gameFrameTimePercentage >= 10) + (gameFrameTimePercentage >= 100), "Profiler");
-
-		Printing::setOrientation(_printing, kPrintingOrientationVertical);
-		Printing::setDirection(_printing, kPrintingDirectionRTL);
-		Printing::text(_printing, "/", column, 4, "Profiler"); // "%"
-*/
+		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
+		Printing::setDirection(_printing, kPrintingDirectionLTR);
 	}
 }
 

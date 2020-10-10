@@ -108,6 +108,9 @@ void Printing::reset()
 	this->mp = 0;
 	this->w = __SCREEN_WIDTH - 1;
 	this->h = __SCREEN_HEIGHT - 1;
+
+	Printing::setOrientation(this, kPrintingOrientationHorizontal);
+	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 void Printing::setOrientation(u8 value)
@@ -335,17 +338,11 @@ void Printing::number(int value, u8 x, u8 y, const char* font)
 void Printing::int(int value, u8 x, u8 y, const char* font)
 {
 	Printing::number(this, value, x, y, font);
-
-	Printing::setOrientation(this, kPrintingOrientationHorizontal);
-	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 {
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
-
-	Printing::setOrientation(this, kPrintingOrientationHorizontal);
-	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 void Printing::float(float value, u8 x, u8 y, const char* font)
@@ -397,10 +394,6 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	string[i++] = 0;
 
 	Printing::text(this, string, x, y, font);
-
-	Printing::setOrientation(this, kPrintingOrientationHorizontal);
-	Printing::setDirection(this, kPrintingDirectionLTR);
-
 }
 
 void Printing::text(const char* string, int x, int y, const char* font)
@@ -410,8 +403,6 @@ void Printing::text(const char* string, int x, int y, const char* font)
 #else
 	Printing::out(this, x, y, string, font);
 #endif
-	Printing::setOrientation(this, kPrintingOrientationHorizontal);
-	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
 #ifdef __FORCE_PRINTING_LAYER
