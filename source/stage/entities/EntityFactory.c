@@ -140,7 +140,7 @@ void EntityFactory::destructor()
 	Base::destructor();
 }
 
-void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId)
+void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId)
 {
 	if(!positionedEntity || !parent)
 	{

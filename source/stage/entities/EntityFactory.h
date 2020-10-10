@@ -117,7 +117,7 @@ typedef const PositionedEntity PositionedEntityROMSpec;
  */
 typedef struct PositionedEntityDescription
 {
-	PositionedEntity* positionedEntity;
+	const PositionedEntity* positionedEntity;
 	Container parent;
 	Entity entity;
 	EventListener callback;
@@ -151,7 +151,7 @@ class EntityFactory : Object
 	void constructor();
 	u32 prepareEntities();
 	void prepareAllEntities();
-	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId);
+	void spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId);
 	u32 hasEntitiesPending();
 	u32 instantiateEntities();
 	u32 transformEntities();
