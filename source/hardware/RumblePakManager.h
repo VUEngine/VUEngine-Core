@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef COMMUNICATTION_MANAGER_H_
-#define COMMUNICATTION_MANAGER_H_
+#ifndef RUMBLE_PAK_MANAGER_H_
+#define RUMBLE_PAK_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -29,7 +29,12 @@
 
 #include <Object.h>
 #include <Telegram.h>
-#include <VirtualList.h>
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __RUMBLE_PAK_START			0xFE
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,43 +42,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class CommunicationManager : Object
+singleton class RumblePakManager : Object
 {
-	volatile bool connected;
-	volatile u8 communicationMode;
-	volatile int status;
-	volatile BYTE* sentData;
-	volatile BYTE* receivedData;
-	volatile BYTE* syncSentByte;
-	volatile BYTE* syncReceivedByte;
-	volatile BYTE* asyncSentByte;
-	volatile BYTE* asyncReceivedByte;
-	volatile int numberOfBytesPendingTransmission;
-
-	u32 timeout;
-
 	/// @publicsection
-	static CommunicationManager getInstance();
-	static void interruptHandler();
-	override bool handleMessage(Telegram telegram);
-	void enableCommunications(EventListener eventLister, Object scope);
-	bool cancelCommunications();
-	void update();
-	bool isConnected();
-	bool isMaster();
-	bool broadcastData(BYTE* data, int numberOfBytes);
-	bool sendData(BYTE* data, int numberOfBytes);
-	bool receiveData(BYTE* data, int numberOfBytes);
-	bool sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes);
-	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
-	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
-	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
-	WORD getReceivedMessage();
-	WORD getSentMessage();
-	const BYTE* getReceivedData();
-	const BYTE* getSentData();
-	void startSyncCycle();
-	void printStatus(int x, int y);
+	static RumblePakManager getInstance();
+
+	void sendRumbleCode(u8 code);
 }
 
 

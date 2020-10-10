@@ -642,6 +642,19 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 	return true;
 }
 
+
+bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
+{
+	u8 communicationMode = this->communicationMode;
+	this->communicationMode = __COM_AS_MASTER;
+	
+	bool result = CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
+	
+	this->communicationMode = communicationMode;
+
+	return result;
+}
+
 bool CommunicationManager::sendData(BYTE* data, int numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
