@@ -289,7 +289,7 @@ FontData* Printing::getFontByName(const char* font)
 	}
 	else if(this->fonts)
 	{
-		if(NULL != this->lastUsedFontData)
+		if(NULL != this->lastUsedFontData && NULL != font)
 		{
 			if(!strcmp(this->lastUsedFontData->fontSpec->name, font))
 			{
