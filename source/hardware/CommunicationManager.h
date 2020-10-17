@@ -39,8 +39,6 @@
 /// @ingroup hardware
 singleton class CommunicationManager : Object
 {
-	volatile bool connected;
-	volatile u8 communicationMode;
 	volatile int status;
 	volatile BYTE* sentData;
 	volatile BYTE* receivedData;
@@ -49,6 +47,9 @@ singleton class CommunicationManager : Object
 	volatile BYTE* asyncSentByte;
 	volatile BYTE* asyncReceivedByte;
 	volatile int numberOfBytesPendingTransmission;
+	volatile bool connected;
+	volatile bool broadcast;
+	volatile u8 communicationMode;
 
 	u32 timeout;
 

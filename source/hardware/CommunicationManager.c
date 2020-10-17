@@ -161,6 +161,7 @@ void CommunicationManager::reset()
 	_communicationRegisters[__CCSR] = __COM_DISABLE_INTERRUPT;
 	CommunicationManager::endCommunications(this);
 	this->connected = false;
+	this->broadcast = false;
 	this->sentData = NULL;
 	this->syncSentByte = NULL;
 	this->asyncSentByte = NULL;
@@ -222,7 +223,7 @@ bool CommunicationManager::cancelCommunications()
 	{
 		return false;
 	}
-	
+
 	CommunicationManager::endCommunications(this);
 
 	if(NULL != this->sentData)
@@ -242,6 +243,7 @@ bool CommunicationManager::cancelCommunications()
 	this->syncReceivedByte = NULL;
 	this->asyncReceivedByte = NULL;
 	this->status = kCommunicationsStatusIdle;
+	this->broadcast = false;
 
 	CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
 	CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
@@ -277,8 +279,16 @@ void CommunicationManager::startClockSignal()
 	// Make sure to disable COMCNT interrupts
 //	_communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
 
-	// Start communications
-	_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
+	if(this->broadcast)
+	{
+		// Start communications
+		_communicationRegisters[__CCR] = __COM_AS_MASTER | __COM_START;
+	}
+	else
+	{
+		// Start communications
+		_communicationRegisters[__CCR] = this->communicationMode | __COM_START;
+	}
 }
 
 void CommunicationManager::waitForRemote()
@@ -331,7 +341,10 @@ void CommunicationManager::startTransmissions(u8 payload, bool async)
 		}
 		else
 		{
-			while(!CommunicationManager::isRemoteReady(this));
+			if(!this->broadcast)
+			{
+				while(!CommunicationManager::isRemoteReady(this));
+			}
 
 			CommunicationManager::startClockSignal(this);
 		}
@@ -462,7 +475,7 @@ void CommunicationManager::processInterrupt()
 
 		default:
 
-			this->connected = true;
+			this->connected = !this->broadcast;
 			break;
 	}
 
@@ -575,7 +588,7 @@ void CommunicationManager::processInterrupt()
 bool CommunicationManager::isFreeForTransmissions()
 {
 	return (
-		this->connected &&
+		(this->connected || this->broadcast) &&
 		NULL == this->syncSentByte &&
 		NULL == this->syncReceivedByte &&
 		NULL == this->asyncSentByte &&
@@ -644,13 +657,28 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 
 
 bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
-{
-	u8 communicationMode = this->communicationMode;
-	this->communicationMode = __COM_AS_MASTER;
-	
+{	
+	if(CommunicationManager::isConnected(this))
+	{
+		return false;
+	}
+
+	switch (this->status)
+	{
+		case kCommunicationsStatusSendingHandshake:
+
+			this->status = 	kCommunicationsStatusIdle;
+			break;
+	}
+
+	if(kCommunicationsStatusIdle != this->status)
+	{
+		return false;
+	}
+
+	this->broadcast = true;
 	bool result = CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
-	
-	this->communicationMode = communicationMode;
+	this->broadcast = false;
 
 	return result;
 }
