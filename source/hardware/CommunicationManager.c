@@ -45,6 +45,7 @@
 //volatile u16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)_hardwareRegisters;
 static volatile BYTE* _communicationRegisters =			(u8*)0x02000000;
 
+int traceY = 0;
 
 //---------------------------------------------------------------------------------------------------------
 //												DECLARATIONS
@@ -365,7 +366,14 @@ void CommunicationManager::setReady(bool ready)
 	{
 		if(CommunicationManager::isMaster(this))
 		{
-			_communicationRegisters[__CCSR] |= 0x02;
+			if(this->broadcast)
+			{
+				_communicationRegisters[__CCSR] &= (~0x02);
+			}
+			else
+			{
+				_communicationRegisters[__CCSR] |= 0x02;
+			}
 		}
 		else
 		{
@@ -650,8 +658,6 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 	this->status = kCommunicationsStatusIdle;
 	this->syncSentByte = this->syncReceivedByte = NULL;
 
-	CommunicationManager::setReady(this, false);
-
 	return true;
 }
 
@@ -735,8 +741,6 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	this->status = kCommunicationsStatusIdle;
 	this->syncSentByte = this->syncReceivedByte = NULL;
-
-	CommunicationManager::setReady(this, false);
 
 	return true;
 }
