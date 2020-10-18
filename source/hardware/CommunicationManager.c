@@ -682,6 +682,9 @@ bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
 		return false;
 	}
 
+	// Always start comms as master when broadcasting
+	this->communicationMode = __COM_AS_MASTER;
+
 	this->broadcast = true;
 	bool result = CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
 	this->broadcast = false;
