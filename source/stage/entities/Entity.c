@@ -517,7 +517,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 			}
 		}
 	}
-	else if(!positionedEntity->childrenSpecs)
+	else if(!positionedEntity->childrenSpecs && !positionedEntity->entitySpec->childrenSpecs)
 	{
 		// TODO: there should be a class which handles special cases
 		halfWidth = positionedEntity->entitySpec->pixelSize.x >> 1;
@@ -568,6 +568,15 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		for(; positionedEntity->childrenSpecs[i].entitySpec; i++)
 		{
 			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
+		}
+	}
+
+	if(positionedEntity->entitySpec->childrenSpecs)
+	{
+		int i = 0;
+		for(; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
+		{
+			Entity::getSizeFromSpec(&positionedEntity->entitySpec->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
 		}
 	}
 }
@@ -670,7 +679,12 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 intern
 	// process extra info
 	if(positionedEntity->extraInfo)
 	{
-		Entity::setExtraInfo(entity, positionedEntity);
+		Entity::setExtraInfo(entity, positionedEntity->extraInfo);
+	}
+
+	if(entitySpec->extraInfo)
+	{
+		Entity::setExtraInfo(entity, entitySpec->extraInfo);
 	}
 
 	return entity;
@@ -731,6 +745,11 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	if(positionedEntity->childrenSpecs)
 	{
 		Entity::addChildEntities(entity, positionedEntity->childrenSpecs);
+	}
+
+	if(positionedEntity->entitySpec->childrenSpecs)
+	{
+		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
 	return entity;
@@ -797,6 +816,11 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	if(positionedEntity->childrenSpecs)
 	{
 		Entity::addChildEntitiesDeferred(entity, positionedEntity->childrenSpecs);
+	}
+
+	if(positionedEntity->entitySpec->childrenSpecs)
+	{
+		Entity::addChildEntitiesDeferred(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
 	return entity;
@@ -1083,7 +1107,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
  *
  * @param extraInfo
  */
-void Entity::setExtraInfo(const PositionedEntity* const positionedEntity __attribute__ ((unused)))
+void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {
 }
 

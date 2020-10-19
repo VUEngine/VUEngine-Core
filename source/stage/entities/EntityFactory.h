@@ -55,13 +55,19 @@ typedef struct EntitySpec
 	/// class allocator
 	AllocatorPointer allocator;
 
+	/// children
+	struct PositionedEntity* childrenSpecs;
+
 	/// behaviors
 	BehaviorSpec** behaviorSpecs;
 
-	// sprites
+	/// extra info
+	void* extraInfo;
+
+	/// sprites
 	SpriteSpec** spriteSpecs;
 
-	// use z displacement in projection
+	/// use z displacement in projection
 	bool useZDisplacementInProjection;
 
 	/// collision shapes

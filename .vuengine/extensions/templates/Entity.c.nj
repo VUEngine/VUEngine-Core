@@ -207,7 +207,13 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 			// class allocator
 			__TYPE({{ currentItem.entity.class }}),
 
+			// children
+			NULL,
+
 			// behaviors
+			NULL,
+
+			// extra
 			NULL,
 
 			// sprites

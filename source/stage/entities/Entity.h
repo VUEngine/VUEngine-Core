@@ -109,7 +109,7 @@ class Entity : Container
 	virtual bool updateSpriteScale();
 	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
-	virtual void setExtraInfo(const PositionedEntity* const positionedEntity);
+	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
