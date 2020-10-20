@@ -571,7 +571,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 void Printing::render(u8 textLayer)
 {
-	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
+	ASSERT(!(0 > (s8)textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
 	_worldAttributesBaseAddress[textLayer].mx = this->mx;
 	_worldAttributesBaseAddress[textLayer].mp = this->mp;
