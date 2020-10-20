@@ -132,7 +132,6 @@ void Stage::constructor(StageSpec *stageSpec)
 
 	this->stageSpec = stageSpec;
 	this->stageEntities = NULL;
-	this->loadedStageEntities = NULL;
 	this->uiContainer = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
@@ -193,12 +192,6 @@ void Stage::destructor()
 		delete this->stageEntities;
 
 		this->stageEntities = NULL;
-	}
-
-	if(this->loadedStageEntities)
-	{
-		delete this->loadedStageEntities;
-		this->loadedStageEntities = NULL;
 	}
 
 	// destroy the super object
@@ -467,7 +460,6 @@ void Stage::removeChild(Container child, bool deleteChild)
 		}
 
 		VirtualList::removeElement(this->stageEntities, node->data);
-		VirtualList::removeElement(this->loadedStageEntities, node->data);
 		delete node->data;
 	}
 }
@@ -616,13 +608,6 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 	this->stageEntities = new VirtualList();
 
-	if(this->loadedStageEntities)
-	{
-		delete this->loadedStageEntities;
-	}
-
-	this->loadedStageEntities = new VirtualList();
-
 	// register entities ordering them according to their distances to the origin
 	int i = 0;
 
@@ -698,8 +683,6 @@ void Stage::loadInitialEntities()
 				}
 
 				stageEntityDescription->internalId = Entity::getInternalId(entity);
-
-				VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 			}
 		}
 	}
@@ -741,7 +724,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		{
 			s16 internalId = Entity::getInternalId(entity);
 
-			VirtualNode auxNode = this->loadedStageEntities->head;
+			VirtualNode auxNode = this->stageEntities->head;
 			StageEntityDescription* stageEntityDescription = NULL;
 
 			for(; auxNode; auxNode = auxNode->next)
@@ -762,7 +745,6 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 				{
 					// unload it
 					Stage::unloadChild(this, Container::safeCast(entity));
-					VirtualList::removeElement(this->loadedStageEntities, stageEntityDescription);
 
 					unloaded = true;
 				}
@@ -853,7 +835,6 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 					loadedEntities = true;
 
 					stageEntityDescription->internalId = this->nextEntityId++;
-					VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 
 					if(defer)
 					{
@@ -895,7 +876,6 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 					loadedEntities = true;
 
 					stageEntityDescription->internalId = this->nextEntityId++;
-					VirtualList::pushBack(this->loadedStageEntities, stageEntityDescription);
 
 					if(defer)
 					{
@@ -1273,8 +1253,6 @@ void Stage::showStreamingProfiling(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->stageEntities), x + xDisplacement, y++, NULL);
-	Printing::text(Printing::getInstance(), "Loaded entities:                ", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->loadedStageEntities), x + xDisplacement, y++, NULL);
 	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
 

@@ -203,8 +203,6 @@ class Stage : Container
 	VirtualList stageEntities;
 	// the pivot node for streaming
 	VirtualNode streamingHeadNode;
-	// the stage entities to test for streaming
-	VirtualList loadedStageEntities;
 	// The sounds
 	VirtualList soundWrappers;
 	// Streaming settings

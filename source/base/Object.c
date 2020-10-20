@@ -277,7 +277,7 @@ void Object::fireEvent(u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			// safe check in case that the there is a stacking up of firings within firings
+			// safety check in case that the there is a stacking up of firings within firings
 			if(isDeleted(event) || isDeleted(event->listener))
 			{
 				VirtualList::pushBack(eventsToRemove, event);
@@ -294,7 +294,7 @@ void Object::fireEvent(u32 eventCode)
 
 			VirtualList::removeElement(this->events, event);
 
-			// safe check in case that the there is a stacking up of firings within firings
+			// safety check in case that the there is a stacking up of firings within firings
 			if(!isDeleted(event))
 			{
 				delete event;
