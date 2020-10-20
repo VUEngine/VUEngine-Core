@@ -1125,11 +1125,11 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 
 	int i = 0;
 
-	// go through n sprites in entity's spec
+	// go through n behaviors in entity's spec
 	for(; behaviorSpecs[i]; i++)
 	{
 		Container::addBehavior(Container::safeCast(this), Behavior::create(behaviorSpecs[i]));
-		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: sprite not created");
+		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
 	}
 }
 
