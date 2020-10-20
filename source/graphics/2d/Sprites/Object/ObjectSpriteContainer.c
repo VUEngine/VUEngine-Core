@@ -112,8 +112,6 @@ void ObjectSpriteContainer::destructor()
 		delete node->data;
 	}
 
-	NM_ASSERT(0 == VirtualList::getSize(this->objectSprites), "ObjectSpriteContainer::destructor: sprites list not empty");
-
 	delete this->objectSprites;
 	this->objectSprites = NULL;
 
