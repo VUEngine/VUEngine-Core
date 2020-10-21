@@ -91,6 +91,7 @@ class GameState : State
 	void stopClocks();
 	void updatePhysics();
 	void streamAll();
+	void streamOutAll();
 
 	virtual void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);

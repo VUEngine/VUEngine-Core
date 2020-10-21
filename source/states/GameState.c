@@ -351,6 +351,28 @@ void GameState::streamAll()
 }
 
 /**
+ * Streaming everything on the Stage
+ */
+void GameState::streamOutAll()
+{
+	// Make sure that the focus entity is transformed before focusing the camera
+	GameState::transform(this);
+
+	// Move the camera to its initial position
+	Camera::focus(Camera::getInstance(), false);
+
+	// Transformation everything so anything outside the camera
+	// can be streamed out
+	GameState::transform(this);
+
+	// Froce graphics to get ready
+	GameState::synchronizeGraphics(this);
+	
+	// Remove out of range entities
+	Stage::unloadOutOfRangeEntities(this->stage, false);
+}
+
+/**
  * Start a transformation cycle on the Stage
  */
 void GameState::transform()
