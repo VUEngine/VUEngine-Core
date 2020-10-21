@@ -160,17 +160,8 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 {
 	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
-	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
-
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::disableRendering(HardwareManager::getInstance());
-
-	// Since fonts' charsets will be released, there is no reason to keep
-	// anything in the printing area
-	Printing::clear(Printing::getInstance());
-
-	// empty list of registered fonts
-	Printing::releaseFonts(this);
+	HardwareManager::disableInterrupts();
 
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
@@ -204,12 +195,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 
-	if(isDrawingAllowed)
-	{
-		// Restore drawing
-		HardwareManager::enableRendering(HardwareManager::getInstance());
-		while(VIPManager::isRenderingPending(VIPManager::getInstance()));
-	}
+	HardwareManager::enableInterrupts();
 }
 
 void Printing::setFontPage(const char* font, u16 page)
