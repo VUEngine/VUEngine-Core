@@ -31,7 +31,7 @@
 //#define __FORCE_UPPERCASE
 //#define __MAXIMUM_BOUNCINESS_COEFFICIENT		5.5f
 //#define __FORCE_FONT "GuiTime"
-//#define __DEFAUL_FONT "GuiTime"
+//#define __DEFAULT_FONT "GuiTime"
 //#define __MUTE_ALL_SOUND
 //#define __DRAW_COMPLETE_BOXES
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
