@@ -163,6 +163,13 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	// Prevent VIP's interrupt from calling render during this process
 	HardwareManager::disableInterrupts();
 
+	// Since fonts' charsets will be released, there is no reason to keep
+	// anything in the printing area
+	Printing::clear(Printing::getInstance());
+
+	// empty list of registered fonts
+	Printing::releaseFonts(this);
+	
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
 	for(i = 0; __FONTS[i]; i++)
