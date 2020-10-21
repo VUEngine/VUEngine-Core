@@ -406,6 +406,7 @@ void CameraEffectManager::fxFadeAsync()
 	}
 	else
 	{
+		_vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
 		lightRedDone = true;
 	}
 
@@ -424,6 +425,7 @@ void CameraEffectManager::fxFadeAsync()
 		}
 		else
 		{
+			_vipRegisters[__BRTB] = this->fxFadeTargetBrightness.mediumRed;
 			mediumRedDone = true;
 		}
 	}
@@ -439,6 +441,7 @@ void CameraEffectManager::fxFadeAsync()
 	}
 	else
 	{
+		_vipRegisters[__BRTA] = this->fxFadeTargetBrightness.darkRed;
 		darkRedDone = true;
 	}
 
