@@ -185,7 +185,7 @@ static int Error::triggerException(char* message, char* detail)
 #endif
 
 	// Prevent VIP's interrupts
-	HardwareManager::disableInterrupts(HardwareManager::getInstance());
+	HardwareManager::disableInterrupts();
 
 	// error display message
 	Printing::render(Printing::getInstance(), __EXCEPTIONS_WORLD);

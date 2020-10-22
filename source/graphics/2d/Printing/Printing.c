@@ -168,7 +168,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	Printing::releaseFonts(this);
 
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::disableInterrupts(HardwareManager::getInstance());
+	HardwareManager::disableInterrupts();
 
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
@@ -202,7 +202,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 		VirtualList::pushBack(this->fonts, fontData);
 	}
 
-	HardwareManager::enableInterrupts(HardwareManager::getInstance());
+	HardwareManager::enableInterrupts();
 }
 
 void Printing::setFontPage(const char* font, u16 page)

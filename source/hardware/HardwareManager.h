@@ -56,6 +56,9 @@ static u8* const _hardwareRegisters =			(u8*)0x02000000;
 #define CACHE_CLEAR		asm("mov 1,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 
 
+extern bool _enabledInterrupts;
+
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -71,15 +74,13 @@ singleton class HardwareManager : Object
 	KeypadManager keypadManager;
 	// HW registry
 	u8* hwRegisters;
-	// 
-	bool enabledInterrupts;
 
 	/// @publicsection
 	static HardwareManager getInstance();
-	static void enableInterrupts();
-    static void disableInterrupts();
-	static void resumeInterrupts();
-    static void suspendInterrupts();
+	static inline void enableInterrupts();
+    static inline void disableInterrupts();
+	static inline void resumeInterrupts();
+    static inline void suspendInterrupts();
     static inline void enableMultiplexedInterrupts();
     static inline void disableMultiplexedInterrupts();
     static inline int getStackPointer();
@@ -110,6 +111,45 @@ static inline void HardwareManager::halt()
 {
     static const long code = 0x181F6800L;
     ((void(*)())&code)();
+}
+
+/**
+ * Enable interrupts
+ */
+static inline void HardwareManager::enableInterrupts()
+{
+	_enabledInterrupts = true;
+
+	asm("cli");
+}
+
+/**
+ * Disable interrupts
+ */
+static inline void HardwareManager::disableInterrupts()
+{
+	_enabledInterrupts = false;
+
+	asm("sei");
+}
+
+/**
+ * Enable interrupts
+ */
+static inline void HardwareManager::resumeInterrupts()
+{
+	if(_enabledInterrupts)
+	{
+		asm("cli");
+	}
+}
+
+/**
+ * Disable interrupts
+ */
+static inline void HardwareManager::suspendInterrupts()
+{
+	asm("sei");
 }
 
 /**

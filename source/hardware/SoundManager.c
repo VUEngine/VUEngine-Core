@@ -644,7 +644,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		waveform->overwrite = false;
 
 		// Disable interrupts to make the following as soon as possible
-		HardwareManager::suspendInterrupts(HardwareManager::getInstance());
+		HardwareManager::suspendInterrupts();
 
 		// Must stop all sound before writing the waveforms
 		SoundManager::turnOffPlayingSounds(this);
@@ -658,7 +658,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		SoundManager::turnOnPlayingSounds(this);
 
 		// Turn back interrupts on
-		HardwareManager::resumeInterrupts(HardwareManager::getInstance());
+		HardwareManager::resumeInterrupts();
 		/*
 		// TODO
 		const u8 kModData[] = {

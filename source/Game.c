@@ -222,7 +222,7 @@ void Game::initialize()
 	Clock::start(this->clock);
 
 	// Enable interrupts
-	HardwareManager::enableInterrupts(HardwareManager::getInstance());
+	HardwareManager::enableInterrupts();
 
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
@@ -443,7 +443,7 @@ void Game::reset()
 	Profiler::reset(Profiler::getInstance());
 #endif
 
-	HardwareManager::disableInterrupts(HardwareManager::getInstance());
+	HardwareManager::disableInterrupts();
 
 	// Disable timer
 	TimerManager::enable(this->timerManager, false);
@@ -474,7 +474,7 @@ void Game::reset()
 	// Enable timer
 	TimerManager::enable(this->timerManager, true);
 
-	HardwareManager::enableInterrupts(HardwareManager::getInstance());
+	HardwareManager::enableInterrupts();
 }
 
 #ifdef __TOOLS

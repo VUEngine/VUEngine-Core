@@ -349,7 +349,7 @@ void MemoryPool::free(BYTE* object)
 	// get the total objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
-	HardwareManager::suspendInterrupts(HardwareManager::getInstance());
+	HardwareManager::suspendInterrupts();
 
 	// search for the pool in which it is allocated
 	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
@@ -359,7 +359,7 @@ void MemoryPool::free(BYTE* object)
 		{
 			// free the block
 			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-			HardwareManager::resumeInterrupts(HardwareManager::getInstance());
+			HardwareManager::resumeInterrupts();
 			return;
 		}
 	}
@@ -396,7 +396,7 @@ void MemoryPool::free(BYTE* object)
 
 	int pool = __MEMORY_POOLS;
 
-	HardwareManager::suspendInterrupts(HardwareManager::getInstance());
+	HardwareManager::suspendInterrupts();
 
 	while(pool--)
 	{
@@ -418,7 +418,7 @@ void MemoryPool::free(BYTE* object)
 				{
 					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
-					HardwareManager::resumeInterrupts(HardwareManager::getInstance());
+					HardwareManager::resumeInterrupts();
 					return poolLocation0;
 				}
 
@@ -426,7 +426,7 @@ void MemoryPool::free(BYTE* object)
 				{
 					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
-					HardwareManager::resumeInterrupts(HardwareManager::getInstance());
+					HardwareManager::resumeInterrupts();
 					return poolLocation1;
 				}
 
