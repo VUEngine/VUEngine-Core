@@ -262,7 +262,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		return;
 	}
 
-	HardwareManager::disableInterrupts();
+	HardwareManager::disableInterrupts(HardwareManager::getInstance());
 
 	TimerManager::enable(this->timerManager, false);
 	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
@@ -320,7 +320,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::enableInterrupts(HardwareManager::getInstance());
 }
 
 #endif

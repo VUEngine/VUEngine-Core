@@ -35,6 +35,41 @@
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
+#undef __MEMORY_POOLS
+#define __MEMORY_POOLS								13
+
+#undef __MEMORY_POOL_ARRAYS
+#define __MEMORY_POOL_ARRAYS \
+	__BLOCK_DEFINITION(320, 9) \
+	__BLOCK_DEFINITION(180, 5) \
+	__BLOCK_DEFINITION(152, 16) \
+	__BLOCK_DEFINITION(116, 35) \
+	__BLOCK_DEFINITION(96, 60) \
+	__BLOCK_DEFINITION(60, 65) \
+	__BLOCK_DEFINITION(36, 65) \
+	__BLOCK_DEFINITION(32, 75) \
+	__BLOCK_DEFINITION(28, 140) \
+	__BLOCK_DEFINITION(24, 820) \
+	__BLOCK_DEFINITION(20, 280) \
+	__BLOCK_DEFINITION(16, 400) \
+	__BLOCK_DEFINITION(12, 60) \
+
+#undef __SET_MEMORY_POOL_ARRAYS
+#define __SET_MEMORY_POOL_ARRAYS \
+	__SET_MEMORY_POOL_ARRAY(320) \
+	__SET_MEMORY_POOL_ARRAY(180) \
+	__SET_MEMORY_POOL_ARRAY(152) \
+	__SET_MEMORY_POOL_ARRAY(116) \
+	__SET_MEMORY_POOL_ARRAY(96) \
+	__SET_MEMORY_POOL_ARRAY(60) \
+	__SET_MEMORY_POOL_ARRAY(36) \
+	__SET_MEMORY_POOL_ARRAY(32) \
+	__SET_MEMORY_POOL_ARRAY(28) \
+	__SET_MEMORY_POOL_ARRAY(24) \
+	__SET_MEMORY_POOL_ARRAY(20) \
+	__SET_MEMORY_POOL_ARRAY(16) \
+	__SET_MEMORY_POOL_ARRAY(12) \
+
 
 // defines a singleton (unique instance of a class)
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
@@ -349,7 +384,7 @@ void MemoryPool::free(BYTE* object)
 	// get the total objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts(HardwareManager::getInstance());
 
 	// search for the pool in which it is allocated
 	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
@@ -359,7 +394,7 @@ void MemoryPool::free(BYTE* object)
 		{
 			// free the block
 			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-			HardwareManager::enableInterrupts();
+			HardwareManager::resumeInterrupts(HardwareManager::getInstance());
 			return;
 		}
 	}
@@ -396,7 +431,7 @@ void MemoryPool::free(BYTE* object)
 
 	int pool = __MEMORY_POOLS;
 
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts(HardwareManager::getInstance());
 
 	while(pool--)
 	{
@@ -418,7 +453,7 @@ void MemoryPool::free(BYTE* object)
 				{
 					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
-					HardwareManager::enableInterrupts();
+					HardwareManager::resumeInterrupts(HardwareManager::getInstance());
 					return poolLocation0;
 				}
 
@@ -426,7 +461,7 @@ void MemoryPool::free(BYTE* object)
 				{
 					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
-					HardwareManager::enableInterrupts();
+					HardwareManager::resumeInterrupts(HardwareManager::getInstance());
 					return poolLocation1;
 				}
 

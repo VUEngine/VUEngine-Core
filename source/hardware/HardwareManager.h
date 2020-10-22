@@ -71,11 +71,15 @@ singleton class HardwareManager : Object
 	KeypadManager keypadManager;
 	// HW registry
 	u8* hwRegisters;
+	// 
+	bool enabledInterrupts;
 
 	/// @publicsection
 	static HardwareManager getInstance();
-	static inline void enableInterrupts();
-    static inline void disableInterrupts();
+	static void enableInterrupts();
+    static void disableInterrupts();
+	static void resumeInterrupts();
+    static void suspendInterrupts();
     static inline void enableMultiplexedInterrupts();
     static inline void disableMultiplexedInterrupts();
     static inline int getStackPointer();
@@ -106,22 +110,6 @@ static inline void HardwareManager::halt()
 {
     static const long code = 0x181F6800L;
     ((void(*)())&code)();
-}
-
-/**
- * Enable interrupts
- */
-static inline void HardwareManager::enableInterrupts()
-{
-	asm("cli");
-}
-
-/**
- * Disable interrupts
- */
-static inline void HardwareManager::disableInterrupts()
-{
-	asm("sei");
 }
 
 /**

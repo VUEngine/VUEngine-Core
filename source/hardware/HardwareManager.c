@@ -115,6 +115,8 @@ void HardwareManager::constructor()
 	this->vipManager = VIPManager::getInstance();
 	this->keypadManager = KeypadManager::getInstance();
 
+	this->enabledInterrupts = false;
+
 	//setup timer interrupts
 	HardwareManager::setInterruptVectors(this);
 	HardwareManager::setInterruptLevel(this, 0);
@@ -246,6 +248,46 @@ void HardwareManager::setupTimer(u16 timerResolution, u16 timePerInterrupt, u16 
 	TimerManager::initialize(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
 }
+
+/**
+ * Enable interrupts
+ */
+void HardwareManager::enableInterrupts()
+{
+	this->enabledInterrupts = true;
+
+	asm("cli");
+}
+
+/**
+ * Disable interrupts
+ */
+void HardwareManager::disableInterrupts()
+{
+	this->enabledInterrupts = false;
+
+	asm("sei");
+}
+
+/**
+ * Enable interrupts
+ */
+void HardwareManager::resumeInterrupts()
+{
+	if(this->enabledInterrupts)
+	{
+		asm("cli");
+	}
+}
+
+/**
+ * Disable interrupts
+ */
+void HardwareManager::suspendInterrupts()
+{
+	asm("sei");
+}
+
 
 /**
  * Clear the CHAR and Param table memory
