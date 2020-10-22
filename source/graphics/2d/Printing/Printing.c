@@ -162,14 +162,17 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 
 	// Since fonts' charsets will be released, there is no reason to keep
 	// anything in the printing area
-	Printing::clear(Printing::getInstance());
+	Printing::clear(this);
 
 	// empty list of registered fonts
 	Printing::releaseFonts(this);
 
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::disableInterrupts();
-	
+	HardwareManager::disableInterrupts(HardwareManager::getInstance());
+
+	// Make sure all sprites are ready
+	SpriteManager::prepareAll(SpriteManager::getInstance());
+
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
 	for(i = 0; __FONTS[i]; i++)
@@ -190,7 +193,6 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
-					CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 					CharSet::addEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				}
 			}
@@ -200,9 +202,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 		VirtualList::pushBack(this->fonts, fontData);
 	}
 
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-
-	HardwareManager::enableInterrupts();
+	HardwareManager::enableInterrupts(HardwareManager::getInstance());
 }
 
 void Printing::setFontPage(const char* font, u16 page)
@@ -315,7 +315,6 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::removeEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				CharSet::addEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 			}
 		}
