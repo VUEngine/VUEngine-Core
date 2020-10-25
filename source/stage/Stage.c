@@ -1010,7 +1010,11 @@ bool Stage::stream()
 
 void Stage::streamAll()
 {
-	while(Stage::stream(this));
+	this->streamingPhase = 0;
+	do 
+	{
+	}
+	while(Stage::stream(this) || 0 != this->streamingPhase);
 }
 
 // execute stage's logic
