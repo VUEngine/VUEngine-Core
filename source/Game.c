@@ -280,10 +280,10 @@ void Game::start(GameState state)
 
 			Game::debug(this);
 
-			// This breaks PCM playback but reports torn frames more accurately
-			if(!Game::updateSpecialProcesses(this) && !this->nextFrameStarted)
+			while(!this->nextFrameStarted)
 			{
-				while(!this->nextFrameStarted)
+				// This breaks PCM playback but reports torn frames more accurately
+				if(!Game::updateSpecialProcesses(this) && !this->nextFrameStarted)
 				{
 					// Halting the CPU seems to only affect the profiling in Mednafen
 					// But still haven't tested it on hardware
