@@ -89,6 +89,7 @@ void RumblePakManager::sendRumbleCode(u8 code __attribute__((unused)))
 // Rumble only is called in release mode since emulators that don't implement communications, 
 // lock when trying to broadcast message throught the EXT port
 #ifdef __RELEASE
+#ifndef __EMU_ONLY
 	CommunicationManager communicationManager = CommunicationManager::getInstance();
 
 	if(!CommunicationManager::isConnected(communicationManager))
@@ -98,5 +99,6 @@ void RumblePakManager::sendRumbleCode(u8 code __attribute__((unused)))
 		CommunicationManager::broadcastData(communicationManager, &startRumbleCode, sizeof(startRumbleCode));
 		CommunicationManager::broadcastData(communicationManager, &code, sizeof(code));
 	}
+#endif
 #endif
 }
