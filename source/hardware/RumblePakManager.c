@@ -99,10 +99,11 @@ void RumblePakManager::sendRumbleCode(u8 code __attribute__((unused)))
 
 	if(!CommunicationManager::isConnected(communicationManager))
 	{
-		BYTE startRumbleCode = __RUMBLE_PAK_START;
+//		BYTE startRumbleCode = __RUMBLE_PAK_START;
 
-		CommunicationManager::broadcastData(communicationManager, &startRumbleCode, sizeof(startRumbleCode));
+//		CommunicationManager::broadcastData(communicationManager, &startRumbleCode, sizeof(startRumbleCode));
 		CommunicationManager::broadcastData(communicationManager, &code, sizeof(code));
-	}
+		PRINT_TIME(1, 21);
+}
 #endif
 }
