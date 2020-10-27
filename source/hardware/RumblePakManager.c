@@ -103,7 +103,6 @@ void RumblePakManager::sendRumbleCode(u8 code __attribute__((unused)))
 
 //		CommunicationManager::broadcastData(communicationManager, &startRumbleCode, sizeof(startRumbleCode));
 		CommunicationManager::broadcastData(communicationManager, &code, sizeof(code));
-		PRINT_TIME(1, 21);
 }
 #endif
 }
