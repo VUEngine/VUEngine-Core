@@ -674,6 +674,7 @@ bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
 		case kCommunicationsStatusSendingHandshake:
 
 			this->status = 	kCommunicationsStatusIdle;
+			CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
 			break;
 	}
 
