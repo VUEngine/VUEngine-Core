@@ -281,10 +281,20 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
 		this->totalTime += elapsedTime;
 	}
-
+/*
 	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
 
 	int columnTableEntries = 96 - 2;
+
+	int entries = (int)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
+
+	entries = (entries + (entries % 8)) / 4;
+
+	if(2 > entries)
+	{
+		entries = 2;
+	}
+*/
 	u8 value = 0;
 
 	if(this->currentProfilingProcess % 2)
@@ -296,16 +306,10 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		value = 16;
 	}
 
-	int entries = (int)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
+	int entries = 4;
 
-	entries = (entries + (entries % 8)) / 4;
-
-	if(2 > entries)
-	{
-		entries = 2;
-	}
-
-	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i < columnTableEntries; i++)
+//	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i < columnTableEntries; i++)
+	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}
@@ -313,7 +317,8 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	u8 printingColumn = this->lastLapIndex / 2;
 
 //	Profiler::printValue(this, processName, currentTimerCounter, gameFrameTimePercentage, printingColumn);
-	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
+//	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
+	Profiler::printValue(this, processName, elapsedTime, 0, printingColumn);
 
 	this->lastLapIndex += entries;
 
