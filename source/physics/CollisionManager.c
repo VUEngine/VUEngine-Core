@@ -156,22 +156,21 @@ u32 CollisionManager::update(Clock clock)
 
 		shapeToCheck->moved = false;
 
-#ifdef __DRAW_SHAPES
-		if(shape->enabled && shape->isVisible)
-		{
-			Shape::show(shape);
-		}
-		else
-		{
-			Shape::hide(shape);
-		}
-#endif
-
 		if(!shapeToCheck->isVisible)
 		{
 			continue;
 		}
 
+#ifdef __DRAW_SHAPES
+		if(shapeToCheck->enabled && shapeToCheck->isVisible)
+		{
+			Shape::show(shapeToCheck);
+		}
+		else
+		{
+			Shape::hide(shapeToCheck);
+		}
+#endif
 		// check the shapes
 		for(VirtualNode node = this->activeForCollisionCheckingShapes->head; node; node = node->next)
 		{
