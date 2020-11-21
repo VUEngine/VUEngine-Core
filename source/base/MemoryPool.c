@@ -388,7 +388,7 @@ void MemoryPool::free(BYTE* object)
  * @param numberOfBytes		Number of bytes to allocate
  * @return					Pointer to the memory pool entry allocated
  */
- BYTE* MemoryPool::allocate(int numberOfBytes)
+BYTE* MemoryPool::allocate(int numberOfBytes)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
