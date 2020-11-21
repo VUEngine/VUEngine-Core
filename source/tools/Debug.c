@@ -69,6 +69,7 @@
 #include <Ball.h>
 #include <Box.h>
 #include <InverseBox.h>
+#include <LineField.h>
 #include <Shape.h>
 #include <Wireframe.h>
 #include <Sphere.h>
@@ -91,6 +92,8 @@
 #include <Stage.h>
 #include <UIContainer.h>
 #include <Mem.h>
+
+#include <SoundWrapper.h>
 
 #include <DebugState.h>
 #include <DebugState.h>
@@ -660,6 +663,7 @@ void Debug::memoryStatusShowSecondPage(int increment __attribute__ ((unused)), i
 		{&Telegram_getObjectSize, 		"Telegram"},
 		{&VirtualList_getObjectSize, 	"VirtualList"},
 		{&VirtualNode_getObjectSize, 	"VirtualNode"},
+		{&SoundWrapper_getObjectSize, 	"SoundWrapper"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -720,6 +724,7 @@ void Debug::memoryStatusShowFourthPage(int increment __attribute__ ((unused)), i
 		{&Ball_getObjectSize, 			"Ball"},
 		{&Box_getObjectSize,			"Box"},
 		{&InverseBox_getObjectSize,		"InverseBox"},
+		{&LineField_getObjectSize,		"LineField"},
 		{&Wireframe_getObjectSize, 		"Wireframe"},
 		{&Polyhedron_getObjectSize, 	"Polyhedron"},
 		{&Sphere_getObjectSize, 		"Sphere"},
