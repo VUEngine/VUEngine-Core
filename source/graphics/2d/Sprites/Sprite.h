@@ -172,6 +172,8 @@ abstract class Sprite : Object
 	bool visible;
 	// Flag to allow rendering
 	bool positioned;
+	// Flato to allow registering
+	bool registered;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
@@ -239,6 +241,7 @@ abstract class Sprite : Object
 	virtual bool writeTextures();
 	virtual void print(int x, int y);
 	virtual int getTotalPixels();
+	virtual void registerSprite();
 }
 
 

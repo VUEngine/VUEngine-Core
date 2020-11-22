@@ -271,6 +271,11 @@ void MBgmapSprite::setPosition(const PixelVector* position)
  */
 void MBgmapSprite::addDisplacement(const PixelVector* displacement)
 {
+	if(!this->registered)
+	{
+		BgmapSprite::registerSprite(this);
+	}
+
 	this->positioned = true;
 
 	if(this->mBgmapSpriteSpec->xLoop)

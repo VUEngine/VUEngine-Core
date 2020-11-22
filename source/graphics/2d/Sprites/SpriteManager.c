@@ -356,6 +356,37 @@ void SpriteManager::sort()
 	while(SpriteManager::sortProgressively(this));
 }
 
+/**
+ * Sort sprite according to its z coordinate
+ */
+void SpriteManager::doRegisterSprite(Sprite sprite)
+{
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	{
+		Sprite otherSprite = Sprite::safeCast(node->data);
+
+		if(otherSprite == sprite)
+		{
+			return;
+		}
+
+		if(!otherSprite->positioned)
+		{
+			continue;
+		}
+
+		// check if z positions are swapped
+		if(otherSprite->position.z + otherSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+		{
+			VirtualList::insertBefore(this->sprites, node, sprite);
+
+			return;
+		}
+	}
+
+	VirtualList::pushFront(this->sprites, sprite);
+}
+
 // check if any entity must be assigned another world layer
 /**
  * Deferred sorting sprites according to their z coordinate
@@ -426,8 +457,7 @@ void SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 
 	this->lockSpritesLists = true;
 
-	// add to the front: last element corresponds to the 31 WORLD
-	VirtualList::pushFront(this->sprites, sprite);
+	SpriteManager::doRegisterSprite(this, sprite);
 
 	if(hasEffects)
 	{

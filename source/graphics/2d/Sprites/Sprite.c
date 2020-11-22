@@ -70,6 +70,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
+	this->registered = false;
 }
 
 /**
@@ -241,6 +242,16 @@ bool Sprite::isHidden()
 }
 
 /**
+ * Register
+ *
+ * @param position		
+ */
+void Sprite::registerSprite()
+{
+	this->registered = true;
+}
+
+/**
  * Calculate 2D position
  *
  * @param position		3D position
@@ -248,8 +259,12 @@ bool Sprite::isHidden()
 void Sprite::position(const Vector3D* position)
 {
 	this->position = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
-
 	this->positioned = true;
+
+	if(!this->registered)
+	{
+		Sprite::registerSprite(this);
+	}
 }
 
 /**
@@ -260,8 +275,12 @@ void Sprite::position(const Vector3D* position)
 void Sprite::setPosition(const PixelVector* position)
 {
 	this->position = *position;
-
 	this->positioned = true;
+
+	if(!this->registered)
+	{
+		Sprite::registerSprite(this);
+	}
 }
 
 /**

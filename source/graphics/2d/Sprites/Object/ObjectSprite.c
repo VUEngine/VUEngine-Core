@@ -162,48 +162,20 @@ void ObjectSprite::rotate(const Rotation* rotation)
 }
 
 /**
- * Set 2D position
- *
- * @memberof			ObjectSprite
- * @public
- *
- * @param position		New 2D position
- */
-void ObjectSprite::setPosition(const PixelVector* position)
-{
-	Base::setPosition(this, position);
-
-	ObjectSprite::checkForContainer(this);
-}
-
-/**
- * Calculate 2D position
- *
- * @memberof			ObjectSprite
- * @public
- *
- * @param position		3D position
- */
-void ObjectSprite::position(const Vector3D* position)
-{
-	Base::position(this, position);
-
-	ObjectSprite::checkForContainer(this);
-}
-
-/**
  * Check if assigned to a container
  *
  * @memberof			ObjectSprite
  * @private
  */
-void ObjectSprite::checkForContainer()
+void ObjectSprite::registerSprite()
 {
-	if(NULL == this->objectSpriteContainer && this->totalObjects)
+	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
 		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
+
+	Base::registerSprite(this);
 }
 
 /**

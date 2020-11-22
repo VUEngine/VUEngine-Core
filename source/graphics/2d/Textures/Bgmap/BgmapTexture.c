@@ -71,6 +71,8 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id)
 	{
 		_spriteManager = SpriteManager::getInstance();
 	}
+
+	Texture::prepare(this);
 }
 
 /**

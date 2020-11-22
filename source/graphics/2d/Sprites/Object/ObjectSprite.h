@@ -87,10 +87,10 @@ class ObjectSprite : Sprite
 	s16 getTotalObjects();
 	void invalidateObjectSpriteContainer();
 	override u16 doRender(s16 index, bool evenFrame);
-	override void setPosition(const PixelVector* position);
-	override void position(const Vector3D* position3D);
 	override void rotate(const Rotation* rotation);
 	override void setMode(u16 display, u16 mode);
+	override void registerSprite();
+	override void registerSprite();
 }
 
 

@@ -65,10 +65,10 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	if(bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
-		NM_ASSERT(this->texture, "BgmapSprite::constructor: null texture");
+		NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::constructor: null texture");
 	}
 
-	if(this->texture)
+	if(!isDeleted(this->texture))
 	{
 		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
@@ -102,8 +102,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
-
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
 }
 
 /**
@@ -610,6 +608,21 @@ void BgmapSprite::setMode(u16 display, u16 mode)
 	}
 
 	this->head &= ~__WORLD_END;
+}
+
+/**
+ * Register
+ *
+ * @param position		
+ */
+void BgmapSprite::registerSprite()
+{
+	if(!this->registered)
+	{
+		SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+	}
+
+	Base::registerSprite(this);
 }
 
 /**
