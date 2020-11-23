@@ -103,7 +103,7 @@ void ObjectSprite::destructor()
 {
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
-	if(this->objectSpriteContainer)
+	if(this->registered && this->objectSpriteContainer)
 	{
 		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}

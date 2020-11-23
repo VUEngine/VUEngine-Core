@@ -148,10 +148,10 @@ abstract class Sprite : Object
 {
 	// Projected position based on optics configuration
 	PixelVector position;
-	// Flag for making it transparent
-	u8 transparent;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
+	// Head spec for world entry setup
+	u16 head;
 	// AnimationController
 	AnimationController animationController;
 	// Our texture
@@ -160,8 +160,6 @@ abstract class Sprite : Object
 	s16 halfWidth;
 	// Texture's half height
 	s16 halfHeight;
-	// Head spec for world entry setup
-	u16 head;
 	// World layer where to render the texture
 	s16 index;
 	// Hidden flag
@@ -174,6 +172,8 @@ abstract class Sprite : Object
 	bool positioned;
 	// Flato to allow registering
 	bool registered;
+	// Flag for making it transparent
+	u8 transparent;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
