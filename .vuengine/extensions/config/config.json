@@ -160,7 +160,7 @@
 		},
 		"usage": {
 			"initializedData": ".sdata",
-			"memoryPool": ".sdata",
+			"memoryPool": ".sbss",
 			"staticSingletons": ".dram_bss",
 			"uninitializedData": ".sbss",
 			"virtualTables": ".dram_bss"
