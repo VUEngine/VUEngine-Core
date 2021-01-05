@@ -341,11 +341,6 @@ void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 		default:
 			break;
 	}
-
-	if(wasPaused)
-	{
-		SoundWrapper::updateMIDIPlayback(this, 0);
-	}
 }
 
 /**
@@ -443,6 +438,22 @@ void SoundWrapper::rewind()
 		Channel* channel = (Channel*)node->data;
 		channel->finished = false;
 		channel->cursor = 0;
+
+		switch(channel->soundChannelConfiguration.trackType)
+		{
+			case kMIDI:
+
+				SoundWrapper::computeMIDIDummyTicksPerNote(channel);
+				break;
+
+			case kPCM:
+				break;
+
+			default:
+
+				NM_ASSERT(false, "SoundWrapper::setupChannels: unknown track type");
+				break;
+		}
 	}
 }
 
@@ -542,7 +553,7 @@ void SoundWrapper::setupChannels(s8* waves)
 				this->hasMIDITracks = true;
 				channel->soundTrack.dataMIDI = (u16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
 				channel->length = SoundWrapper::computeMIDITrackLength((u16*)channel->soundTrack.dataMIDI);
-				SoundWrapper::computeMIDINextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
+				SoundWrapper::computeMIDIDummyTicksPerNote(channel);
 				break;
 
 			case kPCM:
@@ -648,14 +659,28 @@ static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 lengt
 	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
 }
 
+static void SoundWrapper::computeMIDIDummyTicksPerNote(Channel* channel)
+{
+	channel->ticks = 0;
+	channel->ticksPerNote = 0;
+	channel->tickStep = __I_TO_FIX17_15(1);
+}
+
 static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15 residue, fix17_15 speed, fix17_15 targetTimerResolutionFactor)
 {
 	channel->ticks = residue;
 	channel->ticksPerNote = __I_TO_FIX17_15(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 	channel->ticksPerNote = __FIX17_15_DIV(channel->ticksPerNote, speed);
 
-	fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
-	channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote + 1);
+	if(0 < channel->ticksPerNote)
+	{
+		fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
+		channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+	}
+	else
+	{
+		channel->tickStep = __I_TO_FIX17_15(1);
+	}
 }
 
 static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 residue __attribute__((unused)), fix17_15 speed __attribute__((unused)), fix17_15 targetTimerResolutionFactor __attribute__((unused)))
@@ -862,8 +887,6 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 		{
 			if(elapsedMicroseconds)
 			{
-				channel->cursor++;
-
 				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
 
 				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
@@ -882,6 +905,8 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 			}
 
 			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);
+
+			channel->cursor++;
 		}
 		else
 		{
