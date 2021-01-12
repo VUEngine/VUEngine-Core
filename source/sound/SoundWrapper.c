@@ -832,6 +832,8 @@ void SoundWrapper::playMIDINote(Channel* channel, s16 leftVolumeFactor, s16 righ
 			_soundRegistries[channel->number].SxLRV = SxLRV;
 			_soundRegistries[channel->number].SxFQH = (note >> 8);
 			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
+			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 			break;
 
 	}
