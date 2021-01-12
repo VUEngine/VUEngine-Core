@@ -121,6 +121,9 @@ class BgmapSprite : Sprite
 	void onTextureRewritten(Object eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
+
+	virtual bool hasSpecialEffects();
+
 	override u16 doRender(s16 index, bool evenFrame);
 	override void processEffects();
 	override void rotate(const Rotation* rotation);
