@@ -91,6 +91,8 @@ pad: $(TARGET).vb
 $(TARGET).vb: compile $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
+	@du -h $(BUILD_DIR)/*.vb
+	@echo
 
 #	@$(LD) -r -b binary -o $(MY_HOME)/midi-songs.o $(MY_HOME)/assets/sounds/SoundTracks/MIDI/beginvb.mid
 
