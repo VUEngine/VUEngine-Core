@@ -50,6 +50,7 @@ static class Mem : Object
 	static inline void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
 	static inline void copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
 	static inline void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
+	static inline void addWORD(WORD* destination, const WORD* source, u32 numberOfWORDS, u32 offset);
 	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
 }
 
@@ -88,5 +89,12 @@ static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numbe
 	}
 }
 
+static inline void Mem::addWORD(WORD* destination, const WORD* source, u32 numberOfWORDS, u32 offset)
+{
+	for(; 0 < numberOfWORDS; numberOfWORDS--)
+	{
+		*destination++ = *source++ + offset;
+	}
+}
 
 #endif
