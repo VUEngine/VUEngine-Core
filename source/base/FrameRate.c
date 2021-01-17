@@ -89,7 +89,7 @@ u16 FrameRate::getFps()
 /**
  * Update
  */
-bool FrameRate::update()
+void FrameRate::update()
 {
 	this->fps++;
 
@@ -109,8 +109,6 @@ bool FrameRate::update()
 		//reset frame rate counters
 		this->fps = 0;
 	}
-
-	return 0 == this->gameFrameTotalTime;
 }
 
 /**

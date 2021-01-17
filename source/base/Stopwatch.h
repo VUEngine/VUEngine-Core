@@ -47,7 +47,7 @@ class Stopwatch : Object
 
 	/// @publicsection
 	void constructor();
-	u32 lap();
+	float lap();
 	void reset();
 	void update();
 }

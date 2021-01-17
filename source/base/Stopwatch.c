@@ -76,7 +76,7 @@ void Stopwatch::update()
 	this->interrupts++;
 }
 
-u32 Stopwatch::lap()
+float Stopwatch::lap()
 {
 	extern u8* const _hardwareRegisters;
 
@@ -102,5 +102,5 @@ u32 Stopwatch::lap()
 
 	this->milliSeconds += (u32)elapsedTime;
 
-	return (u32)elapsedTime;
+	return elapsedTime;
 }

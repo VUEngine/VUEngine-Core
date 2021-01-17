@@ -40,14 +40,14 @@ singleton class FrameRate : Object
 {
 	Stopwatch stopwatch;
 	// elapsed time in current 50hz cycle
-	u32 gameFrameTotalTime;
+	float gameFrameTotalTime;
 	// Frames per second
 	u16 fps;
 
 	/// @publicsection
 	static FrameRate getInstance();
 	u16 getFps();
-	bool update();
+	void update();
 	void print(int col, int row);
 	void reset();
 }

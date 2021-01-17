@@ -793,8 +793,22 @@ void Game::updateFrameRate()
 		return;
 	}
 
-	if(FrameRate::update(this->frameRate))
+#ifdef __PRINT_FRAMERATE
+	FrameRate::update(this->frameRate);
+#endif
+}
+
+void Game::nextFrameStarted()
+{
+	this->nextFrameStarted = true;
+
+	static u16 totalTime = 0;
+
+	totalTime += __GAME_FRAME_DURATION;
+
+	if(__MILLISECONDS_PER_SECOND < totalTime)
 	{
+		totalTime = 0;
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
 		static int previousTornGameFrameCount = 0;
@@ -846,11 +860,6 @@ void Game::updateFrameRate()
 		}
 #endif
 	}
-}
-
-void Game::nextFrameStarted()
-{
-	this->nextFrameStarted = true;
 
 #ifdef __ENABLE_PROFILER
 	if(this->currentFrameEnded)
