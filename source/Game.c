@@ -131,7 +131,6 @@ void Game::constructor()
 	// make sure the memory pool is initialized now
 	MemoryPool::getInstance();
 
-	this->gameFrameTotalTime = 0;
 	this->randomSeed = 0;
 
 	// force construction now
@@ -242,11 +241,11 @@ bool Game::updateSpecialProcesses()
 void Game::debug()
 {
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
-		WireframeManager::print(WireframeManager::getInstance(), 1, 1);
+	WireframeManager::print(WireframeManager::getInstance(), 1, 1);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = PROCESS_NAME_END_FRAME;
+	this->lastProcessName = PROCESS_NAME_END_FRAME;
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
@@ -273,8 +272,6 @@ void Game::start(GameState state)
 		while(true)
 		{
 			Game::currentFrameStarted(this);
-
-			Game::updateFrameRate(this);
 
 			Game::run(this);
 
@@ -427,6 +424,8 @@ void Game::setNextState(GameState state)
 	// Fire event
 	Object::fireEvent(this, kEventNextStateSet);
 
+	StopwatchManager::reset(StopwatchManager::getInstance());
+
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	_tornGameFrameCount = 0;
 #endif
@@ -461,6 +460,7 @@ void Game::reset()
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 	CommunicationManager::cancelCommunications(this->communicationManager);
+	StopwatchManager::reset(StopwatchManager::getInstance());
 
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
@@ -792,10 +792,7 @@ void Game::updateFrameRate()
 		return;
 	}
 
-	// this method "doesn't" exist
-	TimerManager::enable(this->timerManager, false);
-
-	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
+	if(FrameRate::update(this->frameRate))
 	{
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
@@ -817,19 +814,10 @@ void Game::updateFrameRate()
 		}
 #endif
 
-		this->gameFrameTotalTime = 0;
-
 #ifdef __DEBUG
 #ifdef __PRINT_DEBUG_ALERT
 		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
 #endif
-#endif
-
-#ifdef __PRINT_FRAMERATE
-		if(!Game::isInSpecialMode(this))
-		{
-			FrameRate::print(FrameRate::getInstance(), 21, 26);
-		}
 #endif
 
 #ifdef __SHOW_CHAR_MEMORY_STATUS
@@ -856,21 +844,12 @@ void Game::updateFrameRate()
 			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 		}
 #endif
-		//reset frame rate counters
-		FrameRate::reset(this->frameRate);
 	}
-
-	// Increase the fps counter
-	FrameRate::increaseFps(this->frameRate);
-
-	// enable timer
-	TimerManager::enable(this->timerManager, true);
 }
 
 void Game::nextFrameStarted(u16 gameFrameDuration)
 {
 	this->nextFrameStarted = true;
-	this->gameFrameTotalTime += gameFrameDuration;
 
 #ifdef __ENABLE_PROFILER
 	if(this->currentFrameEnded)
@@ -889,6 +868,8 @@ void Game::currentFrameStarted()
 {
 	this->nextFrameStarted = false;
 	this->currentFrameEnded = false;
+
+	Game::updateFrameRate(this);
 }
 
 void Game::currentFrameEnded()

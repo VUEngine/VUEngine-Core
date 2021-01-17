@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef FRAMERATE_H_
-#define FRAMERATE_H_
+#ifndef STOPWATCH_H_
+#define STOPWATCH_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,7 +28,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Stopwatch.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,20 +35,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class FrameRate : Object
+class Stopwatch : Object
 {
-	Stopwatch stopwatch;
-	// elapsed time in current 50hz cycle
-	u32 gameFrameTotalTime;
-	// Frames per second
-	u16 fps;
+	// time elapsed
+	u32 milliSeconds;
+	// register
+	u32 interrupts;
+	u32 timerCounter;
+	u32 previousTimerCounter;
+	float timeProportion;
 
 	/// @publicsection
-	static FrameRate getInstance();
-	u16 getFps();
-	bool update();
-	void print(int col, int row);
+	void constructor();
+	u32 lap();
 	void reset();
+	void update();
 }
 
 

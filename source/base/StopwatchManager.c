@@ -24,9 +24,21 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <StopwatchManager.h>
 #include <FrameRate.h>
-#include <VirtualList.h>
+#include <Game.h>
+#include <HardwareManager.h>
+#include <MessageDispatcher.h>
+#include <TimerManager.h>
 #include <debugConfig.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
+
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,10 +48,10 @@
 /**
  * Get instance
  *
- * @fn			FrameRate::getInstance()
- * @memberof	FrameRate
- * @public
- * @return		FrameRate instance
+ * @fn			StopwatchManager::getInstance()
+ * @memberof	StopwatchManager
+ *
+ * @return		StopwatchManager instance
  */
 
 
@@ -48,12 +60,12 @@
  *
  * @private
  */
-void FrameRate::constructor()
+void StopwatchManager::constructor()
 {
 	Base::constructor();
 
-	this->fps = 0;
-	this->stopwatch = new Stopwatch();
+	// create the clock list
+	this->stopwatchs = new VirtualList();
 }
 
 /**
@@ -61,67 +73,72 @@ void FrameRate::constructor()
  *
  * @private
  */
-void FrameRate::destructor()
+void StopwatchManager::destructor()
 {
-	delete this->stopwatch;
+	VirtualNode node = this->stopwatchs->head;
+
+	// destroy all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::destructor(node->data);
+	}
+
+	// clear my list
+	delete this->stopwatchs;
 
 	// allow a new construct
 	Base::destructor();
 }
 
 /**
- * Reset internal values
- */
-void FrameRate::reset()
-{
-	this->fps = 0;
-	Stopwatch::reset(this->stopwatch);
-}
-
-/**
- * Retrieve FPS
- */
-u16 FrameRate::getFps()
-{
-	return this->fps;
-}
-
-/**
- * Update
- */
-bool FrameRate::update()
-{
-	this->fps++;
-
-	this->gameFrameTotalTime += Stopwatch::lap(this->stopwatch);
-
-	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
-	{
-#ifdef __PRINT_FRAMERATE
-		if(!Game::isInSpecialMode(Game::getInstance()))
-		{
-			FrameRate::print(this, 21, 26);
-		}
-#endif
-
-		this->gameFrameTotalTime = 0;
-
-		//reset frame rate counters
-		this->fps = 0;
-	}
-
-	return 0 == this->gameFrameTotalTime;
-}
-
-/**
- * Print FPS
+ * Register a clock
  *
- * @param col	Column to start printing at
- * @param row	Row to start printing at
+ * @private
+ * @param clock Stopwatch to register
  */
-void FrameRate::print(int col, int row)
+void StopwatchManager::register(Stopwatch clock)
 {
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS      ", col, row, NULL);
-	Printing::int(printing, this->fps, col + 4, row++, NULL);
+	if(!VirtualList::find(this->stopwatchs, clock))
+	{
+		VirtualList::pushFront(this->stopwatchs, clock);
+	}
+}
+
+/**
+ * Un-register a clock
+ *
+ * @param clock Stopwatch to un-register
+ */
+void StopwatchManager::unregister(Stopwatch clock)
+{
+	VirtualList::removeElement(this->stopwatchs, clock);
+}
+
+/**
+ * Update stopwatchs
+ *
+ */
+void StopwatchManager::update()
+{
+	VirtualNode node = this->stopwatchs->head;
+
+	// update all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::update(node->data);
+	}
+}
+
+/**
+ * Reset registered stopwatchs
+ */
+void StopwatchManager::reset()
+{
+	VirtualNode node = this->stopwatchs->head;
+
+	// update all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::reset(node->data);
+	}
 }

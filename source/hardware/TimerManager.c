@@ -29,6 +29,7 @@
 #include <HardwareManager.h>
 #include <ClockManager.h>
 #include <SoundManager.h>
+#include <StopwatchManager.h>
 #include <SoundTest.h>
 #include <Game.h>
 #include <Profiler.h>
@@ -483,6 +484,9 @@ static void TimerManager::interruptHandler()
 	// update MIDI sounds
 	SoundManager::playMIDISounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
 
+	// update Stopwatchs
+	StopwatchManager::update(StopwatchManager::getInstance());
+	
 #ifdef __SOUND_TEST
 	if(Game::isInSoundTest(Game::getInstance()))
 	{

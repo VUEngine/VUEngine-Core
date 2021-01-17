@@ -24,9 +24,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <FrameRate.h>
+#include <Stopwatch.h>
+#include <StopwatchManager.h>
+#include <HardwareManager.h>
+#include <TimerManager.h>
 #include <VirtualList.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,94 +36,71 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * Get instance
- *
- * @fn			FrameRate::getInstance()
- * @memberof	FrameRate
- * @public
- * @return		FrameRate instance
- */
-
-
-/**
  * Class constructor
- *
- * @private
  */
-void FrameRate::constructor()
+void Stopwatch::constructor()
 {
 	Base::constructor();
 
-	this->fps = 0;
-	this->stopwatch = new Stopwatch();
+	Stopwatch::reset(this);
+
+	// register clock
+	StopwatchManager::register(StopwatchManager::getInstance(), this);
 }
 
 /**
  * Class destructor
- *
- * @private
  */
-void FrameRate::destructor()
+void Stopwatch::destructor()
 {
-	delete this->stopwatch;
+	// unregister the clock
+	StopwatchManager::unregister(StopwatchManager::getInstance(), this);
 
-	// allow a new construct
+	// destroy the super object
+	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
-/**
- * Reset internal values
- */
-void FrameRate::reset()
+void Stopwatch::reset()
 {
-	this->fps = 0;
-	Stopwatch::reset(this->stopwatch);
+	this->interrupts = 0;
+	this->milliSeconds = 0;
+	this->previousTimerCounter = 0;
+	this->timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance());
+	this->timeProportion = TimerManager::getTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
+	this->previousTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 }
 
-/**
- * Retrieve FPS
- */
-u16 FrameRate::getFps()
+void Stopwatch::update()
 {
-	return this->fps;
+	this->interrupts++;
 }
 
-/**
- * Update
- */
-bool FrameRate::update()
+u32 Stopwatch::lap()
 {
-	this->fps++;
+	extern u8* const _hardwareRegisters;
 
-	this->gameFrameTotalTime += Stopwatch::lap(this->stopwatch);
+	TimerManager::enable(TimerManager::getInstance(), false);
+	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	TimerManager::enable(TimerManager::getInstance(), true);
 
-	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
+	if(this->previousTimerCounter < currentTimerCounter)
 	{
-#ifdef __PRINT_FRAMERATE
-		if(!Game::isInSpecialMode(Game::getInstance()))
+		if(0 < this->interrupts)
 		{
-			FrameRate::print(this, 21, 26);
+			this->interrupts--;
 		}
-#endif
 
-		this->gameFrameTotalTime = 0;
-
-		//reset frame rate counters
-		this->fps = 0;
+		this->previousTimerCounter += this->timerCounter;
 	}
+	
+	float elapsedTime = ((this->previousTimerCounter + this->interrupts * this->timerCounter) - currentTimerCounter) * this->timeProportion;
 
-	return 0 == this->gameFrameTotalTime;
-}
+	this->interrupts = 0;
 
-/**
- * Print FPS
- *
- * @param col	Column to start printing at
- * @param row	Row to start printing at
- */
-void FrameRate::print(int col, int row)
-{
-	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS      ", col, row, NULL);
-	Printing::int(printing, this->fps, col + 4, row++, NULL);
+	this->previousTimerCounter = currentTimerCounter;
+
+	this->milliSeconds += (u32)elapsedTime;
+
+	return (u32)elapsedTime;
 }

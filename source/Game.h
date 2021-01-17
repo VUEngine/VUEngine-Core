@@ -104,8 +104,6 @@ singleton class Game : Object
 	int nextStateOperation;
 	// last process' name
 	char* lastProcessName;
-	// elapsed time in current 50hz cycle
-	u32 gameFrameTotalTime;
 	// frame flags
 	volatile bool currentFrameEnded;
 	volatile bool nextFrameStarted;

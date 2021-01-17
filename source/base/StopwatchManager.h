@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef FRAMERATE_H_
-#define FRAMERATE_H_
+#ifndef STOPWATCH_MANAGER_H_
+#define STOPWATCH_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,20 +36,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class FrameRate : Object
+singleton class StopwatchManager : Object
 {
-	Stopwatch stopwatch;
-	// elapsed time in current 50hz cycle
-	u32 gameFrameTotalTime;
-	// Frames per second
-	u16 fps;
+	VirtualList stopwatchs;
 
 	/// @publicsection
-	static FrameRate getInstance();
-	u16 getFps();
-	bool update();
-	void print(int col, int row);
+	static StopwatchManager getInstance();
+	void register(Stopwatch clock);
 	void reset();
+	void unregister(Stopwatch clock);
+	void update();
 }
 
 
