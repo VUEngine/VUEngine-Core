@@ -26,6 +26,7 @@
 
 #include <FrameRate.h>
 #include <VirtualList.h>
+#include <Game.h>
 #include <debugConfig.h>
 
 
@@ -121,5 +122,5 @@ void FrameRate::print(int col, int row)
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS      ", col, row, NULL);
-	Printing::float(printing, this->fps, col + 4, row++, NULL);
+	Printing::int(printing, this->fps, col + 4, row++, NULL);
 }
