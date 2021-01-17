@@ -28,6 +28,7 @@
 #include <Game.h>
 #include <SRAMManager.h>
 #include <HardwareManager.h>
+#include <StopwatchManager.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
@@ -847,7 +848,7 @@ void Game::updateFrameRate()
 	}
 }
 
-void Game::nextFrameStarted(u16 gameFrameDuration)
+void Game::nextFrameStarted()
 {
 	this->nextFrameStarted = true;
 

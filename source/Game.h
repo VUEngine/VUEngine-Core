@@ -153,7 +153,7 @@ singleton class Game : Object
 	bool isInAnimationInspector();
 	bool isInSoundTest();
 	void openTool(ToolState toolState);
-	void nextFrameStarted(u16 gameFrameDuration);
+	void nextFrameStarted();
 	bool hasCurrentFrameEnded();
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();

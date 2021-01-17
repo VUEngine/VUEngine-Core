@@ -276,7 +276,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
-				Game::nextFrameStarted(Game::getInstance(), __GAME_FRAME_DURATION);
+				Game::nextFrameStarted(Game::getInstance());
 
 				this->frameStarted = _vipManager->processingXPEND;
 
