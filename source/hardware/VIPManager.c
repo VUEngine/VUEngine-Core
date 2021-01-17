@@ -101,6 +101,7 @@ void VIPManager::constructor()
 	this->drawingEnded = false;
 	this->frameStarted = false;
 	this->processingXPEND = false;
+	this->processingFRAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 
@@ -165,7 +166,7 @@ bool VIPManager::isDrawingAllowed()
 /**
  * Return true if FRAMESTART happened during XPEND's processing
  */
-bool VIPManager::hasFrameStarted()
+bool VIPManager::hasFrameStartedDuringXPEND()
 {
 	return this->frameStarted;
 }
@@ -236,14 +237,7 @@ static void VIPManager::interruptHandler()
 	HardwareManager::disableMultiplexedInterrupts();
 
 	// enable interrupts
-	if(_vipManager->processingXPEND)
-	{
-		VIPManager::enableInterrupts(_vipManager, __FRAMESTART);
-	}
-	else
-	{
-		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
-	}
+	VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 }
 
 /**
@@ -268,6 +262,20 @@ void VIPManager::processInterrupt(u16 interrupt)
 		{
 			case __FRAMESTART:
 
+				if(_vipManager->processingFRAMESTART)
+				{
+					if(!_vipManager->processingXPEND)
+					{
+						this->drawingEnded = false;
+					}
+					break;
+				}
+
+				_vipManager->processingFRAMESTART = true;
+
+				// Allow frame start interrupt
+				VIPManager::enableInterrupts(this, __XPEND);
+
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 				Game::saveProcessNameDuringFRAMESTART(Game::getInstance());
 #endif
@@ -290,9 +298,17 @@ void VIPManager::processInterrupt(u16 interrupt)
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_RENDER);
 #endif
+
+				_vipManager->processingFRAMESTART = false;
+
 				break;
 
 			case __XPEND:
+
+				if(_vipManager->processingXPEND)
+				{
+					break;
+				}
 
 				this->processingXPEND = true;
 
@@ -364,7 +380,7 @@ void VIPManager::processInterrupt(u16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail; !VIPManager::hasFrameStarted(this) && node; node = node->previous)
+	for(VirtualNode node = this->postProcessingEffects->tail; !VIPManager::hasFrameStartedDuringXPEND(this) && node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}

@@ -91,11 +91,9 @@ u16 FrameRate::getFps()
  */
 void FrameRate::update()
 {
-	this->fps++;
-
 	this->gameFrameTotalTime += Stopwatch::lap(this->stopwatch);
 
-	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
+	if(__MILLISECONDS_PER_SECOND <= this->gameFrameTotalTime)
 	{
 #ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(Game::getInstance()))
@@ -104,10 +102,12 @@ void FrameRate::update()
 		}
 #endif
 
-		this->gameFrameTotalTime = 0;
-
-		//reset frame rate counters
 		this->fps = 0;
+		this->gameFrameTotalTime = 0;
+	}
+	else
+	{
+		this->fps++;
 	}
 }
 
@@ -121,5 +121,5 @@ void FrameRate::print(int col, int row)
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS      ", col, row, NULL);
-	Printing::int(printing, this->fps, col + 4, row++, NULL);
+	Printing::float(printing, this->fps, col + 4, row++, NULL);
 }

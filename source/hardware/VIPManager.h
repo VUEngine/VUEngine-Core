@@ -293,6 +293,7 @@ singleton class VIPManager : Object
 	u32 currentDrawingFrameBufferSet;
 	u16 customInterrupts;
 	u16 currrentInterrupt;
+	bool processingFRAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
 	bool frameStarted;
@@ -326,7 +327,7 @@ singleton class VIPManager : Object
 	void registerCurrentDrawingFrameBufferSet();
 	bool isRenderingPending();
 	bool isDrawingAllowed();
-	bool hasFrameStarted();
+	bool hasFrameStartedDuringXPEND();
 	void writeDRAM();
 }
 

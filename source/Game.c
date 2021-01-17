@@ -272,11 +272,15 @@ void Game::start(GameState state)
 
 		while(true)
 		{
+			Game::checkForNewState(this);
+
 			Game::currentFrameStarted(this);
 
 			Game::run(this);
 
 			Game::debug(this);
+
+			Game::currentFrameEnded(this);
 
 			while(!this->nextFrameStarted)
 			{
@@ -426,6 +430,7 @@ void Game::setNextState(GameState state)
 	Object::fireEvent(this, kEventNextStateSet);
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
+	FrameRate::reset(this->frameRate);
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	_tornGameFrameCount = 0;
@@ -462,6 +467,7 @@ void Game::reset()
 	KeypadManager::reset(this->keypadManager);
 	CommunicationManager::cancelCommunications(this->communicationManager);
 	StopwatchManager::reset(StopwatchManager::getInstance());
+	FrameRate::reset(this->frameRate);
 
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
@@ -878,13 +884,13 @@ void Game::currentFrameStarted()
 {
 	this->nextFrameStarted = false;
 	this->currentFrameEnded = false;
-
-	Game::updateFrameRate(this);
 }
 
 void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
+
+	Game::updateFrameRate(this);
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	if(this->nextFrameStarted)
@@ -937,13 +943,6 @@ void Game::run()
 
 	// Update sound related logic
 	Game::updateSound(this);
-
-	// frame logic is done
-	Game::currentFrameEnded(this);
-
-	// this is the moment to check if the game's state
-	// needs to be changed
-	Game::checkForNewState(this);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
