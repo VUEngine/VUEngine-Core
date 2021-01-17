@@ -233,6 +233,7 @@ class Stage : Container
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
+	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, s16 internalId);
 	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
 	ParticleRemover getParticleRemover();

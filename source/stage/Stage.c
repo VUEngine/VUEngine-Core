@@ -356,6 +356,11 @@ Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, boo
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++, true);
 }
 
+Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, s16 internalId)
+{
+	return Stage::doAddChildEntity(this, positionedEntity, permanent, internalId, true);
+}
+
 // add entity to the stage
 Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
 {
