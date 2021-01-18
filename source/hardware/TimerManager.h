@@ -89,7 +89,7 @@ singleton class TimerManager : Object
 	u16 getResolution();
 	u16 getResolutionInUS();
 	u16 getTimePerInterrupt();
-	u32 getTimePerInterruptInMS();
+	float getTimePerInterruptInMS();
 	u32 getTimePerInterruptInUS();
 	u16 getTimerCounter();
 	u16 getTimePerInterruptUnits();

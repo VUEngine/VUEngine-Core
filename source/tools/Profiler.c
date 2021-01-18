@@ -103,7 +103,7 @@ void Profiler::reset()
 	this->currentProfilingProcess = 0;
 	this->printedProcessesNames = false;
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
-	this->timePerGameFrameInMS = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
+	this->timePerGameFrameInMS = __GAME_FRAME_DURATION;
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->totalTime = 0;

@@ -228,13 +228,13 @@ u16 TimerManager::getTimePerInterrupt()
 	return this->timePerInterrupt;
 }
 
-u32 TimerManager::getTimePerInterruptInMS()
+float TimerManager::getTimePerInterruptInMS()
 {
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			return this->timePerInterrupt / __MICROSECONDS_PER_MILLISECOND;
+			return this->timePerInterrupt / (float)__MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		case kMS:
