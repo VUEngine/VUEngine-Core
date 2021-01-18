@@ -102,7 +102,7 @@ void FrameRate::update()
 	float elapsedTime = Stopwatch::lap(this->stopwatch);
 	this->gameFrameTotalTime += elapsedTime;
 
-	if(__GAME_FRAME_DURATION < elapsedTime)
+	if(__GAME_FRAME_DURATION + 1 <= (int)elapsedTime)
 	{
 		this->unevenFps++;
 	}
