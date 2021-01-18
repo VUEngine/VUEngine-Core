@@ -43,6 +43,7 @@ singleton class FrameRate : Object
 	float gameFrameTotalTime;
 	// Frames per second
 	u16 fps;
+	u16 unevenFps;
 
 	/// @publicsection
 	static FrameRate getInstance();

@@ -54,6 +54,8 @@ void FrameRate::constructor()
 	Base::constructor();
 
 	this->fps = 0;
+	this->unevenFps = 0;
+	this->gameFrameTotalTime = 0;
 	this->stopwatch = new Stopwatch();
 }
 
@@ -76,6 +78,9 @@ void FrameRate::destructor()
 void FrameRate::reset()
 {
 	this->fps = 0;
+	this->unevenFps = 0;
+	// Prevents reporting 51 FPS when swapping states
+	this->gameFrameTotalTime = __MILLISECONDS_PER_SECOND / 2;
 	Stopwatch::reset(this->stopwatch);
 }
 
@@ -97,6 +102,11 @@ void FrameRate::update()
 	float elapsedTime = Stopwatch::lap(this->stopwatch);
 	this->gameFrameTotalTime += elapsedTime;
 
+	if(__GAME_FRAME_DURATION < elapsedTime)
+	{
+		this->unevenFps++;
+	}
+
 	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
 	{
 		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
@@ -112,6 +122,7 @@ void FrameRate::update()
 #endif
 
 		this->fps = 0;
+		this->unevenFps = 0;
 		this->gameFrameTotalTime = 0;
 	}
 }
@@ -125,6 +136,7 @@ void FrameRate::update()
 void FrameRate::print(int col, int row)
 {
 	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS      ", col, row, NULL);
-	Printing::int(printing, this->fps, col + 4, row++, NULL);
+	Printing::text(printing, "FPS   /   ", col, row, NULL);
+	Printing::int(printing, this->fps, col + 4, row, NULL);
+	Printing::int(printing, this->unevenFps, col + 7, row, NULL);
 }
