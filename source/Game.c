@@ -289,7 +289,7 @@ void Game::start(GameState state)
 				{
 					// Halting the CPU seems to only affect the profiling in Mednafen
 					// But still haven't tested it on hardware
-#if !defined(__ENABLE_PROFILER) || !defined(__PRINT_FRAMERATE)
+#if !defined(__ENABLE_PROFILER) && !defined(__PRINT_FRAMERATE)
 					HardwareManager::halt();
 #endif
 				}
