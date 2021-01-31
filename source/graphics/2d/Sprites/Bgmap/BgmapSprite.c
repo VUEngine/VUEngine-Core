@@ -70,7 +70,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 
 	if(!isDeleted(this->texture))
 	{
-		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
 		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
@@ -153,7 +153,7 @@ void BgmapSprite::releaseTexture()
 	// free the texture
 	if(!isDeleted(this->texture))
 	{
-		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 

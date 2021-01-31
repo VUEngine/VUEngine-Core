@@ -126,8 +126,8 @@ void Texture::loadCharSet()
 
 	this->status = kTexturePendingWriting;
 
-	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
-	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 }
 
 /**
@@ -174,8 +174,8 @@ void Texture::releaseCharSet()
 {
 	if(!isDeleted(this->charSet))
 	{
-		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
-		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+		CharSet::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+		CharSet::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
 

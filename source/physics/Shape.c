@@ -115,8 +115,8 @@ void Shape::destructor()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -148,8 +148,8 @@ void Shape::reset()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-				Object::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -648,8 +648,8 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 	{
 		VirtualList::pushBack(this->collidingShapes, collidingShapeRegistry);
 
-		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+		Shape::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Shape::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return collidingShapeRegistry;
@@ -678,8 +678,8 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
 
 	if(!isDeleted(collidingShape))
 	{
-		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-		Object::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+		Shape::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Shape::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return true;

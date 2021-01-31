@@ -268,7 +268,7 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 		if(callbackScope != NULL)
 		{
 			this->fxFadeCallbackScope = callbackScope;
-			Object::addEventListener(this, callbackScope, callback, kEventEffectFadeComplete);
+			CameraEffectManager::addEventListener(this, callbackScope, callback, kEventEffectFadeComplete);
 		}
 		else
 		{
@@ -295,7 +295,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	// remove event listener
 	if(this->fxFadeCallbackScope)
 	{
-		Object::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
+		CameraEffectManager::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
 	}
 
 	// discard pending delayed messages to stop effect
@@ -468,7 +468,7 @@ void CameraEffectManager::fxFadeAsync()
 		// remove callback event listener
 		if(this->fxFadeCallbackScope)
 		{
-			Object::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
+			CameraEffectManager::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
 		}
 	}
 	else

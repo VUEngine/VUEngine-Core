@@ -482,7 +482,7 @@ void Stage::unloadChild(Container child)
 	Base::removeChild(this, child, true);
 	Container::fireEvent(child, kEventStageChildStreamedOut);
 	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deleted child during kEventStageChildStreamedOut");
-	Object::removeAllEventListeners(child, kEventStageChildStreamedOut);
+	Container::removeAllEventListeners(child, kEventStageChildStreamedOut);
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 
@@ -1221,14 +1221,14 @@ void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(this->focusEntity)
 	{
-		Object::removeEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::removeEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(this->focusEntity)
 	{
-		Object::addEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::addEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);

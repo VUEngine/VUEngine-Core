@@ -300,7 +300,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// setup animation frame
@@ -309,7 +309,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// register event callback
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
@@ -370,7 +370,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 				// remove previous listeners
 				if(this->animationFunction && this->animationFunction->onAnimationComplete)
 				{
-					Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+					AnimationController::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 				}
 
 				this->animationFunction = animationDescription->animationFunctions[i];
@@ -389,7 +389,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	if(this->animationFunction->onAnimationComplete)
 	{
 		// register event callback
-		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
