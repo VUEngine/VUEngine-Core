@@ -427,7 +427,7 @@ void Game::setNextState(GameState state)
 	HardwareManager::displayOn(HardwareManager::getInstance());
 
 	// Fire event
-	Object::fireEvent(this, kEventNextStateSet);
+	Game::fireEvent(this, kEventNextStateSet);
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
@@ -1155,7 +1155,7 @@ void Game::pause(GameState pauseState)
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
 		this->isPaused = true;
-		Object::fireEvent(this, kEventGamePaused);
+		Game::fireEvent(this, kEventGamePaused);
 	}
 }
 
@@ -1170,7 +1170,7 @@ void Game::unpause(GameState pauseState)
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
 		this->isPaused = false;
-		Object::fireEvent(this, kEventGameUnpaused);
+		Game::fireEvent(this, kEventGameUnpaused);
 	}
 }
 

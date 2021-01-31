@@ -282,7 +282,7 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 	MessageDispatcher::dispatchMessage(initialDelay, Object::safeCast(this), Object::safeCast(this), kFadeTo, NULL);
 
 	// fire effect started event
-	Object::fireEvent(this, kEventEffectFadeStart);
+	CameraEffectManager::fireEvent(this, kEventEffectFadeStart);
 }
 
 /**
@@ -307,7 +307,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	this->fxFadeCallbackScope = NULL;
 
 	// fire effect stopped event
-	Object::fireEvent(this, kEventEffectFadeStop);
+	CameraEffectManager::fireEvent(this, kEventEffectFadeStop);
 }
 
 /**
@@ -449,7 +449,7 @@ void CameraEffectManager::fxFadeAsync()
 	if(lightRedDone && mediumRedDone && darkRedDone)
 	{
 		// fire effect ended event
-		Object::fireEvent(this, kEventEffectFadeComplete);
+		CameraEffectManager::fireEvent(this, kEventEffectFadeComplete);
 
 #ifdef __DIMM_FOR_PROFILING
 

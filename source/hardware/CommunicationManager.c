@@ -602,7 +602,7 @@ bool CommunicationManager::isFreeForTransmissions()
 		NULL == this->asyncSentByte &&
 		NULL == this->asyncReceivedByte &&
 		this->status == kCommunicationsStatusIdle &&
-		!Object::hasActiveEventListeners(Object::safeCast(this))
+		!CommunicationManager::hasActiveEventListeners(this)
 	);
 }
 
