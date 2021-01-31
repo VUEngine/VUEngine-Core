@@ -116,12 +116,16 @@
 			ASSERT(object && *(u32*)object, "Deleting null object");									\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else																							\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 								\
 				"Oop: deleting null basic object");														\
 			extern MemoryPool _memoryPool;																\
 			MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD));					\
+		}																								\
+		else 																							\
+		{																								\
+			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}
 #else
 #define __DELETE(object)																				\
@@ -130,9 +134,13 @@
 		{																								\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else																							\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
+		}																								\
+		else 																							\
+		{																								\
+			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}
 #endif
 
