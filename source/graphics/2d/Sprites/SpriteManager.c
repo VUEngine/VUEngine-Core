@@ -451,7 +451,7 @@ void SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	NM_ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::registerSprite: exceding available WORLDS");
+	ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::registerSprite: exceding available WORLDS");
 	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
 	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
@@ -900,9 +900,9 @@ void SpriteManager::print(int x, int y, bool resumed)
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Used layers::     ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Used layers:                ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Sprites count:      ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
 
 	if(resumed)
