@@ -76,18 +76,7 @@ void Clock::destructor()
  */
 void Clock::print(int col, int row, const char* font)
 {
-	char output[] = "00:00";
-	char* minutes = Utilities::itoa(Clock::getMinutes(this), 10, 2);
-
-	output[0] = minutes[0];
-	output[1] = minutes[1];
-
-	char* seconds = Utilities::itoa((Clock::getSeconds(this) - Clock::getMinutes(this) * 60) % 60, 10, 2);
-
-	output[3] = seconds[0];
-	output[4] = seconds[1];
-
-	Printing::text(Printing::getInstance(), output, col, row, font);
+	Clock::printTime(this->milliSeconds, col, row, font);
 }
 
 /**
@@ -242,4 +231,47 @@ void Clock::pause(bool paused)
 bool Clock::isPaused()
 {
 	return this->paused;
+}
+
+/**
+ * Print formatted class' attributes's states
+ *
+ * @param col
+ * @param row
+ * @param font
+ */
+static void Clock::printTime(u32 milliSeconds, int col, int row, const char* font)
+{
+	char output[] = "00:00";
+	u32 minutes = (u32)(milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
+	u32 seconds = (u32)(milliSeconds / __MILLISECONDS_PER_SECOND);
+
+	char* minutesString = Utilities::itoa(minutes, 10, 2);
+
+	output[0] = minutesString[0];
+	output[1] = minutesString[1];
+
+	char* secondsString = Utilities::itoa((seconds - minutes * 60) % 60, 10, 2);
+
+	output[3] = secondsString[0];
+	output[4] = secondsString[1];
+
+	Printing::text(Printing::getInstance(), output, col, row, font);
+}
+
+/**
+ * Print formatted class' attributes's states
+ *
+ * @param col
+ * @param row
+ * @param font
+ */
+static void Clock::printFullTime(u32 milliSeconds, int col, int row, const char* font)
+{
+	Clock::printTime(milliSeconds, col, row, font);
+
+	u32 currentDeciseconds = ((milliSeconds + 50) / 100);
+	currentDeciseconds -= ((currentDeciseconds / 10) * 10);
+
+	Printing::int(Printing::getInstance(), currentDeciseconds, col + 6, row, font);
 }

@@ -47,6 +47,9 @@ class Clock : Object
 	// flag to pause the clock
 	bool paused;
 
+	static void printTime(u32 milliseconds, int col, int row, const char* font);
+	static void printFullTime(u32 milliSeconds, int col, int row, const char* font);
+
 	/// @publicsection
 	void constructor();
 	u32 getElapsedTime();
