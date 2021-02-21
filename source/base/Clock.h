@@ -35,6 +35,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+enum ClockPrintPrecision
+{
+	kTimePrecision0 = 0,
+	kTimePrecision1,
+	kTimePrecision2,
+	kTimePrecision3
+};
+
 /// @ingroup base
 class Clock : Object
 {
@@ -47,8 +55,10 @@ class Clock : Object
 	// flag to pause the clock
 	bool paused;
 
-	static void printTime(u32 milliseconds, int col, int row, const char* font);
-	static void printFullTime(u32 milliSeconds, int col, int row, const char* font);
+	static void printTime(u32 milliseconds, int col, int row, const char* font, u32 precision);
+	static void printDeciseconds(u32 milliSeconds, int col, int row, const char* font);
+	static void printCentiseconds(u32 milliSeconds, int col, int row, const char* font);
+	static void printMilliseconds(u32 milliSeconds, int col, int row, const char* font);
 
 	/// @publicsection
 	void constructor();
