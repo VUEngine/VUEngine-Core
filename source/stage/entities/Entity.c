@@ -1162,7 +1162,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	}
 
 	// make sure that the new sprites are properly initialized
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 }
 
 /**
@@ -1460,7 +1460,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 	this->transformShapes = true;
 	Entity::setupShapes(this);
 
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 
 	if(this->hidden)
 	{
@@ -1810,7 +1810,8 @@ void Entity::show()
 	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+
 	Entity::synchronizeGraphics(this);
 
 	// show all sprites
@@ -1878,9 +1879,11 @@ void Entity::resume()
 	{
 		Entity::addSprites(this, this->entitySpec->spriteSpecs);
 	}
-
-	// force update sprites on next game's cycle
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	else
+	{
+		// force update sprites on next game's cycle
+		this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+	}
 
 	if(this->hidden)
 	{
