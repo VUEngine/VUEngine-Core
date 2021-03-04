@@ -238,6 +238,7 @@ bool Texture::prepare()
 			break;
 
 		case kTextureFrameChanged:
+		case kTextureMapDisplacementChanged:
 
 			if(isDeleted(this->charSet))
 			{
@@ -277,6 +278,20 @@ void Texture::update()
 			}
 			return;
 			break;
+
+		case kTextureMapDisplacementChanged:
+
+			Texture::write(this);
+
+			if(kTextureWritten != this->status)
+			{
+				return;
+			}
+
+			Texture::fireEvent(this, kEventTextureRewritten);			
+			NM_ASSERT(!isDeleted(this), "Texture::prepare: deleted this during kEventTextureRewritten");
+
+			// Intended fall through
 
 		default:
 
@@ -658,7 +673,12 @@ bool Texture::isWritten()
  */
 void Texture::setMapDisplacement(u32 mapDisplacement)
 {
-	this->status = this->mapDisplacement != mapDisplacement ? kTexturePendingWriting : this->status;
+	this->status = this->mapDisplacement != mapDisplacement ? kTextureMapDisplacementChanged : this->status;
 
 	this->mapDisplacement = mapDisplacement;
+
+	if(kTextureMapDisplacementChanged == this->status)
+	{
+		Texture::prepare(this);
+	}
 }
