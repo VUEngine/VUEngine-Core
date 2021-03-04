@@ -122,9 +122,21 @@ void Texture::loadCharSet()
 	Texture::releaseCharSet(this);
 
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
+
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 
 	this->status = kTexturePendingWriting;
+
+	switch(CharSet::getAllocationType(this->charSet))
+	{
+		case __ANIMATED_MULTI:
+			break;
+
+		default:
+
+			CharSet::setFrame(this->charSet, this->frame);
+			break;
+	}
 
 	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
@@ -278,7 +290,7 @@ void Texture::update()
 				{
 					case __ANIMATED_SINGLE_OPTIMIZED:
 
-						CharSet::setFrame(this->charSet, this->frame);
+						CharSet::write(this->charSet);
 						Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
 						Texture::write(this);
 						break;
@@ -288,7 +300,7 @@ void Texture::update()
 					case __ANIMATED_SHARED:
 					case __ANIMATED_SHARED_COORDINATED:
 
-						CharSet::setFrame(this->charSet, this->frame);
+						CharSet::write(this->charSet);
 						this->status = kTextureWritten;
 						break;
 
@@ -371,6 +383,21 @@ void Texture::setFrame(u16 frame)
 	}
 
 	this->frame = frame;
+
+	if(!isDeleted(this->charSet))
+	{
+		switch(CharSet::getAllocationType(this->charSet))
+		{
+			case __ANIMATED_MULTI:
+				break;
+
+			default:
+
+				CharSet::setFrame(this->charSet, this->frame);
+				break;
+		}
+	}
+
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
 	if(kTextureFrameChanged == this->status)

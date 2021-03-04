@@ -278,6 +278,4 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
 void CharSet::setFrame(u16 frame)
 {
 	CharSet::setCharSpecDisplacement(this, this->charSetSpec->numberOfChars * frame);
-
-	CharSet::write(this);
 }
