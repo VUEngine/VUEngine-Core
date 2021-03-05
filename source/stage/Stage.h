@@ -243,6 +243,7 @@ class Stage : Container
 	Entity findChildByInternalId(s16 internalId);
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
+	void streamAllOut();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();

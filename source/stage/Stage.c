@@ -1022,6 +1022,17 @@ void Stage::streamAll()
 	{
 	}
 	while(Stage::stream(this) || 0 != this->streamingPhase);
+
+	// Force deletion
+	Stage::purgeChildren(this);
+}
+
+void Stage::streamAllOut()
+{
+	Stage::unloadOutOfRangeEntities(this, false);
+
+	// Force deletion
+	Stage::purgeChildren(this);
 }
 
 // execute stage's logic

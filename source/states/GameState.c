@@ -369,7 +369,7 @@ void GameState::streamOutAll()
 	GameState::synchronizeGraphics(this);
 	
 	// Remove out of range entities
-	Stage::unloadOutOfRangeEntities(this->stage, false);
+	Stage::streamAllOut(this->stage);
 }
 
 /**
