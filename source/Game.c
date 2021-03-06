@@ -799,9 +799,7 @@ void Game::updateFrameRate()
 		return;
 	}
 
-#ifdef __PRINT_FRAMERATE
 	FrameRate::update(this->frameRate);
-#endif
 }
 
 void Game::nextFrameStarted()

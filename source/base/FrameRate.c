@@ -95,15 +95,14 @@ u16 FrameRate::getFps()
 /**
  * Update
  */
+#ifdef __PRINT_FRAME_TIMES
 void FrameRate::update()
 {
 	float elapsedTime = Stopwatch::lap(this->stopwatch);
 	this->gameFrameTotalTime += elapsedTime;
 
-#ifdef __PRINT_FRAME_TIMES
 	static u32 elapsedTimes[60] = {1};
 	elapsedTimes[this->fps] = elapsedTime;
-#endif
 
 	if(__GAME_FRAME_DURATION + 0.5f < elapsedTime)
 	{
@@ -114,7 +113,6 @@ void FrameRate::update()
 
 	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
 	{
-#ifdef __PRINT_FRAME_TIMES
 		int x = 1; 
 		int y = 1;
 
@@ -130,25 +128,44 @@ void FrameRate::update()
 				y -= 20;
 			}
 		}
-#endif
 
 		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
 		{
 			this->fps--;
 		}
 
-#ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(Game::getInstance()))
 		{
 			FrameRate::print(this, 21, 26);
 		}
-#endif
 
 		this->fps = 0;
 		this->unevenFps = 0;
 		this->gameFrameTotalTime = 0;
 	}
 }
+
+#else
+
+void FrameRate::update()
+{
+	this->gameFrameTotalTime += (__MICROSECONDS_PER_MILLISECOND / __TARGET_FPS);
+	this->fps++;
+
+	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
+	{
+		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
+		{
+			this->fps--;
+		}
+
+		this->fps = 0;
+		this->unevenFps = 0;
+		this->gameFrameTotalTime = 0;
+	}
+}
+
+#endif
 
 /**
  * Print FPS
