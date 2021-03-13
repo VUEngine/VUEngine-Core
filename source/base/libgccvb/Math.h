@@ -75,8 +75,7 @@ inline int customAbs(int number)
 #define fix17_15				s32
 
 // maximum values
-#define __FIX10_6_MAXIMUM_VALUE		__I_TO_FIX10_6(512)
-
+#define __FIX10_6_MAXIMUM_VALUE		(__I_TO_FIX10_6_EXT(1 << (10 - 1)))
 
 // round functions
 #define __F_ROUND(n)				(int)((n) + 0.5f)
