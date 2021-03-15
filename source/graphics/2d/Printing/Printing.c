@@ -79,10 +79,10 @@ void Printing::constructor()
 	this->fonts = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
-	this->printingBgmapSegment = 0;
 	this->orientation = kPrintingOrientationHorizontal;
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFontData = NULL;
+	this->printingSprite = NULL;
 
 	Printing::reset(this);
 }
@@ -97,21 +97,63 @@ void Printing::destructor()
 
 void Printing::reset()
 {
+	if(!isDeleted(this->printingSprite))
+	{
+		SpriteManager::disposeSprite(SpriteManager::getInstance(), Sprite::safeCast(this->printingSprite));
+	}
+
+	this->printingSprite = NULL;
+
 	Printing::releaseFonts(this);
 
 	VirtualList::clear(this->fonts);
 
-	this->gx = 0;
-	this->gy = 0;
-	this->gp = 0;
-	this->mx = __PRINTING_BGMAP_X_OFFSET;
-	this->my = __PRINTING_BGMAP_Y_OFFSET;
-	this->mp = 0;
-	this->w = __SCREEN_WIDTH - 1;
-	this->h = __SCREEN_HEIGHT - 1;
-
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
 	Printing::setDirection(this, kPrintingDirectionLTR);
+}
+
+void Printing::setupSprite()
+{
+	if(!isDeleted(this->printingSprite))
+	{
+		return;
+	}
+	
+	PrintingSpriteSpec PRINTING_SP =
+	{
+		{
+			{
+				// sprite's type
+				__TYPE(PrintingSprite),
+
+				// texture spec
+				NULL,
+
+				// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+				__TRANSPARENCY_NONE,
+
+				// displacement
+				{
+					0, // x
+					0, // y
+					0, // z
+					0, // parallax
+				},
+			},
+
+			// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+			// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
+			__WORLD_BGMAP,
+
+			// pointer to affine/hbias manipulation function
+			NULL,
+
+			// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+			__WORLD_ON,
+		}
+	};
+
+	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&PRINTING_SP, NULL));
 }
 
 void Printing::setOrientation(u8 value)
@@ -158,8 +200,6 @@ void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
 
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-
 	// Since fonts' charsets will be released, there is no reason to keep
 	// anything in the printing area
 	Printing::clear(this);
@@ -229,10 +269,8 @@ void Printing::loadDebugFont()
 
 void Printing::setDebugMode()
 {
-	Printing::resetCoordinates(this);
 	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
-	this->printingBgmapSegment = __EXCEPTIONS_BGMAP;
 }
 
 void Printing::setPalette(u8 palette)
@@ -245,7 +283,10 @@ void Printing::setPalette(u8 palette)
 
 void Printing::clear()
 {
-	Mem::clear((BYTE*)__BGMAP_SEGMENT(this->printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
+	if(!isDeleted(this->printingSprite))
+	{
+		Mem::clear((BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
+	}
 }
 
 void Printing::releaseFonts()
@@ -412,93 +453,106 @@ void Printing::text(const char* string, int x, int y, const char* font)
 }
 
 #ifdef __FORCE_PRINTING_LAYER
-void Printing::setCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s8 p __attribute__ ((unused)))
+void Printing::setCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s16 z __attribute__ ((unused)), s8 parallax __attribute__ ((unused)))
 {
 	Printing::setWorldCoordinates(this, 0, 0, 0);
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
 	Printing::setWorldSize(this, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
-void Printing::setWorldCoordinates(s16 gx __attribute__ ((unused)), s16 gy __attribute__ ((unused)), s8 gp __attribute__ ((unused)))
+void Printing::setWorldCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s16 z __attribute__ ((unused)), s8 parallax __attribute__ ((unused)))
 {
-	this->gx = 0;
-	this->gy = 0;
-	this->gp = 0;
+	if(!isDeleted(this->printingSprite))
+	{
+		PixelVector position = 
+		{
+			0, 0, 0, 0
+		};
+
+		PrintingSprite::setPosition(this->printingSprite, &position);
+	}
 }
 
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
-	this->mx = __PRINTING_BGMAP_X_OFFSET;
-	this->my = __PRINTING_BGMAP_Y_OFFSET;
-	this->mp = 0;
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::setMValues(this->printingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
+	}
 }
 
 void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
 {
-	this->w = __SCREEN_WIDTH - 1;
-	this->h = __SCREEN_HEIGHT - 1;
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::setSize(this->printingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
+	}
 }
 
 #else
-void Printing::setCoordinates(s16 x, s16 y, s8 p)
+void Printing::setCoordinates(s16 x, s16 y, s16 z, s8 parallax)
 {
-	Printing::setWorldCoordinates(this, x, y, p);
+	Printing::setWorldCoordinates(this, x, y, z, parallax);
 	Printing::setBgmapCoordinates(this, x, y, 0);
 }
 
-void Printing::setWorldCoordinates(s16 gx, s16 gy, s8 gp)
+void Printing::setWorldCoordinates(s16 x, s16 y, s16 z, s8 parallax)
 {
-	this->gx = gx <= __SCREEN_WIDTH ? gx : 0;
-	this->gy = gy <= __SCREEN_HEIGHT ? gy : 0;
-	this->gp = gp;
+	if(!isDeleted(this->printingSprite))
+	{
+		PixelVector position = 
+		{
+			x <= __SCREEN_WIDTH ? x : 0, 
+			y <= __SCREEN_HEIGHT ? y : 0, 
+			z, 
+			parallax
+		};
+
+		PrintingSprite::setPosition(this->printingSprite, &position);
+	}
 }
 
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
-	this->mx = mx <= 64 * 8 ? mx : 0;
-	this->my = my + __PRINTING_BGMAP_Y_OFFSET <= 64 * 8 ? my + __PRINTING_BGMAP_Y_OFFSET : __PRINTING_BGMAP_Y_OFFSET;
-	this->mp = mp;
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, my + __PRINTING_BGMAP_Y_OFFSET <= 64 * 8 ? my + __PRINTING_BGMAP_Y_OFFSET : __PRINTING_BGMAP_Y_OFFSET, mp);
+	}
 }
 
 void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
 {
-	this->w = w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH;
-	this->h = h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT;
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::setSize(this->printingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT);
+	}
 }
 #endif
 
 s16 Printing::getWorldCoordinatesX()
 {
-	return this->gx;
+	return 0;
+//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGX(this->printingSprite) : 0;
 }
 
 s16 Printing::getWorldCoordinatesY()
 {
-	return this->gy;
+	return 0;
+//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGY(this->printingSprite) : 0;
 }
 
 s16 Printing::getWorldCoordinatesP()
 {
-	return this->gp;
+	return 0;
+//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
 }
 
 void Printing::resetCoordinates()
 {
-	this->gx = 0;
-	this->gy = 0;
-	this->gp = 0;
-
-	this->mx = __PRINTING_BGMAP_X_OFFSET;
-	this->my = __PRINTING_BGMAP_Y_OFFSET;
-	this->mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
-
-	this->w = __SCREEN_WIDTH;
-	this->h = __SCREEN_HEIGHT;
-}
-
-int Printing::getPixelCount()
-{
-	return (__SCREEN_WIDTH - this->gx) * (__SCREEN_HEIGHT - this->gy);
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::reset(this->printingSprite);
+	}
 }
 
 FontSize Printing::getTextSize(const char* string, const char* font)
@@ -564,17 +618,10 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 void Printing::render(u8 textLayer)
 {
-	ASSERT(!(0 > (s8)textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
-
-	_worldAttributesBaseAddress[textLayer].mx = this->mx;
-	_worldAttributesBaseAddress[textLayer].mp = this->mp;
-	_worldAttributesBaseAddress[textLayer].my = this->my;
-	_worldAttributesBaseAddress[textLayer].gx = this->gx;
-	_worldAttributesBaseAddress[textLayer].gp = this->gp;
-	_worldAttributesBaseAddress[textLayer].gy = this->gy;
-	_worldAttributesBaseAddress[textLayer].w = this->w;
-	_worldAttributesBaseAddress[textLayer].h = this->h;
-	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::doRender(this->printingSprite, textLayer, false);
+	}
 }
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
@@ -592,7 +639,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 
 	u32 i = 0, position = 0, startColumn = x, temp = 0;
 	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
-	u32 printingBgmap = this->printingBgmapSegment;
+	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	FontData* fontData = Printing::getFontByName(this, font);
 

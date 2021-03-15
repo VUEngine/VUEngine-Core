@@ -476,7 +476,6 @@ void Game::reset()
 	CharSetManager::reset(CharSetManager::getInstance());
 	ParamTableManager::reset(ParamTableManager::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-	Printing::reset(Printing::getInstance());
 
 	// Enable timer
 	TimerManager::enable(this->timerManager, true);

@@ -29,6 +29,7 @@
 
 #include <Object.h>
 #include <CharSet.h>
+#include <PrintingSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -202,32 +203,17 @@ singleton class Printing : Object
 {
 	/// @protectedsection
 
+	// sprite
+	PrintingSprite printingSprite;
+
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
 	// Cache the last used font to speed up searchs
 	FontData* lastUsedFontData;
-	// x coordinate for printing WORLD
-	s16 gx;
-	// y coordinate for printing WORLD
-	s16 gy;
-	// x coordinate for printing BGMAP
-	s16 mx;
-	// y coordinate for printing BGMAP
-	s16 my;
-	// print WORLD's width
-	u16 w;
-	// print WORLD's height
-	u16 h;
-	// parallax value for printing WORLD
-	s8 gp;
-	// parallax value for printing BGMAP
-	s8 mp;
 	// Printing mode (Default or Debug)
 	u8 mode;
 	// Palette to use for printing
 	u8 palette;
-	// Bgmap segment for printing
-	u8 printingBgmapSegment;
 	// printing orientation
 	u8 orientation;
 	// printing direction
@@ -268,13 +254,6 @@ singleton class Printing : Object
      * @return		FontData of desired font or default font if NULL or none could be found matching the name
      */
 	FontData* getFontByName(const char* font);
-
-	/**
-	 * Retrieve the pixels used by the WORLD for printing
-	 *
-	 * @return			number of pixels
-	 */
-	int getPixelCount();
 
 	/**
 	 * Get the size of a (block of) text so you can for example center it on screen
@@ -332,6 +311,11 @@ singleton class Printing : Object
 	void reset();
 
 	/**
+     * Setup printing sprite
+     */
+	void setupSprite();
+
+	/**
      * Sets the orientation for the following call to print.
 	 * Resets its self automatically to horizonal.
      */
@@ -361,20 +345,22 @@ singleton class Printing : Object
 	/**
 	 * Set the coordinates used for printing
 	 *
-	 * @param gx		x coordinate
-	 * @param gy		y coordinate
-	 * @param gp		parallax value
+	 * @param x				WORLD x coordinate
+	 * @param y				WORLD y coordinate
+	 * @param z				WORLD parallax value
+	 * @param parallax		WORLD parallax value
 	 */
-	void setCoordinates(s16 x, s16 y, s8 p);
+	void setCoordinates(s16 x, s16 y, s16 z, s8 parallax);
 
 	/**
 	 * Set the coordinates of the WORLD used for printing
 	 *
-	 * @param gx		WORLD x coordinate
-	 * @param gy		WORLD y coordinate
-	 * @param gp		WORLD parallax value
+	 * @param x				WORLD x coordinate
+	 * @param y				WORLD y coordinate
+	 * @param z				WORLD parallax value
+	 * @param parallax		WORLD parallax value
 	 */
-	void setWorldCoordinates(s16 gx, s16 gy, s8 gp);
+	void setWorldCoordinates(s16 x, s16 y, s16 z, s8 parallax);
 
 	/**
 	 * Set the coordinates of the BGMAP used for printing

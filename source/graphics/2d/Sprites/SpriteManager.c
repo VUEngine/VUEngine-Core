@@ -162,6 +162,8 @@ void SpriteManager::cleanUp()
  */
 void SpriteManager::reset()
 {
+	Printing::reset(Printing::getInstance());
+
 	this->lockSpritesLists = true;
 
 	SpriteManager::cleanUp(this);
@@ -188,7 +190,9 @@ void SpriteManager::reset()
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
 
-	SpriteManager::renderTextWorld(this);
+	SpriteManager::stopRendering(this);
+
+	Printing::setupSprite(Printing::getInstance());
 
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
@@ -495,19 +499,15 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 }
 
 /**
- * Render the WORLD destined to printing output
+ * End drawing
  */
-void SpriteManager::renderTextWorld()
+void SpriteManager::stopRendering()
 {
-	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderTextWorld: no more layers");
+	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::stopRendering: no more layers");
 
-	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
-
-	Printing::render(Printing::getInstance(), this->freeLayer);
-
-	if(0 < this->freeLayer)
+	if(0 <= this->freeLayer)
 	{
-		_worldAttributesBaseAddress[this->freeLayer - 1].head = __WORLD_END;
+		_worldAttributesBaseAddress[this->freeLayer].head = __WORLD_END;
 	}
 }
 
@@ -583,7 +583,7 @@ void SpriteManager::writeDRAM()
 		ObjectSpriteContainer::writeDRAM(ObjectSpriteContainer::safeCast(node->data));
 	}
 
-	SpriteManager::renderTextWorld(this);
+	SpriteManager::stopRendering(this);
 }
 
 /**
@@ -622,7 +622,7 @@ void SpriteManager::render()
 		}
 	}
 
-	NM_ASSERT(0 < this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
+	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
@@ -650,7 +650,7 @@ void SpriteManager::render()
  *
  * @return			Free WORLD layer
  */
-u8 SpriteManager::getFreeLayer()
+s8 SpriteManager::getFreeLayer()
 {
 	return this->freeLayer;
 }
@@ -691,7 +691,7 @@ void SpriteManager::showSprites()
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
-	SpriteManager::renderTextWorld(this);
+	SpriteManager::stopRendering(this);
 }
 
 /**

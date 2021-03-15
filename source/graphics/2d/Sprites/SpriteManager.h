@@ -81,7 +81,7 @@ singleton class SpriteManager : Object
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
 	// next world layer
-	u8 freeLayer;
+	s8 freeLayer;
 	// number of cycles that the texture writing is idle
 	s8 cyclesToWaitForSpriteTextureWriting;
 	// number of rows to write in texture's writing
@@ -101,7 +101,7 @@ singleton class SpriteManager : Object
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);
-	u8 getFreeLayer();
+	s8 getFreeLayer();
 	int getNumberOfSprites();
 	int getMaximumParamTableRowsToComputePerCall();
 	Sprite getSpriteAtPosition(s16 position);
@@ -113,7 +113,7 @@ singleton class SpriteManager : Object
 	void showSprites();
 	void hideSprites();
 	void render();
-	void renderTextWorld();
+	void stopRendering();
 	void reset();
 	void setCyclesToWaitForTextureWriting(u8 cyclesToWaitForTextureWriting);
 	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);

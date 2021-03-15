@@ -19,50 +19,78 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef BGMAP_PRINTING_H_
-#define	BGMAP_PRINTING_H_
+#ifndef PRINTING_SPRITE_H_
+#define PRINTING_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
-#include <CharSet.h>
+#include <BgmapSprite.h>
+#include <MiscStructs.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												DEFINES
+//											 MACROS
 //---------------------------------------------------------------------------------------------------------
+
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+/**
+ * A PrintingSprite spec
+ *
+ * @memberof PrintingSprite
+ */
+typedef struct PrintingSpriteSpec
+{
+	/// it has a Sprite spec at the beginning
+	BgmapSpriteSpec bgmapSpriteSpec;
+
+} PrintingSpriteSpec;
+
+/**
+ * A PrintingSprite spec that is stored in ROM
+ *
+ * @memberof PrintingSprite
+ */
+typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Manages printing layer and offers various functions to write to it.
- *
- * @ingroup graphics-2d
- */
-singleton class BgmapPrinting : Printing
+/// Sprite which holds a texture and a drawing specification.
+/// @ingroup graphics-2d-sprites-bgmap
+class PrintingSprite : BgmapSprite
 {
-	/// @protectedsection
-
+	// print WORLD's width
+	u16 w;
+	// print WORLD's height
+	u16 h;
+	// Bgmap segment for printing
+	u8 printingBgmapSegment;
+	
 	/// @publicsection
+	void constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner);
+	void reset();
 
-	/** Get instance
-	 *
-	 * @return		BgmapPrinting instance
-	 */
-	static BgmapPrinting getInstance();
+	void setGValues(s16 gx, s16 gy, s16 gp);
+	void setMValues(s16 mx, s16 my, s16 mp);
+	void setSize(u16 w, u16 h);
+	void setSize(u16 w, u16 h);
 
-//	override void out(u8 x, u8 y, const char* string, const char* font);
-//	override void render(int textLayer);
+	s16 getGX();
+	s16 getGY();
+	s16 getGP();
+
+	override u16 doRender(s16 index, bool evenFrame);
 }
+
 
 #endif

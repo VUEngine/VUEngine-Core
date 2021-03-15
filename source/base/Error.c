@@ -27,6 +27,7 @@
 #include <string.h>
 #include <Error.h>
 #include <VIPManager.h>
+#include <BgmapTextureManager.h>
 #include <Globals.h>
 #include <Game.h>
 #include <SpriteManager.h>
@@ -188,7 +189,18 @@ static int Error::triggerException(char* message, char* detail)
 	HardwareManager::disableInterrupts();
 
 	// error display message
-	Printing::render(Printing::getInstance(), __EXCEPTIONS_WORLD);
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[__EXCEPTIONS_WORLD];
+
+	worldPointer->mx = __PRINTING_BGMAP_X_OFFSET;
+	worldPointer->mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+	worldPointer->my = __PRINTING_BGMAP_Y_OFFSET;
+	worldPointer->gx = 0;
+	worldPointer->gp = 0;
+	worldPointer->gy = 0;
+	worldPointer->w = __SCREEN_WIDTH;
+	worldPointer->h = __SCREEN_HEIGHT;
+	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+
 	_worldAttributesBaseAddress[__EXCEPTIONS_WORLD - 1].head = __WORLD_END;
 
 	// dimm game
