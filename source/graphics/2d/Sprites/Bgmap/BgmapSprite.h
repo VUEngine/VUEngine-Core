@@ -130,7 +130,7 @@ class BgmapSprite : Sprite
 	override Scale getScale();
 	override void resize(Scale scale, fix10_6 z);
 	override void setMode(u16 display, u16 mode);
-	override void registerSprite();
+	override void registerWithManager();
 }
 
 

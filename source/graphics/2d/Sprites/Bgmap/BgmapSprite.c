@@ -618,14 +618,14 @@ void BgmapSprite::setMode(u16 display, u16 mode)
  *
  * @param position		
  */
-void BgmapSprite::registerSprite()
+void BgmapSprite::registerWithManager()
 {
 	if(!this->registered)
 	{
 		SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
 	}
 
-	Base::registerSprite(this);
+	Base::registerWithManager(this);
 }
 
 /**

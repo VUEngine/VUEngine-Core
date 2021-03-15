@@ -273,7 +273,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
 {
 	if(!this->registered)
 	{
-		BgmapSprite::registerSprite(this);
+		BgmapSprite::registerWithManager(this);
 	}
 
 	this->positioned = true;

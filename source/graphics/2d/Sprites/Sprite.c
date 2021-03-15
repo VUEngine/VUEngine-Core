@@ -246,7 +246,7 @@ bool Sprite::isHidden()
  *
  * @param position		
  */
-void Sprite::registerSprite()
+void Sprite::registerWithManager()
 {
 	this->registered = true;
 }
@@ -263,7 +263,7 @@ void Sprite::position(const Vector3D* position)
 
 	if(!this->registered)
 	{
-		Sprite::registerSprite(this);
+		Sprite::registerWithManager(this);
 	}
 }
 
@@ -279,7 +279,7 @@ void Sprite::setPosition(const PixelVector* position)
 
 	if(!this->registered)
 	{
-		Sprite::registerSprite(this);
+		Sprite::registerWithManager(this);
 	}
 }
 

@@ -167,7 +167,7 @@ void ObjectSprite::rotate(const Rotation* rotation)
  * @memberof			ObjectSprite
  * @private
  */
-void ObjectSprite::registerSprite()
+void ObjectSprite::registerWithManager()
 {
 	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
 	{
@@ -175,7 +175,7 @@ void ObjectSprite::registerSprite()
 		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
-	Base::registerSprite(this);
+	Base::registerWithManager(this);
 }
 
 /**

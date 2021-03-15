@@ -73,8 +73,6 @@ class PrintingSprite : BgmapSprite
 	u16 w;
 	// print WORLD's height
 	u16 h;
-	// Bgmap segment for printing
-	u8 printingBgmapSegment;
 	
 	/// @publicsection
 	void constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner);

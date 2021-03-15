@@ -56,18 +56,11 @@
  */
 void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner)
 {
-	Base::constructor((SpriteSpec*)&printingSpriteSpec->bgmapSpriteSpec, owner);
+	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
 
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.parallax = 0;
-	this->drawSpec.textureSource.mx = __PRINTING_BGMAP_X_OFFSET;
-	this->drawSpec.textureSource.my = __PRINTING_BGMAP_Y_OFFSET;
-	this->drawSpec.textureSource.mp = 0;
-	this->w = __SCREEN_WIDTH - 1;
-	this->h = __SCREEN_HEIGHT - 1;
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-	this->positioned = true;
+	PrintingSprite::reset(this);
+
+	PrintingSprite::registerWithManager(this);
 }
 
 /**
@@ -106,13 +99,15 @@ u16 PrintingSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->gy = this->position.y;
 	worldPointer->w = this->w;
 	worldPointer->h = this->h;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
+	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	return index;
 }
 
 void PrintingSprite::reset()
 {
+	this->positioned = true;
+
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.parallax = 0;
@@ -121,14 +116,12 @@ void PrintingSprite::reset()
 	this->drawSpec.textureSource.my = __PRINTING_BGMAP_Y_OFFSET;
 	this->drawSpec.textureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
-	this->w = __SCREEN_WIDTH;
-	this->h = __SCREEN_HEIGHT;
+	this->w = __SCREEN_WIDTH - 1;
+	this->h = __SCREEN_HEIGHT - 1;
 }
 
 void PrintingSprite::setGValues(s16 gx, s16 gy, s16 gp)
 {
-	BgmapSprite::registerSprite(this);
-
 	this->position.x = gx;
 	this->position.y = gy;
 	this->position.parallax = gp;
