@@ -254,9 +254,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 		// Set up visual representation
 		GameState::synchronizeGraphics(this);
-
-		// Make sure everything is properly rendered
-		SpriteManager::prepareAll(SpriteManager::getInstance());
 	}
 
 	// Restore timer
@@ -498,9 +495,6 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// set up visual representation
 	GameState::synchronizeGraphics(this);
-
-	// Make sure everything is properly rendered
-	SpriteManager::prepareAll(SpriteManager::getInstance());
 
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);

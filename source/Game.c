@@ -423,6 +423,9 @@ void Game::setNextState(GameState state)
 		CommunicationManager::startSyncCycle(this->communicationManager);
 	}
 
+	// Make sure everything is properly rendered
+	SpriteManager::prepareAll(SpriteManager::getInstance());
+
 	HardwareManager::enableRendering(HardwareManager::getInstance());
 	HardwareManager::displayOn(HardwareManager::getInstance());
 
