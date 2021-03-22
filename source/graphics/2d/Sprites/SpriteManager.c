@@ -895,6 +895,7 @@ int SpriteManager::getTotalPixelsDrawn()
  */
 void SpriteManager::print(int x, int y, bool resumed)
 {
+	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, 0, 0);
 	SpriteManager::computeTotalPixelsDrawn(this);
 
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
