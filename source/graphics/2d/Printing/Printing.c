@@ -455,7 +455,7 @@ void Printing::text(const char* string, int x, int y, const char* font)
 #ifdef __FORCE_PRINTING_LAYER
 void Printing::setCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s16 z __attribute__ ((unused)), s8 parallax __attribute__ ((unused)))
 {
-	Printing::setWorldCoordinates(this, 0, 0, 0);
+	Printing::setWorldCoordinates(this, 0, 0, 0, 0);
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
 	Printing::setWorldSize(this, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
@@ -466,7 +466,7 @@ void Printing::setWorldCoordinates(s16 x __attribute__ ((unused)), s16 y __attri
 	{
 		PixelVector position = 
 		{
-			0, 0, 0, 0
+			0, 0, -64, -4
 		};
 
 		PrintingSprite::setPosition(this->printingSprite, &position);
