@@ -596,7 +596,8 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	Waveform* freeWaveformPriority2 = NULL;
 
 	// Reset all sounds and channels
-	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
+//	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
+	for(s16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		if(NULL == this->waveforms[i].data)
 		{
@@ -619,7 +620,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	{
 		freeWaveformPriority1->overwrite = freeWaveformPriority1->data != waveFormData;
 		freeWaveformPriority1->data = waveFormData;
-		freeWaveformPriority1->usageCount += 1;
+		freeWaveformPriority1->usageCount = 1;
 
 		return freeWaveformPriority1->number;
 	}
@@ -628,7 +629,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	{
 		freeWaveformPriority2->overwrite = freeWaveformPriority2->data != waveFormData;
 		freeWaveformPriority2->data = waveFormData;
-		freeWaveformPriority2->usageCount += 1;
+		freeWaveformPriority2->usageCount = 1;
 
 		return freeWaveformPriority2->number;
 	}
@@ -915,17 +916,20 @@ SoundWrapper SoundManager::doGetSound(Sound* sound, u32 command, EventListener s
 
 				u16 i = 0;
 
-				for(i = 0; i < normalChannelsCount + modulationChannelsCount; i++)
+				if(NULL != sound->soundChannels[i]->soundChannelConfiguration->waveFormData)
 				{
-					if(kChannelNoise != sound->soundChannels[i]->soundChannelConfiguration->channelType)
+					for(i = 0; i < normalChannelsCount + modulationChannelsCount; i++)
 					{
-						waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
-					}
-
-					if(0 > waves[i])
-					{
-						delete availableChannels;
-						return NULL;
+						if(kChannelNoise != sound->soundChannels[i]->soundChannelConfiguration->channelType)
+						{
+							waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
+							if(0 > waves[i])
+							{
+								NM_ASSERT(false, "No wave found");
+								delete availableChannels;
+								return NULL;
+							}
+						}
 					}
 				}
 

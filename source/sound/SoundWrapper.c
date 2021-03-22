@@ -833,18 +833,19 @@ void SoundWrapper::playMIDINote(Channel* channel, s16 leftVolumeFactor, s16 righ
 			_soundRegistries[channel->number].SxFQH = (note >> 8);
 			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
 			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+
+			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
+			{
+				u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
+				_soundRegistries[channel->number].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+			}
+			else
+			{
+				_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+			}
+			
 			break;
 
-	}
-
-	if(kChannelNoise == channel->soundChannelConfiguration.channelType)
-	{
-		u8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
-
-		channel->soundChannelConfiguration.SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
-
-		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 	}
 }
 
