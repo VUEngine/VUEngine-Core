@@ -649,29 +649,32 @@ void VirtualCircularList::copy(VirtualCircularList sourceList)
 /**
  * Copy source list's elements to destination list in reverse order
  *
- * @param sourceList
  */
-void VirtualCircularList::reverse(VirtualCircularList sourceList)
+void VirtualCircularList::reverse()
 {
-#ifdef __DEBUG
-	int counter = 0;
-#endif
-
-	if(sourceList->head)
+	if(this->head && this->tail != this->head)
 	{
-		VirtualNode node = sourceList->head;
-
-		VirtualCircularList::clear(this);
+		VirtualNode node = this->head;
+		VirtualNode nextNode = node->next;
 
 		do
 		{
-			VirtualCircularList::pushFront(this, node->data);
+			VirtualNode helper = node->next;
+			node->next = node->previous;
+			node->previous = helper;
 
-			node = node->next;
-
-			ASSERT(++counter < LIST_MAX_SIZE, "VirtualCircularList::reverse: endless list copying");
+			node = nextNode;
+			nextNode = nextNode->next;
 		}
-		while(node != sourceList->head);
+		while(nextNode != this->head);
+
+		VirtualNode helper = node->next;
+		node->next = node->previous;
+		node->previous = helper;
+
+		helper = this->head;
+		this->head = this->tail;
+		this->tail = helper;
 	}
 }
 
