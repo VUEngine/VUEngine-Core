@@ -827,19 +827,16 @@ void SpriteManager::prepareAll()
 	// Sort all sprites' layers
 	SpriteManager::sort(this);
 
-	// Render sprites as soon as possible
-	SpriteManager::render(this);
+	// Render and draw sprites as soon as possible
+	SpriteManager::renderAndDraw(this);
 
 	// Sort all sprites' layers again
 	// don't remove me, some custom sprites depend on others
 	// to have been setup up before
 	SpriteManager::sort(this);
 
-	// Render sprites as soon as possible
-	SpriteManager::render(this);
-
-	// Write render data
-	SpriteManager::writeDRAM(this);
+	// Render and draw sprites as soon as possible again
+	SpriteManager::renderAndDraw(this);
 
 	// Defer rendering again
 	SpriteManager::deferParamTableEffects(this, true);
@@ -850,6 +847,14 @@ void SpriteManager::prepareAll()
 		HardwareManager::enableRendering(HardwareManager::getInstance());
 		while(VIPManager::isRenderingPending(VIPManager::getInstance()));
 	}
+}
+
+void SpriteManager::renderAndDraw()
+{
+	SpriteManager::render(this);
+
+	// Write render data
+	SpriteManager::writeDRAM(this);
 }
 
 /**

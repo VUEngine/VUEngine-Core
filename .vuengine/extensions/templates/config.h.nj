@@ -410,7 +410,6 @@
 //												  HACKS
 //---------------------------------------------------------------------------------------------------------
 
-{% if project.config.hacks.mednafen.objectMemoryCleanup %}#define{% else %}#undef{% endif %} __MEDNAFEN_HACK
 
 
 #endif

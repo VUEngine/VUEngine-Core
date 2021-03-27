@@ -194,8 +194,6 @@
 		"paramTableSegments": 1
 	},
 	"hacks": {
-		"mednafen": {
-			"objectMemoryCleanup": true
 		}
 	}
 }

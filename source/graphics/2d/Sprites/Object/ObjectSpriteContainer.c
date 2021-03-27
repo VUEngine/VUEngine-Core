@@ -70,7 +70,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->availableObjects = this->totalObjects;
 	this->firstObjectIndex = firstObjectIndex;
 	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
-	this->totalObjectsToWriteToDRAM = this->lastRenderedObjectIndex;
+	this->totalObjectsToWriteToDRAM = this->totalObjects;
 	this->objectSprites = new VirtualList();
 	this->hidden = false;
 	this->visible = true;
@@ -79,9 +79,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->lockSpritesLists = false;
 
 	// clear OBJ memory
-	int i = firstObjectIndex;
-
-	for(; i < this->firstObjectIndex + this->totalObjects; i++)
+	for(int i = firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
 		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
@@ -169,9 +167,6 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numb
 	this->availableObjects += numberOfObjects;
 
 	this->lockSpritesLists = false;
-
-	// Make sure to clean OBJECT memory next cycle	
-	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
 }
 
 /**
@@ -288,21 +283,7 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 		_objectAttributesCache[objectIndex].head = __OBJECT_CHAR_HIDE_MASK;
 	}
 
-
-#ifdef __MEDNAFEN_HACK
-	// totalObjectsToWriteToDRAM causes graphical glitches on Mednafnen but
-	// works just fine on hardware.
-	this->totalObjectsToWriteToDRAM = this->totalObjects;
-#else
-#ifndef __RELEASE
-	// totalObjectsToWriteToDRAM causes graphical glitches on Mednafnen but
-	// works just fine on hardware.
-	this->totalObjectsToWriteToDRAM = this->totalObjects;
-#else
 	this->totalObjectsToWriteToDRAM = (lastRenderedObjectIndex > this->lastRenderedObjectIndex ? lastRenderedObjectIndex : this->lastRenderedObjectIndex) - this->firstObjectIndex;
-#endif
-#endif
-
 	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
 
 	return index;
