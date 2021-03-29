@@ -188,7 +188,11 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Objec
 	}
 
 	// Wait a little bit for channel to stabilize
+#ifdef __RELEASE
 	TimerManager::wait(TimerManager::getInstance(), 2000);
+#else
+	TimerManager::wait(TimerManager::getInstance(), 500);
+#endif
 
 	// If handshake is taking place
     if(CommunicationManager::isHandshakeIncoming(this))
