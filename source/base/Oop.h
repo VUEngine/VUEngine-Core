@@ -190,6 +190,11 @@
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
 
+#define __OVERRIDES_METHOD(ClassName, object, MethodName) 												\
+																										\
+		/* try to up cast object */																		\
+		(void (*)())&ClassName ## _ ## MethodName != 													\
+			(void*)__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
 
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\

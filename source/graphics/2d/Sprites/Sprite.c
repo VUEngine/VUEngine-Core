@@ -621,13 +621,19 @@ void Sprite::setTransparent(u8 value)
 /**
  * Animate the Sprite
  */
-void Sprite::updateAnimation()
+bool Sprite::updateAnimation()
 {
+	bool stillAnimating = false;
+
 	if(!isDeleted(this->animationController))
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
+		
+		stillAnimating |= AnimationController::isPlaying(this->animationController);
 	}
+
+	return stillAnimating;
 }
 
 /**

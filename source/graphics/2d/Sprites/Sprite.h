@@ -216,7 +216,7 @@ abstract class Sprite : Object
 	void setFrameCycleDecrement(u8 frameDelayDelta);
 	void setFrameDuration(u8 frameDuration);
 	void update();
-	void updateAnimation();
+	bool updateAnimation();
 	void putChar(Point* texturePixel, BYTE* newChar);
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	AnimationController getAnimationController();

@@ -91,6 +91,10 @@ class Container : SpatialObject
 	u8 hidden;
 	// Flag to recalculate global transformations
 	u8 invalidateGlobalTransformation;
+	// flag to enable calls to update method
+	bool update;
+	// Flag to update sprites' attributes
+	bool invalidateSprites;
 
 	/// @publicsection
 	void constructor(const char* const name);

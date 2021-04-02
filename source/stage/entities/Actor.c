@@ -105,6 +105,18 @@ void Actor::destructor()
 	Base::destructor();
 }
 
+void Actor::initializeStateMachine(State state)
+{
+	if(isDeleted(this->stateMachine))
+	{
+		this->stateMachine = new StateMachine(this);
+	}
+
+	StateMachine::swapState(this->stateMachine, state);
+
+	this->update = true;
+}
+
 void Actor::iAmDeletingMyself()
 {
 	Base::iAmDeletingMyself(this);

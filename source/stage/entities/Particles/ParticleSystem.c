@@ -59,6 +59,8 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+
 	this->particles = NULL;
 
 	this->particleCount = 0;
@@ -130,6 +132,8 @@ void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 	this->maximumNumberOfAliveParticles = 0;
 
 	ParticleSystem::configure(this);
+
+	this->update = this->particleSystemSpec->autoStart;
 }
 
 void ParticleSystem::configure()
@@ -295,11 +299,13 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(NULL == node && this->paused)
 	{
+		this->update = ParticleSystem::overrides(this, update);
 		return;
 	}
 
 	if(this->hidden)
 	{
+		this->update = ParticleSystem::overrides(this, update);
 		return;
 	}
 
@@ -517,6 +523,8 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 		return;
 	}
 
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	this->transformed = true;
@@ -663,6 +671,7 @@ void ParticleSystem::setMaximumNumberOfAliveParticles(u8 maximumNumberOfAlivePar
 
 void ParticleSystem::start()
 {
+	this->update = true;
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
@@ -677,6 +686,8 @@ void ParticleSystem::pause()
 
 void ParticleSystem::unpause()
 {
+	this->update = true;
+
 	if(this->paused)
 	{
 		this->paused = false;

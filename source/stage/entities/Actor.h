@@ -74,6 +74,7 @@ class Actor : AnimatedEntity
 
 	/// @publicsection
 	void constructor(const ActorSpec* actorSpec, s16 internalId, const char* const name);
+	void initializeStateMachine(State state);
 	bool hasChangedDirection(u16 axis);
 	void changeDirectionOnAxis(u16 axis);
 	bool isInsideGame();

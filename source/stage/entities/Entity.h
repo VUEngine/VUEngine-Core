@@ -55,8 +55,6 @@ class Entity : Container
 	EntitySpec* entitySpec;
 	// Center displacement
 	Vector3D* centerDisplacement;
-	// Flag to update sprites' attributes
-	bool invalidateSprites;
 	// Flag to prevent transforming the shapes during the transformation phase
 	bool transformShapes;
 	// Flag to signal if collisions are allowed

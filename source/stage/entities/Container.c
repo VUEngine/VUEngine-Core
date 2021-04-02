@@ -51,6 +51,9 @@ void Container::constructor(const char* const name)
 	// construct base object
 	Base::constructor();
 
+	// By default, save on calls to update.
+	this->update = Container::overrides(this, update);
+
 	// set position
 	this->transformation.localPosition = Vector3D::zero();
 	this->transformation.globalPosition = Vector3D::zero();
@@ -457,6 +460,13 @@ void Container::updateChildren(u32 elapsedTime)
 		// update each child
 		for(; node ; node = node->next)
 		{
+			Container child = Container::safeCast(node->data);
+
+			if(!child->update && NULL == child->children)
+			{
+				continue;
+			}
+
 			Container::update(node->data, elapsedTime);
 		}
 	}
@@ -734,7 +744,14 @@ void Container::synchronizeChildrenGraphics()
 		// update each child
 		for(; node; node = node->next)
 		{
-			Container::synchronizeGraphics(node->data);
+			Container child = Container::safeCast(node->data);
+
+			if(!child->invalidateSprites && NULL == child->children)
+			{
+				continue;
+			}
+
+			Container::synchronizeGraphics(child);
 		}
 	}
 }

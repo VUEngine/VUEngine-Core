@@ -115,12 +115,16 @@ void AnimatedEntity::animate()
 
 	VirtualNode node = this->sprites->head;
 
+	bool stillPlaying = false;
+
 	// move each child to a temporary list
 	for(; node && this->sprites; node = node->next)
 	{
 		// first animate the frame
-		Sprite::updateAnimation(node->data);
+		stillPlaying |= Sprite::updateAnimation(node->data);
 	}
+
+	this->update = stillPlaying || AnimatedEntity::overrides(this, update);
 }
 
 // pause animation
@@ -149,6 +153,8 @@ void AnimatedEntity::playAnimation(char* animationName)
 	{
 		return;
 	}
+
+	this->update = true;
 
 	this->currentAnimationName = animationName;
 
@@ -269,6 +275,8 @@ void AnimatedEntity::resume()
 	Base::resume(this);
 
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
+
+	this->update = true;
 }
 
 s16 AnimatedEntity::getActualFrame()
