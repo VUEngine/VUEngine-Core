@@ -95,14 +95,16 @@ u16 FrameRate::getFps()
 /**
  * Update
  */
-#ifdef __PRINT_FRAME_TIMES
+#ifdef __PRINT_FRAMERATE
 void FrameRate::update()
 {
 	float elapsedTime = Stopwatch::lap(this->stopwatch);
 	this->gameFrameTotalTime += elapsedTime;
 
+#ifdef __PRINT_FRAME_TIMES
 	static u32 elapsedTimes[60] = {1};
 	elapsedTimes[this->fps] = elapsedTime;
+#endif
 
 	if(__GAME_FRAME_DURATION + 0.5f < elapsedTime)
 	{
@@ -113,6 +115,7 @@ void FrameRate::update()
 
 	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
 	{
+#ifdef __PRINT_FRAME_TIMES
 		int x = 1; 
 		int y = 1;
 
@@ -128,6 +131,7 @@ void FrameRate::update()
 				y -= 20;
 			}
 		}
+#endif
 
 		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
 		{
