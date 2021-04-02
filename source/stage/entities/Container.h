@@ -96,6 +96,8 @@ class Container : SpatialObject
 	// flag to enable calls to update method
 	bool transform;
 	// Flag to update sprites' attributes
+	bool dontStreamOut;
+	// Flag to update sprites' attributes
 	bool invalidateSprites;
 
 	/// @publicsection

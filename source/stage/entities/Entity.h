@@ -100,13 +100,13 @@ class Entity : Container
 	void setTransparent(u8 transparent);
 	bool isSpriteVisible(Sprite sprite, int pad);
 	void setupShapes();
+	bool isVisible(int pad, bool recursive);
 	VirtualList getShapes();
 	void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
 	virtual bool updateSpritePosition();
 	virtual bool updateSpriteRotation();
 	virtual bool updateSpriteScale();
 	virtual void setDirection(Direction direction);
-	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);

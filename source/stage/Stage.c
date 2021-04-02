@@ -724,6 +724,11 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		// get next entity
 		Entity entity = Entity::safeCast(node->data);
 
+		if(entity->dontStreamOut)
+		{
+			continue;
+		}
+
 		// if the entity isn't visible inside the view field, unload it
 		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{

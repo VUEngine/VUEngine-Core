@@ -69,6 +69,8 @@ void Entity::constructor(EntitySpec* entitySpec, s16 internalId, const char* con
 	// save spec
 	this->entitySpec = entitySpec;
 
+	this->dontStreamOut = false;
+
 	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
 	this->shapes = NULL;
