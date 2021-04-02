@@ -51,8 +51,9 @@ void Container::constructor(const char* const name)
 	// construct base object
 	Base::constructor();
 
-	// By default, save on calls to update.
+	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
+	this->transform = Container::overrides(this, transform);
 
 	// set position
 	this->transformation.localPosition = Vector3D::zero();
@@ -467,7 +468,7 @@ void Container::updateChildren(u32 elapsedTime)
 				continue;
 			}
 
-			Container::update(node->data, elapsedTime);
+			Container::update(child, elapsedTime);
 		}
 	}
 }
@@ -715,6 +716,8 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 	// if I have children
 	if(this->children)
 	{
+		u8 invalidateSprites = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -723,6 +726,12 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
+			child->invalidateSprites |= invalidateSprites;
+
+			if(!this->transform && NULL == child->children && !(child->invalidateGlobalTransformation))
+			{
+				continue;
+			}
 
 			Container::transform(child, &this->transformation, invalidateTransformationFlag);
 		}

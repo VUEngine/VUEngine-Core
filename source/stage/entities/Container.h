@@ -93,6 +93,8 @@ class Container : SpatialObject
 	u8 invalidateGlobalTransformation;
 	// flag to enable calls to update method
 	bool update;
+	// flag to enable calls to update method
+	bool transform;
 	// Flag to update sprites' attributes
 	bool invalidateSprites;
 
