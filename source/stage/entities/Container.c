@@ -462,7 +462,7 @@ void Container::updateChildren(u32 elapsedTime)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(!child->update && NULL == child->children)
+			if(!child->update && NULL == child->children && NULL == this->behaviors)
 			{
 				continue;
 			}
