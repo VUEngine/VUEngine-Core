@@ -120,14 +120,14 @@ s16 Sprite::render(s16 index, bool evenFrame)
 
 	if(kTextureInvalid == this->texture->status)
 	{
-		return this->index;
+		return __NO_RENDER_INDEX;
 	}
 
 	if(kTextureWritten != this->texture->status)
 	{
 		if(!Texture::prepare(this->texture))
 		{
-			return this->index;
+			return __NO_RENDER_INDEX;
 		}
 	}
 
@@ -142,7 +142,12 @@ s16 Sprite::render(s16 index, bool evenFrame)
 */
 	if(!Sprite::isWithinScreenSpace(this))
 	{
-		return this->index;
+		if(this->writeAnimationFrame)
+		{
+			Sprite::update(this);
+		}
+
+		return __NO_RENDER_INDEX;
 	}
 
 	this->index = Sprite::doRender(this, index, evenFrame);
