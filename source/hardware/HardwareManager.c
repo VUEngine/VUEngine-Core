@@ -46,6 +46,7 @@ extern u32 timVector;
 extern u32 croVector;
 extern u32 comVector;
 extern u32 vipVector;
+extern u32 zeroDivisionVector;
 
 extern u32 _dram_bss_end;
 extern u32 _dram_data_start;
@@ -119,6 +120,7 @@ void HardwareManager::constructor()
 	//setup timer interrupts
 	HardwareManager::setInterruptVectors(this);
 	HardwareManager::setInterruptLevel(this, 0);
+	HardwareManager::setExceptionVectors(this);
 }
 
 /**
@@ -186,6 +188,14 @@ void HardwareManager::setInterruptVectors()
 	croVector = (u32)HardwareManager::croInterruptHandler;
 	comVector = (u32)CommunicationManager::interruptHandler;
 	vipVector = (u32)VIPManager::interruptHandler;
+}
+
+/**
+ * Setup interrupt vectors
+ */
+void HardwareManager::setExceptionVectors()
+{
+	zeroDivisionVector = (u32)Error::zeroDivisionException;
 }
 
 /**

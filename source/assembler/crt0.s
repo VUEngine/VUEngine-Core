@@ -21,6 +21,8 @@ _comVector = 0x0500FFCC
 .global _vipVector
 _vipVector = 0x0500FFD0
 
+.global _zeroDivisionVector
+_zeroDivisionVector = 0x0500FFD4
 
 
 /*************************************************
@@ -192,7 +194,6 @@ __end:
 	jmp	    [lp]
 
 /* interrupt handler*/
-
 __interrupt_handler:
 	jmp	    [r1]
 
@@ -260,6 +261,12 @@ __interrupt_handler_epilogue:
 	addi	0x0050,sp,sp
 	reti
 
+__zero_exception:
+	movhi	hi(_zeroDivisionVector), r0, r1
+	movea	lo(_zeroDivisionVector), r1, r1
+	ld.w	0[r1],r1
+	jmp	    [r1]
+
 	.section ".vbvectors","ax"
 	.align	1
 
@@ -287,7 +294,7 @@ _interrupt_table:
 	.fill	0x0c
 
     /* Unused vectors (7FFFE50h-7FFFF5Fh) */
-	.fill	0x010F
+	.fill	0x0110
 
     /* (7FFFF60h) - Float exception */
 	reti
@@ -297,8 +304,8 @@ _interrupt_table:
 	.fill	0x10
 
     /* (7FFFF80h) - Divide by zero exception */
-	reti
-	.fill	0x0E
+	jr __zero_exception
+	.fill	0x0c
 
     /* (7FFFF90h) - Invalid Opcode exception */
 	reti
@@ -318,7 +325,7 @@ _interrupt_table:
 
     /* (7FFFFD0h) - NMI/Duplex exception */
 	reti
-	.fill	0x0F
+	.fill	0x0E
 
     /* Unused vector */
 	.fill	0x10

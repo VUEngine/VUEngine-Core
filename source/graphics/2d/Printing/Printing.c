@@ -643,7 +643,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
-	if(!fontData || isDeleted(fontData->charSet))
+	if(!fontData || (__PRINTING_MODE_DEBUG != this->mode && isDeleted(fontData->charSet)))
 	{
 		return;
 	}

@@ -219,3 +219,20 @@ static int Error::triggerException(char* message, char* detail)
 	return false;
 }
 #endif
+
+static void Error::zeroDivisionException()
+{
+	u16 eipc;
+	// Save EIPC
+    asm("					\n\t"      \
+		"stsr	eipc, r10	\n\t"      \
+		"mov	r10, %0	\n\t"
+    : // No Output
+    : "r" (eipc)
+	: "r10" // regs used
+    );
+
+	_vuengineLinkPointer = eipc;
+
+	Error::triggerException("Zero division", NULL);
+}

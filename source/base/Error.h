@@ -40,6 +40,7 @@ singleton class Error : Object
 	/// @publicsection
 	static Error getInstance();
 	static int triggerException(char* message, char* detail);
+	static void zeroDivisionException();
 }
 
 
