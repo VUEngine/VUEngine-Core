@@ -222,6 +222,7 @@ static int Error::triggerException(char* message, char* detail)
 
 static void Error::zeroDivisionException()
 {
+#ifndef __RELEASE
 	u16 eipc;
 	// Save EIPC
     asm("					\n\t"      \
@@ -235,4 +236,5 @@ static void Error::zeroDivisionException()
 	_vuengineLinkPointer = eipc;
 
 	Error::triggerException("Zero division", NULL);
+#endif
 }
