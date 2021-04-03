@@ -728,7 +728,7 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateSprites |= invalidateSprites;
 
-			if(!this->transform && NULL == child->children && !(child->invalidateGlobalTransformation))
+			if(!child->transform && (NULL == child->children || !child->invalidateGlobalTransformation))
 			{
 				continue;
 			}

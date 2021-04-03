@@ -63,6 +63,8 @@ void Entity::constructor(EntitySpec* entitySpec, s16 internalId, const char* con
 	// construct base Container
 	Base::constructor(name);
 
+	this->transform = Entity::overrides(this, transform);
+
 	// set the ids
 	this->internalId = internalId;
 
