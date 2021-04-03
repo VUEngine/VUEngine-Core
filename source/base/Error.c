@@ -223,7 +223,7 @@ static int Error::triggerException(char* message, char* detail)
 static void Error::zeroDivisionException()
 {
 #ifndef __RELEASE
-	u16 eipc;
+	u16 eipc = 0;
 	// Save EIPC
     asm("					\n\t"      \
 		"stsr	eipc, r10	\n\t"      \
