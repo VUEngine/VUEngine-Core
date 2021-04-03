@@ -43,6 +43,7 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+friend class Sprite;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,6 +90,25 @@ void AnimatedEntity::ready(bool recursive)
 	Base::ready(this, recursive);
 
 	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
+
+	VirtualNode node = this->sprites->head;
+
+	// move each child to a temporary list
+	for(; node && this->sprites; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+		AnimationController animationController = Sprite::getAnimationController(sprite);
+
+		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
+		{
+			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
+		}
+	}
+}
+
+void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused)))
+{
+	this->update = true;
 }
 
 // execute character's logic

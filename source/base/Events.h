@@ -48,6 +48,7 @@ enum Events
 	kEventSecondChanged,
 	kEventMinuteChanged,
 
+	kEventAnimationStarted,
 	kEventAnimationCompleted,
 	kEventTextureRewritten,
 	kEventTextureSetFrame,

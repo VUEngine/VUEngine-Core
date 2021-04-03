@@ -89,7 +89,7 @@ void ObjectAnimationCoordinator::removeAnimationController(AnimationController a
 	bool mustChangeLeader = animationController == AnimationController::safeCast(VirtualList::front(this->animationControllers));
 	VirtualList::removeElement(this->animationControllers, animationController);
 
-	if(mustChangeLeader && this->animationControllers->head)
+	if(mustChangeLeader && !isDeleted(this->animationControllers->head))
 	{
 		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
 

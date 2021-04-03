@@ -37,6 +37,9 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+// Forward declaration
+class AnimationCoordinator;
+
 /// @ingroup graphics-2d-sprites-animation
 class AnimationController : Object
 {
@@ -61,6 +64,7 @@ class AnimationController : Object
 
 	/// @publicsection
 	void constructor(Object owner, Sprite sprite, const CharSetSpec* charSetSpec);
+	AnimationCoordinator getAnimationCoordinator();
 	s16 getActualFrame();
 	s16 getActualFrameIndex();
 	u8 getCols();
