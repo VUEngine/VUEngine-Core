@@ -38,10 +38,10 @@
 
 // some handy macros
 #define PRINT_TEXT(string, x, y)			Printing::text(Printing::getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)				Printing::int(Printing::getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)			Printing::float(Printing::getInstance(), number, x, y, NULL)
-#define PRINT_HEX(number, x, y)				Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
-#define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
+#define PRINT_INT(number, x, y)				PRINT_TEXT("        ", x, y); Printing::int(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)			PRINT_TEXT("        ", x, y);Printing::float(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)				PRINT_TEXT("        ", x, y);Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
+#define PRINT_HEX_EXT(number, x, y, d)		PRINT_TEXT("        ", x, y);Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
 
 // horizontal tab size in chars
 #define __TAB_SIZE					4
