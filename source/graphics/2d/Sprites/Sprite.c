@@ -234,6 +234,7 @@ void Sprite::show()
 void Sprite::hide()
 {
 	this->hidden = true;
+	this->positioned = false;
 }
 
 /**

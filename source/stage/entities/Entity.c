@@ -1809,15 +1809,6 @@ void Entity::show()
 {
 	Base::show(this);
 
-	// update transformation before hiding
-	Transformation environmentTransform = Container::getEnvironmentTransform(this);
-	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
-
-	// update the visual representation
-	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
-
-	Entity::synchronizeGraphics(this);
-
 	// show all sprites
 	if(this->sprites)
 	{
@@ -1839,15 +1830,6 @@ void Entity::hide()
 {
 	// This is called from the initialTransformation method
 	// causing a call to transform that messes up the localPosition
-/*
-	// update transformation before hiding
-	Transformation environmentTransform = Container::getEnvironmentTransform(this);
-	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
-
-	// update the visual representation
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity::synchronizeGraphics(this);
-*/
 	Base::hide(this);
 
 	// hide all sprites
