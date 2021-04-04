@@ -1009,12 +1009,21 @@ void Debug::charMemoryShowMemory(int increment __attribute__ ((unused)), int x _
 		24,	25,	26,	27,	28,	29,	30,	31
 	};
 
+/*
+		Mem::copyHWORD((HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + ((row + topBorder) << 6) + offsetDisplacement]),
+				(const HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (this->bgmapSegment)) + ((row + myDisplacement) << 6) + mxDisplacement]), 
+				numberOfHWORDS
+
+*/
+	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+
 	// put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
 	{
-		Mem_addHWORD
+		Mem::addHWORD
 		(
-			(HWORD*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance())) + (((yOffset + i) * (64)) + 2),
+			(HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + ((yOffset + i) << 6) + 2]),
 			(HWORD*)charMemoryMap,
 			__CHARS_PER_ROW_TO_SHOW,
 			this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + i * __CHARS_PER_ROW_TO_SHOW
