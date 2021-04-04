@@ -568,7 +568,14 @@ void SpriteManager::writeGraphicsToDRAM()
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{
-		Sprite::processEffects(node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(sprite->hidden | !sprite->positioned)
+		{
+			continue;
+		}
+		
+		Sprite::processEffects(sprite);
 	}
 }
 
