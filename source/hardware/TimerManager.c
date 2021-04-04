@@ -643,24 +643,24 @@ void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, 
 
 void TimerManager::print(int x, int y)
 {
-	PRINT_TEXT("TIMER", x, y++);
+	Printing::text(Printing::getInstance(), "TIMER", x, y++, NULL);
 	y++;
 
 	switch(this->resolution)
 	{
 		case __TIMER_20US:
 
-			PRINT_TEXT("Resolution    20 US ", x, y++);
+			Printing::text(Printing::getInstance(), "Resolution    20 US ", x, y++, NULL);
 			break;
 
 		case __TIMER_100US:
 
-			PRINT_TEXT("Resolution    100 US ", x, y++);
+			Printing::text(Printing::getInstance(), "Resolution    100 US ", x, y++, NULL);
 			break;
 
 		default:
 
-			PRINT_TEXT("Resolution    ?      ", x, y++);
+			Printing::text(Printing::getInstance(), "Resolution    ?      ", x, y++, NULL);
 			break;
 	}
 
@@ -668,22 +668,22 @@ void TimerManager::print(int x, int y)
 	{
 		case kUS:
 
-			PRINT_TEXT("US/interrupt        ", x, y);
+			Printing::text(Printing::getInstance(), "US/interrupt        ", x, y, NULL);
 			break;
 
 		case kMS:
 
-			PRINT_TEXT("MS/interrupt        ", x, y);
+			Printing::text(Printing::getInstance(), "MS/interrupt        ", x, y, NULL);
 			break;
 
 		default:
 
-			PRINT_TEXT(" ?/interrupt        ", x, y);
+			Printing::text(Printing::getInstance(), " ?/interrupt        ", x, y, NULL);
 			break;
 	}
 
-	PRINT_INT(this->timePerInterrupt, x + 14, y++);
+	Printing::int(Printing::getInstance(), this->timePerInterrupt, x + 14, y++, NULL);
 
-	PRINT_TEXT("Timer counter               ", x, y);
-	PRINT_INT(TimerManager::computeTimerCounter(this), x + 14, y++);
+	Printing::text(Printing::getInstance(), "Timer counter               ", x, y, NULL);
+	Printing::int(Printing::getInstance(), TimerManager::computeTimerCounter(this), x + 14, y++, NULL);
 }
