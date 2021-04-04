@@ -121,6 +121,7 @@ void SoundTest::show()
 	SpriteManager::hideSprites(SpriteManager::getInstance());
 	Sprite::show(SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0));
 	Printing::resetCoordinates(Printing::getInstance());
+	Printing::show(Printing::getInstance());
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
