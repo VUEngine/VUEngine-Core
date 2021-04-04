@@ -65,6 +65,8 @@ class BgmapTexture : Texture
 	s8 remainingRowsToBeWritten;
 
 	/// @publicsection
+	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset, u16 flip, bool backward);
+
 	void constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id);
 	s8 getRemainingRowsToBeWritten();
 	s16 getXOffset();

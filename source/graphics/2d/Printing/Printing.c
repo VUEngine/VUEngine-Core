@@ -616,6 +616,14 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 	return fontSize;
 }
 
+void Printing::show()
+{
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::show(this->printingSprite);
+	}
+}
+
 void Printing::render(u8 textLayer)
 {
 	if(!isDeleted(this->printingSprite))

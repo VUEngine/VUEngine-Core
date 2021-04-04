@@ -231,6 +231,7 @@ void Debug::render()
 void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
+	Printing::setCoordinates(Printing::getInstance(), 0, 0, -64, -2);
 	SpriteManager::showSprites(SpriteManager::getInstance());
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
@@ -260,6 +261,7 @@ u8 Debug::getCurrentPageNumber()
 void Debug::setBlackBackground()
 {
 	SpriteManager::hideSprites(SpriteManager::getInstance());
+	Printing::show(Printing::getInstance());
 }
 
 /**
@@ -414,6 +416,8 @@ void Debug::showPage(int increment)
 
 		((void (*)(Debug, int, int, int))this->currentPage->data)(this, increment, 1, 2);
 	}
+
+	Printing::show(Printing::getInstance());
 }
 
 /**
@@ -434,6 +438,8 @@ void Debug::showSubPage(int increment)
 
 		((void (*)(Debug, int, int, int))VirtualNode::getData(this->currentSubPage))(this, increment, 1, 2);
 	}
+
+	Printing::show(Printing::getInstance());
 }
 
 /**
@@ -1064,19 +1070,16 @@ void Debug::showDebugBgmap()
  */
 void Debug::showBgmapSegment()
 {
+	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	u32 topBorder = 0;
+	u32 bottomBorder = 0;
+	u32 leftBorder = 0;
+	u32 rightBorder = 0;
+	u32 mxDisplacement = 0;
+	u32 myDisplacement = 0;
+
 	u8 i = 0;
 	u8 yOffset = 4;
-
-	// write the head
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = (this->viewedMapPart % 2 == 0) ? 0 : (512-(384-16));
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mp = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = (this->viewedMapPart < 2) ? 0 : (this->viewedMapPart > 3) ? (512-(224-48)) : ((512-(224-32))/2);
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gx = (this->viewedMapPart % 2 == 0) ? 16 : 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gp = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gy = (this->viewedMapPart < 2) ? 40 : 32;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].w = (384-16);
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].h = (this->viewedMapPart < 2) ? (224-40) : (this->viewedMapPart > 3) ? (224-48) : (224-32);
 
 	// print box
 	switch(this->viewedMapPart)
@@ -1088,10 +1091,16 @@ void Debug::showBgmapSegment()
 
         	for(i = yOffset + 1; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
         		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
         	}
 
+			topBorder = 5;
+			bottomBorder = 0;
+			leftBorder = 2;
+			rightBorder = 0;
+			mxDisplacement = 0;
+			myDisplacement = 0;
 			break;
 		}
 		case 1:
@@ -1102,9 +1111,15 @@ void Debug::showBgmapSegment()
         	for(i = yOffset + 1; i < 28; i++)
         	{
         		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
         	}
 
+			topBorder = 5;
+			bottomBorder = 0;
+			leftBorder = 0;
+			rightBorder = 2;
+			mxDisplacement = 64 - (__SCREEN_WIDTH_IN_CHARS - (leftBorder + rightBorder));
+			myDisplacement = 0;
 			break;
 		}
 		case 2:
@@ -1114,10 +1129,16 @@ void Debug::showBgmapSegment()
 
         	for(i = yOffset; i < 28; i++)
         	{
-        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
         		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
         	}
 
+			topBorder = 4;
+			bottomBorder = 0;
+			leftBorder = 2;
+			rightBorder = 0;
+			mxDisplacement = 0;
+			myDisplacement = __SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder) - 2;
 			break;
 		}
 		case 3:
@@ -1128,9 +1149,15 @@ void Debug::showBgmapSegment()
         	for(i = yOffset; i < 28; i++)
         	{
         		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
         	}
 
+			topBorder = 4;
+			bottomBorder = 0;
+			leftBorder = 0;
+			rightBorder = 2;
+			mxDisplacement = 64 - (__SCREEN_WIDTH_IN_CHARS - (leftBorder + rightBorder));
+			myDisplacement = __SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder) - 2;
 			break;
 		}
 		case 4:
@@ -1141,10 +1168,16 @@ void Debug::showBgmapSegment()
 
         	for(i = yOffset; i < 26; i++)
         	{
-        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " \x07", 0, i, NULL);
         		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
         	}
 
+			topBorder = 4;
+			bottomBorder = 2;
+			leftBorder = 2;
+			rightBorder = 0;
+			mxDisplacement = 0;
+			myDisplacement = 64 - (__SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder));
 			break;
 		}
 		case 5:
@@ -1156,11 +1189,30 @@ void Debug::showBgmapSegment()
         	for(i = yOffset; i < 26; i++)
         	{
         		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
-        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07 ", 46, i, NULL);
         	}
 
+			topBorder = 4;
+			bottomBorder = 2;
+			leftBorder = 0;
+			rightBorder = 2;
+			mxDisplacement = 64 - (__SCREEN_WIDTH_IN_CHARS - (leftBorder + rightBorder));
+			myDisplacement = 64 - (__SCREEN_HEIGHT_IN_CHARS - (topBorder + bottomBorder));
 			break;
 		}
+	}
+
+	u32 numberOfHWORDS = __SCREEN_WIDTH_IN_CHARS - leftBorder - rightBorder;
+	u32 offsetDisplacement = leftBorder;
+
+	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+
+	for(int row = 0; row < __SCREEN_HEIGHT_IN_CHARS - topBorder - bottomBorder; row++)
+	{
+		Mem::copyHWORD((HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + ((row + topBorder) << 6) + offsetDisplacement]),
+				(const HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (this->bgmapSegment)) + ((row + myDisplacement) << 6) + mxDisplacement]), 
+				numberOfHWORDS
+		);
 	}
 }
 
