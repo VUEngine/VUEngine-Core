@@ -75,10 +75,14 @@ enum OptionTypes
 {
 	/// a string
 	kString,
+	/// a float
+	kFloat,
 	/// an integer
 	kInt,
-	/// a float
-	kFloat
+	/// a short integer
+	kShortInt,
+	/// a char
+	kChar
 };
 
 

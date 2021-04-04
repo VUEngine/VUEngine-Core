@@ -127,6 +127,7 @@ singleton class SpriteManager : Object
 	void prepareAll();
 	bool isEvenFrame();
 	void writeDRAM();
+	void showOnly(Sprite spriteToShow);
 
 }
 

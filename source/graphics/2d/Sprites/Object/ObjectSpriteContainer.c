@@ -258,6 +258,49 @@ void ObjectSpriteContainer::writeDRAM()
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjectsToWriteToDRAM) >> 2);
 }
 
+bool ObjectSpriteContainer::showIfEqual(Sprite sprite)
+{
+	if(sprite == this)
+	{
+		Sprite::show(this);
+		return true;
+	}
+
+	VirtualNode node = this->objectSprites->head;
+
+	for(; node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(sprite == objectSprite)
+		{
+			break;
+		}
+	}
+
+	if(isDeleted(node))
+	{
+		ObjectSpriteContainer::hideSprites(this);
+	}
+	else
+	{
+		ObjectSpriteContainer::showSprites(this);
+
+		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+		{
+			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+		
+			if(!ObjectSprite::showIfEqual(objectSprite, sprite))
+			{
+				ObjectSprite::hide(objectSprite);
+			}
+		}		
+	}
+
+	return true;
+}
+
+
 /**
  * Write WORLD data to DRAM
  *

@@ -621,6 +621,7 @@ void Printing::show()
 	if(!isDeleted(this->printingSprite))
 	{
 		PrintingSprite::show(this->printingSprite);
+		PrintingSprite::setPosition(this->printingSprite, PrintingSprite::getPosition(this->printingSprite));
 	}
 }
 

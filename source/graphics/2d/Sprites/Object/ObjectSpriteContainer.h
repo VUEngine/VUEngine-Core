@@ -84,6 +84,7 @@ class ObjectSpriteContainer : Sprite
 	override bool writeTextures();
 	override void print(int x, int y);
 	override int getTotalPixels();
+	override bool showIfEqual(Sprite sprite);
 }
 
 

@@ -436,14 +436,21 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
+					case kFloat:
+						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						break;
+
 					case kInt:
 						Printing::int(printing, *((int*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
-					case kFloat:
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+					case kShortInt:
+						Printing::int(printing, *((s16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
-				}
+
+					case kChar:
+						Printing::int(printing, *((s8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						break;				}
 			}
 
 			y += fontData->fontSpec->fontSize.y;

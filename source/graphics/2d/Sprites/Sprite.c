@@ -257,6 +257,17 @@ void Sprite::registerWithManager()
 	this->registered = true;
 }
 
+bool Sprite::showIfEqual(Sprite sprite)
+{
+	if(sprite == this)
+	{
+		Sprite::show(this);
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Calculate 2D position
  *

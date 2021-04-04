@@ -753,6 +753,24 @@ s16 SpriteManager::getSpritePosition(Sprite sprite)
 }
 
 /**
+ * Show the Sprite and hide every other one
+ *
+ * @param sprite	Sprite to show
+ */
+void SpriteManager::showOnly(Sprite spriteToShow)
+{
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(!Sprite::showIfEqual(sprite, spriteToShow))
+		{
+			Sprite::hide(sprite);
+		}
+	}	
+}
+
+/**
  * Retrieve the maximum number of texture rows allowed to be written on each render cycle
  *
  * @return 			Maximum number of texture rows to write

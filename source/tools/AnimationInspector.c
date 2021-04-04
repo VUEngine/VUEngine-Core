@@ -115,6 +115,12 @@ void AnimationInspector::constructor()
 	this->frameEditionSelector = NULL;
 
 	this->mode = kFirstMode + 1;
+
+	int i = 0;
+	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
+	{
+		this->animationFunction.frames[i] = 0;
+	}
 }
 
 /**
@@ -171,6 +177,8 @@ void AnimationInspector::update()
  */
 void AnimationInspector::show()
 {
+	Printing::clear(Printing::getInstance());
+
 	this->animatedSprite = NULL;
 
 	this->animationsSelector = NULL;
@@ -201,7 +209,7 @@ void AnimationInspector::show()
 	this->mode = kFirstMode + 1;
 	AnimationInspector::setupMode(this);
 	SpriteManager::hideSprites(SpriteManager::getInstance());
-	Sprite::show(SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0));
+	Printing::show(Printing::getInstance());
 	
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
@@ -772,6 +780,9 @@ void AnimationInspector::createSprite()
 	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->writeAnimationFrame = true;
+
+	SpriteManager::showOnly(SpriteManager::getInstance(), this->animatedSprite);
+	Printing::show(Printing::getInstance());
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::sort(SpriteManager::getInstance());
 	SpriteManager::render(SpriteManager::getInstance());
@@ -911,7 +922,7 @@ void AnimationInspector::createFrameEditionSelector()
 	{
 		Option* option = new Option;
 		option->value = &this->animationFunction.frames[i];
-		option->type = kInt;
+		option->type = kChar;
 		VirtualList::pushBack(framesIndexes, option);
 	}
 
