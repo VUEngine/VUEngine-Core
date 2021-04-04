@@ -873,12 +873,12 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, in
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-void Debug::gameProfilingPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::gameProfilingPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
 	// TODO: show profiler
-	PRINT_TEXT("Show profiler", 1, 10);
+	PRINT_TEXT("TODO: Show profiler", 1, 6);
 }
 
 /**
@@ -1080,12 +1080,12 @@ void Debug::showDebugBgmap()
 void Debug::showBgmapSegment()
 {
 	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
-	u32 topBorder = 0;
-	u32 bottomBorder = 0;
-	u32 leftBorder = 0;
-	u32 rightBorder = 0;
-	u32 mxDisplacement = 0;
-	u32 myDisplacement = 0;
+	int topBorder = 0;
+	int bottomBorder = 0;
+	int leftBorder = 0;
+	int rightBorder = 0;
+	int mxDisplacement = 0;
+	int myDisplacement = 0;
 
 	u8 i = 0;
 	u8 yOffset = 4;
@@ -1331,7 +1331,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 		if(objectSpriteContainer)
 		{
 			SpriteManager::hideSprites(SpriteManager::getInstance());
-			Sprite::show(objectSpriteContainer);
+			ObjectSpriteContainer::showSprites(objectSpriteContainer);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else

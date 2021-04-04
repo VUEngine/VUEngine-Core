@@ -77,6 +77,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
 	this->lockSpritesLists = false;
+	this->hideSprites = false;
 
 	// clear OBJ memory
 	for(int i = firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
@@ -238,6 +239,20 @@ void ObjectSpriteContainer::sortProgressively()
 	}
 }
 
+void ObjectSpriteContainer::showSprites()
+{
+	this->hidden = false;
+	this->positioned = true;
+	this->hideSprites = false;
+}
+
+void ObjectSpriteContainer::hideSprites()
+{
+	this->hidden = false;
+	this->positioned = true;
+	this->hideSprites = true;
+}
+
 void ObjectSpriteContainer::writeDRAM()
 {
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjectsToWriteToDRAM) >> 2);
@@ -254,25 +269,28 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 
 	u16 objectIndex = this->firstObjectIndex;
 
-	for(VirtualNode node = this->objectSprites->head; node && objectIndex < this->firstObjectIndex + this->totalObjects; node = node->next)
+	if(!this->hideSprites)
 	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		// Saves on method calls quite a bit when there are lots of
-		// sprites. Don't remove.
-		if(objectSprite->hidden || !objectSprite->positioned)
+		for(VirtualNode node = this->objectSprites->head; node && objectIndex < this->firstObjectIndex + this->totalObjects; node = node->next)
 		{
-			continue;
-		}
+			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		if(objectSprite->transparent & evenFrame)
-		{
-			continue;
-		}
+			// Saves on method calls quite a bit when there are lots of
+			// sprites. Don't remove.
+			if(objectSprite->hidden || !objectSprite->positioned)
+			{
+				continue;
+			}
 
-		if(objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
-		{
-			objectIndex += objectSprite->totalObjects;
+			if(objectSprite->transparent & evenFrame)
+			{
+				continue;
+			}
+
+			if(objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+			{
+				objectIndex += objectSprite->totalObjects;
+			}
 		}
 	}
 
@@ -376,6 +394,8 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
  */
 void ObjectSpriteContainer::print(int x, int y)
 {
+	ObjectSpriteContainer::showSprites(this);
+	
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);

@@ -669,15 +669,18 @@ s8 SpriteManager::getFreeLayer()
  */
 void SpriteManager::hideSprites()
 {
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		Sprite::hide(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
+	}
+
+	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
+	{
+		ObjectSpriteContainer::hideSprites(node->data);
 	}
 }
 
@@ -686,8 +689,7 @@ void SpriteManager::hideSprites()
  */
 void SpriteManager::showSprites()
 {
-	VirtualNode node = this->sprites->tail;
-	for(; node; node = node->previous)
+	for(VirtualNode node = this->sprites->tail; node; node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -696,6 +698,11 @@ void SpriteManager::showSprites()
 		Sprite::setPosition(sprite, &sprite->position);
 
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
+	}
+
+	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
+	{
+		ObjectSpriteContainer::showSprites(node->data);
 	}
 
 	SpriteManager::stopRendering(this);

@@ -59,6 +59,8 @@ class ObjectSpriteContainer : Sprite
 	int spt;
 	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
+	// flag to override to show / hide sprites
+	bool hideSprites;
 
 	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
@@ -73,6 +75,8 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	void writeDRAM();
+	void showSprites();
+	void hideSprites();
 	override u16 doRender(s16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void addDisplacement(const PixelVector* displacement);
