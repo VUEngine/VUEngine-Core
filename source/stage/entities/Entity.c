@@ -1686,6 +1686,11 @@ bool Entity::isSpriteVisible(Sprite sprite, int pad)
  */
 bool Entity::isVisible(int pad, bool recursive)
 {
+	if(this->hidden)
+	{
+		return false;
+	}
+	
 	if(this->sprites && this->sprites->head)
 	{
 		VirtualNode spriteNode = this->sprites->head;
