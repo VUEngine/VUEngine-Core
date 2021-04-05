@@ -273,6 +273,7 @@ void AnimationInspector::setupMode()
 	{
 		case kSelectActor:
 
+			AnimationInspector::removePreviousSprite(this);
 			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
 			AnimationInspector::printUserAnimatedEntities(this);
 			break;
@@ -425,7 +426,7 @@ void AnimationInspector::selectSprite(u32 pressedKey)
  */
 void AnimationInspector::removePreviousSprite()
 {
-	if(this->animatedSprite)
+	if(!isDeleted(this->animatedSprite))
 	{
 		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->animatedSprite);
 		this->animatedSprite = NULL;
