@@ -85,6 +85,8 @@ class Container : SpatialObject
 	char* name;
 	// whether to inherit position, rotation and scale from environment (parents)
 	bool inheritEnvironment;
+	// Flag to update graphics' attributes
+	bool invalidateGraphics;
 	// Flag for parent to know to delete it
 	u8 deleteMe;
 	// Flag to hide the entity
@@ -97,8 +99,8 @@ class Container : SpatialObject
 	bool transform;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
-	// Flag to update sprites' attributes
-	bool invalidateSprites;
+	// Raise flag when transformed to allow graphics sync
+	bool transformed;
 
 	/// @publicsection
 	void constructor(const char* const name);

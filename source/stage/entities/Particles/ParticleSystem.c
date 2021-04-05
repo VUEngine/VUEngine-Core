@@ -59,7 +59,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
 	this->particles = NULL;
 
@@ -70,7 +70,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s
 	this->spawnPositionDisplacement = (Vector3DFlag){false, false, false};
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
-	this->transformed = false;
 	this->animationChanged = true;
 
 	ParticleSystem::setup(this, particleSystemSpec);
@@ -512,18 +511,18 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
+	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
+
+	bool transformed = this->transformed;
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-	if(!this->transformed)
+	if(!transformed)
 	{
 		ParticleSystem::resetParticlesPositions(this);
 	}
 
 	ParticleSystem::transformParticles(this);
-
-	this->transformed = true;
 }
 
 void ParticleSystem::resetParticlesPositions()
@@ -540,7 +539,7 @@ void ParticleSystem::resetParticlesPositions()
 		}
 
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-		Particle::setPosition(particle, &this->transformation.globalPosition);
+		Particle::setPosition(particle, &position);
 	}
 }
 
@@ -563,7 +562,7 @@ void ParticleSystem::transformParticles()
 
 void ParticleSystem::synchronizeGraphics()
 {
-	if(ParticleSystem::isPaused(this) || !this->transformed)
+	if(ParticleSystem::isPaused(this))
 	{
 		return;
 	}
@@ -601,8 +600,6 @@ void ParticleSystem::show()
 		return;
 	}
 
-	this->transformed = false;
-
 	Base::show(this);
 
 	VirtualNode node = this->particles->head;
@@ -626,8 +623,6 @@ void ParticleSystem::hide()
 	{
 		return;
 	}
-
-	this->transformed = false;
 
 	Base::hide(this);
 

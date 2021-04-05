@@ -82,7 +82,7 @@ void Entity::constructor(EntitySpec* entitySpec, s16 internalId, const char* con
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 
-	this->invalidateSprites = 0;
+	this->invalidateGraphics = 0;
 	this->transformShapes = true;
 	this->allowCollisions = true;
 
@@ -1166,7 +1166,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	}
 
 	// make sure that the new sprites are properly initialized
-	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 }
 
 /**
@@ -1464,7 +1464,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 	this->transformShapes = true;
 	Entity::setupShapes(this);
 
-	this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 
 	if(this->hidden)
 	{
@@ -1488,7 +1488,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 {
 	if(this->sprites)
 	{
-		this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+		this->invalidateGraphics |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
 	if(this->invalidateGlobalTransformation)
@@ -1529,14 +1529,19 @@ void Entity::setLocalRotation(const Rotation* rotation)
  */
 void Entity::synchronizeGraphics()
 {
+	if(!this->transformed)
+	{
+		return;
+	}
+
 	if(this->children)
 	{
 		Base::synchronizeGraphics(this);
 	}
 
-	Entity::updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION, this->invalidateSprites & __INVALIDATE_PROJECTION);
+	Entity::updateSprites(this, this->invalidateGraphics & __INVALIDATE_POSITION, this->invalidateGraphics & __INVALIDATE_SCALE, this->invalidateGraphics & __INVALIDATE_ROTATION, this->invalidateGraphics & __INVALIDATE_PROJECTION);
 
-	this->invalidateSprites = false;
+	this->invalidateGraphics = false;
 }
 
 /**
@@ -1815,9 +1820,6 @@ void Entity::show()
 			Sprite::show(node->data);
 		}
 	}
-
-	// force invalid position to update sprites and children's sprites
-	Container::invalidateGlobalTransformation(this);
 }
 
 /**
@@ -1865,7 +1867,7 @@ void Entity::resume()
 	else
 	{
 		// force update sprites on next game's cycle
-		this->invalidateSprites = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+		this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
 	if(this->hidden)

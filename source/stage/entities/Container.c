@@ -55,6 +55,8 @@ void Container::constructor(const char* const name)
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
 
+	this->transformed = false;
+
 	// set position
 	this->transformation.localPosition = Vector3D::zero();
 	this->transformation.globalPosition = Vector3D::zero();
@@ -598,6 +600,8 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
 			Container::initialTransform(child, &this->transformation, true);
 		}
 	}
+
+	this->transformed = !this->hidden;
 }
 
 /**
@@ -607,9 +611,12 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
  */
 void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
 {
-	Container::applyEnvironmentToRotation(this, environmentTransform);
-	Container::applyEnvironmentToScale(this, environmentTransform);
-	Container::applyEnvironmentToPosition(this, environmentTransform);
+	if(this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToRotation(this, environmentTransform);
+		Container::applyEnvironmentToScale(this, environmentTransform);
+		Container::applyEnvironmentToPosition(this, environmentTransform);
+	}
 }
 
 /**
@@ -620,12 +627,9 @@ void Container::applyEnvironmentToTransformation(const Transformation* environme
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
-	if(this->inheritEnvironment)
-	{
-		this->transformation.globalPosition.x = environmentTransform->globalPosition.x + this->transformation.localPosition.x;
-		this->transformation.globalPosition.y = environmentTransform->globalPosition.y + this->transformation.localPosition.y;
-		this->transformation.globalPosition.z = environmentTransform->globalPosition.z + this->transformation.localPosition.z;
-	}
+	this->transformation.globalPosition.x = environmentTransform->globalPosition.x + this->transformation.localPosition.x;
+	this->transformation.globalPosition.y = environmentTransform->globalPosition.y + this->transformation.localPosition.y;
+	this->transformation.globalPosition.z = environmentTransform->globalPosition.z + this->transformation.localPosition.z;
 }
 
 /**
@@ -636,26 +640,23 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
  */
 inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
 {
-	if(this->inheritEnvironment)
+	this->transformation.globalRotation.x = __MODULO(environmentTransform->globalRotation.x + this->transformation.localRotation.x, 512);
+	this->transformation.globalRotation.y = __MODULO(environmentTransform->globalRotation.y + this->transformation.localRotation.y, 512);
+	this->transformation.globalRotation.z = __MODULO(environmentTransform->globalRotation.z + this->transformation.localRotation.z, 512);
+
+	if(0 > this->transformation.globalRotation.x)
 	{
-		this->transformation.globalRotation.x = __MODULO(environmentTransform->globalRotation.x + this->transformation.localRotation.x, 512);
-		this->transformation.globalRotation.y = __MODULO(environmentTransform->globalRotation.y + this->transformation.localRotation.y, 512);
-		this->transformation.globalRotation.z = __MODULO(environmentTransform->globalRotation.z + this->transformation.localRotation.z, 512);
+		this->transformation.globalRotation.x += 512;
+	}
 
-		if(0 > this->transformation.globalRotation.x)
-		{
-			this->transformation.globalRotation.x += 512;
-		}
+	if(0 > this->transformation.globalRotation.y)
+	{
+		this->transformation.globalRotation.y += 512;
+	}
 
-		if(0 > this->transformation.globalRotation.y)
-		{
-			this->transformation.globalRotation.y += 512;
-		}
-
-		if(0 > this->transformation.globalRotation.z)
-		{
-			this->transformation.globalRotation.z += 512;
-		}
+	if(0 > this->transformation.globalRotation.z)
+	{
+		this->transformation.globalRotation.z += 512;
 	}
 }
 
@@ -667,12 +668,9 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
  */
 inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
 {
-	if(this->inheritEnvironment)
-	{
-		this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
-		this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
-		this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
-	}
+	this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
+	this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
+	this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
 }
 
 /**
@@ -685,20 +683,23 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+	if(this->inheritEnvironment)
 	{
-		Container::applyEnvironmentToRotation(this, environmentTransform);
-	}
+		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+		{
+			Container::applyEnvironmentToRotation(this, environmentTransform);
+		}
 
-	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToScale(this, environmentTransform);
-	}
+		if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
+		{
+			Container::applyEnvironmentToScale(this, environmentTransform);
+		}
 
-	// apply environment transformation
-	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
+		// apply environment transformation
+		if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+		{
+			Container::applyEnvironmentToPosition(this, environmentTransform);
+		}
 	}
 
 	// Check since the call is virtual
@@ -708,7 +709,8 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 	}
 
 	// don't update position on next transformation cycle
-	this->invalidateGlobalTransformation = 0;
+	this->invalidateGlobalTransformation = false;
+	this->transformed = true;
 }
 
 void Container::transformChildren(u8 invalidateTransformationFlag)
@@ -716,7 +718,7 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 	// if I have children
 	if(this->children)
 	{
-		u8 invalidateSprites = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
+		u8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
 		VirtualNode node = this->children->head;
 
@@ -726,7 +728,7 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-			child->invalidateSprites |= invalidateSprites;
+			child->invalidateGraphics |= invalidateGraphics;
 
 			if(child->hidden)
 			{
@@ -765,7 +767,12 @@ void Container::synchronizeChildrenGraphics()
 				continue;
 			}
 
-			if(!child->invalidateSprites && NULL == child->children)
+			if(!child->transformed)
+			{
+				return;
+			}
+
+			if(!child->invalidateGraphics && NULL == child->children)
 			{
 				continue;
 			}
@@ -1338,6 +1345,7 @@ void Container::show()
 	}
 
 	Container::invalidateGlobalTransformation(this);
+	this->transformed = false;
 }
 
 void Container::hide()

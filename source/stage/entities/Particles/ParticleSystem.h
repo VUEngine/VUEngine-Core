@@ -120,7 +120,7 @@ class ParticleSystem : Entity
 	s8 totalSpawnedParticles;
 	// Particles' animation name
 	u8 maximumNumberOfAliveParticles;
-	bool transformed;
+	// Flag to trigger animations in the particles
 	bool animationChanged;
 
 	/// @publicsection
