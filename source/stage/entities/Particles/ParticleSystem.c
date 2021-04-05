@@ -513,11 +513,6 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	if(ParticleSystem::isPaused(this))
-	{
-		return;
-	}
-
 	if(this->hidden)
 	{
 		return;

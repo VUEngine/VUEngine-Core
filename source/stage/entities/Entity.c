@@ -1752,7 +1752,7 @@ bool Entity::isVisible(int pad, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			if( Entity::isVisible(VirtualNode::getData(childNode), pad, true))
+			if(Entity::isVisible(VirtualNode::getData(childNode), pad, true))
 			{
 				return true;
 			}
