@@ -110,8 +110,8 @@ singleton class SpriteManager : Object
 	void computeTotalPixelsDrawn();
 	void print(int x, int y, bool resumed);
 	void printObjectSpriteContainersStatus(int x, int y);
-	void showSprites();
-	void hideSprites();
+	void showSprites(Sprite spareSprite, bool showPrinting);
+	void hideSprites(Sprite spareSprite, bool hidePrinting);
 	void render();
 	void stopRendering();
 	void reset();
@@ -127,8 +127,6 @@ singleton class SpriteManager : Object
 	void prepareAll();
 	bool isEvenFrame();
 	void writeDRAM();
-	void showOnly(Sprite spriteToShow);
-
 }
 
 

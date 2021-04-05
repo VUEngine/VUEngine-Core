@@ -625,6 +625,14 @@ void Printing::show()
 	}
 }
 
+void Printing::hide()
+{
+	if(!isDeleted(this->printingSprite))
+	{
+		PrintingSprite::hide(this->printingSprite);
+	}
+}
+
 void Printing::render(u8 textLayer)
 {
 	if(!isDeleted(this->printingSprite))

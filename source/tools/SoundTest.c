@@ -118,8 +118,7 @@ void SoundTest::show()
 	SoundManager::reset(SoundManager::getInstance());
 
 	Printing::clear(Printing::getInstance());
-	SpriteManager::hideSprites(SpriteManager::getInstance());
-	Sprite::show(SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0));
+	SpriteManager::hideSprites(SpriteManager::getInstance(), SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0), false);
 	Printing::resetCoordinates(Printing::getInstance());
 	Printing::show(Printing::getInstance());
 
@@ -139,7 +138,7 @@ void SoundTest::hide()
 {
 	SoundTest::releaseSoundWrapper(this);
 	Printing::clear(Printing::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SoundTest::lightUpGame(this);
 }
 

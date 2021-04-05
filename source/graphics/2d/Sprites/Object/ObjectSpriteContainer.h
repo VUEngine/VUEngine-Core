@@ -75,8 +75,10 @@ class ObjectSpriteContainer : Sprite
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	void writeDRAM();
-	void showSprites();
-	void hideSprites();
+	void showSprites(ObjectSprite spareSprite);
+	void hideSprites(ObjectSprite spareSprite);
+	override void hideForDebug();
+	override void showForDebug();
 	override u16 doRender(s16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void addDisplacement(const PixelVector* displacement);
@@ -84,7 +86,6 @@ class ObjectSpriteContainer : Sprite
 	override bool writeTextures();
 	override void print(int x, int y);
 	override int getTotalPixels();
-	override bool showIfEqual(Sprite sprite);
 }
 
 

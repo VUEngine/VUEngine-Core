@@ -208,8 +208,7 @@ void AnimationInspector::show()
 
 	this->mode = kFirstMode + 1;
 	AnimationInspector::setupMode(this);
-	SpriteManager::hideSprites(SpriteManager::getInstance());
-	Printing::show(Printing::getInstance());
+	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
 	
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
@@ -251,7 +250,7 @@ void AnimationInspector::hide()
 
 	// make sure all textures are written right now
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 }
 
@@ -781,8 +780,7 @@ void AnimationInspector::createSprite()
 
 	this->animatedSprite->writeAnimationFrame = true;
 
-	SpriteManager::showOnly(SpriteManager::getInstance(), this->animatedSprite);
-	Printing::show(Printing::getInstance());
+	SpriteManager::hideSprites(SpriteManager::getInstance(), this->animatedSprite, false);
 	SpriteManager::writeTextures(SpriteManager::getInstance());
 	SpriteManager::sort(SpriteManager::getInstance());
 	SpriteManager::render(SpriteManager::getInstance());

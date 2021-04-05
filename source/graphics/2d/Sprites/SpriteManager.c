@@ -667,46 +667,90 @@ s8 SpriteManager::getFreeLayer()
  *
  * @param layer		WORLD layer to show
  */
-void SpriteManager::hideSprites()
+#ifdef __TOOLS
+void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 {
 	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		Sprite::hide(sprite);
+		if(sprite == spareSprite)
+		{
+			Sprite::showForDebug(spareSprite);
+			continue;
+		}
 
-		Sprite::setPosition(sprite, &sprite->position);
+		Sprite::hideForDebug(sprite);
 	}
 
-	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
+	if(!isDeleted(spareSprite) && !VirtualList::find(this->sprites, spareSprite))
 	{
-		ObjectSpriteContainer::hideSprites(node->data);
+		VirtualNode node = this->objectSpriteContainers->head;
+
+		for(; node; node = node->next)
+		{
+			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+			ObjectSpriteContainer::hideSprites(objectSpriteContainer, ObjectSprite::safeCast(spareSprite));
+		}
+	}
+
+	if(hidePrinting)
+	{
+		Printing::hide(Printing::getInstance());
+	}
+	else
+	{
+		Printing::show(Printing::getInstance());
 	}
 }
 
 /**
  * Show all WORLD layers
  */
-void SpriteManager::showSprites()
+void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 {
 	for(VirtualNode node = this->sprites->tail; node; node = node->previous)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		Sprite::show(sprite);
+		if(sprite == spareSprite)
+		{
+			Sprite::hideForDebug(spareSprite);
+			continue;
+		}
+
+		Sprite::showForDebug(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
 
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
 
-	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
+	if(!isDeleted(spareSprite) && !VirtualList::find(this->sprites, spareSprite))
 	{
-		ObjectSpriteContainer::showSprites(node->data);
+		VirtualNode node = this->objectSpriteContainers->head;
+
+		for(; node; node = node->next)
+		{
+			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+			ObjectSpriteContainer::showSprites(objectSpriteContainer, ObjectSprite::safeCast(spareSprite));
+		}
+	}
+
+	if(showPrinting)
+	{
+		Printing::show(Printing::getInstance());
+	}
+	else
+	{
+		Printing::hide(Printing::getInstance());
 	}
 
 	SpriteManager::stopRendering(this);
 }
+#endif
 
 /**
  * Retrieve the Sprite assigned to the given WORLD
@@ -750,24 +794,6 @@ s16 SpriteManager::getSpritePosition(Sprite sprite)
 	}
 
 	return (__TOTAL_LAYERS - VirtualList::getSize(this->sprites)) + VirtualList::getDataPosition(this->sprites, sprite);
-}
-
-/**
- * Show the Sprite and hide every other one
- *
- * @param sprite	Sprite to show
- */
-void SpriteManager::showOnly(Sprite spriteToShow)
-{
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(!Sprite::showIfEqual(sprite, spriteToShow))
-		{
-			Sprite::hide(sprite);
-		}
-	}	
 }
 
 /**

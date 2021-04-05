@@ -449,12 +449,17 @@ singleton class Printing : Object
      */
 	void render(u8 textLayer);
 
-
 	/**
      * Force printing layer to show up
      *
      */
 	void show();
+
+	/**
+     * Force printing layer to hide
+     *
+     */
+	void hide();
 }
 
 

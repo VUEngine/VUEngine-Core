@@ -228,6 +228,8 @@ abstract class Sprite : Object
 	void hide();
 	void show();
 	u8 getIndex();
+	virtual void hideForDebug();
+	virtual void showForDebug();
 	virtual void addDisplacement(const PixelVector* displacement);
 	virtual Scale getScale();
 	virtual void position(const Vector3D* position);
@@ -242,7 +244,6 @@ abstract class Sprite : Object
 	virtual void print(int x, int y);
 	virtual int getTotalPixels();
 	virtual void registerWithManager();
-	virtual bool showIfEqual(Sprite sprite);
 }
 
 

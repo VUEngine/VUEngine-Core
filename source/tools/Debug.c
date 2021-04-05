@@ -232,7 +232,7 @@ void Debug::show()
 {
 	Printing::clear(Printing::getInstance());
 	Printing::setCoordinates(Printing::getInstance(), 0, 0, -64, -2);
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
 	Debug::showPage(this, 0);
@@ -245,7 +245,7 @@ void Debug::hide()
 {
 	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	Printing::clear(Printing::getInstance());
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 }
 
 /**
@@ -260,8 +260,7 @@ u8 Debug::getCurrentPageNumber()
 
 void Debug::setBlackBackground()
 {
-	SpriteManager::hideSprites(SpriteManager::getInstance());
-	Printing::show(Printing::getInstance());
+	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
 }
 
 /**
@@ -310,7 +309,7 @@ void Debug::processUserInput(u16 pressedKey)
  */
 void Debug::showPreviousPage()
 {
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -327,7 +326,7 @@ void Debug::showPreviousPage()
  */
 void Debug::showNextPage()
 {
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 
 	this->currentPage = this->currentPage->next;
 
@@ -405,7 +404,7 @@ void Debug::showPage(int increment)
 		this->update = NULL;
 
 		Printing::clear(Printing::getInstance());
-		SpriteManager::showSprites(SpriteManager::getInstance());
+		SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 
 		Debug::printHeader(this);
 		Printing::text(Printing::getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
@@ -1330,8 +1329,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 
 		if(objectSpriteContainer)
 		{
-			SpriteManager::hideSprites(SpriteManager::getInstance());
-			ObjectSpriteContainer::showSprites(objectSpriteContainer);
+			SpriteManager::hideSprites(SpriteManager::getInstance(), Sprite::safeCast(objectSpriteContainer), false);
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		}
 		else
@@ -1398,9 +1396,8 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 	}
 	else if(0 <= this->currentSprite && this->currentSprite < numberOfSprites)
 	{
-		SpriteManager::hideSprites(SpriteManager::getInstance());
 		Sprite sprite = SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), this->currentSprite);
-		Sprite::show(sprite);
+		SpriteManager::hideSprites(SpriteManager::getInstance(), sprite, false);
 		Sprite::render(sprite, 31, 0);
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, ++y);
@@ -1463,7 +1460,7 @@ void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
 
-	SpriteManager::showSprites(SpriteManager::getInstance());
+	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
 }
 

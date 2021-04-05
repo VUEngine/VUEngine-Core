@@ -239,14 +239,58 @@ void ObjectSpriteContainer::sortProgressively()
 	}
 }
 
-void ObjectSpriteContainer::showSprites()
+#ifdef __TOOLS
+void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 {
+	ObjectSpriteContainer::hideForDebug(this);
+
+	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(objectSprite == spareSprite)
+		{
+			ObjectSprite::showForDebug(objectSprite);
+			ObjectSpriteContainer::showForDebug(this);
+			continue;
+		}
+
+		ObjectSprite::hideForDebug(objectSprite);
+	}
+}
+
+/**
+ * Show all WORLD layers
+ */
+void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
+{
+	ObjectSpriteContainer::showForDebug(this);
+
+	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(objectSprite == spareSprite)
+		{
+			ObjectSprite::hideForDebug(objectSprite);
+			continue;
+		}
+
+		ObjectSprite::showForDebug(objectSprite);
+	}
+}
+#endif
+
+
+void ObjectSpriteContainer::showForDebug()
+{
+	Base::showForDebug(this);
 	this->hidden = false;
 	this->positioned = true;
 	this->hideSprites = false;
 }
 
-void ObjectSpriteContainer::hideSprites()
+void ObjectSpriteContainer::hideForDebug()
 {
 	this->hidden = false;
 	this->positioned = true;
@@ -257,49 +301,6 @@ void ObjectSpriteContainer::writeDRAM()
 {
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjectsToWriteToDRAM) >> 2);
 }
-
-bool ObjectSpriteContainer::showIfEqual(Sprite sprite)
-{
-	if(sprite == this)
-	{
-		Sprite::show(this);
-		return true;
-	}
-
-	VirtualNode node = this->objectSprites->head;
-
-	for(; node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(sprite == objectSprite)
-		{
-			break;
-		}
-	}
-
-	if(isDeleted(node))
-	{
-		ObjectSpriteContainer::hideSprites(this);
-	}
-	else
-	{
-		ObjectSpriteContainer::showSprites(this);
-
-		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
-		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-		
-			if(!ObjectSprite::showIfEqual(objectSprite, sprite))
-			{
-				ObjectSprite::hide(objectSprite);
-			}
-		}		
-	}
-
-	return true;
-}
-
 
 /**
  * Write WORLD data to DRAM
@@ -437,8 +438,6 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
  */
 void ObjectSpriteContainer::print(int x, int y)
 {
-	ObjectSpriteContainer::showSprites(this);
-	
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);

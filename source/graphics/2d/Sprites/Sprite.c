@@ -238,6 +238,27 @@ void Sprite::hide()
 }
 
 /**
+ * Show
+ */
+void Sprite::showForDebug()
+{
+	this->hidden = false;
+
+	Sprite::setPosition(this, &this->position);
+}
+
+/**
+ * Hide
+ */
+void Sprite::hideForDebug()
+{
+	this->hidden = true;
+	this->positioned = false;
+
+	Sprite::setPosition(this, &this->position);
+}
+
+/**
  * Is the Sprite hidden?
  *
  * @return		Boolean telling whether the sprite is hidden
@@ -255,17 +276,6 @@ bool Sprite::isHidden()
 void Sprite::registerWithManager()
 {
 	this->registered = true;
-}
-
-bool Sprite::showIfEqual(Sprite sprite)
-{
-	if(sprite == this)
-	{
-		Sprite::show(this);
-		return true;
-	}
-
-	return false;
 }
 
 /**
