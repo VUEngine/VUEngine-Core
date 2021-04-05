@@ -115,10 +115,12 @@ void SoundTest::update()
  */
 void SoundTest::show()
 {
+	this->selectedSound = 0;
+
 	SoundManager::reset(SoundManager::getInstance());
 
 	Printing::clear(Printing::getInstance());
-	SpriteManager::hideSprites(SpriteManager::getInstance(), SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), 0), false);
+	SpriteManager::hideSprites(SpriteManager::getInstance(), NULL, false);
 	Printing::resetCoordinates(Printing::getInstance());
 	Printing::show(Printing::getInstance());
 
@@ -144,11 +146,6 @@ void SoundTest::hide()
 
 void SoundTest::printGUI(bool clearScreen)
 {
-	if(isDeleted(this->soundWrapper))
-	{
-		SoundTest::loadSound(this);
-	}
-
 	Printing printing = Printing::getInstance();
 
 	if(clearScreen)
@@ -409,6 +406,7 @@ void SoundTest::loadSound()
 {
 	if(NULL == _userSounds[this->selectedSound])
 	{
+		SoundTest::printGUI(this, false);
 		return;
 	}
 
