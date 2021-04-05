@@ -728,6 +728,11 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateSprites |= invalidateSprites;
 
+			if(child->hidden)
+			{
+				continue;
+			}
+
 			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
 			{
 				continue;
@@ -754,6 +759,11 @@ void Container::synchronizeChildrenGraphics()
 		for(; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
+
+			if(child->hidden)
+			{
+				continue;
+			}
 
 			if(!child->invalidateSprites && NULL == child->children)
 			{

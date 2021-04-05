@@ -1529,11 +1529,6 @@ void Entity::setLocalRotation(const Rotation* rotation)
  */
 void Entity::synchronizeGraphics()
 {
-	if(this->hidden)
-	{
-		return;
-	}
-
 	if(this->children)
 	{
 		Base::synchronizeGraphics(this);
@@ -1686,11 +1681,6 @@ bool Entity::isSpriteVisible(Sprite sprite, int pad)
  */
 bool Entity::isVisible(int pad, bool recursive)
 {
-	if(this->hidden)
-	{
-		return false;
-	}
-	
 	if(this->sprites && this->sprites->head)
 	{
 		VirtualNode spriteNode = this->sprites->head;
@@ -1757,7 +1747,9 @@ bool Entity::isVisible(int pad, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			if(Entity::isVisible(VirtualNode::getData(childNode), pad, true))
+			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
+
+			if(!child->hidden && Entity::isVisible(child, pad, true))
 			{
 				return true;
 			}
