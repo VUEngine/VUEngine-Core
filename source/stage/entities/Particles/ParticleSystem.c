@@ -286,7 +286,7 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(u32 elapsedTime)
 {
-	if(ParticleSystem::isPaused(this) || !this->transformed)
+	if(ParticleSystem::isPaused(this))
 	{
 		return;
 	}
@@ -298,12 +298,6 @@ void ParticleSystem::update(u32 elapsedTime)
 	VirtualNode node = this->particles->head;
 
 	if(NULL == node && this->paused)
-	{
-		this->update = ParticleSystem::overrides(this, update);
-		return;
-	}
-
-	if(this->hidden)
 	{
 		this->update = ParticleSystem::overrides(this, update);
 		return;
@@ -327,6 +321,11 @@ void ParticleSystem::update(u32 elapsedTime)
 		}
 
 		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
+	}
+
+	if(!this->transformed)
+	{
+		return;
 	}
 
 	if(this->paused)
@@ -513,18 +512,36 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	if(this->hidden)
-	{
-		return;
-	}
-
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-	this->transformed = true;
+	if(!this->transformed)
+	{
+		ParticleSystem::resetParticlesPositions(this);
+	}
 
 	ParticleSystem::transformParticles(this);
+
+	this->transformed = true;
+}
+
+void ParticleSystem::resetParticlesPositions()
+{
+	VirtualNode node = this->particles->head;
+
+	for(; node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired)
+		{
+			continue;
+		}
+
+		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
+		Particle::setPosition(particle, &this->transformation.globalPosition);
+	}
 }
 
 void ParticleSystem::transformParticles()
@@ -546,12 +563,7 @@ void ParticleSystem::transformParticles()
 
 void ParticleSystem::synchronizeGraphics()
 {
-	if(ParticleSystem::isPaused(this))
-	{
-		return;
-	}
-
-	if(this->hidden)
+	if(ParticleSystem::isPaused(this) || !this->transformed)
 	{
 		return;
 	}
@@ -584,6 +596,13 @@ bool ParticleSystem::handleMessage(Telegram telegram __attribute__ ((unused)))
 
 void ParticleSystem::show()
 {
+	if(!this->hidden)
+	{
+		return;
+	}
+
+	this->transformed = false;
+
 	Base::show(this);
 
 	VirtualNode node = this->particles->head;
@@ -603,6 +622,13 @@ void ParticleSystem::show()
 
 void ParticleSystem::hide()
 {
+	if(this->hidden)
+	{
+		return;
+	}
+
+	this->transformed = false;
+
 	Base::hide(this);
 
 	VirtualNode node = this->particles->head;

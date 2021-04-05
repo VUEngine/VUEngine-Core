@@ -312,7 +312,6 @@ void Particle::setup(s16 lifeSpan, const Vector3D* position, const Force* force,
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);
-	Particle::synchronizeGraphics(this);
 
 	if(force->x | force->y | force->z)
 	{

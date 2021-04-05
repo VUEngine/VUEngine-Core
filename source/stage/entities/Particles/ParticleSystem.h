@@ -130,7 +130,6 @@ class ParticleSystem : Entity
 	bool isPaused();
 	void pause();
 	void unpause();
-	void show();
 	void spawnAllParticles();
 	void start();
 	bool getLoop();
@@ -143,6 +142,7 @@ class ParticleSystem : Entity
 	override void synchronizeGraphics();
 	override void resume();
 	override void suspend();
+	override void show();
 	override void hide();
 	virtual void transformParticles();
 	virtual void particleSpawned(Particle particle);
