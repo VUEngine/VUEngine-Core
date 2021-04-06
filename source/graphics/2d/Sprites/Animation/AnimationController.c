@@ -57,7 +57,7 @@ void AnimationController::constructor()
 
 	// initialize frame tracking
 	this->actualFrame = 0;
-	this->previousFrame = 0;
+	this->previousFrameValue = -1;
 
 	// initialize frame head
 	this->frameDuration = 0;
@@ -135,9 +135,9 @@ s16 AnimationController::getActualFrame()
  * @publics
  * @return 		Previous frame of animation
  */
-s16 AnimationController::getPreviousFrame()
+s16 AnimationController::getPreviousFrameValue()
 {
-	return this->previousFrame;
+	return this->previousFrameValue;
 }
 
 /**
@@ -245,7 +245,7 @@ bool AnimationController::updateAnimation()
 	// reduce frame delay count
 	if(0 == this->frameDuration)
 	{
-		this->previousFrame = this->actualFrame;
+		s16 actualFrame = this->actualFrame;
 
 		// increase the frame to show
 		this->actualFrame++;
@@ -277,7 +277,12 @@ bool AnimationController::updateAnimation()
 		// Reset frame duration
 		AnimationController::resetFrameDuration(this);
 
-		return this->animationFunction->frames[this->actualFrame] != this->animationFunction->frames[this->previousFrame];
+		u8 actualFrameValue = this->animationFunction->frames[this->actualFrame];
+
+		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
+		this->previousFrameValue = actualFrameValue;
+
+		return frameValueChanged;
 	}
 
 	return false;
@@ -324,9 +329,6 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	{
 		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
-
-	// force frame writing in the next update
-	this->previousFrame = 0;
 
 	// reset frame to play
 	this->actualFrame = 0;
@@ -408,9 +410,6 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
-	// force frame writing in the next update
-	this->previousFrame = 0;
-
 	// reset frame to play
 	this->actualFrame = 0;
 
@@ -447,9 +446,6 @@ bool AnimationController::replay(const AnimationDescription* animationDescriptio
 			return false;
 		}
 	}
-
-	// force frame writing in the next update
-	this->previousFrame = 0;
 
 	// reset frame to play
 	this->actualFrame = 0;
@@ -490,11 +486,10 @@ void AnimationController::nextFrame()
 
 	if(this->actualFrame < (this->animationFunction->numberOfFrames - 1))
 	{
-		this->previousFrame = this->actualFrame++;
+		this->actualFrame++;
 	}
 	else if(this->animationFunction->loop)
 	{
-		this->previousFrame = this->actualFrame;
 		this->actualFrame = 0;
 	}
 	else
@@ -516,11 +511,10 @@ void AnimationController::previousFrame()
 
 	if(this->actualFrame > 0)
 	{
-		this->previousFrame = this->actualFrame--;
+		this->actualFrame--;
 	}
 	else if(this->animationFunction->loop)
 	{
-		this->previousFrame = this->actualFrame;
 		this->actualFrame = (this->animationFunction->numberOfFrames - 1);
 	}
 	else

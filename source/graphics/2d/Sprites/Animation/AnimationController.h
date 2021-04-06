@@ -50,7 +50,7 @@ class AnimationController : Object
 	// actual animation's frame to show
 	s16 actualFrame;
 	// previous animation's frame shown
-	s16 previousFrame;
+	u8 previousFrameValue;
 	// the number of game cycles that an animation frame is shown
 	u8 frameDuration;
 	// frame delay decrement update cycle
@@ -72,15 +72,14 @@ class AnimationController : Object
 	int getMapType();
 	int getNumberOfFrames();
 	const AnimationFunction* getPlayingAnimationFunction();
-	s16 getPreviousFrame();
 	u8 getRows();
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
-	void nextFrame();
 	void pause(bool pause);
 	bool play(const AnimationDescription* animationDescription, const char* functionName, Object scope);
 	bool replay(const AnimationDescription* animationDescription);
 	void playAnimationFunction(const AnimationFunction* animationFunction, Object scope);
+	void nextFrame();
 	void previousFrame();
 	bool setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameCycleDecrement);
