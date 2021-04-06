@@ -730,10 +730,17 @@ void Container::transformChildren(u8 invalidateTransformationFlag)
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateGraphics |= invalidateGraphics;
 
+			// Do not enable this check to optimize things
+			// It messes up child entities when you need to 
+			// hide and then show them
+			// Besides, the transformation should be valid
+			// all the time
+			/*
 			if(child->hidden)
 			{
 				continue;
 			}
+			*/
 
 			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
 			{
@@ -873,6 +880,8 @@ void Container::setLocalPosition(const Vector3D* position)
 
 		this->transformation.localPosition = *position;
 	}
+
+//	this->transformed = false;
 }
 
 /**
