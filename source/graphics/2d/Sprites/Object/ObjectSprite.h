@@ -85,6 +85,7 @@ class ObjectSprite : Sprite
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
 	s16 getTotalObjects();
+	void rewrite();
 	void invalidateObjectSpriteContainer();
 	override u16 doRender(s16 index, bool evenFrame);
 	override void rotate(const Rotation* rotation);

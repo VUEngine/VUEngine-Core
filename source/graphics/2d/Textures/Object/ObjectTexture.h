@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Texture.h>
+#include <ObjectSprite.h>
 #include <CharSet.h>
 #include <Telegram.h>
 
@@ -65,9 +66,12 @@ typedef const ObjectTextureSpec ObjectTextureROMSpec;
 /// @ingroup graphics-2d-textures-object
 class ObjectTexture : Texture
 {
-	/// @publicsection
-	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id);
+	ObjectSprite owner;
 
+	/// @publicsection
+	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id, ObjectSprite owner);
+
+	override void rewrite();
 	override void setFrameAnimatedMulti(u16 frame);
 }
 

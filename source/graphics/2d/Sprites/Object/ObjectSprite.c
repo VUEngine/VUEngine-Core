@@ -77,7 +77,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
+		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0, this));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
@@ -90,6 +90,54 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	else
 	{
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture spec");
+	}
+}
+
+void ObjectSprite::rewrite()
+{	
+	if(this->hidden || !this->positioned)
+	{
+		return;
+	}
+
+	if(__NO_RENDER_INDEX == this->index)
+	{
+		return;
+	}
+
+	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
+	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
+
+	int charLocation = CharSet::getOffset(this->texture->charSet);
+
+	s16 halfWidth = this->halfWidth;
+	s16 halfHeight = this->halfHeight;
+
+	s16 cols = halfWidth >> 2;
+	s16 rows = halfHeight >> 2;
+
+	u16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+
+	s16 jDisplacement = 0;
+
+	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
+	u16 result = 0;
+
+	ObjectAttributes* objectPointer = NULL;
+
+	for(s16 i = 0; i < rows; i++, jDisplacement += cols)
+	{
+		s16 objectIndexStart = this->index + jDisplacement;
+
+		for(s16 j = 0; j < cols; j++)
+		{
+			s16 objectIndex = objectIndexStart + j;
+			objectPointer = &_objectAttributesCache[objectIndex];
+
+			s32 charNumberIndex = (jDisplacement + j) << 1;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			objectPointer->tile = fourthWordValue | charNumber;
+		}
 	}
 }
 
@@ -153,11 +201,6 @@ void ObjectSprite::rotate(const Rotation* rotation)
 	else if(__DOWN == direction.y)
 	{
 		this->head &= 0xEFFF;
-	}
-
-	if(!isDeleted(this->texture))
-	{
-		Texture::rewrite(this->texture);
 	}
 }
 

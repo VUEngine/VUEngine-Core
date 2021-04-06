@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectTexture.h>
+#include <ObjectSprite.h>
 #include <Optics.h>
 #include <VIPManager.h>
 #include <VirtualList.h>
@@ -41,10 +42,12 @@
  * @param objectTextureSpec		Texture spec
  * @param id							Identifier
  */
-void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
+void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id, ObjectSprite owner)
 {
 	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
+
+	this->owner = owner;
 }
 
 /**
@@ -65,4 +68,19 @@ void ObjectTexture::destructor()
 void ObjectTexture::setFrameAnimatedMulti(u16 frame)
 {
 	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
+}
+
+/**
+ * Write the texture to DRAM
+ */
+void ObjectTexture::rewrite()
+{
+	Base::rewrite(this);
+
+	if(isDeleted(this->owner))
+	{
+		return;
+	}
+
+	ObjectSprite_rewrite(this->owner);
 }
