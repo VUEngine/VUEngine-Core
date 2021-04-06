@@ -305,6 +305,10 @@ void Object::fireEvent(u32 eventCode)
 
 		node = eventsToFire->head;
 
+#ifndef __RELEASE
+		const char* className = __GET_CLASS_NAME(this);
+#endif
+
 		for(; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
@@ -321,8 +325,12 @@ void Object::fireEvent(u32 eventCode)
 #ifndef __RELEASE
 				Printing::setDebugMode(Printing::getInstance());
 				Printing::clear(Printing::getInstance());
-				Printing::text(Printing::getInstance(), "Method: ", 1, 13, NULL);
-				Printing::hex(Printing::getInstance(), (int)event->method, 10, 14, 8, NULL);
+				Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
+				Printing::text(Printing::getInstance(), className, 13, 12, NULL);
+				Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
+				Printing::hex(Printing::getInstance(), (int)event->method, 13, 13, 8, NULL);
+				Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
+				Printing::int(Printing::getInstance(), event->code, 13, 14, NULL);
 				NM_ASSERT(!isDeleted(this), "Object::fireEvent: deleted during event listening");
 #endif
 				break;
