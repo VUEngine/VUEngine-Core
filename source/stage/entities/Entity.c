@@ -711,7 +711,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + Container::getChildCount(this));
+		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + Entity::getChildCount(this));
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
@@ -741,7 +741,7 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	Container::setLocalPosition(entity, &position);
+	Entity::setLocalPosition(entity, &position);
 
 	Entity::addSprites(entity, entity->entitySpec->spriteSpecs);
 
@@ -783,7 +783,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Container::getChildCount(this));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildCount(this));
 	}
 }
 
@@ -808,13 +808,13 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 
 	if(positionedEntity->name)
 	{
-		Container::setName(entity, positionedEntity->name);
+		Entity::setName(entity, positionedEntity->name);
 	}
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	Container::setLocalPosition(entity, &position);
+	Entity::setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenSpecs)
@@ -863,7 +863,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	{
 		(EntitySpec*)entitySpec,
 		screenPixelVector,
-		this->internalId + Container::getChildCount(this),
+		this->internalId + Entity::getChildCount(this),
 		(char*)name,
 		NULL,
 		extraInfo,
@@ -878,7 +878,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	Entity::addChild(this, Container::safeCast(childEntity));
 
 	// apply transformations
-	Transformation environmentTransform = Container::getEnvironmentTransform(this);
+	Transformation environmentTransform = Entity::getEnvironmentTransform(this);
 	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
 	Entity::initialTransform(childEntity, &environmentTransform, true);
 
@@ -1132,7 +1132,7 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 	// go through n behaviors in entity's spec
 	for(; behaviorSpecs[i]; i++)
 	{
-		Container::addBehavior(Container::safeCast(this), Behavior::create(behaviorSpecs[i]));
+		Entity::addBehavior(this, Behavior::create(behaviorSpecs[i]));
 		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
 	}
 }
@@ -2056,7 +2056,7 @@ void Entity::setDirection(Direction direction)
 		this->transformation.localRotation.z,
 	};
 
-	Container::setLocalRotation(this, &rotation);
+	Entity::setLocalRotation(this, &rotation);
 }
 
 /**
