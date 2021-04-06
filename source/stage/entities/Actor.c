@@ -319,10 +319,23 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 				this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 			}
 		}
-	}
 
-	// call base
-	Base::transform(this, environmentTransform, invalidateTransformationFlag);
+		Transformation surrogateEnvironmentTransformation = *environmentTransform;
+
+		surrogateEnvironmentTransformation.globalRotation.x = 0;
+		surrogateEnvironmentTransformation.globalRotation.y = 0;
+		surrogateEnvironmentTransformation.globalRotation.z = 0;
+
+		environmentTransform = &surrogateEnvironmentTransformation;
+
+		// call base
+		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+	}
+	else
+	{
+		// call base
+		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+	}
 
 	this->transformShapes = transformShapes;
 
