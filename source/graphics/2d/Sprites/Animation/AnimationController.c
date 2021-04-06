@@ -51,12 +51,9 @@ extern int strcmp(const char *, const char *);
  * @param sprite				Sprite to animate
  * @param charSetSpec		CharSetSpec used to decide the animation allocation type
  */
-void AnimationController::constructor(Object owner, Sprite sprite, const CharSetSpec* charSetSpec)
+void AnimationController::constructor()
 {
 	Base::constructor();
-
-	// set the owner
-	this->owner = owner;
 
 	// initialize frame tracking
 	this->actualFrame = 0;
@@ -71,11 +68,6 @@ void AnimationController::constructor(Object owner, Sprite sprite, const CharSet
 
 	// not playing anything yet
 	this->playing = false;
-
-	ASSERT(charSetSpec, "AnimationController::constructor: null charSetSpec");
-
-	// animation coordinator
-	this->animationCoordinator = AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory::getInstance(), this, sprite, charSetSpec);
 }
 
 /**
@@ -102,6 +94,17 @@ void AnimationController::destructor()
 AnimationCoordinator AnimationController::getAnimationCoordinator()
 {
 	return this->animationCoordinator;
+}
+
+/**
+ * Set the animation coordinator
+ *
+ * @param 		Animation coordinator
+ */
+void AnimationController::setAnimationCoordinator(AnimationCoordinator animationCoordinator)
+{
+	// animation coordinator
+	this->animationCoordinator = animationCoordinator; 
 }
 
 /**
@@ -303,23 +306,23 @@ void AnimationController::resetFrameDuration()
  * @private
  * @param animationFunction		Animation function to play
  */
-void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction)
+void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, Object scope)
 {
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		AnimationController::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// setup animation frame
 	this->animationFunction = animationFunction;
 
 	// register event callback
-	if(this->animationFunction && this->animationFunction->onAnimationComplete)
+	if(!isDeleted(scope) && this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		AnimationController::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
@@ -357,7 +360,7 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
  * @param functionName				Name of the animation function's to play
  * @return							True if the animation started playing
  */
-bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName, Object scope)
 {
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
 	ASSERT(functionName, "AnimationController::play: null functionName");
@@ -383,7 +386,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 				// remove previous listeners
 				if(this->animationFunction && this->animationFunction->onAnimationComplete)
 				{
-					AnimationController::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+					AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 				}
 
 				this->animationFunction = animationDescription->animationFunctions[i];
@@ -399,10 +402,10 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	}
 
 	// setup animation frame
-	if(this->animationFunction->onAnimationComplete)
+	if(!isDeleted(scope) && this->animationFunction->onAnimationComplete)
 	{
 		// register event callback
-		AnimationController::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update

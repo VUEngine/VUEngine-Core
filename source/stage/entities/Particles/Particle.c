@@ -95,7 +95,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
 
 		if(animationName && animationDescription)
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName);
+			Sprite::play(this->sprite, animationDescription, (char*)animationName, Object::safeCast(this));
 		}
 		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
@@ -113,7 +113,7 @@ void Particle::changeAnimation(const AnimationDescription* animationDescription,
 	{
 		if(force || !Sprite::replay(this->sprite, animationDescription))
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName);
+			Sprite::play(this->sprite, animationDescription, (char*)animationName, Object::safeCast(this));
 		}
 	}
 }

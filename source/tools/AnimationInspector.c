@@ -302,7 +302,7 @@ void AnimationInspector::setupMode()
 			AnimationInspector::loadAnimationFunction(this);
 			AnimationInspector::createAnimationEditionSelector(this);
 			AnimationInspector::createFrameEditionSelector(this);
-			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction);
+			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction, NULL);
 			Sprite::writeAnimation(this->animatedSprite);
 			Sprite::pause(this->animatedSprite, true);
 			Sprite::pause(this->animatedSprite, false);
@@ -477,7 +477,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 		}
 		else
 		{
-			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction);
+			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction, NULL);
 		}
 	}
 	else if((pressedKey & K_LU))

@@ -44,7 +44,7 @@ singleton class AnimationCoordinatorFactory : Object
 
 	/// @publicsection
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationController animationController, Sprite sprite, const CharSetSpec* charSetSpec);
+	AnimationCoordinator getCoordinator(AnimationController animationController, Object scope, const CharSetSpec* charSetSpec);
 	void reset();
 }
 

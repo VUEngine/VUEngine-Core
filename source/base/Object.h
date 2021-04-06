@@ -76,7 +76,8 @@ abstract class Object : Object
 	void constructor();
 	void addEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);
-	void removeEventListeners(Object listener, u32 eventCode);
+	void removeEventListeners(EventListener method, u32 eventCode);
+	void removeEventListenerScopes(Object listener, u32 eventCode);
 	void removeAllEventListeners(u32 eventCode);
 	bool hasActiveEventListeners();
 	void fireEvent(u32 eventCode);

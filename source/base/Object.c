@@ -164,12 +164,55 @@ void Object::removeEventListener(Object listener, EventListener method, u32 even
 }
 
 /**
+ * Removes event listeners without specifying a scope
+ *
+ * @param listener		Object where event listener is registered at
+ * @param eventCode		The code of the event
+ */
+void Object::removeEventListeners(EventListener method, u32 eventCode)
+{
+	if(this->events)
+	{
+		VirtualList eventsToRemove = new VirtualList();
+
+		VirtualNode node = this->events->head;
+
+		for(; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			if(method == event->method && eventCode == event->code)
+			{
+				VirtualList::pushBack(eventsToRemove, event);
+			}
+		}
+
+		for(node = eventsToRemove->head; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			VirtualList::removeElement(this->events, event);
+
+			delete event;
+		}
+
+		delete eventsToRemove;
+
+		if(!this->events->head)
+		{
+			delete this->events;
+			this->events = NULL;
+		}
+	}
+}
+
+/**
  * Removes event listeners without specifying a method
  *
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
-void Object::removeEventListeners(Object listener, u32 eventCode)
+void Object::removeEventListenerScopes(Object listener, u32 eventCode)
 {
 	if(this->events)
 	{

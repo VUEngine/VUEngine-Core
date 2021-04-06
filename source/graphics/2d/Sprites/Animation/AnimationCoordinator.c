@@ -45,10 +45,11 @@ friend class VirtualList;
  *
  * @param charSetSpec		CharSetSpec
  */
-void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec)
+void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, Object scope)
 {
 	Base::constructor();
 
+	this->scope = scope;
 	this->animationControllers = new VirtualList();
 	this->charSetSpec = charSetSpec;
 }
@@ -68,24 +69,12 @@ void AnimationCoordinator::destructor()
 	Base::destructor();
 }
 
-/**
- * Class constructor
- *
- * @return 				CharSetSpec
- */
 const CharSetSpec* AnimationCoordinator::getCharSetSpec()
 {
 	return this->charSetSpec;
 }
 
-/**
- * Class constructor
- *
- * @param animationController		Animation controller
- * @param animationDescription		Animation description holding the animation function
- * @param functionName				Name of the animation function's to play
- * @return 							True if the animation started playing
- */
+
 bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
 {
 	if(this->animationControllers->head)
@@ -101,11 +90,71 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(functionName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
-			AnimationController::play(firstAnimationController, animationDescription, functionName);
+			AnimationController::play(firstAnimationController, animationDescription, functionName, this->scope);
 		}
 
 		return false;
 	}
 
 	return true;
+}
+
+/**
+ * Add an AnimationController
+ *
+ * @param animationController		Animation controller to register
+ */
+void AnimationCoordinator::addAnimationController(AnimationController animationController)
+{
+	ASSERT(animationController, "AnimationCoordinator::addAnimationController: null animationController");
+	ASSERT(!VirtualList::find(this->animationControllers, animationController), "AnimationCoordinator::addAnimationController: animationController already registered");
+
+	if(VirtualList::front(this->animationControllers))
+	{
+		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
+
+		ASSERT(firstAnimationController, "AnimationCoordinator::addAnimationController: null firstAnimationController");
+
+		if(AnimationController::isPlaying(firstAnimationController))
+		{
+			AnimationController::playAnimationFunction(animationController, AnimationController::getPlayingAnimationFunction(firstAnimationController), this->scope);
+			s16 currentFrame = AnimationController::getActualFrame(firstAnimationController);
+			u8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
+			AnimationController::setActualFrame(animationController, currentFrame);
+			AnimationController::setFrameDuration(animationController, frameDuration);
+		}
+	}
+
+	VirtualList::pushBack(this->animationControllers, animationController);
+}
+
+/**
+ * Remove an AnimationController
+ *
+ * @param animationController		Animation controller to unregister
+ */
+void AnimationCoordinator::removeAnimationController(AnimationController animationController)
+{
+	ASSERT(this->animationControllers->head, "AnimationCoordinator::removeAnimationController: null this");
+
+	bool mustChangeLeader = animationController == AnimationController::safeCast(VirtualList::front(this->animationControllers));
+	VirtualList::removeElement(this->animationControllers, animationController);
+
+	if(mustChangeLeader && !isDeleted(this->animationControllers->head))
+	{
+		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
+
+		if(firstAnimationController)
+		{
+			if(AnimationController::isPlaying(animationController))
+			{
+				AnimationController::playAnimationFunction(firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController), this->scope);
+				s16 currentFrame = AnimationController::getActualFrame(firstAnimationController);
+				u8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
+				AnimationController::setActualFrame(firstAnimationController, currentFrame);
+				AnimationController::setFrameDuration(firstAnimationController, frameDuration);
+				AnimationController::stop(animationController);
+			}
+		}
+	}
 }

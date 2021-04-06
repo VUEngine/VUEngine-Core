@@ -37,7 +37,8 @@ To fire an event, call the following code:
 The removal of listeners is the responsibility of the client code. To remove a listener use one of the following:
 
 	Object::removeEventListener(triggerObject, listener, method, eventCode);
-	Object::removeEventListeners(triggerObject, listener, eventCode);
+	Object::removeEventListeners(listener, eventCode);
+	Object::removeEventListenerScopes(triggerObject, eventCode);
 	Object::removeAllEventListeners(triggerObject, eventCode);
 
 Beware: During the processing of an event it is illegal to modify the firer's event list by adding or removing event listeners to it, or by deleting the firer. If any of that happens, the engine will trigger an exception.

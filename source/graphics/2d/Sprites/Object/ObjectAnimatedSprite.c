@@ -30,6 +30,7 @@
 #include <ObjectSpriteContainer.h>
 #include <AnimationController.h>
 #include <ObjectTexture.h>
+#include <AnimationCoordinatorFactory.h>
 #include <Game.h>
 
 
@@ -55,7 +56,17 @@ void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAni
 	// construct base object
 	Base::constructor(&objectAnimatedSpriteSpec->objectSpriteSpec, owner);
 
-	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec);
+	this->animationController = new AnimationController();
+
+	AnimationController::setAnimationCoordinator(
+		this->animationController, 
+		AnimationCoordinatorFactory::getCoordinator(
+			AnimationCoordinatorFactory::getInstance(), 
+			this->animationController, 
+			owner,
+			objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec
+			)
+	);
 }
 
 /**

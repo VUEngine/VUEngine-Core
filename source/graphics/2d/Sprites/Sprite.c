@@ -684,15 +684,20 @@ void Sprite::pause(bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-void Sprite::play(const AnimationDescription* animationDescription, char* functionName)
+bool Sprite::play(const AnimationDescription* animationDescription, char* functionName, Object scope)
 {
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
 
+	bool playBackStarted = false;
+
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::play(this->animationController, animationDescription, functionName);
+		playBackStarted = AnimationController::play(this->animationController, animationDescription, functionName, scope);
+		this->writeAnimationFrame |= playBackStarted;
 	}
+
+	return playBackStarted;
 }
 
 /**

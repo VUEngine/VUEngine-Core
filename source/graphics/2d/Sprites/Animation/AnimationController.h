@@ -44,8 +44,6 @@ class AnimationCoordinator;
 class AnimationController : Object
 {
 	// who owns the animated sprite
-	Object owner;
-	// who owns the animated sprite
 	AnimationCoordinator animationCoordinator;
 	// a pointer to the animation function being played
 	const AnimationFunction* animationFunction;
@@ -63,8 +61,9 @@ class AnimationController : Object
 	u8 animationFrameChanged;
 
 	/// @publicsection
-	void constructor(Object owner, Sprite sprite, const CharSetSpec* charSetSpec);
+	void constructor();
 	AnimationCoordinator getAnimationCoordinator();
+	void setAnimationCoordinator(AnimationCoordinator animationCoordinator);
 	s16 getActualFrame();
 	s16 getActualFrameIndex();
 	u8 getCols();
@@ -79,9 +78,9 @@ class AnimationController : Object
 	bool isPlayingFunction(const char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, const char* functionName);
+	bool play(const AnimationDescription* animationDescription, const char* functionName, Object scope);
 	bool replay(const AnimationDescription* animationDescription);
-	void playAnimationFunction(const AnimationFunction* animationFunction);
+	void playAnimationFunction(const AnimationFunction* animationFunction, Object scope);
 	void previousFrame();
 	bool setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameCycleDecrement);

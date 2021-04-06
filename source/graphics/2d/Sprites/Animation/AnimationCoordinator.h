@@ -40,17 +40,19 @@
 /// @ingroup graphics-2d-sprites-animation
 class AnimationCoordinator : Object
 {
+	// who owns the coordinator
+	Object scope;
 	// Controllers to sync
 	VirtualList animationControllers;
 	// Charset spec shared among entities
 	const CharSetSpec* charSetSpec;
 
 	/// @publicsection
-	void constructor(const CharSetSpec* charSetSpec);
+	void constructor(const CharSetSpec* charSetSpec, Object scope);
 	const CharSetSpec* getCharSetSpec();
 	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
-	virtual void addAnimationController(AnimationController animationController) = 0;
-	virtual void removeAnimationController(AnimationController animationController) = 0;
+	void addAnimationController(AnimationController animationController);
+	void removeAnimationController(AnimationController animationController);
 }
 
 

@@ -29,6 +29,7 @@
 #include <BgmapAnimatedSprite.h>
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
+#include <AnimationCoordinatorFactory.h>
 #include <debugUtilities.h>
 
 
@@ -56,7 +57,18 @@ void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimat
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec);
+    this->animationController = new AnimationController();
+
+	AnimationController::setAnimationCoordinator(
+		this->animationController, 
+		AnimationCoordinatorFactory::getCoordinator(
+			AnimationCoordinatorFactory::getInstance(), 
+			this->animationController, 
+			owner, 
+			bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec
+			)
+	);
+
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;

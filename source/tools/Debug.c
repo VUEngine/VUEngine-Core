@@ -46,8 +46,6 @@
 #include <DirectDraw.h>
 #include <MiscStructs.h>
 #include <MBgmapSprite.h>
-#include <BgmapAnimationCoordinator.h>
-#include <ObjectAnimationCoordinator.h>
 #include <KeypadManager.h>
 #include <SRAMManager.h>
 //#include <I18n.h>
@@ -692,13 +690,11 @@ void Debug::memoryStatusShowThirdPage(int increment __attribute__ ((unused)), in
 		{&AnimationCoordinator_getObjectSize, 			"AnimationCoordinat."},
 		{&AnimationCoordinatorFactory_getObjectSize,	"AnimationCoor.Fact."},
 		{&BgmapAnimatedSprite_getObjectSize,			"BgmapAnim. Sprite"},
-		{&BgmapAnimationCoordinator_getObjectSize,		"BgmapAnim. Coord."},
 		{&BgmapSprite_getObjectSize, 					"BgmapSprite"},
 		{&BgmapTexture_getObjectSize, 					"BgmapTexture"},
 		{&CharSet_getObjectSize, 						"CharSet"},
 		{&MBgmapSprite_getObjectSize, 					"MBgmapSprite"},
 		{&ObjectAnimatedSprite_getObjectSize,			"ObjectAnim. Sprite"},
-		{&ObjectAnimationCoordinator_getObjectSize,		"ObjectAnim.Coord."},
 		{&ObjectSprite_getObjectSize,					"ObjectSprite"},
 		{&ObjectSpriteContainer_getObjectSize,			"ObjectSpriteCont."},
 		{&ObjectTexture_getObjectSize,					"ObjectTexture"},

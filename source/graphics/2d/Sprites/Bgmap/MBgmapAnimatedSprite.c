@@ -30,6 +30,7 @@
 #include <ParamTableManager.h>
 #include <Optics.h>
 #include <Camera.h>
+#include <AnimationCoordinatorFactory.h>
 #include <debugConfig.h>
 
 
@@ -43,7 +44,17 @@ void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAni
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, Sprite::safeCast(this), mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec);
+    this->animationController = new AnimationController();
+
+	AnimationController::setAnimationCoordinator(
+		this->animationController, 
+		AnimationCoordinatorFactory::getCoordinator(
+			AnimationCoordinatorFactory::getInstance(), 
+			this->animationController, 
+			owner, 
+			mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec
+			)
+	);
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;

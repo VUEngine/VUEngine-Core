@@ -25,10 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationCoordinatorFactory.h>
-#include <BgmapAnimationCoordinator.h>
-#include <ObjectAnimationCoordinator.h>
-#include <BgmapAnimatedSprite.h>
-#include <ObjectAnimatedSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -105,9 +101,8 @@ void AnimationCoordinatorFactory::reset()
  * @param charSetSpec
  * @return						AnimationCoordinator instance
  */
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Sprite sprite, const CharSetSpec* charSetSpec)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Object scope, const CharSetSpec* charSetSpec)
 {
-	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
 	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
 	switch(charSetSpec->allocationType)
@@ -127,20 +122,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 					}
 				}
 
-				AnimationCoordinator animationCoordinator = NULL;
-
-				if(__GET_CAST(BgmapAnimatedSprite, sprite))
-				{
-					animationCoordinator = AnimationCoordinator::safeCast(new BgmapAnimationCoordinator(charSetSpec));
-				}
-				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
-				{
-					animationCoordinator = AnimationCoordinator::safeCast(new ObjectAnimationCoordinator(charSetSpec));
-				}
-				else
-				{
-					NM_ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: invalid sprite type");
-				}
+				AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
 
 				// create a new coordinator
 				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);

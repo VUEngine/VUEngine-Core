@@ -93,7 +93,6 @@ void AnimatedEntity::ready(bool recursive)
 
 	VirtualNode node = this->sprites->head;
 
-	// move each child to a temporary list
 	for(; node && this->sprites; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -164,6 +163,8 @@ void AnimatedEntity::pauseAnimation(bool pause)
 	{
 		Sprite::pause(node->data, pause);
 	}
+
+	this->update = !pause;
 }
 
 // play an animation
@@ -180,10 +181,15 @@ void AnimatedEntity::playAnimation(char* animationName)
 
 	VirtualNode node = this->sprites->head;
 
+	Object scope = Object::safeCast(this);
+
 	// play animation on each sprite
 	for(; node && this->sprites; node = node->next)
 	{
-		Sprite::play(node->data, this->animationDescription, animationName);
+		if(Sprite::play(node->data, this->animationDescription, animationName, scope))
+		{
+			scope = NULL;
+		}
 	}
 }
 
