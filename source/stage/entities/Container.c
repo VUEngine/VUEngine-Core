@@ -189,7 +189,7 @@ void Container::deleteMyself()
 		Container::removeChild(this->parent, this, true);
 		Container::iAmDeletingMyself(this);
 	}
-	else
+	else if(!this->deleteMe)
 	{
 		delete this;
 	}
