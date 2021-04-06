@@ -164,7 +164,7 @@ void AnimatedEntity::pauseAnimation(bool pause)
 		Sprite::pause(node->data, pause);
 	}
 
-	this->update = !pause;
+	this->update = !pause || AnimatedEntity::overrides(this, update);
 }
 
 // play an animation
