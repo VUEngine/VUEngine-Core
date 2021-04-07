@@ -235,24 +235,33 @@ void Actor::doSyncRotationWithBody()
 
 		if(!this->actorSpec->axisForSynchronizationWithBody)
 		{
-			Direction direction =
-			{
-				__RIGHT, __DOWN, __FAR
-			};
+			Direction direction = Actor::getDirection(this);
 
 			if(0 > direction3D->x)
 			{
 				direction.x = __LEFT;
+			}
+			else if(0 < direction3D->x)
+			{
+				direction.x = __RIGHT;
 			}
 
 			if(0 > direction3D->y)
 			{
 				direction.y = __UP;
 			}
+			else if(0 < direction3D->y)
+			{
+				direction.y = __DOWN;
+			}
 
 			if(0 > direction3D->z)
 			{
 				direction.z = __NEAR;
+			}
+			else if(0 < direction3D->z)
+			{
+				direction.z = __FAR;
 			}
 
 			Entity::setDirection(this, direction);
@@ -264,15 +273,27 @@ void Actor::doSyncRotationWithBody()
 			switch(this->actorSpec->axisForSynchronizationWithBody)
 			{
 				case __X_AXIS:
-					localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
+
+					if(direction3D->y)
+					{
+						localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
+					}
 					break;
 
 				case __Y_AXIS:
-					localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
+
+					if(direction3D->x)
+					{
+						localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
+					}
 					break;
 
 				case __Z_AXIS:
-					localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
+
+					if(direction3D->x)
+					{
+						localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
+					}
 					break;
 			}
 
@@ -401,7 +422,7 @@ void Actor::changeDirectionOnAxis(u16 axis)
 		// save current rotation
 		this->previousRotation = this->transformation.localRotation;
 
-		Direction direction = Entity::getDirection(this);
+		Direction direction = Actor::getDirection(this);
 
 		if((__X_AXIS & axis))
 		{
@@ -530,8 +551,8 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 
 			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
 
-			fix10_6 bounciness =  Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix10_6 frictionCoefficient =  Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
 			if(Actor::mustBounce(this))
 			{
