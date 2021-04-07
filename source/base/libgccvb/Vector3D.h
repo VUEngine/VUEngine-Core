@@ -61,9 +61,9 @@ static class Vector3D : Object
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
-	static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b);
-	static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
-	static inline void Vector3D::print(Vector3D vector, int x, int y);
+	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
+	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
+	static inline void print(Vector3D vector, int x, int y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -221,10 +221,32 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, s16 
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
+	fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
+
+	if(0 <= displacementX)
+	{
+		x -= (displacementX >> _optical->maximumXViewDistancePower);	
+	}
+	else
+	{
+		x += (__ABS(displacementX) >> _optical->maximumYViewDistancePower);
+	}
+
+	fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
+
+	if(0 <= displacementY)
+	{
+		y -= (displacementY >> _optical->maximumYViewDistancePower);	
+	}
+	else
+	{
+		y += (__ABS(displacementY) >> _optical->maximumYViewDistancePower);
+	}
+	
 	PixelVector projection =
 	{
-		__METERS_TO_PIXELS(x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower)),
-		__METERS_TO_PIXELS(y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower)),
+		__METERS_TO_PIXELS(x),
+		__METERS_TO_PIXELS(y),
 		__METERS_TO_PIXELS(z),
 		parallax
 	};
@@ -251,8 +273,27 @@ static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector
 
 	if(0 != z)
 	{
-		projection.x -= __METERS_TO_PIXELS(__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);
-		projection.y -= __METERS_TO_PIXELS(__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);
+		fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
+
+		if(0 <= displacementX)
+		{
+			projection.x -= (displacementX >> _optical->maximumXViewDistancePower);	
+		}
+		else
+		{
+			projection.x += (__ABS(displacementX) >> _optical->maximumXViewDistancePower);
+		}
+
+		fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
+
+		if(0 <= displacementY)
+		{
+			projection.y -= (displacementY >> _optical->maximumYViewDistancePower);	
+		}
+		else
+		{
+			projection.y += ((__ABS(displacementY) >> _optical->maximumYViewDistancePower));
+		}
 	}
 
 	return projection;
