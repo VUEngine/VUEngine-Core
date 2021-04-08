@@ -455,7 +455,9 @@ void ParticleSystem::spawnAllParticles()
 {
 	while(this->particleCount < this->maximumNumberOfAliveParticles)
 	{
-		VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+		Particle particle = ParticleSystem::spawnParticle(this);
+		Particle::hide(particle);
+		VirtualList::pushBack(this->particles, particle);
 		this->particleCount++;
 	}
 }
