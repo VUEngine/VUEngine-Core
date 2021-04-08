@@ -121,7 +121,6 @@ void ObjectSprite::rewrite()
 	s16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
-	u16 result = 0;
 
 	ObjectAttributes* objectPointer = NULL;
 
