@@ -37,6 +37,7 @@
 extern int abs(int);
 extern float fabsf(float);
 
+#define __USE_WORDS_SIZE_ABS_FUNCTION
 #ifdef __USE_WORDS_SIZE_ABS_FUNCTION
 #define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
 #else
