@@ -501,6 +501,9 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// Transformation everything definitively
 	GameState::transform(this);
+
+	// Make sure all sprites are ready
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 }
 
 /**
