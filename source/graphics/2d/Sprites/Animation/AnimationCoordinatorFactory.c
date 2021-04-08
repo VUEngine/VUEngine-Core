@@ -110,8 +110,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 		case __ANIMATED_SHARED_COORDINATED:
 			{
 				// try to find an already created coordinator
-				VirtualNode node = this->animationCoordinators->head;
-				for(;node; node = node->next)
+				for(VirtualNode node = this->animationCoordinators->head; node; node = node->next)
 				{
 					AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
