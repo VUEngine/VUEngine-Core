@@ -209,7 +209,7 @@ if [ -z "$INPUT_FILE" ] || [ ! -f "$INPUT_FILE" ];
 then
 	echo "Input file not found: $INPUT_FILE"
 	clean_up
-	exit 0
+	exit 1
 fi
 
 if [ "$INPUT_FILE" = "$OUTPUT_FILE" ];
@@ -273,7 +273,6 @@ then
 		clean_up
 		releaseLocks
 		echo "Already processed on caller $CALLER" >> $CLASS_LOG_FILE
-
 		exit 0
 	fi
 fi
@@ -370,7 +369,7 @@ then
 
 		while [ -z "$processedBaseClassFile" ] || [ ! -f "$processedBaseClassFile" ] || [ -d "$baseClassLock" ];
 		do
-			if [ "$counter" -gt 100 ];
+			if [ "$counter" -gt 200 ];
 			then
 				counter=0
 				echo "Waiting for $baseClassName during computation of whole hierarchy"  >> $CLASS_LOG_FILE
@@ -380,14 +379,13 @@ then
 
 			counter=$((counter + 1))
 
-			if [ "$counter" -gt 1000 ];
+			if [ "$counter" -gt 199 ];
 			then
 				echo "Error processing $className while computing hierarchy on $baseClassName with file $processedBaseClassFile not found"  >> $CLASS_LOG_FILE
-				ls -la FILE: $processedBaseClassFile
-				ls -la LOCK: $baseClassLock.lock
+				echo "$className: base class $baseClassName not found"
 				clean_up
 				releaseLocks
-				exit 0
+				exit 1
 			fi
 		done
 	fi
@@ -543,12 +541,12 @@ do
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
 
-		echo " error (1): $className, header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
+		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE
 		clean_up
 		releaseLocks
-		exit 0
+		exit 1
 	fi
 done
 
@@ -678,11 +676,10 @@ then
 
 	if [ -z "$constructor" ];
 	then
-		echo
-		echo " error (2): no constructor defined for $className : $baseClassName in $methodDeclarations"
+		echo "$className: no constructor defined for $className : $baseClassName in $methodDeclarations"
 		clean_up
 		releaseLocks
-		exit 0
+		exit 1
 	else
 #		echo "Added allocator"
 #		echo constructor $constructor
