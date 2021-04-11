@@ -91,18 +91,7 @@ void AnimatedEntity::ready(bool recursive)
 
 	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node && this->sprites; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-		AnimationController animationController = Sprite::getAnimationController(sprite);
-
-		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
-		{
-			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
-		}
-	}
+	AnimatedEntity::setupListeners(this);
 }
 
 void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused)))
@@ -301,6 +290,24 @@ void AnimatedEntity::resume()
 	Base::resume(this);
 
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
+
+	AnimatedEntity::setupListeners(this);
+}
+
+void AnimatedEntity::setupListeners()
+{ 
+	VirtualNode node = this->sprites->head;
+
+	for(; node && this->sprites; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+		AnimationController animationController = Sprite::getAnimationController(sprite);
+
+		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
+		{
+			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
+		}
+	}
 
 	this->update = true;
 }
