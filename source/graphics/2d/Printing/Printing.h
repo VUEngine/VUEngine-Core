@@ -39,7 +39,7 @@
 // some handy macros
 #define PRINT_TEXT(string, x, y)			Printing::text(Printing::getInstance(), string, x, y, NULL)
 #define PRINT_INT(number, x, y)				PRINT_TEXT("        ", x, y); Printing::int(Printing::getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)			PRINT_TEXT("        ", x, y);Printing::float(Printing::getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)			PRINT_TEXT("        ", x, y);Printing::float(Printing::getInstance(), number, x, y, 2, NULL)
 #define PRINT_HEX(number, x, y)				PRINT_TEXT("        ", x, y);Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
 #define PRINT_HEX_EXT(number, x, y, d)		PRINT_TEXT("        ", x, y);Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
 
@@ -241,11 +241,12 @@ singleton class Printing : Object
 	 * Print a float value
 	 *
 	 * @param value	Float value to print
-	 * @param x		Column to start printing at
-	 * @param y		Row to start printing at
+	 * @param x				Column to start printing at
+	 * @param y				Row to start printing at
+	 * @param precision		How many decimals to print
 	 * @param font	Name of font to use for printing
 	 */
-	void float(float value, u8 x, u8 y, const char* font);
+	void float(float value, u8 x, u8 y, int precision, const char* font);
 
 	/**
      * Get font spec and starting position in character memory

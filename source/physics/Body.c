@@ -1317,65 +1317,65 @@ void Body::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Weight", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                             ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Position", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Velocity", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Direction", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Maximum Speed", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->maximumSpeed), xDisplacement + x, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->maximumSpeed), xDisplacement + x, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Speed", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Acceleration", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Acceleration gravity = Body::getGravity(this);
 
 	Printing::text(Printing::getInstance(), "Gravity", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "External Force", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Normal", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Normal Force", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Normals", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
@@ -1383,15 +1383,15 @@ void Body::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Friction", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.x), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.y), xDisplacement + x + 8, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.z), xDisplacement + x + 8 * 2, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.x), xDisplacement + x, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.y), xDisplacement + x + 8, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Total frict. coef.", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, 2, NULL);
 
 	Printing::text(Printing::getInstance(), "Friction magnitude", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, 2, NULL);
 }

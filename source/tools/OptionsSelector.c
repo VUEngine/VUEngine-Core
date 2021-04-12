@@ -437,7 +437,7 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 						break;
 
 					case kFloat:
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, 2, this->font);
 						break;
 
 					case kInt:

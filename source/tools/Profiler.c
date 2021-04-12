@@ -137,6 +137,8 @@ void Profiler::initialize()
 	/**/
 }
 
+static float lastInterruptElapsedTime = 0;
+
 void Profiler::start()
 {
 	if(!this->initialized)
@@ -158,6 +160,7 @@ void Profiler::start()
 
 	this->started = true;
 	this->lapTypeFlags = 0;
+	lastInterruptElapsedTime = 0;
 
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
@@ -179,7 +182,7 @@ void Profiler::start()
 }
 
 void Profiler::end()
-{
+{	
 	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
 	{
 		return;
@@ -207,14 +210,17 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 	}
 	else
 	{
+
 		Printing::text(_printing, "<", column, 27, "Profiler");
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
 		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
-		Printing::float(_printing, elapsedTime, column, 14 + ((int)elapsedTime >= 10), "Profiler");
+		Printing::float(_printing, elapsedTime - lastInterruptElapsedTime, column, 14 + ((int)(elapsedTime - lastInterruptElapsedTime) >= 10), 2, "Profiler");
 		Printing::text(_printing, ":;", column, 11, "Profiler"); // "ms"
+
+		lastInterruptElapsedTime = 0;
 
 		u8 indicatorRow = 9;
 
@@ -223,6 +229,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, ">", column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeVIPInterruptProcess;
+			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		if(kProfilerLapTypeTimerInterruptProcess & this->lapTypeFlags)
@@ -230,6 +237,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, "?", column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeTimerInterruptProcess;
+			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		if(kProfilerLapTypeCommunicationsInterruptProcess & this->lapTypeFlags)
@@ -237,6 +245,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, "@", column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeCommunicationsInterruptProcess;
+			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);

@@ -392,10 +392,18 @@ void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
 }
 
-void Printing::float(float value, u8 x, u8 y, const char* font)
+void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 {
-	char string[48];
-	char* integer = Utilities::itoa((int)value, 10, Utilities::getDigitCount((int)value));
+	if(1 > precision)
+	{
+		precision = 2;
+	}
+	else if(10 < precision)
+	{
+		precision = 10;
+	}
+	
+	char string[48] = "\0";
 
 	int i = 0;
 
@@ -403,42 +411,62 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	{
 		string[i] = '-';
 		i++;
+
+		value *= -1;
 	}
 
-	for(int j = 0; integer[j]; i++, j++)
+	char* integer = Utilities::itoa((int)value, 10, Utilities::getDigitCount((int)value));
+
+	for(int j = 0; integer[j];)
 	{
-		string[i] = integer[j];
+		string[i++] = integer[j++];
 	}
-
-	int decimal = (int)(((float)__FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 100.f);
-	//int length = Utilities::intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
 	string[i++] = '.';
 
-	if(decimal)
-	{
-		int auxDecimal = decimal;
+	volatile float decimalValue = value - (int)value;
 
-		while(0 == (auxDecimal / 10))
+	int decimals = 0;
+	int rounding = 10;
+
+	for(; decimals < precision; decimals++)
+	{
+		rounding *= 10;
+	}
+
+	decimalValue += (0.5f / rounding);
+
+	for(decimals = 0; decimals < precision; decimals++)
+	{
+		decimalValue *= 10;
+		int roundedDecimalValue = (int)decimalValue;
+
+		if(0 == roundedDecimalValue)
 		{
-			auxDecimal *= 10;
 			string[i++] = '0';
 		}
+	}
 
-		auxDecimal = decimal;
+	if(true|| decimals <= precision)
+	{
+		int roundedDecimalValue = (int)decimalValue;
+		int totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
 
-		while(0 == (auxDecimal % 10))
+		char* decimalString = Utilities::itoa((int)(decimalValue), 10, totalDecimalDigits);
+
+		int j = 0;
+
+		for(; j < totalDecimalDigits; j++)
 		{
-			auxDecimal /= 10;
-			string[i++] = Utilities::itoa((int)auxDecimal, 10, 1)[0];
+			string[i + j] = decimalString[j];
 		}
+
+		string[i + j] = 0;
 	}
 	else
 	{
-		string[i++] = '0';
+		string[i] = 0;
 	}
-
-	string[i++] = 0;
 
 	Printing::text(this, string, x, y, font);
 }
