@@ -62,6 +62,7 @@ static class Utilities : Object
 	static int getDigitCount(int value);
 	static int intLength(int value);
 	static u32 reverse(u32 x, int bits);
+	static float Utilities::floor(float x);
 }
 
 

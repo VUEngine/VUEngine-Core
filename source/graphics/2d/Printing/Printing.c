@@ -396,7 +396,7 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 {
 	if(1 > precision)
 	{
-		precision = 2;
+		precision = 1;
 	}
 	else if(10 < precision)
 	{
@@ -407,6 +407,7 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 
 	int i = 0;
 
+	// Handle negatives
 	if(0 > value)
 	{
 		string[i] = '-';
@@ -415,53 +416,76 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 		value *= -1;
 	}
 
-	char* integer = Utilities::itoa((int)value, 10, Utilities::getDigitCount((int)value));
+	// Get integral part
+	float floorValue = Utilities::floor(value);
+	char* integer = Utilities::itoa((int)floorValue, 10, Utilities::getDigitCount((int)floorValue));
 
+	// Save it right away
 	for(int j = 0; integer[j];)
 	{
 		string[i++] = integer[j++];
 	}
 
+	// Start decimal part
 	string[i++] = '.';
 
-	volatile float decimalValue = value - (int)value;
+	// Get decimal part
+	float decimalValue = value - floorValue;
 
 	int decimals = 0;
-	int rounding = 10;
+	int decMultiplier = 1;
+	int iIncrement = 1;
 
 	for(; decimals < precision; decimals++)
 	{
-		rounding *= 10;
+		decMultiplier *= 10;
+
+		if(1 == precision)
+		{
+			continue;
+		}
+
+		// Check if it is a leading zero
+		if(0 == ((int)Utilities::floor(decimalValue * decMultiplier)) % 10)
+		{
+			string[i] = '0';
+			i += iIncrement;
+		}
+		else
+		{
+			iIncrement = 0;
+		}
 	}
 
-	decimalValue += (0.5f / rounding);
+	// Round last precision digit
+	decimalValue += (0.5f / (decMultiplier));
 
-	for(decimals = 0; decimals < precision; decimals++)
+	// Promote to integral all the decimals up to precision
+	decimalValue *= decMultiplier; 
+
+	if(decimals <= precision)
 	{
-		decimalValue *= 10;
-		int roundedDecimalValue = (int)decimalValue;
+		long roundedDecimalValue = (int)Utilities::floor(decimalValue);
 
 		if(0 == roundedDecimalValue)
 		{
-			string[i++] = '0';
+			string[i] = 0;
 		}
-	}
-
-	if(true|| decimals <= precision)
-	{
-		int roundedDecimalValue = (int)decimalValue;
-		int totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
-
-		char* decimalString = Utilities::itoa((int)(decimalValue), 10, totalDecimalDigits);
-
-		int j = 0;
-
-		for(; j < totalDecimalDigits; j++)
+		else
 		{
-			string[i + j] = decimalString[j];
-		}
+			int totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
 
-		string[i + j] = 0;
+			char* decimalString = Utilities::itoa((int)Utilities::floor(decimalValue), 10, totalDecimalDigits);
+
+			int j = 0;
+
+			for(; j < totalDecimalDigits; j++)
+			{
+				string[i + j] = decimalString[j];
+			}
+
+			string[i + j] = 0;
+		}
 	}
 	else
 	{

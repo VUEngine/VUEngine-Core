@@ -195,3 +195,27 @@ static u32 Utilities::reverse(u32 x, int bits)
     x = ((x & 0x0000FFFF) << 16) | ((x & 0xFFFF0000) >> 16);
     return x >> ((sizeof(u32) << 3) - bits);
 }
+
+static float Utilities::floor(float x) 
+{
+    float xAux = x < 0 ? x *- 1 : x;
+    unsigned int zeros = 0;
+    
+	float n = 1;
+    
+	for(; xAux > n * 10; n *= 10, zeros++);
+
+    for(xAux -=n; -1 != zeros; xAux -= n)
+	{
+        if(xAux < 0)
+        {
+            xAux += n;
+            n /= 10;
+            --zeros;
+        }
+	}
+
+    xAux += n;
+
+    return x < 0 ? (xAux == 0? x : x - ( 1 - xAux) ) : (x - xAux);
+}
