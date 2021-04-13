@@ -75,8 +75,10 @@ singleton class Profiler : Object
 	void initialize();
 	void reset();
 	void start();
+	void startInterrupt();
 	void end();
 	void lap(u32 lapType, const char* processName);
+	void interruptLap(u32 lapType, const char* processName);
 }
 
 #endif

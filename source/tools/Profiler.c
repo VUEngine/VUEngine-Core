@@ -121,6 +121,7 @@ void Profiler::reset()
 void Profiler::initialize()
 {
 	Profiler::reset(this);
+	Printing::resetCoordinates(Printing::getInstance());
 
 	this->initialized = true;
 	/**/
@@ -136,8 +137,6 @@ void Profiler::initialize()
 	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0b11100000;
 	/**/
 }
-
-static float lastInterruptElapsedTime = 0;
 
 void Profiler::start()
 {
@@ -156,11 +155,10 @@ void Profiler::start()
 		return;
 	}
 
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
 
 	this->started = true;
 	this->lapTypeFlags = 0;
-	lastInterruptElapsedTime = 0;
 
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 
@@ -168,8 +166,6 @@ void Profiler::start()
 	Printing::text(_printing, "================================================", 0, 27, "Profiler");
 
 	this->printedProcessesNames = true;
-
-	Profiler::printValue(this, "TOTAL", this->totalTime, (this->totalTime * 100) / this->timePerGameFrameInMS, 47);
 
 	this->currentProfilingProcess = 0;
 	this->previousTimerCounter = this->timerCounter;
@@ -182,11 +178,18 @@ void Profiler::start()
 }
 
 void Profiler::end()
-{	
+{
 	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
 	{
 		return;
 	}
+
+	if(!this->started)
+	{
+		return;
+	}
+
+	this->started = false;
 
 	Profiler::computeLap(this, "HEADROOM", true);
 
@@ -198,11 +201,9 @@ void Profiler::end()
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
-
-	this->started = false;
 }
 
-void Profiler::printValue(const char* processName, float elapsedTime, float gameFrameTimePercentage __attribute__((unused)), u8 column)
+void Profiler::printValue(const char* processName, float elapsedTime, u8 column)
 {
 	if(NULL == processName)
 	{
@@ -217,10 +218,8 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
 		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
-		Printing::float(_printing, elapsedTime - lastInterruptElapsedTime, column, 14 + ((int)(elapsedTime - lastInterruptElapsedTime) >= 10), 2, "Profiler");
-		Printing::text(_printing, ":;", column, 11, "Profiler"); // "ms"
-
-		lastInterruptElapsedTime = 0;
+		Printing::float(_printing, elapsedTime, column, 14 + ((int)(elapsedTime) >= 10), 2, "Profiler");
+		Printing::text(_printing, ":;", column, 10, "Profiler"); // "ms"
 
 		u8 indicatorRow = 9;
 
@@ -229,7 +228,6 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, ">", column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeVIPInterruptProcess;
-			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		if(kProfilerLapTypeTimerInterruptProcess & this->lapTypeFlags)
@@ -237,7 +235,6 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, "?", column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeTimerInterruptProcess;
-			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		if(kProfilerLapTypeCommunicationsInterruptProcess & this->lapTypeFlags)
@@ -245,7 +242,6 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 			Printing::text(_printing, "@", column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
 			this->lapTypeFlags &= ~kProfilerLapTypeCommunicationsInterruptProcess;
-			lastInterruptElapsedTime = elapsedTime;
 		}
 
 		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
@@ -255,13 +251,18 @@ void Profiler::printValue(const char* processName, float elapsedTime, float game
 
 void Profiler::lap(u32 lapType, const char* processName)
 {
+	if(!this->started)
+	{
+		return;
+	}
+
 	Profiler::computeLap(this, processName, false);
 	this->lapTypeFlags |= lapType;
 }
 
 void Profiler::computeLap(const char* processName, bool isHeadroom)
 {
-	if(!this->started)
+	if(!this->started && !isHeadroom)
 	{
 		return;
 	}
@@ -290,6 +291,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
 		this->totalTime += elapsedTime;
 	}
+
 /*
 	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
 
@@ -317,7 +319,6 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 
 	int entries = 4;
 
-//	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i < columnTableEntries; i++)
 	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
@@ -325,14 +326,15 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 
 	u8 printingColumn = this->lastLapIndex / 2;
 
-//	Profiler::printValue(this, processName, currentTimerCounter, gameFrameTimePercentage, printingColumn);
-//	Profiler::printValue(this, processName, elapsedTime, gameFrameTimePercentage, printingColumn);
-	Profiler::printValue(this, processName, elapsedTime, 0, printingColumn);
-
+	Profiler::printValue(this, processName, elapsedTime, printingColumn);
 	this->lastLapIndex += entries;
-
 	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
+
+	if(isHeadroom)
+	{
+		Profiler::printValue(this, "TOTAL", this->totalTime, 46);
+	}
 
 	HardwareManager::enableInterrupts();
 }
