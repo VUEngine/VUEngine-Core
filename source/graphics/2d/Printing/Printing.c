@@ -402,7 +402,19 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 	{
 		precision = 10;
 	}
-	
+
+	int decMultiplier = 1;
+
+	int decimals = 0;
+
+	for(; decimals < precision; decimals++)
+	{
+		decMultiplier *= 10;
+	}
+
+	// Round last precision digit
+	value += (0.5f / (decMultiplier));
+
 	char string[48] = "\0";
 
 	int i = 0;
@@ -432,38 +444,27 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 	// Get decimal part
 	float decimalValue = value - floorValue;
 
-	int decimals = 0;
-	int decMultiplier = 1;
-	int iIncrement = 1;
-
-	for(; decimals < precision; decimals++)
-	{
-		decMultiplier *= 10;
-
-		if(1 == precision)
-		{
-			continue;
-		}
-
-		// Check if it is a leading zero
-		if(0 == ((int)Utilities::floor(decimalValue * decMultiplier)) % 10)
-		{
-			string[i] = '0';
-			i += iIncrement;
-		}
-		else
-		{
-			iIncrement = 0;
-		}
-	}
-
-	// Round last precision digit
-	decimalValue += (0.5f / (decMultiplier));
-
 	// Promote to integral all the decimals up to precision
 	decimalValue *= decMultiplier; 
 
-	if(decimals <= precision)
+	bool nonZero = false;
+	int zeros = 0;
+	int flooredDecimalValue = (int)Utilities::floor(decimalValue);
+
+	while(10 <= decMultiplier)
+	{
+		decMultiplier /= 10;
+
+		if(0 != (flooredDecimalValue / decMultiplier))
+		{
+			break;
+		}
+
+		string[i++] = '0';
+		zeros++;
+	}
+
+	if(decimals <= precision && zeros < precision)
 	{
 		long roundedDecimalValue = (int)Utilities::floor(decimalValue);
 
