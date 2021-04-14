@@ -218,10 +218,10 @@ void Profiler::printValue(const char* processName, float elapsedTime, u8 column)
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
 		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
-		Printing::float(_printing, elapsedTime, column, 14 + ((int)(elapsedTime) >= 10), 2, "Profiler");
+		Printing::float(_printing, elapsedTime, column, 14 + (10 > elapsedTime ? 0 : 1), 2, "Profiler");
 		Printing::text(_printing, ":;", column, 10, "Profiler"); // "ms"
 
-		u8 indicatorRow = 9;
+		u8 indicatorRow = 8;
 
 		if(kProfilerLapTypeVIPInterruptProcess & this->lapTypeFlags)
 		{
