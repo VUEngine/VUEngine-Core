@@ -205,7 +205,7 @@ static float Utilities::floor(float x)
     
 	for(; xAux > n * 10; n *= 10, zeros++);
 
-    for(xAux -=n; -1 != zeros; xAux -= n)
+    for(xAux -=n; -1 != (int)zeros; xAux -= n)
 	{
         if(xAux < 0)
         {
