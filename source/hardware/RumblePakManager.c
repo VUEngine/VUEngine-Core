@@ -75,7 +75,14 @@ void RumblePakManager::constructor()
 {    
 	Base::constructor();
 
-    this->communicationManager = CommunicationManager::getInstance();
+    this->communicationManager = NULL;
+    this->frequency = 0;
+    this->sustainPositive = 0;
+    this->sustainNegative = 0;
+    this->overdrive = 0;
+    this->breaking = 0;
+
+    RumblePakManager::reset(this);
 
     _rumblePakManager = this;
 }
@@ -89,6 +96,23 @@ void RumblePakManager::destructor()
 
 	// allow a new construct
 	Base::destructor();
+}
+
+void RumblePakManager::reset()
+{
+    this->communicationManager = CommunicationManager::getInstance();
+
+    this->frequency = __RUMBLE_FREQ_160HZ + 1;
+    this->sustainPositive = 0;
+    this->sustainNegative = 0;
+    this->overdrive = 0;
+    this->breaking = 0;
+
+    RumblePakManager::setFrequency(__RUMBLE_FREQ_160HZ);
+    RumblePakManager::setSustainPositive(255);
+    RumblePakManager::setSustainNegative(255);
+    RumblePakManager::setOverdrive(255);
+    RumblePakManager::setBreak(255);
 }
 
 static void RumblePakManager::sendCode(u8 code __attribute__((unused)))
@@ -113,7 +137,7 @@ static void RumblePakManager::sendCode(u8 code __attribute__((unused)))
     }
 
 #ifdef __RELEASE
-    CommunicationManager::broadcastData(_rumblePakManager->communicationManager, &code, sizeof(code));
+    CommunicationManager::broadcastData(_rumblePakManager->communicationManager, code);
 #endif
 }
 
@@ -162,38 +186,71 @@ static void RumblePakManager::playEffectChain(u8 effectChain)
     }
 }
 
-static void RumblePakManager::setFrequency(u8 frequency)
+static void RumblePakManager::setFrequency(u8 value)
 {
-    u8 command = frequency;
-    
-	if(command >= __RUMBLE_FREQ_160HZ && command <= __RUMBLE_FREQ_400HZ)
-	{
-        command +=  __RUMBLE_CMD_FREQ_160HZ;
+    if(_rumblePakManager->frequency == value)
+    {
+        return;
     }
 
-    if(command >= __RUMBLE_CMD_FREQ_160HZ && command <= __RUMBLE_CMD_FREQ_400HZ)
+    _rumblePakManager->frequency = value;
+    
+	if(value >= __RUMBLE_FREQ_160HZ && value <= __RUMBLE_FREQ_400HZ)
 	{
-        RumblePakManager::sendCode(command);
+        value +=  __RUMBLE_CMD_FREQ_160HZ;
+    }
+
+    if(value >= __RUMBLE_CMD_FREQ_160HZ && value <= __RUMBLE_CMD_FREQ_400HZ)
+	{
+        RumblePakManager::sendCode(value);
     }
 }
 
 static void RumblePakManager::setOverdrive(u8 value)
 {
+    if(_rumblePakManager->overdrive == value)
+    {
+        return;
+    }
+
+    _rumblePakManager->overdrive = value;
+
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_OVERDRIVE, value);
 }
 
 static void RumblePakManager::setSustainPositive(u8 value)
 {
+    if(_rumblePakManager->sustainPositive == value)
+    {
+        return;
+    }
+
+    _rumblePakManager->sustainPositive = value;
+
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_SUSTAIN_POS, value);
 }
 
 static void RumblePakManager::setSustainNegative(u8 value)
 {
+    if(_rumblePakManager->sustainNegative == value)
+    {
+        return;
+    }
+
+    _rumblePakManager->sustainNegative = value;
+
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_SUSTAIN_NEG, value);
 }
 
 static void RumblePakManager::setBreak(u8 value)
 {
+    if(_rumblePakManager->breaking == value)
+    {
+        return;
+    }
+
+    _rumblePakManager->breaking = value;
+
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_BREAK, value);
 }
 

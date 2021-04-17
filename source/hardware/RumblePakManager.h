@@ -78,11 +78,15 @@
 singleton class RumblePakManager : Object
 {
 	CommunicationManager communicationManager;
+	u8 frequency;
+	u8 sustainPositive;
+	u8 sustainNegative;
+	u8 overdrive;
+	u8 breaking;
 
 	/// @publicsection
 	static RumblePakManager getInstance();
 
-	static void sendCode(u8 code);
 	static void playEffect(u8 effect);
 	static void playEffectChain(u8 effectChain);
 	static void sendByte(u8 byteValue);
@@ -95,6 +99,8 @@ singleton class RumblePakManager : Object
 	static void setBreak(u8 value);
 	static void play();
 	static void stop();
+
+	void reset();
 }
 
 

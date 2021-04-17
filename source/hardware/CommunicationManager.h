@@ -62,7 +62,7 @@ singleton class CommunicationManager : Object
 	void update();
 	bool isConnected();
 	bool isMaster();
-	bool broadcastData(BYTE* data, int numberOfBytes);
+	bool broadcastData(u8 data);
 	bool sendData(BYTE* data, int numberOfBytes);
 	bool receiveData(BYTE* data, int numberOfBytes);
 	bool sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes);

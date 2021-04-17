@@ -287,7 +287,10 @@ void CommunicationManager::startClockSignal()
 	if(this->broadcast)
 	{
 		// Start communications
-		_communicationRegisters[__CCR] = __COM_AS_MASTER | __COM_START;
+		_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT | __COM_AS_MASTER | __COM_START;
+
+		this->numberOfBytesPendingTransmission = 0;
+		this->status = kCommunicationsStatusIdle;
 	}
 	else
 	{
@@ -605,8 +608,7 @@ bool CommunicationManager::isFreeForTransmissions()
 		NULL == this->syncReceivedByte &&
 		NULL == this->asyncSentByte &&
 		NULL == this->asyncReceivedByte &&
-		this->status == kCommunicationsStatusIdle &&
-		!CommunicationManager::hasActiveEventListeners(this)
+		kCommunicationsStatusIdle == this->status
 	);
 }
 
@@ -666,8 +668,8 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 }
 
 
-bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
-{	
+bool CommunicationManager::broadcastData(u8 data)
+{
 	if(CommunicationManager::isConnected(this))
 	{
 		return false;
@@ -677,8 +679,7 @@ bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
 	{
 		case kCommunicationsStatusSendingHandshake:
 
-			this->status = 	kCommunicationsStatusIdle;
-			CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
+			CommunicationManager::cancelCommunications(this);
 			break;
 	}
 
@@ -687,11 +688,13 @@ bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
 		return false;
 	}
 
+	while(CommunicationManager::isTransmitting(this));
+
 	// Always start comms as master when broadcasting
 	this->communicationMode = __COM_AS_MASTER;
 
 	this->broadcast = true;
-	bool result = CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
+	bool result = CommunicationManager::startDataTransmission(this, &data, sizeof(u8), true);
 	this->broadcast = false;
 
 	return result;
