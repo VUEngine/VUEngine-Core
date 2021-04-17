@@ -472,7 +472,7 @@ void Game::reset()
 	SoundManager::reset(this->soundManager);
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
-	CommunicationManager::cancelCommunications(this->communicationManager);
+	CommunicationManager::reset(this->communicationManager);
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
 

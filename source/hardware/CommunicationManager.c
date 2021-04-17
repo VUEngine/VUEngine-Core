@@ -53,7 +53,8 @@ int traceY = 0;
 
 enum CommunicationsStatus
 {
-	kCommunicationsStatusIdle = 1,
+	kCommunicationsStatusNone = 0,
+	kCommunicationsStatusIdle,
 	kCommunicationsStatusSendingHandshake,
 	kCommunicationsStatusSendingPayload,
 	kCommunicationsStatusWaitingPayload,
@@ -91,6 +92,9 @@ enum CommunicationsStatus
 
 #define	__MESSAGE_SIZE					sizeof(WORD)
 
+#define __REMOTE_READY_MESSAGE			0x43873AD1
+#define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -121,6 +125,8 @@ static CommunicationManager _communicationManager;
 void CommunicationManager::constructor()
 {
 	Base::constructor();
+
+	this->status = 	kCommunicationsStatusNone;
 
 	CommunicationManager::reset(this);
 
@@ -158,19 +164,33 @@ bool CommunicationManager::isMaster()
 
 void CommunicationManager::reset()
 {
-	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
-	_communicationRegisters[__CCSR] = __COM_DISABLE_INTERRUPT;
-	CommunicationManager::endCommunications(this);
-	this->connected = false;
-	this->broadcast = false;
-	this->sentData = NULL;
-	this->syncSentByte = NULL;
-	this->asyncSentByte = NULL;
-	this->receivedData = NULL;
-	this->syncReceivedByte = NULL;
-	this->asyncReceivedByte = NULL;
-	this->status = kCommunicationsStatusIdle;
-	this->communicationMode = __COM_AS_REMOTE;
+	switch(this->status)
+	{
+		case kCommunicationsStatusNone:
+
+			this->connected = false;
+			this->communicationMode = __COM_AS_REMOTE;
+			this->status = kCommunicationsStatusIdle;
+			this->broadcast = false;
+			this->sentData = NULL;
+			this->syncSentByte = NULL;
+			this->asyncSentByte = NULL;
+			this->receivedData = NULL;
+			this->syncReceivedByte = NULL;
+			this->asyncReceivedByte = NULL;
+
+			CommunicationManager::endCommunications(this);
+			break;
+
+		case kCommunicationsStatusSendingHandshake:
+
+			break;
+
+		default:
+
+			CommunicationManager::cancelCommunications(this);
+			break;
+	}
 }
 
 void CommunicationManager::enableCommunications(EventListener eventLister, Object scope)
@@ -224,11 +244,6 @@ void CommunicationManager::endCommunications()
 
 bool CommunicationManager::cancelCommunications()
 {
-	if(!this->connected)
-	{
-		return false;
-	}
-
 	CommunicationManager::endCommunications(this);
 
 	if(NULL != this->sentData)
@@ -832,13 +847,15 @@ const BYTE* CommunicationManager::getSentData()
 
 void CommunicationManager::startSyncCycle()
 {
+	if(!this->connected)
+	{
+		return;
+	}
+
 	extern volatile u16* _vipRegisters;
 
 	_vipRegisters[__FRMCYC] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
-
-#define __REMOTE_READY_MESSAGE			0x43873AD1
-#define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
 
 	CommunicationManager::cancelCommunications(this);
 
