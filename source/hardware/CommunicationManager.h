@@ -57,6 +57,7 @@ singleton class CommunicationManager : Object
 	static CommunicationManager getInstance();
 	static void interruptHandler();
 	override bool handleMessage(Telegram telegram);
+	void reset();
 	void enableCommunications(EventListener eventLister, Object scope);
 	bool cancelCommunications();
 	void update();
