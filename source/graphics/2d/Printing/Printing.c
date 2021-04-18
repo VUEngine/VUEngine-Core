@@ -249,7 +249,7 @@ void Printing::setFontPage(const char* font, u16 page)
 {
 	FontData* fontData = Printing::getFontByName(this, font);
 
-	if(!fontData)
+	if(!fontData || isDeleted(fontData->charSet))
 	{
 		return;
 	}
