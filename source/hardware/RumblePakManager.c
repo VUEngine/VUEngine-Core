@@ -178,7 +178,7 @@ static void RumblePakManager::playEffectChain(u8 effectChain)
 {
     u8 command = effectChain;
 
-    if(command >= __RUMBLE_CHAIN_EFFECT_0 && command <= __RUMBLE_CHAIN_EFFECT_4)
+    if(command <= __RUMBLE_CHAIN_EFFECT_4)
 	{
         command +=  __RUMBLE_CMD_CHAIN_EFFECT_0;
     }
@@ -198,7 +198,7 @@ static void RumblePakManager::setFrequency(u8 value)
 
     _rumblePakManager->frequency = value;
     
-	if(value >= __RUMBLE_FREQ_160HZ && value <= __RUMBLE_FREQ_400HZ)
+	if(value <= __RUMBLE_FREQ_400HZ)
 	{
         value +=  __RUMBLE_CMD_FREQ_160HZ;
     }
