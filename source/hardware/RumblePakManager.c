@@ -76,6 +76,8 @@ void RumblePakManager::constructor()
 	Base::constructor();
 
     this->communicationManager = NULL;
+
+    this->rumbleEffect = NULL;
     this->frequency = 0;
     this->sustainPositive = 0;
     this->sustainNegative = 0;
@@ -102,6 +104,7 @@ void RumblePakManager::reset()
 {
     this->communicationManager = CommunicationManager::getInstance();
 
+    this->rumbleEffect = NULL;
     this->frequency = __RUMBLE_FREQ_160HZ + 1;
     this->sustainPositive = 0;
     this->sustainNegative = 0;
@@ -262,4 +265,68 @@ static void RumblePakManager::play()
 static void RumblePakManager::stop()
 {
     RumblePakManager::sendCode(__RUMBLE_CMD_STOP);
+}
+
+static void RumblePakManager::startEffect(const RumbleEffect* rumbleEffect)
+{
+    return;
+    if(isDeleted(_rumblePakManager))
+    {
+        RumblePakManager::getInstance();
+
+        if(isDeleted(_rumblePakManager))
+        {
+            RumblePakManager::getInstance();
+            return;
+        }
+    }
+
+    if(NULL == rumbleEffect)
+    {
+        return;
+    }
+
+    if(_rumblePakManager->rumbleEffect == rumbleEffect)
+    {
+        if(rumbleEffect->stop)
+        {
+            RumblePakManager::stop();
+        }
+
+		RumblePakManager::play();
+
+        return;
+    }
+
+    _rumblePakManager->rumbleEffect = rumbleEffect;
+
+    if(rumbleEffect->stop)
+    {
+        RumblePakManager::stop();
+    }
+
+    RumblePakManager::setFrequency(rumbleEffect->frequency);
+    RumblePakManager::setSustainPositive(rumbleEffect->sustainPositive);
+    RumblePakManager::setSustainNegative(rumbleEffect->sustainNegative);
+    RumblePakManager::setOverdrive(rumbleEffect->overdrive);
+    RumblePakManager::setBreak(rumbleEffect->breaking);
+    RumblePakManager::playEffect(rumbleEffect->effect);
+}
+
+static void RumblePakManager::stopEffect(const RumbleEffect* rumbleEffect)
+{
+    if(NULL == rumbleEffect)
+    {
+        return;
+    }
+
+    if(_rumblePakManager->rumbleEffect == rumbleEffect)
+    {
+        RumblePakManager::stop();
+    }
+}
+
+static void RumblePakManager::stopAllEffects()
+{
+    RumblePakManager::stop();
 }

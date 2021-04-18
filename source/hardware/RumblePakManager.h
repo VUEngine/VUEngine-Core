@@ -70,6 +70,36 @@
 
 #define __RUMBLE_EFFECT_CHAIN_END         0xFF
 
+
+
+//---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * A Rumble effect
+ *
+ * @memberof	Sprite
+ */
+typedef struct RumbleEffect
+{
+	/// Effect #
+	u8 effect;
+	/// Frequency
+	u8 frequency;
+	/// Sustain+
+	u8 sustainPositive;
+	/// Sustain-
+	u8 sustainNegative;
+	/// Overdrive
+	u8 overdrive;
+	/// Break
+	u8 breaking;
+	/// Stop before starting
+	bool stop;
+
+} RumbleEffect;
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -78,6 +108,7 @@
 singleton class RumblePakManager : Object
 {
 	CommunicationManager communicationManager;
+	const RumbleEffect* rumbleEffect;
 	u8 frequency;
 	u8 sustainPositive;
 	u8 sustainNegative;
@@ -87,20 +118,10 @@ singleton class RumblePakManager : Object
 	/// @publicsection
 	static RumblePakManager getInstance();
 
-	static void playEffect(u8 effect);
-	static void playEffectChain(u8 effectChain);
-	static void sendByte(u8 byteValue);
-	static void sendCommandWithValue(u8 command, u8 value);
-	static void setFrequency(u8 frequency);
-	static void storeEffectChain(u8 chainNumber, u8* effectChain);
-	static void setOverdrive(u8 value);
-	static void setSustainPositive(u8 value);
-	static void setSustainNegative(u8 value);
-	static void setBreak(u8 value);
-	static void play();
-	static void stop();
-
 	void reset();
+	static void startEffect(const RumbleEffect* rumbleEffect);
+	static void stopEffect(const RumbleEffect* rumbleEffect);
+	static void stopAllEffects();
 }
 
 
