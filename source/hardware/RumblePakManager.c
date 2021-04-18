@@ -269,7 +269,6 @@ static void RumblePakManager::stop()
 
 static void RumblePakManager::startEffect(const RumbleEffect* rumbleEffect)
 {
-    return;
     if(isDeleted(_rumblePakManager))
     {
         RumblePakManager::getInstance();
