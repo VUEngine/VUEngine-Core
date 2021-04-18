@@ -312,7 +312,7 @@ static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
     RumblePakManager::playEffect(rumbleEffect->effect);
 }
 
-static void RumblePakManager::stopEffect(RumbleEffectROMSpec* rumbleEffect)
+static void RumblePakManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
 {
     if(NULL == rumbleEffect)
     {
