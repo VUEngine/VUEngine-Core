@@ -41,6 +41,7 @@ singleton class Error : Object
 	static Error getInstance();
 	static int triggerException(char* message, char* detail);
 	static void zeroDivisionException();
+	static void invalidOpcodeException();
 }
 
 

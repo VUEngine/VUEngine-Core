@@ -24,6 +24,9 @@ _vipVector = 0x0500FFD0
 .global _zeroDivisionVector
 _zeroDivisionVector = 0x0500FFD4
 
+.global _invalidOpcodeVector
+_invalidOpcodeVector = 0x0500FFD8
+
 
 /*************************************************
   startup code
@@ -267,6 +270,12 @@ __zero_exception:
 	ld.w	0[r1],r1
 	jmp	    [r1]
 
+__invalid_opcode_exception:
+	movhi	hi(_invalidOpcodeVector), r0, r1
+	movea	lo(_invalidOpcodeVector), r1, r1
+	ld.w	0[r1],r1
+	jmp	    [r1]
+
 	.section ".vbvectors","ax"
 	.align	1
 
@@ -308,8 +317,8 @@ _interrupt_table:
 	.fill	0x0c
 
     /* (7FFFF90h) - Invalid Opcode exception */
-	reti
-	.fill	0x0E
+	jr __invalid_opcode_exception
+	.fill	0x0c
 
     /* (7FFFFA0h) - Trap 0 exception */
 	reti

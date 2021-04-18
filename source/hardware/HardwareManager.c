@@ -47,6 +47,7 @@ extern u32 croVector;
 extern u32 comVector;
 extern u32 vipVector;
 extern u32 zeroDivisionVector;
+extern u32 invalidOpcodeVector;
 
 extern u32 _dram_bss_end;
 extern u32 _dram_data_start;
@@ -196,6 +197,7 @@ void HardwareManager::setInterruptVectors()
 void HardwareManager::setExceptionVectors()
 {
 	zeroDivisionVector = (u32)Error::zeroDivisionException;
+	invalidOpcodeVector = (u32)Error::invalidOpcodeException;
 }
 
 /**

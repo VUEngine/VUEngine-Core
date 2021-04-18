@@ -238,3 +238,22 @@ static void Error::zeroDivisionException()
 	Error::triggerException("Zero division", NULL);
 #endif
 }
+
+static void Error::invalidOpcodeException()
+{
+#ifndef __RELEASE
+	u16 eipc = 0;
+	// Save EIPC
+    asm("					\n\t"      \
+		"stsr	eipc, r10	\n\t"      \
+		"mov	r10, %0	\n\t"
+    : // No Output
+    : "r" (eipc)
+	: "r10" // regs used
+    );
+
+	_vuengineLinkPointer = eipc;
+
+	Error::triggerException("Invalid opcode", NULL);
+#endif
+}
