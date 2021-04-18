@@ -45,7 +45,6 @@
 //volatile u16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)_hardwareRegisters;
 static volatile BYTE* _communicationRegisters =			(u8*)0x02000000;
 
-int traceY = 0;
 
 //---------------------------------------------------------------------------------------------------------
 //												DECLARATIONS
