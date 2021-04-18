@@ -447,7 +447,6 @@ void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
 	// Promote to integral all the decimals up to precision
 	decimalValue *= decMultiplier; 
 
-	bool nonZero = false;
 	int zeros = 0;
 	int flooredDecimalValue = (int)Utilities::floor(decimalValue);
 
