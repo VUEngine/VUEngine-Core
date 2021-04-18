@@ -81,7 +81,7 @@
  *
  * @memberof	Sprite
  */
-typedef struct RumbleEffect
+typedef struct RumbleEffectSpec
 {
 	/// Effect #
 	u8 effect;
@@ -98,7 +98,10 @@ typedef struct RumbleEffect
 	/// Stop before starting
 	bool stop;
 
-} RumbleEffect;
+} RumbleEffectSpec;
+
+typedef const RumbleEffectSpec RumbleEffectROMSpec;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -108,7 +111,7 @@ typedef struct RumbleEffect
 singleton class RumblePakManager : Object
 {
 	CommunicationManager communicationManager;
-	const RumbleEffect* rumbleEffect;
+	const RumbleEffectSpec* rumbleEffect;
 	u8 frequency;
 	u8 sustainPositive;
 	u8 sustainNegative;
@@ -119,8 +122,8 @@ singleton class RumblePakManager : Object
 	static RumblePakManager getInstance();
 
 	void reset();
-	static void startEffect(const RumbleEffect* rumbleEffect);
-	static void stopEffect(const RumbleEffect* rumbleEffect);
+	static void startEffect(const RumbleEffectSpec* rumbleEffect);
+	static void stopEffect(const RumbleEffectSpec* rumbleEffect);
 	static void stopAllEffects();
 }
 

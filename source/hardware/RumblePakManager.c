@@ -267,7 +267,7 @@ static void RumblePakManager::stop()
     RumblePakManager::sendCode(__RUMBLE_CMD_STOP);
 }
 
-static void RumblePakManager::startEffect(const RumbleEffect* rumbleEffect)
+static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
 {
     if(isDeleted(_rumblePakManager))
     {
@@ -312,7 +312,7 @@ static void RumblePakManager::startEffect(const RumbleEffect* rumbleEffect)
     RumblePakManager::playEffect(rumbleEffect->effect);
 }
 
-static void RumblePakManager::stopEffect(const RumbleEffect* rumbleEffect)
+static void RumblePakManager::stopEffect(RumbleEffectROMSpec* rumbleEffect)
 {
     if(NULL == rumbleEffect)
     {
