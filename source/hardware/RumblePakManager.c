@@ -77,7 +77,7 @@ void RumblePakManager::constructor()
 
     this->communicationManager = NULL;
 
-    this->async = false;
+    this->async = true;
     this->rumbleEffect = NULL;
     this->frequency = 0;
     this->sustainPositive = 0;
@@ -106,7 +106,7 @@ void RumblePakManager::reset()
 {
     this->communicationManager = CommunicationManager::getInstance();
 
-    this->async = false;
+    this->async = true;
     this->rumbleEffect = NULL;
     this->frequency = __RUMBLE_FREQ_160HZ + 1;
     this->sustainPositive = 0;
@@ -168,11 +168,13 @@ void RumblePakManager::onBroadcastDataDone(Object eventFirer __attribute__ ((unu
 void RumblePakManager::toggleAsync()
 {
     this->async = !this->async;
+    RumblePakManager::stopAllEffects(this);
 }
 
 void RumblePakManager::setAsync(bool async)
 {
     this->async = async;
+    RumblePakManager::stopAllEffects(this);
 }
 
 static void RumblePakManager::sendCommandWithValue(u8 command, u8 value)
@@ -359,10 +361,12 @@ static void RumblePakManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
     if(_rumblePakManager->rumbleEffect == rumbleEffect)
     {
         RumblePakManager::stop();
+        RumblePakManager::execute();
     }
 }
 
 static void RumblePakManager::stopAllEffects()
 {
     RumblePakManager::stop();
+    RumblePakManager::execute();
 }
