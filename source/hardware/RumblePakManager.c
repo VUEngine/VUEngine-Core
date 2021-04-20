@@ -77,12 +77,14 @@ void RumblePakManager::constructor()
 
     this->communicationManager = NULL;
 
+    this->async = false;
     this->rumbleEffect = NULL;
     this->frequency = 0;
     this->sustainPositive = 0;
     this->sustainNegative = 0;
     this->overdrive = 0;
     this->breaking = 0;
+    this->rumbleCommandIndex = 0;
 
     RumblePakManager::reset(this);
 
@@ -104,21 +106,27 @@ void RumblePakManager::reset()
 {
     this->communicationManager = CommunicationManager::getInstance();
 
+    this->async = false;
     this->rumbleEffect = NULL;
     this->frequency = __RUMBLE_FREQ_160HZ + 1;
     this->sustainPositive = 0;
     this->sustainNegative = 0;
     this->overdrive = 0;
     this->breaking = 0;
+    this->rumbleCommandIndex = 0;
 
-    RumblePakManager::setFrequency(__RUMBLE_FREQ_160HZ);
-    RumblePakManager::setSustainPositive(255);
-    RumblePakManager::setSustainNegative(255);
-    RumblePakManager::setOverdrive(255);
-    RumblePakManager::setBreak(255);
+    for(int i = 0; i < __RUMBLE_TOTAL_COMMANDS; i++)
+    {
+        this->rumbleCommands[i] = 0;
+    }
 }
 
 static void RumblePakManager::sendCode(u8 code __attribute__((unused)))
+{
+    _rumblePakManager->rumbleCommands[_rumblePakManager->rumbleCommandIndex++] = code;
+}
+
+static void RumblePakManager::execute()
 {
 // Rumble only is called in release mode since emulators that don't implement communications, 
 // lock when trying to broadcast message throught the EXT port
@@ -140,8 +148,31 @@ static void RumblePakManager::sendCode(u8 code __attribute__((unused)))
     }
 
 #ifdef __RELEASE
-    CommunicationManager::broadcastData(_rumblePakManager->communicationManager, code);
+    if(_rumblePakManager->async)
+    {
+        CommunicationManager::broadcastDataAsync(_rumblePakManager->communicationManager, (BYTE*)_rumblePakManager->rumbleCommands, _rumblePakManager->rumbleCommandIndex, (EventListener)RumblePakManager::onBroadcastDataDone, Object::safeCast(_rumblePakManager));
+    }
+    else
+    {
+        CommunicationManager::broadcastData(_rumblePakManager->communicationManager, (BYTE*)_rumblePakManager->rumbleCommands, _rumblePakManager->rumbleCommandIndex);
+        _rumblePakManager->rumbleCommandIndex = 0;
+    }
 #endif
+}
+
+void RumblePakManager::onBroadcastDataDone(Object eventFirer __attribute__ ((unused)))
+{
+    this->rumbleCommandIndex = 0;
+}
+
+void RumblePakManager::toggleAsync()
+{
+    this->async = !this->async;
+}
+
+void RumblePakManager::setAsync(bool async)
+{
+    this->async = async;
 }
 
 static void RumblePakManager::sendCommandWithValue(u8 command, u8 value)
@@ -280,6 +311,11 @@ static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
         }
     }
 
+    if(0 != _rumblePakManager->rumbleCommandIndex)
+    {
+        return;
+    }
+
     if(NULL == rumbleEffect)
     {
         return;
@@ -293,7 +329,7 @@ static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
         }
 
 		RumblePakManager::play();
-
+        RumblePakManager::execute();
         return;
     }
 
@@ -310,6 +346,7 @@ static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
     RumblePakManager::setOverdrive(rumbleEffect->overdrive);
     RumblePakManager::setBreak(rumbleEffect->breaking);
     RumblePakManager::playEffect(rumbleEffect->effect);
+    RumblePakManager::execute();
 }
 
 static void RumblePakManager::stopEffect(const RumbleEffectSpec* rumbleEffect)

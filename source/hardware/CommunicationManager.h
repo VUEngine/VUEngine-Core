@@ -32,6 +32,19 @@
 #include <VirtualList.h>
 
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+enum CommunicationsBroadcastStates
+{
+	kCommunicationsBroadcastNone = 0,
+	kCommunicationsBroadcastSync,
+	kCommunicationsBroadcastAsync
+};
+
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -47,8 +60,8 @@ singleton class CommunicationManager : Object
 	volatile BYTE* asyncSentByte;
 	volatile BYTE* asyncReceivedByte;
 	volatile int numberOfBytesPendingTransmission;
+	volatile u32 broadcast;
 	volatile bool connected;
-	volatile bool broadcast;
 	volatile u8 communicationMode;
 
 	u32 timeout;
@@ -63,7 +76,8 @@ singleton class CommunicationManager : Object
 	void update();
 	bool isConnected();
 	bool isMaster();
-	bool broadcastData(u8 data);
+	bool broadcastData(BYTE* data, int numberOfBytes);
+	void broadcastDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
 	bool sendData(BYTE* data, int numberOfBytes);
 	bool receiveData(BYTE* data, int numberOfBytes);
 	bool sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes);
