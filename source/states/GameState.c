@@ -247,13 +247,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		GameState::initialTransform(this);
 
 		// Force all streaming right now
-		Stage::streamAll(this->stage);
-
-		// Force char memory defragmentation
-		CharSetManager::defragment(CharSetManager::getInstance());
-
-		// Set up visual representation
-		GameState::synchronizeGraphics(this);
+		GameState::streamAll(this);
 	}
 
 	// Restore timer
