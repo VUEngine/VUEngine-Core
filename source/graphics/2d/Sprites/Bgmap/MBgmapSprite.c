@@ -137,9 +137,7 @@ void MBgmapSprite::loadTextures()
 		{
 			this->textures = new VirtualList();
 
-			int i = 0;
-
-			for(; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
+			for(int i = 0; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
@@ -182,6 +180,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
+	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
 	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 

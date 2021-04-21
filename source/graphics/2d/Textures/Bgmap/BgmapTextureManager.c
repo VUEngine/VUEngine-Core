@@ -141,10 +141,12 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 
 	if(mustLiveAtEvenSegment)
 	{
-		if(minimumSegment % 2)
+		if(0 != minimumSegment % 2)
 		{
 			minimumSegment++;
 		}
+
+		NM_ASSERT(0 == minimumSegment % 2, "BgmapTextureManager::doAllocate: cannot honor request for even bgmap");
 	}
 
 	// if texture already defined, don't allocate
@@ -187,6 +189,8 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 								this->offset[id][kCols] = cols;
 								this->offset[id][kRows] = rows;
 
+								NM_ASSERT(!mustLiveAtEvenSegment || 0 == (i % 2), "BgmapTextureManager::doAllocate: cannot honor request for even bgmap");
+	
 								BgmapTexture::setSegment(bgmapTexture, i);
 
 								// increment the x offset
