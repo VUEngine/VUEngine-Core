@@ -295,7 +295,12 @@ void AnimatedEntity::resume()
 }
 
 void AnimatedEntity::setupListeners()
-{ 
+{
+	if(isDeleted(this->sprites))
+	{
+		return;
+	}
+
 	VirtualNode node = this->sprites->head;
 
 	for(; node && this->sprites; node = node->next)

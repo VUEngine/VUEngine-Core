@@ -293,7 +293,7 @@ bool CharSetManager::writeCharSetsProgressively()
 
 	CharSet charSet = VirtualList::front(this->charSetsPendingWriting);
 
-	if(charSet)
+	if(!isDeleted(charSet))
 	{
 		CharSet::write(charSet);
 		VirtualList::popFront(this->charSetsPendingWriting);
@@ -301,7 +301,7 @@ bool CharSetManager::writeCharSetsProgressively()
 	}
 	else
 	{
-		NM_ASSERT(0 == VirtualList::front(this->charSetsPendingWriting), "SSS");
+		NM_ASSERT(0 == VirtualList::front(this->charSetsPendingWriting), "CharSetManager::writeCharSetsProgressively: null charset in list");
 	}
 
 	// do some defragmenting
