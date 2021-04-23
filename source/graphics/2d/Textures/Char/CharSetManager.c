@@ -39,6 +39,9 @@
 friend class VirtualNode;
 friend class VirtualList;
 
+#ifndef __RELEASE
+friend class CharSet;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -254,6 +257,15 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 		return charSet;
 	}
 
+	Printing::setDebugMode(Printing::getInstance());
+	Printing::clear(Printing::getInstance());
+	CharSetManager::print(this, 1, 10);
+	Printing::text(Printing::getInstance(), "CharSet ", 1, 19, NULL);
+	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
+	Printing::hex(Printing::getInstance(), (WORD)&charSetSpec, 14, 21, 8, NULL);
+	Printing::text(Printing::getInstance(), "    Size: ", 1, 22, NULL);
+	Printing::int(Printing::getInstance(), charSetSpec->numberOfChars, 14, 22, NULL);
+
 	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
 
@@ -346,6 +358,12 @@ bool CharSetManager::defragmentProgressively()
 */
 			if(!isDeleted(charSet) && this->freedOffset < CharSet::getOffset(charSet))
 			{
+#ifndef __RELEASE
+				for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
+				{
+					*x = 0;
+				}
+#endif
 				CharSet::setOffset(charSet, this->freedOffset);
 
 				//write to CHAR memory
