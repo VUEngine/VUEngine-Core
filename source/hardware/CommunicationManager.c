@@ -177,6 +177,7 @@ void CommunicationManager::reset()
 			this->receivedData = NULL;
 			this->syncReceivedByte = NULL;
 			this->asyncReceivedByte = NULL;
+			this->numberOfBytesPreviouslySent = 0;
 
 			CommunicationManager::endCommunications(this);
 			break;
@@ -545,8 +546,7 @@ void CommunicationManager::processInterrupt()
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
-					delete this->receivedData;
-					this->receivedData = this->asyncReceivedByte = NULL;
+					this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
 #endif
@@ -575,8 +575,6 @@ void CommunicationManager::processInterrupt()
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
-					delete this->sentData;
-					this->sentData = NULL;
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
@@ -611,10 +609,6 @@ void CommunicationManager::processInterrupt()
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
 					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
-					delete this->sentData;
-					delete this->receivedData;
-					this->sentData = NULL;
-					this->receivedData = NULL;
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
 
@@ -775,31 +769,38 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int numberOfBytes, EventLis
 		return false;
 	}
 
-	if(NULL != this->sentData)
-	{
-		delete this->sentData;
-	}
-
-	if(NULL != this->receivedData)
-	{
-		delete this->receivedData;
-	}
-
-	this->syncSentByte = this->syncReceivedByte = NULL;
-
 	if(eventLister && !isDeleted(scope))
 	{
 		CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
-	// Allocate memory to hold both the message and the data
-	this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
-	this->receivedData = NULL;
+	if(this->numberOfBytesPreviouslySent < numberOfBytes)
+	{
+		if(!isDeleted(this->sentData))
+		{
+			delete this->sentData;
+			this->sentData = NULL;
+		}
+	}
 
+
+	if(isDeleted(this->sentData))
+	{
+		// Allocate memory to hold both the message and the data
+		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	}
+
+	if(!isDeleted(this->receivedData))
+	{
+		delete this->receivedData;
+		this->receivedData = NULL;
+	}
+
+	this->syncSentByte = this->syncReceivedByte = NULL;
 	this->asyncSentByte = this->sentData;
 	this->asyncReceivedByte = this->receivedData;
-
+	this->numberOfBytesPreviouslySent = numberOfBytes;
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	// Copy the data
@@ -827,24 +828,35 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 		return false;
 	}
 
-	if(NULL != this->sentData)
+	if(this->numberOfBytesPreviouslySent < numberOfBytes)
 	{
-		delete this->sentData;
+		if(!isDeleted(this->sentData))
+		{
+			delete this->sentData;
+			this->sentData = NULL;
+		}
+
+		if(!isDeleted(this->receivedData))
+		{
+			delete this->receivedData;
+			this->receivedData = NULL;
+		}
 	}
 
-	if(NULL != this->receivedData)
+	if(isDeleted(this->sentData))
 	{
-		delete this->receivedData;
+		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+	}
+
+	if(isDeleted(this->receivedData))
+	{
+		this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
-
-	this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
-	this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
-	
 	this->syncSentByte = this->sentData;
-	this->syncReceivedByte = this->receivedData; 
-	
+	this->syncReceivedByte = this->receivedData;
+	this->numberOfBytesPreviouslySent = numberOfBytes;	
 	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message
@@ -873,31 +885,43 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 		return false;
 	}
 
-	if(NULL != this->sentData)
-	{
-		delete this->sentData;
-	}
-
-	if(NULL != this->receivedData)
-	{
-		delete this->receivedData;
-	}
-
-	this->syncSentByte = this->syncReceivedByte = NULL;
-
 	if(eventLister && !isDeleted(scope))
 	{
 		CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
-	// Allocate memory to hold both the message and the data
-	this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
-	this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+	if(this->numberOfBytesPreviouslySent < numberOfBytes)
+	{
+		if(!isDeleted(this->sentData))
+		{
+			delete this->sentData;
+			this->sentData = NULL;
+		}
 
+		if(!isDeleted(this->receivedData))
+		{
+			delete this->receivedData;
+			this->receivedData = NULL;
+		}
+	}
+
+	if(isDeleted(this->sentData))
+	{
+
+		// Allocate memory to hold both the message and the data
+		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+	}
+
+	if(isDeleted(this->receivedData))
+	{
+		this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+	}
+
+	this->syncSentByte = this->syncReceivedByte = NULL;
 	this->asyncSentByte = this->sentData;
-	this->asyncReceivedByte = this->receivedData; 
-
+	this->asyncReceivedByte = this->receivedData;
+	this->numberOfBytesPreviouslySent = numberOfBytes;	
 	this->numberOfBytesPendingTransmission = numberOfBytes + __MESSAGE_SIZE;
 
 	// Save the message

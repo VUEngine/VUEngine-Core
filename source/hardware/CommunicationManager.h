@@ -60,6 +60,7 @@ singleton class CommunicationManager : Object
 	volatile BYTE* asyncSentByte;
 	volatile BYTE* asyncReceivedByte;
 	volatile int numberOfBytesPendingTransmission;
+	int numberOfBytesPreviouslySent;
 	volatile u32 broadcast;
 	volatile bool connected;
 	volatile u8 communicationMode;
