@@ -120,7 +120,7 @@ preprocessClasses: printClassPreprocessingInfo dirs $(PREPROCESS_ENGINE) preproc
 
 printClassPreprocessingInfo:
 	@echo
-	@echo -e "\033[1mPreprocessing $(BASENAME) \033[0m"
+	@echo "Preprocessing $(BASENAME)"
 #	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt

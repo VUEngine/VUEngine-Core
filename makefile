@@ -32,7 +32,7 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@echo -e "\033[1mBuilding $(BASENAME) \033[0m"
+	@echo "Building $(BASENAME)"
 #	@$(eval START_TIME=$(shell date +%s))
 
 printPostBuildingInfo:
@@ -40,7 +40,8 @@ printPostBuildingInfo:
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
 $(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
-	@echo -e "\n\033[1mLinking $(TARGET_FILE)-$(TYPE)\033[0m"
+	@echo 
+	@echo "Linking $(TARGET_FILE)-$(TYPE)"
 	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o
 
 $(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a
