@@ -62,20 +62,7 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 	for(;entities && entities[i].entitySpec; i++)
 	{
-		Entity entity = Entity::loadEntity(&entities[i], internalId++);
-
-		if(entity)
-		{
-			// create the entity and add it to the world
-			UIContainer::addChild(this, Container::safeCast(entity));
-
-			// apply transformations
-			Transformation environmentTransform = Container::getEnvironmentTransform(this);
-			Entity::initialTransform(entity, &environmentTransform, true);
-
-			Entity::synchronizeGraphics(entity);
-			Entity::ready(entity, true);
-		}
+		UIContainer::addChildEntity(this, &entities[i]);
 	}
 }
 
