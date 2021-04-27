@@ -63,9 +63,12 @@ void ParticleRemover::destructor()
 {
 	ParticleRemover::reset(this);
 
-	delete this->particlesLists;
-	this->particlesLists = NULL;
-
+	if(!isDeleted(this->particlesLists))
+	{
+		delete this->particlesLists;
+		this->particlesLists = NULL;
+	}
+	
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();

@@ -122,7 +122,6 @@ void EntityFactory::destructor()
 	delete this->entitiesToMakeReady;
 	this->entitiesToMakeReady = NULL;
 
-
 	node = this->spawnedEntities->head;
 
 	for(; node; node = node->next)
