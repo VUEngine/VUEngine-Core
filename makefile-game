@@ -47,7 +47,7 @@ all: printPreBuildingInfo preprocessClasses engine plugins printBuildingInfo $(T
 
 printPreBuildingInfo:
 	@echo
-	@echo -e "\033[7m STARTING BUILD \033[0m"
+	@echo "STARTING BUILD"
 	@$(eval START_TIME=$(shell date +%s))
 	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
@@ -58,10 +58,10 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@echo -e "\033[1mBuilding $(NAME) \033[0m"
+	@echo "Building $(NAME)"
 
 printPostBuildingInfo:
-	@echo -e "\033[7;33;32m BUILD FINISHED \033[0m"
+	@echo "BUILD FINISHED"
 	@$(eval END_TIME=$(shell date +%s))
 	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Started at: "$(HUMAN_START_DATE)
@@ -97,10 +97,12 @@ $(TARGET).vb: compile $(TARGET).elf
 #	@$(LD) -r -b binary -o $(MY_HOME)/midi-songs.o $(MY_HOME)/assets/sounds/SoundTracks/MIDI/beginvb.mid
 
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+	@echo 
 	@echo Linking game library
 	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
 	@echo Linking $(TARGET).elf...
-	@echo $(PLUGINS)
+	@echo 
+#	@echo $(PLUGINS)
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) $(VUENGINE) -Wl,-Map=$(TARGET).map
 	@echo
