@@ -687,7 +687,6 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 			return false;
 		}
 
-		// set previous if list isn't empty
 		newNode->next = node->next;
 
 		if(node->next)
@@ -734,11 +733,17 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 			return false;
 		}
 
-		// set previous if list isn't empty
-		newNode->next = node;
 		newNode->previous = node->previous;
-		node->previous->next = newNode;
+
+		if(node->previous)
+		{
+			node->previous->next = newNode;
+		}
+
 		node->previous = newNode;
+
+		newNode->next = node;
+
 	}
 
 	return newNode;
