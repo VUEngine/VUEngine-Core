@@ -247,7 +247,7 @@ bool ParticleSystem::getLoop()
  */
 void ParticleSystem::processExpiredParticles()
 {
-	if(!this->particleSystemSpec->recycleParticles)
+	if(!isDeleted(this->particles) && !this->particleSystemSpec->recycleParticles)
 	{
 		VirtualList expiredParticles = new VirtualList();
 
