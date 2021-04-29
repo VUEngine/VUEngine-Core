@@ -514,16 +514,6 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 20, y, NULL);
 
-	Printing::text(Printing::getInstance(), "Auto Pause State:", 1, ++y, NULL);
-	if(Game::getAutoPauseState(Game::getInstance()))
-	{
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(Game::getAutoPauseState(Game::getInstance())), 20, y, NULL);
-	}
-	else
-	{
-		Printing::text(Printing::getInstance(), "none", 20, y, NULL);
-	}
-
 	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
 	if(Game::getSaveDataManager(Game::getInstance()))
 	{

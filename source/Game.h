@@ -90,8 +90,6 @@ singleton class Game : Object
 	CommunicationManager communicationManager;
 	//
 	SoundManager soundManager;
-	// current auto pause state
-	GameState autoPauseState;
 	// current save data manager
 	Object saveDataManager;
 	//
@@ -158,8 +156,6 @@ singleton class Game : Object
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);
-	void registerAutoPauseState(GameState autoPauseState);
-	GameState getAutoPauseState();
 	void registerSaveDataManager(Object saveDataManager);
 	Object getSaveDataManager();
 	long getRandomSeed();
