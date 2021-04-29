@@ -56,8 +56,6 @@ void KeypadManager::constructor()
 
 	KeypadManager::reset(this);
 
-	this->accumulatedUserInput = 0;
-
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
 
@@ -97,7 +95,6 @@ void KeypadManager::enable()
 {
 	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
-
 	KeypadManager::flush(this);
 }
 
@@ -136,8 +133,18 @@ void KeypadManager::captureUserInput()
 	// store keys
 	this->userInput.powerFlag 	= this->userInput.allKeys & K_PWR;
 	this->userInput.allKeys 	&= K_ANY;
-	this->userInput.pressedKey 	= KeypadManager::getPressedKey(this) & this->userInputToRegister.pressedKey;
-	this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
+
+	if(this->reseted)
+	{
+		this->userInput.pressedKey 	= 0;
+		this->userInput.releasedKey = 0;
+	}
+	else
+	{
+		this->userInput.pressedKey 	= KeypadManager::getPressedKey(this) & this->userInputToRegister.pressedKey;
+		this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
+	}
+
 	this->userInput.holdKey 	= KeypadManager::getHoldKey(this) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 	this->userInput.holdKeyDuration = (this->userInput.holdKey && this->userInput.holdKey == this->userInput.previousKey)
@@ -145,6 +152,8 @@ void KeypadManager::captureUserInput()
 		: 0;
 
 	this->accumulatedUserInput += this->userInput.allKeys;
+
+	this->reseted = false;
 }
 
 /**
@@ -215,8 +224,6 @@ u16 KeypadManager::getPreviousKey()
 	return this->userInput.previousKey;
 }
 
-
-
 /**
  * Reset
  *
@@ -224,9 +231,10 @@ u16 KeypadManager::getPreviousKey()
 void KeypadManager::reset()
 {
 	KeypadManager::flush(this);
-	this->enabled = false;
 
-	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
+	this->reseted = true;
+	this->enabled = false;
+	this->accumulatedUserInput = 0;
 	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 }
 
@@ -273,25 +281,22 @@ static void KeypadManager::printUserInput(const UserInput* userInput, int x, int
 
 	PRINT_TEXT("USER INPUT:", x, y++);
 
-	PRINT_TEXT("allKeys:", x, y);
-	PRINT_HEX(userInput->allKeys, x + xDisplacement, y++);
+	PRINT_TEXT("allKeys:", x, ++y);
+	PRINT_HEX(userInput->allKeys, x + xDisplacement, y);
 
-	PRINT_TEXT("pressedKey:", x, y);
-	PRINT_HEX(userInput->pressedKey, x + xDisplacement, y++);
+	PRINT_TEXT("pressedKey:", x, ++y);
+	PRINT_HEX(userInput->pressedKey, x + xDisplacement, y);
 
-	PRINT_TEXT("releasedKey:", x, y);
-	PRINT_HEX(userInput->releasedKey, x + xDisplacement, y++);
+	PRINT_TEXT("releasedKey:", x, ++y);
+	PRINT_HEX(userInput->releasedKey, x + xDisplacement, y);
 
-	PRINT_TEXT("holdKey:", x, y);
-	PRINT_HEX(userInput->holdKey, x + xDisplacement, y++);
+	PRINT_TEXT("holdKey:", x, ++y);
+	PRINT_HEX(userInput->holdKey, x + xDisplacement, y);
 
-	PRINT_TEXT("holdKeyDuration:", x, y);
-	PRINT_HEX(userInput->holdKeyDuration, x + xDisplacement, y++);
+	PRINT_TEXT("holdKeyDuration:", x, ++y);
+	PRINT_HEX(userInput->holdKeyDuration, x + xDisplacement, y);
 
-	PRINT_TEXT("previousKey:", x, y);
-	PRINT_HEX(userInput->previousKey, x + xDisplacement, y++);
-
-	PRINT_TEXT("powerFlag:", x, y);
-	PRINT_HEX(userInput->powerFlag, x + xDisplacement, y++);
+	PRINT_TEXT("powerFlag:", x, ++y);
+	PRINT_HEX(userInput->powerFlag, x + xDisplacement, y);
 }
 

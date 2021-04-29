@@ -113,6 +113,10 @@ singleton class KeypadManager : Object
 	UserInput userInputToRegister;
 	// Enabled
 	bool enabled;
+	// Flag to prevent pressed and released keys from
+	// being raised when holding buttons while changing 
+	// game states
+	bool reseted;
 
 	/// @publicsection
 	static KeypadManager getInstance();
