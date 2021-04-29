@@ -100,7 +100,7 @@
 		"timerResolution": 10
 	},
 	"game": [],
-	"communications":{
+	"communications": {
 		"enable": false
 	},
 	"memoryPools": {
@@ -192,8 +192,5 @@
 			"printableArea": 1792
 		},
 		"paramTableSegments": 1
-	},
-	"hacks": {
-		}
 	}
 }
