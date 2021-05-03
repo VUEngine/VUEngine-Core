@@ -562,7 +562,7 @@ void SpriteManager::writeGraphicsToDRAM()
 		{
 			Texture texture = Texture::safeCast(node->data);
 
-			if(isDeleted(texture))
+			if(isDeleted(texture) || kTextureWritten == texture->status)
 			{
 				continue;
 			}
