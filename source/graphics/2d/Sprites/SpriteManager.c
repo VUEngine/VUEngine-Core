@@ -91,6 +91,7 @@ void SpriteManager::constructor()
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->lockTextureList = false;
 
 	SpriteManager::reset(this);
 }
@@ -196,6 +197,7 @@ void SpriteManager::reset()
 
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->lockTextureList = false;
 }
 
 /**
@@ -544,7 +546,9 @@ void SpriteManager::updateTexture(Texture texture)
 {
 	if(!isDeleted(texture) && !VirtualList::find(this->texturesToUpdate, texture))
 	{
+		this->lockTextureList = true;
 		VirtualList::pushBack(this->texturesToUpdate, texture);
+		this->lockTextureList = false;
 	}
 }
 
@@ -552,19 +556,22 @@ void SpriteManager::writeGraphicsToDRAM()
 {
 	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
 
-	for(VirtualNode node = this->texturesToUpdate->head; node; node = node->next)
+	if(!this->lockTextureList)
 	{
-		Texture texture = Texture::safeCast(node->data);
-
-		if(isDeleted(texture))
+		for(VirtualNode node = this->texturesToUpdate->head; node; node = node->next)
 		{
-			continue;
+			Texture texture = Texture::safeCast(node->data);
+
+			if(isDeleted(texture))
+			{
+				continue;
+			}
+
+			Texture::update(texture);
 		}
 
-		Texture::update(texture);
+		VirtualList::clear(this->texturesToUpdate);
 	}
-
-	VirtualList::clear(this->texturesToUpdate);
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{

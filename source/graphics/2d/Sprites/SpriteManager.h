@@ -90,6 +90,8 @@ singleton class SpriteManager : Object
 	s8 deferParamTableEffects;
 	// delay before writing again
 	s8 waitToWriteSpriteTextures;
+	// flag to prevent race conditions on texturesToUpdate list
+	bool lockTextureList;
 
 	/// @publicsection
 	static SpriteManager getInstance();
