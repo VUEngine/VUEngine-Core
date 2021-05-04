@@ -146,7 +146,7 @@ abstract class Texture : Object
 	void setFrame(u16 frame);
 	u16 getFrame();
 	bool prepare();
-	void update();
+	bool update();
 	virtual bool write();
 	virtual void rewrite();
 	virtual void setFrameAnimatedMulti(u16 frame);

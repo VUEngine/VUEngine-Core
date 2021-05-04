@@ -262,7 +262,7 @@ bool Texture::prepare()
 	return kTextureWritten == this->status;
 }
 
-void Texture::update()
+bool Texture::update()
 {
 	switch(this->status)
 	{
@@ -276,7 +276,7 @@ void Texture::update()
 			
 				NM_ASSERT(!isDeleted(this), "Texture::prepare: deleted this during kEventTextureRewritten");
 			}
-			return;
+
 			break;
 
 		case kTextureMapDisplacementChanged:
@@ -285,7 +285,7 @@ void Texture::update()
 
 			if(kTextureWritten != this->status)
 			{
-				return;
+				break;
 			}
 
 			Texture::fireEvent(this, kEventTextureRewritten);			
@@ -332,6 +332,8 @@ void Texture::update()
 
 			break;
 	}
+
+	return kTextureWritten == this->status;
 }
 
 /**
