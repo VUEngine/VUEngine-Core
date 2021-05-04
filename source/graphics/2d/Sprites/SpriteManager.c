@@ -558,19 +558,22 @@ void SpriteManager::writeGraphicsToDRAM()
 
 	if(!this->lockTextureList)
 	{
-		for(VirtualNode node = this->texturesToUpdate->head; node; node = node->next)
+		for(VirtualNode node = this->texturesToUpdate->head; node;)
 		{
 			Texture texture = Texture::safeCast(node->data);
 
-			if(isDeleted(texture) || kTextureWritten == texture->status)
+			if(isDeleted(texture))
 			{
 				continue;
 			}
 
-			Texture::update(texture);
-		}
+			node = node->next;
 
-		VirtualList::clear(this->texturesToUpdate);
+			if(kTextureWritten == texture->status || Texture::update(texture))
+			{
+				VirtualList::removeElement(this->texturesToUpdate, texture);
+			}
+		}
 	}
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
