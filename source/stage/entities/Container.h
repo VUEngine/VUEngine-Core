@@ -112,14 +112,14 @@ class Container : SpatialObject
 	int doKeyHold(int pressedKey);
 	int doKeyPressed(int pressedKey);
 	int doKeyUp(int pressedKey);
-	Container getChildByName(char* childName, bool recursive);
+	Container getChildByName(const char* childName, bool recursive);
 	int getChildCount();
 	Transformation getEnvironmentTransform();
 	const Vector3D* getGlobalPosition();
 	const Vector3D* getLocalPosition();
 	const Rotation* getLocalRotation();
 	const Scale* getLocalScale();
-	char* getName();
+	const char* getName();
 	Container getParent();
 	Transformation* getTransform();
 	void invalidateGlobalPosition();

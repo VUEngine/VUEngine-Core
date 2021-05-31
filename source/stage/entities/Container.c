@@ -1197,7 +1197,7 @@ void Container::setName(const char* const name)
  *
  * @return		Name
  */
-char* Container::getName()
+const char* Container::getName()
 {
 	return this->name;
 }
@@ -1249,7 +1249,7 @@ Container Container::findChildByName(VirtualList children, char* childName, bool
  * @param recursive	Whether to search recursively
  * @return			Child Container
  */
-Container Container::getChildByName(char* childName, bool recursive)
+Container Container::getChildByName(const char* childName, bool recursive)
 {
 	Container foundChild = NULL;
 
