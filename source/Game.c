@@ -848,6 +848,11 @@ void Game::nextFrameStarted()
 		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
 #endif
 
+#ifdef __SHOW_BGMAP_MEMORY_STATUS
+		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
+		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
+#endif
+
 #ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!Game::isInSpecialMode(this))
 		{
