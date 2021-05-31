@@ -564,6 +564,10 @@ void SpriteManager::writeGraphicsToDRAM()
 
 			if(isDeleted(texture))
 			{
+				VirtualNode auxNode = node;
+				node = node->next;
+
+				VirtualList::removeNode(this->texturesToUpdate, auxNode);
 				continue;
 			}
 
