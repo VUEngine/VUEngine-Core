@@ -125,7 +125,7 @@ bool BgmapTexture::write()
 		case __ANIMATED_SHARED_COORDINATED:
 		case __NOT_ANIMATED:
 
-			BgmapTexture::doWrite(this);
+			BgmapTexture::doWrite(this, kTexturePendingRewriting == status);
 			break;
 
 		case __ANIMATED_MULTI:
@@ -250,7 +250,7 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
  *
  * @private
  */
-void BgmapTexture::doWrite()
+void BgmapTexture::doWrite(bool forceFullRewrite)
 {
 	int xOffset = (int)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
 	int yOffset = (int)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
@@ -264,7 +264,7 @@ void BgmapTexture::doWrite()
 	int offsetDisplacement = xOffset + (yOffset << 6);
 	u16 offset = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
-	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
+	int counter = forceFullRewrite ? -1 : SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 	u32 mapDisplacement = this->mapDisplacement;
 
 	u32 numberOfHWORDS = this->textureSpec->cols;
