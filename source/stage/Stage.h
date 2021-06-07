@@ -221,6 +221,8 @@ class Stage : Container
 	u32 cameraPreviousDistance;
 	// next entity's id
 	s16 nextEntityId;
+	// flag to prevent loading entities that are within the screen's space
+	bool forceNoPopIn;
 
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);
@@ -244,6 +246,7 @@ class Stage : Container
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
 	void streamAllOut();
+	void forceNoPopIn(bool forceNoPopIn);
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();

@@ -457,8 +457,9 @@ u32 GameState::processCollisions()
  * @param stageSpec				Stage's configuration
  * @param positionedEntitiesToIgnore	List of entities from the spec to not load
  * @param overrideCameraPosition		Flag to override or not the Camera's current position
+ * @param forceNoPopIn					Flag to prevent streaming in entities that are within the screen's space
  */
-void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
 	NM_ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
 
@@ -477,6 +478,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// construct the stage
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
 	ASSERT(this->stage, "GameState::loadStage: null stage");
+
+	Stage::forceNoPopIn(this->stage, true);
 
 	// load world entities
 	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);

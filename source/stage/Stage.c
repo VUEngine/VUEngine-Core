@@ -141,6 +141,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingCycleCounter = 0;
 	this->soundWrappers = NULL;
 	this->streaming = this->stageSpec->streaming;
+	this->forceNoPopIn = false;
 }
 
 // class's destructor
@@ -200,7 +201,7 @@ void Stage::destructor()
 }
 
 // determine if a point is visible
-int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition)
+int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
 {
 	onScreenPosition.x -= cameraPosition->x;
 	onScreenPosition.y -= cameraPosition->y;
@@ -221,6 +222,29 @@ int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRi
 	// check z visibility
 	if(onScreenPosition.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || onScreenPosition.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
+		return false;
+	}
+
+	if(forceNoPopIn)
+	{
+		// check x visibility
+		if(onScreenPosition.x + pixelRightBox->x1 < 0 || onScreenPosition.x + pixelRightBox->x0 > __SCREEN_WIDTH)
+		{
+			return true;
+		}
+
+		// check y visibility
+		if(onScreenPosition.y + pixelRightBox->y1 < 0 || onScreenPosition.y + pixelRightBox->y0 > __SCREEN_HEIGHT)
+		{
+			return true;
+		}
+
+		// check z visibility
+		if(onScreenPosition.z + pixelRightBox->z1 < 0 || onScreenPosition.z + pixelRightBox->z0 > __SCREEN_DEPTH)
+		{
+			return true;
+		}
+
 		return false;
 	}
 
@@ -676,7 +700,7 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, false))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
@@ -840,7 +864,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				}
 
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, this->forceNoPopIn))
 				{
 					loadedEntities = true;
 
@@ -882,7 +906,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 				}
 
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, this->forceNoPopIn))
 				{
 					loadedEntities = true;
 
@@ -1266,6 +1290,11 @@ StageSpec* Stage::getStageSpec()
 ParticleRemover Stage::getParticleRemover()
 {
 	return this->particleRemover;
+}
+
+void Stage::forceNoPopIn(bool forceNoPopIn)
+{
+	this->forceNoPopIn = forceNoPopIn;
 }
 
 void Stage::showStreamingProfiling(int x, int y)
