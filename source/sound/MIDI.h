@@ -169,17 +169,17 @@
 #define MINIMUM_AUDIBLE_NOTE	DS2
 #define MAXIMUM_AUDIBLE_NOTE	D_8
 
-// Commom wave forms
+// Common wave forms
 extern const s8 glockenWaveForm[];
 extern const s8 linearWaveForm[];
 extern const s8 organWaveForm[];
 extern const s8 pianoWaveForm[];
-extern const s8 sawtoothWaveForm[];
-extern const s8 sinAlphaWave[];
-extern const s8 sineWaveForm[];
-extern const s8 squareWaveForm[];
-extern const s8 squareDuty75WaveForm[];
 extern const s8 sawSquareWaveForm[];
+extern const s8 sawtoothWaveForm[];
+extern const s8 sinePlusAlphaWaveForm[];
+extern const s8 sineWaveForm[];
+extern const s8 squareDuty75WaveForm[];
+extern const s8 squareWaveForm[];
 extern const s8 triangleWaveForm[];
 extern const s8 trumpetWaveForm[];
 extern const s8 violinWaveForm[];
