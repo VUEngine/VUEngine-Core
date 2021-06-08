@@ -479,7 +479,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
-	Stage::forceNoPopIn(this->stage, true);
+	Stage::forceNoPopIn(this->stage, forceNoPopIn);
 
 	// load world entities
 	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
