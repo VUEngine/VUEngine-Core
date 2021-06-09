@@ -115,6 +115,7 @@ singleton class SoundManager : Object
 	u16 MIDIPlaybackCounterPerInterrupt;
 	bool hasPCMSounds;
 	bool lock;
+	bool lockSoundWrappersList;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -126,7 +127,7 @@ singleton class SoundManager : Object
 
 	bool playMIDISounds(u32 elapsedMicroseconds);
 	bool playPCMSounds();
-	void stopAllSounds();
+	void stopAllSounds(bool release);
 	void flushQueuedSounds();
 
 	void playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope);

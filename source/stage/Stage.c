@@ -271,7 +271,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
 
 	// stop all sounds
-	SoundManager::stopAllSounds(SoundManager::getInstance());
+	SoundManager::stopAllSounds(SoundManager::getInstance(), true);
 
 	if(overrideCameraPosition)
 	{

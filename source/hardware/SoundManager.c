@@ -297,7 +297,7 @@ void SoundManager::reset()
 	this->MIDIPlaybackCounterPerInterrupt = 0;
 	this->soundWrapperMIDINode = NULL;
 
-	SoundManager::stopAllSounds(this);
+	SoundManager::stopAllSounds(this, false);
 	SoundManager::unlock(this);
 }
 
@@ -358,13 +358,19 @@ void SoundManager::tryToPlayQueuedSounds()
 
 void SoundManager::update()
 {
+	this->lockSoundWrappersList = true;	
 	SoundManager::purgeReleasedSoundWrappers(this);
 
 	SoundManager::tryToPlayQueuedSounds(this);
+	this->lockSoundWrappersList = false;	
 }
 
 bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
+	bool lockSoundWrappersList = this->lockSoundWrappersList;	
+
+	this->lockSoundWrappersList = true;	
+
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
 	{
 		static u32 accumulatedElapsedMicroseconds = 0;
@@ -405,6 +411,8 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 		}
 	}
 
+	this->lockSoundWrappersList = lockSoundWrappersList;
+
 	return true;
 }
 
@@ -414,6 +422,8 @@ bool SoundManager::playPCMSounds()
 	{
 		return false;
 	}
+
+	this->lockSoundWrappersList = true;	
 
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
@@ -436,6 +446,8 @@ bool SoundManager::playPCMSounds()
 			SoundWrapper::updatePCMPlayback(soundWrapper, 0);
 		}
 	}
+
+	this->lockSoundWrappersList = false;
 
 	return true;
 }
@@ -1003,7 +1015,7 @@ void SoundManager::releaseSoundWrapper(SoundWrapper soundWrapper)
 /**
  * Stop all sound playback
  */
-void SoundManager::stopAllSounds()
+void SoundManager::stopAllSounds(bool release)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -1013,8 +1025,20 @@ void SoundManager::stopAllSounds()
 
 		if(!isDeleted(soundWrapper))
 		{
-			SoundWrapper::stop(soundWrapper);
+			if(release)
+			{
+				SoundWrapper::release(soundWrapper);
+			}
+			else
+			{
+				SoundWrapper::stop(soundWrapper);
+			}
 		}
+	}
+
+	if(release && !this->lockSoundWrappersList)
+	{
+		SoundManager::purgeReleasedSoundWrappers(this);
 	}
 
 	__SSTOP = 0x01;
