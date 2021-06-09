@@ -1210,7 +1210,7 @@ const char* Container::getName()
  * @param recursive	Whether to search recursively
  * @return			Child Container
  */
-Container Container::findChildByName(VirtualList children, char* childName, bool recursive)
+Container Container::findChildByName(VirtualList children, const char* childName, bool recursive)
 {
 	if(this->deleteMe)
 	{
