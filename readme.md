@@ -144,6 +144,7 @@ In alphabetical order:
 	Adam Emmons
 	Adam Hunter
 	Adam Nelson
+	Adam Wannamaker
 	Alec Kafka
 	Amos Bieler
 	Austin Hoople
@@ -151,53 +152,69 @@ In alphabetical order:
 	Bernardo Compagnoni
 	Bnjmn Mrph
 	Brandon Dixon
-	Braxton Mott
+	Brian
 	Brie Hebert
+	Cameron Hollaway
 	Candi's Classic Game Shrine
 	Cesar Henzelin
-	chairodactyl
-	Chris Garland
+	chairodactyl 
+	Christopher Garland
 	Daniel Lhota
 	Dave Sheldon
 	David Baisley
 	David Green
+	Derek da Silva
 	Domenic Umberto Raso
 	eatberries
 	Eric Freeman
 	Graham Dawes
+	Gregory VanNostrand
 	Griffin Robinson
-	IanelGreenleaf
+	Hertz
+	IanelGreenleaf 
+	Jason Bronowski
 	Jeffrey Kauffman
 	Jesse Levine
+	Jo√£o Gabriel Gama
 	Jon Zrostlik
 	Jordan Carriere
 	Jose Zagal
-	Kevin L Mellott
+	Kevin McAloney
 	Larry Anderson
 	Luke Gerhardt
-	Marten Reiß
+	Marc Andre Sigle
+	MarcoDotIO
+	Marten Rei√ü
 	Massih Naisan
 	Mattison Mozingo
+	MC GAM3R 
 	Michael Ortega
+	miguel angel rodriguez
 	Mike Boodle
-	NeGiZON
+	NeGiZON 
 	Nektarios Moulianakis
-	norty
-	NyTR0S96
+	norty 
+	NyTR0S96 
 	Patrick Fenton
 	Patrick-VB
 	Peter Fields
+	Plop Slop
 	Randy Jeffery
+	RayceARoni
 	Reed T.
-	Ren Amamiya
+	RetroOnyx
 	Richard Corlett
+	Robert Aliperti
 	Schwanck
 	Sean Machan
+	Simon Gellis
 	Simon Williams
 	Steven Hagelgans
+	Studio Kerga
+	tealsummernights 
 	Tero Piiroinen
-	Tony
+	Tony 
 	Troy Bonneau
 	tydyedsyko
-	VectrexRoli
-
+	VectrexRoli 
+	Zach Xavier
