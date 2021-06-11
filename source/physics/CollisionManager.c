@@ -60,6 +60,7 @@ void CollisionManager::constructor()
 	// create the shape list
 	this->shapes = new VirtualList();
 	this->activeForCollisionCheckingShapes = new VirtualList();
+	this->clearActiveForCollisionCheckingShapes = true;
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -106,6 +107,7 @@ void CollisionManager::destroyShape(Shape shape)
 	{
 		VirtualList::removeElement(this->shapes, shape);
 		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
+		this->clearActiveForCollisionCheckingShapes = true;
 
 		// delete it
 		delete shape;
@@ -125,6 +127,20 @@ u32 CollisionManager::update(Clock clock)
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
+
+	static VirtualList activeForCollisionCheckingShapes = NULL;
+
+	if(NULL == activeForCollisionCheckingShapes)
+	{
+		activeForCollisionCheckingShapes = new VirtualList();
+	}
+	else if(this->clearActiveForCollisionCheckingShapes)
+	{
+		VirtualList::clear(activeForCollisionCheckingShapes);
+		VirtualList::copy(activeForCollisionCheckingShapes, this->activeForCollisionCheckingShapes);
+	}
+
+	this->clearActiveForCollisionCheckingShapes = false;
 
 	// check the shapes
 	for(VirtualNode auxNode = this->shapes->head; auxNode; auxNode = auxNode->next)
@@ -172,7 +188,7 @@ u32 CollisionManager::update(Clock clock)
 		}
 #endif
 		// check the shapes
-		for(VirtualNode node = this->activeForCollisionCheckingShapes->head; node; node = node->next)
+		for(VirtualNode node = activeForCollisionCheckingShapes->head; node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -225,6 +241,7 @@ void CollisionManager::reset()
 	// empty the lists
 	VirtualList::clear(this->shapes);
 	VirtualList::clear(this->activeForCollisionCheckingShapes);
+	this->clearActiveForCollisionCheckingShapes = true;
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -245,13 +262,14 @@ void CollisionManager::activeCollisionCheckForShape(Shape shape, bool activate)
 		if(!VirtualList::find(this->activeForCollisionCheckingShapes, shape))
 		{
 			VirtualList::pushBack(this->activeForCollisionCheckingShapes, shape);
+			this->clearActiveForCollisionCheckingShapes = true;
 		}
 	}
 	else
 	{
 		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
+		this->clearActiveForCollisionCheckingShapes = true;
 	}
-
 }
 
 // draw shapes

@@ -57,6 +57,7 @@ class CollisionManager : Object
 	u32 collisionChecks;
 	u32 collisions;
 	u32 checkCycles;
+	bool clearActiveForCollisionCheckingShapes;
 
 	/// @publicsection
 	void constructor();
