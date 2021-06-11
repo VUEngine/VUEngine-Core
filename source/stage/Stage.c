@@ -1193,7 +1193,6 @@ void Stage::prepareGraphics()
 	Stage::preloadAssets(this);
 
 	// setup SpriteManager's configuration
-	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
 	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
 }

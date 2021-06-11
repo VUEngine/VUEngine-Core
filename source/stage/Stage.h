@@ -98,9 +98,6 @@ typedef struct StageSpec
 	// rendering
 	struct Rendering
 	{
-		// number of cycles that the texture writing is idle
-		int cyclesToWaitForTextureWriting;
-
 		// maximum number of texture's rows to write each time the texture writing is active
 		int texturesMaximumRowsToWrite;
 

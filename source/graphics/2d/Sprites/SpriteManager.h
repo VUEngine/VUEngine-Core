@@ -82,8 +82,6 @@ singleton class SpriteManager : Object
 	bool evenFrame;
 	// next world layer
 	s8 freeLayer;
-	// number of cycles that the texture writing is idle
-	s8 cyclesToWaitForSpriteTextureWriting;
 	// number of rows to write in texture's writing
 	s8 texturesMaximumRowsToWrite;
 	// flag to control texture's writing deferring
@@ -117,7 +115,6 @@ singleton class SpriteManager : Object
 	void render();
 	void stopRendering();
 	void reset();
-	void setCyclesToWaitForTextureWriting(u8 cyclesToWaitForTextureWriting);
 	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);

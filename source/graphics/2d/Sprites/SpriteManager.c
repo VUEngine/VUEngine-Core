@@ -84,7 +84,6 @@ void SpriteManager::constructor()
 	this->texturesToUpdate = NULL;
 	this->specialSprites = NULL;
 
-	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
@@ -187,7 +186,6 @@ void SpriteManager::reset()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
 
@@ -818,16 +816,6 @@ s16 SpriteManager::getSpritePosition(Sprite sprite)
 s8 SpriteManager::getTexturesMaximumRowsToWrite()
 {
 	return this->texturesMaximumRowsToWrite;
-}
-
-/**
- * Set the number of idle cycles before allowing texture wrinting
- *
- * @param cyclesToWaitForSpriteTextureWriting		Number of idle cycles
- */
-void SpriteManager::setCyclesToWaitForTextureWriting(u8 cyclesToWaitForSpriteTextureWriting)
-{
-	this->cyclesToWaitForSpriteTextureWriting = cyclesToWaitForSpriteTextureWriting;
 }
 
 /**
