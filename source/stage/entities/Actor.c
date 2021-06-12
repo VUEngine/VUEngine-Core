@@ -233,7 +233,12 @@ void Actor::doSyncRotationWithBody()
 	{
 		const Direction3D* direction3D = Body::getDirection3D(this->body);
 
-		if(!this->actorSpec->axisForSynchronizationWithBody)
+		if((u16)__LOCK_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		{
+			return;
+		}
+
+		if(__NO_AXIS == this->actorSpec->axisForSynchronizationWithBody)
 		{
 			Direction direction = Actor::getDirection(this);
 
@@ -264,7 +269,7 @@ void Actor::doSyncRotationWithBody()
 				direction.z = __FAR;
 			}
 
-			Entity::setDirection(this, direction);
+			Actor::setDirection(this, direction);
 		}
 		else
 		{
@@ -460,7 +465,7 @@ void Actor::changeDirectionOnAxis(u16 axis)
 			}
 		}
 
-		Entity::setDirection(this, direction);
+		Actor::setDirection(this, direction);
 	}
 }
 

@@ -95,6 +95,7 @@
 #define __Y_AXIS 	0x02
 #define __Z_AXIS 	0x04
 #define __ALL_AXIS	(__X_AXIS | __Y_AXIS | __Z_AXIS)
+#define __LOCK_AXIS	(~__ALL_AXIS)
 
 // direction
 #define __LEFT		((int)-1)
