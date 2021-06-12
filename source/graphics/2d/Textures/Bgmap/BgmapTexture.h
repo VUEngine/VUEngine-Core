@@ -63,6 +63,9 @@ class BgmapTexture : Texture
 	s8 segment;
 	// Remaining rows to be written
 	s8 remainingRowsToBeWritten;
+	// flip flag
+	bool horizontalFlip : 1;
+	bool verticalFlip : 1;
 
 	/// @publicsection
 	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset, u16 flip, bool backward);
@@ -73,6 +76,8 @@ class BgmapTexture : Texture
 	s16 getYOffset();
 	s8 getSegment();
 	void setSegment(s8 segment);
+	void setHorizontalFlip(bool value);
+	void setVerticalFlip(bool value);
 	override bool write();
 	override void rewrite();
 }

@@ -937,7 +937,6 @@ void Container::setLocalRotation(const Rotation* rotation)
 	}
 
 	this->transformation.localRotation = auxRotation;
-
 }
 
 /**

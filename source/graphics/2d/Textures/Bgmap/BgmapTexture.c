@@ -62,6 +62,9 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id)
 	this->segment = -1;
 	this->remainingRowsToBeWritten = 0;
 
+	this->horizontalFlip = this->textureSpec->horizontalFlip;
+	this->verticalFlip = this->textureSpec->verticalFlip;
+
 	if(!_bgmapTextureManager)
 	{
 		_bgmapTextureManager = BgmapTextureManager::getInstance();
@@ -269,11 +272,11 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 
 	u32 numberOfHWORDS = this->textureSpec->cols;
 
-	u16 flip = ((this->textureSpec->horizontalFlip << 1) | this->textureSpec->verticalFlip) << 12;
+	u16 flip = ((this->horizontalFlip << 1) | this->verticalFlip) << 12;
 
-	if(this->textureSpec->horizontalFlip)
+	if(this->horizontalFlip)
 	{
-		if(this->textureSpec->verticalFlip)
+		if(this->verticalFlip)
 		{
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -302,7 +305,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 	}
 	else
 	{
-		if(this->textureSpec->verticalFlip)
+		if(this->verticalFlip)
 		{
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -417,3 +420,22 @@ s8 BgmapTexture::getSegment()
 	return this->segment;
 }
 
+void BgmapTexture::setHorizontalFlip(bool value)
+{
+	if(this->horizontalFlip != value)
+	{
+		BgmapTexture::rewrite(this);
+	}
+
+	this->horizontalFlip = value;
+}
+
+void BgmapTexture::setVerticalFlip(bool value)
+{
+	if(this->verticalFlip != value)
+	{
+		BgmapTexture::rewrite(this);
+	}
+
+	this->verticalFlip = value;
+}

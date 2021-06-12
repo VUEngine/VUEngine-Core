@@ -223,6 +223,33 @@ void BgmapSprite::rotate(const Rotation* rotation)
 		// scale the texture in the next render cycle
 		BgmapSprite::invalidateParamTable(this);
 	}
+	else if(!isDeleted(this->texture))
+	{
+		Direction direction =
+		{
+			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
+			__FAR,
+		};
+
+		if(__LEFT == direction.x)
+		{
+			BgmapTexture::setHorizontalFlip(this->texture, true);
+		}
+		else if(__RIGHT == direction.x)
+		{
+			BgmapTexture::setHorizontalFlip(this->texture, false);
+		}
+
+		if(__UP == direction.y)
+		{
+			BgmapTexture::setVerticalFlip(this->texture, true);
+		}
+		else if(__DOWN == direction.y)
+		{
+			BgmapTexture::setVerticalFlip(this->texture, false);
+		}		
+	}
 }
 
 /**
