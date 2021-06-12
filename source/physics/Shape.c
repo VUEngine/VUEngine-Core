@@ -559,6 +559,7 @@ bool Shape::isEnabled()
  */
 void Shape::activeCollisionChecks(bool activate)
 {
+	Shape::setCheckForCollisions(this, activate);
 	CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, activate);
 }
 
