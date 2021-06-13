@@ -321,10 +321,6 @@ void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __at
 // graphically refresh of characters that are visible
 void Actor::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-//  Optimization: this doesn't seem to do anything useful
-	// apply environment transformation
-//	Container::applyEnvironmentToTransformation(this, environmentTransform);
-
 	bool transformShapes = this->transformShapes;
 
 	if(this->body)

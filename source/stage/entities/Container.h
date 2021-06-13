@@ -110,7 +110,6 @@ class Container : SpatialObject
 
 	/// @publicsection
 	void constructor(const char* const name);
-	void applyEnvironmentToTransformation(const Transformation* environmentTransform);
 	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
 	void deleteMyself();
 	void addBehavior(Behavior behavior);

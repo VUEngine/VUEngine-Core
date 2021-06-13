@@ -607,29 +607,6 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
 /**
  *
  *
- * @param environmentTransform
- */
-void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
-{
-	if(__INHERIT_POSITION & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToRotation(this, environmentTransform);
-	}
-
-	if(__INHERIT_SCALE & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToScale(this, environmentTransform);
-	}
-
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
-	}
-}
-
-/**
- *
- *
  * @private
  * @param environmentTransform
  */
