@@ -78,7 +78,7 @@ void Container::constructor(const char* const name)
 	this->behaviors = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
-	this->inheritEnvironment = true;
+	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -611,10 +611,18 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
  */
 void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
 {
-	if(this->inheritEnvironment)
+	if(__INHERIT_POSITION & this->inheritEnvironment)
 	{
 		Container::applyEnvironmentToRotation(this, environmentTransform);
+	}
+
+	if(__INHERIT_SCALE & this->inheritEnvironment)
+	{
 		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
 		Container::applyEnvironmentToPosition(this, environmentTransform);
 	}
 }
@@ -683,18 +691,24 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(this->inheritEnvironment)
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
 	{
 		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 		{
 			Container::applyEnvironmentToRotation(this, environmentTransform);
 		}
+	}
 
+	if(__INHERIT_SCALE & this->inheritEnvironment)
+	{
 		if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 		{
 			Container::applyEnvironmentToScale(this, environmentTransform);
 		}
+	}
 
+	if(__INHERIT_POSITION & this->inheritEnvironment)
+	{
 		// apply environment transformation
 		if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
 		{
@@ -1376,7 +1390,7 @@ bool Container::isHidden()
 	return this->hidden;
 }
 
-void Container::setInheritEnvironment(bool inheritEnvironment)
+void Container::setInheritEnvironment(u8 inheritEnvironment)
 {
 	this->inheritEnvironment = inheritEnvironment;
 }

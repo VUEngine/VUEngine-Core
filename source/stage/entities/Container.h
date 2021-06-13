@@ -60,6 +60,12 @@
 #define __INVALIDATE_SCALE					0x04
 #define __INVALIDATE_PROJECTION				0x08
 
+#define __INHERIT_TRANSFORMATION			0x0F
+#define __INHERIT_POSITION					0x01
+#define __INHERIT_ROTATION					0x02
+#define __INHERIT_SCALE						0x04
+#define __INVALIDATE_PROJECTION				0x08
+
 
 #define __MAX_CONTAINER_NAME_LENGTH			8
 
@@ -84,7 +90,7 @@ class Container : SpatialObject
 	// Name
 	char* name;
 	// whether to inherit position, rotation and scale from environment (parents)
-	bool inheritEnvironment;
+	u8 inheritEnvironment;
 	// Flag to update graphics' attributes
 	bool invalidateGraphics;
 	// Flag for parent to know to delete it
@@ -132,7 +138,7 @@ class Container : SpatialObject
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
-	void setInheritEnvironment(bool inheritEnvironment);
+	void setInheritEnvironment(u8 inheritEnvironment);
 	void updateChildren(u32 elapsedTime);
 	void updateBehaviors(u32 elapsedTime);
 	void synchronizeChildrenGraphics();
