@@ -61,10 +61,10 @@
 #define __INVALIDATE_PROJECTION				0x08
 
 #define __INHERIT_TRANSFORMATION			0x0F
+#define __INHERIT_NONE						0x00
 #define __INHERIT_POSITION					0x01
 #define __INHERIT_ROTATION					0x02
 #define __INHERIT_SCALE						0x04
-#define __INVALIDATE_PROJECTION				0x08
 
 
 #define __MAX_CONTAINER_NAME_LENGTH			8
