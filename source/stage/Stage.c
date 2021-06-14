@@ -1167,6 +1167,10 @@ void Stage::resume()
 	// apply transformations
 	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
 
+	// setup colors and brightness
+	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
+	// TODO: properly handle brightness and brightness repeat on resume
+
 	if(this->uiContainer)
 	{
 		Container::resume(this->uiContainer);
