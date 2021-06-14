@@ -65,7 +65,7 @@ void CharSet::destructor()
 	NM_ASSERT(!isDeleted(this), "CharSet::destructor: deleted this during kEventCharSetDeleted");
 
 	// make sure that I'm not destroyed again
-	this->usageCount = 00;
+	this->usageCount = 0;
 
 	// free processor memory
 	// must always be called at the end of the destructor
