@@ -236,7 +236,9 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
-	u16 offset = 0 < VirtualList::getSize(this->charSets) ? 0 : 1;
+	this->preventDefragmentation = true;
+
+	u16 offset = NULL != this->charSets->head ? 0 : 1;
 
 	if(this->charSets->head)
 	{
@@ -247,8 +249,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	if((unsigned)offset + charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
 	{
 		CharSet charSet = new CharSet(charSetSpec, offset);
-
-		this->preventDefragmentation = true;
 
 		VirtualList::pushBack(this->charSets, charSet);
 		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
@@ -348,30 +348,31 @@ bool CharSetManager::defragmentProgressively()
 		{
 			CharSet charSet = CharSet::safeCast(node->data);
 
-			// Not sure what this is for, but breaks the defragmentation
-/*
-			if(this->freedOffset == CharSet::getOffset(charSet))
+			if(!isDeleted(charSet))
 			{
-				this->freedOffset = 1;
-				return false;
-			}
-*/
-			if(!isDeleted(charSet) && this->freedOffset < CharSet::getOffset(charSet))
-			{
-#ifndef __RELEASE
-				for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
+				u32 offset = CharSet::getOffset(charSet);
+
+				if(this->freedOffset < offset)
 				{
-					*x = 0;
+	#ifndef __RELEASE
+					for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
+					{
+						*x = 0;
+					}
+	#endif
+					CharSet::setOffset(charSet, this->freedOffset);
+
+					//write to CHAR memory
+					CharSet::rewrite(charSet);
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
+
+					VirtualList::removeElement(this->charSetsPendingWriting, charSet);
+					return true;
 				}
-#endif
-				CharSet::setOffset(charSet, this->freedOffset);
-
-				//write to CHAR memory
-				CharSet::rewrite(charSet);
-				this->freedOffset += CharSet::getNumberOfChars(charSet);
-
-				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
-				return true;
+				else if(this->freedOffset == offset)
+				{
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
+				}
 			}
 		}
 
