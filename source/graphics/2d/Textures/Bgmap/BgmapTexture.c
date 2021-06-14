@@ -421,7 +421,14 @@ s8 BgmapTexture::getSegment()
 }
 
 void BgmapTexture::setHorizontalFlip(bool value)
-{
+{	
+	// TODO: this is a hack, positioned entities should have a complete transformation
+	// and the flip flags should be removed from the texture spec
+	if(this->textureSpec->horizontalFlip)
+	{
+		value = !value;
+	}
+
 	if(this->horizontalFlip != value)
 	{
 		BgmapTexture::rewrite(this);
@@ -432,6 +439,13 @@ void BgmapTexture::setHorizontalFlip(bool value)
 
 void BgmapTexture::setVerticalFlip(bool value)
 {
+	// TODO: this is a hack, positioned entities should have a complete transformation
+	// and the flip flags should be removed from the texture spec
+	if(this->textureSpec->verticalFlip)
+	{
+		value = !value;
+	}
+
 	if(this->verticalFlip != value)
 	{
 		BgmapTexture::rewrite(this);
