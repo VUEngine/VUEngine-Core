@@ -101,7 +101,7 @@ void BgmapTexture::rewrite()
  */
 bool BgmapTexture::write()
 {
-	if(!this->charSet)
+	if(isDeleted(this->charSet))
 	{
 		// make sure to force full writing if no char set
 		this->remainingRowsToBeWritten = this->textureSpec->rows;

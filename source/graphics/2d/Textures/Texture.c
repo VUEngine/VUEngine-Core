@@ -229,6 +229,9 @@ bool Texture::prepare()
 			// Non written textures can be written at any time 
 			// since they are not visible yet
 			Texture::write(this);
+
+			// Leave a cycle to make sure that everything is ready
+			return false;
 			break;
 
 		case kTexturePendingRewriting:
