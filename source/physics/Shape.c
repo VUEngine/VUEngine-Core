@@ -570,12 +570,20 @@ void Shape::activeCollisionChecks(bool activate)
  */
 void Shape::enable(bool enable)
 {
+	if(this->enabled != enable)
+	{
+		if(!enable)
+		{
+			Shape::fireEvent(this, kEventShapeChanged);
+		}
+	}
+	
 	this->enabled = enable;
 
 	if(!this->enabled)
 	{
 		CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, false);
-	}
+	}	
 }
 
 /**
