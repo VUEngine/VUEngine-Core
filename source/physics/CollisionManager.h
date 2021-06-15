@@ -58,6 +58,7 @@ class CollisionManager : Object
 	u32 collisions;
 	u32 checkCycles;
 	bool clearActiveForCollisionCheckingShapes;
+	bool checkShapesOutOfCameraRange;
 
 	/// @publicsection
 	void constructor();
@@ -68,6 +69,7 @@ class CollisionManager : Object
 	void reset();
 	void activeCollisionCheckForShape(Shape shape, bool activate);
 	void showShapes();
+	void setCheckShapesOutOfCameraRange(bool value);
 	u32 update(Clock clock);
 }
 

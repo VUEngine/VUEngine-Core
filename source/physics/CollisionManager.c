@@ -67,6 +67,7 @@ void CollisionManager::constructor()
 	this->checkCycles = 0;
 	this->collisionChecks = 0;
 	this->collisions = 0;
+	this->checkShapesOutOfCameraRange = false;
 }
 
 // class's destructor
@@ -160,14 +161,17 @@ u32 CollisionManager::update(Clock clock)
 		extern const Vector3D* _cameraPosition;
 
 		// not ready for collision checks if out of the camera
-		if(
-			shapeToCheck->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
-			shapeToCheck->rightBox.x1 - _cameraPosition->x < 0 ||
-			shapeToCheck->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
-			shapeToCheck->rightBox.y1 - _cameraPosition->y < 0
-		)
+		if(!this->checkShapesOutOfCameraRange)
 		{
-			shapeToCheck->isVisible = false;
+			if(
+				shapeToCheck->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
+				shapeToCheck->rightBox.x1 - _cameraPosition->x < 0 ||
+				shapeToCheck->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
+				shapeToCheck->rightBox.y1 - _cameraPosition->y < 0
+			)
+			{
+				shapeToCheck->isVisible = false;
+			}
 		}
 
 		shapeToCheck->moved = false;
@@ -319,6 +323,12 @@ int CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
 
 	return count;
 }
+
+void CollisionManager::setCheckShapesOutOfCameraRange(bool value)
+{
+	this->checkShapesOutOfCameraRange = value;
+}
+
 
 // print status
 void CollisionManager::print(int x, int y)
