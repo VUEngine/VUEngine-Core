@@ -185,7 +185,8 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
 	@$(eval RAW_SOURCE_FILE=$<)
 	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(NAME)/\1/@g"))
 	@$(eval OBJECT_FILE=$@)
-	@$(eval HASH_OBJECT=$(shell echo $(OBJECT_FILE) | shasum | cut -d' ' -f1))
+	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
+	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@rm -f $(OBJECT_FILE)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
 		$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
