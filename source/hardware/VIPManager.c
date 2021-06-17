@@ -445,8 +445,6 @@ void VIPManager::lowerBrightness()
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
 	_vipRegisters[__BRTC] = 0;
-
-	VIPManager::setBackgroundColor(this, __COLOR_BLACK);
 }
 
 /**
