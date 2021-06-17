@@ -30,6 +30,7 @@
 #include <Clock.h>
 #include <TimerManager.h>
 #include <MessageDispatcher.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -319,12 +320,7 @@ void CameraEffectManager::showCamera()
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
-
-	__SET_BRIGHT(
-		defaultBrightness.darkRed,
-		defaultBrightness.mediumRed,
-		defaultBrightness.brightRed
-	);
+	VIPManager::setupBrightness(VIPManager::getInstance(), &defaultBrightness);
 }
 
 /**
@@ -334,7 +330,7 @@ void CameraEffectManager::showCamera()
  */
 void CameraEffectManager::hideCamera()
 {
-	__SET_BRIGHT(0, 0, 0);
+	VIPManager::lowerBrightness(VIPManager::getInstance());
 }
 
 /**
@@ -344,11 +340,14 @@ void CameraEffectManager::hideCamera()
  */
 void CameraEffectManager::fxFadeIn()
 {
-	__SET_BRIGHT(
+	Brightness incrementalBrightness =
+	{
 		_vipRegisters[__BRTA] + 1,
 		_vipRegisters[__BRTB] + 2,
-		_vipRegisters[__BRTC] + 1
-	);
+		_vipRegisters[__BRTC] - _vipRegisters[__BRTB] - _vipRegisters[__BRTA] + 1
+	};
+	
+	VIPManager::setupBrightness(VIPManager::getInstance(), &incrementalBrightness);
 
 #ifdef __DIMM_FOR_PROFILING
 
@@ -372,12 +371,14 @@ void CameraEffectManager::fxFadeIn()
  */
 void CameraEffectManager::fxFadeOut()
 {
-	// decrease brightness
-	__SET_BRIGHT(
+	Brightness decrementalBrightness =
+	{
 		(_vipRegisters[__BRTA] > 0) ? _vipRegisters[__BRTA] - 1 : 0,
 		(_vipRegisters[__BRTB] > 1) ? _vipRegisters[__BRTB] - 2 : 0,
 		(_vipRegisters[__BRTC] > 0) ? _vipRegisters[__BRTC] - 1 : 0
-	);
+	};
+	
+	VIPManager::setupBrightness(VIPManager::getInstance(), &decrementalBrightness);
 }
 
 /**

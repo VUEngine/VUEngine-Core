@@ -31,6 +31,7 @@
 #include <HardwareManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -193,7 +194,14 @@ void Profiler::end()
 
 	Profiler::computeLap(this, "HEADROOM", true);
 
-	__SET_BRIGHT(2, 2, 2);
+	Brightness brightness =
+	{
+		2,
+		2,
+		6
+	};
+	
+	VIPManager::setupBrightness(VIPManager::getInstance(), &brightness);
 
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
