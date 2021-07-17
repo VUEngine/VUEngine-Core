@@ -34,7 +34,7 @@ printBuildingInfo:
 	@echo ""
 	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/builtComponents.txt)
 	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/builtComponents.txt))
-	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS))Building $(BASENAME)"
+	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
 #	@$(eval START_TIME=$(shell date +%s))
 
 printPostBuildingInfo:

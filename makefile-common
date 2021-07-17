@@ -123,7 +123,7 @@ printClassPreprocessingInfo:
 	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/preprocessedComponents.txt)
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/preprocessedComponents.txt > $(WORKING_FOLDER)/preprocessedComponents.txt.tmp)
 	@$(eval PREPROCESSED_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/preprocessedComponents.txt))
-	@echo "($(PREPROCESSED_COMPONENTS)/$(COMPONENTS))Preprocessing $(BASENAME)"
+	@echo "($(PREPROCESSED_COMPONENTS)/$(COMPONENTS)) Preprocessing $(BASENAME)"
 #	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
