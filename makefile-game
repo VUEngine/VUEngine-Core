@@ -59,6 +59,8 @@ printPreBuildingInfo:
 
 printComponentsToBuildInformation:
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt > $(WORKING_FOLDER)/traces/components.txt.tmp)
+	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt >> $(WORKING_FOLDER)/traces/components.txt.tmp)
+	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt > $(WORKING_FOLDER)/traces/builtComponents.txt)
 	@$(eval COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/components.txt.tmp))
 	@echo Total components to build: $(COMPONENTS)
 	@echo "COMPONENTS=$(COMPONENTS)" > \$(WORKING_FOLDER)/traces/components.txt
