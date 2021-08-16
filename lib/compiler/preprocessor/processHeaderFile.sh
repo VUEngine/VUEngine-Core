@@ -496,6 +496,8 @@ CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$clas
 searchPaths="$HEADERS_FOLDER/source $ENGINE_HOME/source "
 for plugin in $PLUGINS;
 do
+	plugin=`echo $plugin | sed -r "s@(user//|vuengine//)@/@"`
+
 	searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
 done
 

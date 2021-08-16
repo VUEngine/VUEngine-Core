@@ -8,11 +8,21 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
+# TODO: USER_PLUGINS_FOLDER must be given by the invoker of make
+USER_PLUGINS_FOLDER = $(ENGINE_HOME)../../custom
+
+# Clean plugin name by stripping out everything up to (and including) the last slash
+CLEAN_NAME = $(shell echo $(NAME) | sed -e "s@.*//@@")
+
 # My home
 ifeq ($(NAME), $(ENGINE_NAME))
-	override MY_HOME = $(ENGINE_HOME)
+    override MY_HOME = $(ENGINE_HOME)
 else
-	override MY_HOME = $(PLUGINS_FOLDER)/$(NAME)
+ifneq (,$(findstring vuengine,$(NAME)))
+    override MY_HOME = $(PLUGINS_FOLDER)$(CLEAN_NAME)
+else
+    override MY_HOME = $(USER_PLUGINS_FOLDER)/$(CLEAN_NAME)
+endif
 endif
 
 # Where the game lives
