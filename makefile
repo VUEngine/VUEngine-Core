@@ -1,6 +1,6 @@
 # Fully qualified plugin name
 # (this is set from outside)
-NAME = vuengine/plugin-name
+NAME = vuengine//plugin-name
 
 # Engine name
 override ENGINE_NAME = core
@@ -19,7 +19,7 @@ ifeq ($(NAME), $(ENGINE_NAME))
     override MY_HOME = $(ENGINE_HOME)
 else
 ifneq (,$(findstring vuengine,$(NAME)))
-    override MY_HOME = $(PLUGINS_FOLDER)$(CLEAN_NAME)
+    override MY_HOME = $(PLUGINS_FOLDER)/$(CLEAN_NAME)
 else
     override MY_HOME = $(USER_PLUGINS_FOLDER)/$(CLEAN_NAME)
 endif
