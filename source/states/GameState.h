@@ -60,7 +60,7 @@ class GameState : State
 	// clock for physics
 	Clock physicsClock;
 	// previous update time
-	u32 previousUpdateTime;
+	uint32 previousUpdateTime;
 	// Flags to disable some processes
 	bool stream;
 	bool transform;
@@ -80,7 +80,7 @@ class GameState : State
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);
-	u32 processCollisions();
+	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	int propagateMessage(int message);
 	void resumeClocks();

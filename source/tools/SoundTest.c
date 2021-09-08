@@ -94,7 +94,7 @@ void SoundTest::update()
 {
 	if(!isDeleted(this->soundWrapper))
 	{
-		static u16 delay = 0;
+		static uint16 delay = 0;
 
 		if(delay++ > __TARGET_FPS)
 		{
@@ -164,7 +164,7 @@ void SoundTest::printGUI(bool clearScreen)
 
 	Printing::text(printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
 
-	u16 totalSounds = SoundTest::getTotalSounds(this);
+	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
 	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound + 1);
 	int totalSoundsDigits = Utilities::getDigitCount(totalSounds);
@@ -202,7 +202,7 @@ void SoundTest::printGUI(bool clearScreen)
 	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
 }
 
-void SoundTest::processUserInput(u16 pressedKey)
+void SoundTest::processUserInput(uint16 pressedKey)
 {
 	if(NULL == _userSounds[this->selectedSound])
 	{
@@ -266,7 +266,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 	// Timer controls
 	else if(K_RU & pressedKey)
 	{
-		u16 timerResolution = TimerManager::getResolution(TimerManager::getInstance());
+		uint16 timerResolution = TimerManager::getResolution(TimerManager::getInstance());
 
 		switch(timerResolution)
 		{
@@ -291,8 +291,8 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 	else if(K_RD & pressedKey)
 	{
-		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
-		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
+		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
 
 		switch(timePerInterruptUnits)
 		{
@@ -320,7 +320,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 	else if(K_RL & pressedKey)
 	{
-		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
 
 		timePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
@@ -329,7 +329,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 	else if(K_RR & pressedKey)
 	{
-		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
 
 		timePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
@@ -362,9 +362,9 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 }
 
-u16 SoundTest::getTotalSounds()
+uint16 SoundTest::getTotalSounds()
 {
-	u16 totalSounds = 0;
+	uint16 totalSounds = 0;
 
 	for(; _userSounds[totalSounds]; totalSounds++);
 
@@ -373,7 +373,7 @@ u16 SoundTest::getTotalSounds()
 
 void SoundTest::loadPreviousSound()
 {
-	u16 totalSounds = SoundTest::getTotalSounds(this);
+	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
 	if(0 == this->selectedSound)
 	{
@@ -388,7 +388,7 @@ void SoundTest::loadPreviousSound()
 }
 void SoundTest::loadNextSound()
 {
-	u16 totalSounds = SoundTest::getTotalSounds(this);
+	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
 	if(totalSounds - 1 == this->selectedSound)
 	{

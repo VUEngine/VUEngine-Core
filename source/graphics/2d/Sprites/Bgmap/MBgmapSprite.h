@@ -48,7 +48,7 @@ typedef struct MBgmapSpriteSpec
 	TextureSpec** textureSpecs;
 
 	/// SCX/SCY value
-	u32 scValue;
+	uint32 scValue;
 
 	/// flag to loop the x axis
 	int xLoop;
@@ -84,9 +84,9 @@ class MBgmapSprite : BgmapSprite
 	// pinter to spec
 	const MBgmapSpriteSpec* mBgmapSpriteSpec;
 	// to speed up rendering
-	u32 textureXOffset;
+	uint32 textureXOffset;
 	// to speed up rendering
-	u32 textureYOffset;
+	uint32 textureYOffset;
 	// Multiple BGMAP expansion
 	Point sizeMultiplier;
 
@@ -94,10 +94,10 @@ class MBgmapSprite : BgmapSprite
 	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner);
 	override void position(const Vector3D* position);
 	override void setPosition(const PixelVector* position);
-	override u16 doRender(s16 index, bool evenFrame);
+	override uint16 doRender(int16 index, bool evenFrame);
 	override void addDisplacement(const PixelVector* displacement);
 	override void resize(Scale scale, fix10_6 z);
-	override void setMode(u16 display, u16 mode);
+	override void setMode(uint16 display, uint16 mode);
 	override bool writeTextures();
 }
 

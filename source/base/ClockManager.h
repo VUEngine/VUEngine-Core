@@ -46,7 +46,7 @@ singleton class ClockManager : Object
 	void register(Clock clock);
 	void reset();
 	void unregister(Clock clock);
-	void update(u32 millisecondsElapsed);
+	void update(uint32 millisecondsElapsed);
 }
 
 

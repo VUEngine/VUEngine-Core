@@ -63,7 +63,7 @@
 
 
 /****** VIP Registers ******/
-extern volatile u16* _vipRegisters;
+extern volatile uint16* _vipRegisters;
 
 /****** VIP Register Mnemonics ******/
 #define	__INTPND			0x00 // Interrupt Pending
@@ -124,27 +124,27 @@ extern volatile u16* _vipRegisters;
 
 typedef struct WorldAttributes
 {
-	u16 head;
-	s16 gx;
-	s16 gp;
-	s16 gy;
-	u16 mx;
-	s16 mp;
-	u16 my;
-	u16 w;
-	u16 h;
-	u16 param;
-	u16 ovr;
-	u16 spacer[5];
+	uint16 head;
+	int16 gx;
+	int16 gp;
+	int16 gy;
+	uint16 mx;
+	int16 mp;
+	uint16 my;
+	uint16 w;
+	uint16 h;
+	uint16 param;
+	uint16 ovr;
+	uint16 spacer[5];
 
 } WorldAttributes;
 
 typedef struct ObjectAttributes
 {
-	s16 jx;
-	s16 head;
-	s16 jy;
-	s16 tile;
+	int16 jx;
+	int16 head;
+	int16 jy;
+	int16 tile;
 
 } ObjectAttributes;
 
@@ -155,8 +155,8 @@ extern ObjectAttributes _objectAttributesCache[1024];
 static WorldAttributes* const _worldAttributesBaseAddress		=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
 static ObjectAttributes* const	_objectAttributesBaseAddress	=	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress
 
-static u16* const	_columnTableBaseAddressLeft			 		=	(u16*)0x0003DC00; // base address of Column Table (Left Eye)
-static u16* const	_columnTableBaseAddressRight				=	(u16*)0x0003DE00; // base address of Column Table (Right Eye)
+static uint16* const	_columnTableBaseAddressLeft			 		=	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
+static uint16* const	_columnTableBaseAddressRight				=	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
 
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)
@@ -185,8 +185,8 @@ static u16* const	_columnTableBaseAddressRight				=	(u16*)0x0003DE00; // base ad
 #define	__WORLD_END				0x0040
 
 // param table for affine and hbias render
-extern u32 _dram_data_start;
-#define __PARAM_TABLE_END 		((u32)&_dram_data_start)
+extern uint32 _dram_data_start;
+#define __PARAM_TABLE_END 		((uint32)&_dram_data_start)
 
 #define	__COLOR_BLACK			0x00
 #define	__COLOR_DARK_RED		0x01
@@ -218,7 +218,7 @@ typedef struct BrightnessRepeatSpec
 	bool mirror;
 
 	// brightness repeat values
-	u8 brightnessRepeat[];
+	uint8 brightnessRepeat[];
 
 } BrightnessRepeatSpec;
 
@@ -227,7 +227,7 @@ typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
 typedef struct ColorConfig
 {
 	// background color
-	u8 backgroundColor;
+	uint8 backgroundColor;
 
 	// brightness config
 	Brightness brightness;
@@ -241,23 +241,23 @@ typedef struct PaletteConfig
 {
 	struct Bgmap
 	{
-		u8 gplt0;
-		u8 gplt1;
-		u8 gplt2;
-		u8 gplt3;
+		uint8 gplt0;
+		uint8 gplt1;
+		uint8 gplt2;
+		uint8 gplt3;
 	} bgmap;
 
 	struct Object
 	{
-		u8 jplt0;
-		u8 jplt1;
-		u8 jplt2;
-		u8 jplt3;
+		uint8 jplt0;
+		uint8 jplt1;
+		uint8 jplt2;
+		uint8 jplt3;
 	} object;
 
 } PaletteConfig;
 
-typedef void (*PostProcessingEffect) (u32, SpatialObject);
+typedef void (*PostProcessingEffect) (uint32, SpatialObject);
 
 /**
  * Texture Post Processing Effect Registry
@@ -280,9 +280,9 @@ typedef struct PostProcessingEffectRegistry
 singleton class VIPManager : Object
 {
 	VirtualList postProcessingEffects;
-	u32 currentDrawingFrameBufferSet;
-	u16 customInterrupts;
-	u16 currrentInterrupt;
+	uint32 currentDrawingFrameBufferSet;
+	uint16 customInterrupts;
+	uint16 currrentInterrupt;
 	bool processingFRAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
@@ -292,10 +292,10 @@ singleton class VIPManager : Object
 	static VIPManager getInstance();
 	static void interruptHandler();
 	void reset();
-	void enableCustomInterrupts(u16 customInterrupts);
+	void enableCustomInterrupts(uint16 customInterrupts);
 	void enableDrawing();
 	void disableDrawing();
-	void enableInterrupts(u16 interruptCode);
+	void enableInterrupts(uint16 interruptCode);
 	void disableInterrupts();
 	void displayOn();
 	void displayOff();
@@ -309,7 +309,7 @@ singleton class VIPManager : Object
 	void useInternalColumnTable(bool internal);
 	void setupBrightness(Brightness* brightness);
 	void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
-	void setBackgroundColor(u8 color);
+	void setBackgroundColor(uint8 color);
 	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);

@@ -155,7 +155,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int number
  * @param objectSprite		Sprite to remove
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numberOfObjects)
+void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, int32 numberOfObjects)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
 	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
@@ -176,7 +176,7 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, s32 numb
  * @param numberOfObjects	The number of OBJECTs to check
  * @return 					True if there is enough OBJECT space in this container
  */
-bool ObjectSpriteContainer::hasRoomFor(s32 numberOfObjects)
+bool ObjectSpriteContainer::hasRoomFor(int32 numberOfObjects)
 {
 	return this->availableObjects >= numberOfObjects;
 }
@@ -307,11 +307,11 @@ void ObjectSpriteContainer::writeDRAM()
  *
  * @param evenFrame
  */
-u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+uint16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	_worldAttributesCache[index].head = this->head;
 
-	u16 objectIndex = this->firstObjectIndex;
+	uint16 objectIndex = this->firstObjectIndex;
 
 	if(!this->hideSprites)
 	{
@@ -338,7 +338,7 @@ u16 ObjectSpriteContainer::doRender(s16 index __attribute__((unused)), bool even
 		}
 	}
 
-	u16 lastRenderedObjectIndex = objectIndex;
+	uint16 lastRenderedObjectIndex = objectIndex;
 
 	for(; objectIndex < this->lastRenderedObjectIndex; objectIndex++)
 	{
@@ -488,7 +488,7 @@ int ObjectSpriteContainer::getTotalPixels()
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void ObjectSpriteContainer::setMode(u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+void ObjectSpriteContainer::setMode(uint16 display __attribute__ ((unused)), uint16 mode __attribute__ ((unused)))
 {}
 
 /**

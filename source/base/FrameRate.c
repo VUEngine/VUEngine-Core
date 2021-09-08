@@ -87,7 +87,7 @@ void FrameRate::reset()
 /**
  * Retrieve FPS
  */
-u16 FrameRate::getFps()
+uint16 FrameRate::getFps()
 {
 	return this->fps;
 }
@@ -102,7 +102,7 @@ void FrameRate::update()
 	this->gameFrameTotalTime += elapsedTime;
 
 #ifdef __PRINT_FRAME_TIMES
-	static u32 elapsedTimes[60] = {1};
+	static uint32 elapsedTimes[60] = {1};
 	elapsedTimes[this->fps] = elapsedTime;
 #endif
 

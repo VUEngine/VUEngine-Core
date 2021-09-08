@@ -87,7 +87,7 @@ friend class Printing;
  * @param rows	Number of rows
  * @param font	Font to use for printing selector
  */
-void OptionsSelector::constructor(u16 cols, u16 rows, char* font)
+void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font)
 {
 	Base::constructor();
 
@@ -162,7 +162,7 @@ void OptionsSelector::setMarkCharacter(char* mark)
  *
  * @param width Width (in font chars)
  */
-void OptionsSelector::setColumnWidth(u8 width)
+void OptionsSelector::setColumnWidth(uint8 width)
 {
 	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
@@ -180,7 +180,7 @@ void OptionsSelector::setColumnWidth(u8 width)
  *
  * @return		Total width of options selector (in chars)
  */
-u8 OptionsSelector::getWidth()
+uint8 OptionsSelector::getWidth()
 {
 	return this->columnWidth * this->cols;
 }
@@ -391,7 +391,7 @@ int OptionsSelector::getSelectedOption()
  * @param x	 X coordinate to start printing at (in chars)
  * @param y	 Y coordinate to start printing at (in chars)
  */
-void OptionsSelector::printOptions(u8 x, u8 y)
+void OptionsSelector::printOptions(uint8 x, uint8 y)
 {
 	Printing printing = Printing::getInstance();
 
@@ -445,11 +445,11 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 						break;
 
 					case kShortInt:
-						Printing::int(printing, *((s16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::int(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
 					case kChar:
-						Printing::int(printing, *((s8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::int(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;				}
 			}
 

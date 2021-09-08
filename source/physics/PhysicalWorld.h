@@ -37,7 +37,7 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, u16 axisSubjectToGravity);
+typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, uint16 axisSubjectToGravity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -68,14 +68,14 @@ class PhysicalWorld : Object
 	// time scale
 	fix10_6 timeScale;
 	// Time scale is handled here, not in the Body class
-	u8 remainingSkipCycles;
-	u8 skipCycles;
+	uint8 remainingSkipCycles;
+	uint8 skipCycles;
 
 	/// @publicsection
 	void constructor();
 	void destructor();
 	void setTimeScale(fix10_6 timeScale);
-	u32 getTimeScale();
+	uint32 getTimeScale();
 	void bodyAwake(Body body);
 	void bodySleep(Body body);
 	void bodySetInactive(Body body);
@@ -86,7 +86,7 @@ class PhysicalWorld : Object
 	bool isSpatialObjectRegistered(SpatialObject owner);
 	void print(int x, int y);
 	void purgeBodyLists();
-	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity);
+	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void destroyBody(Body body);
 	void reset();
 	void setGravity(Acceleration gravity);

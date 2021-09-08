@@ -105,7 +105,7 @@ void UIContainer::synchronizeGraphics()
 }
 
 // transformation
-void UIContainer::initialTransform(const Transformation* environmentTransform, u32 recursive)
+void UIContainer::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UIContainer::initialTransform: null camera");

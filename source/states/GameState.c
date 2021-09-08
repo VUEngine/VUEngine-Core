@@ -377,7 +377,7 @@ void GameState::transform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	u8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_PROJECTION : 0;
+	uint8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_PROJECTION : 0;
 	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities
@@ -441,7 +441,7 @@ void GameState::updatePhysics()
  *
  * @return			The result of the collision processing
  */
-u32 GameState::processCollisions()
+uint32 GameState::processCollisions()
 {
 	if(!this->processCollisions || isDeleted(this->collisionManager))
 	{

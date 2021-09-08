@@ -179,7 +179,7 @@ void KeypadManager::flush()
  *
  * @return 		Currently pressed keys
  */
-u16 KeypadManager::getPressedKey()
+uint16 KeypadManager::getPressedKey()
 {
 	return this->userInput.allKeys & ~this->userInput.previousKey;
 }
@@ -189,7 +189,7 @@ u16 KeypadManager::getPressedKey()
  *
  * @return 		Currently released keys
  */
-u16 KeypadManager::getReleasedKey()
+uint16 KeypadManager::getReleasedKey()
 {
 	return ~this->userInput.allKeys & this->userInput.previousKey;
 }
@@ -199,7 +199,7 @@ u16 KeypadManager::getReleasedKey()
  *
  * @return 		Currently held keys
  */
-u16 KeypadManager::getHoldKey()
+uint16 KeypadManager::getHoldKey()
 {
 	return this->userInput.allKeys & this->userInput.previousKey;
 }
@@ -209,7 +209,7 @@ u16 KeypadManager::getHoldKey()
  *
  * @return 		Duration of currently held keys
  */
-u32 KeypadManager::getHoldKeyDuration()
+uint32 KeypadManager::getHoldKeyDuration()
 {
 	return this->userInput.holdKeyDuration;
 }
@@ -219,7 +219,7 @@ u32 KeypadManager::getHoldKeyDuration()
  *
  * @return 		Previously pressed keys
  */
-u16 KeypadManager::getPreviousKey()
+uint16 KeypadManager::getPreviousKey()
 {
 	return this->userInput.previousKey;
 }
@@ -243,7 +243,7 @@ void KeypadManager::reset()
  *
  * @param inputToRegister	Flag
  */
-void KeypadManager::registerInput(u16 inputToRegister)
+void KeypadManager::registerInput(uint16 inputToRegister)
 {
 	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;

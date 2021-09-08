@@ -41,7 +41,7 @@
  *
  * @private
  */
-void Sphere::constructor(Vector3D center, fix10_6 radius, u8 color)
+void Sphere::constructor(Vector3D center, fix10_6 radius, uint8 color)
 {
 	// construct base object
 	Base::constructor(color);
@@ -127,7 +127,7 @@ void Sphere::draw(bool calculateParallax)
 		Vector3D topTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y - relativePoint3D.y, normalizedCenter3D.z};
 		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
 
-		s16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
+		int16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
 		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);
 		PixelVector bottomPoint2D = Vector3D::projectToPixelVector(bottomTranslatedPoint3D, parallax);
 

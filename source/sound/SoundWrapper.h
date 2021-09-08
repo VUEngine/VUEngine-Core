@@ -65,40 +65,40 @@ enum SoundChannelTypes
 typedef struct SoundChannelConfiguration
 {
 	/// kMIDI, kPCM
-	u32 trackType;
+	uint32 trackType;
 
 	/// SxINT
-	u8 SxINT;
+	uint8 SxINT;
 
 	/// Volume SxLRV
-	u8 SxLRV;
+	uint8 SxLRV;
 
 	/// SxRAM
-	u8 SxRAM;
+	uint8 SxRAM;
 
 	/// SxEV0
-	u8 SxEV0;
+	uint8 SxEV0;
 
 	/// SxEV1
-	u8 SxEV1;
+	uint8 SxEV1;
 
 	/// SxFQH
-	u8 SxFQH;
+	uint8 SxFQH;
 
 	/// SxFQL
-	u8 SxFQL;
+	uint8 SxFQL;
 
 	/// Ch. 5 only
-	u8 S5SWP;
+	uint8 S5SWP;
 
 	/// Waveform data pointer
-	const s8* waveFormData;
+	const int8* waveFormData;
 
 	/// kChannelNormal, kChannelModulation, kChannelNoise
-	u32 channelType;
+	uint32 channelType;
 
 	/// Volume
-	u8 volume;
+	uint8 volume;
 
 } SoundChannelConfiguration;
 
@@ -110,16 +110,16 @@ typedef struct SoundChannel
 	SoundChannelConfiguration* soundChannelConfiguration;
 
 	/// Length
-	u32 length;
+	uint32 length;
 
 	/// Sound track
 	union SoundTrack
 	{
 		/// Sound track 8Bit (PCM)
-		const u8* dataPCM;
+		const uint8* dataPCM;
 
 		/// Sound track 16Bit (MIDI)
-		const u16* dataMIDI;
+		const uint16* dataMIDI;
 
 	} soundTrack;
 
@@ -136,7 +136,7 @@ typedef struct Sound
 	bool loop;
 
 	/// Target timer resolution in us
-	u16 targetTimerResolutionUS;
+	uint16 targetTimerResolutionUS;
 
 	/// Tracks
 	SoundChannel** soundChannels;
@@ -147,11 +147,11 @@ typedef const Sound SoundROM;
 
 typedef struct Waveform
 {
-	u8 number;
-	s8 usageCount;
-	u8* wave;
-	u8 overwrite;
-	const s8* data;
+	uint8 number;
+	int8 usageCount;
+	uint8* wave;
+	uint8 overwrite;
+	const int8* data;
 
 } Waveform;
 
@@ -164,10 +164,10 @@ typedef struct Channel
 	Sound* sound;
 
 	/// Channel's effective length
-	u32 length;
+	uint32 length;
 
 	/// Position within the sound track
-	u32 cursor;
+	uint32 cursor;
 
 	/// Ticks before moving the cursor
 	fix17_15 ticksPerNote;
@@ -182,18 +182,18 @@ typedef struct Channel
 	union ChannelSoundTrack
 	{
 		/// Sound track 8Bit (PCM)
-		const u8* dataPCM;
+		const uint8* dataPCM;
 
 		/// Sound track 16Bit (MIDI)
-		const u16* dataMIDI;
+		const uint16* dataMIDI;
 
 	} soundTrack;
 
-	u32 type;
+	uint32 type;
 
-	u8 number;
-	u8 soundChannel;
-	u8 volumeReduction;
+	uint8 number;
+	uint8 soundChannel;
+	uint8 volumeReduction;
 	bool finished;
 
 } Channel;
@@ -229,12 +229,12 @@ class SoundWrapper : Object
 	VirtualList channels;
 	fix17_15 speed;
 	fix17_15 targetTimerResolutionFactor;
-	u32 elapsedMicroseconds;
-	u32 totalPlaybackMilliseconds;
-	u16 pcmTargetPlaybackFrameRate;
-	u16 frequencyModifier;
-	s8 volumeReduction;
-	u8 playbackType;
+	uint32 elapsedMicroseconds;
+	uint32 totalPlaybackMilliseconds;
+	uint16 pcmTargetPlaybackFrameRate;
+	uint16 frequencyModifier;
+	int8 volumeReduction;
+	uint8 playbackType;
 	bool turnedOn;
 	bool paused;
 	bool hasMIDITracks;
@@ -243,14 +243,14 @@ class SoundWrapper : Object
 	bool autoReleaseOnFinish;
 
 	/// @publicsection
-	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
+	void constructor(Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
 
-	const Channel* getChannel(u8 index);
+	const Channel* getChannel(uint8 index);
 	bool isPaused();
 	bool hasPCMTracks();
 	bool isFadingIn();
 	bool isFadingOut();
-	void play(const Vector3D* position, u32 playbackType);
+	void play(const Vector3D* position, uint32 playbackType);
 	void pause();
 	void unpause();
 	void turnOff();
@@ -261,15 +261,15 @@ class SoundWrapper : Object
 	void mute();
 	void unmute();
 	void autoReleaseOnFinish(bool value);
-	void updateMIDIPlayback(u32 elapsedMicroseconds);
-	void updatePCMPlayback(u32 elapsedMicroseconds);
+	void updateMIDIPlayback(uint32 elapsedMicroseconds);
+	void updatePCMPlayback(uint32 elapsedMicroseconds);
 	void setSpeed(fix17_15 speed);
-	void setVolumeReduction(s8 volumeReduction);
-	s8 getVolumeReduction();
+	void setVolumeReduction(int8 volumeReduction);
+	int8 getVolumeReduction();
 	fix17_15 getSpeed();
 	void computeTimerResolutionFactor();
-	void setFrequencyModifier(u16 frequencyModifier);
-	u16 getFrequencyModifier();
+	void setFrequencyModifier(uint16 frequencyModifier);
+	uint16 getFrequencyModifier();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y, bool printHeader);

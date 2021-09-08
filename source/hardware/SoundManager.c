@@ -45,9 +45,9 @@
 
 SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
 
-#define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n * 128))
-#define __MODULATION_DATA			(u8*)0x01000280;
-#define __SSTOP						*(u8*)0x01000580
+#define __WAVE_ADDRESS(n)			(uint8*)(0x01000000 + (n * 128))
+#define __MODULATION_DATA			(uint8*)0x01000280;
+#define __SSTOP						*(uint8*)0x01000580
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,10 +67,10 @@ friend class VirtualList;
 typedef struct QueuedSound
 {
 	Sound* sound;
-	u32 command;
+	uint32 command;
 	Vector3D position;
 	bool isPositionValid;
-	u32 playbackType;
+	uint32 playbackType;
 	EventListener soundReleaseListener;
 	Object scope;
 
@@ -263,14 +263,14 @@ void SoundManager::reset()
 		this->waveforms[i].data = NULL;
 		this->waveforms[i].overwrite = true;
 
-		for(u16 j = 0; j < 128; j++)
+		for(uint16 j = 0; j < 128; j++)
 		{
 			this->waveforms[i].wave[j] = 0;
 		}
 	}
 
 	// Reset modulation data
-	u8* modulationData = __MODULATION_DATA;
+	uint8* modulationData = __MODULATION_DATA;
 	for(i = 0; i <= 32 * 4; i++)
 	{
 		modulationData[i] = 0;
@@ -301,7 +301,7 @@ void SoundManager::reset()
 	SoundManager::unlock(this);
 }
 
-void SoundManager::deferMIDIPlayback(u32 MIDIPlaybackCounterPerInterrupt)
+void SoundManager::deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt)
 {
 	this->MIDIPlaybackCounterPerInterrupt = MIDIPlaybackCounterPerInterrupt;
 }
@@ -314,7 +314,7 @@ void SoundManager::startPCMPlayback()
 	SoundManager::muteAllSounds(this, kPCM);
 }
 
-void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
+void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 {
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
@@ -365,7 +365,7 @@ void SoundManager::update()
 	this->lockSoundWrappersList = false;	
 }
 
-bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
+bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
 	bool lockSoundWrappersList = this->lockSoundWrappersList;	
 
@@ -373,7 +373,7 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
 	{
-		static u32 accumulatedElapsedMicroseconds = 0;
+		static uint32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
 		if(NULL == this->soundWrapperMIDINode)
@@ -382,7 +382,7 @@ bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 			accumulatedElapsedMicroseconds = elapsedMicroseconds;
 		}
 
-		u16 counter = this->MIDIPlaybackCounterPerInterrupt;
+		uint16 counter = this->MIDIPlaybackCounterPerInterrupt;
 
 		for(; counter-- && this->soundWrapperMIDINode;)
 		{
@@ -427,7 +427,7 @@ bool SoundManager::playPCMSounds()
 
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
-	volatile u16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
+	volatile uint16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
@@ -459,7 +459,7 @@ void SoundManager::updateFrameRate()
 		return;
 	}
 
-	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
+	int16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
 
 	if(2 < deviation)
 	{
@@ -479,7 +479,7 @@ void SoundManager::updateFrameRate()
 	}
 
 #ifdef __SOUND_MANAGER_PROFILE
-	static u16 counter = 20;
+	static uint16 counter = 20;
 
 	if(++counter > 20)
 	{
@@ -492,7 +492,7 @@ void SoundManager::updateFrameRate()
 	this->pcmPlaybackCycles = 0;
 }
 
-void SoundManager::rewindAllSounds(u32 type)
+void SoundManager::rewindAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -527,7 +527,7 @@ void SoundManager::rewindAllSounds(u32 type)
 	}
 }
 
-void SoundManager::unmuteAllSounds(u32 type)
+void SoundManager::unmuteAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -562,7 +562,7 @@ void SoundManager::unmuteAllSounds(u32 type)
 	}
 }
 
-void SoundManager::muteAllSounds(u32 type)
+void SoundManager::muteAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -597,7 +597,7 @@ void SoundManager::muteAllSounds(u32 type)
 	}
 }
 
-s8 SoundManager::getWaveform(const s8* waveFormData)
+int8 SoundManager::getWaveform(const int8* waveFormData)
 {
 	if(NULL == waveFormData)
 	{
@@ -608,8 +608,8 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	Waveform* freeWaveformPriority2 = NULL;
 
 	// Reset all sounds and channels
-//	for(s16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
-	for(s16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+//	for(int16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
+	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		if(NULL == this->waveforms[i].data)
 		{
@@ -649,11 +649,11 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	return -1;
 }
 
-void SoundManager::setWaveform(Waveform* waveform, const s8* data)
+void SoundManager::setWaveform(Waveform* waveform, const int8* data)
 {
 	if(NULL != waveform && waveform->overwrite)
 	{
-		waveform->data = (s8*)data;
+		waveform->data = (int8*)data;
 		waveform->overwrite = false;
 
 		// Disable interrupts to make the following as soon as possible
@@ -662,9 +662,9 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		// Must stop all sound before writing the waveforms
 		SoundManager::turnOffPlayingSounds(this);
 
-		for(u16 i = 0; i < 32; i++)
+		for(uint16 i = 0; i < 32; i++)
 		{
-			waveform->wave[(i << 2)] = (u8)data[i];
+			waveform->wave[(i << 2)] = (uint8)data[i];
 		}
 
 		// Resume playing sounds
@@ -674,12 +674,12 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 		HardwareManager::resumeInterrupts();
 		/*
 		// TODO
-		const u8 kModData[] = {
+		const uint8 kModData[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 18, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
 		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
 		};
 
-		u8* moddata = __MODULATION_DATA;
+		uint8* moddata = __MODULATION_DATA;
 		for(i = 0; i <= 0x7C; i++)
 		{
 			moddata[i << 2] = kModData[i];
@@ -688,7 +688,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 	}
 }
 
-void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
+void SoundManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 {
 	if(0 <= waveFormIndex && waveFormIndex < __TOTAL_CHANNELS)
 	{
@@ -779,12 +779,12 @@ void SoundManager::turnOnPlayingSounds()
 	}
 }
 
-static u8 SoundManager::getSoundChannelsCount(Sound* sound, u32 channelType)
+static uint8 SoundManager::getSoundChannelsCount(Sound* sound, uint32 channelType)
 {
 	// Compute the number of
-	u8 channelsCount = 0;
+	uint8 channelsCount = 0;
 
-	for(u16 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
+	for(uint16 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
 	{
 		if(channelType == sound->soundChannels[i]->soundChannelConfiguration->channelType)
 		{
@@ -795,15 +795,15 @@ static u8 SoundManager::getSoundChannelsCount(Sound* sound, u32 channelType)
 	return __TOTAL_CHANNELS < channelsCount ? __TOTAL_CHANNELS : channelsCount;
 }
 
-u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8 channelsCount, u32 channelType)
+uint8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, uint8 channelsCount, uint32 channelType)
 {
 	if(NULL == sound || isDeleted(availableChannels))
 	{
 		return 0;
 	}
 
-	u16 i = 0;
-	u8 usableChannelsCount = 0;
+	uint16 i = 0;
+	uint8 usableChannelsCount = 0;
 
 	for(i = 0; usableChannelsCount < channelsCount && i < __TOTAL_CHANNELS; i++)
 	{
@@ -827,7 +827,7 @@ void SoundManager::unlock()
 	this->lock = false;
 }
 
-void SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType, EventListener soundReleaseListener, Object scope)
+void SoundManager::playSound(Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 	SoundManager::tryToPlayQueuedSounds(this);
@@ -873,7 +873,7 @@ void SoundManager::onSoundWrapperReleased(Object eventFirer)
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::getSound(Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
 {
 	if(this->lock)
 	{
@@ -883,7 +883,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, u32 command, EventListener sou
 	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope);
 }
 
-SoundWrapper SoundManager::doGetSound(Sound* sound, u32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::doGetSound(Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
 {
 	if(NULL == sound)
 	{
@@ -891,17 +891,17 @@ SoundWrapper SoundManager::doGetSound(Sound* sound, u32 command, EventListener s
 	}
 
 	// Compute the number of
-	u8 normalChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormal);
-	u8 modulationChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelModulation);
-	u8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
-	u8 normalExtendeChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormalExtended);
+	uint8 normalChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormal);
+	uint8 modulationChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelModulation);
+	uint8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
+	uint8 normalExtendeChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormalExtended);
 
 	// Check for free channels
 	VirtualList availableChannels  = new VirtualList();
 
-	u8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (normalExtendeChannelsCount && 0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
-	u8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
-	u8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
+	uint8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (normalExtendeChannelsCount && 0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
+	uint8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
+	uint8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
 
 	if(kPlayAll != command)
 	{
@@ -924,9 +924,9 @@ SoundWrapper SoundManager::doGetSound(Sound* sound, u32 command, EventListener s
 
 			if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
 			{
-				s8 waves[__TOTAL_WAVEFORMS] = {-1, -1, -1, -1, -1};
+				int8 waves[__TOTAL_WAVEFORMS] = {-1, -1, -1, -1, -1};
 
-				u16 i = 0;
+				uint16 i = 0;
 
 				if(NULL != sound->soundChannels[i]->soundChannelConfiguration->waveFormData)
 				{
@@ -1153,12 +1153,12 @@ void SoundManager::print()
 void SoundManager::printWaveFormStatus(int x, int y)
 {
 	// Reset all waveforms
-	for(u16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	for(uint16 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		PRINT_TEXT("           ", x, y + this->waveforms[i].number);
 		PRINT_INT(this->waveforms[i].number, x, y + this->waveforms[i].number);
 		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].number);
-		PRINT_HEX((u32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
+		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
 	}
 }
 

@@ -37,9 +37,9 @@
 // brightness setting
 typedef struct Brightness
 {
-	u8 darkRed;
-	u8 mediumRed;
-	u8 brightRed;
+	uint8 darkRed;
+	uint8 mediumRed;
+	uint8 brightRed;
 
 } Brightness;
 
@@ -55,9 +55,9 @@ typedef struct Size
 // size in pixels
 typedef struct PixelSize
 {
-	u16 x;
-	u16 y;
-	u16 z;
+	uint16 x;
+	uint16 y;
+	uint16 z;
 
 } PixelSize;
 
@@ -74,21 +74,21 @@ typedef struct Vector3D
 // used to represent a screen position with parallax info
 typedef struct PixelVector
 {
-	s16 x;
-	s16 y;
-	s16 z;
-	s16 parallax;
+	int16 x;
+	int16 y;
+	int16 z;
+	int16 parallax;
 
 } PixelVector;
 
 // used to represent a screen position with z sorting displacement info
 typedef struct ScreenPixelVector
 {
-	s16 x;
-	s16 y;
+	int16 x;
+	int16 y;
 	// it is used for WORLD sorting and having micromanagement allows for easier sorting
-	s16 z;
-	s16 zDisplacement;
+	int16 z;
+	int16 zDisplacement;
 
 } ScreenPixelVector;
 
@@ -116,39 +116,39 @@ typedef struct Vector3D Direction3D;
 // movement type flag vector
 typedef struct MovementType
 {
-	s8 x;
-	s8 y;
-	s8 z;
+	int8 x;
+	int8 y;
+	int8 z;
 
 } MovementType;
 
 typedef struct Rotation
 {
 	// rotation around x axis
-	s16 x;
+	int16 x;
 
 	// rotation around y axis
-	s16 y;
+	int16 y;
 
 	// rotation around z axis
-	s16 z;
+	int16 z;
 
 } Rotation;
 
 // spatial direction vector
 typedef struct Direction
 {
-	s8 x;
-	s8 y;
-	s8 z;
+	int8 x;
+	int8 y;
+	int8 z;
 
 } Direction;
 
 // engine's optical values structure
 typedef struct Optical
 {
-	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
-	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
+	uint16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
+	uint16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	fix10_6 distanceEyeScreen;
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
@@ -160,12 +160,12 @@ typedef struct Optical
 // engine's optical values structure
 typedef struct PixelOptical
 {
-	u16 maximumXViewDistance;		// maximum distance from the screen to the infinite
-	u16 maximumYViewDistance;		// maximum distance from the screen to the infinite
-	u16 distanceEyeScreen;
-	u16 baseDistance;					// distance from left to right eye (depth perception)
-	s16 horizontalViewPointCenter;		// horizontal View point center
-	s16 verticalViewPointCenter;		// vertical View point center
+	uint16 maximumXViewDistance;		// maximum distance from the screen to the infinite
+	uint16 maximumYViewDistance;		// maximum distance from the screen to the infinite
+	uint16 distanceEyeScreen;
+	uint16 baseDistance;					// distance from left to right eye (depth perception)
+	int16 horizontalViewPointCenter;		// horizontal View point center
+	int16 verticalViewPointCenter;		// vertical View point center
 	float scalingFactor;				// scaling factor for sprite resizing
 
 } PixelOptical;
@@ -174,16 +174,16 @@ typedef struct PixelOptical
 // define a 2d point
 typedef struct Point
 {
-	s16 x;
-	s16 y;
+	int16 x;
+	int16 y;
 
 } Point;
 
 // define a 2d point in screen space
 typedef struct Pixel
 {
-	u16 x;
-	u16 y;
+	uint16 x;
+	uint16 y;
 
 } Pixel;
 
@@ -199,17 +199,17 @@ typedef struct Scale
 // used to represent the m coordinates of the bgmaps
 typedef struct TextureSource
 {
-	s16 mx;
-	s16 mp;
-	s16 my;
+	int16 mx;
+	int16 mp;
+	int16 my;
 
 } TextureSource;
 
 
 typedef struct TexturePadding
 {
-	u8 cols;
-	u8 rows;
+	uint8 cols;
+	uint8 rows;
 
 } TexturePadding;
 
@@ -267,14 +267,14 @@ typedef struct RightBox
 typedef struct PixelRightBox
 {
 	/* left upper corner */
-	s16 x0;
-	s16 y0;
-	s16 z0;
+	int16 x0;
+	int16 y0;
+	int16 z0;
 
 	/* right down corner */
-	s16 x1;
-	s16 y1;
-	s16 z1;
+	int16 x1;
+	int16 y1;
+	int16 z1;
 
 } PixelRightBox;
 

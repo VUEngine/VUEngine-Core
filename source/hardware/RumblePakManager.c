@@ -121,7 +121,7 @@ void RumblePakManager::reset()
     }
 }
 
-static void RumblePakManager::sendCode(u8 code __attribute__((unused)))
+static void RumblePakManager::sendCode(uint8 code __attribute__((unused)))
 {
     _rumblePakManager->rumbleCommands[_rumblePakManager->rumbleCommandIndex++] = code;
 }
@@ -177,13 +177,13 @@ void RumblePakManager::setAsync(bool async)
     RumblePakManager::stopAllEffects(this);
 }
 
-static void RumblePakManager::sendCommandWithValue(u8 command, u8 value)
+static void RumblePakManager::sendCommandWithValue(uint8 command, uint8 value)
 {
     RumblePakManager::sendCode(command);
     RumblePakManager::sendCode(value);
 }
 
-static void RumblePakManager::playEffect(u8 effect)
+static void RumblePakManager::playEffect(uint8 effect)
 {
     if(effect >= __RUMBLE_CMD_MIN_EFFECT && effect <= __RUMBLE_CMD_MAX_EFFECT)
 	{
@@ -191,9 +191,9 @@ static void RumblePakManager::playEffect(u8 effect)
     }
 }
 
-static void RumblePakManager::storeEffectChain(u8 chainNumber, u8* effectChain)
+static void RumblePakManager::storeEffectChain(uint8 chainNumber, uint8* effectChain)
 {
-    u8 i = 0;
+    uint8 i = 0;
     
     RumblePakManager::sendCode(__RUMBLE_CMD_WRITE_EFFECT_CHAIN);
     
@@ -207,9 +207,9 @@ static void RumblePakManager::storeEffectChain(u8 chainNumber, u8* effectChain)
     RumblePakManager::sendCode(__RUMBLE_EFFECT_CHAIN_END);
 }
 
-static void RumblePakManager::playEffectChain(u8 effectChain)
+static void RumblePakManager::playEffectChain(uint8 effectChain)
 {
-    u8 command = effectChain;
+    uint8 command = effectChain;
 
     if(command <= __RUMBLE_CHAIN_EFFECT_4)
 	{
@@ -222,7 +222,7 @@ static void RumblePakManager::playEffectChain(u8 effectChain)
     }
 }
 
-static void RumblePakManager::setFrequency(u8 value)
+static void RumblePakManager::setFrequency(uint8 value)
 {
     if(_rumblePakManager->frequency == value)
     {
@@ -242,7 +242,7 @@ static void RumblePakManager::setFrequency(u8 value)
     }
 }
 
-static void RumblePakManager::setOverdrive(u8 value)
+static void RumblePakManager::setOverdrive(uint8 value)
 {
     if(_rumblePakManager->overdrive == value)
     {
@@ -254,7 +254,7 @@ static void RumblePakManager::setOverdrive(u8 value)
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_OVERDRIVE, value);
 }
 
-static void RumblePakManager::setSustainPositive(u8 value)
+static void RumblePakManager::setSustainPositive(uint8 value)
 {
     if(_rumblePakManager->sustainPositive == value)
     {
@@ -266,7 +266,7 @@ static void RumblePakManager::setSustainPositive(u8 value)
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_SUSTAIN_POS, value);
 }
 
-static void RumblePakManager::setSustainNegative(u8 value)
+static void RumblePakManager::setSustainNegative(uint8 value)
 {
     if(_rumblePakManager->sustainNegative == value)
     {
@@ -278,7 +278,7 @@ static void RumblePakManager::setSustainNegative(u8 value)
     RumblePakManager::sendCommandWithValue(__RUMBLE_CMD_SUSTAIN_NEG, value);
 }
 
-static void RumblePakManager::setBreak(u8 value)
+static void RumblePakManager::setBreak(uint8 value)
 {
     if(_rumblePakManager->breaking == value)
     {

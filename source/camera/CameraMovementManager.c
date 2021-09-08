@@ -83,7 +83,7 @@ void CameraMovementManager::destructor()
  *
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ ((unused)))
+void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute__ ((unused)))
 {
 	Camera camera = Camera::getInstance();
 

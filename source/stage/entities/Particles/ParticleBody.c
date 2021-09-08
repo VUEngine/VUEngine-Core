@@ -48,7 +48,7 @@ extern const Acceleration* _currentGravity;
  * @param owner
  * @param mass
  */
-void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity)
+void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	Base::constructor(owner, physicalSpecification, axisSubjectToGravity);
 }

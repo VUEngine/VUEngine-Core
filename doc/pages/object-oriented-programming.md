@@ -42,7 +42,7 @@ Then you must declare Hero class's specific attributes, to do so, declare the fo
     Character_ATTRIBUTES                                \
                                                         \
     /* hero has energy    */                            \
-    u8 energy;
+    uint8 energy;
 
 
 Notice that all of these macros have a backslash ("\") at the end of each line, you must be careful and always be sure that there are no blank or tab spaces after them. The reason to declare the class's attributes this way is because this allows to inherit methods/attributes, and at the same time allows to make the attributes private. Notice that in order for Hero to inherit Character's attributes to include `Character_ATTRIBUTES` in `Hero_ATTRIBUTES`.

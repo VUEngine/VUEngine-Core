@@ -58,7 +58,7 @@ singleton class CameraEffectManager : Object
 	// Target brightness for current fade effect
 	Brightness fxFadeTargetBrightness;
 	// Delay for current fade effect
-	u8 fxFadeDelay;
+	uint8 fxFadeDelay;
 	// Callback scope for current fade effect
 	Object fxFadeCallbackScope;
 

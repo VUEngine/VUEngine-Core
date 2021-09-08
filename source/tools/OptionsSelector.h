@@ -53,7 +53,7 @@ typedef struct Option
 	/// value of Option
 	void* value;
 	/// OptionType
-	u8 type;
+	uint8 type;
 	/// callback function to be executed for this menu option
 	void (*callback)(Object);
 	/// scope of callback function
@@ -101,15 +101,15 @@ class OptionsSelector : Object
 	// Current option node
 	VirtualNode currentOption;
 	// Printing column
-	u8 x;
+	uint8 x;
 	// Printing row
-	u8 y;
+	uint8 y;
 	// Number of columns per page
-	u16 cols;
+	uint16 cols;
 	// Number of rows per page
-	u16 rows;
+	uint16 rows;
 	// Width of a column (in chars)
-	u8 columnWidth;
+	uint8 columnWidth;
 	// Total number of options
 	int totalOptions;
 	// Current page index
@@ -122,11 +122,11 @@ class OptionsSelector : Object
 	char* font;
 
 	/// @publicsection
-	void constructor(u16 cols, u16 rows, char* font);
+	void constructor(uint16 cols, uint16 rows, char* font);
 	void doCurrentSelectionCallback();
-	void setColumnWidth(u8 width);
+	void setColumnWidth(uint8 width);
 	void setMarkCharacter(char* mark);
-	u8 getWidth();
+	uint8 getWidth();
 	void setOptions(VirtualList options);
 	void selectNext();
 	void selectPrevious();
@@ -134,7 +134,7 @@ class OptionsSelector : Object
 	bool selectPreviousColumn();
 	bool setSelectedOption(int optionIndex);
 	int getSelectedOption();
-	void printOptions(u8 x, u8 y);
+	void printOptions(uint8 x, uint8 y);
 	int getNumberOfOptions();
 }
 

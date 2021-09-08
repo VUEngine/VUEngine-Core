@@ -50,7 +50,7 @@
  * @param lifeSpan
  * @param mass
  */
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, lifeSpan);
@@ -86,7 +86,7 @@ void PhysicalParticle::destructor()
  * @param behavior
  * @return				Boolean that tells whether a body was set active(?)
  */
-bool PhysicalParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
+bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(Base::update(this, elapsedTime, behavior))
 	{
@@ -111,7 +111,7 @@ void PhysicalParticle::transform()
  * @param force
  * @param movementType
  */
-void PhysicalParticle::addForce(const Force* force, u32 movementType)
+void PhysicalParticle::addForce(const Force* force, uint32 movementType)
 {
 	if(__UNIFORM_MOVEMENT == movementType)
 	{

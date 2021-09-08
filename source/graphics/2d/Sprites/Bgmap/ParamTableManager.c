@@ -40,8 +40,8 @@
  */
 typedef struct ParamTableFreeData
 {
-	u32 param;
-	u32 recoveredSize;
+	uint32 param;
+	uint32 recoveredSize;
 } ParamTableFreeData;
 
 
@@ -156,7 +156,7 @@ void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForPar
 	BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager::getInstance());
 
 	// Clean param tables memory
-	for(u8* data = (u8*)this->paramTableBase; data < (u8*)__PARAM_TABLE_END; data++)
+	for(uint8* data = (uint8*)this->paramTableBase; data < (uint8*)__PARAM_TABLE_END; data++)
 	{
 		*data = 0;
 	}
@@ -167,7 +167,7 @@ void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForPar
  *
  * @return	The base address of the param table
  */
-u32 ParamTableManager::getParamTableBase()
+uint32 ParamTableManager::getParamTableBase()
 {
 	return this->paramTableBase;
 }
@@ -178,13 +178,13 @@ u32 ParamTableManager::getParamTableBase()
  * @param bgmapSprite	Sprite to base the calculation on
  * @return				Param table's size for the Sprite
  */
-u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
+uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite, "ParamTableManager::calculateSpriteParamTableSize: null sprite");
 
-	u16 spriteHead = Sprite::getHead(bgmapSprite);
-	u32 textureRows = Texture::getRows(Sprite::getTexture(bgmapSprite)) + __PARAM_TABLE_PADDING;
-	u32 size = 0;
+	uint16 spriteHead = Sprite::getHead(bgmapSprite);
+	uint32 textureRows = Texture::getRows(Sprite::getTexture(bgmapSprite)) + __PARAM_TABLE_PADDING;
+	uint32 size = 0;
 
 	if(__WORLD_AFFINE & spriteHead)
 	{
@@ -218,19 +218,19 @@ u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
  * @param bgmapSprite	Sprite for which the param table space will be allocated
  * @return				True if param table space was allocated
  */
-u32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
+uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
-	u32 size = ParamTableManager::calculateSpriteParamTableSize(this, bgmapSprite);
+	uint32 size = ParamTableManager::calculateSpriteParamTableSize(this, bgmapSprite);
 
 	if(0 == size)
 	{
 		return 0;
 	}
 
-	u32 paramAddress = 0;
+	uint32 paramAddress = 0;
 
 	//if there is space in the param table, allocate
 	if(this->paramTableBase + this->used + size < (__PARAM_TABLE_END))
@@ -300,7 +300,7 @@ bool ParamTableManager::defragmentProgressively()
 		{
 			BgmapSprite sprite = BgmapSprite::safeCast(node->data);
 
-			u32 spriteParam = BgmapSprite::getParam(sprite);
+			uint32 spriteParam = BgmapSprite::getParam(sprite);
 
 			// retrieve param
 			if(spriteParam > this->paramTableFreeData.param)

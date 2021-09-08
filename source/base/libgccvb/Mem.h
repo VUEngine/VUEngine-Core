@@ -45,19 +45,19 @@
 static class Mem : Object
 {
 	/// @publicsection
-	static void clear(BYTE* destination, u32 numberOfBYTES);
-	static inline void copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
-	static inline void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
-	static inline void copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
-	static inline void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
-	static inline void addWORD(WORD* destination, const WORD* source, u32 numberOfWORDS, u32 offset);
-	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
+	static void clear(BYTE* destination, uint32 numberOfBYTES);
+	static inline void copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
+	static inline void copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS);
+	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
+	static inline void addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset);
+	static inline void addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset);
+	static void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset);
 }
 
 // TODO: input registers should not be modified according to GCC's docs
 
 // Copy a block of data from one area in memory to another.
-static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
@@ -65,7 +65,7 @@ static inline void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numb
 	}
 }
 
-static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
+static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS)
 {
 	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
 	{
@@ -73,7 +73,7 @@ static inline void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 n
 	}
 }
 
-static inline void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
+static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
@@ -81,7 +81,7 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, u32 numb
 	}
 }
 
-static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
+static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
@@ -89,7 +89,7 @@ static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numbe
 	}
 }
 
-static inline void Mem::addWORD(WORD* destination, const WORD* source, u32 numberOfWORDS, u32 offset)
+static inline void Mem::addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{

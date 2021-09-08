@@ -68,10 +68,10 @@ class ObjectTexture : Texture
 	ObjectSprite owner;
 
 	/// @publicsection
-	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id, ObjectSprite owner);
+	void constructor(ObjectTextureSpec* objectTextureSpec, uint16 id, ObjectSprite owner);
 
 	override void rewrite();
-	override void setFrameAnimatedMulti(u16 frame);
+	override void setFrameAnimatedMulti(uint16 frame);
 }
 
 

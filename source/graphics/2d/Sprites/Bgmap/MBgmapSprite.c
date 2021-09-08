@@ -168,7 +168,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 {
 	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
 
-	s16 minimumSegment = 0;
+	int16 minimumSegment = 0;
 
 	if(VirtualList::getSize(this->textures))
 	{
@@ -323,16 +323,16 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-u16 MBgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
+uint16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
-	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
-	s16 gy = this->position.y + this->displacement.y - this->halfHeight;
-	s16 gp = this->position.parallax + this->displacement.parallax;
+	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
+	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
+	int16 gp = this->position.parallax + this->displacement.parallax;
 
 	int mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
@@ -348,12 +348,12 @@ u16 MBgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 		gy = _cameraFrustum->y0;
 	}
 
-	s16 mx = this->drawSpec.textureSource.mx + mxDisplacement;
-	s16 my = this->drawSpec.textureSource.my + myDisplacement;
-	s16 mp = this->drawSpec.textureSource.mp;
+	int16 mx = this->drawSpec.textureSource.mx + mxDisplacement;
+	int16 my = this->drawSpec.textureSource.my + myDisplacement;
+	int16 mp = this->drawSpec.textureSource.mp;
 
-	s16 w = 0;
-	s16 h = 0;
+	int16 w = 0;
+	int16 h = 0;
 
 	// set the world size
 	if(!this->mBgmapSpriteSpec->xLoop)
@@ -504,7 +504,7 @@ void MBgmapSprite::calculateSize()
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void MBgmapSprite::setMode(u16 display, u16 mode __attribute__ ((unused)))
+void MBgmapSprite::setMode(uint16 display, uint16 mode __attribute__ ((unused)))
 {
 	this->head = display | __WORLD_BGMAP;
 }

@@ -44,7 +44,7 @@ friend class VirtualList;
 /**
  * Class constructor
  */
-void Wireframe::constructor(u8 color)
+void Wireframe::constructor(uint8 color)
 {
 	// construct base object
 	Base::constructor();

@@ -136,8 +136,8 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 			if(AnimationController::isPlaying(animationController))
 			{
 				AnimationController::playAnimationFunction(firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController), this->scope);
-				s16 currentFrame = AnimationController::getActualFrame(animationController);
-				u8 frameDuration = AnimationController::getFrameDuration(animationController);
+				int16 currentFrame = AnimationController::getActualFrame(animationController);
+				uint8 frameDuration = AnimationController::getFrameDuration(animationController);
 				AnimationController::setActualFrame(firstAnimationController, currentFrame);
 				AnimationController::setFrameDuration(firstAnimationController, frameDuration);
 				AnimationController::stop(animationController);

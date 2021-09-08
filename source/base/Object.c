@@ -76,9 +76,9 @@ void Object::destructor()
 
 	// free the memory
 #ifdef __DEBUG
-	MemoryPool::free(_memoryPool, (void*)((u32)this - __DYNAMIC_STRUCT_PAD));
+	MemoryPool::free(_memoryPool, (void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
 #else
-	*((u32*)((u32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
+	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
 #endif
 }
 
@@ -100,7 +100,7 @@ bool Object::handleMessage(Telegram telegram __attribute__ ((unused)))
  * @param method		The method to execute on event
  * @param eventCode		The code of the event to listen to
  */
-void Object::addEventListener(Object listener, EventListener method, u32 eventCode)
+void Object::addEventListener(Object listener, EventListener method, uint32 eventCode)
 {
 	if(!listener || !method)
 	{
@@ -142,7 +142,7 @@ void Object::addEventListener(Object listener, EventListener method, u32 eventCo
  * @param method		The method attached to event listener
  * @param eventCode		The code of the event
  */
-void Object::removeEventListener(Object listener, EventListener method, u32 eventCode)
+void Object::removeEventListener(Object listener, EventListener method, uint32 eventCode)
 {
 	if(this->events)
 	{
@@ -169,7 +169,7 @@ void Object::removeEventListener(Object listener, EventListener method, u32 even
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
-void Object::removeEventListeners(EventListener method, u32 eventCode)
+void Object::removeEventListeners(EventListener method, uint32 eventCode)
 {
 	if(this->events)
 	{
@@ -212,7 +212,7 @@ void Object::removeEventListeners(EventListener method, u32 eventCode)
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
-void Object::removeEventListenerScopes(Object listener, u32 eventCode)
+void Object::removeEventListenerScopes(Object listener, uint32 eventCode)
 {
 	if(this->events)
 	{
@@ -254,7 +254,7 @@ void Object::removeEventListenerScopes(Object listener, u32 eventCode)
  *
  * @param eventCode		The code of the event
  */
-void Object::removeAllEventListeners(u32 eventCode)
+void Object::removeAllEventListeners(uint32 eventCode)
 {
 	if(this->events)
 	{
@@ -306,7 +306,7 @@ bool Object::hasActiveEventListeners()
  *
  * @param eventCode		The code of the event
  */
-void Object::fireEvent(u32 eventCode)
+void Object::fireEvent(uint32 eventCode)
 {
 	if(this->events)
 	{
@@ -418,7 +418,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	/*
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (u32)object, 18, 15, 8, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
 	*/
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
@@ -467,7 +467,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
  * @param delay
  * @param randomDelay
  */
-void Object::sendMessageTo(Object receiver, u32 message, u32 delay, u32 randomDelay)
+void Object::sendMessageTo(Object receiver, uint32 message, uint32 delay, uint32 randomDelay)
 {
 	MessageDispatcher::dispatchMessage(
 		delay + (randomDelay ? Utilities::random(Utilities::randomSeed(), randomDelay) : 0), 
@@ -486,7 +486,7 @@ void Object::sendMessageTo(Object receiver, u32 message, u32 delay, u32 randomDe
  * @param delay
  * @param randomDelay
  */
-void Object::sendMessageToSelf(u32 message, u32 delay, u32 randomDelay)
+void Object::sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay)
 {
 	Object::sendMessageTo(this, this, message, delay, randomDelay);
 }
@@ -506,7 +506,7 @@ void Object::discardAllMessages()
  *
  * @param message
  */
-void Object::discardMessages(u32 message)
+void Object::discardMessages(uint32 message)
 {
 	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), message);
 }

@@ -37,7 +37,7 @@ A PositionEntity is composed of the following attributes:
 	{
 	    EntityDefinition* entityDefinition; 			// pointer to the entity definition in ROM
 	    Vector3D position; 								// position in the world
-	    s16 id;											// entity's id
+	    int16 id;											// entity's id
 	    char* name;										// name
 	    struct PositionedEntity* childrenDefinitions;	// the children
 	    void* extraInfo;								// extra info
@@ -50,11 +50,11 @@ The StageDefinition struct has an special attribute that controls the behavior o
 
 	struct Streaming
 	{
-		u16 minimumSpareMilliSecondsToAllowStreaming;
-		u16 loadPadding;
-		u16 unloadPadding;
-		u16 streamingAmplitude;
-		u16 particleRemovalDelayCycles;
+		uint16 minimumSpareMilliSecondsToAllowStreaming;
+		uint16 loadPadding;
+		uint16 unloadPadding;
+		uint16 streamingAmplitude;
+		uint16 particleRemovalDelayCycles;
 	} streaming;
 
 The minimumSpareMilliSecondsToAllowStreaming attribute is used to skip the streaming processes during long-to-process game frames to help reduce frame rate drops or frame pacing issues.

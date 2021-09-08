@@ -43,7 +43,7 @@
 		typedef struct SingletonWrapper ## ClassName													\
 		{																								\
 			/* footprint to differentiate between objects and structs */								\
-			u32 objectMemoryFootprint;																	\
+			uint32 objectMemoryFootprint;																	\
 			/* declare the static instance */															\
 			ClassName ## _str instance;																	\
 		} SingletonWrapper ## ClassName;																\
@@ -56,7 +56,7 @@
 			&_singletonWrapper ## ClassName.instance;													\
 																										\
 		/* a flag to know when to allow construction */													\
-		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\
@@ -144,7 +144,7 @@ void MemoryPool::reset()
 	{
 		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
 		{
-			*((u32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
+			*((uint32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
 		}
 	}
 }
@@ -162,7 +162,7 @@ void MemoryPool::cleanUp()
 		int i = 0;
 		for(; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
 		{
-			if(!*((u32*)&this->poolLocation[pool][i]))
+			if(!*((uint32*)&this->poolLocation[pool][i]))
 			{
 				int j = i;
 				for(; j < this->poolSizes[pool][eBlockSize]; j++)
@@ -221,7 +221,7 @@ void MemoryPool::printDetailedUsage(int x, int y)
 		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
-			if(*((u32*)&this->poolLocation[pool][displacement]))
+			if(*((uint32*)&this->poolLocation[pool][displacement]))
 			{
 				totalUsedBlocks++;
 			}
@@ -358,7 +358,7 @@ void MemoryPool::free(BYTE* object)
 		if(object == &this->poolLocation[pool][displacement])
 		{
 			// free the block
-			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
+			*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
 			HardwareManager::resumeInterrupts();
 			return;
 		}
@@ -370,7 +370,7 @@ void MemoryPool::free(BYTE* object)
 #endif
 
 	// set address as free
-	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
+	*(uint32*)((uint32)object) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
 // Have to undefine these in order for the lp to not get corrupted by the checks on the this pointer
@@ -414,17 +414,17 @@ BYTE* MemoryPool::allocate(int numberOfBytes)
 
 			do
 			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation0) && i < numberOfOjects)
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocation0) && i < numberOfOjects)
 				{
-					*((u32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
+					*((uint32*)poolLocation0) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
 					HardwareManager::resumeInterrupts();
 					return poolLocation0;
 				}
 
-				if(__MEMORY_FREE_BLOCK_FLAG == *((u32*)poolLocation1) && 0 <= j)
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocation1) && 0 <= j)
 				{
-					*((u32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
+					*((uint32*)poolLocation1) = __MEMORY_USED_BLOCK_FLAG;
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
 					HardwareManager::resumeInterrupts();
 					return poolLocation1;

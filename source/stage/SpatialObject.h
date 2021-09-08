@@ -61,7 +61,7 @@ class SpatialObject : Object
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
 	virtual void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	virtual void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	virtual u32 getInGameType();
+	virtual uint32 getInGameType();
 }
 
 

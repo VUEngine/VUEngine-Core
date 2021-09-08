@@ -38,11 +38,11 @@
 class Stopwatch : Object
 {
 	// time elapsed
-	u32 milliSeconds;
+	uint32 milliSeconds;
 	// register
-	u32 interrupts;
-	u32 timerCounter;
-	u32 previousTimerCounter;
+	uint32 interrupts;
+	uint32 timerCounter;
+	uint32 previousTimerCounter;
 	float timeProportion;
 
 	/// @publicsection

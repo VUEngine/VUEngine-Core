@@ -56,7 +56,7 @@ typedef struct TextObjectSpriteSpec
 	const char* font;
 
 	/// Palette
-	u8 palette;
+	uint8 palette;
 
 } TextObjectSpriteSpec;
 
@@ -77,13 +77,13 @@ class TextObjectSprite : ObjectSprite
 {
 	const char* text;
 	const char* font;
-	u16 palette;
+	uint16 palette;
 	bool printed;
 
 	/// @publicsection
 	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
 
-	override u16 doRender(s16 index, bool evenFrame);
+	override uint16 doRender(int16 index, bool evenFrame);
 }
 
 

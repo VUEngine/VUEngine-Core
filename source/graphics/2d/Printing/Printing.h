@@ -128,8 +128,8 @@ enum PrintingDirection
  */
 typedef struct FontSize
 {
-	u16 x;
-	u16 y;
+	uint16 x;
+	uint16 y;
 
 } FontSize;
 
@@ -144,13 +144,13 @@ typedef struct FontSpec
 	CharSetSpec* charSetSpec;
 
 	/// at which character number the font starts
-	s16 offset;
+	int16 offset;
 
 	/// number of characters in this font
-	u16 characterCount;
+	uint16 characterCount;
 
 	/// number of characters per line in charset
-	u16 charactersPerLineInCharset;
+	uint16 charactersPerLineInCharset;
 
 	/// size of a single character (in chars) ({width, height})
 	FontSize fontSize;
@@ -211,13 +211,13 @@ singleton class Printing : Object
 	// Cache the last used font to speed up searchs
 	FontData* lastUsedFontData;
 	// Printing mode (Default or Debug)
-	u8 mode;
+	uint8 mode;
 	// Palette to use for printing
-	u8 palette;
+	uint8 palette;
 	// printing orientation
-	u8 orientation;
+	uint8 orientation;
 	// printing direction
-	u8 direction;
+	uint8 direction;
 
 	/// @publicsection
 
@@ -246,7 +246,7 @@ singleton class Printing : Object
 	 * @param precision		How many decimals to print
 	 * @param font	Name of font to use for printing
 	 */
-	void float(float value, u8 x, u8 y, int precision, const char* font);
+	void float(float value, uint8 x, uint8 y, int precision, const char* font);
 
 	/**
      * Get font spec and starting position in character memory
@@ -273,7 +273,7 @@ singleton class Printing : Object
 	 * @param length	digits to print
 	 * @param font		Name of font to use for printing
 	 */
-	void hex(WORD value, u8 x, u8 y, u8 length, const char* font);
+	void hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font);
 
 	/**
 	 * Print an Integer value
@@ -283,7 +283,7 @@ singleton class Printing : Object
 	 * @param y		Row to start printing at
 	 * @param font	Name of font to use for printing
 	 */
-	void int(int value, u8 x, u8 y, const char* font);
+	void int(int value, uint8 x, uint8 y, const char* font);
 
 	/**
      * Load engine's default font to end of char memory directly (for debug purposes)
@@ -304,7 +304,7 @@ singleton class Printing : Object
 	 * @param font	Name of font to use for printing
 	 * @param page	ROM's displacement multiplier
      */
-	void setFontPage(const char* font, u16 page);
+	void setFontPage(const char* font, uint16 page);
 
 	/**
      * Empties internal virtual list of registered fonts
@@ -320,13 +320,13 @@ singleton class Printing : Object
      * Sets the orientation for the following call to print.
 	 * Resets its self automatically to horizonal.
      */
-	void setOrientation(u8 value);
+	void setOrientation(uint8 value);
 
 	/**
      * Sets the direction for the following call to print.
 	 * Resets its self automatically to LTR (Left to Right).
      */
-	void setDirection(u8 value);
+	void setDirection(uint8 value);
 
 	/**
 	 * Reset the coordinates of the WORLD used for printing
@@ -341,7 +341,7 @@ singleton class Printing : Object
 	/**
 	 * Set palette
 	 */
-	void setPalette(u8 palette);
+	void setPalette(uint8 palette);
 
 	/**
 	 * Set the coordinates used for printing
@@ -351,7 +351,7 @@ singleton class Printing : Object
 	 * @param z				WORLD parallax value
 	 * @param parallax		WORLD parallax value
 	 */
-	void setCoordinates(s16 x, s16 y, s16 z, s8 parallax);
+	void setCoordinates(int16 x, int16 y, int16 z, int8 parallax);
 
 	/**
 	 * Set the coordinates of the WORLD used for printing
@@ -361,7 +361,7 @@ singleton class Printing : Object
 	 * @param z				WORLD parallax value
 	 * @param parallax		WORLD parallax value
 	 */
-	void setWorldCoordinates(s16 x, s16 y, s16 z, s8 parallax);
+	void setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax);
 
 	/**
 	 * Set the coordinates of the BGMAP used for printing
@@ -370,7 +370,7 @@ singleton class Printing : Object
 	 * @param my		BGMAP y coordinate
 	 * @param mp		BGMAP parallax value
 	 */
-	void setBgmapCoordinates(s16 mx, s16 my, s8 mp);
+	void setBgmapCoordinates(int16 mx, int16 my, int8 mp);
 
 	/**
 	 * Set WORLD's size
@@ -378,28 +378,28 @@ singleton class Printing : Object
 	 * @param w			WORLD's width
 	 * @param h			WORLD's height
 	 */
-	void setWorldSize(u16 w, u16 h);
+	void setWorldSize(uint16 w, uint16 h);
 
 	/**
 	 * Retrieve WORLD's gx
 	 *
 	 * @return			WORLD's gx
 	 */
-	s16 getWorldCoordinatesX();
+	int16 getWorldCoordinatesX();
 
 	/**
 	 * Retrieve WORLD's gy
 	 *
 	 * @return			WORLD's gy
 	 */
-	s16 getWorldCoordinatesY();
+	int16 getWorldCoordinatesY();
 
 	/**
 	 * Retrieve WORLD's gp
 	 *
 	 * @return			WORLD's gp
 	 */
-	s16 getWorldCoordinatesP();
+	int16 getWorldCoordinatesP();
 
 	/**
 	 * Print a string
@@ -433,7 +433,7 @@ singleton class Printing : Object
  	/**
  	 * Direct printing out method
  	 *
-     * @fn	void Printing::out(u8 x, u8 y, const char* string, const char* font)
+     * @fn	void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
      * @memberof  Printing
      *
      * @param x			Column to start printing at
@@ -441,14 +441,14 @@ singleton class Printing : Object
      * @param string	String to print
      * @param font		Name of font to use for printing
      */
-	void out(u8 x, u8 y, const char* string, const char* font);
+	void out(uint8 x, uint8 y, const char* string, const char* font);
 
 	/**
      * Render general print output layer
      *
      * @param textLayer	Number of layer (World) to set as printing layer
      */
-	void render(u8 textLayer);
+	void render(uint8 textLayer);
 
 	/**
      * Force printing layer to show up

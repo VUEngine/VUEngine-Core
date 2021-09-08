@@ -17,7 +17,7 @@ To remove a previously registered post-processing effect use the following code:
 
 A PostProcessingEffect is a pointer to a function with the following signature:
 
-	void PostProcessingEffects::dummyEffect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
+	void PostProcessingEffects::dummyEffect(uint32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
 	
 It is possible to pass a SpatialObject to the post processing effect so processed region of the screen can be relative to that Object.  
 

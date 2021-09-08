@@ -58,7 +58,7 @@ class UIContainer : Container
 	void constructor(UIContainerSpec* uiContainerSpec);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity);
 	void addEntities(PositionedEntity* entities);
-	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void synchronizeGraphics();
 }
 

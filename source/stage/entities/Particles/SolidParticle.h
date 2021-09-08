@@ -55,13 +55,13 @@ typedef struct SolidParticleSpec
 	fix10_6 bounciness;
 
 	/// object's in-game type
-	u32 inGameType;
+	uint32 inGameType;
 
 	/// layers in which I live
-	u32 layers;
+	uint32 layers;
 
 	/// layers to ignore when checking for collisions
-	u32 layersToIgnore;
+	uint32 layersToIgnore;
 
 	/// disable collision detection when the particle stops
 	bool disableCollisionOnStop;
@@ -89,7 +89,7 @@ class SolidParticle : PhysicalParticle
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
+	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
 	Shape getShape();
 	VirtualList getShapes();
 	override fix10_6 getWidth();
@@ -100,7 +100,7 @@ class SolidParticle : PhysicalParticle
 	override bool handleMessage(Telegram telegram);
 	override void transform();
 	override void setPosition(const Vector3D* position);
-	override u32 getInGameType();
+	override uint32 getInGameType();
 	override Velocity getVelocity();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void reset();

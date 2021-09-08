@@ -51,7 +51,7 @@ friend class Sprite;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, s16 internalId, const char* const name)
+void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name)
 {
 	// construct base object
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
@@ -100,7 +100,7 @@ void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused
 }
 
 // execute character's logic
-void AnimatedEntity::update(u32 elapsedTime)
+void AnimatedEntity::update(uint32 elapsedTime)
 {
 	// call base
 	Base::update(this, elapsedTime);
@@ -262,7 +262,7 @@ AnimationDescription* AnimatedEntity::getAnimationDescription()
 	return this->animationDescription;
 }
 
-void AnimatedEntity::setActualFrame(s16 frame)
+void AnimatedEntity::setActualFrame(int16 frame)
 {
 	if(!this->sprites)
 	{
@@ -317,7 +317,7 @@ void AnimatedEntity::setupListeners()
 	this->update = true;
 }
 
-s16 AnimatedEntity::getActualFrame()
+int16 AnimatedEntity::getActualFrame()
 {
 	if(!this->sprites)
 	{

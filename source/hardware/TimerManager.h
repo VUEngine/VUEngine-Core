@@ -70,43 +70,43 @@ enum TimerResolutionScales
 /// @ingroup hardware
 singleton class TimerManager : Object
 {
-	u32 milliseconds;
-	u32 microseconds;
-	u32 totalMilliseconds;
-	u16 resolution;
-	u16 timePerInterrupt;
-	u16 timePerInterruptUnits;
-	u16 minimumTimePerInterruptUS;
-	u16 minimumTimePerInterruptMS;
-	u16 maximumTimePerInterruptUS;
-	u16 maximumTimePerInterruptMS;
-	u8 tcrValue;
+	uint32 milliseconds;
+	uint32 microseconds;
+	uint32 totalMilliseconds;
+	uint16 resolution;
+	uint16 timePerInterrupt;
+	uint16 timePerInterruptUnits;
+	uint16 minimumTimePerInterruptUS;
+	uint16 minimumTimePerInterruptMS;
+	uint16 maximumTimePerInterruptUS;
+	uint16 maximumTimePerInterruptMS;
+	uint8 tcrValue;
 
 	/// @publicsection
 	static TimerManager getInstance();
 	static void interruptHandler();
 	void reset();
-	u16 getResolution();
-	u16 getResolutionInUS();
-	u16 getTimePerInterrupt();
+	uint16 getResolution();
+	uint16 getResolutionInUS();
+	uint16 getTimePerInterrupt();
 	float getTimePerInterruptInMS();
-	u32 getTimePerInterruptInUS();
-	u16 getTimerCounter();
-	u16 getTimePerInterruptUnits();
-	u16 getMinimumTimePerInterruptStep();
-	void setResolution(u16 resolution);
-	void setTimePerInterrupt(u16 timePerInterrupt);
-	void setTimePerInterruptUnits(u16 timePerInterruptUnits);
+	uint32 getTimePerInterruptInUS();
+	uint16 getTimerCounter();
+	uint16 getTimePerInterruptUnits();
+	uint16 getMinimumTimePerInterruptStep();
+	void setResolution(uint16 resolution);
+	void setTimePerInterrupt(uint16 timePerInterrupt);
+	void setTimePerInterruptUnits(uint16 timePerInterruptUnits);
 	void enable(bool flag);
-	u32 getMillisecondsElapsed();
-	u32 getTotalMillisecondsElapsed();
-	u32 resetMilliseconds();
+	uint32 getMillisecondsElapsed();
+	uint32 getTotalMillisecondsElapsed();
+	uint32 resetMilliseconds();
 	void configureTimerCounter();
 	int getStat();
 	void clearStat();
 	void initialize();
-	void wait(u32 milliSeconds);
-	void repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
+	void wait(uint32 milliSeconds);
+	void repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32));
 	void print(int x, int y);
 }
 

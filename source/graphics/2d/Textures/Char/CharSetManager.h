@@ -43,7 +43,7 @@ singleton class CharSetManager : Object
 	// Charsets pending writing
 	VirtualList charSetsPendingWriting;
 	// Next offset to be reclaimed
-	u16 freedOffset;
+	uint16 freedOffset;
 	bool preventDefragmentation;
 
 	/// @publicsection

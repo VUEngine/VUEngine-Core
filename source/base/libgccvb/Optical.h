@@ -46,8 +46,8 @@ static class Optical : Object
 
 static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical)
 {
-	s16 maximumXViewDistancePower = 0;
-	s16 maximumYViewDistancePower = 0;
+	int16 maximumXViewDistancePower = 0;
+	int16 maximumYViewDistancePower = 0;
 
 	pixelOptical.maximumXViewDistance >>= __PIXELS_PER_METER_2_POWER;
 	pixelOptical.maximumYViewDistance >>= __PIXELS_PER_METER_2_POWER;

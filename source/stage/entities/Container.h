@@ -90,15 +90,15 @@ class Container : SpatialObject
 	// Name
 	char* name;
 	// whether to inherit position, rotation and scale from environment (parents)
-	u8 inheritEnvironment;
+	uint8 inheritEnvironment;
 	// Flag to update graphics' attributes
 	bool invalidateGraphics;
 	// Flag for parent to know to delete it
-	u8 deleteMe;
+	uint8 deleteMe;
 	// Flag to hide the entity
-	u8 hidden;
+	uint8 hidden;
 	// Flag to recalculate global transformations
-	u8 invalidateGlobalTransformation;
+	uint8 invalidateGlobalTransformation;
 	// flag to enable calls to update method
 	bool update;
 	// flag to enable calls to update method
@@ -137,9 +137,9 @@ class Container : SpatialObject
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
-	void setInheritEnvironment(u8 inheritEnvironment);
-	void updateChildren(u32 elapsedTime);
-	void updateBehaviors(u32 elapsedTime);
+	void setInheritEnvironment(uint8 inheritEnvironment);
+	void updateChildren(uint32 elapsedTime);
+	void updateBehaviors(uint32 elapsedTime);
 	void synchronizeChildrenGraphics();
 
 	// Use: typeofclass(ClassName)
@@ -147,11 +147,11 @@ class Container : SpatialObject
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
-	virtual void update(u32 elapsedTime);
-	virtual void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	virtual void transformChildren(u8 invalidateTransformationFlag);
+	virtual void update(uint32 elapsedTime);
+	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
+	virtual void transformChildren(uint8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
-	virtual void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
 	virtual bool handlePropagatedMessage(int message);

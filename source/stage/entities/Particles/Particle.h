@@ -44,10 +44,10 @@ typedef struct ParticleSpec
 	AllocatorPointer allocator;
 
 	/// particle's minimum life span in milliseconds
-	u16 minimumLifeSpan;
+	uint16 minimumLifeSpan;
 
 	/// particle's life span delta in milliseconds
-	u16 lifeSpanDelta;
+	uint16 lifeSpanDelta;
 
 	/// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
@@ -82,18 +82,18 @@ class Particle : SpatialObject
 	// sprite
 	Sprite sprite;
 	// Particle's life span in milliseconds
-	s16 lifeSpan;
+	int16 lifeSpan;
 	bool expired;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
-	void setLifeSpan(s16 lifeSpan);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
+	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
-	void setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
+	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
 	void expire();
 	virtual void synchronizeGraphics();
-	virtual void addForce(const Force* force, u32 movementType);
-	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
+	virtual void addForce(const Force* force, uint32 movementType);
+	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
 	virtual void resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName);
 	virtual void suspend();

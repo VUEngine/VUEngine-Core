@@ -44,7 +44,7 @@
 		ClassName ClassName ## _new(__VA_ARGS__)
 
 
-#define __OBJECT_MEMORY_FOOT_PRINT		(__MEMORY_USED_BLOCK_FLAG + sizeof(u16) * 8)
+#define __OBJECT_MEMORY_FOOT_PRINT		(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
 
 // define the class's allocator
 #define __CLASS_NEW_DEFINITION(ClassName, ...)															\
@@ -59,14 +59,14 @@
 			extern MemoryPool _memoryPool;																\
 																										\
 			/* allocate object */																		\
-			u32* memoryBlock = (u32*)MemoryPool_allocate(_memoryPool, 									\
+			uint32* memoryBlock = (uint32*)MemoryPool_allocate(_memoryPool, 									\
 							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
 																										\
 			/* mark memory block as used by an object */												\
 			*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;													\
 																										\
 			/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */											\
-			ClassName this = (ClassName)((u32)memoryBlock + __DYNAMIC_STRUCT_PAD);						\
+			ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);						\
 																										\
 			/* check if properly created */																\
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");								\
@@ -91,7 +91,7 @@
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
 		void ClassName ## dummyMethodClassNew()
 
-#define	__DYNAMIC_STRUCT_PAD	sizeof(u32)
+#define	__DYNAMIC_STRUCT_PAD	sizeof(uint32)
 
 // like new in C++
 #define __NEW(ClassName, ...)																			\
@@ -103,25 +103,25 @@
 #define __NEW_BASIC(ClassName)																			\
 																										\
 		/* allocate data */																				\
-		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),									\
+		(ClassName*)((uint32)MemoryPool_allocate(MemoryPool_getInstance(),									\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
 #ifndef __RELEASE
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))					\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
-			ASSERT(object && *(u32*)object, "Deleting null object");									\
+			ASSERT(object && *(uint32*)object, "Deleting null object");									\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))				\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
-			ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 								\
+			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 								\
 				"Oop: deleting null basic object");														\
 			extern MemoryPool _memoryPool;																\
-			MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD));					\
+			MemoryPool_free(_memoryPool, (BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));					\
 		}																								\
 		else 																							\
 		{																								\
@@ -130,13 +130,13 @@
 #else
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))					\
 		{																								\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))				\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
-			*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
+			*(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
 		}																								\
 		else 																							\
 		{																								\
@@ -199,7 +199,7 @@
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(object && (__MEMORY_FREE_BLOCK_FLAG != *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD)))			\
+		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))			\
 
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
@@ -252,7 +252,7 @@
 			Delete the GAME/build/working/setupClasses.c file);											\
 																										\
 			/* check that no method is null */															\
-			u32 i = 0;																					\
+			uint32 i = 0;																					\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
 			{																							\
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## ## is abstract);		\
@@ -280,7 +280,7 @@
 			}																							\
 																										\
 			/* clean up the vtable */																	\
-			u32 i = 0;																					\
+			uint32 i = 0;																					\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
 			{																							\
 				((void (*(*))())&ClassName ## _vTable)[i] = NULL;										\
@@ -449,7 +449,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		typedef struct SingletonWrapper ## ClassName													\
 		{																								\
 			/* footprint to differentiate between objects and structs */								\
-			u32 objectMemoryFootprint;																	\
+			uint32 objectMemoryFootprint;																	\
 			/* declare the static instance */															\
 			ClassName ## _str instance;																	\
 		} SingletonWrapper ## ClassName;																\
@@ -458,7 +458,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;												\
 																										\
 		/* a flag to know when to allow construction */													\
-		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\
@@ -526,7 +526,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		__CLASS_NEW_END(ClassName);																		\
 																										\
 		/* a flag to know when to allow construction */													\
-		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\

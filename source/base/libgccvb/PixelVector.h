@@ -42,9 +42,9 @@ static class PixelVector : Object
 	static inline PixelVector zero();
 	static inline PixelVector get(PixelVector from, PixelVector to);
 	static inline PixelVector sum(PixelVector a, PixelVector b);
-	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax);
-	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
-	static inline u32 squareLength(PixelVector vector);
+	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
+	static inline PixelVector getFromVector3D(Vector3D vector3D, int16 parallax);
+	static inline uint32 squareLength(PixelVector vector);
 	static inline fix10_6 length(PixelVector vector);
 	static inline PixelVector getRelativeToCamera(PixelVector vector);
 	static inline void print(PixelVector vector, int x, int y);
@@ -69,7 +69,7 @@ static inline PixelVector PixelVector::sum(PixelVector a, PixelVector b)
 	return (PixelVector){a.x + b.x, a.y + b.y, a.z + b.z, a.parallax + b.parallax};
 }
 
-static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax)
+static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax)
 {
 	return (PixelVector)
 	{
@@ -80,7 +80,7 @@ static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVecto
 	};
 }
 
-static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, s16 parallax)
+static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, int16 parallax)
 {
 	return (PixelVector)
 	{
@@ -91,9 +91,9 @@ static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, s16 pa
 	};
 }
 
-static inline u32 PixelVector::squareLength(PixelVector vector)
+static inline uint32 PixelVector::squareLength(PixelVector vector)
 {
-	return ((u32)vector.x) * ((u32)vector.x) + ((u32)vector.y) * ((u32)vector.y) + ((u32)vector.z) * ((u32)vector.z);
+	return ((uint32)vector.x) * ((uint32)vector.x) + ((uint32)vector.y) * ((uint32)vector.y) + ((uint32)vector.z) * ((uint32)vector.z);
 }
 
 static inline fix10_6 PixelVector::length(PixelVector vector)

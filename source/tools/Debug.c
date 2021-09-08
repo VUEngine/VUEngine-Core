@@ -251,7 +251,7 @@ void Debug::hide()
  *
  * @return 			Current page's node's position
  */
-u8 Debug::getCurrentPageNumber()
+uint8 Debug::getCurrentPageNumber()
 {
 	return VirtualList::getNodePosition(this->pages, this->currentPage) + 1;
 }
@@ -266,7 +266,7 @@ void Debug::setBlackBackground()
  *
  * @param pressedKey	User input
  */
-void Debug::processUserInput(u16 pressedKey)
+void Debug::processUserInput(uint16 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -1000,8 +1000,8 @@ void Debug::charMemoryShowMemory(int increment __attribute__ ((unused)), int x _
 				numberOfHWORDS
 
 */
-	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
-	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
@@ -1064,7 +1064,7 @@ void Debug::showDebugBgmap()
  */
 void Debug::showBgmapSegment()
 {
-	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());;
 	int topBorder = 0;
 	int bottomBorder = 0;
 	int leftBorder = 0;
@@ -1072,8 +1072,8 @@ void Debug::showBgmapSegment()
 	int mxDisplacement = 0;
 	int myDisplacement = 0;
 
-	u8 i = 0;
-	u8 yOffset = 4;
+	uint8 i = 0;
+	uint8 yOffset = 4;
 
 	// print box
 	switch(this->viewedMapPart)
@@ -1196,10 +1196,10 @@ void Debug::showBgmapSegment()
 		}
 	}
 
-	u32 numberOfHWORDS = __SCREEN_WIDTH_IN_CHARS - leftBorder - rightBorder;
-	u32 offsetDisplacement = leftBorder;
+	uint32 numberOfHWORDS = __SCREEN_WIDTH_IN_CHARS - leftBorder - rightBorder;
+	uint32 offsetDisplacement = leftBorder;
 
-	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	for(int row = 0; row < __SCREEN_HEIGHT_IN_CHARS - topBorder - bottomBorder; row++)
 	{
@@ -1506,13 +1506,13 @@ void Debug::sramPage(int increment __attribute__ ((unused)), int x __attribute__
  */
 void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
-	u8 value;
+	uint8 value;
 	int i, j, totalPages;
 	char word[9];
 
 	totalPages = __TOTAL_SAVE_RAM >> 7;
 
-	extern u32 _sram_bss_end;
+	extern uint32 _sram_bss_end;
 
 	this->sramPage += increment;
 
@@ -1526,7 +1526,7 @@ void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribu
 	}
 
 	// get sram base address
-	u16* startAddress = (u16*)&_sram_bss_end;
+	uint16* startAddress = (uint16*)&_sram_bss_end;
 
 	// print status header
 	Printing::text(Printing::getInstance(), "SRAM STATUS", 1, y++, NULL);

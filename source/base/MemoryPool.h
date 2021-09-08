@@ -71,7 +71,7 @@ singleton class MemoryPool : Object
 	// pointer to the beginning of each memory pool
 	BYTE* poolLocation[__MEMORY_POOLS];
 	// pool's size and pool's block size
-	u16 poolSizes[__MEMORY_POOLS][3];
+	uint16 poolSizes[__MEMORY_POOLS][3];
 
 	/// @publicsection
 	static MemoryPool getInstance();

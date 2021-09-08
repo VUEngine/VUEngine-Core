@@ -135,7 +135,7 @@ void WireframeManager::reset()
 /**
  * Draw the wireframes to the frame buffers
  */
-static void WireframeManager::drawWireframes(u32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
+static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
 {
 	WireframeManager this = WireframeManager::getInstance();
 

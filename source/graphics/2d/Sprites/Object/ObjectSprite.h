@@ -55,10 +55,10 @@ typedef struct ObjectSpriteSpec
 	SpriteSpec spriteSpec;
 
 	/// the display mode (BGMAP, AFFINE, H-BIAS)
-	u16 bgmapMode;
+	uint16 bgmapMode;
 
 	/// flag to indicate in which display to show the bg texture
-	u16 display;
+	uint16 display;
 
 } ObjectSpriteSpec;
 
@@ -80,16 +80,16 @@ class ObjectSprite : Sprite
 	// parent sprite
 	ObjectSpriteContainer objectSpriteContainer;
 	// number of objects
-	s16 totalObjects;
+	int16 totalObjects;
 
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
-	s16 getTotalObjects();
+	int16 getTotalObjects();
 	void rewrite();
 	void invalidateObjectSpriteContainer();
-	override u16 doRender(s16 index, bool evenFrame);
+	override uint16 doRender(int16 index, bool evenFrame);
 	override void rotate(const Rotation* rotation);
-	override void setMode(u16 display, u16 mode);
+	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 	override void registerWithManager();
 }

@@ -170,19 +170,19 @@
 #define MAXIMUM_AUDIBLE_NOTE	D_8
 
 // Common wave forms
-extern const s8 glockenWaveForm[];
-extern const s8 linearWaveForm[];
-extern const s8 organWaveForm[];
-extern const s8 pianoWaveForm[];
-extern const s8 sawSquareWaveForm[];
-extern const s8 sawtoothWaveForm[];
-extern const s8 sinePlusAlphaWaveForm[];
-extern const s8 sineWaveForm[];
-extern const s8 squareDuty75WaveForm[];
-extern const s8 squareWaveForm[];
-extern const s8 triangleWaveForm[];
-extern const s8 trumpetWaveForm[];
-extern const s8 violinWaveForm[];
+extern const int8 glockenWaveForm[];
+extern const int8 linearWaveForm[];
+extern const int8 organWaveForm[];
+extern const int8 pianoWaveForm[];
+extern const int8 sawSquareWaveForm[];
+extern const int8 sawtoothWaveForm[];
+extern const int8 sinePlusAlphaWaveForm[];
+extern const int8 sineWaveForm[];
+extern const int8 squareDuty75WaveForm[];
+extern const int8 squareWaveForm[];
+extern const int8 triangleWaveForm[];
+extern const int8 trumpetWaveForm[];
+extern const int8 violinWaveForm[];
 
 
 #endif

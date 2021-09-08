@@ -84,7 +84,7 @@ void Clock::print(int col, int row, const char* font)
  *
  * @param millisecondsElapsed	Time elapsed between calls
  */
-void Clock::update(u32 millisecondsElapsed)
+void Clock::update(uint32 millisecondsElapsed)
 {
 	// increase count
 	if(this->paused)
@@ -94,7 +94,7 @@ void Clock::update(u32 millisecondsElapsed)
 
 	this->milliSeconds += millisecondsElapsed;
 
-	u32 currentSecond = Clock::getSeconds(this);
+	uint32 currentSecond = Clock::getSeconds(this);
 
 	if(currentSecond != this->previousSecond)
 	{
@@ -103,7 +103,7 @@ void Clock::update(u32 millisecondsElapsed)
 		Clock::fireEvent(this, kEventSecondChanged);
 		NM_ASSERT(!isDeleted(this), "Clock::update: deleted this during kEventSecondChanged");
 
-		u32 currentMinute = Clock::getMinutes(this);
+		uint32 currentMinute = Clock::getMinutes(this);
 
 		if(currentMinute != this->previousMinute)
 		{
@@ -130,7 +130,7 @@ void Clock::reset()
  *
  * @return	Current milliseconds
  */
-u32 Clock::getMilliSeconds()
+uint32 Clock::getMilliSeconds()
 {
 	return this->milliSeconds;
 }
@@ -140,9 +140,9 @@ u32 Clock::getMilliSeconds()
  *
  * @return	Current seconds
  */
-u32 Clock::getSeconds()
+uint32 Clock::getSeconds()
 {
-	return (u32)(this->milliSeconds / __MILLISECONDS_PER_SECOND);
+	return (uint32)(this->milliSeconds / __MILLISECONDS_PER_SECOND);
 }
 
 /**
@@ -150,9 +150,9 @@ u32 Clock::getSeconds()
  *
  * @return	Current minutes
  */
-u32 Clock::getMinutes()
+uint32 Clock::getMinutes()
 {
-	return (u32)(this->milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
+	return (uint32)(this->milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
 }
 
 /**
@@ -160,7 +160,7 @@ u32 Clock::getMinutes()
  *
  * @return	Current milliseconds
  */
-u32 Clock::getTime()
+uint32 Clock::getTime()
 {
 	return this->milliSeconds;
 }
@@ -190,7 +190,7 @@ void Clock::setTimeInSeconds(float totalSeconds)
  *
  * @param milliSeconds
  */
-void Clock::setTimeInMilliSeconds(u32 milliSeconds)
+void Clock::setTimeInMilliSeconds(uint32 milliSeconds)
 {
 	this->milliSeconds = milliSeconds;
 }
@@ -240,11 +240,11 @@ bool Clock::isPaused()
  * @param row
  * @param font
  */
-static void Clock::printTime(u32 milliSeconds, int col, int row, const char* font, u32 precision)
+static void Clock::printTime(uint32 milliSeconds, int col, int row, const char* font, uint32 precision)
 {
 	char output[] = "00:00";
-	u32 minutes = (u32)(milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
-	u32 seconds = (u32)(milliSeconds / __MILLISECONDS_PER_SECOND);
+	uint32 minutes = (uint32)(milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
+	uint32 seconds = (uint32)(milliSeconds / __MILLISECONDS_PER_SECOND);
 
 	char* minutesString = Utilities::itoa(minutes, 10, 2);
 
@@ -284,9 +284,9 @@ static void Clock::printTime(u32 milliSeconds, int col, int row, const char* fon
  * @param row
  * @param font
  */
-static void Clock::printDeciseconds(u32 milliSeconds, int col, int row, const char* font)
+static void Clock::printDeciseconds(uint32 milliSeconds, int col, int row, const char* font)
 {
-	u32 deciSeconds = ((milliSeconds + 50) / 100);
+	uint32 deciSeconds = ((milliSeconds + 50) / 100);
 	deciSeconds -= ((deciSeconds / 10) * 10);
 
 	Printing::int(Printing::getInstance(), deciSeconds, col, row, font);
@@ -299,9 +299,9 @@ static void Clock::printDeciseconds(u32 milliSeconds, int col, int row, const ch
  * @param row
  * @param font
  */
-static void Clock::printCentiseconds(u32 milliSeconds, int col, int row, const char* font)
+static void Clock::printCentiseconds(uint32 milliSeconds, int col, int row, const char* font)
 {
-	u32 centiSeconds = ((milliSeconds + 5) / 10);
+	uint32 centiSeconds = ((milliSeconds + 5) / 10);
 	centiSeconds -= ((centiSeconds / 100) * 100);
 
 	if(centiSeconds >= 10)
@@ -322,7 +322,7 @@ static void Clock::printCentiseconds(u32 milliSeconds, int col, int row, const c
  * @param row
  * @param font
  */
-static void Clock::printMilliseconds(u32 milliSeconds, int col, int row, const char* font)
+static void Clock::printMilliseconds(uint32 milliSeconds, int col, int row, const char* font)
 {
 	milliSeconds -= ((milliSeconds / 1000) * 1000);
 

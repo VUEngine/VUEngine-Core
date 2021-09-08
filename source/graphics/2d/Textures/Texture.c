@@ -42,7 +42,7 @@
  * @param textureSpec		Spec to use
  * @param id					Texture's identification
  */
-void Texture::constructor(TextureSpec* textureSpec, u16 id)
+void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 {
 	// construct base object
 	Base::constructor();
@@ -84,7 +84,7 @@ void Texture::destructor()
  *
  * @return				Texture's count usage
  */
-u8 Texture::getUsageCount()
+uint8 Texture::getUsageCount()
 {
 	return this->usageCount;
 }
@@ -400,7 +400,7 @@ TextureSpec* Texture::getTextureSpec()
  *
  * @param frame	Texture's frame to display
  */
-void Texture::setFrame(u16 frame)
+void Texture::setFrame(uint16 frame)
 {
 	if(frame == this->frame)
 	{
@@ -425,7 +425,7 @@ void Texture::setFrame(u16 frame)
  *
  * @return 	Texture's frame to display
  */
-u16 Texture::getFrame()
+uint16 Texture::getFrame()
 {
 	return this->frame;
 }
@@ -435,7 +435,7 @@ u16 Texture::getFrame()
  *
  * @param frame	Texture's frame to display
  */
-void Texture::setFrameAnimatedMulti(u16 frame __attribute__ ((unused)))
+void Texture::setFrameAnimatedMulti(uint16 frame __attribute__ ((unused)))
 {
 }
 
@@ -444,7 +444,7 @@ void Texture::setFrameAnimatedMulti(u16 frame __attribute__ ((unused)))
  *
  * @return	Number of total columns
  */
-u32 Texture::getTotalCols()
+uint32 Texture::getTotalCols()
 {
 	// determine the allocation type
 	switch(this->textureSpec->charSetSpec->allocationType)
@@ -486,7 +486,7 @@ u32 Texture::getTotalCols()
  *
  * @return	Number of total rows
  */
-u32 Texture::getTotalRows()
+uint32 Texture::getTotalRows()
 {
 	// determine the allocation type
 	switch(this->textureSpec->charSetSpec->allocationType)
@@ -527,7 +527,7 @@ u32 Texture::getTotalRows()
  *
  * @return	Number of frames for animation
  */
-u32 Texture::getNumberOfFrames()
+uint32 Texture::getNumberOfFrames()
 {
 	return this->textureSpec->numberOfFrames;
 }
@@ -538,7 +538,7 @@ u32 Texture::getNumberOfFrames()
  * @param loadIfNeeded	Flag to force loading if CharSet is NULL
  * @return				CharSet
  */
-CharSet Texture::getCharSet(u32 loadIfNeeded)
+CharSet Texture::getCharSet(uint32 loadIfNeeded)
 {
 	if(isDeleted(this->charSet) && loadIfNeeded)
 	{
@@ -563,7 +563,7 @@ BYTE* Texture::getMapSpec()
  *
  * @param palette	New palette
  */
-void Texture::setPalette(u8 palette)
+void Texture::setPalette(uint8 palette)
 {
 	this->palette = palette;
 }
@@ -573,7 +573,7 @@ void Texture::setPalette(u8 palette)
  *
  * @return	Palette
  */
-u8 Texture::getPalette()
+uint8 Texture::getPalette()
 {
 	return this->palette;
 }
@@ -583,7 +583,7 @@ u8 Texture::getPalette()
  *
  * @return	Number of rows
  */
-u32 Texture::getRows()
+uint32 Texture::getRows()
 {
 	//ASSERT(this->textureSpec, "Texture::getRows: 0 rows");
 
@@ -595,7 +595,7 @@ u32 Texture::getRows()
  *
  * @return	Number of columns
  */
-u32 Texture::getCols()
+uint32 Texture::getCols()
 {
 	return this->textureSpec->cols;
 }
@@ -605,7 +605,7 @@ u32 Texture::getCols()
  *
  * @return	Identification number
  */
-u16 Texture::getId()
+uint16 Texture::getId()
 {
 	return this->id;
 }
@@ -642,8 +642,8 @@ void Texture::putChar(Point* texturePixel, BYTE* newChar)
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		u32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureSpec->mapSpec[displacement];
+		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
+		uint32 charToReplace = this->textureSpec->mapSpec[displacement];
 		CharSet::putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -659,8 +659,8 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		u32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureSpec->mapSpec[displacement];
+		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
+		uint32 charToReplace = this->textureSpec->mapSpec[displacement];
 		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
@@ -680,7 +680,7 @@ bool Texture::isWritten()
  *
  * @param mapSpecDisplacement	Displacement
  */
-void Texture::setMapDisplacement(u32 mapDisplacement)
+void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
 

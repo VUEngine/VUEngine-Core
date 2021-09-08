@@ -58,7 +58,7 @@ friend class VirtualList;
  * @param internalId
  * @param name
  */
-void Entity::constructor(EntitySpec* entitySpec, s16 internalId, const char* const name)
+void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* const name)
 {
 	// construct base Container
 	Base::constructor(name);
@@ -132,7 +132,7 @@ void Entity::iAmDeletingMyself()
  *
  * @return		Internal ID
  */
-s16 Entity::getInternalId()
+int16 Entity::getInternalId()
 {
 	return this->internalId;
 }
@@ -143,7 +143,7 @@ s16 Entity::getInternalId()
  * @param id
  * @return		Child Entity
  */
-Entity Entity::getChildById(s16 id)
+Entity Entity::getChildById(int16 id)
 {
 	if(this->children)
 	{
@@ -251,15 +251,15 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
 	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->transformation.localPosition.z);
 
-	s16 left = 0;
-	s16 right = 0;
-	s16 top = 0;
-	s16 bottom = 0;
-	s16 front = 0;
-	s16 back = 0;
-	s16 halfWidth = 0;
-	s16 halfHeight = 0;
-	s16 halfDepth = 10;
+	int16 left = 0;
+	int16 right = 0;
+	int16 top = 0;
+	int16 bottom = 0;
+	int16 front = 0;
+	int16 back = 0;
+	int16 halfWidth = 0;
+	int16 halfHeight = 0;
+	int16 halfDepth = 10;
 
 	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
 	{
@@ -412,15 +412,15 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 	pixelGlobalPosition.y += positionedEntity->onScreenPosition.y;
 	pixelGlobalPosition.z += positionedEntity->onScreenPosition.z;
 
-	s16 left = 0;
-	s16 right = 0;
-	s16 top = 0;
-	s16 bottom = 0;
-	s16 front = 0;
-	s16 back = 0;
-	s16 halfWidth = 0;
-	s16 halfHeight = 0;
-	s16 halfDepth = 5;
+	int16 left = 0;
+	int16 right = 0;
+	int16 top = 0;
+	int16 bottom = 0;
+	int16 front = 0;
+	int16 back = 0;
+	int16 halfWidth = 0;
+	int16 halfHeight = 0;
+	int16 halfDepth = 5;
 
 	if(positionedEntity->entitySpec->spriteSpecs && positionedEntity->entitySpec->spriteSpecs[0])
 	{
@@ -440,14 +440,14 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 				for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
 				{
-					if(halfWidth < (s16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
+					if(halfWidth < (int16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
 					{
 						halfWidth = mBgmapSpriteSpec->textureSpecs[j]->cols << 2;
 					}
 
-					if(halfHeight < (s16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
+					if(halfHeight < (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
 					{
-						halfHeight = (s16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
+						halfHeight = (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
 					}
 				}
 
@@ -667,7 +667,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
  * @param extraInfo
  * @return					Entity instance
  */
-static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, const PositionedEntity* const positionedEntity)
+static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity)
 {
 	ASSERT(entitySpec, "Entity::load: null spec");
 	ASSERT(entitySpec->allocator, "Entity::load: no allocator defined");
@@ -678,7 +678,7 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 intern
 	}
 
 	// call the appropriate allocator to support inheritance
-	Entity entity = ((Entity (*)(EntitySpec*, s16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, internalId, name);
+	Entity entity = ((Entity (*)(EntitySpec*, int16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, internalId, name);
 
 	// process extra info
 	if(positionedEntity->extraInfo)
@@ -726,7 +726,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
  * @param internalId
  * @return					Entity
  */
-static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, int16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadFromSpec: null positionedEntity");
 
@@ -794,7 +794,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
  * @param internalId
  * @return					Entity
  */
-static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
@@ -896,7 +896,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
  *
  * @return		Boolean whether all children are instantiated
  */
-u32 Entity::areAllChildrenInstantiated()
+uint32 Entity::areAllChildrenInstantiated()
 {
 	if(this->entityFactory)
 	{
@@ -911,7 +911,7 @@ u32 Entity::areAllChildrenInstantiated()
  *
  * @return		Boolean whether all children are transformed
  */
-u32 Entity::areAllChildrenTransformed()
+uint32 Entity::areAllChildrenTransformed()
 {
 	if(this->entityFactory)
 	{
@@ -926,11 +926,11 @@ u32 Entity::areAllChildrenTransformed()
  *
  * @return		Boolean whether all children are ready
  */
-u32 Entity::areAllChildrenReady()
+uint32 Entity::areAllChildrenReady()
 {
 	if(this->entityFactory)
 	{
-		u32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
+		uint32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
 
 		if(!EntityFactory::hasEntitiesPending(this->entityFactory))
 		{
@@ -962,7 +962,7 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 
-			u16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
+			uint16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
 
 			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement);
 
@@ -1231,7 +1231,7 @@ bool Entity::addShapeFromSpecAtIndex(int shapeSpecIndex)
 	return true;
 }
 
-void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
+void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
 {
 	if(this->entitySpec->useZDisplacementInProjection)
 	{
@@ -1243,7 +1243,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	}
 }
 
-void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
+void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
 {
 	if(!this->sprites)
 	{
@@ -1266,7 +1266,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
 			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1290,7 +1290,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
 			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1312,7 +1312,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
 			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1333,7 +1333,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			s16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
 			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1357,7 +1357,7 @@ void Entity::perSpriteUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 }
 
-void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
+void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
 {
 	if(!this->sprites)
 	{
@@ -1371,7 +1371,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 
 	if(updatePosition && updateRotation && updateScale)
 	{
-		s16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
+		int16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
 		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
 
 		for(; node ; node = node->next)
@@ -1407,7 +1407,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
 	}
 	else if(updatePosition && updateScale)
 	{
-		s16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
+		int16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
 		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
 
 		for(; node ; node = node->next)
@@ -1456,7 +1456,7 @@ void Entity::condensedUpdateSprites(u32 updatePosition, u32 updateScale, u32 upd
  * @param environmentTransform
  * @param recursive
  */
-void Entity::initialTransform(const Transformation* environmentTransform, u32 recursive)
+void Entity::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
@@ -1484,7 +1484,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
  *
  * @param environmentTransform
  */
-void Entity::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
 	if(this->sprites)
 	{
@@ -1648,9 +1648,9 @@ bool Entity::isSpriteVisible(Sprite sprite, int pad)
 
 	PixelSize pixelSize = PixelSize::getFromSize(this->size);
 
-	s16 halfWidth	= pixelSize.x >> 1;
-	s16 halfHeight	= pixelSize.y >> 1;
-	s16 halfDepth	= pixelSize.z >> 1;
+	int16 halfWidth	= pixelSize.x >> 1;
+	int16 halfHeight	= pixelSize.y >> 1;
+	int16 halfDepth	= pixelSize.z >> 1;
 
 	int x = spritePosition.x;
 	int y = spritePosition.y;
@@ -1717,9 +1717,9 @@ bool Entity::isVisible(int pad, bool recursive)
 
 		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
-		s16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
-		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
-		s16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
+		int16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
+		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
+		int16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
 		int x = position2D.x;
 		int y = position2D.y;
@@ -1899,7 +1899,7 @@ bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
  *
  * @return		Type of entity within the game's logic
  */
-u32 Entity::getInGameType()
+uint32 Entity::getInGameType()
 {
 	return this->entitySpec->inGameType;
 }
@@ -2094,9 +2094,9 @@ Direction Entity::getDirection()
  *
  * @return		Shape layers
  */
-u32 Entity::getShapesLayers()
+uint32 Entity::getShapesLayers()
 {
-	u32 shapesLayers = 0;
+	uint32 shapesLayers = 0;
 
 	if(this->shapes)
 	{
@@ -2116,9 +2116,9 @@ u32 Entity::getShapesLayers()
 /**
  * Set Shape layers
  *
- * @param u32	Shape layers
+ * @param uint32	Shape layers
  */
-void Entity::setShapesLayers(u32 layers)
+void Entity::setShapesLayers(uint32 layers)
 {
 	if(this->shapes)
 	{
@@ -2138,9 +2138,9 @@ void Entity::setShapesLayers(u32 layers)
  *
  * @return		Shape layers to ignore
  */
-u32 Entity::getShapesLayersToIgnore()
+uint32 Entity::getShapesLayersToIgnore()
 {
-	u32 shapesLayersToIgnore = 0;
+	uint32 shapesLayersToIgnore = 0;
 
 	if(this->shapes)
 	{
@@ -2160,9 +2160,9 @@ u32 Entity::getShapesLayersToIgnore()
 /**
  * Set Shape layers to ignore
  *
- * @param u32	Shape layers to ignore
+ * @param uint32	Shape layers to ignore
  */
-void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
+void Entity::setShapesLayersToIgnore(uint32 layersToIgnore)
 {
 	if(this->shapes)
 	{
@@ -2180,9 +2180,9 @@ void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 /**
  * Set transparency
  *
- * @param u8	Transparency value
+ * @param uint8	Transparency value
  */
-void Entity::setTransparent(u8 transparent)
+void Entity::setTransparent(uint8 transparent)
 {
 	if(this->sprites)
 	{
@@ -2200,7 +2200,7 @@ void Entity::setTransparent(u8 transparent)
  *
  * @return		Axis
  */
-u16 Entity::getAxisForShapeSyncWithDirection()
+uint16 Entity::getAxisForShapeSyncWithDirection()
 {
 	return __ALL_AXIS;
 }

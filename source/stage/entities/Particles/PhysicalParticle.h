@@ -45,7 +45,7 @@ typedef struct PhysicalParticleSpec
 	fix10_6 massDelta;
 
 	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
-	u16 axisSubjectToGravity;
+	uint16 axisSubjectToGravity;
 
 } PhysicalParticleSpec;
 
@@ -70,11 +70,11 @@ class PhysicalParticle : Particle
 	Body body;
 
 	/// @publicsection
-	void constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan);
+	void constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
-	override void addForce(const Force* force, u32 movementType);
-	override bool update(u32 elapsedTime, void (* behavior)(Particle particle));
+	override void addForce(const Force* force, uint32 movementType);
+	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
 	override void setMass(fix10_6 mass);
 	override void hide();

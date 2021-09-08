@@ -38,7 +38,7 @@
 class ParticleBody : Body
 {
 	/// @publicsection
-	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity);
+	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	override void update();
 }
 

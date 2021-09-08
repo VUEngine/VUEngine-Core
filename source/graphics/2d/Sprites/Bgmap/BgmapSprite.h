@@ -58,7 +58,7 @@
 
 class BgmapSprite;
 
-typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
+typedef int16 (*ParamTableEffectMethod)(BgmapSprite);
 
 /**
  * A BgmapSprite spec
@@ -71,13 +71,13 @@ typedef struct BgmapSpriteSpec
 	SpriteSpec spriteSpec;
 
 	/// the display mode (BGMAP, AFFINE, H-BIAS)
-	u16 bgmapMode;
+	uint16 bgmapMode;
 
 	/// pointer to affine/hbias manipulation function
 	ParamTableEffectMethod applyParamTableEffect;
 
 	/// flag to indicate in which display to show the bg texture
-	u16 display;
+	uint16 display;
 
 } BgmapSpriteSpec;
 
@@ -102,18 +102,18 @@ class BgmapSprite : Sprite
 	// pointer to function that implements the param table based effects
 	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
-	u32 param;
+	uint32 param;
 	// param table offset
-	s16 paramTableRow;
+	int16 paramTableRow;
 
 	/// @publicsection
 	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner);
 	DrawSpec getDrawSpec();
 	void invalidateParamTable();
 	void setDrawSpec(const DrawSpec* const drawSpec);
-	s16 getParamTableRow();
-	u32 getParam();
-	void setParam(u32 param);
+	int16 getParamTableRow();
+	uint32 getParam();
+	void setParam(uint32 param);
 	void putChar(Point* texturePixel, BYTE* newChar);
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 	void processAffineEffects();
@@ -124,12 +124,12 @@ class BgmapSprite : Sprite
 
 	virtual bool hasSpecialEffects();
 
-	override u16 doRender(s16 index, bool evenFrame);
+	override uint16 doRender(int16 index, bool evenFrame);
 	override void processEffects();
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
 	override void resize(Scale scale, fix10_6 z);
-	override void setMode(u16 display, u16 mode);
+	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 }
 

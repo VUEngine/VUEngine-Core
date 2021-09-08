@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 {% for waveform in project.sound.waveforms -%}
-extern const s8 {{ waveform.name }}WaveForm[];
+extern const int8 {{ waveform.name }}WaveForm[];
 {% endfor %}
 
 #endif

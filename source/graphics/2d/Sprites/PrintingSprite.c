@@ -76,7 +76,7 @@ void PrintingSprite::destructor()
 	Base::destructor();
 }
 
-void PrintingSprite::setMode(u16 display __attribute__((unused)), u16 mode __attribute__((unused)))
+void PrintingSprite::setMode(uint16 display __attribute__((unused)), uint16 mode __attribute__((unused)))
 {}
 
 /**
@@ -87,7 +87,7 @@ void PrintingSprite::setMode(u16 display __attribute__((unused)), u16 mode __att
  *
  * @param evenFrame
  */
-u16 PrintingSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
+uint16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
@@ -120,37 +120,37 @@ void PrintingSprite::reset()
 	this->h = __SCREEN_HEIGHT - 1;
 }
 
-void PrintingSprite::setGValues(s16 gx, s16 gy, s16 gp)
+void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
 {
 	this->position.x = gx;
 	this->position.y = gy;
 	this->position.parallax = gp;
 }
 
-void PrintingSprite::setMValues(s16 mx, s16 my, s16 mp)
+void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
 {
 	this->drawSpec.textureSource.mx = mx;
 	this->drawSpec.textureSource.my = my;
 	this->drawSpec.textureSource.mp = mp;
 }
 
-void PrintingSprite::setSize(u16 w, u16 h)
+void PrintingSprite::setSize(uint16 w, uint16 h)
 {
 	this->w = w;
 	this->h = h;
 }
 
-s16 PrintingSprite::getGX()
+int16 PrintingSprite::getGX()
 {
 	return this->position.x;
 }
 
-s16 PrintingSprite::getGY()
+int16 PrintingSprite::getGY()
 {
 	return this->position.y;
 }
 
-s16 PrintingSprite::getGP()
+int16 PrintingSprite::getGP()
 {
 	return this->position.parallax;
 }

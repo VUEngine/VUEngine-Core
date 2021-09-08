@@ -42,19 +42,19 @@ typedef struct ParticleSystemSpec
 	EntitySpec entitySpec;
 
 	/// whether to delete or reuse expired particles
-	u8 recycleParticles;
+	uint8 recycleParticles;
 
 	/// minimum generation delay in milliseconds
-	u16 minimumSpawnDelay;
+	uint16 minimumSpawnDelay;
 
 	/// generation delay delta in milliseconds
-	u16 spawnDelayDelta;
+	uint16 spawnDelayDelta;
 
 	/// maximum number of alive particles
-	u8 maximumNumberOfAliveParticles;
+	uint8 maximumNumberOfAliveParticles;
 
 	/// maximum number of particles to spawn in each cycle
-	u8 maximumNumberOfParticlesToSpawnPerCycle;
+	uint8 maximumNumberOfParticlesToSpawnPerCycle;
 
 	/// array of sprites to select randomly
 	const SpriteSpec** spriteSpecs;
@@ -78,7 +78,7 @@ typedef struct ParticleSystemSpec
 	Vector3D maximumForce;
 
 	/// type of movement for the particles
-	u32 movementType;
+	uint32 movementType;
 
 } ParticleSystemSpec;
 
@@ -107,24 +107,24 @@ class ParticleSystem : Entity
 	// next spawn time
 	int nextSpawnTime;
 	// particles' life span increment
-	s16 particleLifeSpanIncrement;
+	int16 particleLifeSpanIncrement;
 	// number of sprite specs
-	s16 numberOfSpriteSpecs;
+	int16 numberOfSpriteSpecs;
 	// particle count
-	s8 particleCount;
+	int8 particleCount;
 	// pause flag
 	bool paused;
 	// Flag to keep spawning particles
 	bool loop;
 	// Counter of total spawned particles
-	s8 totalSpawnedParticles;
+	int8 totalSpawnedParticles;
 	// Particles' animation name
-	u8 maximumNumberOfAliveParticles;
+	uint8 maximumNumberOfAliveParticles;
 	// Flag to trigger animations in the particles
 	bool animationChanged;
 
 	/// @publicsection
-	void constructor(const ParticleSystemSpec* particleSystemSpec,  s16 internalId, const char* const name);
+	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
 	void setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec, bool reset);
 	bool handleMessage(Telegram telegram);
 	bool isPaused();
@@ -136,9 +136,9 @@ class ParticleSystem : Entity
 	void setLoop(bool value);
 	void deleteAllParticles();
 	void expireAllParticles();
-	void setMaximumNumberOfAliveParticles(u8 maximumNumberOfAliveParticles);
-	override void update(u32 elapsedTime);
-	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
+	override void update(uint32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
 	override void resume();
 	override void suspend();

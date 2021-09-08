@@ -47,37 +47,37 @@ enum ClockPrintPrecision
 class Clock : Object
 {
 	// time elapsed
-	u32 milliSeconds;
+	uint32 milliSeconds;
 	// register
-	u32 previousSecond;
+	uint32 previousSecond;
 	// register
-	u32 previousMinute;
+	uint32 previousMinute;
 	// flag to pause the clock
 	bool paused;
 
-	static void printTime(u32 milliseconds, int col, int row, const char* font, u32 precision);
-	static void printDeciseconds(u32 milliSeconds, int col, int row, const char* font);
-	static void printCentiseconds(u32 milliSeconds, int col, int row, const char* font);
-	static void printMilliseconds(u32 milliSeconds, int col, int row, const char* font);
+	static void printTime(uint32 milliseconds, int col, int row, const char* font, uint32 precision);
+	static void printDeciseconds(uint32 milliSeconds, int col, int row, const char* font);
+	static void printCentiseconds(uint32 milliSeconds, int col, int row, const char* font);
+	static void printMilliseconds(uint32 milliSeconds, int col, int row, const char* font);
 
 	/// @publicsection
 	void constructor();
-	u32 getElapsedTime();
-	u32 getMilliSeconds();
-	u32 getMinutes();
-	u32 getSeconds();
-	u32 getTime();
+	uint32 getElapsedTime();
+	uint32 getMilliSeconds();
+	uint32 getMinutes();
+	uint32 getSeconds();
+	uint32 getTime();
 	int getTimeInCurrentSecond();
 	bool isPaused();
 	void pause(bool paused);
 	void print(int col, int row, const char* font);
 	void reset();
 	void setTime(int hours, int minutes, int seconds);
-	void setTimeInMilliSeconds(u32 milliSeconds);
+	void setTimeInMilliSeconds(uint32 milliSeconds);
 	void setTimeInSeconds(float totalSeconds);
 	void start();
 	void stop();
-	void update(u32 millisecondsElapsed);
+	void update(uint32 millisecondsElapsed);
 }
 
 

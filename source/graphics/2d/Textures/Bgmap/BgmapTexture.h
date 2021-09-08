@@ -60,22 +60,22 @@ typedef const BgmapTextureSpec BgmapTextureROMSpec;
 class BgmapTexture : Texture
 {
 	// Segment
-	s8 segment;
+	int8 segment;
 	// Remaining rows to be written
-	s8 remainingRowsToBeWritten;
+	int8 remainingRowsToBeWritten;
 	// flip flag
 	bool horizontalFlip : 1;
 	bool verticalFlip : 1;
 
 	/// @publicsection
-	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset, u16 flip, bool backward);
+	static void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward);
 
-	void constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id);
-	s8 getRemainingRowsToBeWritten();
-	s16 getXOffset();
-	s16 getYOffset();
-	s8 getSegment();
-	void setSegment(s8 segment);
+	void constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id);
+	int8 getRemainingRowsToBeWritten();
+	int16 getXOffset();
+	int16 getYOffset();
+	int8 getSegment();
+	void setSegment(int8 segment);
 	void setHorizontalFlip(bool value);
 	void setVerticalFlip(bool value);
 	override bool write();

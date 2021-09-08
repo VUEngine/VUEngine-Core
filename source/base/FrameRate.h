@@ -42,12 +42,12 @@ singleton class FrameRate : Object
 	// elapsed time in current 50hz cycle
 	float gameFrameTotalTime;
 	// Frames per second
-	u16 fps;
-	u16 unevenFps;
+	uint16 fps;
+	uint16 unevenFps;
 
 	/// @publicsection
 	static FrameRate getInstance();
-	u16 getFps();
+	uint16 getFps();
 	void update();
 	void print(int col, int row);
 	void reset();

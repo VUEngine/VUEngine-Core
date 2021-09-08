@@ -163,10 +163,10 @@ void Shape::reset()
 /**
  * Setup
  *
- * @param layers				u32
- * @param layersToIgnore		u32
+ * @param layers				uint32
+ * @param layersToIgnore		uint32
  */
-void Shape::setup(u32 layers, u32 layersToIgnore)
+void Shape::setup(uint32 layers, uint32 layersToIgnore)
 {
 	this->layers = layers;
 	this->layersToIgnore = layersToIgnore;
@@ -835,22 +835,22 @@ int Shape::getNumberOfImpenetrableCollidingShapes()
 	return count;
 }
 
-u32 Shape::getLayers()
+uint32 Shape::getLayers()
 {
 	return this->layers;
 }
 
-void Shape::setLayers(u32 layers)
+void Shape::setLayers(uint32 layers)
 {
 	this->layers = layers;
 }
 
-u32 Shape::getLayersToIgnore()
+uint32 Shape::getLayersToIgnore()
 {
 	return this->layersToIgnore;
 }
 
-void Shape::setLayersToIgnore(u32 layersToIgnore)
+void Shape::setLayersToIgnore(uint32 layersToIgnore)
 {
 	this->layersToIgnore = layersToIgnore;
 }

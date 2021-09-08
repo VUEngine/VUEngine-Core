@@ -54,7 +54,7 @@ friend class VirtualList;
  * @param internalId
  * @param name
  */
-void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, s16 internalId, const char* const name)
+void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, int16 internalId, const char* const name)
 {
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
@@ -283,7 +283,7 @@ void ParticleSystem::processExpiredParticles()
 /**
  * @param elapsedTime
  */
-void ParticleSystem::update(u32 elapsedTime)
+void ParticleSystem::update(uint32 elapsedTime)
 {
 	if(ParticleSystem::isPaused(this))
 	{
@@ -337,7 +337,7 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{
-		u16 spawnedParticles = 0;
+		uint16 spawnedParticles = 0;
 		do 
 		{
 			++this->totalSpawnedParticles;
@@ -383,7 +383,7 @@ bool ParticleSystem::recycleParticle()
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 			Force force = ParticleSystem::getParticleSpawnForce(this);
-			s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
+			int16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + (this->particleSystemSpec->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta) : 0);
 
 			Particle::setup(particle, lifeSpan, &position, &force, this->particleSystemSpec->movementType, this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation, this->animationChanged);
 
@@ -494,7 +494,7 @@ void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused))
  */
 Particle ParticleSystem::spawnParticle()
 {
-	s16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+	int16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
@@ -511,7 +511,7 @@ Particle ParticleSystem::spawnParticle()
 /**
  * @param environmentTransform
  */
-void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
 	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
@@ -682,7 +682,7 @@ int ParticleSystem::computeNextSpawnTime()
  * @public
  * @param maximumNumberOfAliveParticles		Maximum number of particles alive
  */
-void ParticleSystem::setMaximumNumberOfAliveParticles(u8 maximumNumberOfAliveParticles)
+void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles)
 {
 	this->maximumNumberOfAliveParticles = maximumNumberOfAliveParticles;
 }

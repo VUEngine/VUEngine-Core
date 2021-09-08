@@ -44,7 +44,7 @@ class Entity : Container
 	// Used for collisions and streaming
 	Size size;
 	// Entity's internal id, set by the engine
-	s16 internalId;
+	int16 internalId;
 	// Entity factory
 	EntityFactory entityFactory;
 	// sprites list
@@ -61,12 +61,12 @@ class Entity : Container
 	bool allowCollisions;
 
 	/// @publicsection
-	static Entity instantiate(const EntitySpec* const entitySpec, s16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
-	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
-	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
+	static Entity instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
+	static Entity loadEntity(const PositionedEntity* const positionedEntity, int16 internalId);
+	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
-	void constructor(EntitySpec* entitySpec, s16 internalId, const char* const name);
+	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -74,14 +74,14 @@ class Entity : Container
 	bool addShapeFromSpecAtIndex(int shapeSpecIndex);
 	bool transformShapeAtSpecIndex(int shapeSpecIndex);
 	void addSprites(SpriteSpec** spritesSpecs);
-	u32 areAllChildrenInstantiated();
-	u32 areAllChildrenTransformed();
-	u32 areAllChildrenReady();
-	Entity getChildById(s16 id);
+	uint32 areAllChildrenInstantiated();
+	uint32 areAllChildrenTransformed();
+	uint32 areAllChildrenReady();
+	Entity getChildById(int16 id);
 	EntitySpec* getEntitySpec();
 	int getMapParallax();
-	s16 getId();
-	s16 getInternalId();
+	int16 getId();
+	int16 getInternalId();
 	VirtualList getSprites();
 	void transformShapes();
 	void setAnimation(void (*animation)());
@@ -93,16 +93,16 @@ class Entity : Container
 	void showShapes();
 	void hideShapes();
 	Direction getDirection();
-	u32 getShapesLayers();
-	void setShapesLayers(u32 layers);
-	u32 getShapesLayersToIgnore();
-	void setShapesLayersToIgnore(u32 layersToIgnore);
-	void setTransparent(u8 transparent);
+	uint32 getShapesLayers();
+	void setShapesLayers(uint32 layers);
+	uint32 getShapesLayersToIgnore();
+	void setShapesLayersToIgnore(uint32 layersToIgnore);
+	void setTransparent(uint8 transparent);
 	bool isSpriteVisible(Sprite sprite, int pad);
 	void setupShapes();
 	bool isVisible(int pad, bool recursive);
 	VirtualList getShapes();
-	void updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
+	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	virtual bool updateSpritePosition();
 	virtual bool updateSpriteRotation();
 	virtual bool updateSpriteScale();
@@ -110,11 +110,11 @@ class Entity : Container
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
-	virtual u16 getAxisForShapeSyncWithDirection();
+	virtual uint16 getAxisForShapeSyncWithDirection();
 	virtual void releaseSprites();
 	override void iAmDeletingMyself();
-	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
-	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
+	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
 	override void synchronizeGraphics();
@@ -131,7 +131,7 @@ class Entity : Container
 	override void hide();
 	override fix10_6 getBounciness();
 	override fix10_6 getFrictionCoefficient();
-	override u32 getInGameType();
+	override uint32 getInGameType();
 }
 
 

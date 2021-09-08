@@ -49,7 +49,7 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, s16 lifeSpan)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor();
@@ -125,7 +125,7 @@ void Particle::changeAnimation(const AnimationDescription* animationDescription,
  * @param behavior
  * @return				Returns true if the particle's life span has elapsed
  */
-bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
+bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(0 <= this->lifeSpan)
 	{
@@ -174,7 +174,7 @@ void Particle::synchronizeGraphics()
  * @param force
  * @param movementType
  */
-void Particle::addForce(const Force* force __attribute__ ((unused)), u32 movementType __attribute__ ((unused)))
+void Particle::addForce(const Force* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
 {
 }
 
@@ -183,7 +183,7 @@ void Particle::addForce(const Force* force __attribute__ ((unused)), u32 movemen
  *
  * @param lifeSpan
  */
-void Particle::setLifeSpan(s16 lifeSpan)
+void Particle::setLifeSpan(int16 lifeSpan)
 {
 	this->lifeSpan = lifeSpan;
 }
@@ -305,7 +305,7 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(s16 lifeSpan, const Vector3D* position, const Force* force, u32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation)
+void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation)
 {
 	Particle::reset(this);
 	Particle::changeAnimation(this, animationDescription, animationName, forceAnimation);
@@ -332,8 +332,8 @@ bool Particle::isVisible()
 
 	Texture texture = Sprite::getTexture(this->sprite);
 
-	s16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
-	s16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
+	int16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
+	int16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
 
 	if(!isDeleted(texture))
 	{

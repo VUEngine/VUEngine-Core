@@ -61,11 +61,11 @@ singleton class CommunicationManager : Object
 	volatile BYTE* asyncReceivedByte;
 	volatile int numberOfBytesPendingTransmission;
 	int numberOfBytesPreviouslySent;
-	volatile u32 broadcast;
+	volatile uint32 broadcast;
 	volatile bool connected;
-	volatile u8 communicationMode;
+	volatile uint8 communicationMode;
 
-	u32 timeout;
+	uint32 timeout;
 
 	/// @publicsection
 	static CommunicationManager getInstance();

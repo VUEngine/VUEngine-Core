@@ -35,7 +35,7 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-static u8* const _hardwareRegisters =			(u8*)0x02000000;
+static uint8* const _hardwareRegisters =			(uint8*)0x02000000;
 
 // hardware register mnemonics
 #define	__CCR		0x00	// Communication Control Register	(0x0200 0000)
@@ -73,7 +73,7 @@ singleton class HardwareManager : Object
 	// VPU manager
 	KeypadManager keypadManager;
 	// HW registry
-	u8* hwRegisters;
+	uint8* hwRegisters;
 
 	/// @publicsection
 	static HardwareManager getInstance();
@@ -95,10 +95,10 @@ singleton class HardwareManager : Object
 	void displayOn();
 	void enableKeypad();
 	void enableRendering();
-	void setupTimer(u16 timerResolution, u16 timePerInterrupt, u16 timePerInterruptUnits);
+	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
 	void lowerBrightness();
 	void print(int x, int y);
-	void setInterruptLevel(u8 level);
+	void setInterruptLevel(uint8 level);
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
@@ -157,7 +157,7 @@ static inline void HardwareManager::suspendInterrupts()
  */
 static inline void HardwareManager::enableMultiplexedInterrupts()
 {
-	u32 psw;
+	uint32 psw;
 
 	asm("			\n\
 		stsr psw,%0	\n\

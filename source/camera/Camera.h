@@ -55,17 +55,17 @@
 typedef struct CameraFrustum
 {
 	/// x0 frustum
-	s16 x0;
+	int16 x0;
 	/// y0 frustum
-	s16 y0;
+	int16 y0;
 	/// z0 frustum
-	s16 z0;
+	int16 z0;
 	/// x1 frustum
-	s16 x1;
+	int16 x1;
 	/// y1 frustum
-	s16 y1;
+	int16 y1;
 	/// z1 frustum
-	s16 z1;
+	int16 z1;
 
 } CameraFrustum;
 
@@ -113,7 +113,7 @@ singleton class Camera : Object
 	static Camera getInstance();
 	void capPosition();
 	void doneUITransform();
-	void focus(u32 checkIfFocusEntityIsMoving);
+	void focus(uint32 checkIfFocusEntityIsMoving);
 	void forceDisplacement(int flag);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();

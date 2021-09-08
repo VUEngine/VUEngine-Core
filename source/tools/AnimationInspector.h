@@ -81,7 +81,7 @@ singleton class AnimationInspector : Tool
 	override void update();
 	override void show();
 	override void hide();
-	override void processUserInput(u16 pressedKey);
+	override void processUserInput(uint16 pressedKey);
 }
 
 #endif

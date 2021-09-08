@@ -196,7 +196,7 @@ void SpatialObject::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unu
  *
  * @return		no type
  */
-u32 SpatialObject::getInGameType()
+uint32 SpatialObject::getInGameType()
 {
 	return kTypeNone;
 }

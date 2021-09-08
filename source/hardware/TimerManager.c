@@ -115,9 +115,9 @@ void TimerManager::reset()
 /**
  * Get resolution in US
  *
- * @return resolution in us	u16
+ * @return resolution in us	uint16
  */
-u16 TimerManager::getResolutionInUS()
+uint16 TimerManager::getResolutionInUS()
 {
 	switch(this->resolution)
 	{
@@ -144,9 +144,9 @@ u16 TimerManager::getResolutionInUS()
 /**
  * Get timer frequency
  *
- * @return frequency	u16
+ * @return frequency	uint16
  */
-u16 TimerManager::getResolution()
+uint16 TimerManager::getResolution()
 {
 	return this->resolution;
 }
@@ -154,9 +154,9 @@ u16 TimerManager::getResolution()
 /**
  * Set timer resolution
  *
- * @param resolution 	u16
+ * @param resolution 	uint16
  */
-void TimerManager::setResolution(u16 resolution)
+void TimerManager::setResolution(uint16 resolution)
 {
 	switch(resolution)
 	{
@@ -180,13 +180,13 @@ void TimerManager::setResolution(u16 resolution)
 
 	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
 
-	u32 timePerInterrupt = this->timePerInterrupt;
+	uint32 timePerInterrupt = this->timePerInterrupt;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 			{
-				u32 residue = timePerInterrupt % TimerManager::getResolutionInUS(this);
+				uint32 residue = timePerInterrupt % TimerManager::getResolutionInUS(this);
 
 				if(timePerInterrupt > residue)
 				{
@@ -211,9 +211,9 @@ void TimerManager::setResolution(u16 resolution)
 /**
  * Get applied timer counter
  *
- * @return timer counter 	u16
+ * @return timer counter 	uint16
  */
-u16 TimerManager::getTimerCounter()
+uint16 TimerManager::getTimerCounter()
 {
 	return TimerManager::computeTimerCounter(this);
 }
@@ -221,9 +221,9 @@ u16 TimerManager::getTimerCounter()
 /**
  * Get target time per interrupt
  *
- * @return timePerInterrupt 	u16
+ * @return timePerInterrupt 	uint16
  */
-u16 TimerManager::getTimePerInterrupt()
+uint16 TimerManager::getTimePerInterrupt()
 {
 	return this->timePerInterrupt;
 }
@@ -251,7 +251,7 @@ float TimerManager::getTimePerInterruptInMS()
 	return 0;
 }
 
-u32 TimerManager::getTimePerInterruptInUS()
+uint32 TimerManager::getTimePerInterruptInUS()
 {
 	switch(this->timePerInterruptUnits)
 	{
@@ -277,12 +277,12 @@ u32 TimerManager::getTimePerInterruptInUS()
 /**
  * Set target time per interrupt
  *
- * @param timePerInterrupt 	u16
+ * @param timePerInterrupt 	uint16
  */
-void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
+void TimerManager::setTimePerInterrupt(uint16 timePerInterrupt)
 {
-	s16 minimumTimePerInterrupt = TimerManager::getMinimumTimePerInterruptStep(this);
-	s16 maximumTimePerInterrupt = 1000;
+	int16 minimumTimePerInterrupt = TimerManager::getMinimumTimePerInterruptStep(this);
+	int16 maximumTimePerInterrupt = 1000;
 
 	switch(this->timePerInterruptUnits)
 	{
@@ -302,11 +302,11 @@ void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 			break;
 	}
 
-	if((s16)timePerInterrupt < minimumTimePerInterrupt)
+	if((int16)timePerInterrupt < minimumTimePerInterrupt)
 	{
 		timePerInterrupt = minimumTimePerInterrupt;
 	}
-	else if((s16)timePerInterrupt > maximumTimePerInterrupt)
+	else if((int16)timePerInterrupt > maximumTimePerInterrupt)
 	{
 		timePerInterrupt = maximumTimePerInterrupt;
 	}
@@ -317,9 +317,9 @@ void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 /**
  * Get target time per interrupt units
  *
- * @return scale 	u16
+ * @return scale 	uint16
  */
-u16 TimerManager::getTimePerInterruptUnits()
+uint16 TimerManager::getTimePerInterruptUnits()
 {
 	return this->timePerInterruptUnits;
 }
@@ -327,9 +327,9 @@ u16 TimerManager::getTimePerInterruptUnits()
 /**
  * Set target time per interrupt units
  *
- * @param timePerInterruptUnits 	u16
+ * @param timePerInterruptUnits 	uint16
  */
-void TimerManager::setTimePerInterruptUnits(u16 timePerInterruptUnits)
+void TimerManager::setTimePerInterruptUnits(uint16 timePerInterruptUnits)
 {
 	switch(timePerInterruptUnits)
 	{
@@ -348,7 +348,7 @@ void TimerManager::setTimePerInterruptUnits(u16 timePerInterruptUnits)
 	TimerManager::setResolution(this, this->resolution);
 }
 
-u16 TimerManager::getMinimumTimePerInterruptStep()
+uint16 TimerManager::getMinimumTimePerInterruptStep()
 {
 	switch(this->timePerInterruptUnits)
 	{
@@ -365,9 +365,9 @@ u16 TimerManager::getMinimumTimePerInterruptStep()
 	return 0;
 }
 
-u16 TimerManager::computeTimerCounter()
+uint16 TimerManager::computeTimerCounter()
 {
-	u16 timerCounter = 0;
+	uint16 timerCounter = 0;
 
 	switch(this->timePerInterruptUnits)
 	{
@@ -454,7 +454,7 @@ static void TimerManager::interruptHandler()
 	TimerManager::enableInterrupt(_timerManager, false);
 #endif
 
-	u32 elapsedMilliseconds = 0;
+	uint32 elapsedMilliseconds = 0;
 
 	// update clocks
 	switch(_timerManager->timePerInterruptUnits)
@@ -515,7 +515,7 @@ static void TimerManager::interruptHandler()
  *
  * @return			Milliseconds elapsed during the current game frame
  */
-u32 TimerManager::getMillisecondsElapsed()
+uint32 TimerManager::getMillisecondsElapsed()
 {
 	return this->milliseconds;
 }
@@ -525,7 +525,7 @@ u32 TimerManager::getMillisecondsElapsed()
  *
  * @return			Total elapsed milliseconds
  */
-u32 TimerManager::getTotalMillisecondsElapsed()
+uint32 TimerManager::getTotalMillisecondsElapsed()
 {
 	return this->totalMilliseconds;
 }
@@ -533,9 +533,9 @@ u32 TimerManager::getTotalMillisecondsElapsed()
 /**
  * Reset the total milliseconds elapsed
  */
-u32 TimerManager::resetMilliseconds()
+uint32 TimerManager::resetMilliseconds()
 {
-	u32 milliseconds = this->milliseconds;
+	uint32 milliseconds = this->milliseconds;
 
 	this->milliseconds = 0;
 	this->microseconds = 0;
@@ -550,7 +550,7 @@ u32 TimerManager::resetMilliseconds()
  */
 void TimerManager::configureTimerCounter()
 {
-	u16 timerCounter = TimerManager::computeTimerCounter(this);
+	uint16 timerCounter = TimerManager::computeTimerCounter(this);
 	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
 	_hardwareRegisters[__THR] = (timerCounter >> 8);
 }
@@ -591,13 +591,13 @@ void TimerManager::clearStat()
  *
  * @param milliSeconds		Time to wait
  */
-void TimerManager::wait(u32 milliSeconds)
+void TimerManager::wait(uint32 milliSeconds)
 {
 	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid
-	volatile u32 currentMilliseconds = this->milliseconds;
-	u32 waitStartTime = this->milliseconds;
-	volatile u32 *milliseconds = (u32*)&this->milliseconds;
+	volatile uint32 currentMilliseconds = this->milliseconds;
+	uint32 waitStartTime = this->milliseconds;
+	volatile uint32 *milliseconds = (uint32*)&this->milliseconds;
 
 	while ((*milliseconds - waitStartTime) < milliSeconds)
 	{
@@ -615,15 +615,15 @@ void TimerManager::wait(u32 milliSeconds)
  * @param object			Called method's scope
  * @param method			Method to call
  */
-void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
+void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32))
 {
 	if(!isDeleted(object) && method)
 	{
 		// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 		// making the last assignment invalid
-		volatile u32 currentMilliseconds = this->milliseconds;
+		volatile uint32 currentMilliseconds = this->milliseconds;
 
-		u32 i = 0;
+		uint32 i = 0;
 
 		for(; i < callTimes; i++)
 		{

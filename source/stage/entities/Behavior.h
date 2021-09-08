@@ -67,7 +67,7 @@ abstract class Behavior : Object
 	static Behavior create(const BehaviorSpec* behaviorSpec);
 
 	virtual void start(Container owner);
-	virtual void update(Container owner, u32 elapsedTime);
+	virtual void update(Container owner, uint32 elapsedTime);
 	virtual void pause(Container owner);
 	virtual void resume(Container owner);
 }

@@ -83,19 +83,19 @@
 typedef struct UserInput
 {
 	/// Currently pressed key(s)
-	u16 allKeys;
+	uint16 allKeys;
 	/// Currently pressed key(s)
-	u16 pressedKey;
+	uint16 pressedKey;
 	/// Released key(s)
-	u16 releasedKey;
+	uint16 releasedKey;
 	/// Held key(s)
-	u16 holdKey;
+	uint16 holdKey;
 	/// How long the key(s) have been held (in game frames)
-	u32 holdKeyDuration;
+	uint32 holdKeyDuration;
 	/// Previously pressed key(s)
-	u16 previousKey;
+	uint16 previousKey;
 	/// Low power flag
-	u16 powerFlag;
+	uint16 powerFlag;
 } UserInput;
 
 
@@ -129,15 +129,15 @@ singleton class KeypadManager : Object
 	void enable();
 	void enableInterrupt();
 	void flush();
-	u16 getHoldKey();
-	u32 getHoldKeyDuration();
-	u16 getPressedKey();
-	u16 getPreviousKey();
-	u16 getReleasedKey();
+	uint16 getHoldKey();
+	uint32 getHoldKeyDuration();
+	uint16 getPressedKey();
+	uint16 getPreviousKey();
+	uint16 getReleasedKey();
 	UserInput getUserInput();
 	int isEnabled();
 	void captureUserInput();
-	void registerInput(u16 inputToRegister);
+	void registerInput(uint16 inputToRegister);
 	long getAccumulatedUserInput();
 }
 

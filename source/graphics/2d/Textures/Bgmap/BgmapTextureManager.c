@@ -72,7 +72,7 @@ void BgmapTextureManager::reset()
 {
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
-	this->availableBgmapSegmentsForTextures = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
+	this->availableBgmapSegmentsForTextures = (uint32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
@@ -123,7 +123,7 @@ void BgmapTextureManager::reset()
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 					True if the required space was successfully allocated
  */
-int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegment, bool mustLiveAtEvenSegment)
+int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	int i = 0;
 	int j = 0;
@@ -134,8 +134,8 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 
 	TextureSpec* textureSpec = Texture::getTextureSpec(bgmapTexture);
 
-	u16 colsPad = (textureSpec->padding.cols << 1);// + (cols < 64 ? 1 : 0);
-	u16 rowsPad = (textureSpec->padding.rows << 1);// + (rows < 64 ? 1 : 0);
+	uint16 colsPad = (textureSpec->padding.cols << 1);// + (cols < 64 ? 1 : 0);
+	uint16 rowsPad = (textureSpec->padding.rows << 1);// + (rows < 64 ? 1 : 0);
 
 	int area = (cols + colsPad) * (rows + rowsPad);
 
@@ -181,7 +181,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 						{
 							if(cols + colsPad <= 64 - this->xOffset[i][j])
 							{
-								u16 id = Texture::getId(bgmapTexture);
+								uint16 id = Texture::getId(bgmapTexture);
 
 								// register bgmap spec
 								this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
@@ -316,9 +316,9 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 
 		if(bgmapTexture && 0 == BgmapTexture::getUsageCount(bgmapTexture))
 		{
-			u16 id = Texture::getId(bgmapTexture);
-			u16 cols = this->offset[id][kCols];
-			u16 rows = this->offset[id][kRows];
+			uint16 id = Texture::getId(bgmapTexture);
+			uint16 cols = this->offset[id][kCols];
+			uint16 rows = this->offset[id][kRows];
 
 			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
 
@@ -365,7 +365,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 								True if the required space was successfully allocated
  */
-BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, s16 minimumSegment, bool mustLiveAtEvenSegment)
+BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	int i = 0;
 
@@ -396,7 +396,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 								Allocated Texture
  */
-BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, s16 minimumSegment, bool mustLiveAtEvenSegment)
+BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	BgmapTexture bgmapTexture = NULL;
 
@@ -450,7 +450,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
  * @param id		Texture identification
  * @return 			X offset within a BGMAP segment
  */
-s16 BgmapTextureManager::getXOffset(int id)
+int16 BgmapTextureManager::getXOffset(int id)
 {
 	return this->offset[id][kXOffset];
 }
@@ -462,7 +462,7 @@ s16 BgmapTextureManager::getXOffset(int id)
  * @param id		Texture identification
  * @return 			Y offset within a BGMAP segment
  */
-s16 BgmapTextureManager::getYOffset(int id)
+int16 BgmapTextureManager::getYOffset(int id)
 {
 	return this->offset[id][kYOffset];
 }
@@ -473,7 +473,7 @@ s16 BgmapTextureManager::getYOffset(int id)
  * @private
  * @return 			Number of non used BGMAP segments for texture allocation
  */
-s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
+int16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
 	return this->availableBgmapSegmentsForTextures;
 }
@@ -484,7 +484,7 @@ s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
  * @private
  * @return 			BGMAP segment available for printing
  */
-s16 BgmapTextureManager::getPrintingBgmapSegment()
+int16 BgmapTextureManager::getPrintingBgmapSegment()
 {
 	return this->printingBgmapSegment;
 }
@@ -496,9 +496,9 @@ s16 BgmapTextureManager::getPrintingBgmapSegment()
  */
 void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
-	u32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
+	uint32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
 
-	this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
+	this->printingBgmapSegment = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
 
 	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment + 1;
 

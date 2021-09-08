@@ -37,7 +37,7 @@
 #define	__SRAM_DUMMY_READ_CYCLES		8
 #define	__SRAM_DUMMY_READ_LENGTH		100
 
-extern u32 _sram_bss_end;
+extern uint32 _sram_bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void SRAMManager::constructor()
 {
 	Base::constructor();
 
-	this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
+	this->saveSpaceStartAddress = (uint16*)&_sram_bss_end;
 
 	SRAMManager::initialize(this);
 }
@@ -87,7 +87,7 @@ void SRAMManager::initialize()
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
 	{
-		u16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
+		uint16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
 		SRAMManager::read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
 	}
 }
@@ -118,7 +118,7 @@ void SRAMManager::save(const BYTE* const source, int memberOffset, int dataSize)
 {
 	int i = 0;
 
-	u16* destination = this->saveSpaceStartAddress + memberOffset;
+	uint16* destination = this->saveSpaceStartAddress + memberOffset;
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
 
 	for(; i < dataSize; i++)
@@ -138,7 +138,7 @@ void SRAMManager::read(BYTE* destination, int memberOffset, int dataSize)
 {
 	int i = 0;
 
-	u16* source = this->saveSpaceStartAddress + memberOffset;
+	uint16* source = this->saveSpaceStartAddress + memberOffset;
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
 
 	for(; i < dataSize; i++)

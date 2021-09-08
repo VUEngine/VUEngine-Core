@@ -99,7 +99,7 @@ void TextObjectSprite::destructor()
  *
  * @param evenFrame
  */
-u16 TextObjectSprite::doRender(s16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+uint16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "TextObjectSprite::doRender: null texture");
 
@@ -124,8 +124,8 @@ u16 TextObjectSprite::doRender(s16 index __attribute__((unused)), bool evenFrame
 	//FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
-	u16 fourthWordValue = (this->head & 0x3000);
+	uint16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
+	uint16 fourthWordValue = (this->head & 0x3000);
 	ObjectAttributes* objectPointer = NULL;
 
 	for(; i < rows; i++)
@@ -139,7 +139,7 @@ u16 TextObjectSprite::doRender(s16 index __attribute__((unused)), bool evenFrame
 			int j = 0;
 			for(; j < cols; j++)
 			{
-				s32 objectIndex = index + j;
+				int32 objectIndex = index + j;
 
 				objectPointer = &_objectAttributesCache[objectIndex];
 				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
@@ -152,7 +152,7 @@ u16 TextObjectSprite::doRender(s16 index __attribute__((unused)), bool evenFrame
 
 		for(; j < cols; j++)
 		{
-			s32 objectIndex = index + j;
+			int32 objectIndex = index + j;
 
 			// TODO: Account for character's size
 //			int outputX = x + (j * fontData->fontSpec->fontSize.x) * xDirection;
@@ -178,10 +178,10 @@ u16 TextObjectSprite::doRender(s16 index __attribute__((unused)), bool evenFrame
 	return index;
 }
 
-void TextObjectSprite::out(u16 index)
+void TextObjectSprite::out(uint16 index)
 {
-	u32 i = 0;
-	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
+	uint32 i = 0;
+	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 
 	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
@@ -190,7 +190,7 @@ void TextObjectSprite::out(u16 index)
 		return;
 	}
 
-	u32 offset = CharSet::getOffset(fontData->charSet);
+	uint32 offset = CharSet::getOffset(fontData->charSet);
 
 	// print text
 	while(this->text[i])
@@ -205,17 +205,17 @@ void TextObjectSprite::out(u16 index)
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							s32 objectIndex = index + i;
+							int32 objectIndex = index + i;
 
-							u16 charNumber =
+							uint16 charNumber =
 								// offset of charset in char memory
 								offset +
 
 								// offset of character in charset
-								((u8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
+								((uint8)(this->text[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
 								// additional y offset in charset
-								(((u8)(this->text[i] - fontData->fontSpec->offset)
+								(((uint8)(this->text[i] - fontData->fontSpec->offset)
 									/ fontData->fontSpec->charactersPerLineInCharset
 									* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
 										* (fontData->fontSpec->fontSize.y - 1)) +

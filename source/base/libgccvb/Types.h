@@ -28,27 +28,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // quick, easy types
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned long u32;
+typedef unsigned char 		uint8;
+typedef unsigned short 		uint16;
+typedef unsigned int 		uint32;
+typedef unsigned long long	uint64;
 
-typedef signed char s8;
-typedef signed short s16;
-typedef signed long s32;
-typedef signed long long s64;
+typedef signed char 		int8;
+typedef signed short 		int16;
+typedef signed int	 		int32;
+typedef signed long long 	int64;
 
-typedef unsigned char BYTE;
-typedef unsigned short HWORD;
-typedef unsigned long WORD;
-
-// for fixed point maths
-#define f8 s8
-#define f16 s16
-#define f32 s32
+typedef unsigned char 		BYTE;
+typedef unsigned short 		HWORD;
+typedef unsigned long 		WORD;
 
 // define of boolean type
-typedef u8 bool;
+typedef uint8				bool;
 enum { false, true };
-
 
 #endif

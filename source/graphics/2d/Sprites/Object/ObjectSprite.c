@@ -110,31 +110,31 @@ void ObjectSprite::rewrite()
 
 	int charLocation = CharSet::getOffset(this->texture->charSet);
 
-	s16 halfWidth = this->halfWidth;
-	s16 halfHeight = this->halfHeight;
+	int16 halfWidth = this->halfWidth;
+	int16 halfHeight = this->halfHeight;
 
-	s16 cols = halfWidth >> 2;
-	s16 rows = halfHeight >> 2;
+	int16 cols = halfWidth >> 2;
+	int16 rows = halfHeight >> 2;
 
-	u16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 
-	s16 jDisplacement = 0;
+	int16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
 
 	ObjectAttributes* objectPointer = NULL;
 
-	for(s16 i = 0; i < rows; i++, jDisplacement += cols)
+	for(int16 i = 0; i < rows; i++, jDisplacement += cols)
 	{
-		s16 objectIndexStart = this->index + jDisplacement;
+		int16 objectIndexStart = this->index + jDisplacement;
 
-		for(s16 j = 0; j < cols; j++)
+		for(int16 j = 0; j < cols; j++)
 		{
-			s16 objectIndex = objectIndexStart + j;
+			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
 
-			s32 charNumberIndex = (jDisplacement + j) << 1;
-			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			int32 charNumberIndex = (jDisplacement + j) << 1;
+			uint16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			objectPointer->tile = fourthWordValue | charNumber;
 		}
 	}
@@ -228,24 +228,24 @@ void ObjectSprite::registerWithManager()
  *
  * @param evenFrame
  */
-u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
+uint16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
 	int charLocation = CharSet::getOffset(this->texture->charSet);
 
-	s16 xDisplacementIncrement = 8;
-	s16 yDisplacementIncrement = 8;
+	int16 xDisplacementIncrement = 8;
+	int16 yDisplacementIncrement = 8;
 
-	s16 halfWidth = this->halfWidth;
-	s16 halfHeight = this->halfHeight;
+	int16 halfWidth = this->halfWidth;
+	int16 halfHeight = this->halfHeight;
 
-	s16 cols = halfWidth >> 2;
-	s16 rows = halfHeight >> 2;
+	int16 cols = halfWidth >> 2;
+	int16 rows = halfHeight >> 2;
 
-	s16 xDisplacementDelta = 0;
-	s16 yDisplacementDelta = 0;
+	int16 xDisplacementDelta = 0;
+	int16 yDisplacementDelta = 0;
 
 	if(this->head & 0x2000)
 	{
@@ -261,32 +261,32 @@ u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 		yDisplacementDelta = __FLIP_Y_DISPLACEMENT;
 	}
 
-	s16 x = this->position.x - halfWidth + this->displacement.x - xDisplacementDelta;
-	s16 y = this->position.y - halfHeight + this->displacement.y - yDisplacementDelta;
+	int16 x = this->position.x - halfWidth + this->displacement.x - xDisplacementDelta;
+	int16 y = this->position.y - halfHeight + this->displacement.y - yDisplacementDelta;
 
-	u16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
-	u16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 
-	s16 yDisplacement = 0;
-	s16 jDisplacement = 0;
+	int16 yDisplacement = 0;
+	int16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
-	u16 result = 0;
+	uint16 result = 0;
 
 	ObjectAttributes* objectPointer = NULL;
 
-	for(s16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
+	for(int16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
-		s16 outputY = y + yDisplacement;
+		int16 outputY = y + yDisplacement;
 
-		s16 objectIndexStart = index + jDisplacement;
+		int16 objectIndexStart = index + jDisplacement;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
-			s16 j = 0;
+			int16 j = 0;
 			for(; j < cols; j++)
 			{
-				s16 objectIndex = objectIndexStart + j;
+				int16 objectIndex = objectIndexStart + j;
 
 				objectPointer = &_objectAttributesCache[objectIndex];
 				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
@@ -294,15 +294,15 @@ u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 			continue;
 		}
 
-		s16 j = 0;
-		s16 xDisplacement = 0;
+		int16 j = 0;
+		int16 xDisplacement = 0;
 
 		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
 		{
-			s16 objectIndex = objectIndexStart + j;
+			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
 
-			s16 outputX = x + xDisplacement;
+			int16 outputX = x + xDisplacement;
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
@@ -316,8 +316,8 @@ u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 			objectPointer->head = secondWordValue;
 			objectPointer->jy = outputY;
 
-			s32 charNumberIndex = (jDisplacement + j) << 1;
-			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			int32 charNumberIndex = (jDisplacement + j) << 1;
+			uint16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			objectPointer->tile = fourthWordValue | charNumber;
 
 			result = index;
@@ -335,7 +335,7 @@ u16 ObjectSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
  *
  * @return				Number of used OBJECTs
  */
-s16 ObjectSprite::getTotalObjects()
+int16 ObjectSprite::getTotalObjects()
 {
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
@@ -351,7 +351,7 @@ s16 ObjectSprite::getTotalObjects()
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void ObjectSprite::setMode(u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+void ObjectSprite::setMode(uint16 display __attribute__ ((unused)), uint16 mode __attribute__ ((unused)))
 {}
 
 /**

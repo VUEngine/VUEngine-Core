@@ -46,10 +46,10 @@ typedef struct ActorSpec
 	bool createBody;
 
 	/// axis subject to gravity
-	u16 axisSubjectToGravity;
+	uint16 axisSubjectToGravity;
 
 	/// axis around which to rotate the entity when syncronizing with body
-	u16 axisForSynchronizationWithBody;
+	uint16 axisForSynchronizationWithBody;
 
 } ActorSpec;
 
@@ -73,10 +73,10 @@ class Actor : AnimatedEntity
 	Rotation previousRotation;
 
 	/// @publicsection
-	void constructor(const ActorSpec* actorSpec, s16 internalId, const char* const name);
+	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 	void initializeStateMachine(State state);
-	bool hasChangedDirection(u16 axis);
-	void changeDirectionOnAxis(u16 axis);
+	bool hasChangedDirection(uint16 axis);
+	void changeDirectionOnAxis(uint16 axis);
 	bool isInsideGame();
 	StateMachine getStateMachine();
 	void moveUniformly(Velocity* velocity);
@@ -85,10 +85,10 @@ class Actor : AnimatedEntity
 	Body getBody();
 	void takeHitFrom(Actor other);
 	bool isMoving();
-	u16 getMovementState();
+	uint16 getMovementState();
 	virtual void addForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
-	virtual void stopMovement(u16 axis);
+	virtual void stopMovement(uint16 axis);
 	virtual void syncPositionWithBody();
 	virtual void syncRotationWithBody();
 	virtual void syncRotationWithBodyAfterBouncing(SpatialObject collidingObject);
@@ -100,9 +100,9 @@ class Actor : AnimatedEntity
 	virtual bool registerCollidingShapes();
 	virtual fix10_6 getMaximumSpeed();
 	override void iAmDeletingMyself();
-	override void update(u32 elapsedTime);
-	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	override void update(uint32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
+	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void resume();
 	override bool handleMessage(Telegram telegram);
 	override void setLocalPosition(const Vector3D* position);

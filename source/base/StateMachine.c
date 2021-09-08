@@ -139,7 +139,7 @@ void StateMachine::swapState(State newState)
  * @param newState	state to push
  * @return 			Resulting stack's size
  */
-u32 StateMachine::pushState(State newState)
+uint32 StateMachine::pushState(State newState)
 {
 	if(!newState)
 	{
@@ -173,7 +173,7 @@ u32 StateMachine::pushState(State newState)
  *
  * @return 			Resulting stack's size
  */
-u32 StateMachine::popStateWithoutResume()
+uint32 StateMachine::popStateWithoutResume()
 {
 	// return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)
@@ -212,7 +212,7 @@ void StateMachine::popAllStates()
  *
  * @return 			Resulting stack's size
  */
-u32 StateMachine::popState()
+uint32 StateMachine::popState()
 {
 	// return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)

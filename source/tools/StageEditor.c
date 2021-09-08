@@ -200,7 +200,7 @@ void StageEditor::hide()
  *
  * @param pressedKey	User input
  */
-void StageEditor::processUserInput(u16 pressedKey)
+void StageEditor::processUserInput(uint16 pressedKey)
 {
 	if(!this->gameState)
 	{
@@ -479,7 +479,7 @@ void StageEditor::selectNextEntity()
  * @private
  * @param pressedKey	The controller button pressed by the user
  */
-void StageEditor::moveCamera(u32 pressedKey)
+void StageEditor::moveCamera(uint32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -574,7 +574,7 @@ void StageEditor::moveCamera(u32 pressedKey)
  * @private
  * @param pressedKey	The controller button pressed by the user
  */
-void StageEditor::changeProjection(u32 pressedKey)
+void StageEditor::changeProjection(uint32 pressedKey)
 {
 	Optical optical = *_optical;
 
@@ -668,7 +668,7 @@ void StageEditor::changeProjection(u32 pressedKey)
  * @private
  * @param pressedKey	The controller button pressed by the user
  */
-void StageEditor::translateEntity(u32 pressedKey)
+void StageEditor::translateEntity(uint32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -865,7 +865,7 @@ void StageEditor::showSelectedUserObject()
  * @private
  * @param pressedKey	The controller button pressed by the user
  */
-void StageEditor::selectUserObject(u32 pressedKey)
+void StageEditor::selectUserObject(uint32 pressedKey)
 {
 	if(pressedKey & K_LU)
 	{
@@ -936,8 +936,8 @@ void StageEditor::printEntityPosition()
 {
 	int x = 1;
 	int y = 2;
-	u8 controlsXPos = 38;
-	u8 controlsYPos = 2;
+	uint8 controlsXPos = 38;
+	uint8 controlsYPos = 2;
 
 	Printing::text(Printing::getInstance(), "MOVE OBJECT", x, y++, NULL);
 
@@ -1024,8 +1024,8 @@ void StageEditor::printProjectionValues()
 {
 	int x = 1;
 	int y = 2;
-	u8 controlsXPos = 38;
-	u8 controlsYPos = 2;
+	uint8 controlsXPos = 38;
+	uint8 controlsYPos = 2;
 
 	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
 	controlsYPos++;
@@ -1058,8 +1058,8 @@ void StageEditor::printProjectionValues()
  */
 void StageEditor::printUserObjects()
 {
-	u8 controlsXPos = 38;
-	u8 controlsYPos = 2;
+	uint8 controlsXPos = 38;
+	uint8 controlsYPos = 2;
 
 	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
@@ -1077,7 +1077,7 @@ void StageEditor::printUserObjects()
  * @memberof 	StageEditor
  * @private
  */
-void StageEditor::printTranslationStepSize(u8 x, u8 y)
+void StageEditor::printTranslationStepSize(uint8 x, uint8 y)
 {
 	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", x, y, NULL);
 	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);

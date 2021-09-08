@@ -46,7 +46,7 @@ struct SaveData;
 singleton class SRAMManager : Object
 {
 	// save space start address
-	u16* saveSpaceStartAddress;
+	uint16* saveSpaceStartAddress;
 
 	/// @publicsection
 	static SRAMManager getInstance();

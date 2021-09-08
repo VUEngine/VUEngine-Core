@@ -48,31 +48,31 @@ class AnimationController : Object
 	// a pointer to the animation function being played
 	const AnimationFunction* animationFunction;
 	// actual animation's frame to show
-	s16 actualFrame;
+	int16 actualFrame;
 	// previous animation's frame shown
-	u8 previousFrameValue;
+	uint8 previousFrameValue;
 	// the number of game cycles that an animation frame is shown
-	u8 frameDuration;
+	uint8 frameDuration;
 	// frame delay decrement update cycle
-	u8 frameCycleDecrement;
+	uint8 frameCycleDecrement;
 	// flag to know if playing an animation
-	u8 playing;
+	uint8 playing;
 	// frame changed flag
-	u8 animationFrameChanged;
+	uint8 animationFrameChanged;
 
 	/// @publicsection
 	void constructor();
 	AnimationCoordinator getAnimationCoordinator();
 	void setAnimationCoordinator(AnimationCoordinator animationCoordinator);
-	s16 getActualFrame();
-	s16 getActualFrameIndex();
-	u8 getCols();
-	u8 getFrameCycleDecrement();
-	u8 getFrameDuration();
+	int16 getActualFrame();
+	int16 getActualFrameIndex();
+	uint8 getCols();
+	uint8 getFrameCycleDecrement();
+	uint8 getFrameDuration();
 	int getMapType();
 	int getNumberOfFrames();
 	const AnimationFunction* getPlayingAnimationFunction();
-	u8 getRows();
+	uint8 getRows();
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
 	void pause(bool pause);
@@ -81,9 +81,9 @@ class AnimationController : Object
 	void playAnimationFunction(const AnimationFunction* animationFunction, Object scope);
 	void nextFrame();
 	void previousFrame();
-	bool setActualFrame(s16 actualFrame);
-	void setFrameCycleDecrement(u8 frameCycleDecrement);
-	void setFrameDuration(u8 frameDuration);
+	bool setActualFrame(int16 actualFrame);
+	void setFrameCycleDecrement(uint8 frameCycleDecrement);
+	void setFrameDuration(uint8 frameDuration);
 	void stop();
 	bool update(Clock clock);
 	bool updateAnimation();

@@ -78,10 +78,10 @@ void Stopwatch::update()
 
 float Stopwatch::lap()
 {
-	extern u8* const _hardwareRegisters;
+	extern uint8* const _hardwareRegisters;
 
 	TimerManager::enable(TimerManager::getInstance(), false);
-	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 	TimerManager::enable(TimerManager::getInstance(), true);
 
 	if(this->previousTimerCounter < currentTimerCounter)
@@ -100,7 +100,7 @@ float Stopwatch::lap()
 
 	this->previousTimerCounter = currentTimerCounter;
 
-	this->milliSeconds += (u32)elapsedTime;
+	this->milliSeconds += (uint32)elapsedTime;
 
 	return elapsedTime;
 }

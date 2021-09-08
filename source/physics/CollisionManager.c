@@ -116,14 +116,14 @@ void CollisionManager::destroyShape(Shape shape)
 }
 
 // calculate collisions
-u32 CollisionManager::update(Clock clock)
+uint32 CollisionManager::update(Clock clock)
 {
 	if(clock->paused)
 	{
 		return false;
 	}
 
-	u32 returnValue = false;
+	uint32 returnValue = false;
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;

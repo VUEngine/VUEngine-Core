@@ -36,7 +36,7 @@ KeypadManager _keypadManager = NULL;
 //											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-static u32 _seed = 7; /* Seed value */
+static uint32 _seed = 7; /* Seed value */
 static char numbers[17] = "0123456789ABCDEF";
 
 static void Utilities::setClock(Clock clock)
@@ -65,7 +65,7 @@ static int Utilities::intLength(int value)
 	return length;
 }
 
-static char* Utilities::itoa(u32 num, u32 base, u32 digits)
+static char* Utilities::itoa(uint32 num, uint32 base, uint32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
 	int i = 0;
@@ -136,7 +136,7 @@ static void Utilities::resetRandomSeed()
 /*
  * Taken from Shokwav's N64 demo
  */
-static u32 Utilities::randomSeed()
+static uint32 Utilities::randomSeed()
 {
 	if(!_seed)
 	{
@@ -151,7 +151,7 @@ static u32 Utilities::randomSeed()
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
-static int Utilities::random(u32 seed, int randnums)
+static int Utilities::random(uint32 seed, int randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
 	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
@@ -186,14 +186,14 @@ static int Utilities::getDigitCount(int value)
 	return size;
 }
 
-static u32 Utilities::reverse(u32 x, int bits)
+static uint32 Utilities::reverse(uint32 x, int bits)
 {
     x = ((x & 0x55555555) << 1) | ((x & 0xAAAAAAAA) >> 1);
     x = ((x & 0x33333333) << 2) | ((x & 0xCCCCCCCC) >> 2);
     x = ((x & 0x0F0F0F0F) << 4) | ((x & 0xF0F0F0F0) >> 4);
     x = ((x & 0x00FF00FF) << 8) | ((x & 0xFF00FF00) >> 8);
     x = ((x & 0x0000FFFF) << 16) | ((x & 0xFFFF0000) >> 16);
-    return x >> ((sizeof(u32) << 3) - bits);
+    return x >> ((sizeof(uint32) << 3) - bits);
 }
 
 static float Utilities::floor(float x) 

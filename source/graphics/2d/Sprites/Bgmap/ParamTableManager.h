@@ -51,11 +51,11 @@
 typedef struct AffineEntry
 {
 	fix13_3	pb_y;		// *y+Dx /= 8.0
-	s16		parallax;
+	int16		parallax;
 	fix13_3	pd_y;		// *y+Dy /= 8.0
 	fix7_9	pa;			// /=512.0
 	fix7_9	pc;			// /=512.0
-	u16 	spacer[3];		//unknown
+	uint16 	spacer[3];		//unknown
 } AffineEntry;
 
 /**
@@ -71,7 +71,7 @@ typedef struct FixedAffineMatrix
 	fix13_3 pd;
 	fix13_3 dx;
 	fix13_3 dy;
-	s16		parallax;
+	int16		parallax;
 } FixedAffineMatrix;
 
 /**
@@ -89,8 +89,8 @@ typedef struct AffineInfo
 	fix13_3 	halfHeight;
 	Rotation* 	rotation;
 	Scale* 		scale;
-	u32 		param;
-	s16			parallax;
+	uint32 		param;
+	int16			parallax;
 } AffineInfo;
 
 /**
@@ -100,8 +100,8 @@ typedef struct AffineInfo
  */
 typedef struct HbiasEntry
 {
-	s16 offsetLeft;
-	s16 offsetRight;
+	int16 offsetLeft;
+	int16 offsetRight;
 } HbiasEntry;
 
 
@@ -113,9 +113,9 @@ typedef struct HbiasEntry
 singleton class ParamTableManager : Object
 {
 	// total size of param table
-	u32 size;
+	uint32 size;
 	// number of used bytes
-	u32 used;
+	uint32 used;
 	// allocated bgmapSprites
 	VirtualList bgmapSprites;
 	// removed bgmapSprites' sizes
@@ -125,15 +125,15 @@ singleton class ParamTableManager : Object
 	// used for defragmentation
 	BgmapSprite previouslyMovedBgmapSprite;
 	// used for defragmentation
-	u32 paramTableBase;
+	uint32 paramTableBase;
 
 	/// @publicsection
 	static ParamTableManager getInstance();
-	u32 allocate(BgmapSprite bsprite);
+	uint32 allocate(BgmapSprite bsprite);
 	void calculateParamTableBase(int availableBgmapSegmentsForParamTable);
 	bool defragmentProgressively();
 	void free(BgmapSprite bsprite);
-	u32 getParamTableBase();
+	uint32 getParamTableBase();
 	void print(int x, int y);
 	void reset();
 }

@@ -316,7 +316,7 @@ void AnimationInspector::setupMode()
  *
  * @param pressedKey	User input
  */
-void AnimationInspector::processUserInput(u16 pressedKey)
+void AnimationInspector::processUserInput(uint16 pressedKey)
 {
 	if(!this->gameState)
 	{
@@ -369,7 +369,7 @@ void AnimationInspector::processUserInput(u16 pressedKey)
  * @private
  * @param pressedKey		User input
  */
-void AnimationInspector::selectAnimatedEntity(u32 pressedKey)
+void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 {
 	int userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
@@ -396,7 +396,7 @@ void AnimationInspector::selectAnimatedEntity(u32 pressedKey)
  * @private
  * @param pressedKey		User input
  */
-void AnimationInspector::selectSprite(u32 pressedKey)
+void AnimationInspector::selectSprite(uint32 pressedKey)
 {
 	int userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
@@ -439,7 +439,7 @@ void AnimationInspector::removePreviousSprite()
  * @private
  * @param pressedKey		User input
  */
-void AnimationInspector::selectAnimation(u32 pressedKey)
+void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
 	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
 
@@ -467,7 +467,7 @@ void AnimationInspector::selectAnimation(u32 pressedKey)
  * @private
  * @param pressedKey		User input
  */
-void AnimationInspector::editAnimation(u32 pressedKey)
+void AnimationInspector::editAnimation(uint32 pressedKey)
 {
 	if(pressedKey & K_A)
 	{

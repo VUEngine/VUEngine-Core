@@ -123,8 +123,8 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 {
 	int entry = 0;
 	int lastEntry = 0;
-	static int entriesPerQuadrant = (int)(sizeof(_sinLut) / sizeof(s16)) >> 2;
-	static int totalEntries = (int)(sizeof(_sinLut) / sizeof(s16));
+	static int entriesPerQuadrant = (int)(sizeof(_sinLut) / sizeof(int16)) >> 2;
+	static int totalEntries = (int)(sizeof(_sinLut) / sizeof(int16));
 
 	// Determine the quadrant
 	if(0 == x)

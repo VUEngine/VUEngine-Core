@@ -75,19 +75,19 @@ singleton class SpriteManager : Object
 	// pixels drawn
 	int totalPixelsDrawn;
 	// number of rows to write in affine transformations
-	s16 maximumParamTableRowsToComputePerCall;
+	int16 maximumParamTableRowsToComputePerCall;
 	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
 	// next world layer
-	s8 freeLayer;
+	int8 freeLayer;
 	// number of rows to write in texture's writing
-	s8 texturesMaximumRowsToWrite;
+	int8 texturesMaximumRowsToWrite;
 	// flag to control texture's writing deferring
-	s8 deferParamTableEffects;
+	int8 deferParamTableEffects;
 	// delay before writing again
-	s8 waitToWriteSpriteTextures;
+	int8 waitToWriteSpriteTextures;
 	// flag to prevent race conditions on texturesToUpdate list
 	bool lockTextureList;
 
@@ -101,12 +101,12 @@ singleton class SpriteManager : Object
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);
-	s8 getFreeLayer();
+	int8 getFreeLayer();
 	int getNumberOfSprites();
 	int getMaximumParamTableRowsToComputePerCall();
-	Sprite getSpriteAtPosition(s16 position);
-	s16 getSpritePosition(Sprite sprite);
-	s8 getTexturesMaximumRowsToWrite();
+	Sprite getSpriteAtPosition(int16 position);
+	int16 getSpritePosition(Sprite sprite);
+	int8 getTexturesMaximumRowsToWrite();
 	void computeTotalPixelsDrawn();
 	void print(int x, int y, bool resumed);
 	void printObjectSpriteContainersStatus(int x, int y);
@@ -116,8 +116,8 @@ singleton class SpriteManager : Object
 	void stopRendering();
 	void reset();
 	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
-	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
-	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
+	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
+	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
 	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
 	void sort();

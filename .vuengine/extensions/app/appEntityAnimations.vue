@@ -53,7 +53,7 @@
 						<v-row>
 							<v-col>
 
- 								<!-- data type for cycles is s8, so 127 max -->
+ 								<!-- data type for cycles is int8, so 127 max -->
 								<s-input
 									type="number"
 									:data="'config.project.entities[0].animations.definitions[' + key + '].cycles'"

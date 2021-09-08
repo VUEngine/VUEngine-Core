@@ -67,9 +67,9 @@ class AnimatedEntity : Entity
 	char* currentAnimationName;
 
 	/// @publicsection
-	void constructor(AnimatedEntitySpec* animatedEntitySpec, s16 internalId, const char* const name);
+	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
 	AnimationDescription* getAnimationDescription();
-	s16 getActualFrame();
+	int16 getActualFrame();
 	int getNumberOfFrames();
 	bool isAnimationLoaded(char* functionName);
 	bool isPlayingAnimation();
@@ -77,12 +77,12 @@ class AnimatedEntity : Entity
 	void pauseAnimation(bool pause);
 	void playAnimation(char* animationName);
 	void previousFrame();
-	void setActualFrame(s16 frame);
+	void setActualFrame(int16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
 	void onAnimationCompleteHide(Object eventFirer);
 	virtual void animate();
 	override void ready(bool recursive);
-	override void update(u32 elapsedTime);
+	override void update(uint32 elapsedTime);
 	override void resume();
 	override void setSpec(void* animatedEntitySpec);
 }

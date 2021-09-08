@@ -43,7 +43,7 @@
  * @param charSetSpec				CharSet spec
  * @param offset						Displacement within the CHAR segment
  */
-void CharSet::constructor(CharSetSpec* charSetSpec, u16 offset)
+void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 {
 	Base::constructor();
 
@@ -100,7 +100,7 @@ bool CharSet::decreaseUsageCount()
  *
  * @return								Usage count
  */
-u8 CharSet::getUsageCount()
+uint8 CharSet::getUsageCount()
 {
 	return this->usageCount;
 }
@@ -110,7 +110,7 @@ u8 CharSet::getUsageCount()
  *
  * @return				Allocation type
  */
-u32 CharSet::getAllocationType()
+uint32 CharSet::getAllocationType()
 {
 	return this->charSetSpec->allocationType;
 }
@@ -120,7 +120,7 @@ u32 CharSet::getAllocationType()
  *
  * @return				Offset within CHAR memory
  */
-u32 CharSet::getOffset()
+uint32 CharSet::getOffset()
 {
 	return this->offset;
 }
@@ -130,7 +130,7 @@ u32 CharSet::getOffset()
  *
  * @param offset		Offset within CHAR memory
  */
-void CharSet::setOffset(u16 offset)
+void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
@@ -162,7 +162,7 @@ void CharSet::setCharSetSpec(CharSetSpec* charSetSpec)
  *
  * @return 			Number of CHARS in the spec
  */
-u32 CharSet::getNumberOfChars()
+uint32 CharSet::getNumberOfChars()
 {
 	return this->charSetSpec->numberOfChars;
 }
@@ -173,7 +173,7 @@ u32 CharSet::getNumberOfChars()
 void CharSet::write()
 {
 	Mem::copyWORD(
-		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
+		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
 		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
 		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
 	);
@@ -196,7 +196,7 @@ void CharSet::rewrite()
  *
  * @param charSpecDisplacement		Displacement
  */
-void CharSet::setCharSpecDisplacement(u32 charSpecDisplacement)
+void CharSet::setCharSpecDisplacement(uint32 charSpecDisplacement)
 {
 	this->charSpecDisplacement = charSpecDisplacement;
 }
@@ -207,12 +207,12 @@ void CharSet::setCharSpecDisplacement(u32 charSpecDisplacement)
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::putChar(u32 charToReplace, BYTE* newChar)
+void CharSet::putChar(uint32 charToReplace, BYTE* newChar)
 {
 	if(newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
 		Mem::copyWORD(
-			(WORD*)(__CHAR_SPACE_BASE_ADDRESS + ((((u32)this->offset) << 4) + (charToReplace << 4))),
+			(WORD*)(__CHAR_SPACE_BASE_ADDRESS + ((((uint32)this->offset) << 4) + (charToReplace << 4))),
 			(WORD*)newChar,
 			__BYTES_PER_CHARS(1) / sizeof(WORD)
 		);
@@ -221,7 +221,7 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 
 // TODO: if inline is allowed, the optization that GCC does makes this innefective in putPixel method
 // It is not because of O3 optimization option, the same happens with O1
-static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
 {
 	const BYTE* finalSource = source + numberOfBYTES;
 
@@ -248,7 +248,7 @@ static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, cons
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
@@ -257,16 +257,16 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
 
-		CharSet::copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
+		CharSet::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
-		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
-		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
+		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
+		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 
 		// TODO: review this, only works with non transparent pixels
-		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-//		auxChar[displacement] |= (u16)newPixelColor << pixelToReplaceDisplacement;
+		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
+//		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
 
-		CharSet::copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(sizeof(BYTE) << 4));
+		CharSet::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(sizeof(BYTE) << 4));
 	}
 }
 
@@ -275,7 +275,7 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
  *
  * @param frame		ROM memory displacement multiplier
  */
-void CharSet::setFrame(u16 frame)
+void CharSet::setFrame(uint16 frame)
 {
 	CharSet::setCharSpecDisplacement(this, this->charSetSpec->numberOfChars * frame);
 }

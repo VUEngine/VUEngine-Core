@@ -41,8 +41,8 @@
 static class Affine : Object
 {
 	/// @publicsection
-	static s16 applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation);
-	static s16 rotate(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Rotation* rotation)
+	static int16 applyAll(uint32 param, int16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation);
+	static int16 rotate(uint32 param, int16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Rotation* rotation)
 }
 
 

@@ -51,7 +51,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Actor::constructor(const ActorSpec* actorSpec, s16 internalId, const char* const name)
+void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name)
 {
 	// construct base object
 	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
@@ -233,7 +233,7 @@ void Actor::doSyncRotationWithBody()
 	{
 		const Direction3D* direction3D = Body::getDirection3D(this->body);
 
-		if((u16)__LOCK_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		if((uint16)__LOCK_AXIS == this->actorSpec->axisForSynchronizationWithBody)
 		{
 			return;
 		}
@@ -319,7 +319,7 @@ void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __at
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Actor::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
 	bool transformShapes = this->transformShapes;
 
@@ -330,7 +330,7 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 		// Prevent transformation of shapes again when calling Base::transform
 		this->transformShapes = false;
 
-		u16 bodyMovement = Body::getMovementOnAllAxis(this->body);
+		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
 
 		if(bodyMovement)
 		{
@@ -372,7 +372,7 @@ void Actor::resume()
 }
 
 // execute character's logic
-void Actor::update(u32 elapsedTime)
+void Actor::update(uint32 elapsedTime)
 {
 	// call base
 	Base::update(this, elapsedTime);
@@ -388,7 +388,7 @@ void Actor::update(u32 elapsedTime)
 }
 
 // whether changed direction in the last cycle or not
-bool Actor::hasChangedDirection(u16 axis)
+bool Actor::hasChangedDirection(uint16 axis)
 {
 	switch(axis)
 	{
@@ -412,7 +412,7 @@ bool Actor::hasChangedDirection(u16 axis)
 }
 
 // change direction over axis
-void Actor::changeDirectionOnAxis(u16 axis)
+void Actor::changeDirectionOnAxis(uint16 axis)
 {
 	if(this->body)
 	{
@@ -566,7 +566,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			}
 			else
 			{
-				u16 axis = __NO_AXIS;
+				uint16 axis = __NO_AXIS;
 				axis |= collisionInformation->solutionVector.direction.x ? __X_AXIS : __NO_AXIS;
 				axis |= collisionInformation->solutionVector.direction.y ? __Y_AXIS : __NO_AXIS;
 				axis |= collisionInformation->solutionVector.direction.z ? __Z_AXIS : __NO_AXIS;
@@ -633,7 +633,7 @@ void Actor::stopAllMovement()
 }
 
 // stop movement completely
-void Actor::stopMovement(u16 axis)
+void Actor::stopMovement(uint16 axis)
 {
 	if(this->body)
 	{
@@ -678,7 +678,7 @@ bool Actor::isMoving()
 	return this->body ? Body::getMovementOnAllAxis(this->body) : 0;
 }
 
-u16 Actor::getMovementState()
+uint16 Actor::getMovementState()
 {
 	return Actor::isMoving(this);
 }
@@ -702,7 +702,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
  * @param environmentTransform
  * @param recursive
  */
-void Actor::initialTransform(const Transformation* environmentTransform, u32 recursive)
+void Actor::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);

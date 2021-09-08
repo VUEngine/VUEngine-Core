@@ -42,7 +42,7 @@ singleton class CameraMovementManager : Object
 	/// @publicsection
 	static CameraMovementManager getInstance();
 	void constructor();
-	virtual void focus(u32 checkIfFocusEntityIsMoving);
+	virtual void focus(uint32 checkIfFocusEntityIsMoving);
 }
 
 

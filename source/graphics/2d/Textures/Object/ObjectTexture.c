@@ -42,7 +42,7 @@
  * @param objectTextureSpec		Texture spec
  * @param id							Identifier
  */
-void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id, ObjectSprite owner)
+void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, uint16 id, ObjectSprite owner)
 {
 	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
@@ -65,7 +65,7 @@ void ObjectTexture::destructor()
  *
  * @param frame	Texture's frame to display
  */
-void ObjectTexture::setFrameAnimatedMulti(u16 frame)
+void ObjectTexture::setFrameAnimatedMulti(uint16 frame)
 {
 	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
 }

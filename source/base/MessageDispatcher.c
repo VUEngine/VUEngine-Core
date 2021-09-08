@@ -87,7 +87,7 @@ void MessageDispatcher::destructor()
  * @param extraInfo	pointer to any extra data that must accompany the message
  * @return			a flag indicating the status of the processing of the message
  */
-static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -121,7 +121,7 @@ static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object 
  * @param message	the actual message code
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
-void MessageDispatcher::dispatchDelayedMessage(Clock clock, u32 delay,
+void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  	Object sender, Object receiver, int message, void* extraInfo)
 {
 	// create the telegram
@@ -175,11 +175,11 @@ void MessageDispatcher::processDiscardedMessages()
 /**
  * Dispatch the delayed messages whose delay has expired
  */
-u32 MessageDispatcher::dispatchDelayedMessages()
+uint32 MessageDispatcher::dispatchDelayedMessages()
 {
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
-	u32 messagesDispatched = false;
+	uint32 messagesDispatched = false;
 
 	MessageDispatcher::processDiscardedMessages(this);
 

@@ -42,8 +42,8 @@
 //											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-//volatile u16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)_hardwareRegisters;
-static volatile BYTE* _communicationRegisters =			(u8*)0x02000000;
+//volatile uint16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)_hardwareRegisters;
+static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -351,7 +351,7 @@ bool CommunicationManager::handleMessage(Telegram telegram)
 	return false;
 }
 
-void CommunicationManager::startTransmissions(u8 payload, bool async)
+void CommunicationManager::startTransmissions(uint8 payload, bool async)
 {
 	// Set transmission data
 	_communicationRegisters[__CDTR] = payload;
@@ -431,7 +431,7 @@ bool CommunicationManager::isRemoteReady()
 	return 0 == (_communicationRegisters[__CCSR] & 0x01) ? true : false;
 }
 
-bool CommunicationManager::sendPayload(u8 payload, bool async)
+bool CommunicationManager::sendPayload(uint8 payload, bool async)
 {
 	if(kCommunicationsStatusIdle == this->status)
 	{
@@ -455,7 +455,7 @@ bool CommunicationManager::receivePayload(bool async)
 	return false;
 }
 
-bool CommunicationManager::sendAndReceivePayload(u8 payload, bool async)
+bool CommunicationManager::sendAndReceivePayload(uint8 payload, bool async)
 {
 	if(kCommunicationsStatusIdle == this->status)
 	{
@@ -788,7 +788,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int numberOfBytes, EventLis
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(!isDeleted(this->receivedData))
@@ -845,12 +845,12 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	if(isDeleted(this->sentData))
 	{
-		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -910,12 +910,12 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	{
 
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((u32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;
@@ -971,7 +971,7 @@ void CommunicationManager::startSyncCycle()
 		return;
 	}
 
-	extern volatile u16* _vipRegisters;
+	extern volatile uint16* _vipRegisters;
 
 	_vipRegisters[__FRMCYC] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
@@ -980,7 +980,7 @@ void CommunicationManager::startSyncCycle()
 
 	if(CommunicationManager::isMaster(this))
 	{
-		u32 message = 0;
+		uint32 message = 0;
 		do
 		{
 			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
@@ -993,7 +993,7 @@ void CommunicationManager::startSyncCycle()
 	}
 	else
 	{
-		u32 message = __REMOTE_READY_MESSAGE;
+		uint32 message = __REMOTE_READY_MESSAGE;
 		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
 
 		do

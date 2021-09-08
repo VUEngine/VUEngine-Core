@@ -95,7 +95,7 @@ void Sprite::processEffects()
 {
 }
 
-s16 Sprite::render(s16 index, bool evenFrame)
+int16 Sprite::render(int16 index, bool evenFrame)
 {
 	this->index = __NO_RENDER_INDEX;
 	this->visible = false;
@@ -364,7 +364,7 @@ AnimationController Sprite::getAnimationController()
  *
  * @return 		World layer
  */
-u8 Sprite::getIndex()
+uint8 Sprite::getIndex()
 {
 	return this->index;
 }
@@ -394,7 +394,7 @@ bool Sprite::writeTextures()
  *
  * @return
  */
-u16 Sprite::getHead()
+uint16 Sprite::getHead()
 {
 	return this->head;
 }
@@ -404,7 +404,7 @@ u16 Sprite::getHead()
  *
  * @return 		Mode
  */
-u16 Sprite::getMode()
+uint16 Sprite::getMode()
 {
 	return this->head & 0x3000;
 }
@@ -414,7 +414,7 @@ u16 Sprite::getMode()
  *
  * @return
  */
-u32 Sprite::getWorldHead()
+uint32 Sprite::getWorldHead()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->head;
@@ -425,7 +425,7 @@ u32 Sprite::getWorldHead()
  *
  * @return
  */
-s16 Sprite::getWorldGX()
+int16 Sprite::getWorldGX()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gx;
@@ -436,7 +436,7 @@ s16 Sprite::getWorldGX()
  *
  * @return
  */
-s16 Sprite::getWorldGY()
+int16 Sprite::getWorldGY()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gy;
@@ -447,7 +447,7 @@ s16 Sprite::getWorldGY()
  *
  * @return
  */
-s16 Sprite::getWorldGP()
+int16 Sprite::getWorldGP()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->gp;
@@ -458,7 +458,7 @@ s16 Sprite::getWorldGP()
  *
  * @return
  */
-s16 Sprite::getWorldMX()
+int16 Sprite::getWorldMX()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->mx;
@@ -469,7 +469,7 @@ s16 Sprite::getWorldMX()
  *
  * @return
  */
-s16 Sprite::getWorldMY()
+int16 Sprite::getWorldMY()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->my;
@@ -480,7 +480,7 @@ s16 Sprite::getWorldMY()
  *
  * @return
  */
-s16 Sprite::getWorldMP()
+int16 Sprite::getWorldMP()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->mp;
@@ -491,10 +491,10 @@ s16 Sprite::getWorldMP()
  *
  * @return 		Width
  */
-u16 Sprite::getWorldWidth()
+uint16 Sprite::getWorldWidth()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return 0 > (s16)worldPointer->w ? 0 : worldPointer->w;
+	return 0 > (int16)worldPointer->w ? 0 : worldPointer->w;
 }
 
 /**
@@ -502,10 +502,10 @@ u16 Sprite::getWorldWidth()
  *
  * @return 		Width
  */
-u16 Sprite::getWorldHeight()
+uint16 Sprite::getWorldHeight()
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return 0 > (s16)worldPointer->h ? 0 : worldPointer->h;
+	return 0 > (int16)worldPointer->h ? 0 : worldPointer->h;
 }
 
 /**
@@ -629,7 +629,7 @@ bool Sprite::isWithinScreenSpace()
  *
  * @return		Transparency mode
  */
-u8 Sprite::getTransparent()
+uint8 Sprite::getTransparent()
 {
 	return this->transparent;
 }
@@ -639,7 +639,7 @@ u8 Sprite::getTransparent()
  *
  * @param value	Transparency mode
  */
-void Sprite::setTransparent(u8 value)
+void Sprite::setTransparent(uint8 value)
 {
 	this->transparent = value;
 	this->visible = true;
@@ -768,7 +768,7 @@ bool Sprite::isPlayingFunction(char* functionName)
  *
  * @param frameCycleDecrement	Frame cycle decrement
  */
-void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
+void Sprite::setFrameCycleDecrement(uint8 frameCycleDecrement)
 {
 	if(!isDeleted(this->animationController))
 	{
@@ -781,7 +781,7 @@ void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
  *
  * @return		Frame number
  */
-s16 Sprite::getActualFrame()
+int16 Sprite::getActualFrame()
 {
 	if(!isDeleted(this->animationController))
 	{
@@ -796,7 +796,7 @@ s16 Sprite::getActualFrame()
  *
  * @param actualFrame	Frame number
  */
-void Sprite::setActualFrame(s16 actualFrame)
+void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
@@ -837,7 +837,7 @@ void Sprite::previousFrame()
  *
  * @return		Frame delay
  */
-u8 Sprite::getFrameDuration()
+uint8 Sprite::getFrameDuration()
 {
 	if(!isDeleted(this->animationController))
 	{
@@ -852,7 +852,7 @@ u8 Sprite::getFrameDuration()
  *
  * @param frameDuration	Frame delay
  */
-void Sprite::setFrameDuration(u8 frameDuration)
+void Sprite::setFrameDuration(uint8 frameDuration)
 {
 	if(!isDeleted(this->animationController))
 	{
@@ -905,7 +905,7 @@ bool Sprite::isObject()
 void Sprite::print(int x, int y)
 {
 	// Allow normal rendering once for WORLD values to populate properly
-	u8 transparent = this->transparent;
+	uint8 transparent = this->transparent;
 	this->transparent = __TRANSPARENCY_NONE;
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);

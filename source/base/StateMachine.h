@@ -53,8 +53,8 @@ class StateMachine : Object
 	void constructor(void* owner);
 	void update();
 	void swapState(State newState);
-	u32 pushState(State newState);
-	u32 popState();
+	uint32 pushState(State newState);
+	uint32 popState();
 	void popAllStates();
 	void returnToPreviousState();
 	void changeToGlobal(State globalState);

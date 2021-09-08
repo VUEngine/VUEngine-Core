@@ -47,10 +47,10 @@
 
 typedef struct Streaming
 {
-	u16 loadPadding;
-	u16 unloadPadding;
-	u16 streamingAmplitude;
-	u16 particleRemovalDelayCycles;
+	uint16 loadPadding;
+	uint16 unloadPadding;
+	uint16 streamingAmplitude;
+	uint16 particleRemovalDelayCycles;
 	bool deferred;
 
 } Streaming;
@@ -64,17 +64,17 @@ typedef struct StageSpec
 	// Timer config
 	struct Timer
 	{
-		u16 resolution;
-		u16 timePerInterrupt;
-		u16 timePerInterruptUnits;
+		uint16 resolution;
+		uint16 timePerInterrupt;
+		uint16 timePerInterruptUnits;
 
 	} timer;
 
 	// Sound config
 	struct SoundConfig
 	{
-		u16 pcmTargetPlaybackFrameRate;
-		u16 MIDIPlaybackCounterPerInterrupt;
+		uint16 pcmTargetPlaybackFrameRate;
+		uint16 MIDIPlaybackCounterPerInterrupt;
 
 	} sound;
 
@@ -115,10 +115,10 @@ typedef struct StageSpec
 		int paramTableSegments;
 
 		// object segments sizes (__spt0 to __spt3)
-		s16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
+		int16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
 		// object segments z coordinates (__spt0 to __spt3)
-		s16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
+		int16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
 		PixelOptical pixelOptical;
@@ -177,8 +177,8 @@ typedef struct StageEntityDescription
 {
 	PixelRightBox pixelRightBox;
 	PositionedEntity* positionedEntity;
-	u32 distance;
-	s16 internalId;
+	uint32 distance;
+	int16 internalId;
 
 } StageEntityDescription;
 
@@ -209,15 +209,15 @@ class Stage : Container
 	// index for method to execute
 	int streamingPhase;
 	// flag to control streaming
-	u32 hasRemovedChildren;
+	uint32 hasRemovedChildren;
 	// the ui container
 	UIContainer uiContainer;
 	// focus entity: needed for streaming
 	Entity focusEntity;
 	// camera's previous distance. Used for the streaming
-	u32 cameraPreviousDistance;
+	uint32 cameraPreviousDistance;
 	// next entity's id
-	s16 nextEntityId;
+	int16 nextEntityId;
 	// flag to prevent loading entities that are within the screen's space
 	bool forceNoPopIn;
 
@@ -228,18 +228,18 @@ class Stage : Container
 	void setupTimer();
 	Size getSize();
 	CameraFrustum getCameraFrustum();
-	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);
+	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
-	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, s16 internalId);
+	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId);
 	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
 	ParticleRemover getParticleRemover();
 	void showStreamingProfiling(int x, int y);
 	bool unloadOutOfRangeEntities(int defer);
     bool loadInRangeEntities(int defer);
-	Entity findChildByInternalId(s16 internalId);
+	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
 	void streamAllOut();
@@ -248,8 +248,8 @@ class Stage : Container
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
 	virtual void streamAll();
-	override void update(u32 elapsedTime);
-	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void update(uint32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
 	override void suspend();
 	override void resume();

@@ -89,7 +89,7 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-u32 _gameRandomSeed = 0;
+uint32 _gameRandomSeed = 0;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 static char* _processNameDuringFRAMESTART = NULL;
@@ -101,7 +101,7 @@ static char* _processNameDuringXPEND = NULL;
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
 
-s16 _tornGameFrameCount = 0;
+int16 _tornGameFrameCount = 0;
 
 #endif
 
@@ -567,7 +567,7 @@ bool Game::checkIfOpenTool(UserInput userInput)
 
 
 // process input data according to the actual game status
-u32 Game::processUserInput()
+uint32 Game::processUserInput()
 {
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
@@ -611,7 +611,7 @@ void Game::dispatchDelayedMessages()
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-	static u32 dispatchCycle = 0;
+	static uint32 dispatchCycle = 0;
 
 	if(dispatchCycle++ & 1)
 	{
@@ -811,7 +811,7 @@ void Game::nextFrameStarted()
 {
 	this->nextFrameStarted = true;
 
-	static u16 totalTime = 0;
+	static uint16 totalTime = 0;
 
 	totalTime += __GAME_FRAME_DURATION;
 
@@ -969,7 +969,7 @@ bool Game::handleMessage(Telegram telegram)
 }
 
 // retrieve time
-u32 Game::getTime()
+uint32 Game::getTime()
 {
 	return Clock::getTime(this->clock);
 }
@@ -1213,7 +1213,7 @@ void Game::removePostProcessingEffect(PostProcessingEffect postProcessingEffect,
 	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::wait(u32 milliSeconds)
+void Game::wait(uint32 milliSeconds)
 {
 	ASSERT(this, "Game::wait: this null");
 

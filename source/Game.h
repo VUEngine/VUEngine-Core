@@ -106,7 +106,7 @@ singleton class Game : Object
 	volatile bool currentFrameEnded;
 	volatile bool nextFrameStarted;
 	// random seed
-	u32 randomSeed;
+	uint32 randomSeed;
 	// game paused flag
 	bool isPaused;
 
@@ -127,7 +127,7 @@ singleton class Game : Object
 	Optical getOptical();
 	Clock getPhysicsClock();
 	PhysicalWorld getPhysicalWorld();
-	u32 getTime();
+	uint32 getTime();
 	StateMachine getStateMachine();
 	Stage getStage();
 	GameState getCurrentState();
@@ -144,7 +144,7 @@ singleton class Game : Object
 	void setOptical(Optical optical);
 	void start(GameState state);
 	void unpause(GameState pauseState);
-	void wait(u32 milliSeconds);
+	void wait(uint32 milliSeconds);
 	void setLastProcessName(char* processName);
 	bool isInDebugMode();
 	bool isInStageEditor();
@@ -163,6 +163,6 @@ singleton class Game : Object
 }
 
 
-extern u32 _gameRandomSeed;
+extern uint32 _gameRandomSeed;
 
 #endif

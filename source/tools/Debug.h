@@ -65,9 +65,9 @@ singleton class Debug : Tool
 	// current sub page
 	VirtualNode currentSubPage;
 	// current layer
-	s8 currentSprite;
+	int8 currentSprite;
 	// part of bgmap memory current viewed
-	u8 viewedMapPart;
+	uint8 viewedMapPart;
 	// current bgmap
 	int bgmapSegment;
 	// current obj segment
@@ -85,7 +85,7 @@ singleton class Debug : Tool
 	override void render();
 	override void show();
 	override void hide();
-	override void processUserInput(u16 pressedKey);
+	override void processUserInput(uint16 pressedKey);
 }
 
 #endif

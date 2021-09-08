@@ -112,7 +112,7 @@ void PhysicalWorld::destructor()
  * @param physicalSpecification
  * @return				Registered Body
  */
-Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity)
+Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	// if the entity is already registered
 	Body body = PhysicalWorld::getBody(this, owner);
@@ -219,9 +219,9 @@ void PhysicalWorld::checkForGravity()
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			u16 movingState = Body::getMovementOnAllAxis(body);
+			uint16 movingState = Body::getMovementOnAllAxis(body);
 
-			u16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
 			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, gravityDirection))
 			{
@@ -383,7 +383,7 @@ void PhysicalWorld::setTimeScale(fix10_6 timeScale)
 
 	if(__F_TO_FIX10_6(0.5f) < this->timeScale)
 	{
-		u32 gameFramesPerSecond = __TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR;
+		uint32 gameFramesPerSecond = __TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR;
 		fix10_6 targetUpdatesPerSecond = __FIX10_6_MULT(__I_TO_FIX10_6(gameFramesPerSecond), this->timeScale);
 		fix10_6 targetSkipsPerSecond = __I_TO_FIX10_6(gameFramesPerSecond) - targetUpdatesPerSecond;
 
@@ -403,7 +403,7 @@ void PhysicalWorld::setTimeScale(fix10_6 timeScale)
  *
  * @return 			timeScale
  */
-u32 PhysicalWorld::getTimeScale()
+uint32 PhysicalWorld::getTimeScale()
 {
 	return this->timeScale;
 }

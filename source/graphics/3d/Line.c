@@ -41,7 +41,7 @@
  *
  * @private
  */
-void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, u8 color)
+void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color)
 {
 	// construct base object
 	Base::constructor(color);

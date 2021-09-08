@@ -101,7 +101,7 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 		if(rotation->z && 256 != rotation->z)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			s16 angle = rotation->z - ((rotation->z / 256) << 8);
+			int16 angle = rotation->z - ((rotation->z / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -157,7 +157,7 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 		else if(rotation->y && 256 != rotation->y)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			s16 angle = rotation->y - ((rotation->y / 256) << 8);
+			int16 angle = rotation->y - ((rotation->y / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -213,7 +213,7 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 		else if(rotation->x && 256 != rotation->x)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			s16 angle = rotation->x - ((rotation->x / 256) << 8);
+			int16 angle = rotation->x - ((rotation->x / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner

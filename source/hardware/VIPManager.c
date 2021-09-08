@@ -47,8 +47,8 @@
 WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
 ObjectAttributes _objectAttributesCache[1024] __attribute__((section(".dram_bss")));
 
-volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
-u32* _currentDrawingFrameBufferSet = NULL;
+volatile uint16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
+uint32* _currentDrawingFrameBufferSet = NULL;
 
 static VIPManager _vipManager;
 static TimerManager _timerManager;
@@ -131,7 +131,7 @@ void VIPManager::reset()
 	this->currrentInterrupt = 0;
 }
 
-void VIPManager::enableCustomInterrupts(u16 customInterrupts)
+void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
 {
 	this->customInterrupts = customInterrupts;
 }
@@ -176,7 +176,7 @@ bool VIPManager::hasFrameStartedDuringXPEND()
  *
  * @param interruptCode			Interrupts to enable
  */
-void VIPManager::enableInterrupts(u16 interruptCode)
+void VIPManager::enableInterrupts(uint16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
@@ -208,7 +208,7 @@ bool VIPManager::isRenderingPending()
 	return !this->drawingEnded;
 }
 
-u16 VIPManager::getCurrentInterrupt()
+uint16 VIPManager::getCurrentInterrupt()
 {
 	return this->currrentInterrupt;
 }
@@ -243,11 +243,11 @@ static void VIPManager::interruptHandler()
 /**
  * Process interrupt method
  */
-void VIPManager::processInterrupt(u16 interrupt)
+void VIPManager::processInterrupt(uint16 interrupt)
 {
 #define INTERRUPTS	3
 
-	static u16 interruptTable[] =
+	static uint16 interruptTable[] =
 	{
 		__FRAMESTART,
 		__XPEND,
@@ -362,7 +362,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 			case __TIMEERR:
 
 				{
-					static u32 count = 0;
+					static uint32 count = 0;
 					PRINT_TEXT("VIP Overtime!    (   )", 10, 27);
 					PRINT_INT(++count, 28, 27);
 				}
@@ -451,10 +451,10 @@ void VIPManager::lowerBrightness()
  * Clear the CHAR and Param table memory
  */
 void VIPManager::clearScreen()
-{	u8* bgmapStartAddress = (u8*)__BGMAP_SPACE_BASE_ADDRESS;
+{	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < (u8*)__PARAM_TABLE_END; bgmapStartAddress++)
+	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
 	}
@@ -612,7 +612,7 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpe
  *
  * @param color		New color
  */
-void VIPManager::setBackgroundColor(u8 color)
+void VIPManager::setBackgroundColor(uint8 color)
 {
 	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
 		? color
@@ -727,7 +727,7 @@ void VIPManager::removePostProcessingEffects()
  */
 void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
-	u32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
+	uint32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
 
 	this->currentDrawingFrameBufferSet = 0;
 
@@ -746,7 +746,7 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
  *
  * @return	Frame buffer in use by the VIP's drawing process
  */
-u32 VIPManager::getCurrentDrawingframeBufferSet()
+uint32 VIPManager::getCurrentDrawingframeBufferSet()
 {
 	return this->currentDrawingFrameBufferSet;
 }
@@ -756,7 +756,7 @@ u32 VIPManager::getCurrentDrawingframeBufferSet()
  *
  * @return	The number of the block being drawn by the VIP
  */
-s16 VIPManager::getCurrentBlockBeingDrawn()
+int16 VIPManager::getCurrentBlockBeingDrawn()
 {
 	if(_vipRegisters[__XPSTTS] & __SBOUT)
 	{

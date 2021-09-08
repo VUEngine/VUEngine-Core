@@ -53,15 +53,15 @@ static class Utilities : Object
 	static void setClock(Clock clock);
 	static void setKeypadManager(KeypadManager keypadManager);
 	static void resetRandomSeed();
-	static u32 randomSeed();
-	static int random(u32 seed, int randnums);
-	static char* itoa(u32 num, u32 base, u32 digits);
+	static uint32 randomSeed();
+	static int random(uint32 seed, int randnums);
+	static char* itoa(uint32 num, uint32 base, uint32 digits);
 	static const char* toUppercase(const char* string);
 	static const char* toLowercase(const char* string);
 	static int equalSign(int a, int b);
 	static int getDigitCount(int value);
 	static int intLength(int value);
-	static u32 reverse(u32 x, int bits);
+	static uint32 reverse(uint32 x, int bits);
 	static float Utilities::floor(float x);
 }
 

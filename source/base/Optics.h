@@ -38,7 +38,7 @@ extern const Optical* _optical;
 static class Optics : Object
 {
 	/// @publicsection
-	static inline s16 calculateParallax(fix10_6 x, fix10_6 z);
+	static inline int16 calculateParallax(fix10_6 x, fix10_6 z);
 }
 
 
@@ -49,7 +49,7 @@ static class Optics : Object
  * @param z	Z parameter for the calculation of the parallax displacement
  * @return 	Parallax (in pixels)
  */
-static inline s16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
+static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
 	if(0 == z)
 	{

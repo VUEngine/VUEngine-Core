@@ -70,24 +70,24 @@ typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 class PrintingSprite : BgmapSprite
 {
 	// print WORLD's width
-	u16 w;
+	uint16 w;
 	// print WORLD's height
-	u16 h;
+	uint16 h;
 	
 	/// @publicsection
 	void constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner);
 	void reset();
 
-	void setGValues(s16 gx, s16 gy, s16 gp);
-	void setMValues(s16 mx, s16 my, s16 mp);
-	void setSize(u16 w, u16 h);
-	void setSize(u16 w, u16 h);
+	void setGValues(int16 gx, int16 gy, int16 gp);
+	void setMValues(int16 mx, int16 my, int16 mp);
+	void setSize(uint16 w, uint16 h);
+	void setSize(uint16 w, uint16 h);
 
-	s16 getGX();
-	s16 getGY();
-	s16 getGP();
+	int16 getGX();
+	int16 getGY();
+	int16 getGP();
 
-	override u16 doRender(s16 index, bool evenFrame);
+	override uint16 doRender(int16 index, bool evenFrame);
 }
 
 

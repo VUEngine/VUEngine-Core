@@ -211,7 +211,7 @@ void Profiler::end()
 	}
 }
 
-void Profiler::printValue(const char* processName, float elapsedTime, u8 column)
+void Profiler::printValue(const char* processName, float elapsedTime, uint8 column)
 {
 	if(NULL == processName)
 	{
@@ -229,7 +229,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, u8 column)
 		Printing::float(_printing, elapsedTime, column, 14 + (10 > elapsedTime ? 0 : 1), 2, "Profiler");
 		Printing::text(_printing, ":;", column, 10, "Profiler"); // "ms"
 
-		u8 indicatorRow = 8;
+		uint8 indicatorRow = 8;
 
 		if(kProfilerLapTypeVIPInterruptProcess & this->lapTypeFlags)
 		{
@@ -257,7 +257,7 @@ void Profiler::printValue(const char* processName, float elapsedTime, u8 column)
 	}
 }
 
-void Profiler::lap(u32 lapType, const char* processName)
+void Profiler::lap(uint32 lapType, const char* processName)
 {
 	if(!this->started)
 	{
@@ -283,7 +283,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	HardwareManager::disableInterrupts();
 
 	TimerManager::enable(this->timerManager, false);
-	u16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 
 	TimerManager::enable(this->timerManager, true);
 
@@ -314,7 +314,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		entries = 2;
 	}
 */
-	u8 value = 0;
+	uint8 value = 0;
 
 	if(this->currentProfilingProcess % 2)
 	{
@@ -332,7 +332,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}
 
-	u8 printingColumn = this->lastLapIndex / 2;
+	uint8 printingColumn = this->lastLapIndex / 2;
 
 	Profiler::printValue(this, processName, elapsedTime, printingColumn);
 	this->lastLapIndex += entries;

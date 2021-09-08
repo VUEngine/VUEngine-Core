@@ -156,7 +156,7 @@ void Printing::setupSprite()
 	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&PRINTING_SP, NULL));
 }
 
-void Printing::setOrientation(u8 value)
+void Printing::setOrientation(uint8 value)
 {
 	this->orientation = value;
 
@@ -174,7 +174,7 @@ void Printing::setOrientation(u8 value)
 	}
 }
 
-void Printing::setDirection(u8 value)
+void Printing::setDirection(uint8 value)
 {
 	this->direction = value;
 
@@ -214,7 +214,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 
 	// iterate over all defined fonts and add to internal list
-	u32 i = 0, j = 0;
+	uint32 i = 0, j = 0;
 	for(i = 0; __FONTS[i]; i++)
 	{
 		// instance and initialize a new fontdata instance
@@ -245,7 +245,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	HardwareManager::enableInterrupts();
 }
 
-void Printing::setFontPage(const char* font, u16 page)
+void Printing::setFontPage(const char* font, uint16 page)
 {
 	FontData* fontData = Printing::getFontByName(this, font);
 
@@ -261,8 +261,8 @@ void Printing::setFontPage(const char* font, u16 page)
 void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
-		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
-		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
+		(uint8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
+		(uint8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
 		VUENGINE_DEBUG_FONT_SIZE << 4
 	);
 }
@@ -273,7 +273,7 @@ void Printing::setDebugMode()
 	this->mode = __PRINTING_MODE_DEBUG;
 }
 
-void Printing::setPalette(u8 palette)
+void Printing::setPalette(uint8 palette)
 {
 	if(palette < 4)
 	{
@@ -367,7 +367,7 @@ FontData* Printing::getFontByName(const char* font)
 	return result;
 }
 
-void Printing::number(int value, u8 x, u8 y, const char* font)
+void Printing::number(int value, uint8 x, uint8 y, const char* font)
 {
 	if(value < 0)
 	{
@@ -382,17 +382,17 @@ void Printing::number(int value, u8 x, u8 y, const char* font)
 	}
 }
 
-void Printing::int(int value, u8 x, u8 y, const char* font)
+void Printing::int(int value, uint8 x, uint8 y, const char* font)
 {
 	Printing::number(this, value, x, y, font);
 }
 
-void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
+void Printing::hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font)
 {
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
 }
 
-void Printing::float(float value, u8 x, u8 y, int precision, const char* font)
+void Printing::float(float value, uint8 x, uint8 y, int precision, const char* font)
 {
 	if(1 > precision)
 	{
@@ -505,14 +505,14 @@ void Printing::text(const char* string, int x, int y, const char* font)
 }
 
 #ifdef __FORCE_PRINTING_LAYER
-void Printing::setCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s16 z __attribute__ ((unused)), s8 parallax __attribute__ ((unused)))
+void Printing::setCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
 	Printing::setWorldCoordinates(this, 0, 0, 0, 0);
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
 	Printing::setWorldSize(this, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
-void Printing::setWorldCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s16 z __attribute__ ((unused)), s8 parallax __attribute__ ((unused)))
+void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -525,7 +525,7 @@ void Printing::setWorldCoordinates(s16 x __attribute__ ((unused)), s16 y __attri
 	}
 }
 
-void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
+void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -533,7 +533,7 @@ void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __att
 	}
 }
 
-void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
+void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -542,13 +542,13 @@ void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ 
 }
 
 #else
-void Printing::setCoordinates(s16 x, s16 y, s16 z, s8 parallax)
+void Printing::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
 	Printing::setWorldCoordinates(this, x, y, z, parallax);
 	Printing::setBgmapCoordinates(this, x, y, 0);
 }
 
-void Printing::setWorldCoordinates(s16 x, s16 y, s16 z, s8 parallax)
+void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -564,7 +564,7 @@ void Printing::setWorldCoordinates(s16 x, s16 y, s16 z, s8 parallax)
 	}
 }
 
-void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
+void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -572,7 +572,7 @@ void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __att
 	}
 }
 
-void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
+void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -581,19 +581,19 @@ void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ 
 }
 #endif
 
-s16 Printing::getWorldCoordinatesX()
+int16 Printing::getWorldCoordinatesX()
 {
 	return 0;
 //	return !isDeleted(this->printingSprite) ? PrintingSprite::getGX(this->printingSprite) : 0;
 }
 
-s16 Printing::getWorldCoordinatesY()
+int16 Printing::getWorldCoordinatesY()
 {
 	return 0;
 //	return !isDeleted(this->printingSprite) ? PrintingSprite::getGY(this->printingSprite) : 0;
 }
 
-s16 Printing::getWorldCoordinatesP()
+int16 Printing::getWorldCoordinatesP()
 {
 	return 0;
 //	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
@@ -610,7 +610,7 @@ void Printing::resetCoordinates()
 FontSize Printing::getTextSize(const char* string, const char* font)
 {
 	FontSize fontSize = {0, 0};
-	u16 i = 0, currentLineLength = 0;
+	uint16 i = 0, currentLineLength = 0;
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
@@ -685,7 +685,7 @@ void Printing::hide()
 	}
 }
 
-void Printing::render(u8 textLayer)
+void Printing::render(uint8 textLayer)
 {
 	if(!isDeleted(this->printingSprite))
 	{
@@ -693,7 +693,7 @@ void Printing::render(u8 textLayer)
 	}
 }
 
-void Printing::out(u8 x, u8 y, const char* string, const char* font)
+void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 {
 #ifdef __DEFAULT_FONT
 	if(NULL == font)
@@ -706,9 +706,9 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	font = __FORCE_FONT;
 #endif
 
-	u32 i = 0, position = 0, startColumn = x, temp = 0;
-	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
-	u32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	uint32 i = 0, position = 0, startColumn = x, temp = 0;
+	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
+	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
@@ -717,8 +717,8 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 		return;
 	}
 
-	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
-	u32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
+	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
+	uint32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
 	// print text
 	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
@@ -775,10 +775,10 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 									offset +
 
 									// offset of character in charset
-									((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
+									((uint8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
 									// additional y offset in charset
-									(((u8)(string[i] - fontData->fontSpec->offset)
+									(((uint8)(string[i] - fontData->fontSpec->offset)
 										/ fontData->fontSpec->charactersPerLineInCharset
 										* fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x)
 											* (fontData->fontSpec->fontSize.y - 1)) +

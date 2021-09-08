@@ -71,7 +71,7 @@ typedef struct SpriteSpec
 	TextureSpec* textureSpec;
 
 	/// transparency mode
-	u8 transparent;
+	uint8 transparent;
 
 	/// displacement modifier to achieve better control over display
 	PixelVector displacement;
@@ -96,7 +96,7 @@ typedef struct AnimationFunction
 	int numberOfFrames;
 
 	/// frames to play in animation
-	u8 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
+	uint8 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
 	/// number of cycles a frame of animation is displayed
 	int delay;
@@ -151,17 +151,17 @@ abstract class Sprite : Object
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
 	// Head spec for world entry setup
-	u16 head;
+	uint16 head;
 	// AnimationController
 	AnimationController animationController;
 	// Our texture
 	Texture texture;
 	// Texture's half width
-	s16 halfWidth;
+	int16 halfWidth;
 	// Texture's half height
-	s16 halfHeight;
+	int16 halfHeight;
 	// World layer where to render the texture
-	s16 index;
+	int16 index;
 	// Hidden flag
 	bool hidden;
 	// Update animation
@@ -173,32 +173,32 @@ abstract class Sprite : Object
 	// Flato to allow registering
 	bool registered;
 	// Flag for making it transparent
-	u8 transparent;
+	uint8 transparent;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
 	const PixelVector* getPosition();
 	PixelVector getDisplacedPosition();
-	u16 getHead();
-	u16 getMode();
+	uint16 getHead();
+	uint16 getMode();
 	Texture getTexture();
-	u8 getTransparent();
-	u32 getWorldHead();
-	u16 getWorldHeight();
-	u16 getWorldWidth();
-	s16 getWorldGP();
-	s16 getWorldGX();
-	s16 getWorldGY();
-	s16 getWorldMP();
-	s16 getWorldMX();
-	s16 getWorldMY();
+	uint8 getTransparent();
+	uint32 getWorldHead();
+	uint16 getWorldHeight();
+	uint16 getWorldWidth();
+	int16 getWorldGP();
+	int16 getWorldGX();
+	int16 getWorldGY();
+	int16 getWorldMP();
+	int16 getWorldMX();
+	int16 getWorldMY();
 	bool isHidden();
 	void rewrite();
-	void setTransparent(u8 value);
-	s16 getActualFrame();
+	void setTransparent(uint8 value);
+	int16 getActualFrame();
 	const PixelVector* getDisplacement();
 	void setDisplacement(const PixelVector* displacement);
-	u8 getFrameDuration();
+	uint8 getFrameDuration();
 	int getHalfHeight();
 	int getHalfWidth();
 	bool isAffine();
@@ -212,9 +212,9 @@ abstract class Sprite : Object
 	void stop();
 	bool replay(const AnimationDescription* animationDescription);
 	void previousFrame();
-	void setActualFrame(s16 actualFrame);
-	void setFrameCycleDecrement(u8 frameDelayDelta);
-	void setFrameDuration(u8 frameDuration);
+	void setActualFrame(int16 actualFrame);
+	void setFrameCycleDecrement(uint8 frameDelayDelta);
+	void setFrameDuration(uint8 frameDuration);
 	void update();
 	bool updateAnimation();
 	void putChar(Point* texturePixel, BYTE* newChar);
@@ -223,21 +223,21 @@ abstract class Sprite : Object
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	s16 render(s16 index, bool evenFrame);
+	int16 render(int16 index, bool evenFrame);
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();
-	u8 getIndex();
+	uint8 getIndex();
 	virtual void hideForDebug();
 	virtual void showForDebug();
 	virtual void addDisplacement(const PixelVector* displacement);
 	virtual Scale getScale();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
-	virtual u16 doRender(s16 index, bool evenFrame) = 0;
+	virtual uint16 doRender(int16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
-	virtual void setMode(u16 display, u16 mode) = 0;
+	virtual void setMode(uint16 display, uint16 mode) = 0;
 	virtual void setPosition(const PixelVector* position);
 	virtual void writeAnimation();
 	virtual bool writeTextures();

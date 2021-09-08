@@ -7,7 +7,7 @@
 
 {%- for waveform in project.sound.waveforms %}
 
-const s8 {{ waveform.name }}WaveForm[] =
+const int8 {{ waveform.name }}WaveForm[] =
 {
 	{{ waveform.values }}
 };

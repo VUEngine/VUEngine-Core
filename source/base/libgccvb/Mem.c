@@ -36,7 +36,7 @@
 // redefine memcpy
 __attribute__ ((unused)) static void* memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
-	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(u32) + __MODULO(numberOfBytes, sizeof(u32));
+	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
 
 	asm("				\n\t"      \
 		"jr end%=		\n\t"      \
@@ -58,9 +58,9 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 
 // Produces graphical glitches if inlined
 // Not too critical since it is not used a lot
-static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
+static void Mem::clear(BYTE* destination, uint32 numberOfBYTES)
 {
-	u32 i;
+	uint32 i;
 
 	for(i = 0; i < numberOfBYTES; i++)
 	{
@@ -69,7 +69,7 @@ static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
+static void Mem::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 

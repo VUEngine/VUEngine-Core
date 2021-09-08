@@ -119,7 +119,7 @@ void ClockManager::unregister(Clock clock)
  *
  * @param millisecondsElapsed	Milliseconds elapsed between calls
  */
-void ClockManager::update(u32 millisecondsElapsed)
+void ClockManager::update(uint32 millisecondsElapsed)
 {
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 

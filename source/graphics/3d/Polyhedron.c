@@ -50,7 +50,7 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(u8 color)
+void Polyhedron::constructor(uint8 color)
 {
 	// construct base object
 	Base::constructor(color);

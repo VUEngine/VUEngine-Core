@@ -315,24 +315,24 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-u16 BgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
+uint16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
-	s16 gx = this->position.x + this->displacement.x - this->halfWidth;
-	s16 gy = this->position.y + this->displacement.y - this->halfHeight;
-	s16 gp = this->position.parallax + this->displacement.parallax;
+	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
+	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
+	int16 gp = this->position.parallax + this->displacement.parallax;
 
-	s16 auxGp = __ABS(gp);
+	int16 auxGp = __ABS(gp);
 
 	// get sprite's size
-	s16 width = this->halfWidth << 1;
-	s16 height = this->halfHeight << 1;
-	s16 w = width;
-	s16 h = height;
+	int16 width = this->halfWidth << 1;
+	int16 height = this->halfHeight << 1;
+	int16 w = width;
+	int16 h = height;
 
 	// set the head
 	int mx = this->drawSpec.textureSource.mx;
@@ -408,7 +408,7 @@ u16 BgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-	worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
+	worldPointer->param = (uint16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 
 	return index;
 }
@@ -416,7 +416,7 @@ u16 BgmapSprite::doRender(s16 index, bool evenFrame __attribute__((unused)))
 void BgmapSprite::processEffects()
 {
 	// set the world size according to the zoom
-	if(0 < this->param && (u8)__NO_RENDER_INDEX != this->index)
+	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{
 		BgmapSprite::processAffineEffects(this);
 		BgmapSprite::processHbiasEffects(this);
@@ -443,8 +443,8 @@ void BgmapSprite::processAffineEffects()
 			worldPointer->w = this->halfWidth << 1;
 		}
 
-		s16 myDisplacement = 0;
-		s16 gy = this->position.y + this->displacement.y - this->halfHeight;
+		int16 myDisplacement = 0;
+		int16 gy = this->position.y + this->displacement.y - this->halfHeight;
 
 		if(_cameraFrustum->y0 > gy)
 		{
@@ -453,7 +453,7 @@ void BgmapSprite::processAffineEffects()
 
 		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
 
-		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{
@@ -601,7 +601,7 @@ void BgmapSprite::displacement()
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void BgmapSprite::setMode(u16 display, u16 mode)
+void BgmapSprite::setMode(uint16 display, uint16 mode)
 {
 	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
 
@@ -663,7 +663,7 @@ void BgmapSprite::registerWithManager()
  *
  * @return			Param table address
  */
-u32 BgmapSprite::getParam()
+uint32 BgmapSprite::getParam()
 {
 	return this->param;
 }
@@ -676,7 +676,7 @@ u32 BgmapSprite::getParam()
  *
  * @param param		Net param table address
  */
-void BgmapSprite::setParam(u32 param)
+void BgmapSprite::setParam(uint32 param)
 {
 	this->param = param;
 
@@ -723,7 +723,7 @@ void BgmapSprite::setDrawSpec(const DrawSpec* const drawSpec)
  *
  * @return				Next param table row to calculate
  */
-s16 BgmapSprite::getParamTableRow()
+int16 BgmapSprite::getParamTableRow()
 {
 	return this->paramTableRow;
 }
@@ -740,7 +740,7 @@ s16 BgmapSprite::getParamTableRow()
  * @private
  * @return 				last computed row
  */
-static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
+static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 

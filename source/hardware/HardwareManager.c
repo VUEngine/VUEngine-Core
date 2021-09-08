@@ -41,16 +41,16 @@
 //												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-extern u32 keyVector;
-extern u32 timVector;
-extern u32 croVector;
-extern u32 comVector;
-extern u32 vipVector;
-extern u32 zeroDivisionVector;
-extern u32 invalidOpcodeVector;
+extern uint32 keyVector;
+extern uint32 timVector;
+extern uint32 croVector;
+extern uint32 comVector;
+extern uint32 vipVector;
+extern uint32 zeroDivisionVector;
+extern uint32 invalidOpcodeVector;
 
-extern u32 _dram_bss_end;
-extern u32 _dram_data_start;
+extern uint32 _dram_bss_end;
+extern uint32 _dram_data_start;
 
 int _vuengineLinkPointer = 0;
 int _vuengineStackPointer = 0;
@@ -113,7 +113,7 @@ void HardwareManager::constructor()
 	// set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;
 
-	this->hwRegisters =	(u8*)0x02000000;
+	this->hwRegisters =	(uint8*)0x02000000;
 	this->timerManager = TimerManager::getInstance();
 	this->vipManager = VIPManager::getInstance();
 	this->keypadManager = KeypadManager::getInstance();
@@ -138,26 +138,26 @@ void HardwareManager::destructor()
  */
 static void HardwareManager::checkMemoryMap()
 {
-	if((u32)&_dram_data_start < __WORLD_SPACE_BASE_ADDRESS && (u32)&_dram_bss_end >= __WORLD_SPACE_BASE_ADDRESS)
+	if((uint32)&_dram_data_start < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dram_bss_end >= __WORLD_SPACE_BASE_ADDRESS)
 	{
 		MemoryPool::getInstance();
 		Printing::setDebugMode(Printing::getInstance());
 		int y = 15;
-		u32 missingSpace = (u32)&_dram_bss_end - __WORLD_SPACE_BASE_ADDRESS;
-		u32 recommendedDramStart = (u32)&_dram_data_start - missingSpace;
-		u32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
-		u32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
+		uint32 missingSpace = (uint32)&_dram_bss_end - __WORLD_SPACE_BASE_ADDRESS;
+		uint32 recommendedDramStart = (uint32)&_dram_data_start - missingSpace;
+		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
+		uint32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
 
 		Printing::text(Printing::getInstance(), "Increase the dram section in the vb.ld file", 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "Missing space: ", 1, ++y, NULL);
 		Printing::int(Printing::getInstance(), missingSpace, 17, y, NULL);
 		Printing::text(Printing::getInstance(), "Bytes ", 17 + Utilities::intLength(missingSpace) + 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "WORLD space: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (u32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "DRAM start: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (u32)&_dram_data_start, 17, y, 4, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)&_dram_data_start, 17, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "DRAM end: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (u32)&_dram_bss_end, 17, y++, 4, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)&_dram_bss_end, 17, y++, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), recommendedDramStart, 25, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
@@ -184,11 +184,11 @@ static void HardwareManager::croInterruptHandler()
  */
 void HardwareManager::setInterruptVectors()
 {
-	keyVector = (u32)KeypadManager::interruptHandler;
-	timVector = (u32)TimerManager::interruptHandler;
-	croVector = (u32)HardwareManager::croInterruptHandler;
-	comVector = (u32)CommunicationManager::interruptHandler;
-	vipVector = (u32)VIPManager::interruptHandler;
+	keyVector = (uint32)KeypadManager::interruptHandler;
+	timVector = (uint32)TimerManager::interruptHandler;
+	croVector = (uint32)HardwareManager::croInterruptHandler;
+	comVector = (uint32)CommunicationManager::interruptHandler;
+	vipVector = (uint32)VIPManager::interruptHandler;
 }
 
 /**
@@ -196,8 +196,8 @@ void HardwareManager::setInterruptVectors()
  */
 void HardwareManager::setExceptionVectors()
 {
-	zeroDivisionVector = (u32)Error::zeroDivisionException;
-	invalidOpcodeVector = (u32)Error::invalidOpcodeException;
+	zeroDivisionVector = (uint32)Error::zeroDivisionException;
+	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
 }
 
 /**
@@ -205,7 +205,7 @@ void HardwareManager::setExceptionVectors()
  *
  * @param level	 	Interrupt level
  */
-void HardwareManager::setInterruptLevel(u8 level)
+void HardwareManager::setInterruptLevel(uint8 level)
 {
 	asm(" \n\
 		stsr	sr5,r6 \n\
@@ -250,7 +250,7 @@ int HardwareManager::getInterruptLevel()
 /**
  * Initialize the timer
  */
-void HardwareManager::setupTimer(u16 timerResolution, u16 timePerInterrupt, u16 timePerInterruptUnits)
+void HardwareManager::setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits)
 {
 	TimerManager::setResolution(this->timerManager, timerResolution);
 	TimerManager::setTimePerInterruptUnits(this->timerManager, timePerInterruptUnits);
@@ -421,11 +421,11 @@ void HardwareManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "DPCTRL:", x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "BRTA:", x, ++auxY, NULL);
-	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
+	Printing::hex(Printing::getInstance(), (uint8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "BRTB:", x, ++auxY, NULL);
-	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
+	Printing::hex(Printing::getInstance(), (uint8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "BRTC:", x, ++auxY, NULL);
-	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
+	Printing::hex(Printing::getInstance(), (uint8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "REST:", x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "FRMCYC:", x, ++auxY, NULL);

@@ -113,7 +113,7 @@ void AnimationController::setAnimationCoordinator(AnimationCoordinator animation
  * @private
  * @return 		Actual frame of animation index
  */
-s16 AnimationController::getActualFrameIndex()
+int16 AnimationController::getActualFrameIndex()
 {
 	return this->animationFunction ? this->animationFunction->frames[this->actualFrame] : 0;
 }
@@ -124,7 +124,7 @@ s16 AnimationController::getActualFrameIndex()
  * @private
  * @return 		Actual frame of animation
  */
-s16 AnimationController::getActualFrame()
+int16 AnimationController::getActualFrame()
 {
 	return this->actualFrame;
 }
@@ -135,7 +135,7 @@ s16 AnimationController::getActualFrame()
  * @publics
  * @return 		Previous frame of animation
  */
-s16 AnimationController::getPreviousFrameValue()
+int16 AnimationController::getPreviousFrameValue()
 {
 	return this->previousFrameValue;
 }
@@ -148,7 +148,7 @@ s16 AnimationController::getPreviousFrameValue()
  *
  * @return bool			Whether the value was updated or not
  */
-bool AnimationController::setActualFrame(s16 actualFrame)
+bool AnimationController::setActualFrame(int16 actualFrame)
 {
 	if(0 > actualFrame)
 	{
@@ -173,7 +173,7 @@ bool AnimationController::setActualFrame(s16 actualFrame)
  * @private
  * @return		Frame duration in game cycles
  */
-u8 AnimationController::getFrameDuration()
+uint8 AnimationController::getFrameDuration()
 {
 	return this->frameDuration;
 }
@@ -184,7 +184,7 @@ u8 AnimationController::getFrameDuration()
  * @private
  * @param frameDuration	Number of cycles that each frame of animation is shown
  */
-void AnimationController::setFrameDuration(u8 frameDuration)
+void AnimationController::setFrameDuration(uint8 frameDuration)
 {
 	this->frameDuration = frameDuration;
 }
@@ -195,7 +195,7 @@ void AnimationController::setFrameDuration(u8 frameDuration)
  * @private
  * @return		Frame cycle decrement
  */
-u8 AnimationController::getFrameCycleDecrement()
+uint8 AnimationController::getFrameCycleDecrement()
 {
 	return this->frameCycleDecrement;
 }
@@ -206,7 +206,7 @@ u8 AnimationController::getFrameCycleDecrement()
  * @private
  * @param frameCycleDecrement	Decrement value for the frame cycle on each game cycle
  */
-void AnimationController::setFrameCycleDecrement(u8 frameCycleDecrement)
+void AnimationController::setFrameCycleDecrement(uint8 frameCycleDecrement)
 {
 	this->frameCycleDecrement = frameCycleDecrement;
 }
@@ -245,7 +245,7 @@ bool AnimationController::updateAnimation()
 	// reduce frame delay count
 	if(0 == this->frameDuration)
 	{
-		s16 actualFrame = this->actualFrame;
+		int16 actualFrame = this->actualFrame;
 
 		// increase the frame to show
 		this->actualFrame++;
@@ -277,7 +277,7 @@ bool AnimationController::updateAnimation()
 		// Reset frame duration
 		AnimationController::resetFrameDuration(this);
 
-		u8 actualFrameValue = this->animationFunction->frames[this->actualFrame];
+		uint8 actualFrameValue = this->animationFunction->frames[this->actualFrame];
 
 		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
 		this->previousFrameValue = actualFrameValue;

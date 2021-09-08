@@ -120,9 +120,9 @@ void Container::destructor()
 				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 24, 12, NULL);
 				Printing::text(Printing::getInstance(), "It: ", 20, 13, NULL);
 				Printing::text(Printing::getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 24, 13, NULL);
-				Printing::hex(Printing::getInstance(), (u32)child, 29, 14, 8, NULL);
+				Printing::hex(Printing::getInstance(), (uint32)child, 29, 14, 8, NULL);
 				Printing::text(Printing::getInstance(), "Parent: ", 20, 15, NULL);
-				Printing::hex(Printing::getInstance(), (u32)child->parent, 29, 15, 8, NULL);
+				Printing::hex(Printing::getInstance(), (uint32)child->parent, 29, 15, 8, NULL);
 			}
 #endif
 			NM_ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
@@ -308,7 +308,7 @@ void Container::removeChild(Container child, bool deleteChild)
 	{
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (u32)this, 18, 15, 8, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
 		Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
@@ -354,7 +354,7 @@ void Container::purgeChildren()
 		{
 			Printing::setDebugMode(Printing::getInstance());
 			Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-			Printing::hex(Printing::getInstance(), (u32)this, 18, 15, 8, NULL);
+			Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
 			Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
 			Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
@@ -415,7 +415,7 @@ void Container::ready(bool recursive)
  *
  * @param elapsedTime
  */
-void Container::update(u32 elapsedTime)
+void Container::update(uint32 elapsedTime)
 {
 	Container::updateBehaviors(this, elapsedTime);
 	Container::updateChildren(this, elapsedTime);
@@ -426,7 +426,7 @@ void Container::update(u32 elapsedTime)
  *
  * @param elapsedTime
  */
-void Container::updateBehaviors(u32 elapsedTime)
+void Container::updateBehaviors(uint32 elapsedTime)
 {
 	if(this->behaviors)
 	{
@@ -450,7 +450,7 @@ void Container::updateBehaviors(u32 elapsedTime)
  *
  * @param elapsedTime
  */
-void Container::updateChildren(u32 elapsedTime)
+void Container::updateChildren(uint32 elapsedTime)
 {
 	// if I have children
 	if(this->children)
@@ -576,7 +576,7 @@ void Container::changeEnvironment(Transformation* environmentTransform)
  * @param environmentTransform
  * @param recursive
  */
-void Container::initialTransform(const Transformation* environmentTransform, u32 recursive)
+void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	// concatenate transformation
 	Container::applyEnvironmentToRotation(this, environmentTransform);
@@ -664,7 +664,7 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
  * @param environmentTransform
  * @param invalidateTransformationFlag
  */
-void Container::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Container::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
@@ -704,12 +704,12 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 	this->transformed = true;
 }
 
-void Container::transformChildren(u8 invalidateTransformationFlag)
+void Container::transformChildren(uint8 invalidateTransformationFlag)
 {
 	// if I have children
 	if(this->children)
 	{
-		u8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
+		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
 		VirtualNode node = this->children->head;
 
@@ -1367,7 +1367,7 @@ bool Container::isHidden()
 	return this->hidden;
 }
 
-void Container::setInheritEnvironment(u8 inheritEnvironment)
+void Container::setInheritEnvironment(uint8 inheritEnvironment)
 {
 	this->inheritEnvironment = inheritEnvironment;
 }

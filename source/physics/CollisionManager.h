@@ -52,11 +52,11 @@ class CollisionManager : Object
 	// a list of shapes that check for collisions against other shapes
 	VirtualList	activeForCollisionCheckingShapes;
 	// counters for statistics
-	u32 lastCycleCollisionChecks;
-	u32 lastCycleCollisions;
-	u32 collisionChecks;
-	u32 collisions;
-	u32 checkCycles;
+	uint32 lastCycleCollisionChecks;
+	uint32 lastCycleCollisions;
+	uint32 collisionChecks;
+	uint32 collisions;
+	uint32 checkCycles;
 	bool clearActiveForCollisionCheckingShapes;
 	bool checkShapesOutOfCameraRange;
 
@@ -70,7 +70,7 @@ class CollisionManager : Object
 	void activeCollisionCheckForShape(Shape shape, bool activate);
 	void showShapes();
 	void setCheckShapesOutOfCameraRange(bool value);
-	u32 update(Clock clock);
+	uint32 update(Clock clock);
 }
 
 

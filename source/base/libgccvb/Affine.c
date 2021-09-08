@@ -45,7 +45,7 @@ extern double fabs (double);
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation)
+static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation)
 {
 	NM_ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	NM_ASSERT(scale->y, "Affine::applyAll: 0 y scale");
@@ -100,7 +100,7 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 	AffineEntry* affine = (AffineEntry*)param;
 
 
-	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
+	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
 	int counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
 
@@ -269,7 +269,7 @@ PRINT_INT(lastRow, 1, 16);
 	return -1;
 }
 
-static s16 Affine::rotate(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Rotation* rotation)
+static int16 Affine::rotate(uint32 param, int16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Rotation* rotation)
 {
 	fix10_6 highPrecisionPa = __FIX7_9_TO_FIX10_6(__COS(-rotation->z));
 	fix10_6 highPrecisionPb = -__FIX7_9_TO_FIX10_6(__SIN(-rotation->z));
@@ -315,11 +315,11 @@ static s16 Affine::rotate(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fi
 	AffineEntry* affine = (AffineEntry*)param;
 
 
-	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
+	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int lastRow = __FIX10_6_TO_I((halfHeight << 1)) + 1;
 
 /*
-	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
+	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
 	int counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
 */

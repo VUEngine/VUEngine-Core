@@ -41,7 +41,7 @@ static class Vector3D : Object
 {
 	/// @publicsection
 	static inline Vector3D zero();
-	static inline Vector3D unit(u16 axis);
+	static inline Vector3D unit(uint16 axis);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
@@ -56,7 +56,7 @@ static class Vector3D : Object
 	static inline fix10_6_ext squareLength(Vector3D vector);
 	static inline fix10_6 lengthProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
-	static inline PixelVector projectToPixelVector(Vector3D vector3D, s16 parallax);
+	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
@@ -75,7 +75,7 @@ static inline Vector3D Vector3D::zero()
 	return (Vector3D){0, 0, 0};
 }
 
-static inline Vector3D Vector3D::unit(u16 axis)
+static inline Vector3D Vector3D::unit(uint16 axis)
 {
 	return (Vector3D)
 	{
@@ -213,7 +213,7 @@ static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 	return vector3D;
 }
 
-static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, s16 parallax)
+static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int16 parallax)
 {
 	extern const Optical* _optical;
 
@@ -254,7 +254,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, s16 
 	return projection;
 }
 
-static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector3D, s16 parallax)
+static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector3D, int16 parallax)
 {
 	extern const Optical* _optical;
 	extern const Vector3D* _cameraPosition;

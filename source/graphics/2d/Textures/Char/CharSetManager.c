@@ -205,7 +205,7 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 		VirtualList::removeElement(this->charSets, charSet);
 		VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 
-		u32 offset = CharSet::getOffset(charSet);
+		uint32 offset = CharSet::getOffset(charSet);
 
 		if(1 == this->freedOffset || offset < this->freedOffset)
 		{
@@ -238,7 +238,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 	this->preventDefragmentation = true;
 
-	u16 offset = NULL != this->charSets->head ? 0 : 1;
+	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
 	if(this->charSets->head)
 	{
@@ -350,12 +350,12 @@ bool CharSetManager::defragmentProgressively()
 
 			if(!isDeleted(charSet))
 			{
-				u32 offset = CharSet::getOffset(charSet);
+				uint32 offset = CharSet::getOffset(charSet);
 
 				if(this->freedOffset < offset)
 				{
 	#ifndef __RELEASE
-					for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
+					for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
 					{
 						*x = 0;
 					}

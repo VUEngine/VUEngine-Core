@@ -53,7 +53,7 @@ typedef struct Event
 	/// the method to execute on event
 	EventListener method;
 	/// the code of the event to listen to
-	u32 code;
+	uint32 code;
 
 } Event;
 
@@ -74,17 +74,17 @@ abstract class Object : Object
 	/// @publicsection
 	static Object getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod);
 	void constructor();
-	void addEventListener(Object listener, EventListener method, u32 eventCode);
-	void removeEventListener(Object listener, EventListener method, u32 eventCode);
-	void removeEventListeners(EventListener method, u32 eventCode);
-	void removeEventListenerScopes(Object listener, u32 eventCode);
-	void removeAllEventListeners(u32 eventCode);
+	void addEventListener(Object listener, EventListener method, uint32 eventCode);
+	void removeEventListener(Object listener, EventListener method, uint32 eventCode);
+	void removeEventListeners(EventListener method, uint32 eventCode);
+	void removeEventListenerScopes(Object listener, uint32 eventCode);
+	void removeAllEventListeners(uint32 eventCode);
 	bool hasActiveEventListeners();
-	void fireEvent(u32 eventCode);
-	void sendMessageTo(Object receiver, u32 message, u32 delay, u32 randomDelay);
-	void sendMessageToSelf(u32 message, u32 delay, u32 randomDelay);
+	void fireEvent(uint32 eventCode);
+	void sendMessageTo(Object receiver, uint32 message, uint32 delay, uint32 randomDelay);
+	void sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay);
 	void discardAllMessages();
-	void discardMessages(u32 message);
+	void discardMessages(uint32 message);
 	virtual bool handleMessage(Telegram telegram);
 	const void* getVTable();
 }

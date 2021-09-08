@@ -163,7 +163,7 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
  *
  * @param checkIfFocusEntityIsMoving	The CameraEffectManager
  */
-void Camera::focus(u32 checkIfFocusEntityIsMoving)
+void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
@@ -552,8 +552,8 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
  */
 void Camera::print(int x, int y, bool inPixels)
 {
-	u8 controlsXPos = 38;
-	u8 controlsYPos = 2;
+	uint8 controlsXPos = 38;
+	uint8 controlsYPos = 2;
 	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
 	controlsYPos++;
 	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);

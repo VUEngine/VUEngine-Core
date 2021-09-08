@@ -157,10 +157,10 @@ typedef struct ShapeSpec
 	bool checkForCollisions;
 
 	/// layers in which I live
-	u32 layers;
+	uint32 layers;
 
 	/// layers to ignore when checking for collisions
-	u32 layersToIgnore;
+	uint32 layersToIgnore;
 
 } ShapeSpec;
 
@@ -197,21 +197,21 @@ abstract class Shape : Object
 	// colliding shapes list
 	VirtualList collidingShapes;
 	// layers on which this shape live
-	u32 layers;
+	uint32 layers;
 	// layers to ignore when checking for collisions
-	u32 layersToIgnore;
+	uint32 layersToIgnore;
 	// for debugging purposes
 	Wireframe wireframe;
 	// flag to know if setup is needed
-	u8 ready;
+	uint8 ready;
 	// flag to know if has moved
-	u8 moved;
+	uint8 moved;
 	// flag to know if shape is reacting to collisions
-	u8 enabled;
+	uint8 enabled;
 	// flag to check against other shapes
-	u8 checkForCollisions;
+	uint8 checkForCollisions;
 	// flag to cull off shapes outside the screen
-	u8 isVisible;
+	uint8 isVisible;
 	// flag to allow registration of colliding shapes
 	bool registerCollisions;
 	// the rectangle
@@ -235,15 +235,15 @@ abstract class Shape : Object
 	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);
 	fix10_6 getCollidingFrictionCoefficient();
 	void resolveCollision(const CollisionInformation* collisionInformation, bool registerCollidingShape);
-	u32 getLayers();
-	void setLayers(u32 layers);
-	u32 getLayersToIgnore();
-	void setLayersToIgnore(u32 layersToIgnore);
+	uint32 getLayers();
+	void setLayers(uint32 layers);
+	uint32 getLayersToIgnore();
+	void setLayersToIgnore(uint32 layersToIgnore);
 	void registerCollisions(bool value);
 	void show();
 	void hide();
 	RightBox getSurroundingRightBox();
-	virtual void setup(u32 layers, u32 layersToIgnore);
+	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	virtual void setPosition(const Vector3D* position);
 	virtual Vector3D getNormal();

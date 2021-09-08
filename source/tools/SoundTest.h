@@ -45,16 +45,16 @@
 singleton class SoundTest : Tool
 {
 	SoundWrapper soundWrapper;
-	u16 selectedSound;
+	uint16 selectedSound;
 
 	/// @publicsection
 	static SoundTest getInstance();
 	void printVolumeState();
-	void printPlaybackPosition(u32 elapsedMilliseconds);
+	void printPlaybackPosition(uint32 elapsedMilliseconds);
 	override void update();
 	override void show();
 	override void hide();
-	override void processUserInput(u16 pressedKey);
+	override void processUserInput(uint16 pressedKey);
 }
 
 #endif

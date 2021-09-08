@@ -204,11 +204,11 @@ void SpriteManager::reset()
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
+void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	int availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
-	s16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
 	if(this->objectSpriteContainers && VirtualList::getSize(this->objectSpriteContainers))
@@ -503,7 +503,7 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
  */
 void SpriteManager::stopRendering()
 {
-	NM_ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::stopRendering: no more layers");
+	NM_ASSERT(0 <= (int8)this->freeLayer, "SpriteManager::stopRendering: no more layers");
 
 	if(0 <= this->freeLayer)
 	{
@@ -523,7 +523,7 @@ void SpriteManager::writeTextures()
 {
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
-	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
+	int8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
 	// allow complete texture writing
 	this->texturesMaximumRowsToWrite = -1;
@@ -666,7 +666,7 @@ void SpriteManager::render()
  *
  * @return			Free WORLD layer
  */
-s8 SpriteManager::getFreeLayer()
+int8 SpriteManager::getFreeLayer()
 {
 	return this->freeLayer;
 }
@@ -767,7 +767,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
  * @param layer		WORLD layer to show
  * @return			Sprite with the given WORLD layer
  */
-Sprite SpriteManager::getSpriteAtPosition(s16 position)
+Sprite SpriteManager::getSpriteAtPosition(int16 position)
 {
 	if(0 > position || position >= VirtualList::getSize(this->sprites))
 	{
@@ -795,7 +795,7 @@ Sprite SpriteManager::getSpriteAtPosition(s16 position)
  * @param layer		WORLD layer to show
  * @return			Sprite with the given WORLD layer
  */
-s16 SpriteManager::getSpritePosition(Sprite sprite)
+int16 SpriteManager::getSpritePosition(Sprite sprite)
 {
 	if(isDeleted(sprite) || !VirtualList::find(this->sprites, sprite))
 	{
@@ -810,7 +810,7 @@ s16 SpriteManager::getSpritePosition(Sprite sprite)
  *
  * @return 			Maximum number of texture rows to write
  */
-s8 SpriteManager::getTexturesMaximumRowsToWrite()
+int8 SpriteManager::getTexturesMaximumRowsToWrite()
 {
 	return this->texturesMaximumRowsToWrite;
 }
@@ -820,9 +820,9 @@ s8 SpriteManager::getTexturesMaximumRowsToWrite()
  *
  * @param texturesMaximumRowsToWrite		Number of texture rows allowed to be written
  */
-void SpriteManager::setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite)
+void SpriteManager::setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite)
 {
-	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
+	this->texturesMaximumRowsToWrite = 2 > (int8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
 }
 
 /**

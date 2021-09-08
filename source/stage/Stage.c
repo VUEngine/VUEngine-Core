@@ -96,7 +96,7 @@ const Transformation neutralEnvironmentTransformation =
 };
 
 #ifdef __PROFILE_STREAMING
-extern s16 _renderingProcessTimeHelper;
+extern int16 _renderingProcessTimeHelper;
 #endif
 
 typedef bool (*StreamingPhase)(void*, int);
@@ -108,11 +108,11 @@ static const StreamingPhase _streamingPhases[] =
 };
 
 #ifdef __PROFILE_STREAMING
-static u32 unloadOutOfRangeEntitiesHighestTime = 0;
-static u32 loadInRangeEntitiesHighestTime = 0;
-static u32 processRemovedEntitiesHighestTime = 0;
-static u32 entityFactoryHighestTime = 0;
-static u32 timeBeforeProcess = 0;
+static uint32 unloadOutOfRangeEntitiesHighestTime = 0;
+static uint32 loadInRangeEntitiesHighestTime = 0;
+static uint32 processRemovedEntitiesHighestTime = 0;
+static uint32 entityFactoryHighestTime = 0;
+static uint32 timeBeforeProcess = 0;
 #endif
 
 
@@ -380,13 +380,13 @@ Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, boo
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++, true);
 }
 
-Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, s16 internalId)
+Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId)
 {
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, internalId, true);
 }
 
 // add entity to the stage
-Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
+Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId, bool makeReady)
 {
 	if(positionedEntity)
 	{
@@ -431,7 +431,7 @@ void Stage::makeChildReady(Entity entity)
 	}
 }
 
-bool Stage::registerEntityId(s16 internalId, EntitySpec* entitySpec)
+bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
 {
 	VirtualNode node = this->stageEntities->head;
 
@@ -466,7 +466,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 	Base::removeChild(this, child, deleteChild);
 
-	s16 internalId = Entity::getInternalId(child);
+	int16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -510,7 +510,7 @@ void Stage::unloadChild(Container child)
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 
-	s16 internalId = Entity::getInternalId(child);
+	int16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -756,7 +756,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		// if the entity isn't visible inside the view field, unload it
 		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
-			s16 internalId = Entity::getInternalId(entity);
+			int16 internalId = Entity::getInternalId(entity);
 
 			VirtualNode auxNode = this->stageEntities->head;
 			StageEntityDescription* stageEntityDescription = NULL;
@@ -796,7 +796,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 			if(unloaded && defer)
 			{
 #ifdef __PROFILE_STREAMING
-				u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+				uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 				unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 				return true;
@@ -805,7 +805,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 	}
 
 #ifdef __PROFILE_STREAMING
-		u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+		uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 
@@ -823,12 +823,12 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
-	u32 cameraDistance = (cameraPosition.x * cameraPosition.x +
+	uint32 cameraDistance = (cameraPosition.x * cameraPosition.x +
 							cameraPosition.y * cameraPosition.y +
 							cameraPosition.z * cameraPosition.z);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
-	u16 amplitude = this->streaming.streamingAmplitude;
+	uint16 amplitude = this->streaming.streamingAmplitude;
 
 	if(this->cameraPreviousDistance != cameraDistance)
 	{
@@ -929,14 +929,14 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 	this->cameraPreviousDistance = cameraDistance;
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
 
 	return loadedEntities;
 }
 
-Entity Stage::findChildByInternalId(s16 internalId)
+Entity Stage::findChildByInternalId(int16 internalId)
 {
 	VirtualNode node = this->children->head;
 
@@ -977,7 +977,7 @@ bool Stage::purgeChildrenProgressively()
 			delete child;
 
 #ifdef __PROFILE_STREAMING
-			u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+			uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 			processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
 #endif
 			return true;
@@ -985,7 +985,7 @@ bool Stage::purgeChildrenProgressively()
 	}
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 	processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
 #endif
 
@@ -1003,7 +1003,7 @@ bool Stage::updateEntityFactory()
 	bool preparingEntities = EntityFactory::prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
 	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
 #endif
 
@@ -1065,7 +1065,7 @@ void Stage::streamAllOut()
 }
 
 // execute stage's logic
-void Stage::update(u32 elapsedTime)
+void Stage::update(uint32 elapsedTime)
 {
 	Base::update(this, elapsedTime);
 
@@ -1078,7 +1078,7 @@ void Stage::update(u32 elapsedTime)
 }
 
 // transformation state
-void Stage::transform(const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
+void Stage::transform(const Transformation* environmentTransform __attribute__ ((unused)), uint8 invalidateTransformationFlag)
 {
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 

@@ -38,7 +38,7 @@
 friend class VirtualNode;
 friend class VirtualList;
 
-typedef u32 (*StreamingPhase)(void*);
+typedef uint32 (*StreamingPhase)(void*);
 
 static const StreamingPhase _streamingPhases[] =
 {
@@ -139,7 +139,7 @@ void EntityFactory::destructor()
 	Base::destructor();
 }
 
-void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId)
+void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId)
 {
 	if(!positionedEntity || !parent)
 	{
@@ -161,7 +161,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
 
-u32 EntityFactory::instantiateEntities()
+uint32 EntityFactory::instantiateEntities()
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
 
@@ -225,7 +225,7 @@ u32 EntityFactory::instantiateEntities()
 }
 
 // transformation spawned entities
-u32 EntityFactory::transformEntities()
+uint32 EntityFactory::transformEntities()
 {
 	if(!this->entitiesToTransform->head)
 	{
@@ -283,7 +283,7 @@ u32 EntityFactory::transformEntities()
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::makeReadyEntities()
+uint32 EntityFactory::makeReadyEntities()
 {
 	if(!this->entitiesToMakeReady->head)
 	{
@@ -325,7 +325,7 @@ u32 EntityFactory::makeReadyEntities()
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::cleanUp()
+uint32 EntityFactory::cleanUp()
 {
 	if(!this->spawnedEntities->head)
 	{
@@ -358,7 +358,7 @@ u32 EntityFactory::cleanUp()
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::prepareEntities()
+uint32 EntityFactory::prepareEntities()
 {
 	EntityFactory::cleanUp(this);
 
@@ -367,7 +367,7 @@ u32 EntityFactory::prepareEntities()
 		this->streamingPhase = 0;
 	}
 
-	u32 result = _streamingPhases[this->streamingPhase](this);
+	uint32 result = _streamingPhases[this->streamingPhase](this);
 
 	int counter = _streamingPhasesCount;
 
@@ -393,7 +393,7 @@ u32 EntityFactory::prepareEntities()
 	return __LIST_EMPTY != result;
 }
 
-u32 EntityFactory::hasEntitiesPending()
+uint32 EntityFactory::hasEntitiesPending()
 {
 	return VirtualList::getSize(this->entitiesToInstantiate) ||
 			VirtualList::getSize(this->entitiesToTransform) ||

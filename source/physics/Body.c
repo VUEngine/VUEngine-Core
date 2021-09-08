@@ -115,7 +115,7 @@ Clock _physhicsClock = NULL;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Body::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity)
+void Body::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	Base::constructor();
 
@@ -247,7 +247,7 @@ MovementType Body::getMovementType()
 }
 
 // set movement type
-void Body::setMovementType(int movementType, u16 axis)
+void Body::setMovementType(int movementType, uint16 axis)
 {
 	if(__X_AXIS & axis)
 	{
@@ -265,7 +265,7 @@ void Body::setMovementType(int movementType, u16 axis)
 	}
 }
 
-void Body::clearAcceleration(u16 axis)
+void Body::clearAcceleration(uint16 axis)
 {
 	if(__X_AXIS & axis)
 	{
@@ -287,7 +287,7 @@ void Body::clearAcceleration(u16 axis)
 }
 
 // set movement type to accelerated
-void Body::moveAccelerated(u16 axis)
+void Body::moveAccelerated(uint16 axis)
 {
 	Body::setMovementType(this, __ACCELERATED_MOVEMENT, axis);
 }
@@ -295,7 +295,7 @@ void Body::moveAccelerated(u16 axis)
 // set movement type to uniform
 void Body::moveUniformly(Velocity velocity)
 {
-	u16 axisOfUniformMovement = 0;
+	uint16 axisOfUniformMovement = 0;
 
 	if(velocity.x)
 	{
@@ -339,7 +339,7 @@ void Body::applyForce(const Force* force)
 		this->externalForce.y += force->y;
 		this->externalForce.z += force->z;
 
-		u16 axisOfExternalForce = __NO_AXIS;
+		uint16 axisOfExternalForce = __NO_AXIS;
 
 		if(force->x)
 		{
@@ -366,7 +366,7 @@ void Body::applyForce(const Force* force)
 }
 
 // apply gravity
-void Body::applyGravity(u16 axis)
+void Body::applyGravity(uint16 axis)
 {
 	if(axis)
 	{
@@ -666,10 +666,10 @@ bool Body::changedDirection()
 }
 
 // stop movement over an axis
-u16 Body::stopMovement(u16 axis)
+uint16 Body::stopMovement(uint16 axis)
 {
-	u16 axisOfMovement = Body::getMovementOnAllAxis(this);
-	u16 axisOfStopping = __NO_AXIS;
+	uint16 axisOfMovement = Body::getMovementOnAllAxis(this);
+	uint16 axisOfStopping = __NO_AXIS;
 
 	if(axis & __X_AXIS)
 	{
@@ -710,13 +710,13 @@ u16 Body::stopMovement(u16 axis)
 }
 
 // get axis subject to gravity
-u16 Body::getaxisSubjectToGravity()
+uint16 Body::getaxisSubjectToGravity()
 {
 	return this->axisSubjectToGravity;
 }
 
 // set axis subject to gravity
-void Body::setAxisSubjectToGravity(u16 axisSubjectToGravity)
+void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 {
 	this->axisSubjectToGravity = axisSubjectToGravity;
 }
@@ -882,7 +882,7 @@ void Body::reset()
 }
 
 /*
-void Body::clearNormalOnaxis(u16 axis __attribute__ ((unused))) __attribute__ ((unused))
+void Body::clearNormalOnaxis(uint16 axis __attribute__ ((unused))) __attribute__ ((unused))
 {
 	if(this->normals)
 	{
@@ -1061,7 +1061,7 @@ bool Body::isAwake()
 }
 
 // awake body
-void Body::awake(u16 axisOfAwakening)
+void Body::awake(uint16 axisOfAwakening)
 {
 	bool dispatchMessage = false;
 
@@ -1108,9 +1108,9 @@ void Body::sleep()
 }
 
 // is it moving?
-u16 Body::getMovementOnAllAxis()
+uint16 Body::getMovementOnAllAxis()
 {
-	u16 result = 0;
+	uint16 result = 0;
 
 	result |= (this->velocity.x | __FIX10_6_INT_PART(this->acceleration.x)) ? __X_AXIS : 0;
 	result |= (this->velocity.y | __FIX10_6_INT_PART(this->acceleration.y)) ? __Y_AXIS : 0;
@@ -1253,7 +1253,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	// stop over the axis where there is no bouncing
 	if(movementResult.axisStoppedMovement)
 	{
-		u16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
+		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
 		if(axisOfStopping && this->sendMessages)
 		{

@@ -56,7 +56,7 @@ abstract class Tool : Object
 	virtual void render();
 	virtual void show() = 0;
 	virtual void hide() = 0;
-	virtual void processUserInput(u16 pressedKey) = 0;
+	virtual void processUserInput(uint16 pressedKey) = 0;
 	virtual void dimmGame();
 	virtual void lightUpGame();
 }

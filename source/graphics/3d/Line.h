@@ -44,7 +44,7 @@ class Line : Wireframe
 	Vector3D b;
 
 	/// @publicsection
-	void constructor(Vector3D a, Vector3D b, Vector3D normal, u8 color);
+	void constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color);
 	override void draw(bool calculateParallax);
 }
 

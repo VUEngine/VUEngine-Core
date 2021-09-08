@@ -78,7 +78,7 @@ typedef struct EntitySpec
 	PixelSize pixelSize;
 
 	/// object's in-game type
-	u8 inGameType;
+	uint8 inGameType;
 
 	/// physical specification
 	PhysicalSpecification* physicalSpecification;
@@ -98,7 +98,7 @@ typedef struct PositionedEntity
 	ScreenPixelVector onScreenPosition;
 
 	// entity's id
-	s16 id;
+	int16 id;
 
 	// name
 	char* name;
@@ -127,10 +127,10 @@ typedef struct PositionedEntityDescription
 	Container parent;
 	Entity entity;
 	EventListener callback;
-	s16 spriteSpecIndex;
-	s16 shapeSpecIndex;
-	s16 transformedShapeSpecIndex;
-	s16 internalId;
+	int16 spriteSpecIndex;
+	int16 shapeSpecIndex;
+	int16 transformedShapeSpecIndex;
+	int16 internalId;
 	bool transformed;
 } PositionedEntityDescription;
 
@@ -155,14 +155,14 @@ class EntityFactory : Object
 
 	/// @publicsection
 	void constructor();
-	u32 prepareEntities();
+	uint32 prepareEntities();
 	void prepareAllEntities();
-	void spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId);
-	u32 hasEntitiesPending();
-	u32 instantiateEntities();
-	u32 transformEntities();
-	u32 makeReadyEntities();
-	u32 callLoadedEntities();
+	void spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId);
+	uint32 hasEntitiesPending();
+	uint32 instantiateEntities();
+	uint32 transformEntities();
+	uint32 makeReadyEntities();
+	uint32 callLoadedEntities();
 	void showStatus(int x, int y);
 }
 

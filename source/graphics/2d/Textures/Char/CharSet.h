@@ -75,10 +75,10 @@ typedef struct CharSetSpec
 	/// __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
 	/// __ANIMATED_MULTI: sum of chars of all animation frames
 	/// __NOT_ANIMATED: number of chars of whole image
-	u16 numberOfChars;
+	uint16 numberOfChars;
 
 	/// the way its chars and bgtexture will be allocated in graphic memory
-	u8 allocationType;
+	uint8 allocationType;
 
 	/// pointer to the char spec in ROM
 	BYTE* charSpec;
@@ -103,28 +103,28 @@ class CharSet : Object
 	// Charset spec
 	CharSetSpec* charSetSpec;
 	// Array spec of the charSet
-	u32 charSpecDisplacement;
+	uint32 charSpecDisplacement;
 	// Memory displacement
-	u16 offset;
+	uint16 offset;
 	// How many textures are using me
-	u8 usageCount;
+	uint8 usageCount;
 
 	/// @publicsection
-	void constructor(CharSetSpec* charSetSpec, u16 offset);
+	void constructor(CharSetSpec* charSetSpec, uint16 offset);
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	u32 getAllocationType();
-	u32 getOffset();
-	void setOffset(u16 offset);
+	uint32 getAllocationType();
+	uint32 getOffset();
+	void setOffset(uint16 offset);
 	void setCharSetSpec(CharSetSpec* charSetSpec);
 	CharSetSpec* getCharSetSpec();
-	u32 getNumberOfChars();
+	uint32 getNumberOfChars();
 	void write();
 	void rewrite();
-	void setCharSpecDisplacement(u32 charSpecDisplacement);
-	void putChar(u32 charToReplace, BYTE* newChar);
-	void putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
-	void setFrame(u16 frame);
+	void setCharSpecDisplacement(uint32 charSpecDisplacement);
+	void putChar(uint32 charToReplace, BYTE* newChar);
+	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
+	void setFrame(uint16 frame);
 }
 
 

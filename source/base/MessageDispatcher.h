@@ -47,7 +47,7 @@ typedef struct DelayedMessage
 	/// pointer to the telegram to dispatch
 	Telegram telegram;
 	/// time of arrival
-	u32 timeOfArrival;
+	uint32 timeOfArrival;
 	/// reference to clock
 	Clock clock;
 
@@ -71,10 +71,10 @@ singleton class MessageDispatcher : Object
 
 	/// @publicsection
 	static MessageDispatcher getInstance();
-	static bool dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-	void dispatchDelayedMessage(Clock clock, u32 delay, Object sender,
+	static bool dispatchMessage(uint32 delay, Object sender, Object receiver, int message, void* extraInfo);
+	void dispatchDelayedMessage(Clock clock, uint32 delay, Object sender,
 		Object receiver, int message, void* extraInfo);
- 	u32 dispatchDelayedMessages();
+ 	uint32 dispatchDelayedMessages();
 	bool discardDelayedMessagesWithClock(Clock clock);
 	bool discardDelayedMessagesFromSender(Object sender, int message);
 	bool discardDelayedMessagesForReceiver(Object receiver, int message);
