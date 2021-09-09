@@ -40,6 +40,8 @@ singleton class DirectDraw : Object
 {
 	/// @publicsection
 	static DirectDraw getInstance();
+
+	void reset();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
 	void drawPoint(PixelVector point, int32 color);
 }

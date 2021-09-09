@@ -78,6 +78,14 @@ void SRAMManager::destructor()
 }
 
 /**
+ * Reset
+ */
+void SRAMManager::reset()
+{
+	// dummy, don't remove
+}
+
+/**
  * Initialize SRAM
  *
  * @private

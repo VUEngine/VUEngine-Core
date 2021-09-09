@@ -152,20 +152,13 @@ void Game::constructor()
 	this->isPaused = false;
 
 	// make sure all managers are initialized now
-	this->camera = Camera::getInstance();
-	this->keypadManager = KeypadManager::getInstance();
-	this->vipManager = VIPManager::getInstance();
-	this->timerManager = TimerManager::getInstance();
-	this->communicationManager = CommunicationManager::getInstance();
-	this->frameRate = FrameRate::getInstance();
-	this->soundManager = SoundManager::getInstance();
-
-	CharSetManager::getInstance();
-	BgmapTextureManager::getInstance();
-	HardwareManager::getInstance();
-	SpriteManager::getInstance();
-	DirectDraw::getInstance();
-	ParamTableManager::getInstance();
+	this->camera = NULL;
+	this->keypadManager = NULL;
+	this->vipManager = NULL;
+	this->timerManager = NULL;
+	this->communicationManager = NULL;
+	this->frameRate = NULL;
+	this->soundManager = NULL;
 
 	Utilities::setClock(this->clock);
 	Utilities::setKeypadManager(this->keypadManager);
@@ -206,6 +199,22 @@ void Game::destructor()
 // setup engine parameters
 void Game::initialize()
 {
+	// make sure all managers are initialized now
+	this->camera = Camera::getInstance();
+	this->keypadManager = KeypadManager::getInstance();
+	this->vipManager = VIPManager::getInstance();
+	this->timerManager = TimerManager::getInstance();
+	this->communicationManager = CommunicationManager::getInstance();
+	this->frameRate = FrameRate::getInstance();
+	this->soundManager = SoundManager::getInstance();
+
+	CharSetManager::reset(CharSetManager::getInstance());
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	SpriteManager::reset(SpriteManager::getInstance());
+	DirectDraw::reset(DirectDraw::getInstance());
+	ParamTableManager::reset(ParamTableManager::getInstance());
+	SRAMManager::reset(SRAMManager::getInstance());
+
 	// setup vectorInterrupts
 	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
 
@@ -261,9 +270,6 @@ void Game::debug()
 void Game::start(GameState state)
 {
 	ASSERT(state, "Game::start: initial state is NULL");
-
-	// Initialize SRAM
-	SRAMManager::getInstance();
 
 	// Initialize VPU and turn off the brightness
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());

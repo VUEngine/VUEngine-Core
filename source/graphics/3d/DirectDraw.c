@@ -72,6 +72,14 @@ void DirectDraw::destructor()
 }
 
 /**
+ * Reset
+ */
+void DirectDraw::reset()
+{
+	// dummy, don't remove
+}
+
+/**
  * Draws a pixel on the screen.
  * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
  * instead.

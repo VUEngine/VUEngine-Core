@@ -50,6 +50,8 @@ singleton class SRAMManager : Object
 
 	/// @publicsection
 	static SRAMManager getInstance();
+
+	void reset();
 	void clear(int32 startOffset, int32 endOffset);
 	void save(const BYTE* const source, int32 memberOffset, int32 dataSize);
 	void read(BYTE* destination, int32 memberOffset, int32 dataSize);
