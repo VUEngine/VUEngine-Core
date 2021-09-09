@@ -161,30 +161,30 @@ bool BgmapTexture::write()
  */
 void BgmapTexture::writeAnimatedMulti()
 {
-	int xOffset = (int)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
-	int yOffset = (int)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
+	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
 
-	int bgmapSegment = this->segment;
-	int offsetDisplacement = xOffset + (yOffset << 6);
-	int palette = this->palette << 14;
+	int32 bgmapSegment = this->segment;
+	int32 offsetDisplacement = xOffset + (yOffset << 6);
+	int32 palette = this->palette << 14;
 
 	// determine the number of frames the map had
-	int area = (this->textureSpec->cols * this->textureSpec->rows);
-	int charLocation = (int)CharSet::getOffset(this->charSet);
-	int frames = CharSet::getNumberOfChars(this->charSet) / area;
+	int32 area = (this->textureSpec->cols * this->textureSpec->rows);
+	int32 charLocation = (int32)CharSet::getOffset(this->charSet);
+	int32 frames = CharSet::getNumberOfChars(this->charSet) / area;
 	uint32 mapDisplacement = this->mapDisplacement;
 
-	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
+	int32 counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		int j = 1;
+		int32 j = 1;
 		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
 		// specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
@@ -198,7 +198,7 @@ void BgmapTexture::writeAnimatedMulti()
 
 	if(this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
 	{
-		int j = 1;
+		int32 j = 1;
 		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
 		// specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
@@ -255,19 +255,19 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
  */
 void BgmapTexture::doWrite(bool forceFullRewrite)
 {
-	int xOffset = (int)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
-	int yOffset = (int)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
+	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
 
-	int bgmapSegment = this->segment;
-	int offsetDisplacement = xOffset + (yOffset << 6);
-	uint16 offset = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
+	int32 bgmapSegment = this->segment;
+	int32 offsetDisplacement = xOffset + (yOffset << 6);
+	uint16 offset = (int32)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
-	int counter = forceFullRewrite ? -1 : SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
+	int32 counter = forceFullRewrite ? -1 : SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 	uint32 mapDisplacement = this->mapDisplacement;
 
 	uint32 numberOfHWORDS = this->textureSpec->cols;
@@ -347,17 +347,17 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 /*
 void BgmapTexture::writeAnimatedSingleOptimized()
 {
-	int bgmapSegment = this->segment;
-	int palette = this->palette << 14;
+	int32 bgmapSegment = this->segment;
+	int32 palette = this->palette << 14;
 
-	int charLocation = (int)CharSet::getOffset(this->charSet);
+	int32 charLocation = (int32)CharSet::getOffset(this->charSet);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
 
-	int counter = SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager::getInstance());
+	int32 counter = SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager::getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)

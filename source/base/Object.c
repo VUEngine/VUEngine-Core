@@ -371,9 +371,9 @@ void Object::fireEvent(uint32 eventCode)
 				Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
 				Printing::text(Printing::getInstance(), className, 13, 12, NULL);
 				Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
-				Printing::hex(Printing::getInstance(), (int)event->method, 13, 13, 8, NULL);
+				Printing::hex(Printing::getInstance(), (int32)event->method, 13, 13, 8, NULL);
 				Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
-				Printing::int(Printing::getInstance(), event->code, 13, 14, NULL);
+				Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
 				NM_ASSERT(!isDeleted(this), "Object::fireEvent: deleted during event listening");
 #endif
 				break;
@@ -397,8 +397,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	return object;
 #endif
 
-	static int lp = -1;
-	static int sp = -1;
+	static int32 lp = -1;
+	static int32 sp = -1;
 
 	if(-1 == lp && -1 == sp)
 	{

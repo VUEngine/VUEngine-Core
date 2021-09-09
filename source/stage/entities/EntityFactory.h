@@ -151,7 +151,7 @@ class EntityFactory : Object
 	// entities loaded
 	VirtualList spawnedEntities;
 	// index for method to execute
-	int streamingPhase;
+	int32 streamingPhase;
 
 	/// @publicsection
 	void constructor();
@@ -163,7 +163,7 @@ class EntityFactory : Object
 	uint32 transformEntities();
 	uint32 makeReadyEntities();
 	uint32 callLoadedEntities();
-	void showStatus(int x, int y);
+	void showStatus(int32 x, int32 y);
 }
 
 

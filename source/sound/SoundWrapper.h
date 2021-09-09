@@ -270,11 +270,11 @@ class SoundWrapper : Object
 	void computeTimerResolutionFactor();
 	void setFrequencyModifier(uint16 frequencyModifier);
 	uint16 getFrequencyModifier();
-	void print(int x, int y);
-	void printMetadata(int x, int y);
-	void printVolume(int x, int y, bool printHeader);
-	void printPlaybackTime(int x, int y);
-	void printPlaybackProgress(int x, int y);
+	void print(int32 x, int32 y);
+	void printMetadata(int32 x, int32 y);
+	void printVolume(int32 x, int32 y, bool printHeader);
+	void printPlaybackTime(int32 x, int32 y);
+	void printPlaybackProgress(int32 x, int32 y);
 
 	override bool handleMessage(Telegram telegram);
 }

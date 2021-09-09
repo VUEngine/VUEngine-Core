@@ -72,10 +72,10 @@ Another attribute of the StageDefinition that impacts the behavior of the stream
  	// rendering
  	struct Rendering
  	{
-	    int cyclesToWaitForTextureWriting;		// number of cycles that the texture writing is idle
-	    int texturesMaximumRowsToWrite;			// maximum number of texture's rows to write each time the
+	    int32 cyclesToWaitForTextureWriting;		// number of cycles that the texture writing is idle
+	    int32 texturesMaximumRowsToWrite;			// maximum number of texture's rows to write each time the
 	    										// texture writing is active
-		int maximumAffineRowsToComputePerCall;	// maximum number of rows to compute
+		int32 maximumAffineRowsToComputePerCall;	// maximum number of rows to compute
 												// on each call to the affine functions
  		.
  		.

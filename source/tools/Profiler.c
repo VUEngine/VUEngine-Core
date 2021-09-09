@@ -110,7 +110,7 @@ void Profiler::reset()
 	this->totalTime = 0;
 	this->lastLapIndex = 0;
 
-	for(int i = 0; i < 96; i++)
+	for(int32 i = 0; i < 96; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
@@ -205,7 +205,7 @@ void Profiler::end()
 
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
-	for(int i = 0; i < 96; i++)
+	for(int32 i = 0; i < 96; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
@@ -303,9 +303,9 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 /*
 	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
 
-	int columnTableEntries = 96 - 2;
+	int32 columnTableEntries = 96 - 2;
 
-	int entries = (int)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
+	int32 entries = (int32)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
 
 	entries = (entries + (entries % 8)) / 4;
 
@@ -325,9 +325,9 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 		value = 16;
 	}
 
-	int entries = 4;
+	int32 entries = 4;
 
-	for(int i = this->lastLapIndex; i < this->lastLapIndex + entries && i; i++)
+	for(int32 i = this->lastLapIndex; i < this->lastLapIndex + entries && i; i++)
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}

@@ -102,12 +102,12 @@ singleton class TimerManager : Object
 	uint32 getTotalMillisecondsElapsed();
 	uint32 resetMilliseconds();
 	void configureTimerCounter();
-	int getStat();
+	int32 getStat();
 	void clearStat();
 	void initialize();
 	void wait(uint32 milliSeconds);
 	void repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32));
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 }
 
 

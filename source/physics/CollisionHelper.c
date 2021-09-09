@@ -203,7 +203,7 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsBox(Box boxA, Box boxB)
 				{0, 0, __I_TO_FIX10_6(1)},
 			};
 
-			int i = 0;
+			int32 i = 0;
 			fix10_6* component = &intervalDistance.x;
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
@@ -286,7 +286,7 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsBall(Box boxA, Ball ball
 				{0, 0, __I_TO_FIX10_6(1)},
 			};
 
-			int i = 0;
+			int32 i = 0;
 			fix10_6* component = &intervalDistance.x;
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
@@ -353,7 +353,7 @@ CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsBall(InverseBox i
 			{0, 0, __I_TO_FIX10_6(1)},
 		};
 
-		int i = 0;
+		int32 i = 0;
 		fix10_6* component = &intervalDistance.x;
 
 		for(i = 0; i < __SHAPE_NORMALS; i++)
@@ -448,12 +448,12 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBox(Box boxA, Box 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
  	fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
-	int boxIndex = 0;
+	int32 boxIndex = 0;
 
 	// has to project all points on all the normals of both boxes
 	for(; boxIndex < 2; boxIndex++)
 	{
-		int normalIndex = 0;
+		int32 normalIndex = 0;
 
 		// test all 3 normals of each box
 		for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
@@ -540,7 +540,7 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA __at
 	fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 	// has to project all points on all the normals of the tilted box
-	int normalIndex = 0;
+	int32 normalIndex = 0;
 
 	// test all 3 normals of each box
 	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)

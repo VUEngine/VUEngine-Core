@@ -356,7 +356,7 @@ State StateMachine::getPreviousState()
  *
  * @return				The size of the stack
  */
-int StateMachine::getStackSize()
+int32 StateMachine::getStackSize()
 {
 	return VirtualList::getSize(this->stateStack);
 }

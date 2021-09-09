@@ -303,9 +303,9 @@ void CollisionManager::hideShapes()
 	}
 }
 
-int CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
+int32 CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
 {
-	int count = 0;
+	int32 count = 0;
 
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
@@ -331,7 +331,7 @@ void CollisionManager::setCheckShapesOutOfCameraRange(bool value)
 
 
 // print status
-void CollisionManager::print(int x, int y)
+void CollisionManager::print(int32 x, int32 y)
 {
 	Printing::resetCoordinates(Printing::getInstance());
 
@@ -339,22 +339,22 @@ void CollisionManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Shapes", x, ++y, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Registered:     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Active:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), CollisionManager::getNumberOfactiveForCollisionCheckingShapes(this), x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfactiveForCollisionCheckingShapes(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Moving:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->activeForCollisionCheckingShapes), x + 12, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->activeForCollisionCheckingShapes), x + 12, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Statistics (per cycle)", x, ++y, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Average", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Checks:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->checkCycles ? this->collisionChecks / this->checkCycles : 0, x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), this->checkCycles ? this->collisionChecks / this->checkCycles : 0, x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Collisions:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->checkCycles ? this->collisions / this->checkCycles : 0, x + 12, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->checkCycles ? this->collisions / this->checkCycles : 0, x + 12, y++, NULL);
 	Printing::text(Printing::getInstance(), "Last cycle", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Checks:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->lastCycleCollisionChecks, x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), this->lastCycleCollisionChecks, x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Collisions:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->lastCycleCollisions, x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), this->lastCycleCollisions, x + 12, y, NULL);
 }

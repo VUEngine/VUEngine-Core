@@ -74,7 +74,7 @@ singleton class AnimationInspector : Tool
 	// frame edition selector
 	OptionsSelector frameEditionSelector;
 	// mode
-	int mode;
+	int32 mode;
 
 	/// @publicsection
 	static AnimationInspector getInstance();

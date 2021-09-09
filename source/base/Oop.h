@@ -348,7 +348,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		void ClassName ## _setVTable();																	\
 																										\
 		/* declare getSize method */																	\
-		int ClassName ## _getObjectSize();																\
+		int32 ClassName ## _getObjectSize();																\
 																										\
 		/* declare getBaseClass method */																\
 		ClassPointer ClassName ## _getBaseClass(void*);													\
@@ -372,7 +372,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #ifdef __DEBUG_TOOLS
 #define __GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
-		int ClassName ## _getObjectSize()																\
+		int32 ClassName ## _getObjectSize()																\
 		{																								\
 			return sizeof(ClassName ## _str);															\
 		}

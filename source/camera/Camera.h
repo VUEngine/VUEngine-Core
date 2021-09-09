@@ -39,8 +39,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // state of movement
-#define __ACTIVE 		(int)0x1
-#define __PASSIVE		(int)0x0
+#define __ACTIVE 		(int32)0x1
+#define __PASSIVE		(int32)0x0
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -114,14 +114,14 @@ singleton class Camera : Object
 	void capPosition();
 	void doneUITransform();
 	void focus(uint32 checkIfFocusEntityIsMoving);
-	void forceDisplacement(int flag);
+	void forceDisplacement(int32 flag);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
 	Vector3D getLastDisplacement();
 	Optical getOptical();
 	Vector3D getPosition();
 	Size getStageSize();
-	void move(Vector3D translation, int cap);
+	void move(Vector3D translation, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
 	void prepareForUI();
 	void reset();
@@ -134,12 +134,12 @@ singleton class Camera : Object
 	void setOptical(Optical optical);
 	void setPosition(Vector3D position);
 	void setStageSize(Size size);
-	void startEffect(int effect, ...);
-	void stopEffect(int effect);
+	void startEffect(int32 effect, ...);
+	void stopEffect(int32 effect);
 	void unsetFocusEntity();
 	Vector3D getFocusEntityPosition();
 	Vector3D getFocusEntityPositionDisplacement();
-	void print(int x, int y, bool inPixels);
+	void print(int32 x, int32 y, bool inPixels);
 }
 
 

@@ -55,10 +55,10 @@ class Clock : Object
 	// flag to pause the clock
 	bool paused;
 
-	static void printTime(uint32 milliseconds, int col, int row, const char* font, uint32 precision);
-	static void printDeciseconds(uint32 milliSeconds, int col, int row, const char* font);
-	static void printCentiseconds(uint32 milliSeconds, int col, int row, const char* font);
-	static void printMilliseconds(uint32 milliSeconds, int col, int row, const char* font);
+	static void printTime(uint32 milliseconds, int32 col, int32 row, const char* font, uint32 precision);
+	static void printDeciseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
+	static void printCentiseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
+	static void printMilliseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
 
 	/// @publicsection
 	void constructor();
@@ -67,12 +67,12 @@ class Clock : Object
 	uint32 getMinutes();
 	uint32 getSeconds();
 	uint32 getTime();
-	int getTimeInCurrentSecond();
+	int32 getTimeInCurrentSecond();
 	bool isPaused();
 	void pause(bool paused);
-	void print(int col, int row, const char* font);
+	void print(int32 col, int32 row, const char* font);
 	void reset();
-	void setTime(int hours, int minutes, int seconds);
+	void setTime(int32 hours, int32 minutes, int32 seconds);
 	void setTimeInMilliSeconds(uint32 milliSeconds);
 	void setTimeInSeconds(float totalSeconds);
 	void start();

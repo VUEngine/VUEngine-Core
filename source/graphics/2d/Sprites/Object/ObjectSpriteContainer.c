@@ -57,7 +57,7 @@ friend class VirtualList;
  * @param totalObjects			Total number of OBJECTs that manages by this container
  * @param firstObjectIndex		The index of the first OBJECT managed by this container
  */
-void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObjectIndex)
+void ObjectSpriteContainer::constructor(int32 spt, int32 totalObjects, int32 firstObjectIndex)
 {
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
@@ -80,7 +80,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->hideSprites = false;
 
 	// clear OBJ memory
-	for(int i = firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
+	for(int32 i = firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
 		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
@@ -125,7 +125,7 @@ void ObjectSpriteContainer::destructor()
  * @param objectSprite		Sprite to add
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int numberOfObjects)
+bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int32 numberOfObjects)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
 
@@ -356,7 +356,7 @@ uint16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool
  *
  * @return 		Number of free OBJECTs
  */
-int ObjectSpriteContainer::getAvailableObjects()
+int32 ObjectSpriteContainer::getAvailableObjects()
 {
 	return this->availableObjects;
 }
@@ -366,9 +366,9 @@ int ObjectSpriteContainer::getAvailableObjects()
  *
  * @return 		Number of used OBJECTs
  */
-int ObjectSpriteContainer::getTotalUsedObjects()
+int32 ObjectSpriteContainer::getTotalUsedObjects()
 {
-	int totalUsedObjects = 0;
+	int32 totalUsedObjects = 0;
 	if(this->objectSprites)
 	{
 		VirtualNode node = this->objectSprites->head;
@@ -387,7 +387,7 @@ int ObjectSpriteContainer::getTotalUsedObjects()
  *
  * @return 		Index of the next free OBJECT
  */
-int ObjectSpriteContainer::getNextFreeObjectIndex()
+int32 ObjectSpriteContainer::getNextFreeObjectIndex()
 {
 	return 0;
 }
@@ -397,7 +397,7 @@ int ObjectSpriteContainer::getNextFreeObjectIndex()
  *
  * @return 		Index of the first OBJECT
  */
-int ObjectSpriteContainer::getFirstObjectIndex()
+int32 ObjectSpriteContainer::getFirstObjectIndex()
 {
 	return this->firstObjectIndex;
 }
@@ -407,7 +407,7 @@ int ObjectSpriteContainer::getFirstObjectIndex()
  *
  * @return 		Index of the last OBJECT
  */
-int ObjectSpriteContainer::getLastObjectIndex()
+int32 ObjectSpriteContainer::getLastObjectIndex()
 {
 	return this->firstObjectIndex + this->totalObjects;
 }
@@ -436,11 +436,11 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void ObjectSpriteContainer::print(int x, int y)
+void ObjectSpriteContainer::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
@@ -448,30 +448,30 @@ void ObjectSpriteContainer::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Segment:                ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->spt, x + 18, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->spt, x + 18, y++, NULL);
 	Printing::text(Printing::getInstance(), "STP value:                ", x, y, NULL);
-	Printing::int(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "HEAD:                   ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->index].head, x + 18, y, 4, NULL);
 	Printing::text(Printing::getInstance(), "Total OBJs:           ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->totalObjects, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->totalObjects, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Available OBJs:       ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getAvailableObjects(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getAvailableObjects(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total used OBJs:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalUsedObjects(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalUsedObjects(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Next free OBJ:  ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getNextFreeObjectIndex(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getNextFreeObjectIndex(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)), y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->position.z, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }
 
-int ObjectSpriteContainer::getTotalPixels()
+int32 ObjectSpriteContainer::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
 	{

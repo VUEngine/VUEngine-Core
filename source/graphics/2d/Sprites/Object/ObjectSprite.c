@@ -108,7 +108,7 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	int charLocation = CharSet::getOffset(this->texture->charSet);
+	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
 	int16 halfWidth = this->halfWidth;
 	int16 halfHeight = this->halfHeight;
@@ -233,7 +233,7 @@ uint16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	int charLocation = CharSet::getOffset(this->texture->charSet);
+	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
 	int16 xDisplacementIncrement = 8;
 	int16 yDisplacementIncrement = 8;

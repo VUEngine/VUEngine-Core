@@ -247,7 +247,7 @@ MovementType Body::getMovementType()
 }
 
 // set movement type
-void Body::setMovementType(int movementType, uint16 axis)
+void Body::setMovementType(int32 movementType, uint16 axis)
 {
 	if(__X_AXIS & axis)
 	{
@@ -517,7 +517,7 @@ void Body::clampVelocity()
 	{
 		if(__ABS(this->maximumVelocity.x) < __ABS(this->velocity.x))
 		{
-			int sign = 0 <= this->velocity.x ? 1 : -1;
+			int32 sign = 0 <= this->velocity.x ? 1 : -1;
 
 			this->velocity.x = (this->maximumVelocity.x * sign);
 		}
@@ -527,7 +527,7 @@ void Body::clampVelocity()
 	{
 		if(__ABS(this->maximumVelocity.y) < __ABS(this->velocity.y))
 		{
-			int sign = 0 <= this->velocity.y ? 1 : -1;
+			int32 sign = 0 <= this->velocity.y ? 1 : -1;
 
 			this->velocity.y = (this->maximumVelocity.y * sign);
 		}
@@ -537,7 +537,7 @@ void Body::clampVelocity()
 	{
 		if(__ABS(this->maximumVelocity.z) < __ABS(this->velocity.z))
 		{
-			int sign = 0 <= this->velocity.z ? 1 : -1;
+			int32 sign = 0 <= this->velocity.z ? 1 : -1;
 
 			this->velocity.z = (this->maximumVelocity.z * sign);
 		}
@@ -1298,7 +1298,7 @@ void Body::sendMessages(bool value)
 	this->sendMessages = value;
 }
 
-void Body::print(int x, int y)
+void Body::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "Active:", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->active ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
@@ -1307,7 +1307,7 @@ void Body::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "                    X       Y       Z", x, y++, NULL);
 
-	int xDisplacement = 20;
+	int32 xDisplacement = 20;
 
 	Printing::text(Printing::getInstance(), "Mov. type", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
@@ -1379,7 +1379,7 @@ void Body::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "Normals", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::int(Printing::getInstance(), this->normals ? VirtualList::getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->normals ? VirtualList::getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Friction", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);

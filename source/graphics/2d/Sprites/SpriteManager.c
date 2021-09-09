@@ -168,7 +168,7 @@ void SpriteManager::reset()
 
 	SpriteManager::cleanUp(this);
 
-	int i = 0;
+	int32 i = 0;
 	// clean OBJ memory
 	for(; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
@@ -206,7 +206,7 @@ void SpriteManager::reset()
  */
 void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	int availableObjects = __AVAILABLE_CHAR_OBJECTS;
+	int32 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
@@ -219,8 +219,8 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 	// must add them from __SPT3 to __SPT0
 	// so each they start presorted in the WORLDS
 
-	int spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	int i = __TOTAL_OBJECT_SEGMENTS;
+	int32 spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	int32 i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )
 	{
 		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
@@ -256,7 +256,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
  * @param z						Z coordinate
  * @return 						ObjectSpriteContainer instance
  */
-ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObjects, fix10_6 z)
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int32 numberOfObjects, fix10_6 z)
 {
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 	VirtualNode node = this->objectSpriteContainers->head;
@@ -292,7 +292,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObject
  * @param segment		Spt segment
  * @return 				ObjectSpriteContainer instance
  */
-ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int segment)
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 segment)
 {
 	ASSERT((unsigned)segment < __TOTAL_OBJECT_SEGMENTS, "SpriteManager::getObjectSpriteContainerBySegment: invalid segment");
 
@@ -511,7 +511,7 @@ void SpriteManager::stopRendering()
 	}
 }
 
-int SpriteManager::getNumberOfSprites()
+int32 SpriteManager::getNumberOfSprites()
 {
 	return VirtualList::getSize(this->sprites);
 }
@@ -650,7 +650,7 @@ void SpriteManager::render()
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
 	{
-		static int counter = __TARGET_FPS / 10;
+		static int32 counter = __TARGET_FPS / 10;
 
 		if(0 >= --counter)
 		{
@@ -776,7 +776,7 @@ Sprite SpriteManager::getSpriteAtPosition(int16 position)
 
 	VirtualNode node = this->sprites->head;
 
-	int counter = 0;
+	int32 counter = 0;
 
 	for(; node; node = node->next, counter++)
 	{
@@ -840,7 +840,7 @@ void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
  *
  * @return			Number of affine transformation rows to compute
  */
-int SpriteManager::getMaximumParamTableRowsToComputePerCall()
+int32 SpriteManager::getMaximumParamTableRowsToComputePerCall()
 {
 	return this->deferParamTableEffects ? this->maximumParamTableRowsToComputePerCall : -1;
 }
@@ -850,7 +850,7 @@ int SpriteManager::getMaximumParamTableRowsToComputePerCall()
  *
  * @param maximumParamTableRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
  */
-void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTableRowsToComputePerCall)
+void SpriteManager::setMaximumParamTableRowsToComputePerCall(int32 maximumParamTableRowsToComputePerCall)
 {
 	this->maximumParamTableRowsToComputePerCall = maximumParamTableRowsToComputePerCall;
 }
@@ -929,9 +929,9 @@ bool SpriteManager::isEvenFrame()
  *
  * @return			Number of pixels
  */
-int SpriteManager::getTotalPixelsDrawn()
+int32 SpriteManager::getTotalPixelsDrawn()
 {
-	int totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
+	int32 totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
 
 	VirtualNode node = this->sprites->head;
 
@@ -955,28 +955,28 @@ int SpriteManager::getTotalPixelsDrawn()
  * @param y			Camera y coordinate
  * @param resumed	If true prints info about all the Sprites in the list
  */
-void SpriteManager::print(int x, int y, bool resumed)
+void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
 	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, 0, 0);
 	SpriteManager::computeTotalPixelsDrawn(this);
 
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Used layers:                ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
 
 	if(resumed)
 	{
 		return;
 	}
 
-	int auxY = y + 2;
-	int auxX = x;
+	int32 auxY = y + 2;
+	int32 auxX = x;
 
-	int counter = __TOTAL_LAYERS - 1;
+	int32 counter = __TOTAL_LAYERS - 1;
 	VirtualNode node = this->sprites->tail;
 
 	for(; node; node = node->previous, counter--)
@@ -988,11 +988,11 @@ void SpriteManager::print(int x, int y, bool resumed)
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
 
-		Printing::int(Printing::getInstance(), counter, auxX, auxY, NULL);
+		Printing::int32(Printing::getInstance(), counter, auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 //		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
-//		Printing::int(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
+//		Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
 		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
 		{
@@ -1008,10 +1008,10 @@ void SpriteManager::print(int x, int y, bool resumed)
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
+void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "OBJECTS USAGE", x, y++, NULL);
-	int totalUsedObjects = 0;
+	int32 totalUsedObjects = 0;
 	VirtualNode node = this->objectSpriteContainers->head;
 
 	for(; node; node = node->next)
@@ -1020,5 +1020,5 @@ void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
 	}
 
 	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
+	Printing::int32(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
 }

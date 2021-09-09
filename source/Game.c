@@ -534,7 +534,7 @@ bool Game::checkIfOpenTool(UserInput userInput)
 		NULL
 	};
 
-	int i = 0;
+	int32 i = 0;
 
 	for(; engineToolStates[i]; i++)
 	{
@@ -820,7 +820,7 @@ void Game::nextFrameStarted()
 		totalTime = 0;
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
-		static int previousTornGameFrameCount = 0;
+		static int32 previousTornGameFrameCount = 0;
 		if(_tornGameFrameCount != previousTornGameFrameCount)
 		{
 			previousTornGameFrameCount = _tornGameFrameCount;
@@ -1046,7 +1046,7 @@ bool Game::isInSoundTest()
 // whether if a special mode is active
 bool Game::isInSpecialMode()
 {
-	int isInSpecialMode = false;
+	int32 isInSpecialMode = false;
 
 #ifdef __DEBUG_TOOLS
 	isInSpecialMode |= Game::isInDebugMode(this);
@@ -1067,7 +1067,7 @@ bool Game::isInSpecialMode()
 // whether if a special mode is being started
 bool Game::isEnteringSpecialMode()
 {
-	int isEnteringSpecialMode = false;
+	int32 isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
 	isEnteringSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
 #endif
@@ -1087,7 +1087,7 @@ bool Game::isEnteringSpecialMode()
 // whether if a special mode is being started
 bool Game::isExitingSpecialMode()
 {
-	int isExitingSpecialMode = false;
+	int32 isExitingSpecialMode = false;
 #ifdef __DEBUG_TOOLS
 	isExitingSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
 #endif

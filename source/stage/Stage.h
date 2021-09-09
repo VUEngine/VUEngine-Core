@@ -99,10 +99,10 @@ typedef struct StageSpec
 	struct Rendering
 	{
 		// maximum number of texture's rows to write each time the texture writing is active
-		int texturesMaximumRowsToWrite;
+		int32 texturesMaximumRowsToWrite;
 
 		// maximum number of rows to compute on each call to the affine functions
-		int maximumAffineRowsToComputePerCall;
+		int32 maximumAffineRowsToComputePerCall;
 
 		// color config
 		ColorConfig colorConfig;
@@ -112,7 +112,7 @@ typedef struct StageSpec
 
 		// bgmap segments configuration
 		// number of segments reserved for the param tables
-		int paramTableSegments;
+		int32 paramTableSegments;
 
 		// object segments sizes (__spt0 to __spt3)
 		int16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
@@ -205,9 +205,9 @@ class Stage : Container
 	// Streaming settings
 	Streaming streaming;
 	// counter to control the streaming phases
-	int streamingCycleCounter;
+	int32 streamingCycleCounter;
 	// index for method to execute
-	int streamingPhase;
+	int32 streamingPhase;
 	// flag to control streaming
 	uint32 hasRemovedChildren;
 	// the ui container
@@ -236,9 +236,9 @@ class Stage : Container
 	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
 	ParticleRemover getParticleRemover();
-	void showStreamingProfiling(int x, int y);
-	bool unloadOutOfRangeEntities(int defer);
-    bool loadInRangeEntities(int defer);
+	void showStreamingProfiling(int32 x, int32 y);
+	bool unloadOutOfRangeEntities(int32 defer);
+    bool loadInRangeEntities(int32 defer);
 	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
@@ -254,7 +254,7 @@ class Stage : Container
 	override void suspend();
 	override void resume();
 	override void removeChild(Container child, bool deleteChild);
-	override bool handlePropagatedMessage(int message);
+	override bool handlePropagatedMessage(int32 message);
 }
 
 

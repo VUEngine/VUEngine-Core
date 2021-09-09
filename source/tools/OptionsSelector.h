@@ -111,11 +111,11 @@ class OptionsSelector : Object
 	// Width of a column (in chars)
 	uint8 columnWidth;
 	// Total number of options
-	int totalOptions;
+	int32 totalOptions;
 	// Current page index
-	int currentPageIndex;
+	int32 currentPageIndex;
 	// Current option index
-	int currentOptionIndex;
+	int32 currentOptionIndex;
 	// Selection mark character
 	char* mark;
 	// Font to use for printing the OptionsSelector
@@ -132,10 +132,10 @@ class OptionsSelector : Object
 	void selectPrevious();
 	bool selectNextColumn();
 	bool selectPreviousColumn();
-	bool setSelectedOption(int optionIndex);
-	int getSelectedOption();
+	bool setSelectedOption(int32 optionIndex);
+	int32 getSelectedOption();
 	void printOptions(uint8 x, uint8 y);
-	int getNumberOfOptions();
+	int32 getNumberOfOptions();
 }
 
 

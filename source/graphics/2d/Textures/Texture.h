@@ -102,7 +102,7 @@ typedef const TextureSpec TextureROMSpec;
 /// @ingroup graphics-2d-textures
 abstract class Texture : Object
 {
-	// Char group to use int this texture
+	// Char group to use int32 this texture
 	CharSet charSet;
 	// Pointer to ROM spec
 	TextureSpec* textureSpec;
@@ -124,7 +124,7 @@ abstract class Texture : Object
 	TextureSpec* getSpec();
 	void releaseCharSet();
 	void writeHBiasMode();
-	int getNumberOfChars();
+	int32 getNumberOfChars();
 	TextureSpec* getTextureSpec();
 	uint32 getTotalCols();
 	uint32 getTotalRows();

@@ -498,7 +498,7 @@ static void CommunicationManager::interruptHandler()
  */
 void CommunicationManager::processInterrupt()
 {
-	int status = this->status;
+	int32 status = this->status;
 	this->status = kCommunicationsStatusIdle;
 
 	switch(status)
@@ -634,7 +634,7 @@ bool CommunicationManager::isFreeForTransmissions()
 	);
 }
 
-bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, bool sendingData)
+bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
 	if((sendingData && !data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -690,7 +690,7 @@ bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 }
 
 
-bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
+bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -733,7 +733,7 @@ bool CommunicationManager::broadcastData(BYTE* data, int numberOfBytes)
 	return true;
 }
 
-void CommunicationManager::broadcastDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -762,7 +762,7 @@ void CommunicationManager::broadcastDataAsync(BYTE* data, int numberOfBytes, Eve
 	return;
 }
 
-bool CommunicationManager::sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -811,17 +811,17 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int numberOfBytes, EventLis
 	return true;
 }
 
-bool CommunicationManager::sendData(BYTE* data, int numberOfBytes)
+bool CommunicationManager::sendData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, true);
 }
 
-bool CommunicationManager::receiveData(BYTE* data, int numberOfBytes)
+bool CommunicationManager::receiveData(BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
 }
 
-bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int numberOfBytes)
+bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE* data, int32 numberOfBytes)
 {
 	if((NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -878,7 +878,7 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	return true;
 }
 
-bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
 {
 	if(!data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -934,12 +934,12 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	return true;
 }
 
-bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes)
+bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes)
 {
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
 
-bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
 }
@@ -1004,12 +1004,12 @@ void CommunicationManager::startSyncCycle()
 	}
 }
 
-void CommunicationManager::printStatus(int x, int y)
+void CommunicationManager::printStatus(int32 x, int32 y)
 {
 	PRINT_TEXT(CommunicationManager::isConnected(this) ? "Connected   " : "Disconnected", x, y);
 
 	char* helper = "";
-	int valueDisplacement = 20;
+	int32 valueDisplacement = 20;
 
 	PRINT_TIME(x + valueDisplacement, y++);
 	PRINT_TEXT("Time out:                  ", x, y);

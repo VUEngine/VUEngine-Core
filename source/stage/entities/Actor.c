@@ -586,7 +586,7 @@ bool Actor::handleMessage(Telegram telegram)
 	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
 	{
 		// retrieve message
-		int message = Telegram::getMessage(telegram);
+		int32 message = Telegram::getMessage(telegram);
 
 		if(this->body && Body::isActive(this->body))
 		{
@@ -611,7 +611,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 				case kMessageBodyChangedDirection:
 
-					Actor::changeDirectionOnAxis(this, *(int*)Telegram::getExtraInfo(telegram));
+					Actor::changeDirectionOnAxis(this, *(int32*)Telegram::getExtraInfo(telegram));
 					return true;
 					break;
 			}

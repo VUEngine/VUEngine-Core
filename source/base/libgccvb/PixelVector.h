@@ -47,7 +47,7 @@ static class PixelVector : Object
 	static inline uint32 squareLength(PixelVector vector);
 	static inline fix10_6 length(PixelVector vector);
 	static inline PixelVector getRelativeToCamera(PixelVector vector);
-	static inline void print(PixelVector vector, int x, int y);
+	static inline void print(PixelVector vector, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 	return vector;
 }
 
-static inline void PixelVector::print(PixelVector vector, int x, int y)
+static inline void PixelVector::print(PixelVector vector, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
 	PRINT_TEXT("y:    ", x, y + 1);

@@ -333,7 +333,7 @@ int16 AnimatedEntity::getActualFrame()
 	return -1;
 }
 
-int AnimatedEntity::getNumberOfFrames()
+int32 AnimatedEntity::getNumberOfFrames()
 {
 	if(!this->sprites)
 	{

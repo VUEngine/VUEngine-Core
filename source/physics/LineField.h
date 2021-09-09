@@ -59,7 +59,7 @@ class LineField : Shape
 	override Vector3D getPosition();
 	override Vector3D getNormal();
 	override void configureWireframe();
-	override void print(int x, int y);
+	override void print(int32 x, int32 y);
 }
 
 

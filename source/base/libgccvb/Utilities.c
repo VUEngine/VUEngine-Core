@@ -50,9 +50,9 @@ static void Utilities::setKeypadManager(KeypadManager keypadManager)
 }
 
 
-static int Utilities::intLength(int value)
+static int32 Utilities::intLength(int32 value)
 {
-	int length = 0;
+	int32 length = 0;
 
 	while(value > 0)
 	{
@@ -68,12 +68,12 @@ static int Utilities::intLength(int value)
 static char* Utilities::itoa(uint32 num, uint32 base, uint32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
-	int i = 0;
+	int32 i = 0;
 	static char rev[__CHAR_HOLDER_SIZE] __attribute__((section(".bss")));
-//	int flag = false;
+//	int32 flag = false;
 //	static char sign='-';
 
-/*	if((int)num < 0)
+/*	if((int32)num < 0)
 	{
 		flag = true;
 //		num*=(-1);
@@ -91,9 +91,9 @@ static char* Utilities::itoa(uint32 num, uint32 base, uint32 digits)
 	{
 		i++;
 	}
-	if(i >= (__CHAR_HOLDER_SIZE - 1 - (int)digits))
+	if(i >= (__CHAR_HOLDER_SIZE - 1 - (int32)digits))
 	{
-		i = __CHAR_HOLDER_SIZE - 1 - (int)digits;
+		i = __CHAR_HOLDER_SIZE - 1 - (int32)digits;
 	}
 
 	rev[__CHAR_HOLDER_SIZE - 1] = 0;
@@ -102,7 +102,7 @@ static char* Utilities::itoa(uint32 num, uint32 base, uint32 digits)
 
 static const char* Utilities::toUppercase(const char* string)
 {
-	int i = 0;
+	int32 i = 0;
 	char* result = NULL;
 	while(string[i])
 	{
@@ -116,7 +116,7 @@ static const char* Utilities::toUppercase(const char* string)
 
 static const char* Utilities::toLowercase(const char* string)
 {
-	int i = 0;
+	int32 i = 0;
 	char* result = NULL;
 	while(string[i])
 	{
@@ -151,13 +151,13 @@ static uint32 Utilities::randomSeed()
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
-static int Utilities::random(uint32 seed, int randnums)
+static int32 Utilities::random(uint32 seed, int32 randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
 	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
 #endif
 
-	return seed && randnums ? __ABS((int)(seed % randnums)) : 0;
+	return seed && randnums ? __ABS((int32)(seed % randnums)) : 0;
 }
 
 /*
@@ -167,14 +167,14 @@ static int Utilities::random(uint32 seed, int randnums)
 /*
  * Check if 2 numbers have an equal sign
  */
-static int Utilities::equalSign(int a, int b)
+static int32 Utilities::equalSign(int32 a, int32 b)
 {
-	return ((a & (1 << sizeof(int))) ==	(b & (1 << sizeof(int))));
+	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
 }
 
-static int Utilities::getDigitCount(int value)
+static int32 Utilities::getDigitCount(int32 value)
 {
-	int size = 0;
+	int32 size = 0;
 
 	do
 	{
@@ -186,7 +186,7 @@ static int Utilities::getDigitCount(int value)
 	return size;
 }
 
-static uint32 Utilities::reverse(uint32 x, int bits)
+static uint32 Utilities::reverse(uint32 x, int32 bits)
 {
     x = ((x & 0x55555555) << 1) | ((x & 0xAAAAAAAA) >> 1);
     x = ((x & 0x33333333) << 2) | ((x & 0xCCCCCCCC) >> 2);
@@ -199,13 +199,13 @@ static uint32 Utilities::reverse(uint32 x, int bits)
 static float Utilities::floor(float x) 
 {
     float xAux = x < 0 ? x *- 1 : x;
-    unsigned int zeros = 0;
+    uint32 zeros = 0;
     
 	float n = 1;
     
 	for(; xAux > n * 10; n *= 10, zeros++);
 
-    for(xAux -=n; -1 != (int)zeros; xAux -= n)
+    for(xAux -=n; -1 != (int32)zeros; xAux -= n)
 	{
         if(xAux < 0)
         {

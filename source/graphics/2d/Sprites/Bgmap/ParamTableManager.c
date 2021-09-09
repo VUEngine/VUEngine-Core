@@ -134,7 +134,7 @@ void ParamTableManager::reset()
  *
  * @param availableBgmapSegmentsForParamTable	Number of BGMAP segments for the param tables
  */
-void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForParamTable)
+void ParamTableManager::calculateParamTableBase(int32 availableBgmapSegmentsForParamTable)
 {
 	if(0 == availableBgmapSegmentsForParamTable)
 	{
@@ -249,7 +249,7 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 	if(!paramAddress)
 	{
 		Printing::text(Printing::getInstance(), "Total size: ", 20, 7, NULL);
-		Printing::int(Printing::getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
+		Printing::int32(Printing::getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
 
 		NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 	}
@@ -305,7 +305,7 @@ bool ParamTableManager::defragmentProgressively()
 			// retrieve param
 			if(spriteParam > this->paramTableFreeData.param)
 			{
-				int size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
+				int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
 
 				// check that the sprite won't override itself
 				if(this->paramTableFreeData.param + size > spriteParam)
@@ -354,16 +354,16 @@ bool ParamTableManager::defragmentProgressively()
  * @param x				Camera x coordinate
  * @param y				Camera y coordinate
  */
-void ParamTableManager::print(int x, int y)
+void ParamTableManager::print(int32 x, int32 y)
 {
-	int xDisplacement = 11;
+	int32 xDisplacement = 11;
 
 	Printing::text(Printing::getInstance(), "PARAM TABLE STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Size:              ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->size, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), this->size, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Used:              ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->used - 1, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), this->used - 1, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "ParamBase:          ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), this->paramTableBase, x + xDisplacement, y, 8, NULL);

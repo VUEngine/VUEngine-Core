@@ -126,7 +126,7 @@ void StageEditor::constructor()
 
 	VirtualList userObjects = new VirtualList();
 
-	int i = 0;
+	int32 i = 0;
 	for(;  _userObjects[i].entitySpec; i++)
 	{
 		Option* option = new Option;
@@ -254,8 +254,8 @@ void StageEditor::printHeader()
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
 	Printing::text(Printing::getInstance(), "  /  ", 16, 0, NULL);
-	Printing::int(Printing::getInstance(), this->mode, 17, 0, NULL);
-	Printing::int(Printing::getInstance(), kLastMode - 1, 19, 0, NULL);
+	Printing::int32(Printing::getInstance(), this->mode, 17, 0, NULL);
+	Printing::int32(Printing::getInstance(), kLastMode - 1, 19, 0, NULL);
 }
 
 /**
@@ -934,8 +934,8 @@ void StageEditor::selectUserObject(uint32 pressedKey)
  */
 void StageEditor::printEntityPosition()
 {
-	int x = 1;
-	int y = 2;
+	int32 x = 1;
+	int32 y = 2;
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
@@ -956,34 +956,34 @@ void StageEditor::printEntityPosition()
 		char* entityName = Container::getName(entity);
 
 		Printing::text(Printing::getInstance(),		"ID:                             ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		Entity::getInternalId(entity), 					x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		Entity::getInternalId(entity), 					x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Type:                           ", 			x, 		++y, 	NULL);
 		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME_UNSAFE(entity), 				x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Name:                           ", 			x, 		++y, 	NULL);
 		Printing::text(Printing::getInstance(),		entityName ? entityName : "-", 					x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"          X      Y      Z       ", 			x, 		++y, 	NULL);
 		Printing::text(Printing::getInstance(),		"Position:                       ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->x), 			x + 10, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->x), 			x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		globalRotation->x, 								x + 10, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		globalRotation->y, 								x + 17, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		globalRotation->z, 								x + 24, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		globalRotation->x, 								x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		globalRotation->y, 								x + 17, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		globalRotation->z, 								x + 24, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z), 					x + 24, y, 		2, NULL);
 		Printing::text(Printing::getInstance(),		"Size:                           ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
-		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
 		Printing::text(Printing::getInstance(),		"Visible:                        ", 			x, 		++y, 	NULL);
 		Printing::text(Printing::getInstance(),		Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y, NULL);
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);
-		Printing::int(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getSize(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getSize(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
 	}
 }
 
@@ -1022,8 +1022,8 @@ void StageEditor::printCameraPosition()
  */
 void StageEditor::printProjectionValues()
 {
-	int x = 1;
-	int y = 2;
+	int32 x = 1;
+	int32 y = 2;
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
 
@@ -1037,17 +1037,17 @@ void StageEditor::printProjectionValues()
 
 	Printing::text(Printing::getInstance(), "PROJECTION VALUES", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Horz. view point center:        ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Distance Eye to Camera:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum X View Distance:        ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum Y View Distance:        ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), _optical->maximumYViewDistancePower, x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), _optical->maximumYViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
 }
 
 /**
@@ -1081,7 +1081,7 @@ void StageEditor::printTranslationStepSize(uint8 x, uint8 y)
 {
 	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", x, y, NULL);
 	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
+	Printing::int32(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
 }
 
 #endif

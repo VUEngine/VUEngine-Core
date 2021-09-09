@@ -125,7 +125,7 @@ Brightness CameraEffectManager::convertBrightnessToVipFormat(Brightness brightne
  * @param effect	Effect Id
  * @param args		va_list of effect parameters
  */
-void CameraEffectManager::startEffect(int effect, va_list args)
+void CameraEffectManager::startEffect(int32 effect, va_list args)
 {
 	switch(effect)
 	{
@@ -142,15 +142,15 @@ void CameraEffectManager::startEffect(int effect, va_list args)
 		case kFadeIn:
 		case kFadeOut:
 
-			CameraEffectManager::fxFadeStart(this, effect, va_arg(args, int));
+			CameraEffectManager::fxFadeStart(this, effect, va_arg(args, int32));
 			break;
 
 		case kFadeTo:
 
 			CameraEffectManager::fxFadeAsyncStart(this,
-				va_arg(args, int),
+				va_arg(args, int32),
 				va_arg(args, Brightness*),
-				va_arg(args, int),
+				va_arg(args, int32),
 				va_arg(args, void*),
 				va_arg(args, Object)
 			);
@@ -163,7 +163,7 @@ void CameraEffectManager::startEffect(int effect, va_list args)
  *
  * @param effect	Effect Id
  */
-void CameraEffectManager::stopEffect(int effect)
+void CameraEffectManager::stopEffect(int32 effect)
 {
 	switch(effect)
 	{
@@ -198,7 +198,7 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
  * @param effect	Effect ID
  * @param delay		Start effect after this delay
  */
-void CameraEffectManager::fxFadeStart(int effect, int delay)
+void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 
@@ -243,7 +243,7 @@ void CameraEffectManager::fxFadeStart(int effect, int delay)
  * @param callback			Callback to execute after the fading is complete
  * @param callbackScope		Scope (class) of the callback to execute
  */
-void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
+void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
 {
 	// stop previous effect
 	CameraEffectManager::stopEffect(this, kFadeTo);

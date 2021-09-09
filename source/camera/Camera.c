@@ -234,7 +234,7 @@ void Camera::onFocusEntityDeleted(Entity actor)
  * @param translation
  * @param cap
  */
-void Camera::move(Vector3D translation, int cap)
+void Camera::move(Vector3D translation, int32 cap)
 {
 	this->lastDisplacement = translation;
 
@@ -414,7 +414,7 @@ void Camera::setStageSize(Size size)
  *
  * @param flag
  */
-void Camera::forceDisplacement(int flag)
+void Camera::forceDisplacement(int32 flag)
 {
 	this->lastDisplacement.x = flag ? __1I_FIX10_6 : 0;
 	this->lastDisplacement.y = flag ? __1I_FIX10_6 : 0;
@@ -427,7 +427,7 @@ void Camera::forceDisplacement(int flag)
  * @param effect	Effect reference ID
  * @param args		Various effect parameters
  */
-void Camera::startEffect(int effect, ...)
+void Camera::startEffect(int32 effect, ...)
 {
 	va_list args;
 	va_start(args, effect);
@@ -440,7 +440,7 @@ void Camera::startEffect(int effect, ...)
  *
  * @param effect	Effect reference ID
  */
-void Camera::stopEffect(int effect)
+void Camera::stopEffect(int32 effect)
 {
 	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
@@ -550,7 +550,7 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
  * @param y				Row
  * @param inPixels		Whether to printing the output in pixels or not
  */
-void Camera::print(int x, int y, bool inPixels)
+void Camera::print(int32 x, int32 y, bool inPixels)
 {
 	uint8 controlsXPos = 38;
 	uint8 controlsYPos = 2;
@@ -562,11 +562,11 @@ void Camera::print(int x, int y, bool inPixels)
 	Printing::text(Printing::getInstance(), "MOVE CAMERA", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "              X    Y    Z    ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Stage's size:                   ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIX10_6_TO_I(this->stageSize.y), x + 19, y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIX10_6_TO_I(this->stageSize.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIX10_6_TO_I(this->stageSize.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIX10_6_TO_I(this->stageSize.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
-	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
 }

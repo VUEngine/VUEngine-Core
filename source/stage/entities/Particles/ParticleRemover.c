@@ -168,7 +168,7 @@ void ParticleRemover::deleteParticles(VirtualList particles)
  *
  * @param removalDelayCycles	New value
  */
-void ParticleRemover::setRemovalDelayCycles(int removalDelayCycles)
+void ParticleRemover::setRemovalDelayCycles(int32 removalDelayCycles)
 {
 	this->removalDelayCycles = removalDelayCycles;
 }

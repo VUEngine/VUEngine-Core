@@ -63,11 +63,11 @@ singleton class StageEditor : Tool
 	// Current entity's shape
 	Shape shape;
 	// Mode
-	int mode;
+	int32 mode;
 	// Actors selector
 	OptionsSelector userObjectsSelector;
 	// Translation step size
-	int translationStepSize;
+	int32 translationStepSize;
 	// Current user's object's sprite
 	Sprite userObjectSprite;
 

@@ -93,16 +93,16 @@ typedef const SpriteSpec SpriteROMSpec;
 typedef struct AnimationFunction
 {
 	/// number of frames of this animation function
-	int numberOfFrames;
+	int32 numberOfFrames;
 
 	/// frames to play in animation
 	uint8 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
 	/// number of cycles a frame of animation is displayed
-	int delay;
+	int32 delay;
 
 	/// whether to play it in loop or not
-	int loop;
+	int32 loop;
 
 	/// method to call on function completion
 	EventListener onAnimationComplete;
@@ -199,8 +199,8 @@ abstract class Sprite : Object
 	const PixelVector* getDisplacement();
 	void setDisplacement(const PixelVector* displacement);
 	uint8 getFrameDuration();
-	int getHalfHeight();
-	int getHalfWidth();
+	int32 getHalfHeight();
+	int32 getHalfWidth();
 	bool isAffine();
 	bool isHBias();
 	bool isObject();
@@ -241,8 +241,8 @@ abstract class Sprite : Object
 	virtual void setPosition(const PixelVector* position);
 	virtual void writeAnimation();
 	virtual bool writeTextures();
-	virtual void print(int x, int y);
-	virtual int getTotalPixels();
+	virtual void print(int32 x, int32 y);
+	virtual int32 getTotalPixels();
 	virtual void registerWithManager();
 }
 

@@ -87,7 +87,7 @@ void MessageDispatcher::destructor()
  * @param extraInfo	pointer to any extra data that must accompany the message
  * @return			a flag indicating the status of the processing of the message
  */
-static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Object receiver, int message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Object receiver, int32 message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -122,7 +122,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
- 	Object sender, Object receiver, int message, void* extraInfo)
+ 	Object sender, Object receiver, int32 message, void* extraInfo)
 {
 	// create the telegram
 	Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
@@ -267,7 +267,7 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int message)
+bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -294,7 +294,7 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int mess
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int message)
+bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -381,11 +381,11 @@ bool MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */
-void MessageDispatcher::print(int x, int y)
+void MessageDispatcher::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
 	Printing::text(Printing::getInstance(), "Discarded messages:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
 }

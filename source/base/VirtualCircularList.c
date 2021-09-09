@@ -104,7 +104,7 @@ void VirtualCircularList::clear()
  *
  * @param data
  */
-int VirtualCircularList::pushFront(const void* const data)
+int32 VirtualCircularList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -176,7 +176,7 @@ void* VirtualCircularList::popFront()
  *
  * @param data
  */
-int VirtualCircularList::pushBack(const void* const data)
+int32 VirtualCircularList::pushBack(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -330,9 +330,9 @@ VirtualNode VirtualCircularList::insertAfter(VirtualNode node, const void* const
  *
  * @return				Number of objects
  */
-int VirtualCircularList::getSize()
+int32 VirtualCircularList::getSize()
 {
-	int counter = 0;
+	int32 counter = 0;
 
 	if(this->head)
 	{
@@ -362,7 +362,7 @@ int VirtualCircularList::getSize()
  * @param item
  * @return				Data pointer of object in the given index node
  */
-void* VirtualCircularList::getNodeData(int item)
+void* VirtualCircularList::getNodeData(int32 item)
 {
 	// get the node
 	VirtualNode node = VirtualCircularList::getNode(this, item);
@@ -377,11 +377,11 @@ void* VirtualCircularList::getNodeData(int item)
  * @param item		Numeric position of node
  * @return				Node
  */
-VirtualNode VirtualCircularList::getNode(int item)
+VirtualNode VirtualCircularList::getNode(int32 item)
 {
-	int counter = 0;
+	int32 counter = 0;
 
-	int listSize = VirtualCircularList::getSize(this);
+	int32 listSize = VirtualCircularList::getSize(this);
 
 	VirtualNode node = this->head;
 
@@ -429,13 +429,13 @@ VirtualNode VirtualCircularList::getNode(int item)
  * @param node		VirtualNode
  * @return				node's position
  */
-int VirtualCircularList::getNodePosition(VirtualNode node)
+int32 VirtualCircularList::getNodePosition(VirtualNode node)
 {
 	if(node && this->head)
 	{
 		VirtualNode auxNode = this->head;
 
-		int position = 0;
+		int32 position = 0;
 
 		do
 		{
@@ -583,11 +583,11 @@ VirtualNode VirtualCircularList::find(const void* const dataPointer)
  * @param dataPointer
  * @return								Numeric position of node, or -1 when node could not be found
  */
-int VirtualCircularList::getDataPosition(const void* const dataPointer)
+int32 VirtualCircularList::getDataPosition(const void* const dataPointer)
 {
 	if(this->head)
 	{
-		int position = 0;
+		int32 position = 0;
 		VirtualNode node = this->head;
 
 		do
@@ -625,7 +625,7 @@ bool VirtualCircularList::removeElement(const void* const dataPointer)
 void VirtualCircularList::copy(VirtualCircularList sourceList)
 {
 #ifdef __DEBUG
-	int counter = 0;
+	int32 counter = 0;
 #endif
 
 	if(sourceList->head)

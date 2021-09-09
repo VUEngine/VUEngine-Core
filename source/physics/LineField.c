@@ -285,27 +285,27 @@ Vector3D LineField::getNormal()
 }
 
 // print debug data
-void LineField::print(int x, int y)
+void LineField::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "L:             " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::length(Vector3D::get(this->a, this->b))), x + 2, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::length(Vector3D::get(this->a, this->b))), x + 2, y++, NULL);
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).x), x + 2, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).y), x + 8, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).z), x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).x), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).y), x + 8, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).z), x + 14, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->a.x), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.x), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->b.x), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.x), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->a.y), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.y), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->b.y), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.y), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
 }

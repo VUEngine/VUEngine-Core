@@ -83,11 +83,11 @@ singleton class HardwareManager : Object
     static inline void suspendInterrupts();
     static inline void enableMultiplexedInterrupts();
     static inline void disableMultiplexedInterrupts();
-    static inline int getStackPointer();
-    static inline int getLinkPointer();
-    static inline int getPSW();
+    static inline int32 getStackPointer();
+    static inline int32 getLinkPointer();
+    static inline int32 getPSW();
 	static void checkMemoryMap();
-	static void printStackStatus(int x, int y, bool resumed);
+	static void printStackStatus(int32 x, int32 y, bool resumed);
 	void clearScreen();
 	void disableKeypad();
 	void disableRendering();
@@ -97,7 +97,7 @@ singleton class HardwareManager : Object
 	void enableRendering();
 	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
 	void lowerBrightness();
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 	void setInterruptLevel(uint8 level);
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
@@ -194,9 +194,9 @@ static inline void HardwareManager::disableMultiplexedInterrupts()
 /**
  * Retrieve the Stack Pointer's value
  */
-static inline int HardwareManager::getStackPointer()
+static inline int32 HardwareManager::getStackPointer()
 {
-	int sp;
+	int32 sp;
 
 	asm(" 			\n\
 		mov sp,%0	\n\
@@ -210,9 +210,9 @@ static inline int HardwareManager::getStackPointer()
 /**
  * Retrieve the Link Pointer's value
  */
-static inline int HardwareManager::getLinkPointer()
+static inline int32 HardwareManager::getLinkPointer()
 {
-	int lp;
+	int32 lp;
 
 	asm(" 			\n\
 		mov lp,%0	\n\
@@ -227,9 +227,9 @@ static inline int HardwareManager::getLinkPointer()
  * Retrieve PSW
  * @return		 	PSW
  */
-static inline int HardwareManager::getPSW()
+static inline int32 HardwareManager::getPSW()
 {
-	int psw;
+	int32 psw;
 
 	asm("			\n\
 		stsr psw,%0	\n\

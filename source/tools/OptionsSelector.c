@@ -200,8 +200,8 @@ void OptionsSelector::setOptions(VirtualList options)
 
 	this->totalOptions = VirtualList::getSize(options);
 
-	int optionsPerPage = this->cols * this->rows;
-	int numberOfPages = (int)(this->totalOptions / optionsPerPage);
+	int32 optionsPerPage = this->cols * this->rows;
+	int32 numberOfPages = (int32)(this->totalOptions / optionsPerPage);
 	numberOfPages += (0 < (this->totalOptions % optionsPerPage)) ? 1 : 0;
 
 	VirtualNode node = options->head;
@@ -210,13 +210,13 @@ void OptionsSelector::setOptions(VirtualList options)
 
 	if(0 < VirtualList::getSize(options))
 	{
-		int page = 0;
+		int32 page = 0;
 
 		for(; page < numberOfPages && node; page++)
 		{
 			VirtualList pageOptions = new VirtualList();
 
-			int counter = 0;
+			int32 counter = 0;
 			for(; node && counter < optionsPerPage; counter++, node = node->next)
 			{
 				VirtualList::pushBack(pageOptions, node->data);
@@ -345,7 +345,7 @@ void OptionsSelector::selectPrevious()
  * @param optionIndex	Index of desired option
  * @return				Boolean that indicated whether a new option was selected
  */
-bool OptionsSelector::setSelectedOption(int optionIndex)
+bool OptionsSelector::setSelectedOption(int32 optionIndex)
 {
 	bool changed = false;
 
@@ -380,7 +380,7 @@ bool OptionsSelector::setSelectedOption(int optionIndex)
  *
  * @return				Index of selected option
  */
-int OptionsSelector::getSelectedOption()
+int32 OptionsSelector::getSelectedOption()
 {
 	return this->currentOptionIndex;
 }
@@ -405,17 +405,17 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 		ASSERT(this->currentPage, "printOptions: currentPage");
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
-		int i = 0;
+		int32 i = 0;
 		for(; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
 		{
-			int j = 0;
+			int32 j = 0;
 			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
 				Printing::text(printing, " ", x + j, y + i, this->font);
 			}
 		}
 
-		int counter = 0;
+		int32 counter = 0;
 
 		for(; node; node = node->next, counter++)
 		{
@@ -426,7 +426,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 
 			if(NULL == option->value)
 			{
-				Printing::int(printing, counter, x + fontData->fontSpec->fontSize.x, y, this->font);
+				Printing::int32(printing, counter, x + fontData->fontSpec->fontSize.x, y, this->font);
 			}
 			else
 			{
@@ -441,15 +441,15 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 						break;
 
 					case kInt:
-						Printing::int(printing, *((int*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
 					case kShortInt:
-						Printing::int(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
 					case kChar:
-						Printing::int(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;				}
 			}
 
@@ -480,9 +480,9 @@ void OptionsSelector::printSelectorMark(char* mark)
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(VirtualList::safeCast(VirtualList::front(this->pages)));
-		int optionColumn = (int)(indexOption / this->rows);
-		int optionRow = indexOption - optionColumn * this->rows;
+		int32 indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(VirtualList::safeCast(VirtualList::front(this->pages)));
+		int32 optionColumn = (int32)(indexOption / this->rows);
+		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;
 
 		Printing::text(
@@ -513,7 +513,7 @@ void OptionsSelector::doCurrentSelectionCallback()
  *
  * @return		The number of options
  */
-int OptionsSelector::getNumberOfOptions()
+int32 OptionsSelector::getNumberOfOptions()
 {
 	return this->totalOptions;
 }

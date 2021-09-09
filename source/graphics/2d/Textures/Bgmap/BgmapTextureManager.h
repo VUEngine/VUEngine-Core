@@ -80,9 +80,9 @@ singleton class BgmapTextureManager : Object
 	int16 getAvailableBgmapSegmentsForTextures();
 	int16 getPrintingBgmapSegment();
 	BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment);
-	int16 getXOffset(int id);
-	int16 getYOffset(int id);
-	void print(int x, int y);
+	int16 getXOffset(int32 id);
+	int16 getYOffset(int32 id);
+	void print(int32 x, int32 y);
 	void releaseTexture(BgmapTexture bgmapTexture);
 	void reset();
 	void setSpareBgmapSegments(uint8 paramTableSegments);

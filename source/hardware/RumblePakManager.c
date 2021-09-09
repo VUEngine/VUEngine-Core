@@ -115,7 +115,7 @@ void RumblePakManager::reset()
     this->breaking = 0;
     this->rumbleCommandIndex = 0;
 
-    for(int i = 0; i < __RUMBLE_TOTAL_COMMANDS; i++)
+    for(int32 i = 0; i < __RUMBLE_TOTAL_COMMANDS; i++)
     {
         this->rumbleCommands[i] = 0;
     }

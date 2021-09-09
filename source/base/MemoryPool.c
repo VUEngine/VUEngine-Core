@@ -133,8 +133,8 @@ void MemoryPool::constructor()
  */
 void MemoryPool::reset()
 {
-	int pool = 0;
-	int i;
+	int32 pool = 0;
+	int32 i;
 
 	// initialize pool's sizes and pointers
 	__SET_MEMORY_POOL_ARRAYS
@@ -154,17 +154,17 @@ void MemoryPool::reset()
  */
 void MemoryPool::cleanUp()
 {
-	int pool = 0;
+	int32 pool = 0;
 
 	// clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		int i = 0;
+		int32 i = 0;
 		for(; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
 		{
 			if(!*((uint32*)&this->poolLocation[pool][i]))
 			{
-				int j = i;
+				int32 j = i;
 				for(; j < this->poolSizes[pool][eBlockSize]; j++)
 				{
 					this->poolLocation[pool][j] = 0;
@@ -179,10 +179,10 @@ void MemoryPool::cleanUp()
  *
  * @return			Total size of the memory pool
  */
-int MemoryPool::getPoolSize()
+int32 MemoryPool::getPoolSize()
 {
-	int size = 0;
-	int pool = 0;
+	int32 size = 0;
+	int32 pool = 0;
 
 	// clear all allocable objects usage
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
@@ -199,13 +199,13 @@ int MemoryPool::getPoolSize()
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool::printDetailedUsage(int x, int y)
+void MemoryPool::printDetailedUsage(int32 x, int32 y)
 {
-	int i;
-	int totalUsedBlocks = 0;
-	int totalUsedBytes = 0;
-	int pool;
-	int displacement = 0;
+	int32 i;
+	int32 totalUsedBlocks = 0;
+	int32 totalUsedBytes = 0;
+	int32 pool;
+	int32 displacement = 0;
 
 	Printing printing = Printing::getInstance();
 
@@ -218,7 +218,7 @@ void MemoryPool::printDetailedUsage(int x, int y)
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+		int32 totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
 			if(*((uint32*)&this->poolLocation[pool][displacement]))
@@ -230,27 +230,27 @@ void MemoryPool::printDetailedUsage(int x, int y)
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
 		Printing::text(printing, "	              ", x, ++y, NULL);
-		Printing::int(printing, this->poolSizes[pool][eBlockSize],  x, y, NULL);
-		Printing::int(printing, this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
-		Printing::int(printing, totalUsedBlocks, x + 10, y, NULL);
+		Printing::int32(printing, this->poolSizes[pool][eBlockSize],  x, y, NULL);
+		Printing::int32(printing, this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
+		Printing::int32(printing, totalUsedBlocks, x + 10, y, NULL);
 
-		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
-		Printing::int(printing, usedBlocksPercentage, x + 17 - Utilities::intLength(usedBlocksPercentage), y, NULL);
+		int32 usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
+		Printing::int32(printing, usedBlocksPercentage, x + 17 - Utilities::intLength(usedBlocksPercentage), y, NULL);
 		Printing::text(printing, "% ", x + 17, y, NULL);
 
 		totalUsedBlocks = 0 ;
 	}
 
 	++y;
-	int poolSize = MemoryPool::getPoolSize(this);
+	int32 poolSize = MemoryPool::getPoolSize(this);
 	Printing::text(printing, "Pool size: ", x, ++y, NULL);
-	Printing::int(printing, poolSize, x + 18 - Utilities::intLength(poolSize), y, NULL);
+	Printing::int32(printing, poolSize, x + 18 - Utilities::intLength(poolSize), y, NULL);
 
 	Printing::text(printing, "Pool usage: ", x, ++y, NULL);
-	Printing::int(printing, totalUsedBytes, x + 18 - Utilities::intLength(totalUsedBytes), y++, NULL);
+	Printing::int32(printing, totalUsedBytes, x + 18 - Utilities::intLength(totalUsedBytes), y++, NULL);
 
-	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing::int(printing, usedBytesPercentage, x + 17 - Utilities::intLength(usedBytesPercentage), y, NULL);
+	int32 usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
+	Printing::int32(printing, usedBytesPercentage, x + 17 - Utilities::intLength(usedBytesPercentage), y, NULL);
 	Printing::text(printing, "% ", x + 17, y++, NULL);
 }
 
@@ -260,25 +260,25 @@ void MemoryPool::printDetailedUsage(int x, int y)
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool::printResumedUsage(int x, int y)
+void MemoryPool::printResumedUsage(int32 x, int32 y)
 {
-	int originalY = y;
-	int i;
-	int totalUsedBlocks = 0;
-	int totalUsedBytes = 0;
-	int pool;
-	int displacement = 0;
+	int32 originalY = y;
+	int32 i;
+	int32 totalUsedBlocks = 0;
+	int32 totalUsedBytes = 0;
+	int32 pool;
+	int32 displacement = 0;
 
 	Printing printing = Printing::getInstance();
 
 	Printing::text(printing, "MEMORY:", x, y, NULL);
-	int poolSize = MemoryPool::getPoolSize(MemoryPool::getInstance());
+	int32 poolSize = MemoryPool::getPoolSize(MemoryPool::getInstance());
 	Printing::text(printing, "Total: ", x, ++y, NULL);
-	Printing::int(printing, poolSize, x + 12 - Utilities::intLength(poolSize), y, NULL);
+	Printing::int32(printing, poolSize, x + 12 - Utilities::intLength(poolSize), y, NULL);
 
 	for(y += 2, pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+		int32 totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
 			if(this->poolLocation[pool][displacement])
@@ -289,14 +289,14 @@ void MemoryPool::printResumedUsage(int x, int y)
 
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
-		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
+		int32 usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 
 		Printing::text(printing, "           ", x, originalY + 3 + pool, NULL);
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
-			Printing::int(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
-			Printing::int(printing, usedBlocksPercentage, x + 7 - Utilities::intLength(usedBlocksPercentage), y, NULL);
+			Printing::int32(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
+			Printing::int32(printing, usedBlocksPercentage, x + 7 - Utilities::intLength(usedBlocksPercentage), y, NULL);
 			Printing::text(printing, "% ", x + 7, y++, NULL);
 		}
 
@@ -304,11 +304,11 @@ void MemoryPool::printResumedUsage(int x, int y)
 	}
 
 	y = originalY;
-	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing::int(printing, usedBytesPercentage, x + 11 - Utilities::intLength(usedBytesPercentage), y, NULL);
+	int32 usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
+	Printing::int32(printing, usedBytesPercentage, x + 11 - Utilities::intLength(usedBytesPercentage), y, NULL);
 	Printing::text(printing, "% ", x + 11, y++, NULL);
 	Printing::text(printing, "Used: ", x, ++y, NULL);
-	Printing::int(printing, totalUsedBytes, x + 12 - Utilities::intLength(totalUsedBytes), y++, NULL);
+	Printing::int32(printing, totalUsedBytes, x + 12 - Utilities::intLength(totalUsedBytes), y++, NULL);
 }
 
 /**
@@ -327,10 +327,10 @@ void MemoryPool::free(BYTE* object)
 
 #ifdef __DEBUG
 
-	int i;
-	int pool = 0;
-	int displacement = 0;
-	int numberOfOjects = 0;
+	int32 i;
+	int32 pool = 0;
+	int32 displacement = 0;
+	int32 numberOfOjects = 0;
 
 	if(!object)
 	{
@@ -388,29 +388,29 @@ void MemoryPool::free(BYTE* object)
  * @param numberOfBytes		Number of bytes to allocate
  * @return					Pointer to the memory pool entry allocated
  */
-BYTE* MemoryPool::allocate(int numberOfBytes)
+BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
-	int lp = HardwareManager::getLinkPointer();
+	int32 lp = HardwareManager::getLinkPointer();
 
-	int pool = __MEMORY_POOLS;
+	int32 pool = __MEMORY_POOLS;
 
 	HardwareManager::suspendInterrupts();
 
 	while(pool--)
 	{
-		int blockSize = this->poolSizes[pool][eBlockSize];
+		int32 blockSize = this->poolSizes[pool][eBlockSize];
 
 		if(numberOfBytes <= blockSize)
 		{
-			int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+			int32 numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
 			BYTE* poolLocation0 = &this->poolLocation[pool][this->poolSizes[pool][eLastFreeBlockIndex] * blockSize];
 			BYTE* poolLocation1 = poolLocation0 - blockSize;
 
-			int i = this->poolSizes[pool][eLastFreeBlockIndex];
-			int j = i - 1;
+			int32 i = this->poolSizes[pool][eLastFreeBlockIndex];
+			int32 j = i - 1;
 
 			do
 			{
@@ -444,7 +444,7 @@ BYTE* MemoryPool::allocate(int numberOfBytes)
 	Printing::clear(Printing::getInstance());
 	MemoryPool::printDetailedUsage(this, 1, 8);
 	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
-	Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+	Printing::int32(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
 	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
 
 	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);

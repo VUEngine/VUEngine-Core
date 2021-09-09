@@ -1058,13 +1058,13 @@ void Container::invalidateGlobalScale()
 
  * @return							Result
  */
-int Container::propagateMessage(int (*propagatedMessageHandler)(void*, va_list), ...)
+int32 Container::propagateMessage(int32 (*propagatedMessageHandler)(void*, va_list), ...)
 {
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
 
 	va_list args;
 	va_start(args, propagatedMessageHandler);
-	int result =  Container::passMessage(this, propagatedMessageHandler, args);
+	int32 result =  Container::passMessage(this, propagatedMessageHandler, args);
 	va_end(args);
 
 	return result;
@@ -1078,7 +1078,7 @@ int Container::propagateMessage(int (*propagatedMessageHandler)(void*, va_list),
 
  * @return							Result
  */
-int Container::passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args)
+int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args)
 {
 	// if message is valid
 	if(!propagatedMessageHandler)
@@ -1113,9 +1113,9 @@ int Container::passMessage(int (*propagatedMessageHandler)(void*, va_list), va_l
 
  * @return		Result
  */
-int Container::onPropagatedMessage(va_list args)
+int32 Container::onPropagatedMessage(va_list args)
 {
-	int message = va_arg(args, int);
+	int32 message = va_arg(args, int32);
 	return  Container::handlePropagatedMessage(this, message);
 }
 
@@ -1126,7 +1126,7 @@ int Container::onPropagatedMessage(va_list args)
 
  * @return			Result
  */
-bool Container::handlePropagatedMessage(int message __attribute__ ((unused)))
+bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
 {
 	return false;
 }
@@ -1148,7 +1148,7 @@ Container Container::getParent()
 
  * @return		Children count
  */
-int Container::getChildCount()
+int32 Container::getChildCount()
 {
 	return this->children ? VirtualList::getSize(this->children) : 0;
 }

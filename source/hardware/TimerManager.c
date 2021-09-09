@@ -573,7 +573,7 @@ void TimerManager::setTimerResolution()
  *
  * @return			ZSTAT
  */
-int TimerManager::getStat()
+int32 TimerManager::getStat()
 {
 	return (_hardwareRegisters[__TCR] & __TIMER_ZSTAT);
 }
@@ -641,7 +641,7 @@ void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Object ob
 	}
 }
 
-void TimerManager::print(int x, int y)
+void TimerManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "TIMER", x, y++, NULL);
 	y++;
@@ -682,8 +682,8 @@ void TimerManager::print(int x, int y)
 			break;
 	}
 
-	Printing::int(Printing::getInstance(), this->timePerInterrupt, x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->timePerInterrupt, x + 14, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Timer counter               ", x, y, NULL);
-	Printing::int(Printing::getInstance(), TimerManager::computeTimerCounter(this), x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), TimerManager::computeTimerCounter(this), x + 14, y++, NULL);
 }

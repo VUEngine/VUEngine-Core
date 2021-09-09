@@ -114,11 +114,11 @@ class Container : SpatialObject
 	void deleteMyself();
 	void addBehavior(Behavior behavior);
 	void removeBehavior(Behavior behavior);
-	int doKeyHold(int pressedKey);
-	int doKeyPressed(int pressedKey);
-	int doKeyUp(int pressedKey);
+	int32 doKeyHold(int32 pressedKey);
+	int32 doKeyPressed(int32 pressedKey);
+	int32 doKeyUp(int32 pressedKey);
 	Container getChildByName(const char* childName, bool recursive);
-	int getChildCount();
+	int32 getChildCount();
 	Transformation getEnvironmentTransform();
 	const Vector3D* getGlobalPosition();
 	const Vector3D* getLocalPosition();
@@ -132,8 +132,8 @@ class Container : SpatialObject
 	void invalidateGlobalScale();
 	void invalidateGlobalTransformation();
 	bool isHidden();
-	int onPropagatedMessage(va_list args);
-	int propagateMessage(int (*propagatedMessageHandler)(void*, va_list), ...);
+	int32 onPropagatedMessage(va_list args);
+	int32 propagateMessage(int32 (*propagatedMessageHandler)(void*, va_list), ...);
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
@@ -154,7 +154,7 @@ class Container : SpatialObject
 	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
-	virtual bool handlePropagatedMessage(int message);
+	virtual bool handlePropagatedMessage(int32 message);
 	virtual void addChild(Container child);
 	virtual void removeChild(Container child, bool deleteChild);
 	virtual void changeEnvironment(Transformation* environmentTransform);
@@ -162,7 +162,7 @@ class Container : SpatialObject
 	virtual void resume();
 	virtual void show();
 	virtual void hide();
-	virtual int passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args);
+	virtual int32 passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args);
 	virtual bool isTransformed();
 
 	override void setPosition(const Vector3D* position);

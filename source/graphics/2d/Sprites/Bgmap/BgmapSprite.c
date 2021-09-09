@@ -185,7 +185,7 @@ void BgmapSprite::computeDimensions()
 	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
 		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int)this->texture->textureSpec->cols << 2),
+			__I_TO_FIX10_6((int32)this->texture->textureSpec->cols << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
 		)
 	))) + 1;
@@ -193,7 +193,7 @@ void BgmapSprite::computeDimensions()
 	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
 		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int)this->texture->textureSpec->rows << 2),
+			__I_TO_FIX10_6((int32)this->texture->textureSpec->rows << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
 		)
 	))) + 1;
@@ -335,9 +335,9 @@ uint16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 h = height;
 
 	// set the head
-	int mx = this->drawSpec.textureSource.mx;
-	int my = this->drawSpec.textureSource.my;
-	int mp = this->drawSpec.textureSource.mp;
+	int32 mx = this->drawSpec.textureSource.mx;
+	int32 my = this->drawSpec.textureSource.my;
+	int32 mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
@@ -433,7 +433,7 @@ void BgmapSprite::processAffineEffects()
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
 		// camera moves vertically
-		// int lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
+		// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
 		// un-cap x coordinate in affine mode
@@ -510,14 +510,14 @@ void BgmapSprite::displacement()
 		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
 
 		// set the world camera position
-		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
-		int gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
+		int32 gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
+		int32 gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
 
-		int w = Texture::getCols(this->texture)<< 3;
-		int h = Texture::getRows(this->texture)<< 3;
+		int32 w = Texture::getCols(this->texture)<< 3;
+		int32 h = Texture::getRows(this->texture)<< 3;
 
-		int mxDisplacement = 0 > gx ? -gx : 0;
-		int myDisplacement = 0 > gy ? -gy : 0;
+		int32 mxDisplacement = 0 > gx ? -gx : 0;
+		int32 myDisplacement = 0 > gy ? -gy : 0;
 
 		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
 		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
@@ -574,7 +574,7 @@ void BgmapSprite::displacement()
 			if(0 <= this->paramTableRow)
 			{
 				h = Texture::getRows(this->texture)<< 3;
-				int lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
+				int32 lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
 
 				BgmapSprite::doApplyAffineTransformations(this, lastRow);
 

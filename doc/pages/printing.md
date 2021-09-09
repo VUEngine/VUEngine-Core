@@ -8,7 +8,7 @@ Out of the Virtual Boy's 32 available Worlds, VUEngine always uses the lowest av
 output. It provides methods to output different variable types to this so-called *Printing Layer*.
 
 - `Printing::text`
-- `Printing::int`
+- `Printing::int32`
 - `Printing::float`
 - `Printing::hex`
 

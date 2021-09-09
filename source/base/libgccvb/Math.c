@@ -66,13 +66,13 @@ static float Math::squareRoot(float number)
 	return number * y;
 }
 
-static int Math::powerFast(int base, int power)
+static int32 Math::powerFast(int32 base, int32 power)
 {
-	int i=0;
-	int j=0;
-	int sum = base;
-	int result = 0;
-	int limit = base;
+	int32 i=0;
+	int32 j=0;
+	int32 sum = base;
+	int32 result = 0;
+	int32 limit = base;
 
 	power = 0 > power ? -power : power;
 
@@ -89,22 +89,22 @@ static int Math::powerFast(int base, int power)
 	return 0 == power ? 1 : 1 == power ? base : result;
 }
 
-static int Math::multiply(int a, int b)
+static int32 Math::multiply(int32 a, int32 b)
 {
 	return (0 < b) ? a + Math::multiply(a, b - 1) : 0;
 }
 
-static int Math::doPower(int sum, int base, int power)
+static int32 Math::doPower(int32 sum, int32 base, int32 power)
 {
 	return (1 < power) ? Math::doPower(Math::multiply(sum, base), base, power - 1) : sum;
 }
 
-static int Math::power(int base, int power)
+static int32 Math::power(int32 base, int32 power)
 {
 	return 0 == power ? 1 : 1 == power ? base : Math::doPower(base, base, 0 > power ? -power : power);
 }
 
-static int Math::intInfinity()
+static int32 Math::intInfinity()
 {
 	return 0x3FFFFFFF;
 }
@@ -119,12 +119,12 @@ static fix10_6_ext Math::fix10_6_extInfinity()
 	return 0x3FFFFFFF;
 }
 
-static int Math::getAngle(fix7_9 x, fix7_9 y)
+static int32 Math::getAngle(fix7_9 x, fix7_9 y)
 {
-	int entry = 0;
-	int lastEntry = 0;
-	static int entriesPerQuadrant = (int)(sizeof(_sinLut) / sizeof(int16)) >> 2;
-	static int totalEntries = (int)(sizeof(_sinLut) / sizeof(int16));
+	int32 entry = 0;
+	int32 lastEntry = 0;
+	static int32 entriesPerQuadrant = (int32)(sizeof(_sinLut) / sizeof(int16)) >> 2;
+	static int32 totalEntries = (int32)(sizeof(_sinLut) / sizeof(int16));
 
 	// Determine the quadrant
 	if(0 == x)
@@ -187,7 +187,7 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 
 	fix7_9 difference = 1024;
 	fix7_9 sin = y;
-	int angle = 0;
+	int32 angle = 0;
 
 	for(; entry < lastEntry; entry++)
 	{

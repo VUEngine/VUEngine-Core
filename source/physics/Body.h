@@ -189,7 +189,7 @@ class Body : Object
 	Velocity getMaximumVelocity();
 	void setMaximumSpeed(fix10_6 maximumSpeed);
 	fix10_6 getMaximumSpeed();
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 	MovementResult updateMovement();
 	bool changedDirection();
 	void sendMessages(bool value);

@@ -424,7 +424,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 	if(positionedEntity->entitySpec->spriteSpecs && positionedEntity->entitySpec->spriteSpecs[0])
 	{
-		int i = 0;
+		int32 i = 0;
 
 		for(; positionedEntity->entitySpec->spriteSpecs[i]; i++)
 		{
@@ -432,7 +432,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 			{
 				MBgmapSpriteSpec* mBgmapSpriteSpec = (MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
 
-				int j = 0;
+				int32 j = 0;
 
 				halfWidth = 0;
 				halfHeight = 0;
@@ -568,7 +568,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 	if(positionedEntity->childrenSpecs)
 	{
-		int i = 0;
+		int32 i = 0;
 		for(; positionedEntity->childrenSpecs[i].entitySpec; i++)
 		{
 			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
@@ -577,7 +577,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 	if(positionedEntity->entitySpec->childrenSpecs)
 	{
-		int i = 0;
+		int32 i = 0;
 		for(; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
 		{
 			Entity::getSizeFromSpec(&positionedEntity->entitySpec->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
@@ -627,7 +627,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
 
 	static Vector3D position;
 
-	int i = 0;
+	int32 i = 0;
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
 		if(!strncmp(childName, childrenSpecs[i].name, __MAX_CONTAINER_NAME_LENGTH))
@@ -706,7 +706,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		return;
 	}
 
-	int i = 0;
+	int32 i = 0;
 
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
@@ -778,7 +778,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 		this->entityFactory = new EntityFactory();
 	}
 
-	int i = 0;
+	int32 i = 0;
 
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
@@ -840,7 +840,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const EntitySpec* entitySpec, int32 internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
 	ASSERT(entitySpec, "Entity::addChildEntity: null entitySpec");
 
@@ -954,7 +954,7 @@ uint32 Entity::areAllChildrenReady()
  *
  * @private
  */
-void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection, int shapeSpecIndex)
+void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection, int32 shapeSpecIndex)
 {
 	if(shape)
 	{
@@ -1018,7 +1018,7 @@ void Entity::transformShapes()
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 			VirtualNode node = this->shapes->head;
-			int i = 0;
+			int32 i = 0;
 
 			for(; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
@@ -1039,7 +1039,7 @@ void Entity::transformShapes()
 	}
 }
 
-bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
+bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 {
 	if(!this->entitySpec->shapeSpecs)
 	{
@@ -1090,7 +1090,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 		Entity::destroyShapes(this);
 	}
 
-	int i = 0;
+	int32 i = 0;
 
 	if(!this->shapes)
 	{
@@ -1127,7 +1127,7 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 		return;
 	}
 
-	int i = 0;
+	int32 i = 0;
 
 	// go through n behaviors in entity's spec
 	for(; behaviorSpecs[i]; i++)
@@ -1156,7 +1156,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
-	int i = 0;
+	int32 i = 0;
 
 	// go through n sprites in entity's spec
 	for(; spriteSpecs[i]; i++)
@@ -1175,7 +1175,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
  * @param spriteSpecIndex		Index in sprite specs array
  * @return							True if a sprite was created
  */
-bool Entity::addSpriteFromSpecAtIndex(int spriteSpecIndex)
+bool Entity::addSpriteFromSpecAtIndex(int32 spriteSpecIndex)
 {
 	if(!this->entitySpec->spriteSpecs)
 	{
@@ -1206,7 +1206,7 @@ bool Entity::addSpriteFromSpecAtIndex(int spriteSpecIndex)
  * @param shapeSpecIndex			Index in shape specs array
  * @return							True if a shape was created
  */
-bool Entity::addShapeFromSpecAtIndex(int shapeSpecIndex)
+bool Entity::addShapeFromSpecAtIndex(int32 shapeSpecIndex)
 {
 	if(!this->entitySpec->shapeSpecs)
 	{
@@ -1642,7 +1642,7 @@ fix10_6 Entity::getDepth()
 	return this->size.z;
 }
 
-bool Entity::isSpriteVisible(Sprite sprite, int pad)
+bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
 {
 	PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
 
@@ -1652,9 +1652,9 @@ bool Entity::isSpriteVisible(Sprite sprite, int pad)
 	int16 halfHeight	= pixelSize.y >> 1;
 	int16 halfDepth	= pixelSize.z >> 1;
 
-	int x = spritePosition.x;
-	int y = spritePosition.y;
-	int z = spritePosition.z;
+	int32 x = spritePosition.x;
+	int32 y = spritePosition.y;
+	int32 z = spritePosition.z;
 
 	// check x visibility
 	if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
@@ -1684,7 +1684,7 @@ bool Entity::isSpriteVisible(Sprite sprite, int pad)
  * @param recursive
  * @return			Boolean if visible
  */
-bool Entity::isVisible(int pad, bool recursive)
+bool Entity::isVisible(int32 pad, bool recursive)
 {
 	if(this->sprites && this->sprites->head)
 	{
@@ -1721,9 +1721,9 @@ bool Entity::isVisible(int pad, bool recursive)
 		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
 		int16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
-		int x = position2D.x;
-		int y = position2D.y;
-		int z = position2D.z;
+		int32 x = position2D.x;
+		int32 y = position2D.y;
+		int32 z = position2D.z;
 
 		// check x visibility
 		if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))

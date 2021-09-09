@@ -469,7 +469,7 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 		return NULL;
 	}
 
-	int spriteSpecIndex = 0;
+	int32 spriteSpecIndex = 0;
 
 	if(1 < this->numberOfSpriteSpecs)
 	{
@@ -497,7 +497,7 @@ Particle ParticleSystem::spawnParticle()
 	int16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int32)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
@@ -672,7 +672,7 @@ void ParticleSystem::suspend()
  * @private
  * @return		Time
  */
-int ParticleSystem::computeNextSpawnTime()
+int32 ParticleSystem::computeNextSpawnTime()
 {
 	return this->particleSystemSpec->minimumSpawnDelay +
 			(this->particleSystemSpec->spawnDelayDelta ? Utilities::random(_gameRandomSeed, this->particleSystemSpec->spawnDelayDelta) : 0);

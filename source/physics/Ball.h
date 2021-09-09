@@ -51,7 +51,7 @@ class Ball : Shape
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 	override Vector3D getPosition();
 	override void configureWireframe();
-	override void print(int x, int y);
+	override void print(int32 x, int32 y);
 }
 
 

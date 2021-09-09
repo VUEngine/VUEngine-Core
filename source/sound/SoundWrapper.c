@@ -994,9 +994,9 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds __attribute__((u
 	}
 }
 
-void SoundWrapper::print(int x, int y)
+void SoundWrapper::print(int32 x, int32 y)
 {
-	int xDisplacement = 9;
+	int32 xDisplacement = 9;
 
 	VirtualNode node = this->channels->head;
 
@@ -1120,7 +1120,7 @@ uint32 SoundWrapper::getElapsedMilliseconds()
 	return 0;
 }
 
-void SoundWrapper::printPlaybackProgress(int x, int y)
+void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 {
 	uint32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
 
@@ -1148,12 +1148,12 @@ void SoundWrapper::printPlaybackProgress(int x, int y)
 	}
 }
 
-void SoundWrapper::printTiming(uint32 seconds, int x, int y)
+void SoundWrapper::printTiming(uint32 seconds, int32 x, int32 y)
 {
 	uint32 minutes = seconds / 60;
 	seconds = seconds - minutes * 60;
 
-	int minutesDigits = 1;//Utilities::getDigitCount(minutes);
+	int32 minutesDigits = 1;//Utilities::getDigitCount(minutes);
 
 	PRINT_INT(minutes, x, y);
 	PRINT_TEXT(":", x + minutesDigits, y);
@@ -1173,7 +1173,7 @@ void SoundWrapper::printTiming(uint32 seconds, int x, int y)
 	}
 }
 
-void SoundWrapper::printPlaybackTime(int x, int y)
+void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 {
 	static uint32 previousSecond = 0;
 	uint32 currentSecond = SoundWrapper::getElapsedMilliseconds(this) / __MILLISECONDS_PER_SECOND;
@@ -1191,7 +1191,7 @@ void SoundWrapper::printPlaybackTime(int x, int y)
 	}
 }
 
-void SoundWrapper::printMetadata(int x, int y)
+void SoundWrapper::printMetadata(int32 x, int32 y)
 {
 	PRINT_TEXT(this->sound->name, x, y++);
 	y++;
@@ -1236,7 +1236,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	SoundWrapper::printVolume(this, 1, y, true);
 }
 
-void SoundWrapper::printVolume(int x, int y, bool printHeader)
+void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 {
 	if(this->hasPCMTracks)
 	{
@@ -1252,7 +1252,7 @@ void SoundWrapper::printVolume(int x, int y, bool printHeader)
 		++y;
 		++y;
 
-		int yDisplacement = 0;
+		int32 yDisplacement = 0;
 
 		for(node = this->channels->head; node; node = node->next)
 		{
@@ -1261,7 +1261,7 @@ void SoundWrapper::printVolume(int x, int y, bool printHeader)
 			PRINT_TEXT("C", x + 15 - 0, y + yDisplacement);
 			PRINT_INT(channel->number, x + 16 - 0, y + yDisplacement);
 
-			for(int i = 0; i < 15; i++)
+			for(int32 i = 0; i < 15; i++)
 			{
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y + yDisplacement);
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y + yDisplacement);

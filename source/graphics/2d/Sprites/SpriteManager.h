@@ -73,7 +73,7 @@ singleton class SpriteManager : Object
 	// Textures pending update during writeDRAM
 	VirtualList texturesToUpdate;
 	// pixels drawn
-	int totalPixelsDrawn;
+	int32 totalPixelsDrawn;
 	// number of rows to write in affine transformations
 	int16 maximumParamTableRowsToComputePerCall;
 	// semaphore to prevent manipulation of VirtualList during interrupt
@@ -102,24 +102,24 @@ singleton class SpriteManager : Object
 	void destructor();
 	void disposeSprite(Sprite sprite);
 	int8 getFreeLayer();
-	int getNumberOfSprites();
-	int getMaximumParamTableRowsToComputePerCall();
+	int32 getNumberOfSprites();
+	int32 getMaximumParamTableRowsToComputePerCall();
 	Sprite getSpriteAtPosition(int16 position);
 	int16 getSpritePosition(Sprite sprite);
 	int8 getTexturesMaximumRowsToWrite();
 	void computeTotalPixelsDrawn();
-	void print(int x, int y, bool resumed);
-	void printObjectSpriteContainersStatus(int x, int y);
+	void print(int32 x, int32 y, bool resumed);
+	void printObjectSpriteContainersStatus(int32 x, int32 y);
 	void showSprites(Sprite spareSprite, bool showPrinting);
 	void hideSprites(Sprite spareSprite, bool hidePrinting);
 	void render();
 	void stopRendering();
 	void reset();
-	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
+	void setMaximumParamTableRowsToComputePerCall(int32 maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
-	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
-	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
+	ObjectSpriteContainer getObjectSpriteContainer(int32 numberOfObjects, fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainerBySegment(int32 segment);
 	void sort();
 	bool sortProgressively();
 	void writeTextures();

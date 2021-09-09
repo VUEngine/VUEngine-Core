@@ -250,7 +250,7 @@ abstract class Shape : Object
 	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
 	virtual Vector3D getPosition() = 0;
 	virtual void configureWireframe() = 0;
-	virtual void print(int x, int y) = 0;
+	virtual void print(int32 x, int32 y) = 0;
 }
 
 

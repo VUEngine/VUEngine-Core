@@ -60,7 +60,7 @@ void Box::constructor(SpatialObject owner)
 
 	this->normals = NULL;
 
-	int normalIndex = 0;
+	int32 normalIndex = 0;
 	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
 	{
 		this->vertexProjections[normalIndex].min = 0;
@@ -398,7 +398,7 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 
 static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
 {
-	int vertexIndex = 0;
+	int32 vertexIndex = 0;
 
 	// project this onto the current normal
 	fix10_6 dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
@@ -434,7 +434,7 @@ void Box::projectOntoItself()
 	Box::computeNormals(this, vertexes);
 
 	// has to project all points on all the normals of the tilted box
-	int normalIndex = 0;
+	int32 normalIndex = 0;
 
 	// initialize vertex projections
 	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
@@ -563,22 +563,22 @@ void Box::configureWireframe()
 }
 
 // print debug data
-void Box::print(int x, int y)
+void Box::print(int32 x, int32 y)
 {
 	RightBox rightBox = this->rightBox;
 
 	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1), x + 8, y++, NULL);
 }

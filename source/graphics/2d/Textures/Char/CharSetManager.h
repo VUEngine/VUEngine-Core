@@ -54,10 +54,10 @@ singleton class CharSetManager : Object
 	void defragment();
 	void writeCharSets();
 	bool writeCharSetsProgressively();
-	int getTotalUsedChars();
-	int getTotalFreeChars();
-	int getTotalCharSets();
-	void print(int x, int y);
+	int32 getTotalUsedChars();
+	int32 getTotalFreeChars();
+	int32 getTotalCharSets();
+	void print(int32 x, int32 y);
 }
 
 

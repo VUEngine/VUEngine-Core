@@ -553,7 +553,7 @@ void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
  *
  * @return
  */
-int Sprite::getHalfWidth()
+int32 Sprite::getHalfWidth()
 {
 	return this->halfWidth;
 }
@@ -563,7 +563,7 @@ int Sprite::getHalfWidth()
  *
  * @return
  */
-int Sprite::getHalfHeight()
+int32 Sprite::getHalfHeight()
 {
 	return this->halfHeight;
 }
@@ -902,7 +902,7 @@ bool Sprite::isObject()
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
-void Sprite::print(int x, int y)
+void Sprite::print(int32 x, int32 y)
 {
 	// Allow normal rendering once for WORLD values to populate properly
 	uint8 transparent = this->transparent;
@@ -910,7 +910,7 @@ void Sprite::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
@@ -941,28 +941,28 @@ void Sprite::print(int x, int y)
 	Printing::text(Printing::getInstance(), (this->hidden > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->position.x, x + 18, y, NULL);
-	Printing::int(Printing::getInstance(), this->position.y, x + 24, y, NULL);
-	Printing::int(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
-	Printing::int(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.y, x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
 	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
-	Printing::int(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);
-	Printing::int(Printing::getInstance(), this->displacement.z, x + 30, y, NULL);
-	Printing::int(Printing::getInstance(), this->displacement.parallax, x + 36, y, NULL);
+	Printing::int32(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), this->displacement.z, x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), this->displacement.parallax, x + 36, y, NULL);
 	Printing::text(Printing::getInstance(), "G (x,y,p):                           ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldGX(this), x + 18, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldGY(this), x + 24, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldGP(this), x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldGX(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldGY(this), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldGP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "M (x,y,p):                           ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldMX(this), x + 18, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldMY(this), x + 24, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldMP(this), x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldMX(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldMY(this), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldMP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldWidth(this), x + 18, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldHeight(this), x + 24, y++, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldWidth(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getWorldHeight(this), x + 24, y++, NULL);
 	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
 	if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
 	{
@@ -971,16 +971,16 @@ void Sprite::print(int x, int y)
 		Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
 		y++;
 		Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
+		Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
 		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int)Texture::getTextureSpec(bgmapTexture), x + 18, y, 8, NULL);
+		Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(bgmapTexture), x + 18, y, 8, NULL);
 		Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 		Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+		Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
 		Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
-		Printing::int(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
+		Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
+		Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
 	}
 
 	this->transparent = transparent;
@@ -1025,7 +1025,7 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  *
  * @return		Total pixels
  */
-int Sprite::getTotalPixels()
+int32 Sprite::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
 	{

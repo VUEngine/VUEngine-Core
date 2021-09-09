@@ -63,7 +63,7 @@ class StateMachine : Object
 	VirtualList getStateStack();
 	State getCurrentState();
 	State getPreviousState();
-	int getStackSize();
+	int32 getStackSize();
 	override bool handleMessage(Telegram telegram);
 }
 

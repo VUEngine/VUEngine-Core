@@ -254,7 +254,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		__TIMEERR
 	};
 
-	int i = 0;
+	int32 i = 0;
 
 	for(; i < INTERRUPTS; i++)
 	{
@@ -465,7 +465,7 @@ void VIPManager::clearScreen()
 	Mem::clear ((BYTE*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
 	Mem::clear ((BYTE*) __CHAR_SEGMENT_3_BASE_ADDRESS, 8192);
 
-	for(int i = 0; i < __TOTAL_LAYERS; i++)
+	for(int32 i = 0; i < __TOTAL_LAYERS; i++)
 	{
 		_worldAttributesCache[i].head = 0;
 		_worldAttributesCache[i].gx = 0;
@@ -492,7 +492,7 @@ void VIPManager::clearScreen()
 		_worldAttributesBaseAddress[i].ovr = 0;
 	}
 
-	for(int i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	for(int32 i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
 		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
@@ -512,7 +512,7 @@ void VIPManager::clearScreen()
  * @param segment	The segment to clean up
  * @param size		Segment's size
  */
-void VIPManager::clearBgmapSegment(int segment, int size)
+void VIPManager::clearBgmapSegment(int32 segment, int32 size)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
 }
@@ -524,7 +524,7 @@ void VIPManager::clearBgmapSegment(int segment, int size)
  */
 void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
-	int i, value;
+	int32 i, value;
 
 	// use the default column table as fallback
 	if(columnTableSpec == NULL)
@@ -583,7 +583,7 @@ void VIPManager::setupBrightness(Brightness* brightness)
  */
 void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
-	int i, leftCta, rightCta, value;
+	int32 i, leftCta, rightCta, value;
 
 	// use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)

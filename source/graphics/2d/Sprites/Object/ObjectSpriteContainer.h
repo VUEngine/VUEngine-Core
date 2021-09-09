@@ -47,29 +47,29 @@ class ObjectSpriteContainer : Sprite
 	// object sprites
 	VirtualList objectSprites;
 	// first object index
-	int firstObjectIndex;
+	int32 firstObjectIndex;
 	// last rendered object index
-	int lastRenderedObjectIndex;
-	int totalObjectsToWriteToDRAM;
+	int32 lastRenderedObjectIndex;
+	int32 totalObjectsToWriteToDRAM;
 	// total objects
-	int totalObjects;
+	int32 totalObjects;
 	// OBJs available
-	int availableObjects;
+	int32 availableObjects;
 	// spt index
-	int spt;
+	int32 spt;
 	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
 	// flag to override to show / hide sprites
 	bool hideSprites;
 
 	/// @publicsection
-	void constructor(int spt, int totalObjects, int firstObjectIndex);
-	bool registerSprite(ObjectSprite objectSprite, int numberOfObjects);
-	int getAvailableObjects();
-	int getFirstObjectIndex();
-	int getLastObjectIndex();
-	int getNextFreeObjectIndex();
-	int getTotalUsedObjects();
+	void constructor(int32 spt, int32 totalObjects, int32 firstObjectIndex);
+	bool registerSprite(ObjectSprite objectSprite, int32 numberOfObjects);
+	int32 getAvailableObjects();
+	int32 getFirstObjectIndex();
+	int32 getLastObjectIndex();
+	int32 getNextFreeObjectIndex();
+	int32 getTotalUsedObjects();
 	bool hasRoomFor(int32 numberOfObjects);
 	void sortProgressively();
 	void position(const Vector3D* position);
@@ -84,8 +84,8 @@ class ObjectSpriteContainer : Sprite
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(uint16 display, uint16 mode);
 	override bool writeTextures();
-	override void print(int x, int y);
-	override int getTotalPixels();
+	override void print(int32 x, int32 y);
+	override int32 getTotalPixels();
 }
 
 

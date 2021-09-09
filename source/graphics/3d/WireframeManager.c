@@ -155,11 +155,11 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */
-void WireframeManager::print(int x, int y)
+void WireframeManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "WireframeManager's status", x, y++, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Entries: ", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->wireframes), x + 17, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->wireframes), x + 17, y++, NULL);
 }
 

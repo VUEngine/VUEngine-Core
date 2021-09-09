@@ -37,7 +37,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern int strcmp(const char *, const char *);
+extern int32 strcmp(const char *, const char *);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ void BgmapAnimatedSprite::writeAnimation()
 
 void BgmapAnimatedSprite::setFrameAnimatedMulti(uint16 frame)
 {
-	int totalColumns = 64 - (this->originalTextureSource.mx / 8);
+	int32 totalColumns = 64 - (this->originalTextureSource.mx / 8);
 	int32 frameColumn = Texture::getCols(this->texture) * frame;
 	this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 	this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);

@@ -50,7 +50,7 @@ class GameState : State
 	// a pointer to the game's stage
 	Stage stage;
 	// flag to allow streaming
-	int canStream;
+	int32 canStream;
 	// must save to allow pause
 	Vector3D cameraPosition;
 	// clock for messaging
@@ -82,7 +82,7 @@ class GameState : State
 	void pauseMessagingClock(bool pause);
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
-	int propagateMessage(int message);
+	int32 propagateMessage(int32 message);
 	void resumeClocks();
 	void startAnimations();
 	void startClocks();

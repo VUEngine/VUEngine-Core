@@ -53,6 +53,6 @@ The Container implements a passMessage method that allows the propagation of a m
  
 Then, to react to the message, override the following method in your class:
 
-	bool Container::handlePropagatedMessage(int message);
+	bool Container::handlePropagatedMessage(int32 message);
 
 Message propagation stops when handlePropagatedMessage returns true.

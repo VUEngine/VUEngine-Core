@@ -2,7 +2,7 @@
 // Number of frames: 2
 // Number of chars per frame: 180
  
-const unsigned int ProfilingTiles[] __attribute__((aligned(4))) = 
+const uint32 ProfilingTiles[] __attribute__((aligned(4))) = 
 {
 //	321321321
 //	1111 1010 1010 0101
@@ -311,7 +311,7 @@ const unsigned short ProfilingMap[] __attribute__((aligned(4)))=
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,	
 };
 
-const unsigned int ProfilingShadowTiles[] __attribute__((aligned(4))) = 
+const uint32 ProfilingShadowTiles[] __attribute__((aligned(4))) = 
 {
 	0x55555555,
 	0x55555555,

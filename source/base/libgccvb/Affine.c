@@ -101,8 +101,8 @@ static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fix10_6 x, fix1
 
 
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
-	int lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
+	int32 lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
+	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
 
 	if(rotation->x)
 	{
@@ -316,12 +316,12 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fix10_6 x, fix10_
 
 
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
-	int lastRow = __FIX10_6_TO_I((halfHeight << 1)) + 1;
+	int32 lastRow = __FIX10_6_TO_I((halfHeight << 1)) + 1;
 
 /*
 	int16 i = 0 <= paramTableRow ? paramTableRow : 0;
-	int lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
-	int counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
+	int32 lastRow = __FIX10_6_TO_I(__FIX10_6_MULT((halfHeight << 1), finalScaleY)) + 1;
+	int32 counter = SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance());
 */
 //	for(;counter && i <= lastRow; i++, counter--)
 	for(;i <= lastRow; i++, )

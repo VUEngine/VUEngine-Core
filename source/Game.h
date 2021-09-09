@@ -99,7 +99,7 @@ singleton class Game : Object
 	// game's next state
 	GameState nextState;
 	// game's next state operation
-	int nextStateOperation;
+	int32 nextStateOperation;
 	// last process' name
 	char* lastProcessName;
 	// frame flags
@@ -137,7 +137,7 @@ singleton class Game : Object
 	bool isPaused();
 	bool isInSpecialMode();
 	void pause(GameState pauseState);
-	void printClassSizes(int x, int y);
+	void printClassSizes(int32 x, int32 y);
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void reset();
 	void resetProfiling();

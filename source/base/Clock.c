@@ -74,7 +74,7 @@ void Clock::destructor()
  * @param row
  * @param font
  */
-void Clock::print(int col, int row, const char* font)
+void Clock::print(int32 col, int32 row, const char* font)
 {
 	Clock::printTime(this->milliSeconds, col, row, font, kTimePrecision0);
 }
@@ -170,7 +170,7 @@ uint32 Clock::getTime()
  *
  * @return	Elapsed milliseconds in the current second
  */
-int Clock::getTimeInCurrentSecond()
+int32 Clock::getTimeInCurrentSecond()
 {
 	return __MILLISECONDS_PER_SECOND * (this->milliSeconds * 0.001f - __F_FLOOR(this->milliSeconds * 0.001f));
 }
@@ -240,7 +240,7 @@ bool Clock::isPaused()
  * @param row
  * @param font
  */
-static void Clock::printTime(uint32 milliSeconds, int col, int row, const char* font, uint32 precision)
+static void Clock::printTime(uint32 milliSeconds, int32 col, int32 row, const char* font, uint32 precision)
 {
 	char output[] = "00:00";
 	uint32 minutes = (uint32)(milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
@@ -284,12 +284,12 @@ static void Clock::printTime(uint32 milliSeconds, int col, int row, const char* 
  * @param row
  * @param font
  */
-static void Clock::printDeciseconds(uint32 milliSeconds, int col, int row, const char* font)
+static void Clock::printDeciseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
 {
 	uint32 deciSeconds = ((milliSeconds + 50) / 100);
 	deciSeconds -= ((deciSeconds / 10) * 10);
 
-	Printing::int(Printing::getInstance(), deciSeconds, col, row, font);
+	Printing::int32(Printing::getInstance(), deciSeconds, col, row, font);
 }
 
 /**
@@ -299,19 +299,19 @@ static void Clock::printDeciseconds(uint32 milliSeconds, int col, int row, const
  * @param row
  * @param font
  */
-static void Clock::printCentiseconds(uint32 milliSeconds, int col, int row, const char* font)
+static void Clock::printCentiseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
 {
 	uint32 centiSeconds = ((milliSeconds + 5) / 10);
 	centiSeconds -= ((centiSeconds / 100) * 100);
 
 	if(centiSeconds >= 10)
 	{
-		Printing::int(Printing::getInstance(), centiSeconds, col, row, font);
+		Printing::int32(Printing::getInstance(), centiSeconds, col, row, font);
 	}
 	else
 	{
-		Printing::int(Printing::getInstance(), 0, col, row, font);
-		Printing::int(Printing::getInstance(), centiSeconds, col + 1, row, font);
+		Printing::int32(Printing::getInstance(), 0, col, row, font);
+		Printing::int32(Printing::getInstance(), centiSeconds, col + 1, row, font);
 	}
 }
 
@@ -322,23 +322,23 @@ static void Clock::printCentiseconds(uint32 milliSeconds, int col, int row, cons
  * @param row
  * @param font
  */
-static void Clock::printMilliseconds(uint32 milliSeconds, int col, int row, const char* font)
+static void Clock::printMilliseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
 {
 	milliSeconds -= ((milliSeconds / 1000) * 1000);
 
 	if(milliSeconds >= 100)
 	{
-		Printing::int(Printing::getInstance(), milliSeconds, col, row, font);
+		Printing::int32(Printing::getInstance(), milliSeconds, col, row, font);
 	}
 	else if(milliSeconds >= 10)
 	{
-		Printing::int(Printing::getInstance(), 0, col, row, font);
-		Printing::int(Printing::getInstance(), milliSeconds, col + 1, row, font);
+		Printing::int32(Printing::getInstance(), 0, col, row, font);
+		Printing::int32(Printing::getInstance(), milliSeconds, col + 1, row, font);
 	}
 	else
 	{
-		Printing::int(Printing::getInstance(), 0, col, row, font);
-		Printing::int(Printing::getInstance(), 0, col + 1, row, font);
-		Printing::int(Printing::getInstance(), milliSeconds, col + 2, row, font);
+		Printing::int32(Printing::getInstance(), 0, col, row, font);
+		Printing::int32(Printing::getInstance(), 0, col + 1, row, font);
+		Printing::int32(Printing::getInstance(), milliSeconds, col + 2, row, font);
 	}
 }

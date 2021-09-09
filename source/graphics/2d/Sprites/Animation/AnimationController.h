@@ -69,8 +69,8 @@ class AnimationController : Object
 	uint8 getCols();
 	uint8 getFrameCycleDecrement();
 	uint8 getFrameDuration();
-	int getMapType();
-	int getNumberOfFrames();
+	int32 getMapType();
+	int32 getNumberOfFrames();
 	const AnimationFunction* getPlayingAnimationFunction();
 	uint8 getRows();
 	bool isPlaying();

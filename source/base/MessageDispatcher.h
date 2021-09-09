@@ -71,17 +71,17 @@ singleton class MessageDispatcher : Object
 
 	/// @publicsection
 	static MessageDispatcher getInstance();
-	static bool dispatchMessage(uint32 delay, Object sender, Object receiver, int message, void* extraInfo);
+	static bool dispatchMessage(uint32 delay, Object sender, Object receiver, int32 message, void* extraInfo);
 	void dispatchDelayedMessage(Clock clock, uint32 delay, Object sender,
-		Object receiver, int message, void* extraInfo);
+		Object receiver, int32 message, void* extraInfo);
  	uint32 dispatchDelayedMessages();
 	bool discardDelayedMessagesWithClock(Clock clock);
-	bool discardDelayedMessagesFromSender(Object sender, int message);
-	bool discardDelayedMessagesForReceiver(Object receiver, int message);
+	bool discardDelayedMessagesFromSender(Object sender, int32 message);
+	bool discardDelayedMessagesForReceiver(Object receiver, int32 message);
 	bool discardAllDelayedMessagesFromSender(Object sender);
 	bool discardAllDelayedMessagesForReceiver(Object receiver);
 	void processDiscardedMessages();
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 }
 
 

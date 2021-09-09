@@ -367,32 +367,32 @@ FontData* Printing::getFontByName(const char* font)
 	return result;
 }
 
-void Printing::number(int value, uint8 x, uint8 y, const char* font)
+void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 {
 	if(value < 0)
 	{
 		value *= -1;
 
 		Printing::out(this, x++, y, "-", font);
-		Printing::out(this, x, y, Utilities::itoa((int)(value), 10, Utilities::getDigitCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
 	}
 	else
 	{
-		Printing::out(this, x, y, Utilities::itoa((int)(value), 10, Utilities::getDigitCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
 	}
 }
 
-void Printing::int(int value, uint8 x, uint8 y, const char* font)
+void Printing::int32(int32 value, uint8 x, uint8 y, const char* font)
 {
 	Printing::number(this, value, x, y, font);
 }
 
 void Printing::hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font)
 {
-	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
+	Printing::out(this, x,y, Utilities::itoa((int32)(value), 16, length), font);
 }
 
-void Printing::float(float value, uint8 x, uint8 y, int precision, const char* font)
+void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char* font)
 {
 	if(1 > precision)
 	{
@@ -403,9 +403,9 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 		precision = 10;
 	}
 
-	int decMultiplier = 1;
+	int32 decMultiplier = 1;
 
-	int decimals = 0;
+	int32 decimals = 0;
 
 	for(; decimals < precision; decimals++)
 	{
@@ -417,7 +417,7 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 
 	char string[48] = "\0";
 
-	int i = 0;
+	int32 i = 0;
 
 	// Handle negatives
 	if(0 > value)
@@ -430,10 +430,10 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 
 	// Get integral part
 	float floorValue = Utilities::floor(value);
-	char* integer = Utilities::itoa((int)floorValue, 10, Utilities::getDigitCount((int)floorValue));
+	char* integer = Utilities::itoa((int32)floorValue, 10, Utilities::getDigitCount((int32)floorValue));
 
 	// Save it right away
-	for(int j = 0; integer[j];)
+	for(int32 j = 0; integer[j];)
 	{
 		string[i++] = integer[j++];
 	}
@@ -447,8 +447,8 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 	// Promote to integral all the decimals up to precision
 	decimalValue *= decMultiplier; 
 
-	int zeros = 0;
-	int flooredDecimalValue = (int)Utilities::floor(decimalValue);
+	int32 zeros = 0;
+	int32 flooredDecimalValue = (int32)Utilities::floor(decimalValue);
 
 	while(10 <= decMultiplier)
 	{
@@ -465,7 +465,7 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 
 	if(decimals <= precision && zeros < precision)
 	{
-		long roundedDecimalValue = (int)Utilities::floor(decimalValue);
+		long roundedDecimalValue = (int32)Utilities::floor(decimalValue);
 
 		if(0 == roundedDecimalValue)
 		{
@@ -473,11 +473,11 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 		}
 		else
 		{
-			int totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
+			int32 totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
 
-			char* decimalString = Utilities::itoa((int)Utilities::floor(decimalValue), 10, totalDecimalDigits);
+			char* decimalString = Utilities::itoa((int32)Utilities::floor(decimalValue), 10, totalDecimalDigits);
 
-			int j = 0;
+			int32 j = 0;
 
 			for(; j < totalDecimalDigits; j++)
 			{
@@ -495,7 +495,7 @@ void Printing::float(float value, uint8 x, uint8 y, int precision, const char* f
 	Printing::text(this, string, x, y, font);
 }
 
-void Printing::text(const char* string, int x, int y, const char* font)
+void Printing::text(const char* string, int32 x, int32 y, const char* font)
 {
 #ifdef __FORCE_UPPERCASE
 	Printing::out(this, x, y, Utilities::toUppercase(string), font);

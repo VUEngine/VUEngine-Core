@@ -816,14 +816,14 @@ fix10_6 Shape::getCollidingFrictionCoefficient()
 	return totalFrictionCoefficient;
 }
 
-int Shape::getNumberOfImpenetrableCollidingShapes()
+int32 Shape::getNumberOfImpenetrableCollidingShapes()
 {
 	if(!this->collidingShapes)
 	{
 		return 0;
 	}
 
-	int count = 0;
+	int32 count = 0;
 
 	VirtualNode node = this->collidingShapes->head;
 
@@ -885,15 +885,15 @@ void Shape::hide()
 	}
 }
 
-void Shape::print(int x, int y)
+void Shape::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
-	Printing::hex(Printing::getInstance(), (int)this->owner, x + 7, y++, 8, NULL);
+	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
 
 	Printing::text(Printing::getInstance(), "Colliding shapes:            ", x, y, NULL);
-	Printing::int(Printing::getInstance(), this->collidingShapes ? VirtualList::getSize(this->collidingShapes) : 0, x + 21, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->collidingShapes ? VirtualList::getSize(this->collidingShapes) : 0, x + 21, y++, NULL);
 	Printing::text(Printing::getInstance(), "Impenetrable shapes:            ", x, y, NULL);
-	Printing::int(Printing::getInstance(), Shape::getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
+	Printing::int32(Printing::getInstance(), Shape::getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
 }

@@ -99,7 +99,7 @@ const Transformation neutralEnvironmentTransformation =
 extern int16 _renderingProcessTimeHelper;
 #endif
 
-typedef bool (*StreamingPhase)(void*, int);
+typedef bool (*StreamingPhase)(void*, int32);
 
 static const StreamingPhase _streamingPhases[] =
 {
@@ -201,7 +201,7 @@ void Stage::destructor()
 }
 
 // determine if a point is visible
-int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
+int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
 {
 	onScreenPosition.x -= cameraPosition->x;
 	onScreenPosition.y -= cameraPosition->y;
@@ -324,7 +324,7 @@ void Stage::loadPostProcessingEffects()
 {
 	if(this->stageSpec->postProcessingEffects)
 	{
-		int i = 0;
+		int32 i = 0;
 		for(; this->stageSpec->postProcessingEffects[i]; i++)
 		{
 			Game::pushFrontProcessingEffect(Game::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
@@ -543,7 +543,7 @@ void Stage::preloadAssets()
 	// charsets
 	if(this->stageSpec->assets.charSetSpecs)
 	{
-		int i = 0;
+		int32 i = 0;
 
 		for(; this->stageSpec->assets.charSetSpecs[i]; i++)
 		{
@@ -563,7 +563,7 @@ void Stage::preloadAssets()
 	if(this->stageSpec->assets.textureSpecs)
 	{
 		VirtualList recyclableTextures = new VirtualList();
-		int i = 0;
+		int32 i = 0;
 
 		for(; this->stageSpec->assets.textureSpecs[i]; i++)
 		{
@@ -618,9 +618,9 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	PixelVector environmentPosition = {0, 0, 0, 0};
 	stageEntityDescription->pixelRightBox = Entity::getTotalSizeFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
-	int x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
-	int y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
-	int z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
+	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
+	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
+	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
 
 	stageEntityDescription->distance = x * x + y * y + z * z;
 
@@ -638,7 +638,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 	this->stageEntities = new VirtualList();
 
 	// register entities ordering them according to their distances to the origin
-	int i = 0;
+	int32 i = 0;
 
 	for(;this->stageSpec->entities.children[i].entitySpec; i++)
 	{
@@ -725,7 +725,7 @@ void Stage::loadInitialEntities()
 }
 
 // unload non visible entities
-bool Stage::unloadOutOfRangeEntities(int defer)
+bool Stage::unloadOutOfRangeEntities(int32 defer)
 {
 	if(!this->children)
 	{
@@ -812,7 +812,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 	return unloadedEntities;
 }
 
-bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
+bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
@@ -827,7 +827,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 							cameraPosition.y * cameraPosition.y +
 							cameraPosition.z * cameraPosition.z);
 
-	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
+	static int32 advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
 	uint16 amplitude = this->streaming.streamingAmplitude;
 
 	if(this->cameraPreviousDistance != cameraDistance)
@@ -837,7 +837,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
 
-	int counter = 0;
+	int32 counter = 0;
 
 	this->streamingHeadNode = NULL;
 
@@ -1034,7 +1034,7 @@ bool Stage::stream()
 		return true;
 	}
 
-	int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+	int32 streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
 
 	if(++this->streamingPhase >= streamingPhases)
 	{
@@ -1207,7 +1207,7 @@ void Stage::setupSounds()
 
 	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackFrameRate);
 
-	int i = 0;
+	int32 i = 0;
 
 	for(; this->stageSpec->assets.sounds[i]; i++)
 	{
@@ -1236,7 +1236,7 @@ void Stage::setupTimer()
 	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
 }
 
-bool Stage::handlePropagatedMessage(int message)
+bool Stage::handlePropagatedMessage(int32 message)
 {
 	if(this->uiContainer)
 	{
@@ -1300,20 +1300,20 @@ void Stage::forceNoPopIn(bool forceNoPopIn)
 	this->forceNoPopIn = forceNoPopIn;
 }
 
-void Stage::showStreamingProfiling(int x, int y)
+void Stage::showStreamingProfiling(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Stage's status", x, ++y, NULL);
 
-	int originalY __attribute__ ((unused)) = y;
-	int xDisplacement = 21;
+	int32 originalY __attribute__ ((unused)) = y;
+	int32 xDisplacement = 21;
 	y++;
 
 	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->stageEntities), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->stageEntities), x + xDisplacement, y++, NULL);
 	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 
@@ -1323,16 +1323,16 @@ void Stage::showStreamingProfiling(int x, int y)
 	y++;
 
 	Printing::text(Printing::getInstance(), "Unload:           ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Load:             ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Removing:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), processRemovedEntitiesHighestTime, x + xDisplacement, y, NULL);
+	Printing::int32(Printing::getInstance(), processRemovedEntitiesHighestTime, x + xDisplacement, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Factory:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), entityFactoryHighestTime, x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), entityFactoryHighestTime, x + xDisplacement, y++, NULL);
 
 	unloadOutOfRangeEntitiesHighestTime = 0;
 	loadInRangeEntitiesHighestTime = 0;

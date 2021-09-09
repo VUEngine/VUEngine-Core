@@ -70,7 +70,7 @@ class AnimatedEntity : Entity
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
 	AnimationDescription* getAnimationDescription();
 	int16 getActualFrame();
-	int getNumberOfFrames();
+	int32 getNumberOfFrames();
 	bool isAnimationLoaded(char* functionName);
 	bool isPlayingAnimation();
 	void nextFrame();

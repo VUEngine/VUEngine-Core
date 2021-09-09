@@ -53,13 +53,13 @@ The last thing to be done in the header file is to declare the following methods
 
 All classes must follow the following format (the arguments are optional).
 
-    Hero Hero_new(CharacterDefinition* animatedEntityDefinition, int ID);
+    Hero Hero_new(CharacterDefinition* animatedEntityDefinition, int32 ID);
 
 **Constructor:**
  
 The first argument is mandatory.
 
-    void Hero_constructor(CharacterDefinition* definition, int ID);
+    void Hero_constructor(CharacterDefinition* definition, int32 ID);
 
 **Destructor:**
  
@@ -80,13 +80,13 @@ Define the class:
 Define the allocator:
 
     // always call these to macros next to each other
-    __CLASS_NEW_DEFINITION(Hero, ActorDefinition* actorDefinition, int ID)
+    __CLASS_NEW_DEFINITION(Hero, ActorDefinition* actorDefinition, int32 ID)
     __CLASS_NEW_END(Hero, this, actorDefinition, ID);
 
 Define the constructor: must always call the parent class's constructor to properly initialize the object.
 
     // class's constructor
-    void Hero_constructor(ActorDefinition* actorDefinition, int ID)
+    void Hero_constructor(ActorDefinition* actorDefinition, int32 ID)
     {
         __CONSTRUCT_BASE(this, actorDefinition, ID);
     

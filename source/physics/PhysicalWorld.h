@@ -84,7 +84,7 @@ class PhysicalWorld : Object
 	fix10_6 getFrictionCoefficient();
 	const Vector3D* getGravity();
 	bool isSpatialObjectRegistered(SpatialObject owner);
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 	void purgeBodyLists();
 	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void destroyBody(Body body);

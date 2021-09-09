@@ -108,22 +108,22 @@ uint16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool even
 		TextObjectSprite::out(this, index);
 	}
 
-	int cols = strlen(this->text);
+	int32 cols = strlen(this->text);
 
 	// TODO: add support for multiline fonts
-	int rows = 1;
+	int32 rows = 1;
 
-	int xDirection = this->head & 0x2000 ? -1 : 1;
-	int yDirection = this->head & 0x1000 ? -1 : 1;
+	int32 xDirection = this->head & 0x2000 ? -1 : 1;
+	int32 yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
+	int32 x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
 
 	// TODO: the halfHeight should be calculted based on the font's height
-	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
+	int32 y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
 
 	//FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
-	int i = 0;
+	int32 i = 0;
 	uint16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	uint16 fourthWordValue = (this->head & 0x3000);
 	ObjectAttributes* objectPointer = NULL;
@@ -131,12 +131,12 @@ uint16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool even
 	for(; i < rows; i++)
 	{
 		// TODO: Account for multiline characters
-		//int outputY = y + (i << 3) * yDirection;
-		int outputY = y;
+		//int32 outputY = y + (i << 3) * yDirection;
+		int32 outputY = y;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
-			int j = 0;
+			int32 j = 0;
 			for(; j < cols; j++)
 			{
 				int32 objectIndex = index + j;
@@ -148,15 +148,15 @@ uint16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool even
 			continue;
 		}
 
-		int j = 0;
+		int32 j = 0;
 
 		for(; j < cols; j++)
 		{
 			int32 objectIndex = index + j;
 
 			// TODO: Account for character's size
-//			int outputX = x + (j * fontData->fontSpec->fontSize.x) * xDirection;
-			int outputX = x + (j * 8) * xDirection;
+//			int32 outputX = x + (j * fontData->fontSpec->fontSize.x) * xDirection;
+			int32 outputX = x + (j * 8) * xDirection;
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds

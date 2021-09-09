@@ -42,7 +42,7 @@
 typedef struct ClassSizeData
 {
 	/// size
-	int (*classSizeFunction)(void);
+	int32 (*classSizeFunction)(void);
 	/// name
 	char* name;
 
@@ -69,13 +69,13 @@ singleton class Debug : Tool
 	// part of bgmap memory current viewed
 	uint8 viewedMapPart;
 	// current bgmap
-	int bgmapSegment;
+	int32 bgmapSegment;
 	// current obj segment
-	int objectSegment;
+	int32 objectSegment;
 	// current char segment
-	int charSegment;
+	int32 charSegment;
 	// current page in sram inspector
-	int sramPage;
+	int32 sramPage;
 	// update function pointer
 	void (*update)(void *);
 

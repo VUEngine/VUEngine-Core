@@ -38,7 +38,7 @@
 class Telegram : Object
 {
 	// The message itself. These are all enumerated in a file.
-	int message;
+	int32 message;
 	// Any additional information that may accompany the message
 	void* extraInfo;
 	// Who sent this telegram
@@ -47,10 +47,10 @@ class Telegram : Object
 	void* receiver;
 
 	/// @publicsection
-	void constructor(void* sender, void* receiver, int message, void* extraInfo);
+	void constructor(void* sender, void* receiver, int32 message, void* extraInfo);
 	void* getSender();
 	void* getReceiver();
-	int getMessage();
+	int32 getMessage();
 	void* getExtraInfo();
 }
 

@@ -28,8 +28,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern bool _stackHeadroomViolation;
-extern int _vuengineLinkPointer;
-extern int _vuengineStackPointer;
+extern int32 _vuengineLinkPointer;
+extern int32 _vuengineStackPointer;
 extern bool _triggeringException;
 extern uint32 _bss_end;
 

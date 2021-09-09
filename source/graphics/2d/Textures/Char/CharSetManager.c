@@ -264,7 +264,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
 	Printing::hex(Printing::getInstance(), (WORD)&charSetSpec, 14, 21, 8, NULL);
 	Printing::text(Printing::getInstance(), "    Size: ", 1, 22, NULL);
-	Printing::int(Printing::getInstance(), charSetSpec->numberOfChars, 14, 22, NULL);
+	Printing::int32(Printing::getInstance(), charSetSpec->numberOfChars, 14, 22, NULL);
 
 	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
@@ -387,12 +387,12 @@ bool CharSetManager::defragmentProgressively()
  *
  * @return 				Total number of used CHARs
  */
-int CharSetManager::getTotalUsedChars()
+int32 CharSetManager::getTotalUsedChars()
 {
 	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
 	CharSet lastCharSet = VirtualList::back(this->charSets);
-	return (int)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
+	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 }
 
 /**
@@ -400,7 +400,7 @@ int CharSetManager::getTotalUsedChars()
  *
  * @return 				Total number of free CHARs
  */
-int CharSetManager::getTotalFreeChars()
+int32 CharSetManager::getTotalFreeChars()
 {
 	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
 }
@@ -410,7 +410,7 @@ int CharSetManager::getTotalFreeChars()
  *
  * @return 				Total number of registered char sets
  */
-int CharSetManager::getTotalCharSets()
+int32 CharSetManager::getTotalCharSets()
 {
 	return VirtualList::getSize(this->charSets);
 }
@@ -421,14 +421,14 @@ int CharSetManager::getTotalCharSets()
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-void CharSetManager::print(int x, int y)
+void CharSetManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->charSets), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->charSets), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }

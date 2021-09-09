@@ -296,7 +296,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
  * @param message	Message code
  * @return			The result of the propagation of the message
  */
-int GameState::propagateMessage(int message)
+int32 GameState::propagateMessage(int32 message)
 {
 	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, message);
 }

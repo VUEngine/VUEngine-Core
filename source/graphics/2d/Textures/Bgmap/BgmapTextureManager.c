@@ -81,14 +81,14 @@ void BgmapTextureManager::reset()
 
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
-	int i = 0;
+	int32 i = 0;
 
 	// clear each bgmap segment usage
 	for(; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
 		this->numberOfChars[i] = 0;
 
-		int j = 0;
+		int32 j = 0;
 
 		// clear the offsets
 		for(j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
@@ -123,21 +123,21 @@ void BgmapTextureManager::reset()
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 					True if the required space was successfully allocated
  */
-int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegment, bool mustLiveAtEvenSegment)
+int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegment, bool mustLiveAtEvenSegment)
 {
-	int i = 0;
-	int j = 0;
-	int aux = 0;
+	int32 i = 0;
+	int32 j = 0;
+	int32 aux = 0;
 
-	int cols = Texture::getTotalCols(bgmapTexture);
-	int rows = Texture::getTotalRows(bgmapTexture);
+	int32 cols = Texture::getTotalCols(bgmapTexture);
+	int32 rows = Texture::getTotalRows(bgmapTexture);
 
 	TextureSpec* textureSpec = Texture::getTextureSpec(bgmapTexture);
 
 	uint16 colsPad = (textureSpec->padding.cols << 1);// + (cols < 64 ? 1 : 0);
 	uint16 rowsPad = (textureSpec->padding.rows << 1);// + (rows < 64 ? 1 : 0);
 
-	int area = (cols + colsPad) * (rows + rowsPad);
+	int32 area = (cols + colsPad) * (rows + rowsPad);
 
 	if(mustLiveAtEvenSegment)
 	{
@@ -154,11 +154,11 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegm
 	{
 		for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += mustLiveAtEvenSegment ? 2 : 1)
 		{
-			int maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
+			int32 maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
 			
 			// if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
-			if((int)(4096 - this->numberOfChars[i]) >= (int)area )
+			if((int32)(4096 - this->numberOfChars[i]) >= (int32)area )
 			{
 				// check if there is space within the segment
 				// we check the next so don't go to the last element
@@ -246,7 +246,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 	// if no one is using the texture anymore
 	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
-		int i = Texture::getId(bgmapTexture);
+		int32 i = Texture::getId(bgmapTexture);
 
 		TextureSpec* textureSpec = Texture::getTextureSpec(bgmapTexture);
 
@@ -279,7 +279,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
  */
 BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec)
 {
-	int i = 0;
+	int32 i = 0;
 	TextureSpec* textureSpec = (TextureSpec*)bgmapTextureSpec;
 
 	// try to find a texture with the same bgmap spec
@@ -367,7 +367,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
  */
 BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment)
 {
-	int i = 0;
+	int32 i = 0;
 
 	// find an empty slot
 	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
@@ -450,7 +450,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
  * @param id		Texture identification
  * @return 			X offset within a BGMAP segment
  */
-int16 BgmapTextureManager::getXOffset(int id)
+int16 BgmapTextureManager::getXOffset(int32 id)
 {
 	return this->offset[id][kXOffset];
 }
@@ -462,7 +462,7 @@ int16 BgmapTextureManager::getXOffset(int id)
  * @param id		Texture identification
  * @return 			Y offset within a BGMAP segment
  */
-int16 BgmapTextureManager::getYOffset(int id)
+int16 BgmapTextureManager::getYOffset(int32 id)
 {
 	return this->offset[id][kYOffset];
 }
@@ -515,10 +515,10 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
  * @param x			Camera's x coocrinate
  * @param y			Camera's y coocrinate
  */
-void BgmapTextureManager::print(int x, int y)
+void BgmapTextureManager::print(int32 x, int32 y)
 {
-	int index = 0;
-	int textureCount = 0;
+	int32 index = 0;
+	int32 textureCount = 0;
 	for(;index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
 	{
 		if(this->bgmapTextures[index])
@@ -529,11 +529,11 @@ void BgmapTextureManager::print(int x, int y)
 
 	Printing::text(Printing::getInstance(), "BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Segments for textures: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
+	Printing::int32(Printing::getInstance(), BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
 	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), textureCount, x + 23, y, NULL);
+	Printing::int32(Printing::getInstance(), textureCount, x + 23, y, NULL);
 	Printing::text(Printing::getInstance(), "Printing segment: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
+	Printing::int32(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
 
 	y++;
 	y++;
@@ -548,10 +548,10 @@ void BgmapTextureManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Address   Refs", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
 
-	int i = 0;
-	int j = 0;
-	int recyclableTextures = 0;
-	int freeEntries = 0;
+	int32 i = 0;
+	int32 j = 0;
+	int32 recyclableTextures = 0;
+	int32 freeEntries = 0;
 
 	// try to find a texture with the same bgmap spec
 	for(index = 0; index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
@@ -568,8 +568,8 @@ void BgmapTextureManager::print(int x, int y)
 				freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
 //				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
-				Printing::hex(Printing::getInstance(), (int)Texture::getTextureSpec(bgmapTexture), x + j, y + i, 8, NULL);
-				Printing::int(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 10, y + i, NULL);
+				Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(bgmapTexture), x + j, y + i, 8, NULL);
+				Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 10, y + i, NULL);
 
 				if(++i + y > __SCREEN_HEIGHT / 8)
 				{
@@ -586,6 +586,6 @@ void BgmapTextureManager::print(int x, int y)
 		}
 	}
 
-	Printing::int(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
-	Printing::int(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
+	Printing::int32(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
+	Printing::int32(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
 }

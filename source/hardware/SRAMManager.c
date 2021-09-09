@@ -84,7 +84,7 @@ void SRAMManager::destructor()
  */
 void SRAMManager::initialize()
 {
-	int i = __SRAM_DUMMY_READ_CYCLES;
+	int32 i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
 	{
 		uint16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
@@ -98,9 +98,9 @@ void SRAMManager::initialize()
  * @param startOffset		Start address of range to clear
  * @param endOffset			End address of range to clear
  */
-void SRAMManager::clear(int startOffset, int endOffset)
+void SRAMManager::clear(int32 startOffset, int32 endOffset)
 {
-	int i = startOffset;
+	int32 i = startOffset;
 	for(; i < endOffset; i++)
 	{
 		this->saveSpaceStartAddress[i] = 0;
@@ -114,12 +114,12 @@ void SRAMManager::clear(int startOffset, int endOffset)
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager::save(const BYTE* const source, int memberOffset, int dataSize)
+void SRAMManager::save(const BYTE* const source, int32 memberOffset, int32 dataSize)
 {
-	int i = 0;
+	int32 i = 0;
 
 	uint16* destination = this->saveSpaceStartAddress + memberOffset;
-	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
+	ASSERT(0 == ((int32)destination % 2), "SRAMManager::save: odd destination");
 
 	for(; i < dataSize; i++)
 	{
@@ -134,12 +134,12 @@ void SRAMManager::save(const BYTE* const source, int memberOffset, int dataSize)
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager::read(BYTE* destination, int memberOffset, int dataSize)
+void SRAMManager::read(BYTE* destination, int32 memberOffset, int32 dataSize)
 {
-	int i = 0;
+	int32 i = 0;
 
 	uint16* source = this->saveSpaceStartAddress + memberOffset;
-	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
+	ASSERT(0 == ((int32)source % 2), "SRAMManager::constructor: odd source");
 
 	for(; i < dataSize; i++)
 	{

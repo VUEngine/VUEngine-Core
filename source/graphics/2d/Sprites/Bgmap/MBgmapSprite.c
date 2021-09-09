@@ -137,7 +137,7 @@ void MBgmapSprite::loadTextures()
 		{
 			this->textures = new VirtualList();
 
-			for(int i = 0; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
+			for(int32 i = 0; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
@@ -334,14 +334,14 @@ uint16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)
 	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
 	int16 gp = this->position.parallax + this->displacement.parallax;
 
-	int mxDisplacement = 0;
+	int32 mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
 	{
 		mxDisplacement = _cameraFrustum->x0 - gx;
 		gx = _cameraFrustum->x0;
 	}
 
-	int myDisplacement = 0;
+	int32 myDisplacement = 0;
 	if(_cameraFrustum->y0 > gy)
 	{
 		myDisplacement = _cameraFrustum->y0 - gy;
@@ -461,14 +461,14 @@ void MBgmapSprite::calculateSize()
 {
 	VirtualNode node = this->textures->head;
 
-	int cols = 0;
-	int rows = 0;
+	int32 cols = 0;
+	int32 rows = 0;
 
 	for(; node; node = node->next)
 	{
 		// free the texture
-		int textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
-		int textureRows = (Texture::safeCast(node->data))->textureSpec->rows;
+		int32 textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
+		int32 textureRows = (Texture::safeCast(node->data))->textureSpec->rows;
 
 		if(cols < textureCols)
 		{

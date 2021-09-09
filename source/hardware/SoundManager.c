@@ -231,7 +231,7 @@ void SoundManager::reset()
 
 	this->releasedSoundWrappers = new VirtualList();
 
-	int i = 0;
+	int32 i = 0;
 
 	// Reset all channels
 	for(i = 0; i < __TOTAL_CHANNELS; i++)
@@ -707,11 +707,11 @@ void SoundManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 			Printing::setDebugMode(Printing::getInstance());
 			Printing::clear(Printing::getInstance());
 			Printing::text(Printing::getInstance(), "Waveform index: ", 1, 12, NULL);
-			Printing::int(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
+			Printing::int32(Printing::getInstance(), waveFormIndex, 18, 12, NULL);
 			Printing::text(Printing::getInstance(), "Waveform data: ", 1, 13, NULL);
-			Printing::hex(Printing::getInstance(), (int)waveFormData, 18, 13, 8, NULL);
+			Printing::hex(Printing::getInstance(), (int32)waveFormData, 18, 13, 8, NULL);
 			Printing::text(Printing::getInstance(), "Waveform data[]: ", 1, 14, NULL);
-			Printing::hex(Printing::getInstance(), (int)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
+			Printing::hex(Printing::getInstance(), (int32)this->waveforms[waveFormIndex].data, 18, 14, 8, NULL);
 #endif
 			NM_ASSERT(false, "SoundManager::releaseWaveform: mismatch between index and data");
 		}
@@ -757,7 +757,7 @@ void SoundManager::turnOffPlayingSounds()
 		}
 	}
 
-	for(int i = 0; i < __TOTAL_CHANNELS; i++)
+	for(int32 i = 0; i < __TOTAL_CHANNELS; i++)
 	{
 		_soundRegistries[i].SxINT = 0x00;
 		_soundRegistries[i].SxLRV = 0x00;
@@ -1046,16 +1046,16 @@ void SoundManager::stopAllSounds(bool release)
 
 void SoundManager::print()
 {
-	int x = 1;
-	int xDisplacement = 8;
-	int yDisplacement = 0;
+	int32 x = 1;
+	int32 xDisplacement = 8;
+	int32 yDisplacement = 0;
 
-	int i = 0;
+	int32 i = 0;
 
 	// Reset all sounds and channels
 	for(i = 0; i < __TOTAL_CHANNELS; i++)
 	{
-		int y = yDisplacement;
+		int32 y = yDisplacement;
 
 		PRINT_TEXT("CHANNEL ", x, y);
 		PRINT_INT(this->channels[i].number + 1, x + xDisplacement, y);
@@ -1150,7 +1150,7 @@ void SoundManager::print()
 	}
 }
 
-void SoundManager::printWaveFormStatus(int x, int y)
+void SoundManager::printWaveFormStatus(int32 x, int32 y)
 {
 	// Reset all waveforms
 	for(uint16 i = 0; i < __TOTAL_WAVEFORMS; i++)

@@ -12,7 +12,7 @@
 //
 //======================================================================
 
-const unsigned int VUEngineProfilerFontTiles[180] __attribute__((aligned(4)))=
+const uint32 VUEngineProfilerFontTiles[180] __attribute__((aligned(4)))=
 {
 	0x00000000,0x55000000,0x7D007D00,0x00005500,0x55500000,0x5D5075D0,0x75D05750,0x00005550,
 	0x5FD41550,0x75747FF4,0x7FF47774,0x15505FD4,0x74005400,0x7FF47554,0x75D47FF4,0x555075D0,

@@ -200,7 +200,7 @@ void PhysicalWorld::checkForGravity()
 	// give preference to the last body in the list
 	VirtualNode node = !this->bodyToCheckForGravityNode ? this->bodies->tail: this->bodyToCheckForGravityNode;
 
-	int counter = 0;
+	int32 counter = 0;
 
 	Vector3D gravityDirection =
 	{
@@ -485,16 +485,16 @@ fix10_6 PhysicalWorld::getElapsedTime()
  * @param x
  * @param y
  */
-void PhysicalWorld::print(int x, int y)
+void PhysicalWorld::print(int32 x, int32 y)
 {
 	Printing::resetCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
 	Printing::text(Printing::getInstance(), "Active bodies:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->activeBodies), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->activeBodies), x + 19, y, NULL);
 
 //	Printing::text(Printing::getInstance(), "Error:                 ", x, ++y, NULL);
-//	Printing::int(Printing::getInstance(), VirtualList::getSize(this->bodies) - (VirtualList::getSize(this->activeBodies)), x + 19, y, NULL);
+//	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies) - (VirtualList::getSize(this->activeBodies)), x + 19, y, NULL);
 }

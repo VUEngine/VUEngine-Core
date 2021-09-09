@@ -40,7 +40,7 @@
  * @param message		Message code
  * @param extraInfo		Pointer to any attachment to the message
  */
-void Telegram::constructor(void* sender, void* receiver, int message, void* extraInfo)
+void Telegram::constructor(void* sender, void* receiver, int32 message, void* extraInfo)
 {
 	// construct base object
 	Base::constructor();
@@ -91,7 +91,7 @@ void* Telegram::getReceiver()
  *
  * @return				Message code
  */
-int Telegram::getMessage()
+int32 Telegram::getMessage()
 {
 	return this->message;
 }

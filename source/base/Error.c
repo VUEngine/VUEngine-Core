@@ -94,7 +94,7 @@ void Error::destructor()
  * @param detail
  */
 #ifndef __RELEASE
-static int Error::triggerException(char* message, char* detail)
+static int32 Error::triggerException(char* message, char* detail)
 {
 	static bool processingException = false;
 
@@ -105,10 +105,10 @@ static int Error::triggerException(char* message, char* detail)
 
 	processingException = true;
 
-	int lp = _vuengineLinkPointer;
-	int sp = _vuengineStackPointer;
-	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
-	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
+	int32 lp = _vuengineLinkPointer;
+	int32 sp = _vuengineStackPointer;
+	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
+	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
 	// disable vip interrupts
 	_vipRegisters[__INTENB]= 0;
@@ -153,11 +153,11 @@ static int Error::triggerException(char* message, char* detail)
 		Printing::text(Printing::getInstance(), "                                                " , x, ++y + 1, NULL);
 		Printing::text(Printing::getInstance(), " Message:                                       " , x, ++y, NULL);
 
-		int stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
-		int rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
-		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
-		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
-		int line = 0;
+		int32 stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
+		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
+		int32 stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
+		int32 lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
+		int32 line = 0;
 
 		for(; line < lines; line++, message += stringMaxLenght)
 		{

@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // extern declarations
-extern int abs(int);
+extern int32 abs(int32);
 extern float fabsf(float);
 
 #define __USE_WORDS_SIZE_ABS_FUNCTION
@@ -48,9 +48,9 @@ extern float fabsf(float);
 #endif
 #endif
 
-inline int customAbs(int number)
+inline int32 customAbs(int32 number)
 {
-	int result = 0;
+	int32 result = 0;
 
 	asm("				\n\t"	\
 		"ldsr %1, 31	\n\t"	\
@@ -79,9 +79,9 @@ inline int customAbs(int number)
 #define __FIX10_6_MAXIMUM_VALUE		(__I_TO_FIX10_6_EXT(1 << (10 - 1)))
 
 // round functions
-#define __F_ROUND(n)				(int)((n) + 0.5f)
-#define __F_FLOOR(n)				(int)((n) - 0.5f)
-#define __F_CEIL(n)					(int)((n) + 0.5f)
+#define __F_ROUND(n)				(int32)((n) + 0.5f)
+#define __F_FLOOR(n)				(int32)((n) - 0.5f)
+#define __F_CEIL(n)					(int32)((n) + 0.5f)
 
 // convert a float to fixed point and back
 #define __F_TO_FIX7_9(n)			(fix7_9)		((n) 	* 512.0f + 0.5f)
@@ -98,7 +98,7 @@ inline int customAbs(int number)
 #define __FIX19_13_TO_F(n)			(float)((n) / 8192.0f)
 #define __FIX17_15_TO_F(n)			(float)((n) / 32768.0f)
 
-// convert an int to fixed point and back
+// convert an int32 to fixed point and back
 #define __I_TO_FIX7_9(n)			(fix7_9)		((n) << 9)
 #define __I_TO_FIX13_3(n)			(fix13_3)		((n) << 3)
 #define __I_TO_FIX10_6(n)			(fix10_6)		((n) << 6)
@@ -246,11 +246,11 @@ static class Math : Object
 {
 	/// @publicsection
 	static float squareRoot(float number);
-	static int powerFast(int base, int power);
-	static int intInfinity();
+	static int32 powerFast(int32 base, int32 power);
+	static int32 intInfinity();
 	static fix10_6 fix10_6Infinity();
 	static fix10_6_ext fix10_6_extInfinity();
-	static int getAngle(fix7_9 x, fix7_9 y);
+	static int32 getAngle(fix7_9 x, fix7_9 y);
 }
 
 

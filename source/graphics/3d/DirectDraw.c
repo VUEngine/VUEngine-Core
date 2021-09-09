@@ -81,10 +81,10 @@ void DirectDraw::destructor()
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int color)
+static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color)
 {
 	// a pointer to the buffer
-	//int* pointer = (int*)buffer;
+	//int32* pointer = (int32*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
 	// calculate pixel position
@@ -108,7 +108,7 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int color)
 static void DirectDraw::drawBlackPixel(uint32 buffer, uint16 x, uint16 y)
 {
 	// a pointer to the buffer
-	//int* pointer = (int*)buffer;
+	//int32* pointer = (int32*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
 	// calculate pixel position
@@ -127,7 +127,7 @@ static void DirectDraw::drawBlackPixel(uint32 buffer, uint16 x, uint16 y)
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw::drawBlackPixelWrapper(uint32 buffer, uint16 x, uint16 y, int color __attribute__ ((unused)))
+static void DirectDraw::drawBlackPixelWrapper(uint32 buffer, uint16 x, uint16 y, int32 color __attribute__ ((unused)))
 {
 	DirectDraw::drawBlackPixel(buffer, x, y);
 }
@@ -138,7 +138,7 @@ static void DirectDraw::drawBlackPixelWrapper(uint32 buffer, uint16 x, uint16 y,
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)
  */
-void DirectDraw::drawPoint(PixelVector point, int color)
+void DirectDraw::drawPoint(PixelVector point, int32 color)
 {
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
@@ -180,7 +180,7 @@ void DirectDraw::drawPoint(PixelVector point, int color)
  * @param toPoint	Point 2
  * @param color		The color to draw (0-3)
  */
-void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int color)
+void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color)
 {
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
@@ -204,7 +204,7 @@ void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int color)
 	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
 	fix19_13 parallaxDelta = __I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax);
 
-	void (*drawPixelMethod)(uint32 buffer, uint16 x, uint16 y, int color) = DirectDraw::drawPixel;
+	void (*drawPixelMethod)(uint32 buffer, uint16 x, uint16 y, int32 color) = DirectDraw::drawPixel;
 	// duplicating code here since it is much lighter on the cpu
 
 	if(color == __COLOR_BLACK)

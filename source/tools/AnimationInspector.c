@@ -116,7 +116,7 @@ void AnimationInspector::constructor()
 
 	this->mode = kFirstMode + 1;
 
-	int i = 0;
+	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
 	{
 		this->animationFunction.frames[i] = 0;
@@ -189,7 +189,7 @@ void AnimationInspector::show()
 
 	VirtualList animatedEntitiesNames = new VirtualList();
 
-	int i = 0;
+	int32 i = 0;
 	for(; _userAnimatedEntities[i].animatedEntitySpec; i++)
 	{
 		ASSERT(_userAnimatedEntities[i].name, "AnimationInspector::start: push null name");
@@ -371,7 +371,7 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
  */
 void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 {
-	int userAnimatedEntitiesCount = 0;
+	int32 userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
@@ -398,7 +398,7 @@ void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
  */
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
-	int userAnimatedEntitiesCount = 0;
+	int32 userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
@@ -443,7 +443,7 @@ void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
 	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
 
-	int animationsCount = 0;
+	int32 animationsCount = 0;
 	for(; this->animationDescription->animationFunctions[animationsCount]; animationsCount++);
 
 	if(pressedKey & K_LU)
@@ -490,7 +490,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if((pressedKey & K_LL))
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 		switch(selectedProperty)
 		{
 			case kNumberOfFrames:
@@ -525,7 +525,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_LR)
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 		switch(selectedProperty)
 		{
 			case kNumberOfFrames:
@@ -561,7 +561,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_RU)
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 		switch(selectedProperty)
 		{
 			case kFrames:
@@ -572,7 +572,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_RD)
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 		switch(selectedProperty)
 		{
 			case kFrames:
@@ -583,8 +583,8 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_RL)
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
-		int selectedFrame = OptionsSelector::getSelectedOption(this->frameEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedFrame = OptionsSelector::getSelectedOption(this->frameEditionSelector);
 
 		switch(selectedProperty)
 		{
@@ -600,8 +600,8 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 	}
 	else if(pressedKey & K_RR)
 	{
-		int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
-		int selectedFrame = OptionsSelector::getSelectedOption(this->frameEditionSelector);
+		int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+		int32 selectedFrame = OptionsSelector::getSelectedOption(this->frameEditionSelector);
 
 		switch(selectedProperty)
 		{
@@ -673,16 +673,16 @@ void AnimationInspector::printAnimatedEntityAnimations()
  */
 void AnimationInspector::printAnimationConfig()
 {
-	int x = 1;
-	int y = 2;
+	int32 x = 1;
+	int32 y = 2;
 	Printing printing = Printing::getInstance();
 
 	Printing::text(printing, "Animation: ", x, y, NULL);
 	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
 	OptionsSelector::printOptions(this->animationEditionSelector, x, ++y);
 
-	Printing::int(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
-	Printing::int(printing, this->animationFunction.delay, x + 19, y++, NULL);
+	Printing::int32(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
+	Printing::int32(printing, this->animationFunction.delay, x + 19, y++, NULL);
 	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
 	OptionsSelector::printOptions(this->frameEditionSelector, x, ++y + 1);
@@ -699,7 +699,7 @@ void AnimationInspector::printAnimationConfig()
 	Printing::text(printing, "Select \x1E\x1A\x1B", 37, 4, NULL);
 	Printing::text(printing, "Modify \x1E\x1C\x1D", 37, 5, NULL);
 
-	int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
+	int32 selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 
 	switch(selectedProperty)
 	{
@@ -728,7 +728,7 @@ void AnimationInspector::loadAnimationFunction()
 
 	AnimationFunction* animationFunction = this->animationDescription->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
 
-	int i = 0;
+	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
 	{
 		this->animationFunction.frames[i] = animationFunction->frames[i];
@@ -803,7 +803,7 @@ void AnimationInspector::createSpriteSelector()
 
 	VirtualList spriteIndexes = new VirtualList();
 
-	int i = 0;
+	int32 i = 0;
 	while(_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[i])
 	{
 		Option* option = new Option;
@@ -838,7 +838,7 @@ void AnimationInspector::createAnimationsSelector()
 
 		VirtualList animationsNames = new VirtualList();
 
-		int i = 0;
+		int32 i = 0;
 		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
 		{
 			Option* option = new Option;
@@ -916,7 +916,7 @@ void AnimationInspector::createFrameEditionSelector()
 
 	VirtualList framesIndexes = new VirtualList();
 
-	int i = 0;
+	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++)
 	{
 		Option* option = new Option;

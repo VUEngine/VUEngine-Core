@@ -63,7 +63,7 @@ static class Vector3D : Object
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
 	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
-	static inline void print(Vector3D vector, int x, int y);
+	static inline void print(Vector3D vector, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -403,7 +403,7 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 	return projection;
 }
 
-static inline void Vector3D::print(Vector3D vector, int x, int y)
+static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
 	PRINT_TEXT("y:    ", x, y + 1);

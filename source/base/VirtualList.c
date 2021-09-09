@@ -112,7 +112,7 @@ void VirtualList::clear()
  *
  * @param data
  */
-int VirtualList::pushFront(const void* const data)
+int32 VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -214,7 +214,7 @@ void* VirtualList::popBack()
  *
  * @param data
  */
-int VirtualList::pushBack(const void* const data)
+int32 VirtualList::pushBack(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -248,9 +248,9 @@ int VirtualList::pushBack(const void* const data)
  *
  * @return				Number of objects
  */
-int VirtualList::getSize()
+int32 VirtualList::getSize()
 {
-	int counter = 0;
+	int32 counter = 0;
 
 	VirtualNode node = this->head;
 
@@ -275,7 +275,7 @@ int VirtualList::getSize()
  * @param item
  * @return				Data pointer of object in the given index node
  */
-void* VirtualList::getNodeData(int item)
+void* VirtualList::getNodeData(int32 item)
 {
 	// get the node
 	VirtualNode node = VirtualList::getNode(this, item);
@@ -290,11 +290,11 @@ void* VirtualList::getNodeData(int item)
  * @param item		Numeric position of node
  * @return				Node
  */
-VirtualNode VirtualList::getNode(int item)
+VirtualNode VirtualList::getNode(int32 item)
 {
-	int counter = 0;
+	int32 counter = 0;
 
-	int listSize = VirtualList::getSize(this);
+	int32 listSize = VirtualList::getSize(this);
 
 	VirtualNode node = this->head;
 
@@ -453,10 +453,10 @@ VirtualNode VirtualList::find(const void* const dataPointer)
  * @param dataPointer
  * @return								Numeric position of node, or -1 when node could not be found
  */
-int VirtualList::getDataPosition(const void* const dataPointer)
+int32 VirtualList::getDataPosition(const void* const dataPointer)
 {
 	VirtualNode node = this->head;
-		int position = 0;
+		int32 position = 0;
 
 	for(; node && node->data != (void*)dataPointer; node = node->next, position++);
 
@@ -469,10 +469,10 @@ int VirtualList::getDataPosition(const void* const dataPointer)
  * @param node
  * @return				Numeric position of node
  */
-int VirtualList::getNodePosition(VirtualNode node)
+int32 VirtualList::getNodePosition(VirtualNode node)
 {
 	VirtualNode currentNode = this->head;
-		int position = 0;
+		int32 position = 0;
 
 	for(; node && currentNode && currentNode != node; currentNode = currentNode->next, position++);
 
@@ -498,7 +498,7 @@ bool VirtualList::removeElement(const void* const dataPointer)
 void VirtualList::copy(VirtualList sourceList)
 {
 #ifdef __DEBUG
-	int counter = 0;
+	int32 counter = 0;
 #endif
 
 	VirtualNode node = sourceList->head;
@@ -524,7 +524,7 @@ void VirtualList::copy(VirtualList sourceList)
 void VirtualList::add(VirtualList sourceList)
 {
 #ifdef __DEBUG
-	int counter = 0;
+	int32 counter = 0;
 #endif
 
 	VirtualNode node = sourceList->head;
@@ -548,7 +548,7 @@ void VirtualList::add(VirtualList sourceList)
 void VirtualList::substract(VirtualList sourceList)
 {
 #ifdef __DEBUG
-	int counter = 0;
+	int32 counter = 0;
 #endif
 
 	VirtualNode node = sourceList->head;
@@ -572,7 +572,7 @@ void VirtualList::substract(VirtualList sourceList)
 void VirtualList::reverse(VirtualList sourceList)
 {
 #ifdef __DEBUG
-	int counter = 0;
+	int32 counter = 0;
 #endif
 
 	VirtualNode node = sourceList->head;
@@ -777,11 +777,11 @@ void VirtualList::swap(VirtualList secondList)
  * @param position	Function scope
  * @return			Node data or NULL if no node could be found at position
  */
-void* VirtualList::getObjectAtPosition(int position)
+void* VirtualList::getObjectAtPosition(int32 position)
 {
 	VirtualNode node = this->head;
 
-	int counter = 0;
+	int32 counter = 0;
 
 	if(position < 0)
 	{

@@ -52,8 +52,8 @@ extern uint32 invalidOpcodeVector;
 extern uint32 _dram_bss_end;
 extern uint32 _dram_data_start;
 
-int _vuengineLinkPointer = 0;
-int _vuengineStackPointer = 0;
+int32 _vuengineLinkPointer = 0;
+int32 _vuengineStackPointer = 0;
 bool _stackHeadroomViolation = false;
 bool _enabledInterrupts = false;
 
@@ -142,7 +142,7 @@ static void HardwareManager::checkMemoryMap()
 	{
 		MemoryPool::getInstance();
 		Printing::setDebugMode(Printing::getInstance());
-		int y = 15;
+		int32 y = 15;
 		uint32 missingSpace = (uint32)&_dram_bss_end - __WORLD_SPACE_BASE_ADDRESS;
 		uint32 recommendedDramStart = (uint32)&_dram_data_start - missingSpace;
 		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
@@ -150,7 +150,7 @@ static void HardwareManager::checkMemoryMap()
 
 		Printing::text(Printing::getInstance(), "Increase the dram section in the vb.ld file", 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "Missing space: ", 1, ++y, NULL);
-		Printing::int(Printing::getInstance(), missingSpace, 17, y, NULL);
+		Printing::int32(Printing::getInstance(), missingSpace, 17, y, NULL);
 		Printing::text(Printing::getInstance(), "Bytes ", 17 + Utilities::intLength(missingSpace) + 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "WORLD space: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
@@ -161,10 +161,10 @@ static void HardwareManager::checkMemoryMap()
 		Printing::text(Printing::getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), recommendedDramStart, 25, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
-		Printing::int(Printing::getInstance(), recommendedDramSize, 25, y, NULL);
+		Printing::int32(Printing::getInstance(), recommendedDramSize, 25, y, NULL);
 		Printing::text(Printing::getInstance(), "Bytes ", 25 + Utilities::intLength(recommendedDramSize) + 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "Maximum BGMAP segments: ", 1, ++y, NULL);
-		Printing::int(Printing::getInstance(), recommendedBgmapSegments, 25, y, NULL);
+		Printing::int32(Printing::getInstance(), recommendedBgmapSegments, 25, y, NULL);
 
 		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
 	}
@@ -229,9 +229,9 @@ void HardwareManager::setInterruptLevel(uint8 level)
  *
  * @return		 	Interrupt level
  */
-int HardwareManager::getInterruptLevel()
+int32 HardwareManager::getInterruptLevel()
 {
-	int level;
+	int32 level;
 
 	asm(" \n\
 		stsr	sr5,r6 \n\
@@ -362,12 +362,12 @@ void HardwareManager::disableKeypad()
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
-void HardwareManager::print(int x, int y)
+void HardwareManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
-	int auxY = y;
-	int xDisplacement = 5;
+	int32 auxY = y;
+	int32 xDisplacement = 5;
 
 	// print registries' status to know the call source
 	Printing::text(Printing::getInstance(), "PSW:" , x, ++auxY, NULL);
@@ -449,12 +449,12 @@ void HardwareManager::print(int x, int y)
  * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info
  */
-static void HardwareManager::printStackStatus(int x, int y, bool resumed)
+static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 {
-	int sp;
+	int32 sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 
-	int room = sp - (int)&_bss_end;
+	int32 room = sp - (int32)&_bss_end;
 
 	if(resumed)
 	{
@@ -464,7 +464,7 @@ static void HardwareManager::printStackStatus(int x, int y, bool resumed)
 		}
 
 		Printing::text(Printing::getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
-		Printing::int(Printing::getInstance(), room, x + 13, y, NULL);
+		Printing::int32(Printing::getInstance(), room, x + 13, y, NULL);
 	}
 	else
 	{
@@ -475,14 +475,14 @@ static void HardwareManager::printStackStatus(int x, int y, bool resumed)
 
 		Printing::text(Printing::getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
 		Printing::text(Printing::getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int)&_bss_end, x + 15, y, 4, NULL);
+		Printing::hex(Printing::getInstance(), (int32)&_bss_end, x + 15, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Stack Pointer:" , x, ++y, NULL);
 		Printing::hex(Printing::getInstance(), sp, x + 15, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Minimum Room:           " , x, ++y, NULL);
-		Printing::int(Printing::getInstance(), __STACK_HEADROOM, x + 15, y, NULL);
+		Printing::int32(Printing::getInstance(), __STACK_HEADROOM, x + 15, y, NULL);
 		Printing::text(Printing::getInstance(), "Actual Room:           " , x, ++y, NULL);
-		Printing::int(Printing::getInstance(), room, x + 15, y, NULL);
+		Printing::int32(Printing::getInstance(), room, x + 15, y, NULL);
 		Printing::text(Printing::getInstance(), "Overflow:           " , x, ++y, NULL);
-		Printing::int(Printing::getInstance(), __STACK_HEADROOM - room, x + 15, y, NULL);
+		Printing::int32(Printing::getInstance(), __STACK_HEADROOM - room, x + 15, y, NULL);
 	}
 }

@@ -98,12 +98,12 @@
 #define __LOCK_AXIS	(~__ALL_AXIS)
 
 // direction
-#define __LEFT		((int)-1)
-#define __RIGHT		((int)1)
-#define __UP		((int)-1)
-#define __DOWN		((int)1)
-#define __NEAR		((int)-1)
-#define __FAR		((int)1)
+#define __LEFT		((int32)-1)
+#define __RIGHT		((int32)1)
+#define __UP		((int32)-1)
+#define __DOWN		((int32)1)
+#define __NEAR		((int32)-1)
+#define __FAR		((int32)1)
 
 #define __MILLISECONDS_PER_SECOND			1000
 #define __MICROSECONDS_PER_MILLISECOND		1000
@@ -150,17 +150,17 @@ enum DefaulCollisionLayers
 #ifndef __RELEASE
 #define __REGISTER_LAST_PROCESS_NAME
 
-void HardwareManager_printStackStatus(int x, int y, bool resumed);
+void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 
 #define __CHECK_STACK_STATUS																				\
 	extern bool _stackHeadroomViolation;																	\
 	if(!_stackHeadroomViolation)																			\
 	{																										\
-		int _vuengineStackPointer;																			\
+		int32 _vuengineStackPointer;																			\
 		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));													\
 																											\
 		if((0x05000000 & _vuengineStackPointer) &&															\
-			_vuengineStackPointer - __STACK_HEADROOM < (int)&_bss_end)										\
+			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bss_end)										\
 		{																									\
 			_stackHeadroomViolation = true;																	\
 			Printing_setDebugMode(Printing_getInstance());													\

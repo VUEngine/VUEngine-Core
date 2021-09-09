@@ -130,11 +130,11 @@ singleton class ParamTableManager : Object
 	/// @publicsection
 	static ParamTableManager getInstance();
 	uint32 allocate(BgmapSprite bsprite);
-	void calculateParamTableBase(int availableBgmapSegmentsForParamTable);
+	void calculateParamTableBase(int32 availableBgmapSegmentsForParamTable);
 	bool defragmentProgressively();
 	void free(BgmapSprite bsprite);
 	uint32 getParamTableBase();
-	void print(int x, int y);
+	void print(int32 x, int32 y);
 	void reset();
 }
 

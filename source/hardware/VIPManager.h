@@ -304,7 +304,7 @@ singleton class VIPManager : Object
 	void lowerBrightness();
 	void displayHide();
 	void clearScreen();
-	void clearBgmapSegment(int segment, int size);
+	void clearBgmapSegment(int32 segment, int32 size);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
 	void setupBrightness(Brightness* brightness);

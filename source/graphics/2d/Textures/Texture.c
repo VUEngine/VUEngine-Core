@@ -363,7 +363,7 @@ void Texture::writeHBiasMode()
 {
 	// TODO
 	/*
-	int i;
+	int32 i;
 	//put the this into memory calculation the number of char for each reference
 	for(i=0;i<this->textureSpec->rows;i++)
 	{
@@ -380,7 +380,7 @@ void Texture::writeHBiasMode()
  *
  * @return	Number of CHARs
  */
-int Texture::getNumberOfChars()
+int32 Texture::getNumberOfChars()
 {
 	return this->textureSpec->charSetSpec->numberOfChars;
 }
@@ -461,7 +461,7 @@ uint32 Texture::getTotalCols()
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				int totalCols = this->textureSpec->numberOfFrames * this->textureSpec->cols;
+				int32 totalCols = this->textureSpec->numberOfFrames * this->textureSpec->cols;
 				return 64 >= totalCols ? totalCols : 64;
 			}
 			break;

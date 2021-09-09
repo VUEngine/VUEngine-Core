@@ -49,7 +49,7 @@ singleton class FrameRate : Object
 	static FrameRate getInstance();
 	uint16 getFps();
 	void update();
-	void print(int col, int row);
+	void print(int32 col, int32 row);
 	void reset();
 }
 

@@ -12,7 +12,7 @@
 //
 //======================================================================
 
-const unsigned int VUEngineFontTiles[1024] __attribute__((aligned(4)))=
+const uint32 VUEngineFontTiles[1024] __attribute__((aligned(4)))=
 {
 	0x04450441,0x04510445,0x04410451,0x00001441,0x0003C3FF,0x2AA30AA3,0xAAA3AAA3,0xFFFF0003,
 	0x0C000FFF,0xFC00FC00,0xFC02FC00,0x0F0F0C00,0x00000000,0xFFC00000,0x03C0FFC0,0x03C003C0,

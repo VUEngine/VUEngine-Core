@@ -52,15 +52,15 @@ enum CommunicationsBroadcastStates
 /// @ingroup hardware
 singleton class CommunicationManager : Object
 {
-	volatile int status;
+	volatile int32 status;
 	volatile BYTE* sentData;
 	volatile BYTE* receivedData;
 	volatile BYTE* syncSentByte;
 	volatile BYTE* syncReceivedByte;
 	volatile BYTE* asyncSentByte;
 	volatile BYTE* asyncReceivedByte;
-	volatile int numberOfBytesPendingTransmission;
-	int numberOfBytesPreviouslySent;
+	volatile int32 numberOfBytesPendingTransmission;
+	int32 numberOfBytesPreviouslySent;
 	volatile uint32 broadcast;
 	volatile bool connected;
 	volatile uint8 communicationMode;
@@ -77,20 +77,20 @@ singleton class CommunicationManager : Object
 	void update();
 	bool isConnected();
 	bool isMaster();
-	bool broadcastData(BYTE* data, int numberOfBytes);
-	void broadcastDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
-	bool sendData(BYTE* data, int numberOfBytes);
-	bool receiveData(BYTE* data, int numberOfBytes);
-	bool sendAndReceiveData(WORD message, BYTE* data, int numberOfBytes);
-	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
-	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
-	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
+	bool broadcastData(BYTE* data, int32 numberOfBytes);
+	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
+	bool sendData(BYTE* data, int32 numberOfBytes);
+	bool receiveData(BYTE* data, int32 numberOfBytes);
+	bool sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes);
+	bool sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
+	bool receiveDataAsync(int32 numberOfBytes, EventListener eventLister, Object scope);
+	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
 	WORD getReceivedMessage();
 	WORD getSentMessage();
 	const BYTE* getReceivedData();
 	const BYTE* getSentData();
 	void startSyncCycle();
-	void printStatus(int x, int y);
+	void printStatus(int32 x, int32 y);
 }
 
 

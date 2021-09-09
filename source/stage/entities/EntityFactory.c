@@ -47,7 +47,7 @@ static const StreamingPhase _streamingPhases[] =
 	&EntityFactory::makeReadyEntities
 };
 
-static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+static int32 _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -369,7 +369,7 @@ uint32 EntityFactory::prepareEntities()
 
 	uint32 result = _streamingPhases[this->streamingPhase](this);
 
-	int counter = _streamingPhasesCount;
+	int32 counter = _streamingPhasesCount;
 
 	while(__LIST_EMPTY == result)
 	{
@@ -400,7 +400,7 @@ uint32 EntityFactory::hasEntitiesPending()
 			VirtualList::getSize(this->entitiesToMakeReady);
 }
 
-int EntityFactory::getPhase()
+int32 EntityFactory::getPhase()
 {
 	return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
 }
@@ -428,27 +428,27 @@ void EntityFactory::prepareAllEntities()
 }
 
 #ifdef __PROFILE_STREAMING
-void EntityFactory::showStatus(int x, int y)
-{	int xDisplacement = 18;
+void EntityFactory::showStatus(int32 x, int32 y)
+{	int32 xDisplacement = 18;
 
 	Printing::text(Printing::getInstance(), "Factory's status", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Phase: ", x, y, NULL);
-	Printing::int(Printing::getInstance(), this->streamingPhase, x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->streamingPhase, x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Entities pending...", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
 #endif

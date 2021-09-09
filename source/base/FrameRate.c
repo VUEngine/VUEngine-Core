@@ -116,10 +116,10 @@ void FrameRate::update()
 	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
 	{
 #ifdef __PRINT_FRAME_TIMES
-		int x = 1; 
-		int y = 1;
+		int32 x = 1; 
+		int32 y = 1;
 
-		for(int fps = 0; fps < 51; fps++)
+		for(int32 fps = 0; fps < 51; fps++)
 		{
 			PRINT_TEXT("       ", x, y + fps);
 			PRINT_INT(elapsedTimes[fps] * 1000, x, y + fps);
@@ -133,7 +133,7 @@ void FrameRate::update()
 		}
 #endif
 
-		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
+		if(__MILLISECONDS_PER_SECOND <= (int32)this->gameFrameTotalTime) 
 		{
 			this->fps--;
 		}
@@ -158,7 +158,7 @@ void FrameRate::update()
 
 	if(__MILLISECONDS_PER_SECOND - __GAME_FRAME_DURATION < this->gameFrameTotalTime)
 	{
-		if(__MILLISECONDS_PER_SECOND <= (int)this->gameFrameTotalTime) 
+		if(__MILLISECONDS_PER_SECOND <= (int32)this->gameFrameTotalTime) 
 		{
 			this->fps--;
 		}
@@ -177,10 +177,10 @@ void FrameRate::update()
  * @param col	Column to start printing at
  * @param row	Row to start printing at
  */
-void FrameRate::print(int col, int row)
+void FrameRate::print(int32 col, int32 row)
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS   /   ", col, row, NULL);
-	Printing::int(printing, this->fps, col + 4, row, NULL);
-	Printing::int(printing, this->unevenFps, col + 7, row, NULL);
+	Printing::int32(printing, this->fps, col + 4, row, NULL);
+	Printing::int32(printing, this->unevenFps, col + 7, row, NULL);
 }

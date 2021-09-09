@@ -33,7 +33,7 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-static unsigned int volatile* _readingStatus = NULL;
+static uint32 volatile* _readingStatus = NULL;
 
 /**
  * Get instance
@@ -56,7 +56,7 @@ void KeypadManager::constructor()
 
 	KeypadManager::reset(this);
 
-	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
+	_readingStatus = (uint32 *)&_hardwareRegisters[__SCR];
 }
 
 /**
@@ -111,7 +111,7 @@ void KeypadManager::disable()
  *
  * @return			True if user input is enabled
  */
-int KeypadManager::isEnabled()
+int32 KeypadManager::isEnabled()
 {
 	return this->enabled;
 }
@@ -270,14 +270,14 @@ static void KeypadManager::interruptHandler()
 	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 
-static void KeypadManager::printUserInput(const UserInput* userInput, int x, int y)
+static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, int32 y)
 {
 	if(!userInput)
 	{
 		return;
 	}
 
-	int xDisplacement = 13;
+	int32 xDisplacement = 13;
 
 	PRINT_TEXT("USER INPUT:", x, y++);
 

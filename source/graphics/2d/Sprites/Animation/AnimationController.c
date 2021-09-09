@@ -37,7 +37,7 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern int strcmp(const char *, const char *);
+extern int32 strcmp(const char *, const char *);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 
 	if(NULL == this->animationFunction || strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
-		int i = 0;
+		int32 i = 0;
 
 		// search for the animation function
 		for(; animationDescription->animationFunctions[i]; i++ )
@@ -569,7 +569,7 @@ void AnimationController::pause(bool pause)
  *
  * @private
  */
-int AnimationController::getNumberOfFrames()
+int32 AnimationController::getNumberOfFrames()
 {
 	if(this->animationFunction)
 	{

@@ -41,15 +41,15 @@ class ParticleRemover : Object
 	// List of Particles
 	VirtualList particlesLists;
 	// Removal delay
-	int removalDelayCycles;
+	int32 removalDelayCycles;
 	// Removal delay
-	int remainingRemoveDelayCycles;
+	int32 remainingRemoveDelayCycles;
 
 	/// @publicsection
 	void constructor();
 	void deleteParticles(VirtualList particles);
 	void reset();
-	void setRemovalDelayCycles(int removalDelayCycles);
+	void setRemovalDelayCycles(int32 removalDelayCycles);
 	void update();
 }
 

@@ -71,10 +71,10 @@ typedef struct ParticleSystemSpec
 	/// maximum relative spawn position
 	Vector3D maximumRelativeSpawnPosition;
 
-	/// minimum force to apply (use int values in the spec to avoid overflow)
+	/// minimum force to apply (use int32 values in the spec to avoid overflow)
 	Vector3D minimumForce;
 
-	/// maximum force to apply (use int values in the spec to avoid overflow)
+	/// maximum force to apply (use int32 values in the spec to avoid overflow)
 	Vector3D maximumForce;
 
 	/// type of movement for the particles
@@ -105,7 +105,7 @@ class ParticleSystem : Entity
 	Vector3DFlag spawnPositionDisplacement;
 	Vector3DFlag spawnForceDelta;
 	// next spawn time
-	int nextSpawnTime;
+	int32 nextSpawnTime;
 	// particles' life span increment
 	int16 particleLifeSpanIncrement;
 	// number of sprite specs
