@@ -263,7 +263,7 @@ void SoundManager::reset()
 		this->waveforms[i].data = NULL;
 		this->waveforms[i].overwrite = true;
 
-		for(uint16 j = 0; j < 128; j++)
+		for(uint32 j = 0; j < 128; j++)
 		{
 			this->waveforms[i].wave[j] = 0;
 		}
@@ -609,7 +609,7 @@ int8 SoundManager::getWaveform(const int8* waveFormData)
 
 	// Reset all sounds and channels
 //	for(int16 i = __TOTAL_WAVEFORMS - 1; 0 <= i; i--)
-	for(int16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	for(int32 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		if(NULL == this->waveforms[i].data)
 		{
@@ -662,7 +662,7 @@ void SoundManager::setWaveform(Waveform* waveform, const int8* data)
 		// Must stop all sound before writing the waveforms
 		SoundManager::turnOffPlayingSounds(this);
 
-		for(uint16 i = 0; i < 32; i++)
+		for(uint32 i = 0; i < 32; i++)
 		{
 			waveform->wave[(i << 2)] = (uint8)data[i];
 		}
@@ -784,7 +784,7 @@ static uint8 SoundManager::getSoundChannelsCount(Sound* sound, uint32 channelTyp
 	// Compute the number of
 	uint8 channelsCount = 0;
 
-	for(uint16 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
+	for(uint32 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
 	{
 		if(channelType == sound->soundChannels[i]->soundChannelConfiguration->channelType)
 		{
@@ -1153,7 +1153,7 @@ void SoundManager::print()
 void SoundManager::printWaveFormStatus(int32 x, int32 y)
 {
 	// Reset all waveforms
-	for(uint16 i = 0; i < __TOTAL_WAVEFORMS; i++)
+	for(uint32 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
 		PRINT_TEXT("           ", x, y + this->waveforms[i].number);
 		PRINT_INT(this->waveforms[i].number, x, y + this->waveforms[i].number);
