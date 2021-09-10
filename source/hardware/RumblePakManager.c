@@ -78,6 +78,7 @@ void RumblePakManager::constructor()
     this->communicationManager = NULL;
 
     this->async = true;
+	this->overridePreviousEffect = true;
     this->rumbleEffect = NULL;
     this->frequency = 0;
     this->sustainPositive = 0;
@@ -150,7 +151,14 @@ static void RumblePakManager::execute()
 #ifdef __RELEASE
     if(_rumblePakManager->async)
     {
-        CommunicationManager::broadcastDataAsync(_rumblePakManager->communicationManager, (BYTE*)_rumblePakManager->rumbleCommands, _rumblePakManager->rumbleCommandIndex, (EventListener)RumblePakManager::onBroadcastDataDone, Object::safeCast(_rumblePakManager));
+		if(_rumblePakManager->overridePreviousEffect)
+		{
+	        CommunicationManager::broadcastDataAsync(_rumblePakManager->communicationManager, (BYTE*)_rumblePakManager->rumbleCommands, _rumblePakManager->rumbleCommandIndex, NULL, NULL);
+		}
+		else
+		{
+	        CommunicationManager::broadcastDataAsync(_rumblePakManager->communicationManager, (BYTE*)_rumblePakManager->rumbleCommands, _rumblePakManager->rumbleCommandIndex, (EventListener)RumblePakManager::onBroadcastDataDone, Object::safeCast(_rumblePakManager));
+		}
     }
     else
     {
@@ -173,8 +181,13 @@ void RumblePakManager::toggleAsync()
 
 void RumblePakManager::setAsync(bool async)
 {
-    this->async = async;
+	this->async = async;
     RumblePakManager::stopAllEffects(this);
+}
+
+void RumblePakManager::setOverridePreviousEffect(bool overridePreviousEffect)
+{
+	this->overridePreviousEffect = overridePreviousEffect;
 }
 
 static void RumblePakManager::sendCommandWithValue(uint8 command, uint8 value)
@@ -313,7 +326,9 @@ static void RumblePakManager::startEffect(const RumbleEffectSpec* rumbleEffect)
         }
     }
 
-    if(0 != _rumblePakManager->rumbleCommandIndex)
+	_rumblePakManager->rumbleCommandIndex = 0;
+
+    if(!_rumblePakManager->overridePreviousEffect && 0 != _rumblePakManager->rumbleCommandIndex)
     {
         return;
     }

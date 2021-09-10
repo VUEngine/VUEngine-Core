@@ -114,6 +114,7 @@ singleton class RumblePakManager : Object
 	CommunicationManager communicationManager;
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];
 	bool async;
+	bool overridePreviousEffect;
 	uint8 rumbleCommandIndex;
 	const RumbleEffectSpec* rumbleEffect;
 	uint8 frequency;
@@ -127,6 +128,7 @@ singleton class RumblePakManager : Object
 
 	void reset();
 	void setAsync(bool async);
+	void setOverridePreviousEffect(bool overridePreviousEffect);
 	static void startEffect(const RumbleEffectSpec* rumbleEffect);
 	static void stopEffect(const RumbleEffectSpec* rumbleEffect);
 	static void stopAllEffects();
