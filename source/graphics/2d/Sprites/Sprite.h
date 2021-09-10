@@ -48,7 +48,7 @@
 #define __TRANSPARENCY_ODD			1
 #define __TRANSPARENCY_EVEN			2
 
-#define __NO_RENDER_INDEX	-1
+#define __NO_RENDER_INDEX			-1
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ abstract class Sprite : Object
 	virtual Scale getScale();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
-	virtual uint16 doRender(int16 index, bool evenFrame) = 0;
+	virtual int16 doRender(int16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(uint16 display, uint16 mode) = 0;

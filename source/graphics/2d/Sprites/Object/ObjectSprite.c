@@ -228,7 +228,7 @@ void ObjectSprite::registerWithManager()
  *
  * @param evenFrame
  */
-uint16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");

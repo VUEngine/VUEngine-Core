@@ -87,7 +87,7 @@ void PrintingSprite::setMode(uint16 display __attribute__((unused)), uint16 mode
  *
  * @param evenFrame
  */
-uint16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 

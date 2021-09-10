@@ -124,7 +124,7 @@ class BgmapSprite : Sprite
 
 	virtual bool hasSpecialEffects();
 
-	override uint16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index, bool evenFrame);
 	override void processEffects();
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();

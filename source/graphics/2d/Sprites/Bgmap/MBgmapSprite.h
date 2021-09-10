@@ -94,7 +94,7 @@ class MBgmapSprite : BgmapSprite
 	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner);
 	override void position(const Vector3D* position);
 	override void setPosition(const PixelVector* position);
-	override uint16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index, bool evenFrame);
 	override void addDisplacement(const PixelVector* displacement);
 	override void resize(Scale scale, fix10_6 z);
 	override void setMode(uint16 display, uint16 mode);

@@ -307,7 +307,7 @@ void ObjectSpriteContainer::writeDRAM()
  *
  * @param evenFrame
  */
-uint16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	_worldAttributesCache[index].head = this->head;
 

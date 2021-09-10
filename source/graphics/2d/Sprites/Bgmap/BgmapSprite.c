@@ -315,7 +315,7 @@ DrawSpec BgmapSprite::getDrawSpec()
  *
  * @param evenFrame
  */
-uint16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 

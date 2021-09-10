@@ -79,7 +79,7 @@ class ObjectSpriteContainer : Sprite
 	void hideSprites(ObjectSprite spareSprite);
 	override void hideForDebug();
 	override void showForDebug();
-	override uint16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index, bool evenFrame);
 	override void setPosition(const PixelVector* position);
 	override void addDisplacement(const PixelVector* displacement);
 	override void setMode(uint16 display, uint16 mode);

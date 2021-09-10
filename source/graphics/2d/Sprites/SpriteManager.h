@@ -81,7 +81,7 @@ singleton class SpriteManager : Object
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
 	// next world layer
-	int8 freeLayer;
+	int16 freeLayer;
 	// number of rows to write in texture's writing
 	int8 texturesMaximumRowsToWrite;
 	// flag to control texture's writing deferring
