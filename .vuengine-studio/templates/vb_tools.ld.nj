@@ -1,4 +1,6 @@
-{% include('./base/header.ld.nj') %}
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */
@@ -10,12 +12,12 @@ SEARCH_DIR(.);
 MEMORY
 {
     {%- set extraDram = 3 -%}
-    {%- set dramLength = project.config.memory.sections.dram.length - extraDram %}
-    dram    (!r)    : ORIGIN = {{ ((project.config.memory.sections.dram.origin | HexToInt) + dramLength*1024) | IntToHex }}, LENGTH = {{ -dramLength }}k /* Add additional KB needed for debug tools */
-    wram    (!r)    : ORIGIN = {{ project.config.memory.sections.wram.origin }}, LENGTH = {{ project.config.memory.sections.wram.length }}k
-    exp     (r)     : ORIGIN = {{ project.config.memory.sections.exp.origin }}, LENGTH = {{ project.config.memory.sections.exp.length }}M
-    sram    (!r)    : ORIGIN = {{ project.config.memory.sections.sram.origin }}, LENGTH = {{ project.config.memory.sections.sram.length }}M
-    rom     (rx)    : ORIGIN = {{ project.config.memory.sections.rom.origin }}, LENGTH = {{ project.config.memory.sections.rom.length }}M
+    {%- set dramLength = memory.sections.dram.length - extraDram %}
+    dram    (!r)    : ORIGIN = {{ ((memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex }}, LENGTH = {{ -dramLength }}k /* Add additional KB needed for debug tools */
+    wram    (!r)    : ORIGIN = {{ memory.sections.wram.origin }}, LENGTH = {{ memory.sections.wram.length }}k
+    exp     (r)     : ORIGIN = {{ memory.sections.exp.origin }}, LENGTH = {{ memory.sections.exp.length }}M
+    sram    (!r)    : ORIGIN = {{ memory.sections.sram.origin }}, LENGTH = {{ memory.sections.sram.length }}M
+    rom     (rx)    : ORIGIN = {{ memory.sections.rom.origin }}, LENGTH = {{ memory.sections.rom.length }}M
 }
 
 /*

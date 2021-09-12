@@ -1,0 +1,48 @@
+[
+    {
+        "source": "config/Engine.json",
+        "extra": {
+            "compiler": "config/Compiler.json"
+        },
+        "targets": [
+            {
+                "uri": "source/config.h",
+                "template": "templates/config.h.nj"
+            }
+        ]
+    },
+    {
+        "source": "config/ROM.json",
+        "targets": [
+            {
+                "uri": "source/romHeader.h",
+                "template": "templates/romHeader.h.nj"
+            }
+        ]
+    },
+    {
+        "source": "config/Compiler.json",
+        "targets": [
+            {
+                "uri": "config.make",
+                "template": "templates/config.make.nj"
+            },
+            {
+                "uri": "lib/compiler/linker/vb_release.ld",
+                "template": "templates/vb.ld.nj"
+            },
+            {
+                "uri": "lib/compiler/linker/vb_beta.ld",
+                "template": "templates/vb.ld.nj"
+            },
+            {
+                "uri": "lib/compiler/linker/vb_tools.ld",
+                "template": "templates/vb_tools.ld.nj"
+            },
+            {
+                "uri": "lib/compiler/linker/vb_debug.ld",
+                "template": "templates/vb_tools.ld.nj"
+            }
+        ]
+    }
+]

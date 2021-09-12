@@ -1,0 +1,23 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef ROM_HEADER_H_
+#define ROM_HEADER_H_
+
+
+//---------------------------------------------------------------------------------------------------------
+//                                             ROM HEADER INFO
+//---------------------------------------------------------------------------------------------------------
+
+// game title (20 chars) 	 ####################
+#define __GAME_TITLE		"{{ (gameTitle ~ '                    ') | truncate(20, true, '') }}"
+// maker code (2 chars)		 ##
+#define __MAKER_CODE		"{{ (makerCode ~ '  ') | truncate(2, true, '') }}"
+// game code (4 chars)		 ####
+#define __GAME_CODE			"{{ (gameCodeSystem ~ ' ') | truncate(1, true, '') }}{{ (gameCodeId ~ '  ') | truncate(2, true, '') }}{{ (gameCodeLanguage ~ ' ') | truncate(1, true, '') }}"
+// revision (1.x)			 #
+#define __ROM_VERSION		 {{ (revision ~ '') | truncate(1, true, '') }}
+
+
+#endif

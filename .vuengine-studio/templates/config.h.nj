@@ -1,24 +1,25 @@
-{% include('./base/header.c.nj') %}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
 
-{% if fileExists(workspaceRoot ~ 'source/pluginsConfig.h') -%}
 //---------------------------------------------------------------------------------------------------------
-//												PLUGINS
+//                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include "pluginsConfig.h"
+#include "romHeader.h"
 
 
-{% endif %}
-{%- if project.config.game | length -%}
+{% if game | length -%}
 //---------------------------------------------------------------------------------------------------------
-//											GAME SPECIFIC MACROS
+//                                          GAME SPECIFIC MACROS
 //---------------------------------------------------------------------------------------------------------
 
-{% for gameConfig in project.config.game -%}
+{% for gameConfig in game -%}
 {%- if (gameConfig.type === 'text') -%}
 	{%- set gameConfigValue = '"' ~ gameConfig.value ~ '"' -%}
 {%- elseif (gameConfig.type === 'boolean') -%}
@@ -36,48 +37,48 @@
 {% endif -%}
 
 //---------------------------------------------------------------------------------------------------------
-//											COMMUNICATIONS
+//                                             COMMUNICATIONS
 //---------------------------------------------------------------------------------------------------------
 
 // Enable communications at the start of the game
-{% if project.config.communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
+{% if communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
 
 
 //---------------------------------------------------------------------------------------------------------
-//											DEBUGGING / PROFILING
+//                                          DEBUGGING / PROFILING
 //---------------------------------------------------------------------------------------------------------
 
 // print memory pool's status
-{% if project.config.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
-{% if project.config.debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
+{% if debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
+{% if debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
 
 // Enable profiler
-{% if project.config.debug.enableProfiler %}#define{% else %}#undef{% endif %} __ENABLE_PROFILER
+{% if debug.enableProfiler %}#define{% else %}#undef{% endif %} __ENABLE_PROFILER
 
 // print frame rate
-{% if project.config.debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
+{% if debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
 
 // alert stack overflows
-{% if project.config.debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
+{% if debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
 
 // enable streaming's profiling
-{% if project.config.debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
+{% if debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
 
 // show streaming's profiling during game
-{% if project.config.debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
+{% if debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
 
 // dimm screen to make it easier to read the profiling output
-{% if project.config.debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
+{% if debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
 
 // alert vip's overtime
-{% if project.config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
+{% if debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
 
 // stack headroom
-#define __STACK_HEADROOM								{{ project.config.debug.stackHeadroom }}
+#define __STACK_HEADROOM								{{ debug.stackHeadroom }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//											DEBUGGING TOOLS
+//                                             DEBUGGING TOOLS
 //---------------------------------------------------------------------------------------------------------
 
 // If tools already defined, enable all
@@ -130,74 +131,60 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											ROM HEADER INFO
-//---------------------------------------------------------------------------------------------------------
-
-// game title (20 chars) 	 ####################
-#define __GAME_TITLE		"{{ (project.romHeader.gameTitle ~ '                    ') | truncate(20, true, '') }}"
-// maker code (2 chars)		 ##
-#define __MAKER_CODE		"{{ (project.romHeader.makerCode ~ '  ') | truncate(2, true, '') }}"
-// game code (4 chars)		 ####
-#define __GAME_CODE			"{{ (project.romHeader.gameCodeSystem ~ ' ') | truncate(1, true, '') }}{{ (project.romHeader.gameCodeId ~ '  ') | truncate(2, true, '') }}{{ (project.romHeader.gameCodeLanguage ~ ' ') | truncate(1, true, '') }}"
-// revision (1.x)			 #
-#define __ROM_VERSION		 {{ (project.romHeader.revision ~ '') | truncate(1, true, '') }}
-
-
-//---------------------------------------------------------------------------------------------------------
-//											OPTICS / PROJECTION
+//                                           OPTICS / PROJECTION
 //---------------------------------------------------------------------------------------------------------
 
 // screen width in pixels
-#define __SCREEN_WIDTH								{{ project.config.optics.screenWidth }}
+#define __SCREEN_WIDTH								{{ optics.screenWidth }}
 
 // screen height in pixels
-#define __SCREEN_HEIGHT								{{ project.config.optics.screenHeight }}
+#define __SCREEN_HEIGHT								{{ optics.screenHeight }}
 
 // screen depth in pixels
-#define __SCREEN_DEPTH								{{ project.config.optics.screenDepth }}
+#define __SCREEN_DEPTH								{{ optics.screenDepth }}
 
 // distance from player's eyes to the virtual screen
-#define __DISTANCE_EYE_SCREEN						{{ project.config.optics.distanceEyeScreen }}
+#define __DISTANCE_EYE_SCREEN						{{ optics.distanceEyeScreen }}
 
 // maximum x view distance (depth) (power of two)
-#define __MAXIMUM_X_VIEW_DISTANCE					{{ project.config.optics.maximumXViewDistance }}
+#define __MAXIMUM_X_VIEW_DISTANCE					{{ optics.maximumXViewDistance }}
 
 // maximum y view distance (depth) (power of two)
-#define __MAXIMUM_Y_VIEW_DISTANCE					{{ project.config.optics.maximumYViewDistance }}
+#define __MAXIMUM_Y_VIEW_DISTANCE					{{ optics.maximumYViewDistance }}
 
 // distance between eyes
-#define __BASE_FACTOR								{{ project.config.optics.baseFactor }}
+#define __BASE_FACTOR								{{ optics.baseFactor }}
 
 // player's eyes' horizontal position
-#define __HORIZONTAL_VIEW_POINT_CENTER				{{ project.config.optics.horizontalViewPointCenter }}
+#define __HORIZONTAL_VIEW_POINT_CENTER				{{ optics.horizontalViewPointCenter }}
 
 // player's eyes' vertical position
-#define __VERTICAL_VIEW_POINT_CENTER				{{ project.config.optics.verticalViewPointCenter }}
+#define __VERTICAL_VIEW_POINT_CENTER				{{ optics.verticalViewPointCenter }}
 
 // parallax values are divide by this factor to control their strength
-#define __PARALLAX_CORRECTION_FACTOR				{{ project.config.optics.parallaxCorrectionFactor }}
+#define __PARALLAX_CORRECTION_FACTOR				{{ optics.parallaxCorrectionFactor }}
 
 // affects the strength of the scaling
-#define __SCALING_MODIFIER_FACTOR					{{ project.config.optics.scalingModifierFactor }}{% if not '.' in '' ~ project.config.optics.scalingModifierFactor %}.0{% endif %}f
+#define __SCALING_MODIFIER_FACTOR					{{ optics.scalingModifierFactor }}{% if not '.' in '' ~ optics.scalingModifierFactor %}.0{% endif %}f
 
 // minimum number of pixels that the camera can move
-#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ project.config.optics.cameraMinimumDisplacementPixelsPower }}
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ optics.cameraMinimumDisplacementPixelsPower }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//											FRAME RATE CONTROL
+//                                           FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
 // when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired
 // beforethe current game frame is done
-{% if project.config.frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
+{% if frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
 
 // timer resolution
-#define __TIMER_RESOLUTION							{{ project.config.frameRate.timerResolution }}
+#define __TIMER_RESOLUTION							{{ frameRate.timerResolution }}
 
 // __FRAME_CYCLE = 0 means __TARGET_FPS = 50
 // __FRAME_CYCLE = 1 means __TARGET_FPS = 25
-#define	__FRAME_CYCLE								{{ project.config.frameRate.frameCycle }}
+#define	__FRAME_CYCLE								{{ frameRate.frameCycle }}
 
 // target frames per second
 #define __TARGET_FPS 								(50 >> __FRAME_CYCLE)
@@ -209,201 +196,201 @@
 #define __OPTIMUM_FPS 								(__TARGET_FPS >> __FRAME_CYCLE)
 
 // define to dispatch the delayed messages every other game frame cycle
-{% if project.config.frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+{% if frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
 
 //---------------------------------------------------------------------------------------------------------
-//												ANIMATION
+//                                                ANIMATION
 //---------------------------------------------------------------------------------------------------------
 
 // maximum length of an animation function's name
-#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH		{{ project.config.animation.maxAnimationFunctionNameLength }}
+#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH		{{ animation.maxAnimationFunctionNameLength }}
 
 // maximum number of frames per animation function
-#define __MAX_FRAMES_PER_ANIMATION_FUNCTION			{{ project.config.animation.maxFramesPerAnimationFunction }}
+#define __MAX_FRAMES_PER_ANIMATION_FUNCTION			{{ animation.maxFramesPerAnimationFunction }}
 
 // maximum number of animation functions per description
-#define __MAX_ANIMATION_FUNCTIONS					{{ project.config.animation.maxAnimationFunctions }}
+#define __MAX_ANIMATION_FUNCTIONS					{{ animation.maxAnimationFunctions }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//												MEMORY POOL
+//                                               MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
 // reset to 0 each byte of each free block on resetting game
 // only use for debugging, proper object's initialization must make this macro unnecessary
-{% if project.config.memoryPools.cleanUp %}#define{% else %}#undef{% endif %} __MEMORY_POOL_CLEAN_UP
+{% if memoryPools.cleanUp %}#define{% else %}#undef{% endif %} __MEMORY_POOL_CLEAN_UP
 
 #undef __MEMORY_POOLS
-#define __MEMORY_POOLS								{{ project.config.memoryPools.pools | length }}
+#define __MEMORY_POOLS								{{ memoryPools.pools | length }}
 
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS \
 {%- set poolBlockDefinitions = '' -%}
-{% for pool in project.config.memoryPools.pools %}
+{% for pool in memoryPools.pools %}
 	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ pool.size ~ ', ' ~  pool.objects ~') \\\n' ~ poolBlockDefinitions -%}
 {% endfor %}
 {{ poolBlockDefinitions }}
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS \
 {%- set poolArrayDefinitions = '' -%}
-{% for pool in project.config.memoryPools.pools -%}
+{% for pool in memoryPools.pools -%}
 	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ pool.size ~ ') \\\n' ~ poolArrayDefinitions -%}
 {% endfor %}
 {{ poolArrayDefinitions }}
 // percentage (0-100) above which the memory pool's status shows the pool usage
-#define __MEMORY_POOL_WARNING_THRESHOLD				{{ project.config.memoryPools.warningThreshold }}
+#define __MEMORY_POOL_WARNING_THRESHOLD				{{ memoryPools.warningThreshold }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//												SRAM
+//                                                  SRAM
 //---------------------------------------------------------------------------------------------------------
 
 // amount of available sram space, in bytes
 // • the vb allows up to 16 mb, but all known carts support only 8 kb of sram
-#define __TOTAL_SAVE_RAM 							{{ project.config.sram.totalSram }}
+#define __TOTAL_SAVE_RAM 							{{ sram.totalSram }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CHAR MANAGEMENT
+//                                             CHAR MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
 // total number of available chars in char memory
-#define __CHAR_MEMORY_TOTAL_CHARS 					{{ project.config.char.totalChars }}
+#define __CHAR_MEMORY_TOTAL_CHARS 					{{ char.totalChars }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//											SPRITE MANAGEMENT
+//                                            SPRITE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
 // total number of layers (basically the number of worlds)
-#define __TOTAL_LAYERS								{{ project.config.sprite.totalLayers }}
+#define __TOTAL_LAYERS								{{ sprite.totalLayers }}
 
 // Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
-{% if project.config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
+{% if sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TEXTURE MANAGEMENT
+//                                           TEXTURE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
 // total number of bgmap segments
-{%- set dramLength = project.config.memory.sections.dram.length %}
-{%- set bgmapEndAddress = ((project.config.memory.sections.dram.origin | HexToInt) + dramLength*1024) %}
-{%- set bgmapStartAddress = ("0x20000") | HexToInt %}
+{%- set dramLength = compiler.memory.sections.dram.length %}
+{%- set bgmapEndAddress = ((compiler.memory.sections.dram.origin | hexToInt) + dramLength*1024) %}
+{%- set bgmapStartAddress = ("0x20000") | hexToInt %}
 #define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			{{ ((bgmapEndAddress - bgmapStartAddress) / 8192 - 0.5) | round }}
 
 // number of segments for param tables
-#define __PARAM_TABLE_SEGMENTS						{{ project.config.texture.paramTableSegments }}
+#define __PARAM_TABLE_SEGMENTS						{{ texture.paramTableSegments }}
 
 // bgmap segments to use (1 for printing)
 #define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS)
 
 // number of bgmap specs in each bgmap segment
-#define __NUM_BGMAPS_PER_SEGMENT 					{{ project.config.texture.bgmapsPerSegments }}
+#define __NUM_BGMAPS_PER_SEGMENT 					{{ texture.bgmapsPerSegments }}
 
 // printing area
-#define __PRINTING_BGMAP_X_OFFSET					{{ project.config.texture.printing.offset.x }}
+#define __PRINTING_BGMAP_X_OFFSET					{{ texture.printing.offset.x }}
 #define __PRINTING_BGMAP_Y_OFFSET					(64 * 8 - __SCREEN_HEIGHT)
-#define __PRINTING_BGMAP_PARALLAX_OFFSET			{{ project.config.texture.printing.offset.parallax }}
-#define __PRINTABLE_BGMAP_AREA 						{{ project.config.texture.printing.printableArea }}
+#define __PRINTING_BGMAP_PARALLAX_OFFSET			{{ texture.printing.offset.parallax }}
+#define __PRINTABLE_BGMAP_AREA 						{{ texture.printing.printableArea }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PARAM TABLE
+//                                               PARAM TABLE
 //---------------------------------------------------------------------------------------------------------
 
 // maximum possible scale: affects param table allocation space
-#define __MAXIMUM_SCALE								{{ project.config.affine.maxScale }}
+#define __MAXIMUM_SCALE								{{ affine.maxScale }}
 
 // maximum number of rows to write on each call to affine calculation functions
-#define __MAXIMUM_AFFINE_ROWS_PER_CALL				{{ project.config.affine.maxRowsPerCall }}
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL				{{ affine.maxRowsPerCall }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PHYSICS
+//                                                 PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-#define __GRAVITY									{{ project.config.physics.gravity }}{% if not '.' in '' ~ project.config.physics.gravity %}.0{% endif %}f
+#define __GRAVITY									{{ physics.gravity }}{% if not '.' in '' ~ physics.gravity %}.0{% endif %}f
 
 // number of bodies to check for gravity on each cycle
-#define __BODIES_TO_CHECK_FOR_GRAVITY				{{ project.config.physics.bodiesToCheckForGravity }}
+#define __BODIES_TO_CHECK_FOR_GRAVITY				{{ physics.bodiesToCheckForGravity }}
 
 // divisor to speed up physics simulations, bigger numbers equal faster computations
-#define __PHYSICS_TIME_ELAPSED_DIVISOR				{{ project.config.physics.timeElapsedDivisor }}
+#define __PHYSICS_TIME_ELAPSED_DIVISOR				{{ physics.timeElapsedDivisor }}
 
 // thresholds to stop bodies
-#define __STOP_VELOCITY_THRESHOLD					__PIXELS_TO_METERS({{ project.config.physics.stopVelocityThreshold }})
-#define __STOP_BOUNCING_VELOCITY_THRESHOLD 			__PIXELS_TO_METERS({{ project.config.physics.stopBouncingVelocityThreshold }})
+#define __STOP_VELOCITY_THRESHOLD					__PIXELS_TO_METERS({{ physics.stopVelocityThreshold }})
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 			__PIXELS_TO_METERS({{ physics.stopBouncingVelocityThreshold }})
 
 // maximum bounciness coefficient allowed
-#define __MAXIMUM_BOUNCINESS_COEFFICIENT			{{ project.config.physics.maximumBouncinessCoefficient }}{% if not '.' in '' ~ project.config.physics.maximumBouncinessCoefficient %}.0{% endif %}f
+#define __MAXIMUM_BOUNCINESS_COEFFICIENT			{{ physics.maximumBouncinessCoefficient }}{% if not '.' in '' ~ physics.maximumBouncinessCoefficient %}.0{% endif %}f
 
-#define __FRICTION_FORCE_FACTOR_POWER				{{ project.config.physics.frictionForceFactorPower }}
+#define __FRICTION_FORCE_FACTOR_POWER				{{ physics.frictionForceFactorPower }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//												SOUND
+//                                                  SOUND
 //---------------------------------------------------------------------------------------------------------
 
-#define __LEFT_EAR_CENTER							{{ project.config.sound.leftEarCenter }}
-#define __RIGHT_EAR_CENTER							{{ project.config.sound.rightEarCenter }}
+#define __LEFT_EAR_CENTER							{{ sound.leftEarCenter }}
+#define __RIGHT_EAR_CENTER							{{ sound.rightEarCenter }}
 
 // affects the amount of attenuation caused by the distance between the x coordinate and each ear's
 // position defined by __LEFT_EAR_CENTER and __RIGHT_EAR_CENTER
-#define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR		{{ project.config.sound.stereoHorizontalAttenuationFactor }}
-#define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR			{{ project.config.sound.stereoVerticalAttenuationFactor }}
+#define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR		{{ sound.stereoHorizontalAttenuationFactor }}
+#define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR			{{ sound.stereoVerticalAttenuationFactor }}
 
 
 //---------------------------------------------------------------------------------------------------------
-//											BRIGHTNESS
+//                                               BRIGHTNESS
 //---------------------------------------------------------------------------------------------------------
 
 // default brightness settings, actual values are set in stage specs
 // • for a nice progression, each shade should be about twice as big as the previous one
 // • _BRIGHT_RED must be larger than _DARK_RED + _MEDIUM_RED
-#define __BRIGHTNESS_DARK_RED						{{ project.config.colors.brightness.darkRed }}
-#define __BRIGHTNESS_MEDIUM_RED						{{ project.config.colors.brightness.mediumRed }}
-#define __BRIGHTNESS_BRIGHT_RED						{{ project.config.colors.brightness.brightRed }}
+#define __BRIGHTNESS_DARK_RED						{{ colors.brightness.darkRed }}
+#define __BRIGHTNESS_MEDIUM_RED						{{ colors.brightness.mediumRed }}
+#define __BRIGHTNESS_BRIGHT_RED						{{ colors.brightness.brightRed }}
 
 // default delay between steps in fade effect
-#define __FADE_DELAY								{{ project.config.colors.brightness.fadeDelay }}
+#define __FADE_DELAY								{{ colors.brightness.fadeDelay }}
 
 // defaul step increment in fade transitions
-#define __CAMERA_EFFECT_FADE_INCREMENT				{{ project.config.colors.brightness.fadeIncrement }}
+#define __CAMERA_EFFECT_FADE_INCREMENT				{{ colors.brightness.fadeIncrement }}
 
 //---------------------------------------------------------------------------------------------------------
-//											COLOR PALETTES
+//                                             COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALETTE							{{ project.config.colors.palettes.printingPalette }}
+#define __PRINTING_PALETTE							{{ colors.palettes.printingPalette }}
 
 // default palette values, actual values are set in stage specs
-#define __BGMAP_PALETTE_0							0b{{ project.config.colors.palettes.bgMap[0][0] }}{{ project.config.colors.palettes.bgMap[0][1] }}{{ project.config.colors.palettes.bgMap[0][2] }}00
-#define __BGMAP_PALETTE_1							0b{{ project.config.colors.palettes.bgMap[1][0] }}{{ project.config.colors.palettes.bgMap[1][1] }}{{ project.config.colors.palettes.bgMap[1][2] }}00
-#define __BGMAP_PALETTE_2							0b{{ project.config.colors.palettes.bgMap[2][0] }}{{ project.config.colors.palettes.bgMap[2][1] }}{{ project.config.colors.palettes.bgMap[2][2] }}00
-#define __BGMAP_PALETTE_3							0b{{ project.config.colors.palettes.bgMap[3][0] }}{{ project.config.colors.palettes.bgMap[3][1] }}{{ project.config.colors.palettes.bgMap[3][2] }}00
+#define __BGMAP_PALETTE_0							0b{{ colors.palettes.bgMap[0][0] }}{{ colors.palettes.bgMap[0][1] }}{{ colors.palettes.bgMap[0][2] }}00
+#define __BGMAP_PALETTE_1							0b{{ colors.palettes.bgMap[1][0] }}{{ colors.palettes.bgMap[1][1] }}{{ colors.palettes.bgMap[1][2] }}00
+#define __BGMAP_PALETTE_2							0b{{ colors.palettes.bgMap[2][0] }}{{ colors.palettes.bgMap[2][1] }}{{ colors.palettes.bgMap[2][2] }}00
+#define __BGMAP_PALETTE_3							0b{{ colors.palettes.bgMap[3][0] }}{{ colors.palettes.bgMap[3][1] }}{{ colors.palettes.bgMap[3][2] }}00
 
-#define __OBJECT_PALETTE_0							0b{{ project.config.colors.palettes.object[0][0] }}{{ project.config.colors.palettes.object[0][1] }}{{ project.config.colors.palettes.object[0][2] }}00
-#define __OBJECT_PALETTE_1							0b{{ project.config.colors.palettes.object[1][0] }}{{ project.config.colors.palettes.object[1][1] }}{{ project.config.colors.palettes.object[1][2] }}00
-#define __OBJECT_PALETTE_2							0b{{ project.config.colors.palettes.object[2][0] }}{{ project.config.colors.palettes.object[2][1] }}{{ project.config.colors.palettes.object[2][2] }}00
-#define __OBJECT_PALETTE_3							0b{{ project.config.colors.palettes.object[3][0] }}{{ project.config.colors.palettes.object[3][1] }}{{ project.config.colors.palettes.object[3][2] }}00
-
-
-//---------------------------------------------------------------------------------------------------------
-//										RANDOM NUMBER GENERATION
-//---------------------------------------------------------------------------------------------------------
-
-{% if project.config.random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+#define __OBJECT_PALETTE_0							0b{{ colors.palettes.object[0][0] }}{{ colors.palettes.object[0][1] }}{{ colors.palettes.object[0][2] }}00
+#define __OBJECT_PALETTE_1							0b{{ colors.palettes.object[1][0] }}{{ colors.palettes.object[1][1] }}{{ colors.palettes.object[1][2] }}00
+#define __OBJECT_PALETTE_2							0b{{ colors.palettes.object[2][0] }}{{ colors.palettes.object[2][1] }}{{ colors.palettes.object[2][2] }}00
+#define __OBJECT_PALETTE_3							0b{{ colors.palettes.object[3][0] }}{{ colors.palettes.object[3][1] }}{{ colors.palettes.object[3][2] }}00
 
 
 //---------------------------------------------------------------------------------------------------------
-//												EXCEPTIONS
+//                                        RANDOM NUMBER GENERATION
+//---------------------------------------------------------------------------------------------------------
+
+{% if random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+
+
+//---------------------------------------------------------------------------------------------------------
+//                                               EXCEPTIONS
 //---------------------------------------------------------------------------------------------------------
 
 // camera coordinates for the output of exceptions
-#define __EXCEPTION_COLUMN							{{ project.config.exception.position.x }}
-#define __EXCEPTION_LINE							{{ project.config.exception.position.y }}
+#define __EXCEPTION_COLUMN							{{ exception.position.x }}
+#define __EXCEPTION_LINE							{{ exception.position.y }}
 
 
 #endif
