@@ -224,7 +224,7 @@ enum SoundWrapperMessages
 /// @ingroup stage-entities-particles
 class SoundWrapper : Object
 {
-	Sound* sound;
+	const Sound* sound;
 	const Vector3D* position;
 	VirtualList channels;
 	fix17_15 speed;
@@ -243,7 +243,7 @@ class SoundWrapper : Object
 	bool autoReleaseOnFinish;
 
 	/// @publicsection
-	void constructor(Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
+	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
 
 	const Channel* getChannel(uint8 index);
 	bool isPaused();

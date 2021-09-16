@@ -130,12 +130,13 @@ singleton class SoundManager : Object
 	void stopAllSounds(bool release);
 	void flushQueuedSounds();
 
-	void playSound(Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope);
-	SoundWrapper getSound(Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
+	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope);
+	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt);
 	void startPCMPlayback();
+	bool isPlayingSound(const Sound* sound);
 
 	void lock();
 	void unlock();

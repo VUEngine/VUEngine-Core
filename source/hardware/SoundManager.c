@@ -66,7 +66,7 @@ friend class VirtualList;
 
 typedef struct QueuedSound
 {
-	Sound* sound;
+	const Sound* sound;
 	uint32 command;
 	Vector3D position;
 	bool isPositionValid;
@@ -101,8 +101,6 @@ void SoundManager::constructor()
 	this->soundWrapperMIDINode = NULL;
 	this->lock = false;
 	this->queuedSounds = new VirtualList();
-
-	SoundManager::reset(this);
 }
 
 /**
@@ -363,6 +361,23 @@ void SoundManager::update()
 
 	SoundManager::tryToPlayQueuedSounds(this);
 	this->lockSoundWrappersList = false;	
+}
+
+bool SoundManager::isPlayingSound(const Sound* sound)
+{
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(sound == soundWrapper->sound)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
@@ -779,7 +794,7 @@ void SoundManager::turnOnPlayingSounds()
 	}
 }
 
-static uint8 SoundManager::getSoundChannelsCount(Sound* sound, uint32 channelType)
+static uint8 SoundManager::getSoundChannelsCount(const Sound* sound, uint32 channelType)
 {
 	// Compute the number of
 	uint8 channelsCount = 0;
@@ -795,7 +810,7 @@ static uint8 SoundManager::getSoundChannelsCount(Sound* sound, uint32 channelTyp
 	return __TOTAL_CHANNELS < channelsCount ? __TOTAL_CHANNELS : channelsCount;
 }
 
-uint8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, uint8 channelsCount, uint32 channelType)
+uint8 SoundManager::getFreeChannels(const Sound* sound, VirtualList availableChannels, uint8 channelsCount, uint32 channelType)
 {
 	if(NULL == sound || isDeleted(availableChannels))
 	{
@@ -827,7 +842,7 @@ void SoundManager::unlock()
 	this->lock = false;
 }
 
-void SoundManager::playSound(Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope)
+void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 	SoundManager::tryToPlayQueuedSounds(this);
@@ -873,7 +888,7 @@ void SoundManager::onSoundWrapperReleased(Object eventFirer)
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
 {
 	if(this->lock)
 	{
@@ -883,7 +898,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, uint32 command, EventListener 
 	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope);
 }
 
-SoundWrapper SoundManager::doGetSound(Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
 {
 	if(NULL == sound)
 	{
