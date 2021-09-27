@@ -7,7 +7,7 @@
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-{%- for waveform in project.sound.waveforms %}
+{%- for waveform in sound.waveforms %}
 
 const int8 {{ waveform.name }}WaveForm[] =
 {

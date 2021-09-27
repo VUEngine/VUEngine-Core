@@ -16,7 +16,7 @@
 
 FontSpec* const __FONTS[] =
 {
-	{% for font in combined.fonts -%}
+	{% for font in fonts.combined.fonts -%}
 	(FontSpec*)&{{ font.name | toUpperSnakeCase }}_FONT,
 	{% endfor %}
 	NULL

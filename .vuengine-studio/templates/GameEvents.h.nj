@@ -17,10 +17,10 @@
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-{% if project.enums.events.length > 0 -%}
+{% if enums.events.length > 0 -%}
 enum GameEvents
 {
-	{%- for event in project.enums.events %}
+	{%- for event in enums.events %}
 	kEvent{{ event.name }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };

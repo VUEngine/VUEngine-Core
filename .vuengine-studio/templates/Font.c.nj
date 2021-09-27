@@ -14,42 +14,42 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE {{ currentItem.image | basename(false) }}Tiles[];
+extern BYTE {{ font.image | basename(false) }}Tiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-CharSetROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT_CH =
+CharSetROMSpec {{ font.name | toUpperSnakeCase }}_FONT_CH =
 {
 	// number of chars
-	{{ currentItem.characterCount * currentItem.size.x * currentItem.size.y }},
+	{{ font.characterCount * font.size.x * font.size.y }},
 
 	// allocation type
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ currentItem.image | basename(false) }}Tiles,
+	{{ font.image | basename(false) }}Tiles,
 };
 
-FontROMSpec {{ currentItem.name | toUpperSnakeCase }}_FONT =
+FontROMSpec {{ font.name | toUpperSnakeCase }}_FONT =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&{{ currentItem.name | toUpperSnakeCase }}_FONT_CH,
+	(CharSetSpec*)&{{ font.name | toUpperSnakeCase }}_FONT_CH,
 
 	// character number at which the font starts, allows you to skip the control characters for example
-	{{ currentItem.offset }},
+	{{ font.offset }},
 
 	// number of characters in this font
-	{{ currentItem.characterCount }},
+	{{ font.characterCount }},
 
 	// number of characters per line in charset
-	{{ currentItem.charactersPerLine }},
+	{{ font.charactersPerLine }},
 
 	// size of a single character (in chars) ({width, height})
-	{{ "{" }}{{ currentItem.size.x }}, {{ currentItem.size.y }}{{ "}" }},
+	{{ "{" }}{{ font.size.x }}, {{ font.size.y }}{{ "}" }},
 
 	// font's name
-	"{{ currentItem.name }}",
+	"{{ font.name }}",
 };

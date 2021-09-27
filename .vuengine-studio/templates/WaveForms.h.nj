@@ -10,7 +10,7 @@
 //                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-{% for waveform in project.sound.waveforms -%}
+{% for waveform in sound.waveforms -%}
 extern const int8 {{ waveform.name }}WaveForm[];
 {% endfor %}
 

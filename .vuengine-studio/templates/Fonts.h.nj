@@ -18,7 +18,7 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-{% for font in combined.fonts -%}
+{% for font in fonts.combined.fonts -%}
 extern FontSpec {{ font.name | toUpperSnakeCase }}_FONT;
 {% endfor %}
 

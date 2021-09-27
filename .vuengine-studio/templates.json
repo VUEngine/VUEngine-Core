@@ -1,6 +1,7 @@
 [
     {
         "source": "config/Engine.json",
+        "key": "engine",
         "extra": {
             "compiler": "config/Compiler.json"
         },
@@ -13,6 +14,7 @@
     },
     {
         "source": "config/ROM.json",
+        "key": "rom",
         "targets": [
             {
                 "uri": "source/romHeader.h",
@@ -22,6 +24,10 @@
     },
     {
         "source": "config/Compiler.json",
+        "key": "compiler",
+        "extra": {
+            "engine": "config/Engine.json"
+        },
         "targets": [
             {
                 "uri": "config.make",
@@ -42,6 +48,10 @@
             {
                 "uri": "lib/compiler/linker/vb_debug.ld",
                 "template": "templates/vb_tools.ld.nj"
+            },
+            {
+                "uri": "source/config.h",
+                "template": "templates/config.h.nj"
             }
         ]
     }

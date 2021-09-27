@@ -11,12 +11,12 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-    {%- set dramLength = memory.sections.dram.length %}
-    dram    (!r)    : ORIGIN = {{ ((memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex }}, LENGTH = {{ -dramLength }}k
-    wram    (!r)    : ORIGIN = {{ memory.sections.wram.origin }}, LENGTH = {{ memory.sections.wram.length }}k
-    exp     (r)     : ORIGIN = {{ memory.sections.exp.origin }}, LENGTH = {{ memory.sections.exp.length }}M
-    sram    (!r)    : ORIGIN = {{ memory.sections.sram.origin }}, LENGTH = {{ memory.sections.sram.length }}M
-    rom     (rx)    : ORIGIN = {{ memory.sections.rom.origin }}, LENGTH = {{ memory.sections.rom.length }}M
+    {%- set dramLength = compiler.memory.sections.dram.length %}
+    dram    (!r)    : ORIGIN = {{ ((compiler.memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex }}, LENGTH = {{ -dramLength }}k
+    wram    (!r)    : ORIGIN = {{ compiler.memory.sections.wram.origin }}, LENGTH = {{ compiler.memory.sections.wram.length }}k
+    exp     (r)     : ORIGIN = {{ compiler.memory.sections.exp.origin }}, LENGTH = {{ compiler.memory.sections.exp.length }}M
+    sram    (!r)    : ORIGIN = {{ compiler.memory.sections.sram.origin }}, LENGTH = {{ compiler.memory.sections.sram.length }}M
+    rom     (rx)    : ORIGIN = {{ compiler.memory.sections.rom.origin }}, LENGTH = {{ compiler.memory.sections.rom.length }}M
 }
 
 /*
