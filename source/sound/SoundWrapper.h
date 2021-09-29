@@ -161,7 +161,7 @@ typedef struct Channel
 	SoundChannelConfiguration soundChannelConfiguration;
 
 	/// Sound definition
-	Sound* sound;
+	const Sound* sound;
 
 	/// Channel's effective length
 	uint32 length;
