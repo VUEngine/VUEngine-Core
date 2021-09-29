@@ -190,6 +190,10 @@ do
 		LIBRARIES_PATH="$2"
 		shift # past argument
 		;;
+		-u)
+		USER_LIBRARIES_PATH="$2"
+		shift # past argument
+		;;
 		-l)
 		PLUGINS=`sed -e 's/:/ /g' <<< "$2"`
 		LIBRARIES_ARGUMENT="$2"
@@ -307,7 +311,7 @@ then
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -u $USER_LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
 			else
 				mustBeReprocessed=true
 			fi
@@ -393,7 +397,7 @@ then
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
-	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -type f -name "classesHierarchy.txt" -print`
+	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies ! -name '*.lock' -type f -name "classesHierarchy.txt" -print`
 	classesHierarchy=
 
 	echo "Starting computation of whole hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
@@ -498,7 +502,13 @@ for plugin in $PLUGINS;
 do
 	plugin=`echo $plugin | sed -r "s@(user//|vuengine//)@/@"`
 
-	searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
+	if [ -d "$LIBRARIES_PATH/$plugin" ]; 
+	then
+		searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
+	else
+		searchPaths=$searchPaths" $USER_LIBRARIES_PATH/$plugin/source"
+	fi
+
 done
 
 echo "Starting computation of dependcies on caller $CALLER with search path $searchPath "  >> $CLASS_LOG_FILE

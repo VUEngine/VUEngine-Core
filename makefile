@@ -9,7 +9,7 @@ override ENGINE_NAME = core
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
 # TODO: USER_PLUGINS_FOLDER must be given by the invoker of make
-USER_PLUGINS_FOLDER = $(ENGINE_HOME)../../custom
+USER_PLUGINS_FOLDER = $(PLUGINS_FOLDER)
 
 # Clean plugin name by stripping out everything up to (and including) the last slash
 CLEAN_NAME = $(shell echo $(NAME) | sed -e "s@.*//@@")

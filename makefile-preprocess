@@ -29,7 +29,7 @@ PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
 -include $(D_FILES)
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -e $(ENGINE_HOME) -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(PLUGINS_FOLDER) -g makefile -l $(PLUGINS_ARGUMENT)
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -e $(ENGINE_HOME) -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(PLUGINS_FOLDER) -u $(USER_PLUGINS_FOLDER) -g makefile -l $(PLUGINS_ARGUMENT)
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
