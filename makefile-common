@@ -110,7 +110,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
-preprocessClasses: printClassPreprocessingInfo dirs $(PREPROCESS_ENGINE) preprocessPlugins preprocessHeaderFiles
+preprocessClasses: dirs $(PREPROCESS_ENGINE) preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
 	@touch $(CLASSES_HIERARCHY_FILE)
 #	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 #	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
