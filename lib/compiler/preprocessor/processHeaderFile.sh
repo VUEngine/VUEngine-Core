@@ -3,7 +3,7 @@
 
 function waitRandom()
 {
-	delay="0.00"$(( ( ( RANDOM % 900 ) + 10 ) ))
+	delay="0.000"$(( ( ( RANDOM % 900 ) + 10 ) ))
 	sleep $delay
 }
 
