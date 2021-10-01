@@ -298,6 +298,7 @@ ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/hashes/$(NAME)
+	@rm -Rf $(WORKING_FOLDER)/classes/locks
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
 #	@echo " done"
 #	@$(eval CHECKING_DIRS_END_TIME=$(shell date +%s))

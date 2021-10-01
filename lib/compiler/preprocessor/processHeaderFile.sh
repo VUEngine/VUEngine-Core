@@ -238,6 +238,8 @@ then
 	exit 0
 fi
 
+#echo "Starting preprocessing of $className" >> $WORKING_FOLDER/traces/preprocessing.txt
+
 if [ ! -d "$WORKING_FOLDER/classes/logs" ];
 then
 	mkdir -p $WORKING_FOLDER/classes/logs
@@ -417,10 +419,19 @@ then
 			break
 		fi
 
-		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" <<< "$classesHierarchy" | cut -d ":" -f 2`
-		baseClassesNames="$baseBaseClassName $baseClassesNames"
-		baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
+		baseBaseClassNameLine=`grep -e "^$baseBaseClassName:.*" <<< "$classesHierarchy"`
 
+		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
+		then
+			baseBaseClassName=`cut -d ":" -f 2 << "$baseBaseClassNameLine"`
+			baseClassesNames="$baseBaseClassName $baseClassesNames"
+			baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
+		else
+			echo "ERROR: $className depends on $baseBaseClassName which has multiple definitions:"
+			echo "$baseBaseClassNameLine"
+			echo ""
+			exit 1
+		fi
 	done
 fi
 
@@ -805,3 +816,5 @@ echo "Preprocessed class: $className"
 releaseLocks
 
 echo "Released locks on caller $CALLER"  >> $CLASS_LOG_FILE
+
+#echo "Finished preprocessing of $className" >> $WORKING_FOLDER/traces/preprocessing.txt
