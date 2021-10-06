@@ -105,8 +105,8 @@ void ObjectSprite::rewrite()
 		return;
 	}
 
-	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
-	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
+	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
+	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
 	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
