@@ -165,6 +165,10 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, int32 nu
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 
+	// Prevents a race condition in which a deleted sprite is not properly hidden
+	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
+	this->totalObjectsToWriteToDRAM = this->totalObjects;
+
 	this->availableObjects += numberOfObjects;
 
 	this->lockSpritesLists = false;
