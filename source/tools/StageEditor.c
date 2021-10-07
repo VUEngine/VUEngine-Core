@@ -953,7 +953,7 @@ void StageEditor::printEntityPosition()
 		const Vector3D* globalPosition =  SpatialObject::getPosition(entity);
 		const Rotation* globalRotation =  SpatialObject::getRotation(entity);
 		const Scale* globalScale =  SpatialObject::getScale(entity);
-		char* entityName = Container::getName(entity);
+		const char* entityName = Container::getName(entity);
 
 		Printing::text(Printing::getInstance(),		"ID:                             ", 			x, 		++y, 	NULL);
 		Printing::int32(Printing::getInstance(), 		Entity::getInternalId(entity), 					x + 10, y, 		NULL);

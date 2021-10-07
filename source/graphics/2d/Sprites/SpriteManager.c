@@ -206,7 +206,6 @@ void SpriteManager::reset()
  */
 void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	int32 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
@@ -215,21 +214,14 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 	{
 		return;
 	}
-
-	// must add them from __SPT3 to __SPT0
-	// so each they start presorted in the WORLDS
-
-	int32 spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	int32 i = __TOTAL_OBJECT_SEGMENTS;
-	for(; i--; )
+	
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
 		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
 
 		if(0 < size[i])
 		{
-			availableObjects -= size[i];
-			NM_ASSERT(0 <= availableObjects, "SpriteManager::setupObjectSpriteContainers: OBJs depleted");
-			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer(spt--, size[i], availableObjects);
+			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer();
 			VirtualList::pushBack(this->objectSpriteContainers, objectSpriteContainer);
 
 			PixelVector position =
@@ -252,11 +244,10 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 /**
  * Retrieve an ObjectSpriteContainer capable of allocating the given number of OBJECTs and close to the given z coordinate
  *
- * @param numberOfObjects		Number of OBJECTs required
  * @param z						Z coordinate
  * @return 						ObjectSpriteContainer instance
  */
-ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int32 numberOfObjects, fix10_6 z)
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fix10_6 z)
 {
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 	VirtualNode node = this->objectSpriteContainers->head;
@@ -265,18 +256,15 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int32 numberOfObje
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
-		if(ObjectSpriteContainer::hasRoomFor(objectSpriteContainer, numberOfObjects))
+		if(!suitableObjectSpriteContainer)
 		{
-			if(!suitableObjectSpriteContainer)
+			suitableObjectSpriteContainer = objectSpriteContainer;
+		}
+		else
+		{
+			if(__ABS(Sprite::getPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer)->z - z))
 			{
 				suitableObjectSpriteContainer = objectSpriteContainer;
-			}
-			else
-			{
-				if(__ABS(Sprite::getPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer)->z - z))
-				{
-					suitableObjectSpriteContainer = objectSpriteContainer;
-				}
 			}
 		}
 	}
@@ -592,12 +580,9 @@ void SpriteManager::writeDRAM()
 {
 	SpriteManager::writeGraphicsToDRAM(this);
 
-	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer + 1), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer + 1)) >> 2);
+	ObjectSpriteContainer::writeDRAM();
 
-	for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
-	{
-		ObjectSpriteContainer::writeDRAM(ObjectSpriteContainer::safeCast(node->data));
-	}
+	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer + 1), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer + 1)) >> 2);
 
 	SpriteManager::stopRendering(this);
 }
@@ -607,6 +592,8 @@ void SpriteManager::writeDRAM()
  */
 void SpriteManager::render()
 {
+	ObjectSpriteContainer::prepareForRendering();
+
 	ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
 
 	SpriteManager::sortProgressively(this);

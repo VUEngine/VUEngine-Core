@@ -152,7 +152,7 @@ void ObjectSprite::destructor()
 	// and the VPU triggers a new render cycle
 	if(this->registered && this->objectSpriteContainer)
 	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this, this->totalObjects);
+		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
 	}
 
 	if(!isDeleted(this->texture))
@@ -213,8 +213,8 @@ void ObjectSprite::registerWithManager()
 {
 	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
 	{
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z + this->displacement.z);
-		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this, this->totalObjects);
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->position.z + this->displacement.z);
+		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
 	}
 
 	Base::registerWithManager(this);

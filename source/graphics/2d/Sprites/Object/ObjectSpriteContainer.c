@@ -46,6 +46,10 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
+static int32 _spt;
+static int16 _objectIndex;
+static uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -53,11 +57,8 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @param spt					SPT assigned to this container
- * @param totalObjects			Total number of OBJECTs that manages by this container
- * @param firstObjectIndex		The index of the first OBJECT managed by this container
  */
-void ObjectSpriteContainer::constructor(int32 spt, int32 totalObjects, int32 firstObjectIndex)
+void ObjectSpriteContainer::constructor()
 {
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
@@ -65,12 +66,9 @@ void ObjectSpriteContainer::constructor(int32 spt, int32 totalObjects, int32 fir
 
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->head &= ~__WORLD_END;
-	this->spt = spt;
-	this->totalObjects = totalObjects;
-	this->availableObjects = this->totalObjects;
-	this->firstObjectIndex = firstObjectIndex;
-	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
-	this->totalObjectsToWriteToDRAM = this->totalObjects;
+	this->spt = 0;
+	this->firstObjectIndex = 0;
+	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
 	this->hidden = false;
 	this->visible = true;
@@ -78,18 +76,6 @@ void ObjectSpriteContainer::constructor(int32 spt, int32 totalObjects, int32 fir
 	this->positioned = true;
 	this->lockSpritesLists = false;
 	this->hideSprites = false;
-
-	// clear OBJ memory
-	for(int32 i = firstObjectIndex; i < this->firstObjectIndex + this->totalObjects; i++)
-	{
-		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
-		_objectAttributesCache[i].jy = 0;
-		_objectAttributesCache[i].tile = 0;
-	}
-
-	// must setup the STP registers regardless of the totalObjects
-	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
 	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
@@ -123,21 +109,18 @@ void ObjectSpriteContainer::destructor()
  * Add an ObjectSprite to this container
  *
  * @param objectSprite		Sprite to add
- * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int32 numberOfObjects)
+bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
 
 	NM_ASSERT(!VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::registerSprite: already registered");
 
-	if(objectSprite && this->availableObjects >= numberOfObjects)
+	if(objectSprite)
 	{
 		this->lockSpritesLists = true;
 
 		VirtualList::pushBack(this->objectSprites, objectSprite);
-
-		this->availableObjects -= numberOfObjects;
 
 		this->lockSpritesLists = false;
 
@@ -145,7 +128,6 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int32 numb
 	}
 
 	NM_ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
-	NM_ASSERT(this->availableObjects >= numberOfObjects, "ObjectSpriteContainer::registerSprite: not enough OBJECTS");
 	return false;
 }
 
@@ -153,9 +135,8 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite, int32 numb
  * Remove a previously registered ObjectSprite
  *
  * @param objectSprite		Sprite to remove
- * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, int32 numberOfObjects)
+void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
 	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
@@ -165,24 +146,7 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite, int32 nu
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 
-	// Prevents a race condition in which a deleted sprite is not properly hidden
-	this->lastRenderedObjectIndex = this->firstObjectIndex + this->totalObjects;
-	this->totalObjectsToWriteToDRAM = this->totalObjects;
-
-	this->availableObjects += numberOfObjects;
-
 	this->lockSpritesLists = false;
-}
-
-/**
- * Check if this container has enough free OBJECTs
- *
- * @param numberOfObjects	The number of OBJECTs to check
- * @return 					True if there is enough OBJECT space in this container
- */
-bool ObjectSpriteContainer::hasRoomFor(int32 numberOfObjects)
-{
-	return this->availableObjects >= numberOfObjects;
 }
 
 /**
@@ -232,7 +196,7 @@ void ObjectSpriteContainer::sortProgressively()
 			Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 			// check if z positions are swapped
-			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+			if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 			{
 				// swap nodes' data
 				VirtualNode::swapData(node, nextNode);
@@ -285,7 +249,6 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 }
 #endif
 
-
 void ObjectSpriteContainer::showForDebug()
 {
 	Base::showForDebug(this);
@@ -301,11 +264,6 @@ void ObjectSpriteContainer::hideForDebug()
 	this->hideSprites = true;
 }
 
-void ObjectSpriteContainer::writeDRAM()
-{
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress + this->firstObjectIndex), (WORD*)(_objectAttributesCache + this->firstObjectIndex), sizeof(ObjectAttributes) * (this->totalObjectsToWriteToDRAM) >> 2);
-}
-
 /**
  * Write WORLD data to DRAM
  *
@@ -313,13 +271,17 @@ void ObjectSpriteContainer::writeDRAM()
  */
 int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
-	_worldAttributesCache[index].head = this->head;
+	// Setup spt
+	this->spt = _spt;
+	_vipRegistersCache[_spt] = _objectIndex;
 
-	uint16 objectIndex = this->firstObjectIndex;
+	this->firstObjectIndex = _objectIndex;
+
+	_worldAttributesCache[index].head = this->head;
 
 	if(!this->hideSprites)
 	{
-		for(VirtualNode node = this->objectSprites->head; node && objectIndex < this->firstObjectIndex + this->totalObjects; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; node && 0 < _objectIndex; node = node->next)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -332,37 +294,33 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			if(objectSprite->transparent & evenFrame)
 			{
-				continue;
+			//	continue;
 			}
 
-			if(objectIndex == ObjectSprite::render(objectSprite, objectIndex, evenFrame))
+			if(0 > _objectIndex - objectSprite->totalObjects)
 			{
-				objectIndex += objectSprite->totalObjects;
+				break;
+			}
+
+			if(_objectIndex - objectSprite->totalObjects == ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame))
+			{
+				_objectIndex -= objectSprite->totalObjects;
 			}
 		}
 	}
 
-	uint16 lastRenderedObjectIndex = objectIndex;
+	_objectIndex--;
 
-	for(; objectIndex < this->lastRenderedObjectIndex; objectIndex++)
+	// Make sure that the rest of spt segments only run up to the last
+	// used object index
+	for(int32 i = _spt--; i--;)
 	{
-		_objectAttributesCache[objectIndex].head = __OBJECT_CHAR_HIDE_MASK;
+		_vipRegistersCache[i] = _objectIndex;
 	}
 
-	this->totalObjectsToWriteToDRAM = (lastRenderedObjectIndex > this->lastRenderedObjectIndex ? lastRenderedObjectIndex : this->lastRenderedObjectIndex) - this->firstObjectIndex;
-	this->lastRenderedObjectIndex = lastRenderedObjectIndex;
+	this->lastObjectIndex = _objectIndex;
 
 	return index;
-}
-
-/**
- * Retrieve the number of free OBJECTs within the segment assigned to this container
- *
- * @return 		Number of free OBJECTs
- */
-int32 ObjectSpriteContainer::getAvailableObjects()
-{
-	return this->availableObjects;
 }
 
 /**
@@ -372,28 +330,7 @@ int32 ObjectSpriteContainer::getAvailableObjects()
  */
 int32 ObjectSpriteContainer::getTotalUsedObjects()
 {
-	int32 totalUsedObjects = 0;
-	if(this->objectSprites)
-	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
-		{
-			totalUsedObjects += (ObjectSprite::safeCast(node->data))->totalObjects;
-		}
-	}
-
-	return totalUsedObjects;
-}
-
-/**
- * Retrieve the index of the next free OBJECT within the segment assigned to this container
- *
- * @return 		Index of the next free OBJECT
- */
-int32 ObjectSpriteContainer::getNextFreeObjectIndex()
-{
-	return 0;
+	return this->firstObjectIndex - this->lastObjectIndex;
 }
 
 /**
@@ -413,7 +350,7 @@ int32 ObjectSpriteContainer::getFirstObjectIndex()
  */
 int32 ObjectSpriteContainer::getLastObjectIndex()
 {
-	return this->firstObjectIndex + this->totalObjects;
+	return this->firstObjectIndex + this->lastObjectIndex;
 }
 
 /**
@@ -457,14 +394,8 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "HEAD:                   ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->index].head, x + 18, y, 4, NULL);
-	Printing::text(Printing::getInstance(), "Total OBJs:           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->totalObjects, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Available OBJs:       ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getAvailableObjects(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total used OBJs:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalUsedObjects(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Next free OBJ:  ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getNextFreeObjectIndex(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Total OBJs:            ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->firstObjectIndex - this->lastObjectIndex, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)), y, NULL);
@@ -479,7 +410,7 @@ int32 ObjectSpriteContainer::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
 	{
-		return ObjectSpriteContainer::getAvailableObjects(this) * 8 * 8;
+		return (this->firstObjectIndex - this->lastObjectIndex) * 8 * 8;
 	}
 
 	return 0;
@@ -513,4 +444,31 @@ bool ObjectSpriteContainer::writeTextures()
 	}
 
 	return true;
+}
+
+static void ObjectSpriteContainer::prepareForRendering()
+{
+	// clear OBJ memory
+	for(int32 i = _objectIndex; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	{
+		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
+	}
+
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
+
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegistersCache[i] = _objectIndex;
+	}
+}
+
+static void ObjectSpriteContainer::writeDRAM()
+{
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
+	}
+
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
 }

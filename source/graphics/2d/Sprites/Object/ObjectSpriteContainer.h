@@ -49,12 +49,7 @@ class ObjectSpriteContainer : Sprite
 	// first object index
 	int32 firstObjectIndex;
 	// last rendered object index
-	int32 lastRenderedObjectIndex;
-	int32 totalObjectsToWriteToDRAM;
-	// total objects
-	int32 totalObjects;
-	// OBJs available
-	int32 availableObjects;
+	int32 lastObjectIndex;
 	// spt index
 	int32 spt;
 	// semaphore to prevent manipulation of VirtualList during interrupt
@@ -63,8 +58,11 @@ class ObjectSpriteContainer : Sprite
 	bool hideSprites;
 
 	/// @publicsection
-	void constructor(int32 spt, int32 totalObjects, int32 firstObjectIndex);
-	bool registerSprite(ObjectSprite objectSprite, int32 numberOfObjects);
+	static void prepareForRendering();
+	static void writeDRAM();
+
+	void constructor();
+	bool registerSprite(ObjectSprite objectSprite);
 	int32 getAvailableObjects();
 	int32 getFirstObjectIndex();
 	int32 getLastObjectIndex();
@@ -73,8 +71,7 @@ class ObjectSpriteContainer : Sprite
 	bool hasRoomFor(int32 numberOfObjects);
 	void sortProgressively();
 	void position(const Vector3D* position);
-	void unregisterSprite(ObjectSprite objectSprite, int32 numberOfObjects);
-	void writeDRAM();
+	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);
 	void hideSprites(ObjectSprite spareSprite);
 	override void hideForDebug();
