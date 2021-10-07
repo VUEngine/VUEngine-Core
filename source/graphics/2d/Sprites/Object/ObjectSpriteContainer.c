@@ -294,7 +294,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			if(objectSprite->transparent & evenFrame)
 			{
-			//	continue;
+				continue;
 			}
 
 			if(0 > _objectIndex - objectSprite->totalObjects)
