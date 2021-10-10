@@ -358,7 +358,7 @@ void Body::applyForce(const Force* force)
 
 		if(axisOfExternalForce)
 		{
-			//Body::clearNormalOnaxis(this, axisOfExternalForce);
+			Body::clearNormalOnAxis(this, axisOfExternalForce);
 			Body::setMovementType(this, __ACCELERATED_MOVEMENT, axisOfExternalForce);
 			Body::awake(this, axisOfExternalForce);
 		}
@@ -881,8 +881,7 @@ void Body::reset()
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 }
 
-/*
-void Body::clearNormalOnaxis(uint16 axis __attribute__ ((unused))) __attribute__ ((unused))
+void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
 	if(this->normals)
 	{
@@ -912,7 +911,7 @@ void Body::clearNormalOnaxis(uint16 axis __attribute__ ((unused))) __attribute__
 
 			if(!isDeleted(node->data))
 			{
-			delete node->data;
+				delete node->data;
 			}
 			else
 			{
@@ -927,7 +926,6 @@ void Body::clearNormalOnaxis(uint16 axis __attribute__ ((unused))) __attribute__
 
 	Body::computeTotalNormal(this);
 }
-*/
 
 void Body::clearNormal(Object referent)
 {
@@ -1264,7 +1262,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	if(movementResult.axisOfAcceleratedBouncing)
 	{
 	//	Body::setSurroundingFrictionCoefficient(this, 0);
-	//	Body::clearNormalOnaxis(this, movementResult.axisOfAcceleratedBouncing);
+		Body::clearNormalOnAxis(this, movementResult.axisOfAcceleratedBouncing);
 	}
 
 	if(!Body::getMovementOnAllAxis(this))
