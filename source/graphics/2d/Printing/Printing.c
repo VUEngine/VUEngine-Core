@@ -583,20 +583,17 @@ void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attrib
 
 int16 Printing::getWorldCoordinatesX()
 {
-	return 0;
-//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGX(this->printingSprite) : 0;
+	return !isDeleted(this->printingSprite) ? PrintingSprite::getGX(this->printingSprite) : 0;
 }
 
 int16 Printing::getWorldCoordinatesY()
 {
-	return 0;
-//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGY(this->printingSprite) : 0;
+	return !isDeleted(this->printingSprite) ? PrintingSprite::getGY(this->printingSprite) : 0;
 }
 
 int16 Printing::getWorldCoordinatesP()
 {
-	return 0;
-//	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
+	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
 }
 
 void Printing::resetCoordinates()
