@@ -223,13 +223,13 @@ static int32 Error::triggerException(char* message, char* detail)
 static void Error::zeroDivisionException()
 {
 #ifndef __RELEASE
-	uint16 eipc = 0;
+	uint32 eipc = 0;
 	// Save EIPC
     asm("					\n\t"      \
 		"stsr	eipc, r10	\n\t"      \
-		"mov	r10, %0	\n\t"
-    : // No Output
-    : "r" (eipc)
+		"mov	r10, %[eipc]	\n\t"
+    : [eipc] "=r" (eipc)
+    : // No Input
 	: "r10" // regs used
     );
 
@@ -242,13 +242,13 @@ static void Error::zeroDivisionException()
 static void Error::invalidOpcodeException()
 {
 #ifndef __RELEASE
-	uint16 eipc = 0;
+	uint32 eipc = 0;
 	// Save EIPC
     asm("					\n\t"      \
 		"stsr	eipc, r10	\n\t"      \
-		"mov	r10, %0	\n\t"
-    : // No Output
-    : "r" (eipc)
+		"mov	r10, %[eipc]	\n\t"
+    : [eipc] "=r" (eipc)
+    : // No Input
 	: "r10" // regs used
     );
 
