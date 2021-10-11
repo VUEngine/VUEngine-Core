@@ -667,7 +667,7 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 	if(0 > position)
 	{
 		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineField->a, lineField->b);
-
+	
 		if(CollisionHelper::isValueInRange(projection.x, lineField->a.x, lineField->b.x)
 			&&
 			CollisionHelper::isValueInRange(projection.y, lineField->a.y, lineField->b.y)
@@ -677,7 +677,7 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 		{
 			fix10_6 distanceToLine = Vector3D::length(Vector3D::get(projection, ballSideToCheck));
 
-			if(distanceToLine && distanceToLine < lineField->normalLength + (ball->radius << 1))
+			if(distanceToLine < lineField->normalLength + (ball->radius << 1))
 			{
 				solutionVector.magnitude = distanceToLine + (__PIXELS_TO_METERS(1) >> 1);
 				solutionVector.direction = Vector3D::scalarProduct(lineField->normal, __I_TO_FIX10_6(-1));
