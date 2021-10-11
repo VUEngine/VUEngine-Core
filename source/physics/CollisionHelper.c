@@ -679,7 +679,7 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 
 			if(distanceToLine < lineField->normalLength + (ball->radius << 1))
 			{
-				solutionVector.magnitude = distanceToLine + (__PIXELS_TO_METERS(1) >> 1);
+				solutionVector.magnitude = distanceToLine + (__PIXELS_TO_METERS(1) >> (0 == distanceToLine ? 0 : 1));
 				solutionVector.direction = Vector3D::scalarProduct(lineField->normal, __I_TO_FIX10_6(-1));
 			}
 		}
