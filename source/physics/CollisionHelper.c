@@ -646,18 +646,12 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, 
 	return solutionVector;
 }
 
-static bool CollisionHelper::isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB)
-{
-	if(limitA < limitB)
-	{
-		return (unsigned)(value - limitA) <= (unsigned)(limitB - limitA);
-	}
-
-	return (unsigned)(value - limitB) <= (unsigned)(limitA - limitB);
-}
-
 SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball, LineField lineField)
 {
+	// TODO: this misses some cases when the ball's radius is bigger than the line field's length
+	// A first check should compare them and use the bigger's shape axis as the line onto which
+	// project the other shape's points
+
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
 	Vector3D ballSideToCheck = Vector3D::sum(ball->center, Vector3D::scalarProduct(lineField->normal, ball->radius));
@@ -667,13 +661,25 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 	if(0 > position)
 	{
 		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineField->a, lineField->b);
-	
-		if(CollisionHelper::isValueInRange(projection.x, lineField->a.x, lineField->b.x)
-			&&
-			CollisionHelper::isValueInRange(projection.y, lineField->a.y, lineField->b.y)
-			&&
-			CollisionHelper::isValueInRange(projection.z, lineField->a.z, lineField->b.z)
-		)
+
+		bool collision = Vector3D::isVectorInsideLine(projection, lineField->a, lineField->b);
+
+		if(!collision)
+		{
+			Vector3D ballRadiusVector = Vector3D::scalarProduct(lineField->normal, ball->radius);
+
+			// Check both sides of the ball
+			// This is a rough approximation since it identifies a collision even if the ball and the line field
+			// are not really overlapping
+			for(bool left = true; !collision && left; left = false)
+			{
+				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpedicular(ballRadiusVector, left));
+				
+				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineField->a, lineField->b);
+			}
+		}
+
+		if(collision)
 		{
 			fix10_6 distanceToLine = Vector3D::length(Vector3D::get(projection, ballSideToCheck));
 
@@ -686,5 +692,4 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 	}
 
 	return solutionVector;
-
 }

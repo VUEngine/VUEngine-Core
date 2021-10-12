@@ -63,6 +63,8 @@ static class Vector3D : Object
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
 	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
+	static inline bool isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB);
+	static inline bool isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd);
 	static inline void print(Vector3D vector, int32 x, int32 y);
 }
 
@@ -401,6 +403,26 @@ static inline Vector3D Vector3D::projectOntoHighPrecision(Vector3D p, Vector3D a
 	};
 
 	return projection;
+}
+
+static inline bool Vector3D::isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB)
+{
+	if(limitA < limitB)
+	{
+		return (unsigned)(value - limitA) <= (unsigned)(limitB - limitA);
+	}
+
+	return (unsigned)(value - limitB) <= (unsigned)(limitA - limitB);
+}
+
+static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd)
+{
+	return (Vector3D::isValueInRange(vector.x, lineStart.x, lineEnd.x)
+		&&
+		Vector3D::isValueInRange(vector.y, lineStart.y, lineEnd.y)
+		&&
+		Vector3D::isValueInRange(vector.z, lineStart.z, lineEnd.z)
+	);
 }
 
 static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
