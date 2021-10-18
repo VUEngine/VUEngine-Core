@@ -60,6 +60,7 @@ class StateMachine : Object
 	void changeToGlobal(State globalState);
 	bool isInState(State state);
 	void setOwner(void* owner);
+	bool hasStateInTheStack(State state);
 	VirtualList getStateStack();
 	State getCurrentState();
 	State getPreviousState();

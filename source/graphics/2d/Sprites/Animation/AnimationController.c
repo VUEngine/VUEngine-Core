@@ -439,7 +439,7 @@ bool AnimationController::replay(const AnimationDescription* animationDescriptio
 		return false;
 	}
 
-	if(this->animationCoordinator)
+	if(!isDeleted(this->animationCoordinator))
 	{
 		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationDescription, this->animationFunction->name))
 		{

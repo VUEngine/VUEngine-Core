@@ -323,6 +323,16 @@ void StateMachine::setOwner(void* owner)
 }
 
 /**
+ * Check if the state is in the stack
+ *
+ * @param state			State to check for
+ */
+bool StateMachine::hasStateInTheStack(State state)
+{
+	return !isDeleted(state) && VirtualList::find(this->stateStack, state);
+}
+
+/**
  * Retrieve the current state
  *
  * @return				Current state
