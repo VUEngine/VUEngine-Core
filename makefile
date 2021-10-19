@@ -8,7 +8,7 @@ override ENGINE_NAME = core
 # Engine's home
 override ENGINE_HOME = $(ENGINE_FOLDER)
 
-# TODO: USER_PLUGINS_FOLDER must be given by the invoker of make
+# Home of custom user plugins
 USER_PLUGINS_FOLDER = $(PLUGINS_FOLDER)
 
 # Clean plugin name by stripping out everything up to (and including) the last slash

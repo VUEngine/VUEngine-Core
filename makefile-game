@@ -54,6 +54,8 @@ printPreBuildingInfo:
 	@echo "Build type:  $(TYPE)"
 	@echo "Compiler:    $(COMPILER_NAME) $(COMPILER_VERSION)"
 	@echo "Make Jobs:   $(MAKE_JOBS)"
+	@echo
+	@echo "Finding total number of components"
 	@$(shell rm -f \$(WORKING_FOLDER)/traces/*omponents.txt*)
 	@$(shell echo "core" > \$(WORKING_FOLDER)/traces/components.txt)
 	@rm -f $(WORKING_FOLDER)/traces/preprocessing.txt
@@ -63,7 +65,7 @@ printComponentsToBuildInformation:
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt >> $(WORKING_FOLDER)/traces/components.txt.tmp)
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt > $(WORKING_FOLDER)/traces/builtComponents.txt)
 	@$(eval COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/components.txt.tmp))
-	@echo Total components to build: $(COMPONENTS)
+	@echo "Components: $(COMPONENTS)"
 	@echo "COMPONENTS=$(COMPONENTS)" > \$(WORKING_FOLDER)/traces/components.txt
 	@cat \$(WORKING_FOLDER)/traces/components.txt.tmp >> $(WORKING_FOLDER)/components.txt
 	@rm -f \$(WORKING_FOLDER)/traces/components.txt.tmp 
