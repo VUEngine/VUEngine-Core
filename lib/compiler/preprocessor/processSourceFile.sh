@@ -84,13 +84,29 @@ then
 fi
 
 className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
-isStatic=false
+isStaticClass=false
+isExtensionClass=false
 
 if [ -z "$className" ];
 then
-# Maybe it is a static class
-	isStatic=false
+	# Maybe it is an extension class
+	className=`grep -m 1 -e '^extension[ 	][ 	]*class[ 	][ 	]*' $OUTPUT_FILE | sed -e 's/^extension[ 	][ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1/'`
+
+	if [ ! -z "$className" ];
+	then
+		isExtensionClass=true
+	fi
+fi
+
+if [ -z "$className" ];
+then
+	# Maybe it is a static class
 	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+
+	if [ -z "$className" ];
+	then
+		isStaticClass=true
+	fi
 fi
 
 mark="@N@"
@@ -192,7 +208,23 @@ then
 	exit 0
 fi
 
-baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
+if [ "$isExtensionClass" = true ];
+then
+	classesHierarchyFiles=`find $WORKING_FOLDER/classes/hierarchies/ -name classesHierarchy.txt`
+
+	for classesHierarchyFile in $classesHierarchyFiles 
+	do
+		baseClassName=`grep -m1 -e "^$className:" $classesHierarchyFile | cut -d ":" -f2`
+
+		if [ ! -z "$baseClassName" ];
+		then
+			break
+		fi
+	done
+else
+	baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
+fi
+
 if [ -z "$baseClassName" ];
 then
 	clean_up
@@ -329,50 +361,53 @@ then
 	classModifiers="normal"
 fi
 
-if [ ! -z "${classModifiers##*static *}" ] ;
+if [ ! "$isExtensionClass" = true ];
 then
-
-	classDefinition="__CLASS_DEFINITION($className, $baseClassName); $prototypes"
-
-	# Add allocator if it is not abstract nor a singleton class
-	if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
+	if [ ! -z "${classModifiers##*static *}" ] ;
 	then
-	#	echo "Adding allocator"
-		constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
-		constructorParameters=`sed -e 's#^.*(\(.*\))[ 	{]*$#\1#' <<< "$constructor"`
-		#echo "constructorParameters $constructorParameters"
-		allocatorParameters=`cut -d "," -f2- <<< "$constructorParameters,"`
-		#echo "allocatorParameters $allocatorParameters"
-		allocatorArguments=`sed -e 's#[ 	*][ 	*]*\([A-z0-9][A-z0-9]*[ 	]*,\)#<\1>\'$'\n#g' <<< "$allocatorParameters"| sed -e 's#.*<\(.*\)>.*#\1#g' | tr -d "\r\n" | sed -e 's#\(.*\),#\1#'`
-		allocatorParameters=`sed -e 's#\(.*\),#\1#' <<< "$allocatorParameters"`
 
-		if [ -z "$allocatorParameters" ];then
-			classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className)"
-			classDefinition=$classDefinition"__CLASS_NEW_END($className);"
-		else
-			classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
-			classDefinition=$classDefinition"__CLASS_NEW_END($className, $allocatorArguments);"
-		fi
-	else
-		if [ -z "${classModifiers##*singleton *}" ];
+		classDefinition="__CLASS_DEFINITION($className, $baseClassName); $prototypes"
+
+		# Add allocator if it is not abstract nor a singleton class
+		if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
 		then
-			customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
+		#	echo "Adding allocator"
+			constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
+			constructorParameters=`sed -e 's#^.*(\(.*\))[ 	{]*$#\1#' <<< "$constructor"`
+			#echo "constructorParameters $constructorParameters"
+			allocatorParameters=`cut -d "," -f2- <<< "$constructorParameters,"`
+			#echo "allocatorParameters $allocatorParameters"
+			allocatorArguments=`sed -e 's#[ 	*][ 	*]*\([A-z0-9][A-z0-9]*[ 	]*,\)#<\1>\'$'\n#g' <<< "$allocatorParameters"| sed -e 's#.*<\(.*\)>.*#\1#g' | tr -d "\r\n" | sed -e 's#\(.*\),#\1#'`
+			allocatorParameters=`sed -e 's#\(.*\),#\1#' <<< "$allocatorParameters"`
 
-			if [ -z "$customSingletonDefinition" ];
-			then
-				if [ -z "${classModifiers##*dynamic_singleton *}" ];
-				then
-					classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
-				else
-					classDefinition=$classDefinition"__SINGLETON($className);"
-				fi
+			if [ -z "$allocatorParameters" ];then
+				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className)"
+				classDefinition=$classDefinition"__CLASS_NEW_END($className);"
 			else
-				customSingletonDefinition=`sed -e 's@^.*[ 	][ 	]*\(.*SINGLETON.*\)(@\1@' <<< $customSingletonDefinition`
-				classDefinition=$classDefinition"$customSingletonDefinition($className);"
+				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
+				classDefinition=$classDefinition"__CLASS_NEW_END($className, $allocatorArguments);"
 			fi
+		else
+			if [ -z "${classModifiers##*singleton *}" ];
+			then
+				customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
-			sed -i.b "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE 
+				if [ -z "$customSingletonDefinition" ];
+				then
+					if [ -z "${classModifiers##*dynamic_singleton *}" ];
+					then
+						classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
+					else
+						classDefinition=$classDefinition"__SINGLETON($className);"
+					fi
+				else
+					customSingletonDefinition=`sed -e 's@^.*[ 	][ 	]*\(.*SINGLETON.*\)(@\1@' <<< $customSingletonDefinition`
+					classDefinition=$classDefinition"$customSingletonDefinition($className);"
+				fi
 
+				sed -i.b "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE 
+
+			fi
 		fi
 	fi
 else
@@ -408,7 +443,13 @@ fi
 #sed -i.b 's#,[ 	]*);#);#' $OUTPUT_FILE
 #sed -i.b "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 #sed -i.b "s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
+#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutate(\(.*\), \(.*\))#__CLASS_MUTATE(\1, \2, \3)#g" $OUTPUT_FILE
+
 sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g; s#,[ 	]*);#);#; s#Base_destructor()#__DESTROY_BASE#g; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
+
+sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutate(\(.*\), \(.*\))#__CLASS_MUTATE(\1, \2, \3)#g" $OUTPUT_FILE
+
+sed -i.b "s#[ 	]*extension[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 
 clean_up
 

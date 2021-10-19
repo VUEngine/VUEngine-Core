@@ -471,6 +471,7 @@ isSingletonClass=false
 isAbstractClass=false
 isStaticClass=false
 isFinalClass=false
+isExtensionClass=false
 
 
 virtualMethodDeclarations="#define "$className"_METHODS(ClassName)"
@@ -678,10 +679,22 @@ do
 		isStaticClass=true
 	fi
 
+	if [ -z "${classModifier##*extension *}" ];
+	then
+
+		isExtensionClass=true
+	fi
+
 done <<< "$classModifiers"
 
 # Add destructor declaration
 if [ ! "$isStaticClass" = true ];
+then
+	methodDeclarations=$methodDeclarations"
+	void "$className"_destructor(void* _this);"
+fi
+
+if [ ! "$isExtensionClass" = true ];
 then
 	methodDeclarations=$methodDeclarations"
 	void "$className"_destructor(void* _this);"

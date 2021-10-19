@@ -103,25 +103,25 @@
 #define __NEW_BASIC(ClassName)																			\
 																										\
 		/* allocate data */																				\
-		(ClassName*)((uint32)MemoryPool_allocate(MemoryPool_getInstance(),									\
+		(ClassName*)((uint32)MemoryPool_allocate(MemoryPool_getInstance(),								\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
 #ifndef __RELEASE
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))					\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
 			ASSERT(object && *(uint32*)object, "Deleting null object");									\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
 		{																								\
-			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 								\
+			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 						\
 				"Oop: deleting null basic object");														\
 			extern MemoryPool _memoryPool;																\
-			MemoryPool_free(_memoryPool, (BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));					\
+			MemoryPool_free(_memoryPool, (BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));				\
 		}																								\
 		else 																							\
 		{																								\
@@ -130,13 +130,13 @@
 #else
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))					\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
 		{																								\
-			*(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
+			*(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;				\
 		}																								\
 		else 																							\
 		{																								\
@@ -199,7 +199,7 @@
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))			\
+		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))		\
 
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
@@ -237,7 +237,7 @@
 		{																								\
 			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
-			*(tempPointer) = (void (*)())&ClassName ## _ ## NewMethod;									\
+			*(tempPointer) = (void (*)())&NewMethod;													\
 		}
 
 // configure class's vtable
@@ -252,7 +252,7 @@
 			Delete the GAME/build/working/setupClasses.c file);											\
 																										\
 			/* check that no method is null */															\
-			uint32 i = 0;																					\
+			uint32 i = 0;																				\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
 			{																							\
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## ## is abstract);		\
@@ -280,7 +280,7 @@
 			}																							\
 																										\
 			/* clean up the vtable */																	\
-			uint32 i = 0;																					\
+			uint32 i = 0;																				\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
 			{																							\
 				((void (*(*))())&ClassName ## _vTable)[i] = NULL;										\
@@ -348,7 +348,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		void ClassName ## _setVTable();																	\
 																										\
 		/* declare getSize method */																	\
-		int32 ClassName ## _getObjectSize();																\
+		int32 ClassName ## _getObjectSize();															\
 																										\
 		/* declare getBaseClass method */																\
 		ClassPointer ClassName ## _getBaseClass(void*);													\
@@ -449,7 +449,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		typedef struct SingletonWrapper ## ClassName													\
 		{																								\
 			/* footprint to differentiate between objects and structs */								\
-			uint32 objectMemoryFootprint;																	\
+			uint32 objectMemoryFootprint;																\
 			/* declare the static instance */															\
 			ClassName ## _str instance;																	\
 		} SingletonWrapper ## ClassName;																\
