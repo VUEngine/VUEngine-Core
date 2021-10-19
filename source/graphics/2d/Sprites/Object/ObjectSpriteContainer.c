@@ -60,8 +60,6 @@ static uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
  */
 void ObjectSpriteContainer::constructor()
 {
-	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
-
 	Base::constructor(NULL, NULL);
 
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
