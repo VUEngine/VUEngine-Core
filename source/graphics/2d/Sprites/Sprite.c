@@ -719,8 +719,6 @@ void Sprite::stop()
  */
 bool Sprite::replay(const AnimationDescription* animationDescription)
 {
-	ASSERT(animationDescription, "Sprite::replay: null animationDescription");
-
 	if(!isDeleted(this->animationController))
 	{
 		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationDescription);
