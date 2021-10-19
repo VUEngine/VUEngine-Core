@@ -688,13 +688,7 @@ do
 done <<< "$classModifiers"
 
 # Add destructor declaration
-if [ ! "$isStaticClass" = true ];
-then
-	methodDeclarations=$methodDeclarations"
-	void "$className"_destructor(void* _this);"
-fi
-
-if [ ! "$isExtensionClass" = true ];
+if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ];
 then
 	methodDeclarations=$methodDeclarations"
 	void "$className"_destructor(void* _this);"
@@ -703,7 +697,7 @@ fi
 echo "Computing constructor/destructor/allocators on caller $CALLER"  >> $CLASS_LOG_FILE
 
 # Add allocator if it is not abstract nor a singleton class
-if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] ;
+if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ] ;
 then
 
 	constructor=`grep -m 1 -e "void[ 	]\+"$className"_constructor[ 	]*(.*);" <<< "$methodDeclarations"`
@@ -736,7 +730,7 @@ TEMPORAL_FILE=$WORKING_FOLDER/$className"Temporal.txt"
 touch $TEMPORAL_FILE
 
 #echo "" > $TEMPORAL_FILE
-if [ ! "$isStaticClass" = true ];
+if [ ! "$isStaticClass" = true ] && [ ! "$isExtensionClass" = true ];
 then
 	echo "$virtualMethodDeclarations" >> $TEMPORAL_FILE
 #	echo "" >> $TEMPORAL_FILE
@@ -760,9 +754,14 @@ then
 fi
 
 #echo "" >> $TEMPORAL_FILE
-if [ ! "$isStaticClass" = true ];
+if [ "$isExtensionClass" = true ];
 then
-	echo "__CLASS($className);" >> $TEMPORAL_FILE
+	echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+else
+	if [ ! "$isStaticClass" = true ]
+	then
+		echo "__CLASS($className);" >> $TEMPORAL_FILE
+	fi
 fi
 
 #echo "" >> $TEMPORAL_FILE
