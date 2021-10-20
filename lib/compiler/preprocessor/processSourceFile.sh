@@ -443,11 +443,11 @@ fi
 #sed -i.b 's#,[ 	]*);#);#' $OUTPUT_FILE
 #sed -i.b "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 #sed -i.b "s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
-#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutate(\(.*\), \(.*\))#__CLASS_MUTATE(\1, \2, \3)#g" $OUTPUT_FILE
+#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" $OUTPUT_FILE
 
 sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g; s#,[ 	]*);#);#; s#Base_destructor()#__DESTROY_BASE#g; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 
-sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutate(\(.*\), \(.*\))#__CLASS_MUTATE(\1, \2, \3)#g" $OUTPUT_FILE
+sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" $OUTPUT_FILE
 
 sed -i.b "s#[ 	]*extension[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 

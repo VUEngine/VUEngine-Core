@@ -79,7 +79,7 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 
 	# Create the calls directives
 	for className in $CLASSES_NAMES; do
-		echo "	"$className"_setVTable();" >> $OUTPUT_C_FILE
+		echo "	"$className"_setVTable(false);" >> $OUTPUT_C_FILE
 	done
 	echo "}" >> $OUTPUT_C_FILE
 

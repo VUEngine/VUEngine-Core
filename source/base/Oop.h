@@ -59,14 +59,14 @@
 			extern MemoryPool _memoryPool;																\
 																										\
 			/* allocate object */																		\
-			uint32* memoryBlock = (uint32*)MemoryPool_allocate(_memoryPool, 									\
+			uint32* memoryBlock = (uint32*)MemoryPool_allocate(_memoryPool, 							\
 							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
 																										\
 			/* mark memory block as used by an object */												\
 			*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;													\
 																										\
 			/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */											\
-			ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);						\
+			ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);					\
 																										\
 			/* check if properly created */																\
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");								\
@@ -233,7 +233,7 @@
 		}
 
 // mutate class method
-#define __CLASS_MUTATE(ClassName, MethodName, NewMethod)												\
+#define __CLASS_MUTATE_METHOD(ClassName, MethodName, NewMethod)								\
 		{																								\
 			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
@@ -271,10 +271,10 @@
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)												\
 																										\
 		/* define the static method */																	\
-		void __attribute__ ((noinline)) ClassName ## _setVTable()										\
+		void __attribute__ ((noinline)) ClassName ## _setVTable(bool force)								\
 		{																								\
 			/* setup the class's vtable only if destructor is NULL */									\
-			if(ClassName ## _vTable.destructor)															\
+			if(!force && ClassName ## _vTable.destructor)												\
 			{																							\
 				return;																					\
 			}																							\
@@ -289,7 +289,7 @@
 			/* set the base class's virtual methods */													\
 			if(&ClassName ## _setVTable != &BaseClassName ## _setVTable)								\
 			{																							\
-				BaseClassName ## _setVTable();															\
+				BaseClassName ## _setVTable(force);														\
 			}																							\
 																										\
 			/* set the class's virtual methods */														\
@@ -345,7 +345,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		__VTABLE(ClassName);																			\
 																										\
 		/* declare vtable */																			\
-		void ClassName ## _setVTable();																	\
+		void ClassName ## _setVTable(bool force);														\
 																										\
 		/* declare getSize method */																	\
 		int32 ClassName ## _getObjectSize();															\
@@ -354,7 +354,11 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		ClassPointer ClassName ## _getBaseClass(void*);													\
 																										\
 		/* declare getClass name method */																\
-		const char* ClassName ## _getClassName(ClassName)												\
+		const char* ClassName ## _getClassName(ClassName);												\
+																										\
+		/* declare restoreMethods name method */														\
+		void ClassName ## _restoreMethods()																\
+
 
 
 // to being able to friend a class
@@ -417,6 +421,12 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "				\
 					__MAKE_STRING(BaseClassName) ")");													\
 			return (char*)__OBFUSCATE_NAME(ClassName);													\
+		}																								\
+																										\
+		/* restore class vTable */																		\
+		void ClassName ## _restoreMethods()																\
+		{																								\
+			ClassName ## _setVTable(true);																\
 		}																								\
 																										\
 		/* now add the function which will handle the vtable */											\
