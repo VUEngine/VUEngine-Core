@@ -69,7 +69,7 @@ class Entity : Container
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-	Entity addChildEntity(const EntitySpec* entitySpec, int32 internalId, const char* name, const Vector3D* position, void* extraInfo);
+	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
 	bool addSpriteFromSpecAtIndex(int32 spriteSpecIndex);
 	bool addShapeFromSpecAtIndex(int32 shapeSpecIndex);
 	bool transformShapeAtSpecIndex(int32 shapeSpecIndex);

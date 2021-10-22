@@ -840,7 +840,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const EntitySpec* entitySpec, int32 internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
 	ASSERT(entitySpec, "Entity::addChildEntity: null entitySpec");
 
