@@ -157,7 +157,7 @@ static int32 Utilities::random(uint32 seed, int32 randnums)
 	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
 #endif
 
-	return seed && randnums ? __ABS((int32)(seed % randnums)) : 0;
+	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
 }
 
 /*
