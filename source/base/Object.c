@@ -80,6 +80,8 @@ void Object::destructor()
 #else
 	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
 #endif
+
+	this = NULL;
 }
 
 /**
@@ -173,30 +175,18 @@ void Object::removeEventListeners(EventListener method, uint32 eventCode)
 {
 	if(this->events)
 	{
-		VirtualList eventsToRemove = new VirtualList();
-
-		VirtualNode node = this->events->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
 
 			if(method == event->method && eventCode == event->code)
 			{
-				VirtualList::pushBack(eventsToRemove, event);
+				VirtualList::removeNode(this->events, node);
 			}
 		}
 
-		for(node = eventsToRemove->head; node; node = node->next)
-		{
-			Event* event = (Event*)node->data;
-
-			VirtualList::removeElement(this->events, event);
-
-			delete event;
-		}
-
-		delete eventsToRemove;
 
 		if(!this->events->head)
 		{
@@ -216,30 +206,17 @@ void Object::removeEventListenerScopes(Object listener, uint32 eventCode)
 {
 	if(this->events)
 	{
-		VirtualList eventsToRemove = new VirtualList();
-
-		VirtualNode node = this->events->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
 
 			if(listener == event->listener && eventCode == event->code)
 			{
-				VirtualList::pushBack(eventsToRemove, event);
+				VirtualList::removeNode(this->events, node);
 			}
 		}
-
-		for(node = eventsToRemove->head; node; node = node->next)
-		{
-			Event* event = (Event*)node->data;
-
-			VirtualList::removeElement(this->events, event);
-
-			delete event;
-		}
-
-		delete eventsToRemove;
 
 		if(!this->events->head)
 		{
@@ -258,30 +235,17 @@ void Object::removeAllEventListeners(uint32 eventCode)
 {
 	if(this->events)
 	{
-		VirtualList eventsToRemove = new VirtualList();
-
-		VirtualNode node = this->events->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
 
 			if(eventCode == event->code)
 			{
-				VirtualList::pushBack(eventsToRemove, event);
+				VirtualList::removeNode(this->events, node);
 			}
 		}
-
-		for(node = eventsToRemove->head; node; node = node->next)
-		{
-			Event* event = (Event*)node->data;
-
-			VirtualList::removeElement(this->events, event);
-
-			delete event;
-		}
-
-		delete eventsToRemove;
 
 		if(!this->events->head)
 		{
