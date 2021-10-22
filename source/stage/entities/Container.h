@@ -81,8 +81,6 @@ class Container : SpatialObject
 	Transformation transformation;
 	// Children list
 	VirtualList children;
-	// Removed children list
-	VirtualList removedChildren;
 	// Bahaviors list
 	VirtualList behaviors;
 	// Parent

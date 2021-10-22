@@ -74,7 +74,6 @@ void Container::constructor(const char* const name)
 
 	this->parent = NULL;
 	this->children = NULL;
-	this->removedChildren = NULL;
 	this->behaviors = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
@@ -89,25 +88,10 @@ void Container::constructor(const char* const name)
  */
 void Container::destructor()
 {
-	// Must purge children first to prevent race conditions with
-	// children that just called deleteMyself
-	Container::purgeChildren(this);
-
-	// first remove any children removed
-	if(this->removedChildren)
-	{
-		delete this->removedChildren;
-		this->removedChildren = NULL;
-	}
-
 	// if I have children
 	if(this->children)
 	{
-		// create a temporary children list
-		VirtualNode node = this->children->head;
-
-		// destroy each child
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->children->head; node ; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -189,7 +173,7 @@ void Container::deleteMyself()
 		Container::removeChild(this->parent, this, true);
 		Container::iAmDeletingMyself(this);
 	}
-	else if(!this->deleteMe)
+	else
 	{
 		delete this;
 	}
@@ -261,12 +245,6 @@ void Container::addChild(Container child)
 		// add to the children list
 		VirtualList::pushBack(this->children, (void*)child);
 
-		if(this->removedChildren)
-		{
-			// make sure it is not up for removal
-			VirtualList::removeElement(this->removedChildren, child);
-		}
-
 		Container::invalidateGlobalTransformation(child);
 	}
 }
@@ -287,19 +265,8 @@ void Container::removeChild(Container child, bool deleteChild)
 		return;
 	}
 
-	// if don't have any children to remove yet
-	if(!this->removedChildren)
+	if(VirtualList::find(this->children, child))
 	{
-		// create children list
-		this->removedChildren = new VirtualList();
-	}
-
-	if(!VirtualList::find(this->removedChildren, child))
-	{
-		// register for removing
-		VirtualList::pushBack(this->removedChildren, child);
-
-		// set no parent
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
 	}
@@ -312,7 +279,7 @@ void Container::removeChild(Container child, bool deleteChild)
 		Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-		NM_ASSERT(false, "Container::removeChild: removing child twice");
+		NM_ASSERT(false, "Container::removeChild: not my child");
 	}
 #endif
 }
@@ -322,12 +289,16 @@ void Container::setupShapes()
 	// if I have children
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
-			Container::setupShapes(node->data);
+			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
+
+			Container::setupShapes(child);
 		}
 	}
 }
@@ -337,43 +308,37 @@ void Container::setupShapes()
  */
 void Container::purgeChildren()
 {
-	if(!this->removedChildren)
+	// if I have children
+	if(this->children)
 	{
-		return;
-	}
+		// update each child
+		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
+		{
+			nextNode = node->next;
+			
+			Container child = Container::safeCast(node->data);
 
-	ASSERT(this->children, "Container::processRemovedChildren: null children list");
-
-	VirtualNode node = this->removedChildren->head;
-
-	// remove each child
-	for(; node ; node = node->next)
-	{
 #ifndef __RELEASE
-		if(isDeleted(node->data))
-		{
-			Printing::setDebugMode(Printing::getInstance());
-			Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-			Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-			Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
-			Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
+			if(isDeleted(child))
+			{
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+				Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
+				Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-			NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
-		}
+				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+			}
 #endif
-		Container child = Container::safeCast(node->data);
 
-		VirtualList::removeElement(this->children, child);
-
-		if(child->deleteMe)
-		{
-			child->parent = NULL;
-			delete child;
+			if(child->deleteMe)
+			{
+				VirtualList::removeElement(this->children, child);
+				child->parent = NULL;
+				delete child;
+			}
 		}
 	}
-
-	delete this->removedChildren;
-	this->removedChildren = NULL;
 }
 
 /**
@@ -455,15 +420,17 @@ void Container::updateChildren(uint32 elapsedTime)
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
 		Container::purgeChildren(this);
 
-		VirtualNode node = this->children->head;
-
 		// update each child
-		for(; node ; node = node->next)
-		{
+		for(VirtualNode node = this->children->head; node ; node = node->next)
+		{			
 			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
 
 			if(!child->update && NULL == child->children && NULL == this->behaviors)
 			{
@@ -588,12 +555,14 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 	// if I have children
 	if(recursive && this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -711,12 +680,14 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	{
 		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateGraphics |= invalidateGraphics;
@@ -753,12 +724,14 @@ void Container::synchronizeChildrenGraphics()
 	// if I have children
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
 
 			if(child->hidden)
 			{
@@ -1089,13 +1062,17 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 	// propagate if I have children
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
+			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
+
 			// pass message to each child
-			if( Container::passMessage(node->data, propagatedMessageHandler, args))
+			if( Container::passMessage(child, propagatedMessageHandler, args))
 			{
 				return true;
 			}
@@ -1255,7 +1232,7 @@ Container Container::getChildByName(const char* childName, bool recursive)
 		}
 	}
 
-	return this->removedChildren && VirtualList::find(this->removedChildren, foundChild) ? NULL : foundChild;
+	return !isDeleted(foundChild) && !foundChild->deleteMe ? foundChild : NULL;
 }
 
 /**
@@ -1282,9 +1259,7 @@ void Container::suspend()
 	{
 		Container::purgeChildren(this);
 
-		VirtualNode node = this->children->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1315,11 +1290,14 @@ void Container::resume()
 
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
 
 			Container::resume(child);
 		}
@@ -1335,11 +1313,16 @@ void Container::show()
 
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
-			Container::show(node->data);
+			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
+			
+			Container::show(child);
 		}
 	}
 
@@ -1353,9 +1336,7 @@ void Container::hide()
 
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->children->head; node; node = node->next)
 		{
 			Container::hide(node->data);
 		}

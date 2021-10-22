@@ -951,47 +951,6 @@ Entity Stage::findChildByInternalId(int16 internalId)
 	return NULL;
 }
 
-
-// process removed children
-bool Stage::purgeChildrenProgressively()
-{
-	if(!this->removedChildren || !this->removedChildren->head)
-	{
-		return false;
-	}
-
-#ifdef __PROFILE_STREAMING
-	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
-#endif
-
-	Container child = Container::safeCast(VirtualList::front(this->removedChildren));
-
-	VirtualList::popFront(this->removedChildren);
-	VirtualList::removeElement(this->children, child);
-
-	if(!isDeleted(child))
-	{
-		if(child->deleteMe)
-		{
-			delete child;
-
-#ifdef __PROFILE_STREAMING
-			uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
-			processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
-#endif
-			return true;
-		}
-	}
-
-#ifdef __PROFILE_STREAMING
-	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
-	processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
-#endif
-
-	return false;
-}
-
 //
 bool Stage::updateEntityFactory()
 {
@@ -1023,11 +982,6 @@ bool Stage::stream()
 		EntityFactory::showStatus(this->entityFactory, 25, 3);
 	}
 #endif
-
-	if(Stage::purgeChildrenProgressively(this) && this->streaming.deferred)
-	{
-		return true;
-	}
 
 	if(Stage::updateEntityFactory(this) && this->streaming.deferred)
 	{

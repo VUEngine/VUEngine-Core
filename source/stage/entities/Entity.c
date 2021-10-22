@@ -156,7 +156,7 @@ Entity Entity::getChildById(int16 id)
 
 			if(child->internalId == id)
 			{
-				return this->removedChildren && VirtualList::find(this->removedChildren, child) ? NULL : child;
+				return !isDeleted(child) && !child->deleteMe ? child : NULL;
 			}
 		}
 	}
