@@ -192,7 +192,6 @@ then
 			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
-	exit 0
 fi
 
 if [ ! -s $OUTPUT_FILE ];
@@ -237,13 +236,11 @@ then
 			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
-	exit 0
 fi
 
 if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
 	echo " error (7): $INPUT_FILE must be inside source folder"
-	exit 0
 fi
 
 # INJECTION OF ClassName _this into method declarations
