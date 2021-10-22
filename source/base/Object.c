@@ -184,6 +184,8 @@ void Object::removeEventListeners(EventListener method, uint32 eventCode)
 			if(method == event->method && eventCode == event->code)
 			{
 				VirtualList::removeNode(this->events, node);
+
+				delete event;
 			}
 		}
 
@@ -215,6 +217,8 @@ void Object::removeEventListenerScopes(Object listener, uint32 eventCode)
 			if(listener == event->listener && eventCode == event->code)
 			{
 				VirtualList::removeNode(this->events, node);
+
+				delete event;
 			}
 		}
 
@@ -244,6 +248,8 @@ void Object::removeAllEventListeners(uint32 eventCode)
 			if(eventCode == event->code)
 			{
 				VirtualList::removeNode(this->events, node);
+
+				delete event;
 			}
 		}
 
@@ -276,18 +282,23 @@ void Object::fireEvent(uint32 eventCode)
 	{
 		// temporary lists to being able to modify the event lists while firing them
 		VirtualList eventsToFire = new VirtualList();
-		VirtualList eventsToRemove = new VirtualList();
 
-		VirtualNode node = this->events->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
 
 			// safety check in case that the there is a stacking up of firings within firings
 			if(isDeleted(event) || isDeleted(event->listener))
 			{
-				VirtualList::pushBack(eventsToRemove, event);
+				VirtualList::removeNode(this->events, node);
+
+				// safety check in case that the there is a stacking up of firings within firings
+				if(!isDeleted(event))
+				{
+					delete event;
+				}
 			}
 			else if(eventCode == event->code)
 			{
@@ -295,28 +306,11 @@ void Object::fireEvent(uint32 eventCode)
 			}
 		}
 
-		for(node = eventsToRemove->head; node; node = node->next)
-		{
-			Event* event = (Event*)node->data;
-
-			VirtualList::removeElement(this->events, event);
-
-			// safety check in case that the there is a stacking up of firings within firings
-			if(!isDeleted(event))
-			{
-				delete event;
-			}
-		}
-
-		delete eventsToRemove;
-
-		node = eventsToFire->head;
-
 #ifndef __RELEASE
 		const char* className = __GET_CLASS_NAME(this);
 #endif
 
-		for(; node; node = node->next)
+		for(VirtualNode node = eventsToFire->head; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
