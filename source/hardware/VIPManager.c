@@ -397,7 +397,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !VIPManager::hasFrameStartedDuringXPEND(this) && node; node = previousNode)
+	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; node; node = previousNode)
 	{
 		previousNode = node->previous;
 
@@ -412,7 +412,7 @@ void VIPManager::processFrameBuffers()
 				delete postProcessingEffectRegistry;
 			}
 		}
-		else
+		else if(!VIPManager::hasFrameStartedDuringXPEND(this))
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
 		}
