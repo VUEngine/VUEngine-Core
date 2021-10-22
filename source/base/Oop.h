@@ -286,12 +286,6 @@
 				((void (*(*))())&ClassName ## _vTable)[i] = NULL;										\
 			}																							\
 																										\
-			/* set the base class's virtual methods */													\
-			if(&ClassName ## _setVTable != &BaseClassName ## _setVTable)								\
-			{																							\
-				BaseClassName ## _setVTable(force);														\
-			}																							\
-																										\
 			/* set the class's virtual methods */														\
 			ClassName ## _SET_VTABLE(ClassName)															\
 																										\
