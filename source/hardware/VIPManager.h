@@ -259,18 +259,6 @@ typedef struct PaletteConfig
 
 typedef void (*PostProcessingEffect) (uint32, SpatialObject);
 
-/**
- * Texture Post Processing Effect Registry
- *
- * @memberof VIPManager
- */
-typedef struct PostProcessingEffectRegistry
-{
-	PostProcessingEffect postProcessingEffect;
-	SpatialObject spatialObject;
-
-} PostProcessingEffectRegistry;
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION

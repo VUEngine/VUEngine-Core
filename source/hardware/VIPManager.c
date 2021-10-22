@@ -73,6 +73,21 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
+/**
+ * Texture Post Processing Effect Registry
+ *
+ * @memberof VIPManager
+ */
+typedef struct PostProcessingEffectRegistry
+{
+	PostProcessingEffect postProcessingEffect;
+	SpatialObject spatialObject;
+	bool remove;
+
+} PostProcessingEffectRegistry;
+
+
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -119,6 +134,8 @@ void VIPManager::constructor()
  */
 void VIPManager::destructor()
 {
+	VIPManager::removePostProcessingEffects(this);
+
 	delete this->postProcessingEffects;
 
 	// allow a new construct
@@ -380,9 +397,25 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail; !VIPManager::hasFrameStartedDuringXPEND(this) && node; node = node->previous)
+	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !VIPManager::hasFrameStartedDuringXPEND(this) && node; node = previousNode)
 	{
-		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
+		previousNode = node->previous;
+
+		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
+
+		if(isDeleted(postProcessingEffectRegistry) || postProcessingEffectRegistry->remove)
+		{
+			VirtualList::removeNode(this->postProcessingEffects, node);
+
+			if(!isDeleted(postProcessingEffectRegistry))
+			{
+				delete postProcessingEffectRegistry;
+			}
+		}
+		else
+		{
+			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
+		}
 	}
 }
 
@@ -626,7 +659,7 @@ void VIPManager::setBackgroundColor(uint8 color)
  * @param spatialObject			Post-processing effect function's scope
  * @return						Whether the effect and object are already registered
  */
-bool VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -636,11 +669,11 @@ bool VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProce
 
 		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
 		{
-			return true;
+			return postProcessingEffectRegistry;
 		}
 	}
 
-	return false;
+	return NULL;
 }
 
 /**
@@ -651,14 +684,18 @@ bool VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProce
  */
 void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	if(VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject);
+
+	if(!isDeleted(postProcessingEffectRegistry))
 	{
+		postProcessingEffectRegistry->remove = false;
 		return;
 	}
 
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
 	postProcessingEffectRegistry->spatialObject = spatialObject;
+	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
 }
@@ -671,14 +708,18 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
  */
 void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	if(VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = VIPManager::isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject);
+
+	if(!isDeleted(postProcessingEffectRegistry))
 	{
+		postProcessingEffectRegistry->remove = false;
 		return;
 	}
 
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = new PostProcessingEffectRegistry;
+	postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
 	postProcessingEffectRegistry->spatialObject = spatialObject;
+	postProcessingEffectRegistry->remove = false;
 
 	VirtualList::pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
 }
@@ -691,17 +732,13 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
  */
 void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	VirtualNode node = this->postProcessingEffects->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->postProcessingEffects->head; node; node = node->next)
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
 		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
 		{
-			VirtualList::removeElement(this->postProcessingEffects, postProcessingEffectRegistry);
-
-			delete postProcessingEffectRegistry;
+			postProcessingEffectRegistry->remove = true;
 			return;
 		}
 	}
@@ -712,9 +749,7 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
  */
 void VIPManager::removePostProcessingEffects()
 {
-	VirtualNode node = this->postProcessingEffects->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->postProcessingEffects->head; node; node = node->next)
 	{
 		delete node->data;
 	}
