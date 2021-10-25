@@ -304,26 +304,29 @@ done
 #ls -l $VIRTUAL_METHODS_FILE
 
 # Clean up
-cat $NORMAL_METHODS_FILE | sort -u > $NORMAL_METHODS_FILE.tmp
-mv $NORMAL_METHODS_FILE.tmp $NORMAL_METHODS_FILE
-
-cat $VIRTUAL_METHODS_FILE | sort -u > $VIRTUAL_METHODS_FILE.tmp
-mv $VIRTUAL_METHODS_FILE.tmp $VIRTUAL_METHODS_FILE
-
-complexity1=`cat $NORMAL_METHODS_FILE | wc -l` 
-complexity2=`cat $VIRTUAL_METHODS_FILE | wc -l`
-echo "Compiling class: $className (complexity: $(( complexity1 + complexity2 )))"
-
-classHasNormalMethods=`cat $NORMAL_METHODS_FILE`
-if [ ! -z "$classHasNormalMethods" ];
+if [ -f "$NORMAL_METHODS_FILE" ];
 then
-#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
-#		printProgressID=`echo $!`
-	awk -f $ENGINE_HOME/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
-	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
-#		disown $printProgressID
-#		kill $printProgressID
-	rm -f $NORMAL_METHODS_FILE
+	cat $NORMAL_METHODS_FILE | sort -u > $NORMAL_METHODS_FILE.tmp
+	mv $NORMAL_METHODS_FILE.tmp $NORMAL_METHODS_FILE
+
+	cat $VIRTUAL_METHODS_FILE | sort -u > $VIRTUAL_METHODS_FILE.tmp
+	mv $VIRTUAL_METHODS_FILE.tmp $VIRTUAL_METHODS_FILE
+
+	complexity1=`cat $NORMAL_METHODS_FILE | wc -l` 
+	complexity2=`cat $VIRTUAL_METHODS_FILE | wc -l`
+	echo "Compiling class: $className (complexity: $(( complexity1 + complexity2 )))"
+
+	classHasNormalMethods=`cat $NORMAL_METHODS_FILE`
+	if [ ! -z "$classHasNormalMethods" ];
+	then
+	#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
+	#		printProgressID=`echo $!`
+		awk -f $ENGINE_HOME/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+	#		disown $printProgressID
+	#		kill $printProgressID
+		rm -f $NORMAL_METHODS_FILE
+	fi
 fi
 
 classHasVirtualMethods=`cat $VIRTUAL_METHODS_FILE`
@@ -440,7 +443,8 @@ fi
 #sed -i.b 's#,[ 	]*);#);#' $OUTPUT_FILE
 #sed -i.b "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 #sed -i.b "s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
-#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" $OUTPUT_FILE
+#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" 
+#sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_evolve(\(.*\))#__INSTANCE_EVOLVE_TO(\1, \2)#g" $OUTPUT_FILE
 
 sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g; s#,[ 	]*);#);#; s#Base_destructor()#__DESTROY_BASE#g; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 

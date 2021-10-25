@@ -419,7 +419,7 @@ then
 			break
 		fi
 
-		baseBaseClassNameLine=`grep -e "^$baseBaseClassName:.*" <<< "$classesHierarchy"`
+		baseBaseClassNameLine=`grep -e "^$baseBaseClassName:.* | grep -v "extension <<< "$classesHierarchy"`
 
 		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
 		then
