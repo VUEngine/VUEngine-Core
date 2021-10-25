@@ -150,12 +150,14 @@ abstract class Sprite : Object
 	PixelVector position;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
-	// Head spec for world entry setup
-	uint16 head;
 	// AnimationController
 	AnimationController animationController;
 	// Our texture
 	Texture texture;
+	// Owner
+	Object owner;
+	// Head spec for world entry setup
+	uint16 head;
 	// Texture's half width
 	int16 halfWidth;
 	// Texture's half height
