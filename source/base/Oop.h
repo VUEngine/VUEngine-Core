@@ -204,7 +204,6 @@
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
-
 #define typeofclass(ClassName)		((ClassPointer)&ClassName ## _getBaseClass)
 
 #define __GET_CAST(ClassName, object)																	\
@@ -233,7 +232,7 @@
 		}
 
 // mutate class method
-#define __CLASS_MUTATE_METHOD(ClassName, MethodName, NewMethod)								\
+#define __CLASS_MUTATE_METHOD(ClassName, MethodName, NewMethod)											\
 		{																								\
 			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
@@ -341,6 +340,9 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* declare vtable */																			\
 		void ClassName ## _setVTable(bool force);														\
 																										\
+		/* get class */																					\
+		const void* ClassName ## _getClass();															\
+																										\
 		/* declare getSize method */																	\
 		int32 ClassName ## _getObjectSize();															\
 																										\
@@ -421,6 +423,11 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		void ClassName ## _restoreMethods()																\
 		{																								\
 			ClassName ## _setVTable(true);																\
+		}																								\
+																										\
+		const void* ClassName ## _getClass()															\
+		{																								\
+			return (const void*)&ClassName ## _vTable;													\
 		}																								\
 																										\
 		/* now add the function which will handle the vtable */											\

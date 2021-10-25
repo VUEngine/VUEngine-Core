@@ -85,8 +85,10 @@ abstract class Object : Object
 	void sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay);
 	void discardAllMessages();
 	void discardMessages(uint32 message);
-	virtual bool handleMessage(Telegram telegram);
+	bool evolveTo(const void* targetClass);
 	const void* getVTable();
+
+	virtual bool handleMessage(Telegram telegram);
 }
 
 

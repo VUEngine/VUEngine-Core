@@ -28,6 +28,7 @@
 #include <VirtualList.h>
 #include <Utilities.h>
 #include <MessageDispatcher.h>
+#include <string.h>
 #include <debugConfig.h>
 
 
@@ -477,5 +478,58 @@ void Object::discardMessages(uint32 message)
 const void* Object::getVTable()
 {
 	return this->vTable;
+}
+
+/**
+ * Get an Object's vTable
+ *
+ * @return		vTable pointer
+ */
+bool Object::evolveTo(const void* targetClass)
+{
+	const struct Object_vTable* targetClassVTable = (const struct Object_vTable*)targetClass;
+	const struct Object_vTable* thisVTable = (const struct Object_vTable*)this->vTable;
+	
+	if(targetClassVTable == thisVTable)
+	{
+		return true;
+	}
+
+	ClassPointer baseClassGetClassMethod = (ClassPointer)targetClassVTable->getBaseClass(NULL);
+
+	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
+	{
+		if((ClassPointer)thisVTable->getBaseClass == baseClassGetClassMethod)
+		{
+			this->vTable = (void*)targetClassVTable;
+			return true;
+		}
+
+		baseClassGetClassMethod = (ClassPointer)baseClassGetClassMethod(NULL);
+	}
+
+	baseClassGetClassMethod = (ClassPointer)thisVTable->getBaseClass(NULL);
+	
+	while((ClassPointer)Object::getBaseClass != (ClassPointer)baseClassGetClassMethod)
+	{
+		if((ClassPointer)targetClassVTable->getBaseClass == baseClassGetClassMethod)
+		{
+			this->vTable = (void*)targetClassVTable;
+			return true;
+
+		}
+
+		baseClassGetClassMethod = (ClassPointer)baseClassGetClassMethod(NULL);
+	}
+
+#ifndef __RELEASE
+	char errorMessage [200] = "Object::evolve: trying to convert a ";
+	strcat(errorMessage, __GET_CLASS_NAME(this));
+	strcat(errorMessage, " into ");
+	strcat(errorMessage, targetClassVTable->getClassName(NULL));
+	Error::triggerException(errorMessage, NULL);		
+#endif
+
+	return false;
 }
 
