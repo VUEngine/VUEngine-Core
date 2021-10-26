@@ -268,9 +268,16 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 jDisplacement = 0;
 
 	BYTE* framePointer = this->texture->textureSpec->mapSpec + (this->texture->mapDisplacement << 1);
-	uint16 result = __NO_RENDER_INDEX;
+	uint16 result = 0;
 
 	ObjectAttributes* objectPointer = NULL;
+
+	index -= this->totalObjects;
+
+	if(0 > index)
+	{
+		return __NO_RENDER_INDEX;
+	}
 
 	for(int16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
