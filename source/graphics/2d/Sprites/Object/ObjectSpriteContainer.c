@@ -449,7 +449,7 @@ static void ObjectSpriteContainer::prepareForRendering()
 	// clear OBJ memory
 	for(int32 i = _objectIndex; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
-		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
 
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;

@@ -528,12 +528,12 @@ void VIPManager::clearScreen()
 	for(int32 i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
-		_objectAttributesCache[i].head = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 		_objectAttributesCache[i].jy = 0;
 		_objectAttributesCache[i].tile = 0;
 
 		_objectAttributesBaseAddress[i].jx = 0;
-		_objectAttributesBaseAddress[i].head = __OBJECT_CHAR_HIDE_MASK;
+		_objectAttributesBaseAddress[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 		_objectAttributesBaseAddress[i].jy = 0;
 		_objectAttributesBaseAddress[i].tile = 0;
 	}

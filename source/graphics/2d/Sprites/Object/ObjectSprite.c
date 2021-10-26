@@ -37,9 +37,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __FLIP_X_DISPLACEMENT	8
-#define __FLIP_Y_DISPLACEMENT	8
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -65,7 +62,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 {
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
-	this->head = objectSpriteSpec->display & __OBJECT_CHAR_SHOW_MASK;
+	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
 
@@ -251,14 +248,14 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	{
 		xDisplacementIncrement = -8;
 		halfWidth = -halfWidth;
-		xDisplacementDelta = __FLIP_X_DISPLACEMENT;
+		xDisplacementDelta = __OBJECT_SPRITE_FLIP_X_DISPLACEMENT;
 	}
 
 	if(this->head & 0x1000)
 	{
 		yDisplacementIncrement = -8;
 		halfHeight = -halfHeight;
-		yDisplacementDelta = __FLIP_Y_DISPLACEMENT;
+		yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
 	}
 
 	int16 x = this->position.x - halfWidth + this->displacement.x - xDisplacementDelta;
@@ -289,7 +286,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 				int16 objectIndex = objectIndexStart + j;
 
 				objectPointer = &_objectAttributesCache[objectIndex];
-				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			}
 			continue;
 		}
@@ -308,7 +305,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				objectPointer->head = __OBJECT_CHAR_HIDE_MASK;
+				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 				continue;
 			}
 
