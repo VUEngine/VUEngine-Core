@@ -230,6 +230,13 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
+	index -= this->totalObjects;
+
+	if(0 > index)
+	{
+		return __NO_RENDER_INDEX;
+	}
+
 	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
 	int16 xDisplacementIncrement = 8;
@@ -271,13 +278,6 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	uint16 result = 0;
 
 	ObjectAttributes* objectPointer = NULL;
-
-	index -= this->totalObjects;
-
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
 
 	for(int16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
 	{
