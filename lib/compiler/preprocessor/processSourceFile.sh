@@ -329,16 +329,19 @@ then
 	fi
 fi
 
-classHasVirtualMethods=`cat $VIRTUAL_METHODS_FILE`
-if [ ! -z "$classHasVirtualMethods" ];
+if [ -f "$VIRTUAL_METHODS_FILE" ];
 then
-#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
-#		printProgressID=`echo $!`
-	awk -f $ENGINE_HOME/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
-	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
-#		disown $printProgressID
-#		kill $printProgressID
-	rm -f $VIRTUAL_METHODS_FILE
+	classHasVirtualMethods=`cat $VIRTUAL_METHODS_FILE`
+	if [ ! -z "$classHasVirtualMethods" ];
+	then
+	#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
+	#		printProgressID=`echo $!`
+		awk -f $ENGINE_HOME/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+	#		disown $printProgressID
+	#		kill $printProgressID
+		rm -f $VIRTUAL_METHODS_FILE
+	fi
 fi
 
 if [ ! -s $OUTPUT_FILE ];
