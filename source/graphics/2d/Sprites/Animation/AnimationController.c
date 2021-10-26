@@ -338,9 +338,6 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 
 	// it's playing now
 	this->playing = true;
-
-	// Tell anyone listening
-	AnimationController::fireEvent(this, kEventAnimationStarted);
 }
 
 /**
@@ -419,9 +416,6 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 	// it's playing now
 	this->playing = true;
 
-	// Tell anyone listening
-	AnimationController::fireEvent(this, kEventAnimationStarted);
-
 	return true;
 }
 
@@ -455,9 +449,6 @@ bool AnimationController::replay(const AnimationDescription* animationDescriptio
 
 	// it's playing now
 	this->playing = true;
-
-	// Tell anyone listening
-	AnimationController::fireEvent(this, kEventAnimationStarted);
 
 	return true;
 }

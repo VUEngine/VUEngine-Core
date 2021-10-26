@@ -90,13 +90,6 @@ void AnimatedEntity::ready(bool recursive)
 	Base::ready(this, recursive);
 
 	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
-
-	AnimatedEntity::setupListeners(this);
-}
-
-void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused)))
-{
-	this->update = true;
 }
 
 // execute character's logic
@@ -290,31 +283,6 @@ void AnimatedEntity::resume()
 	Base::resume(this);
 
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
-
-	AnimatedEntity::setupListeners(this);
-}
-
-void AnimatedEntity::setupListeners()
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	VirtualNode node = this->sprites->head;
-
-	for(; node && this->sprites; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-		AnimationController animationController = Sprite::getAnimationController(sprite);
-
-		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
-		{
-			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
-		}
-	}
-
-	this->update = true;
 }
 
 int16 AnimatedEntity::getActualFrame()
