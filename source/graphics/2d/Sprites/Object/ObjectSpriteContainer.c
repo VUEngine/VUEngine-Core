@@ -300,7 +300,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 				break;
 			}
 
-			if(_objectIndex - objectSprite->totalObjects == ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame))
+			if(__NO_RENDER_INDEX != ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame))
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}
