@@ -495,7 +495,7 @@ void SpriteManager::stopRendering()
 
 	if(0 <= this->freeLayer)
 	{
-		_worldAttributesBaseAddress[this->freeLayer].head = __WORLD_END;
+		_worldAttributesCache[this->freeLayer].head = __WORLD_END;
 	}
 }
 
@@ -582,9 +582,7 @@ void SpriteManager::writeDRAM()
 
 	ObjectSpriteContainer::writeDRAM();
 
-	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer + 1), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer + 1)) >> 2);
-
-	SpriteManager::stopRendering(this);
+	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer + 1), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
 }
 
 /**
@@ -626,6 +624,8 @@ void SpriteManager::render()
 	}
 
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
+
+	SpriteManager::stopRendering(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
