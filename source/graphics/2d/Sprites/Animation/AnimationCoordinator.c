@@ -141,6 +141,7 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 				AnimationController::setActualFrame(firstAnimationController, currentFrame);
 				AnimationController::setFrameDuration(firstAnimationController, frameDuration);
 				AnimationController::stop(animationController);
+			 	AnimationController::fireEvent(firstAnimationController, kEventAnimationStarted);
 			}
 		}
 	}
