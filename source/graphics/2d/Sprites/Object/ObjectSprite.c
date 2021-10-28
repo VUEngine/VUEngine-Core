@@ -368,3 +368,15 @@ void ObjectSprite::invalidateObjectSpriteContainer()
 {
 	this->objectSpriteContainer = NULL;
 }
+
+/**
+ * Compute total objects
+ *
+ * @memberof				ObjectSprite
+ * @public
+ */
+ void ObjectSprite::resetTotalObjects()
+{
+	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
+}
+
