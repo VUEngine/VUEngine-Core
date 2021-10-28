@@ -129,7 +129,7 @@ sed -i.b 's/.*static.*/&<%>/g' $OUTPUT_FILE
 echo >> $OUTPUT_FILE
 
 # Find method declarations
-sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2<%DECLARATION>/g' > $OUTPUT_FILE.tmp  && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
+sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*\)\(([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2\3<method>\2<%method><%DECLARATION>/g' > $OUTPUT_FILE.tmp  && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Add static qualifier to static methods block start
 #sed -i.b 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g' $OUTPUT_FILE
@@ -155,7 +155,7 @@ rm -f $OUTPUT_FILE.tmp
 # Replace :: by _
 sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE 
 
-prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
+prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e 's/<%DECLARATION>/<%DECLARATION>\'$'\n/g' | grep "DECLARATION>" | sed -e 's/<[%]*DECLARATION>//g' | sed -e 's/{<START_BLOCK>.*<method>.*<%method>/;/g' |sed  -e 's/'"$mark"'//g' |sed  -e 's/<%>//g' | tr -d "\r\n" | sed -e 's/\([^A-z0-9]*\)static[ 	]/\1 /g'`
 
 # Put back line breaks
 sed -i.b 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE 
@@ -167,7 +167,7 @@ mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 # Inject this pointer
 #sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
 #sed -i.b 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
-sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::method: null this"); '"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::method: this failed the cast");\1/g' $OUTPUT_FILE 
+sed -i.b 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g; s/{[ 	]*<START_BLOCK>\(.*\)<method>\(.*\)<%method><%DECLARATION>/{__CHECK_STACK_STATUS NM_ASSERT(!isDeleted(_this), "'"$className"'::\2: null this"); '"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this); ASSERT(!isDeleted(this), "'"$className"'::\2: this failed the cast");\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 
@@ -355,7 +355,7 @@ fi
 #sed -i.b 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
 #sed -i.b 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
 #sed -i.b 's/<START_BLOCK>//g' $OUTPUT_FILE
-sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/<START_BLOCK>//g' $OUTPUT_FILE 
+sed -i.b 's/<%>//g; s/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g; s/<[%]*DECLARATION>//g; s/<START_BLOCK>//g; s/<method>.*<%method>//g' $OUTPUT_FILE 
 
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | sed -e 's/^.*::\(.*\)/\1/g'`
 
