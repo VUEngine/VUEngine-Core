@@ -1,6 +1,3 @@
-
-//{{BLOCK(VUEngineProfilerFont)
-
 //======================================================================
 //
 //	VUEngineProfilerFont, 360x8@2, 
@@ -40,5 +37,3 @@ const uint32 VUEngineProfilerFontTiles[180] __attribute__((aligned(4)))=
 	0x7DF45554,0x57547FF4,0x7FF45754,0x55547DF4,0x05F40154,0x7F5457F4,0x57F47F54,0x015405F4,
 	0x75745454,0x77F475F4,0x7D747F74,0x54547574,
 };
-
-//}}BLOCK(VUEngineProfilerFont)

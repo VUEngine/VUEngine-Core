@@ -1,6 +1,3 @@
-
-//{{BLOCK(VUEngineFont)
-
 //======================================================================
 //
 //	VUEngineFont, 256x64@2, 
@@ -158,5 +155,3 @@ const uint32 VUEngineFontTiles[1024] __attribute__((aligned(4)))=
 	0x03300000,0x0C0C0000,0x0C0C0C0C,0x0CF00F0C,0x0FC00000,0x0C0C0000,0x0FF00C0C,0x03F00C00,
 	0x000C0000,0x0C3C03CC,0x03FC0C0C,0x000C000C,0x03300000,0x0C0C0000,0x0FF00C0C,0x03F00C00,
 };
-
-//}}BLOCK(VUEngineFont)
