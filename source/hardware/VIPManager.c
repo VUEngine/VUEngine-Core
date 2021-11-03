@@ -56,8 +56,8 @@ static WireframeManager _wireframeManager;
 static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
 
-extern ColumnTableROMSpec DEFAULT_COLUMN_TABLE;
-extern BrightnessRepeatROMSpec DEFAULT_BRIGHTNESS_REPEAT;
+extern ColumnTableROMSpec DefaultColumnTable;
+extern BrightnessRepeatROMSpec DefaultBrightnessRepeat;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -562,7 +562,7 @@ void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 	// use the default column table as fallback
 	if(columnTableSpec == NULL)
 	{
-		columnTableSpec = (ColumnTableSpec*)&DEFAULT_COLUMN_TABLE;
+		columnTableSpec = (ColumnTableSpec*)&DefaultColumnTable;
 	}
 
 	// write column table
@@ -621,7 +621,7 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpe
 	// use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
 	{
-		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DEFAULT_BRIGHTNESS_REPEAT;
+		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DefaultBrightnessRepeat;
 	}
 
 	// column table offsets

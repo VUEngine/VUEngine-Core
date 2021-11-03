@@ -2,26 +2,27 @@
 //                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FONTS_H_
-#define FONTS_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
-#include <CharSet.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//                                              DECLARATIONS
+//                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-{% for font in fonts|sort(attribute='name') -%}
-extern FontSpec {{ font.name }}Font;
-{% endfor %}
+BrightnessRepeatROMSpec DefaultBrightnessRepeat =
+{
+	// mirror spec?
+	true,
 
-#endif
+	// brightness repeat values
+	{
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+	}
+};

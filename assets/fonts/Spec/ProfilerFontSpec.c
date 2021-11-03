@@ -4,52 +4,52 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												INCLUDES
+//                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												DECLARATIONS
+//                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VUEngineFontTiles[];
+extern BYTE VUEngineProfilerFontTiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
-//												DEFINITIONS
+//                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-CharSetROMSpec DEFAULT_FONT_CH =
+CharSetROMSpec ProfilerFontCharSet =
 {
 	// number of chars
-	256,
+	45,
 
 	// allocation type
 	__NOT_ANIMATED,
 
 	// char spec
-	VUEngineFontTiles,
+	VUEngineProfilerFontTiles,
 };
 
-FontROMSpec DEFAULT_FONT =
+FontROMSpec ProfilerFont =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&DEFAULT_FONT_CH,
+	(CharSetSpec*)&ProfilerFontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
-	0,
+	46,
 
 	// number of characters in this font
-	256,
+	45,
 
 	// number of characters per line in charset
-	32,
+	45,
 
 	// size of a single character (in chars) ({width, height})
 	{1, 1},
 
 	// font's name
-	"Default",
+	"Profiler",
 };

@@ -2,26 +2,31 @@
 //                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FONTS_H_
-#define FONTS_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
-#include <CharSet.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//                                              DECLARATIONS
+//                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-{% for font in fonts|sort(attribute='name') -%}
-extern FontSpec {{ font.name }}Font;
-{% endfor %}
+BrightnessRepeatROMSpec {{ brep.name }}BrightnessRepeat =
+{
+	// mirror spec?
+	{% if brep.mirror %}true{% else %}false{% endif %},
 
-#endif
+	// brightness repeat values
+	{
+		{% for value in brep.values -%}
+		{%- if not (brep.mirror and loop.index > 48) -%}
+		{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
+		{{- value -}}{{- ', '-}} 
+		{%- if loop.index % 16 == 0 and not (loop.last or (brep.mirror and loop.index == 48)) %}{{ "\n    	" }}{% endif -%}
+		{%- endif -%}
+		{%- endfor %}
+	}
+};

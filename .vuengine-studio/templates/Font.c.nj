@@ -14,14 +14,14 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE {{ font.image | basename(false) }}Tiles[];
+extern BYTE {{ font.tiles }}[];
 
 
 //---------------------------------------------------------------------------------------------------------
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-CharSetROMSpec {{ font.name | toUpperSnakeCase }}_FONT_CH =
+CharSetROMSpec {{ font.name }}FontCharSet =
 {
 	// number of chars
 	{{ font.characterCount * font.size.x * font.size.y }},
@@ -30,13 +30,13 @@ CharSetROMSpec {{ font.name | toUpperSnakeCase }}_FONT_CH =
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ font.image | basename(false) }}Tiles,
+	{{ font.tiles }},
 };
 
-FontROMSpec {{ font.name | toUpperSnakeCase }}_FONT =
+FontROMSpec {{ font.name }}Font =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&{{ font.name | toUpperSnakeCase }}_FONT_CH,
+	(CharSetSpec*)&{{ font.name }}FontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
 	{{ font.offset }},

@@ -2,26 +2,33 @@
 //                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FONTS_H_
-#define FONTS_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
-#include <CharSet.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//                                              DECLARATIONS
+//                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-{% for font in fonts|sort(attribute='name') -%}
-extern FontSpec {{ font.name }}Font;
-{% endfor %}
+{% if colTable.description -%}
+// {{ colTable.description }}
+{% endif -%}
+ColumnTableROMSpec {{ colTable.name }}ColumnTable =
+{
+	// mirror spec?
+	{% if colTable.mirror %}true{% else %}false{% endif %},
 
-#endif
+	// column table spec
+	{
+		{% for value in colTable.values -%}
+		{%- if not (colTable.mirror and loop.index > 128) -%}
+		{{- (value.repeat * 16 + value.time) | intToHex(2) -}}{{- ', '-}} 
+		{%- if loop.index % 8 == 0 and not (loop.last or (colTable.mirror and loop.index == 128)) %}{{ "\n    	" }}{% endif -%}
+		{%- endif -%}
+		{%- endfor %}
+	}
+};

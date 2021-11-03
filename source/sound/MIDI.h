@@ -27,7 +27,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-
 #define PAU 0x00
 #define HOLD 0x01
 #define STOP 0x02
@@ -168,21 +167,6 @@
 #define LOOPSOUND 0xFFFE  // Repeats the sound from the beginning.
 #define MINIMUM_AUDIBLE_NOTE	DS2
 #define MAXIMUM_AUDIBLE_NOTE	D_8
-
-// Common wave forms
-extern const int8 glockenWaveForm[];
-extern const int8 linearWaveForm[];
-extern const int8 organWaveForm[];
-extern const int8 pianoWaveForm[];
-extern const int8 sawSquareWaveForm[];
-extern const int8 sawtoothWaveForm[];
-extern const int8 sinePlusAlphaWaveForm[];
-extern const int8 sineWaveForm[];
-extern const int8 squareDuty75WaveForm[];
-extern const int8 squareWaveForm[];
-extern const int8 triangleWaveForm[];
-extern const int8 trumpetWaveForm[];
-extern const int8 violinWaveForm[];
 
 
 #endif

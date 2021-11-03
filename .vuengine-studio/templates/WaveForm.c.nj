@@ -4,22 +4,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES
-//---------------------------------------------------------------------------------------------------------
-
-#include <Fonts.h>
-
-
-//---------------------------------------------------------------------------------------------------------
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontSpec* const __FONTS[] =
+const int8 {{ waveForm.name }}WaveForm[] =
 {
-	(FontSpec*)&DefaultFont,
-	(FontSpec*)&ProfilerFont,
-	{% for font in fonts|sort(attribute='name') -%}
-	(FontSpec*)&{{ font.name }}Font,
-	{% endfor %}
-	NULL
+	{% for value in waveForm.values -%}
+	{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
+	{{- value -}}{{- ', '-}} 
+	{%- if loop.index % 16 == 0 and not loop.last %}{{ "\n	" }}{% endif -%}
+	{%- endfor %}
 };

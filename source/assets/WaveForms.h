@@ -2,26 +2,27 @@
 //                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FONTS_H_
-#define FONTS_H_
+#ifndef WAVEFORMS_H_
+#define WAVEFORMS_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //                                                INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
-#include <CharSet.h>
+extern const int8 GlockenWaveForm[];
+extern const int8 LinearWaveForm[];
+extern const int8 OrganWaveForm[];
+extern const int8 PianoWaveForm[];
+extern const int8 SawSquareWaveForm[];
+extern const int8 SawtoothWaveForm[];
+extern const int8 SineWaveForm[];
+extern const int8 SinePlusAlphaWaveForm[];
+extern const int8 SquareWaveForm[];
+extern const int8 SquareDuty75WaveForm[];
+extern const int8 TriangleWaveForm[];
+extern const int8 TrumpetWaveForm[];
+extern const int8 ViolinWaveForm[];
 
-
-//---------------------------------------------------------------------------------------------------------
-//                                              DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-{% for font in fonts|sort(attribute='name') -%}
-extern FontSpec {{ font.name }}Font;
-{% endfor %}
 
 #endif

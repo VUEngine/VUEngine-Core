@@ -43,7 +43,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern FontROMSpec* const __FONTS[];
-extern FontROMSpec DEFAULT_FONT;
+extern FontROMSpec DefaultFont;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ extern FontROMSpec DEFAULT_FONT;
 FontROMData VUENGINE_DEBUG_FONT_DATA =
 {
 	// font spec
-	(FontSpec*)&DEFAULT_FONT,
+	(FontSpec*)&DefaultFont,
 
 	// CharSet
 	NULL,
