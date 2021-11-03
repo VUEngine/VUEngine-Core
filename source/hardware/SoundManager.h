@@ -30,6 +30,7 @@
 #include <Object.h>
 #include <MiscStructs.h>
 #include <SoundWrapper.h>
+#include <WaveForms.h>
 
 
 //---------------------------------------------------------------------------------------------------------
