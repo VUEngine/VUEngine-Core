@@ -500,6 +500,20 @@ Acceleration Body::getGravity()
 	};
 }
 
+void Body::computeDirectionAndSpeed()
+{
+	this->speed = Vector3D::length(this->velocity);
+
+	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+
+	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
+
+	if(this->changedDirection)
+	{
+		this->direction = newDirection;
+	}
+}
+
 void Body::clampVelocity()
 {
 	Body::computeDirectionAndSpeed(this);
@@ -644,20 +658,6 @@ MovementResult Body::updateMovement()
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
-}
-
-void Body::computeDirectionAndSpeed()
-{
-	this->speed = Vector3D::length(this->velocity);
-
-	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
-
-	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
-
-	if(this->changedDirection)
-	{
-		this->direction = newDirection;
-	}
 }
 
 bool Body::changedDirection()
