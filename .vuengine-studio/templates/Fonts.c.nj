@@ -16,8 +16,10 @@
 
 FontSpec* const __FONTS[] =
 {
-	{% for font in fonts.combined.fonts -%}
-	(FontSpec*)&{{ font.name | toUpperSnakeCase }}_FONT,
+	(FontSpec*)&DefaultFont,
+	(FontSpec*)&ProfilerFont,
+	{% for font in fonts|sort(attribute='name') -%}
+	(FontSpec*)&{{ font.name }}Font,
 	{% endfor %}
 	NULL
 };

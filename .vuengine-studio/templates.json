@@ -1,57 +1,197 @@
 [
     {
-        "source": "config/Engine.json",
-        "key": "engine",
-        "extra": {
-            "compiler": "config/Compiler.json"
+        "source": {
+            "type": "filetype",
+            "value": ".brep.json"
         },
+        "key": "brep",
         "targets": [
             {
-                "uri": "source/config.h",
+                "root": "relative",
+                "value": "Spec/${name}BrightnessRepeatSpec.c",
+                "template": "templates/BrightnessRepeat.c.nj"
+            }
+        ]
+    },
+    {
+        "source": {
+            "type": "filetype",
+            "value": ".colTable.json"
+        },
+        "key": "colTable",
+        "targets": [
+            {
+                "root": "relative",
+                "value": "Spec/${name}ColumnTableSpec.c",
+                "template": "templates/ColumnTable.c.nj"
+            }
+        ]
+    },
+    {
+        "source": {
+            "type": "uri",
+            "value": "config/Engine.json"
+        },
+        "key": "engine",
+        "extra": [
+            {
+                "key": "compiler",
+                "type": "uri",
+                "root": "workspace",
+                "value": "config/Compiler.json"
+            }
+        ],
+        "targets": [
+            {
+                "root": "workspace",
+                "value": "source/config.h",
                 "template": "templates/config.h.nj"
             }
         ]
     },
     {
-        "source": "config/ROM.json",
+        "source": {
+            "type": "uri",
+            "value": "config/Events.json"
+        },
+        "key": "events",
+        "targets": [
+            {
+                "root": "workspace",
+                "value": "source/GameEvents.h",
+                "template": "templates/GameEvents.h.nj"
+            }
+        ]
+    },
+    {
+        "source": {
+            "type": "uri",
+            "value": "config/ROM.json"
+        },
         "key": "rom",
         "targets": [
             {
-                "uri": "source/romHeader.h",
+                "root": "workspace",
+                "value": "source/romHeader.h",
                 "template": "templates/romHeader.h.nj"
             }
         ]
     },
     {
-        "source": "config/Compiler.json",
-        "key": "compiler",
-        "extra": {
-            "engine": "config/Engine.json"
+        "source": {
+            "type": "filetype",
+            "value": ".font.json"
         },
+        "key": "font",
+        "extra": [
+            {
+                "key": "fonts",
+                "type": "filetype",
+                "root": "activePlugins",
+                "value": ".font.json"
+            },
+            {
+                "key": "fonts",
+                "type": "filetype",
+                "root": "workspace",
+                "value": ".font.json"
+            }
+        ],
         "targets": [
             {
-                "uri": "config.make",
+                "root": "relative",
+                "value": "Spec/${name}FontSpec.c",
+                "template": "templates/Font.c.nj"
+            },
+            {
+                "root": "workspace",
+                "value": "assets/fonts/Fonts.c",
+                "template": "templates/Fonts.c.nj"
+            },
+            {
+                "root": "workspace",
+                "value": "source/assets/Fonts.h",
+                "template": "templates/Fonts.h.nj"
+            }
+        ]
+    },
+    {
+        "source": {
+            "type": "uri",
+            "value": "config/Compiler.json"
+        },
+        "key": "compiler",
+        "extra": [
+            {
+                "key": "engine",
+                "type": "uri",
+                "root": "workspace",
+                "value": "config/Engine.json"
+            }
+        ],
+        "targets": [
+            {
+                "root": "workspace",
+                "value": "config.make",
                 "template": "templates/config.make.nj"
             },
             {
-                "uri": "lib/compiler/linker/vb_release.ld",
+                "root": "workspace",
+                "value": "lib/compiler/linker/vb_release.ld",
                 "template": "templates/vb.ld.nj"
             },
             {
-                "uri": "lib/compiler/linker/vb_beta.ld",
+                "root": "workspace",
+                "value": "lib/compiler/linker/vb_beta.ld",
                 "template": "templates/vb.ld.nj"
             },
             {
-                "uri": "lib/compiler/linker/vb_tools.ld",
+                "root": "workspace",
+                "value": "lib/compiler/linker/vb_tools.ld",
                 "template": "templates/vb_tools.ld.nj"
             },
             {
-                "uri": "lib/compiler/linker/vb_debug.ld",
+                "root": "workspace",
+                "value": "lib/compiler/linker/vb_debug.ld",
                 "template": "templates/vb_tools.ld.nj"
             },
             {
-                "uri": "source/config.h",
+                "root": "workspace",
+                "value": "source/config.h",
                 "template": "templates/config.h.nj"
+            }
+        ]
+    },
+    {
+        "source": {
+            "type": "filetype",
+            "value": ".waveform.json"
+        },
+        "key": "waveForm",
+        "extra": [
+            {
+                "key": "waveForms",
+                "type": "filetype",
+                "root": "engine",
+                "value": ".waveform.json"
+            },
+            {
+                "key": "waveForms",
+                "type": "filetype",
+                "root": "workspace",
+                "value": ".waveform.json"
+            }
+        ],
+        "targets": [
+            {
+                "root": "relative",
+                "value": "Spec/${name}WaveFormSpec.c",
+                "template": "templates/WaveForm.c.nj"
+            },
+            {
+                "root": "workspace",
+                "value": "source/assets/WaveForms.h",
+                "template": "templates/WaveForms.h.nj"
             }
         ]
     }

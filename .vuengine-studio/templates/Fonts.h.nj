@@ -18,8 +18,10 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-{% for font in fonts.combined.fonts -%}
-extern FontSpec {{ font.name | toUpperSnakeCase }}_FONT;
+extern FontSpec DefaultFont;
+extern FontSpec ProfilerFont;
+{% for font in fonts|sort(attribute='name') -%}
+extern FontSpec {{ font.name }}Font;
 {% endfor %}
 
 #endif

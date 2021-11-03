@@ -1,0 +1,1031 @@
+{
+	"name": "Default",
+	"description": "The default column table as provided by Nintendo",
+	"mirror": false,
+	"values": [
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 14,
+			"time": 0
+		},
+		{
+			"repeat": 11,
+			"time": 12
+		},
+		{
+			"repeat": 10,
+			"time": 6
+		},
+		{
+			"repeat": 9,
+			"time": 6
+		},
+		{
+			"repeat": 8,
+			"time": 10
+		},
+		{
+			"repeat": 8,
+			"time": 2
+		},
+		{
+			"repeat": 7,
+			"time": 10
+		},
+		{
+			"repeat": 7,
+			"time": 4
+		},
+		{
+			"repeat": 6,
+			"time": 14
+		},
+		{
+			"repeat": 6,
+			"time": 10
+		},
+		{
+			"repeat": 6,
+			"time": 6
+		},
+		{
+			"repeat": 6,
+			"time": 2
+		},
+		{
+			"repeat": 6,
+			"time": 0
+		},
+		{
+			"repeat": 5,
+			"time": 12
+		},
+		{
+			"repeat": 5,
+			"time": 10
+		},
+		{
+			"repeat": 5,
+			"time": 8
+		},
+		{
+			"repeat": 5,
+			"time": 6
+		},
+		{
+			"repeat": 5,
+			"time": 4
+		},
+		{
+			"repeat": 5,
+			"time": 2
+		},
+		{
+			"repeat": 5,
+			"time": 0
+		},
+		{
+			"repeat": 5,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 14
+		},
+		{
+			"repeat": 4,
+			"time": 12
+		},
+		{
+			"repeat": 4,
+			"time": 12
+		},
+		{
+			"repeat": 4,
+			"time": 10
+		},
+		{
+			"repeat": 4,
+			"time": 10
+		},
+		{
+			"repeat": 4,
+			"time": 8
+		},
+		{
+			"repeat": 4,
+			"time": 8
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 12
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 3,
+			"time": 14
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 0
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 2
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 4
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 6
+		},
+		{
+			"repeat": 4,
+			"time": 8
+		},
+		{
+			"repeat": 4,
+			"time": 8
+		},
+		{
+			"repeat": 4,
+			"time": 10
+		},
+		{
+			"repeat": 4,
+			"time": 10
+		},
+		{
+			"repeat": 4,
+			"time": 12
+		},
+		{
+			"repeat": 4,
+			"time": 12
+		},
+		{
+			"repeat": 4,
+			"time": 14
+		},
+		{
+			"repeat": 5,
+			"time": 0
+		},
+		{
+			"repeat": 5,
+			"time": 0
+		},
+		{
+			"repeat": 5,
+			"time": 2
+		},
+		{
+			"repeat": 5,
+			"time": 4
+		},
+		{
+			"repeat": 5,
+			"time": 6
+		},
+		{
+			"repeat": 5,
+			"time": 8
+		},
+		{
+			"repeat": 5,
+			"time": 10
+		},
+		{
+			"repeat": 5,
+			"time": 12
+		},
+		{
+			"repeat": 6,
+			"time": 0
+		},
+		{
+			"repeat": 6,
+			"time": 2
+		},
+		{
+			"repeat": 6,
+			"time": 6
+		},
+		{
+			"repeat": 6,
+			"time": 10
+		},
+		{
+			"repeat": 6,
+			"time": 14
+		},
+		{
+			"repeat": 7,
+			"time": 4
+		},
+		{
+			"repeat": 7,
+			"time": 10
+		},
+		{
+			"repeat": 8,
+			"time": 2
+		},
+		{
+			"repeat": 8,
+			"time": 10
+		},
+		{
+			"repeat": 9,
+			"time": 6
+		},
+		{
+			"repeat": 10,
+			"time": 6
+		},
+		{
+			"repeat": 11,
+			"time": 12
+		},
+		{
+			"repeat": 14,
+			"time": 0
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		},
+		{
+			"repeat": 15,
+			"time": 14
+		}		
+	]
+}
