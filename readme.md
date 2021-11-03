@@ -79,7 +79,7 @@ Features:
 LICENSE
 -------
 
-© Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>, 2007-2020
+© Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
 
 This software is licensed under the MIT License, which means you can basically do with it whatever you
 want as long as you include the original copyright and license notice in any copy of the software/source.
@@ -133,88 +133,3 @@ its creators, we do not take any credit on it.
 
 V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo.
 Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
-
-
-PATRONS
--------
-
-A huge thank you to the following people for their financial support through our Patreon campaign (https://www.patreon.com/vuengine).
-In alphabetical order:
-
-	Adam Emmons
-	Adam Hunter
-	Adam Nelson
-	Adam Wannamaker
-	Alec Kafka
-	Amos Bieler
-	Austin Hoople
-	Benjamin Stevens
-	Bernardo Compagnoni
-	Bnjmn Mrph
-	Brandon Dixon
-	Brian
-	Brie Hebert
-	Cameron Hollaway
-	Candi's Classic Game Shrine
-	Cesar Henzelin
-	chairodactyl 
-	Christopher Garland
-	Daniel Lhota
-	Dave Sheldon
-	David Baisley
-	David Green
-	Derek da Silva
-	Domenic Umberto Raso
-	eatberries
-	Eric Freeman
-	Graham Dawes
-	Gregory VanNostrand
-	Griffin Robinson
-	Hertz
-	IanelGreenleaf 
-	Jason Bronowski
-	Jeffrey Kauffman
-	Jesse Levine
-	Jo√£o Gabriel Gama
-	Jon Zrostlik
-	Jordan Carriere
-	Jose Zagal
-	Kevin McAloney
-	Larry Anderson
-	Luke Gerhardt
-	Marc Andre Sigle
-	MarcoDotIO
-	Marten Rei√ü
-	Massih Naisan
-	Mattison Mozingo
-	MC GAM3R 
-	Michael Ortega
-	miguel angel rodriguez
-	Mike Boodle
-	NeGiZON 
-	Nektarios Moulianakis
-	norty 
-	NyTR0S96 
-	Patrick Fenton
-	Patrick-VB
-	Peter Fields
-	Plop Slop
-	Randy Jeffery
-	RayceARoni
-	Reed T.
-	RetroOnyx
-	Richard Corlett
-	Robert Aliperti
-	Schwanck
-	Sean Machan
-	Simon Gellis
-	Simon Williams
-	Steven Hagelgans
-	Studio Kerga
-	tealsummernights 
-	Tero Piiroinen
-	Tony 
-	Troy Bonneau
-	tydyedsyko
-	VectrexRoli 
-	Zach Xavier
