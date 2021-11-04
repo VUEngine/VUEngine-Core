@@ -1,6 +1,5 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.c.nj') %}
 
 {%- set entityName = entity.name | toUpperSnakeCase -%}
 {%- set spriteTypes = [] -%}
@@ -9,9 +8,7 @@
 {%- endfor %}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Includes') }}
 
 #include <Libgccvb.h>
 #include <FinishLine.h>
@@ -20,9 +17,7 @@
 {%- endfor %}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                              DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Declarations') }}
 
 {% for sprite in entity.sprites -%}
 extern BYTE {{ sprite.texture.image.name }}Tiles[];
@@ -30,9 +25,7 @@ extern BYTE {{ sprite.texture.image.name }}Map[];
 {% endfor %}
 
 {% if entity.animations.definitions.length -%}
-//---------------------------------------------------------------------------------------------------------
-//                                               ANIMATIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Animations') }}
 
 {% for animation in entity.animations.definitions -%}
 AnimationFunctionROMSpec {{ entityName }}_{{ animation.name | toUpperSnakeCase }}_ANIM =
@@ -72,9 +65,7 @@ AnimationDescriptionROMSpec {{ entityName }}_ANIMS =
 {% endif %}
 
 {% if entity.sprites.length -%}
-//---------------------------------------------------------------------------------------------------------
-//                                                 SPRITES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Sprites') }}
 
 {% set spriteNames = [] -%}
 {%- for sprite in entity.sprites -%}
@@ -196,9 +187,7 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 {%- endif %}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                 ENTITY
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Entity') }}
 
 {{ entity.entity.class }}ROMSpec {{ entityName }}_EN =
 {

@@ -1,18 +1,12 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.c.nj') %}
 
-
-//---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Includes') }}
 
 #include <VIPManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Definitions') }}
 
 BrightnessRepeatROMSpec {{ brep.name }}BrightnessRepeat =
 {
@@ -25,7 +19,7 @@ BrightnessRepeatROMSpec {{ brep.name }}BrightnessRepeat =
 		{%- if not (brep.mirror and loop.index > 48) -%}
 		{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
 		{{- value -}}{{- ', '-}} 
-		{%- if loop.index % 16 == 0 and not (loop.last or (brep.mirror and loop.index == 48)) %}{{ "\n    	" }}{% endif -%}
+		{%- if loop.index % 16 == 0 and not (loop.last or (brep.mirror and loop.index == 48)) %}{{ "\n		" }}{% endif -%}
 		{%- endif -%}
 		{%- endfor %}
 	}

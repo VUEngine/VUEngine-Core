@@ -1,6 +1,4 @@
-###########################################################################################################
-#                               THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                                #
-###########################################################################################################
+{% include('partials/fileHeader.make.nj') %}
 
 # VUEngine based plugins that the project uses
 PLUGINS 						= {% if compiler.plugins is iterable %}{{ compiler.plugins | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}

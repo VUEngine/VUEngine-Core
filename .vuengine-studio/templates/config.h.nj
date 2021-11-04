@@ -1,23 +1,18 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.h.nj') %}
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Includes') }}
 
 #include "pluginsConfig.h"
 #include "romHeader.h"
 
 
 {% if engine.game | length -%}
-//---------------------------------------------------------------------------------------------------------
-//                                          GAME SPECIFIC MACROS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Game specific macros') }}
 
 {% for gameConfig in engine.game -%}
 {%- if (gameConfig.type === 'text') -%}
@@ -36,17 +31,13 @@
 
 {% endif -%}
 
-//---------------------------------------------------------------------------------------------------------
-//                                             COMMUNICATIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Communications') }}
 
 // Enable communications at the start of the game
 {% if engine.communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                          DEBUGGING / PROFILING
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Debugging / Profiling') }}
 
 // print memory pool's status
 {% if engine.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
@@ -77,9 +68,7 @@
 #define __STACK_HEADROOM								{{ engine.debug.stackHeadroom }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                             DEBUGGING TOOLS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Debugging tools') }}
 
 // If tools already defined, enable all
 #ifdef __TOOLS
@@ -130,9 +119,7 @@
 #endif
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                           OPTICS / PROJECTION
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Optics / Projection') }}
 
 // screen width in pixels
 #define __SCREEN_WIDTH								{{ engine.optics.screenWidth }}
@@ -171,9 +158,7 @@
 #define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ engine.optics.cameraMinimumDisplacementPixelsPower }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                           FRAME RATE CONTROL
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Frame rate control') }}
 
 // when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired
 // beforethe current game frame is done
@@ -199,9 +184,7 @@
 {% if engine.frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                ANIMATION
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Animation') }}
 
 // maximum length of an animation function's name
 #define __MAX_ANIMATION_FUNCTION_NAME_LENGTH		{{ engine.animation.maxAnimationFunctionNameLength }}
@@ -213,9 +196,7 @@
 #define __MAX_ANIMATION_FUNCTIONS					{{ engine.animation.maxAnimationFunctions }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               MEMORY POOL
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Memory pool') }}
 
 // reset to 0 each byte of each free block on resetting game
 // only use for debugging, proper object's initialization must make this macro unnecessary
@@ -242,26 +223,20 @@
 #define __MEMORY_POOL_WARNING_THRESHOLD				{{ engine.memoryPools.warningThreshold }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                  SRAM
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('SRAM') }}
 
 // amount of available sram space, in bytes
 // • the vb allows up to 16 mb, but all known carts support only 8 kb of sram
 #define __TOTAL_SAVE_RAM 							{{ engine.sram.totalSram }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                             CHAR MANAGEMENT
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Char management') }}
 
 // total number of available chars in char memory
 #define __CHAR_MEMORY_TOTAL_CHARS 					{{ engine.char.totalChars }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                            SPRITE MANAGEMENT
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Sprite management') }}
 
 // total number of layers (basically the number of worlds)
 #define __TOTAL_LAYERS								{{ engine.sprite.totalLayers }}
@@ -270,9 +245,7 @@
 {% if engine.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                           TEXTURE MANAGEMENT
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Texture management') }}
 
 // total number of bgmap segments
 {%- set dramLength = compiler.memory.sections.dram.length %}
@@ -296,9 +269,7 @@
 #define __PRINTABLE_BGMAP_AREA 						{{ engine.texture.printing.printableArea }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               PARAM TABLE
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Param table') }}
 
 // maximum possible scale: affects param table allocation space
 #define __MAXIMUM_SCALE								{{ engine.affine.maxScale }}
@@ -307,9 +278,7 @@
 #define __MAXIMUM_AFFINE_ROWS_PER_CALL				{{ engine.affine.maxRowsPerCall }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                 PHYSICS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Physics') }}
 
 #define __GRAVITY									{{ engine.physics.gravity }}{% if not '.' in '' ~ engine.physics.gravity %}.0{% endif %}f
 
@@ -329,9 +298,7 @@
 #define __FRICTION_FORCE_FACTOR_POWER				{{ engine.physics.frictionForceFactorPower }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                                  SOUND
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Sound') }}
 
 #define __LEFT_EAR_CENTER							{{ engine.sound.leftEarCenter }}
 #define __RIGHT_EAR_CENTER							{{ engine.sound.rightEarCenter }}
@@ -342,9 +309,7 @@
 #define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR			{{ engine.sound.stereoVerticalAttenuationFactor }}
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               BRIGHTNESS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Brightness') }}
 
 // default brightness settings, actual values are set in stage specs
 // • for a nice progression, each shade should be about twice as big as the previous one
@@ -359,9 +324,7 @@
 // defaul step increment in fade transitions
 #define __CAMERA_EFFECT_FADE_INCREMENT				{{ engine.colors.brightness.fadeIncrement }}
 
-//---------------------------------------------------------------------------------------------------------
-//                                             COLOR PALETTES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Color palettes') }}
 
 #define __PRINTING_PALETTE							{{ engine.colors.palettes.printingPalette }}
 
@@ -377,16 +340,12 @@
 #define __OBJECT_PALETTE_3							0b{{ engine.colors.palettes.object[3][0] }}{{ engine.colors.palettes.object[3][1] }}{{ engine.colors.palettes.object[3][2] }}00
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                        RANDOM NUMBER GENERATION
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Random number generation') }}
 
 {% if engine.random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               EXCEPTIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Exceptions') }}
 
 // camera coordinates for the output of exceptions
 #define __EXCEPTION_COLUMN							{{ engine.exception.position.x }}

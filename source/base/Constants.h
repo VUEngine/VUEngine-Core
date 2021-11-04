@@ -132,7 +132,7 @@ enum DefaultInGameTypes
 
 enum DefaulCollisionLayers
 {
-    kLayerNone = 0,
+	kLayerNone = 0,
 };
 
 #ifndef __RELEASE

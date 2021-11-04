@@ -1,18 +1,12 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.c.nj') %}
 
-
-//---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Includes') }}
 
 #include <VIPManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//                                               DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+{{ macros.sectionHeader('Definitions') }}
 
 {% if colTable.description -%}
 // {{ colTable.description }}
@@ -27,7 +21,7 @@ ColumnTableROMSpec {{ colTable.name }}ColumnTable =
 		{% for value in colTable.values -%}
 		{%- if not (colTable.mirror and loop.index > 128) -%}
 		{{- (value.repeat * 16 + value.time) | intToHex(2) -}}{{- ', '-}} 
-		{%- if loop.index % 8 == 0 and not (loop.last or (colTable.mirror and loop.index == 128)) %}{{ "\n    	" }}{% endif -%}
+		{%- if loop.index % 8 == 0 and not (loop.last or (colTable.mirror and loop.index == 128)) %}{{ "\n		" }}{% endif -%}
 		{%- endif -%}
 		{%- endfor %}
 	}
