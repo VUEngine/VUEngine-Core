@@ -1,21 +1,21 @@
 {
-    "images": [
-        "."
-    ],
-    "converter": {
-        "tileset": {
-            "shared": false,
-            "reduce": false
-        },
-        "map": {
-            "generate": false,
-            "reduce": {
-                "flipped": false,
-                "unique": false
-            }
-        },
-        "stackFrames": false
-    },
-    "name": "",
-    "section": "rom"
+	"images": [
+		"."
+	],
+	"converter": {
+		"tileset": {
+			"shared": false,
+			"reduce": false
+		},
+		"map": {
+			"generate": false,
+			"reduce": {
+				"flipped": false,
+				"unique": false
+			}
+		},
+		"stackFrames": false
+	},
+	"name": "",
+	"section": "rom"
 }
