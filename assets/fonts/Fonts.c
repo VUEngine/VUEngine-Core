@@ -14,7 +14,7 @@
 //                                               DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontSpec* const __FONTS[] =
+FontSpec* const _fonts[] =
 {
 	(FontSpec*)&DefaultFont,
 	(FontSpec*)&ProfilerFont,

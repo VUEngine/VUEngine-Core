@@ -30,7 +30,7 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontROMSpec* const __FONTS[];
+extern FontROMSpec* const _fonts[];
 extern FontROMSpec DefaultFont;
 
 
@@ -203,11 +203,11 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 
 	// iterate over all defined fonts and add to internal list
 	uint32 i = 0, j = 0;
-	for(i = 0; __FONTS[i]; i++)
+	for(i = 0; _fonts[i]; i++)
 	{
 		// instance and initialize a new fontdata instance
 		FontData* fontData = new FontData;
-		fontData->fontSpec = __FONTS[i];
+		fontData->fontSpec = _fonts[i];
 		fontData->charSet = NULL;
 
 		// preload charset for font if in list of fonts to preload
@@ -217,7 +217,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 			for(j = 0; fontSpecs[j]; j++)
 			{
 				// preload charset and save charset reference, if font was found
-				if(__FONTS[i]->charSetSpec == fontSpecs[j]->charSetSpec)
+				if(_fonts[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
