@@ -1,9 +1,9 @@
 {%- import 'partials/macros.nj' as macros -%}
 {% include('partials/fileHeader.c.nj') %}
 
-{%- set entityName = entity.name | toUpperSnakeCase -%}
+{%- set entityName = v.name | toUpperSnakeCase -%}
 {%- set spriteTypes = [] -%}
-{%- for sprite in entity.sprites -%}
+{%- for sprite in v.sprites -%}
 	{%- set spriteTypes = (spriteTypes.push(sprite.type), spriteTypes) -%}
 {%- endfor %}
 
@@ -19,16 +19,16 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% for sprite in entity.sprites -%}
+{% for sprite in v.sprites -%}
 extern BYTE {{ sprite.texture.image.name }}Tiles[];
 extern BYTE {{ sprite.texture.image.name }}Map[];
 {% endfor %}
 
-{% if entity.animations.definitions.length -%}
+{% if v.animations.definitions.length -%}
 {{ macros.sectionHeader('Animations') }}
 
-{% for animation in entity.animations.definitions -%}
-AnimationFunctionROMSpec {{ entityName }}_{{ animation.name | toUpperSnakeCase }}_ANIM =
+{% for animation in v.animations.definitions -%}
+AnimationFunctionROMSpec {{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation =
 {
 	// number of frames of this animation function
 	{{ animation.frames.length }},
@@ -53,34 +53,34 @@ AnimationFunctionROMSpec {{ entityName }}_{{ animation.name | toUpperSnakeCase }
 
 {% endfor -%}
 
-AnimationDescriptionROMSpec {{ entityName }}_ANIMS =
+AnimationDescriptionROMSpec {{ entityName }}Animations =
 {
 	{
-		{% for animation in entity.animations.definitions -%}
-			(AnimationFunction*)&{{ entityName }}_{{ animation.name | toUpperSnakeCase }}_ANIM,
+		{% for animation in v.animations.definitions -%}
+			(AnimationFunction*)&{{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation,
 		{% endfor -%}
 		NULL
 	}
 };
 {% endif %}
 
-{% if entity.sprites.length -%}
+{% if v.sprites.length -%}
 {{ macros.sectionHeader('Sprites') }}
 
 {% set spriteNames = [] -%}
-{%- for sprite in entity.sprites -%}
+{%- for sprite in v.sprites -%}
 
 {%- if sprite.name -%}
-	{%- set spriteName = entity.name ~ '_' ~ sprite.name -%}
-{%- elseif entity.sprites.length > 1-%}
-	{%- set spriteName = entity.name ~ '_' ~ loop.index -%}
+	{%- set spriteName = v.name ~ sprite.name -%}
+{%- elseif v.sprites.length > 1-%}
+	{%- set spriteName = v.name ~ loop.index -%}
 {%- else -%}
-	{%- set spriteName = entity.name -%}
+	{%- set spriteName = v.name -%}
 {%- endif -%}
 {%- set spriteName = spriteName | toUpperSnakeCase -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
-CharSetROMSpec {{ spriteName }}_CH =
+CharSetROMSpec {{ spriteName }}Charset =
 {
 	// number of chars, depending on allocation type:
 	// __ANIMATED_SINGLE*, __ANIMATED_SHARED*: number of chars of a single animation frame (cols * rows)
@@ -99,10 +99,10 @@ CharSetROMSpec {{ spriteName }}_CH =
 	{{ sprite.texture.image.name }}Tiles,
 };
 
-TextureROMSpec {{ spriteName }}_TX =
+TextureROMSpec {{ spriteName }}Texture =
 {
 	// charset spec
-	(CharSetSpec*)&{{ spriteName }}_CH,
+	(CharSetSpec*)&{{ spriteName }}Charset,
 
 	// bgmap spec
 	{{ sprite.texture.image.name }}Map,
@@ -122,8 +122,8 @@ TextureROMSpec {{ spriteName }}_TX =
 	// number of frames, depending on charset's allocation type:
 	// __ANIMATED_SINGLE*, __ANIMATED_SHARED*, __NOT_ANIMATED: 1
 	// __ANIMATED_MULTI: total number of frames
-	{% if sprite.texture.charset.type == 'animatedMulti' and entity.animations.definitions.length -%}
-	{{ entity.animations.definitions.length }}
+	{% if sprite.texture.charset.type == 'animatedMulti' and v.animations.definitions.length -%}
+	{{ v.animations.definitions.length }}
 	{%- else -%}
 	1,
 	{%- endif %}
@@ -141,14 +141,14 @@ TextureROMSpec {{ spriteName }}_TX =
 	false,
 };
 
-{{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}_SP =
+{{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}Sprite =
 {
 	{
 		// sprite's type
 		__TYPE({{ sprite.type }}),
 
 		// texture spec
-		(TextureSpec*)&{{ entityName }}_TX,
+		(TextureSpec*)&{{ entityName }}Texture,
 
 		// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 		__TRANSPARENCY_{{ sprite.transparency }},
@@ -177,10 +177,10 @@ TextureROMSpec {{ spriteName }}_TX =
 
 {% endfor -%}
 
-BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
+BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
 {
 	{% for spriteName in spriteNames -%}
-	&{{ spriteName }}_SP,
+	&{{ spriteName }}Sprite,
 	{% endfor -%}
 	NULL
 };
@@ -189,14 +189,14 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 
 {{ macros.sectionHeader('Entity') }}
 
-{{ entity.entity.class }}ROMSpec {{ entityName }}_EN =
+{{ v.entity.class }}ROMSpec {{ entityName }}Entity =
 {
 	// animated entity
 	{
 		// entity
 		{
 			// class allocator
-			__TYPE({{ entity.entity.class }}),
+			__TYPE({{ v.entity.class }}),
 
 			// children
 			NULL,
@@ -208,7 +208,7 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 			NULL,
 
 			// sprites
-			(SpriteSpec**){{ entityName }}_SPS,
+			(SpriteSpec**){{ entityName }}Sprites,
 
 			// use z displacement in projection
 			false,
@@ -219,22 +219,22 @@ BgmapSpriteROMSpec* const {{ entityName }}_SPS[] =
 			// size
 			// if 0, width and height will be inferred from the first sprite's texture's size
 			{
-				{{ entity.entity.size.x }}, // x
-				{{ entity.entity.size.y }}, // y
-				{{ entity.entity.size.z }}, // z
+				{{ v.entity.size.x }}, // x
+				{{ v.entity.size.y }}, // y
+				{{ v.entity.size.z }}, // z
 			},
 
 			// gameworld's character's type
-			kType{{ entity.collisions.type }},
+			kType{{ v.collisions.type }},
 
 			// physical specification
 			(PhysicalSpecification*)NULL,
 		},
 
 		// pointer to the animation spec for the item
-		(AnimationDescription*)&{{ entityName }}_ANIMS,
+		(AnimationDescription*)&{{ entityName }}Animations,
 
 		// initial animation
-		"{{ entity.animations.default }}",
+		"{{ v.animations.default }}",
 	}
 };

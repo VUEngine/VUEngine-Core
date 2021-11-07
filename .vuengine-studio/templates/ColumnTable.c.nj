@@ -8,20 +8,20 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if colTable.description -%}
-// {{ colTable.description }}
+{% if v.description -%}
+// {{ v.description }}
 {% endif -%}
-ColumnTableROMSpec {{ colTable.name }}ColumnTable =
+ColumnTableROMSpec {{ v.name }}ColumnTable =
 {
 	// mirror spec?
-	{% if colTable.mirror %}true{% else %}false{% endif %},
+	{% if v.mirror %}true{% else %}false{% endif %},
 
 	// column table spec
 	{
-		{% for value in colTable.values -%}
-		{%- if not (colTable.mirror and loop.index > 128) -%}
+		{% for value in v.values -%}
+		{%- if not (v.mirror and loop.index > 128) -%}
 		{{- (value.repeat * 16 + value.time) | intToHex(2) -}}{{- ', '-}} 
-		{%- if loop.index % 8 == 0 and not (loop.last or (colTable.mirror and loop.index == 128)) %}{{ "\n		" }}{% endif -%}
+		{%- if loop.index % 8 == 0 and not (loop.last or (v.mirror and loop.index == 128)) %}{{ "\n		" }}{% endif -%}
 		{%- endif -%}
 		{%- endfor %}
 	}

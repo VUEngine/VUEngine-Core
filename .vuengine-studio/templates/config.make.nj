@@ -1,24 +1,24 @@
 {% include('partials/fileHeader.make.nj') %}
 
 # VUEngine based plugins that the project uses
-PLUGINS 						= {% if compiler.plugins is iterable %}{{ compiler.plugins | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}
+PLUGINS 						= {% if v.plugins is iterable %}{{ v.plugins | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}
 
 # Compiler's output
-COMPILER_OUTPUT					= {{ compiler.compiler.output }}
+COMPILER_OUTPUT					= {{ v.compiler.output }}
 
 # Optimization level
 # Do not use O3 for multiplayer games, it causes unexpected out of sync behaviour when framerate drops
-OPTIMIZATION					= {{ compiler.compiler.optimization }}
+OPTIMIZATION					= {{ v.compiler.optimization }}
 
 # Frame pointer's usage
 # 0: Omit.
 # 1: Use.
-USE_FRAME_POINTER				= {% if compiler.compiler.framePointer %}1{% else %}0{% endif %}
+USE_FRAME_POINTER				= {% if v.compiler.framePointer %}1{% else %}0{% endif %}
 
 # Prolog functions' usage
 # 0: Omit.
 # 1: Use.
-USE_PROLOG_FUNCTIONS			= {% if compiler.compiler.prologFunctions %}1{% else %}0{% endif %}
+USE_PROLOG_FUNCTIONS			= {% if v.compiler.prologFunctions %}1{% else %}0{% endif %}
 
 # Sections' usage
 # SRAM's usage
@@ -31,19 +31,19 @@ USE_PROLOG_FUNCTIONS			= {% if compiler.compiler.prologFunctions %}1{% else %}0{
 # the WORLD attributes start.
 
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-MEMORY_POOL_SECTION			 	= {{ compiler.memory.usage.memoryPool }}
+MEMORY_POOL_SECTION			 	= {{ v.memory.usage.memoryPool }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-NON_INITIALIZED_DATA_SECTION	= {{ compiler.memory.usage.uninitializedData }}
+NON_INITIALIZED_DATA_SECTION	= {{ v.memory.usage.uninitializedData }}
 # valid options are [/.data/.sdata/.dram_data/.sram_data]
-INITIALIZED_DATA_SECTION		= {{ compiler.memory.usage.initializedData }}
+INITIALIZED_DATA_SECTION		= {{ v.memory.usage.initializedData }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-STATIC_SINGLETONS_DATA_SECTION	= {{ compiler.memory.usage.staticSingletons }}
+STATIC_SINGLETONS_DATA_SECTION	= {{ v.memory.usage.staticSingletons }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-VIRTUAL_TABLES_DATA_SECTION		= {{ compiler.memory.usage.virtualTables }}
+VIRTUAL_TABLES_DATA_SECTION		= {{ v.memory.usage.virtualTables }}
 
 # Size of variables to be loaded in the .sdata section
 # Not working properly because rosdata is used instead of rodata section
 # MSDA_SIZE						= 0
 
 # Scramble binary
-SCRAMBLE_BINARY					= {% if compiler.compiler.scrambleBinary %}1{% else %}0{% endif %}
+SCRAMBLE_BINARY					= {% if v.compiler.scrambleBinary %}1{% else %}0{% endif %}

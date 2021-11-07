@@ -10,12 +10,12 @@ SEARCH_DIR(.);
 MEMORY
 {
 	{%- set extraDram = 3 -%}
-	{%- set dramLength = compiler.memory.sections.dram.length - extraDram %}
-	dram (!r) : ORIGIN = {{ ((compiler.memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex(8) }}, LENGTH = {{ -dramLength }}k /* Add additional KBs needed for debug tools */
-	wram (!r) : ORIGIN = {{ compiler.memory.sections.wram.origin }}, LENGTH = {{ compiler.memory.sections.wram.length }}k
-	exp	 (r)  : ORIGIN = {{ compiler.memory.sections.exp.origin }}, LENGTH = {{ compiler.memory.sections.exp.length }}M
-	sram (!r) : ORIGIN = {{ compiler.memory.sections.sram.origin }}, LENGTH = {{ compiler.memory.sections.sram.length }}M
-	rom	 (rx) : ORIGIN = {{ compiler.memory.sections.rom.origin }}, LENGTH = {{ compiler.memory.sections.rom.length }}M
+	{%- set dramLength = v.memory.sections.dram.length - extraDram %}
+	dram (!r) : ORIGIN = {{ ((v.memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex(8) }}, LENGTH = {{ -dramLength }}k /* Add additional KBs needed for debug tools */
+	wram (!r) : ORIGIN = {{ v.memory.sections.wram.origin }}, LENGTH = {{ v.memory.sections.wram.length }}k
+	exp	 (r)  : ORIGIN = {{ v.memory.sections.exp.origin }}, LENGTH = {{ v.memory.sections.exp.length }}M
+	sram (!r) : ORIGIN = {{ v.memory.sections.sram.origin }}, LENGTH = {{ v.memory.sections.sram.length }}M
+	rom	 (rx) : ORIGIN = {{ v.memory.sections.rom.origin }}, LENGTH = {{ v.memory.sections.rom.length }}M
 }
 
 /*

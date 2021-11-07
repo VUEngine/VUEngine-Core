@@ -1,10 +1,9 @@
 [
 	{
-		"source": {
-			"type": "filetype",
+		"event": {
+			"type": "fileWithEndingChanged",
 			"value": ".brep.json"
 		},
-		"key": "brep",
 		"targets": [
 			{
 				"root": "relative",
@@ -14,11 +13,10 @@
 		]
 	},
 	{
-		"source": {
-			"type": "filetype",
+		"event": {
+			"type": "fileWithEndingChanged",
 			"value": ".colTable.json"
 		},
-		"key": "colTable",
 		"targets": [
 			{
 				"root": "relative",
@@ -28,15 +26,14 @@
 		]
 	},
 	{
-		"source": {
-			"type": "uri",
+		"event": {
+			"type": "fileChanged",
 			"value": "config/Engine.json"
 		},
-		"key": "engine",
-		"extra": [
+		"data": [
 			{
 				"key": "compiler",
-				"type": "uri",
+				"type": "file",
 				"root": "workspace",
 				"value": "config/Compiler.json"
 			}
@@ -50,11 +47,10 @@
 		]
 	},
 	{
-		"source": {
-			"type": "uri",
+		"event": {
+			"type": "fileChanged",
 			"value": "config/Events.json"
 		},
-		"key": "events",
 		"targets": [
 			{
 				"root": "workspace",
@@ -64,11 +60,10 @@
 		]
 	},
 	{
-		"source": {
-			"type": "uri",
+		"event": {
+			"type": "fileChanged",
 			"value": "config/ROM.json"
 		},
-		"key": "rom",
 		"targets": [
 			{
 				"root": "workspace",
@@ -78,21 +73,20 @@
 		]
 	},
 	{
-		"source": {
-			"type": "filetype",
+		"event": {
+			"type": "fileWithEndingChanged",
 			"value": ".font.json"
 		},
-		"key": "font",
-		"extra": [
+		"data": [
 			{
 				"key": "fonts",
-				"type": "filetype",
-				"root": "activePlugins",
+				"type": "filesWithEnding",
+				"root": "installedPlugins",
 				"value": ".font.json"
 			},
 			{
 				"key": "fonts",
-				"type": "filetype",
+				"type": "filesWithEnding",
 				"root": "workspace",
 				"value": ".font.json"
 			}
@@ -116,15 +110,14 @@
 		]
 	},
 	{
-		"source": {
-			"type": "uri",
+		"event": {
+			"type": "fileChanged",
 			"value": "config/Compiler.json"
 		},
-		"key": "compiler",
-		"extra": [
+		"data": [
 			{
 				"key": "engine",
-				"type": "uri",
+				"type": "file",
 				"root": "workspace",
 				"value": "config/Engine.json"
 			}
@@ -163,21 +156,20 @@
 		]
 	},
 	{
-		"source": {
-			"type": "filetype",
+		"event": {
+			"type": "fileWithEndingChanged",
 			"value": ".waveform.json"
 		},
-		"key": "waveForm",
-		"extra": [
+		"data": [
 			{
 				"key": "waveForms",
-				"type": "filetype",
+				"type": "filesWithEnding",
 				"root": "engine",
 				"value": ".waveform.json"
 			},
 			{
 				"key": "waveForms",
-				"type": "filetype",
+				"type": "filesWithEnding",
 				"root": "workspace",
 				"value": ".waveform.json"
 			}

@@ -3,9 +3,9 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-const int8 {{ waveForm.name }}WaveForm[] =
+const int8 {{ v.name }}WaveForm[] =
 {
-	{% for value in waveForm.values -%}
+	{% for value in v.values -%}
 	{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
 	{{- value -}}{{- ', '-}} 
 	{%- if loop.index % 16 == 0 and not loop.last %}{{ "\n	" }}{% endif -%}
