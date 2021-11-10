@@ -187,7 +187,8 @@ void Clock::setTimeInMilliSeconds(uint32 milliSeconds)
  * Start the clock
  */
 void Clock::start()
-{	Clock::reset(this);
+{
+	Clock::reset(this);
 
 	this->paused = false;
 }
