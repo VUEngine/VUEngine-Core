@@ -122,6 +122,7 @@ uint32 CollisionManager::update(Clock clock)
 	if(NULL == activeForCollisionCheckingShapes)
 	{
 		activeForCollisionCheckingShapes = new VirtualList();
+		VirtualList::copy(activeForCollisionCheckingShapes, this->activeForCollisionCheckingShapes);
 	}
 	else if(this->clearActiveForCollisionCheckingShapes)
 	{
@@ -137,8 +138,8 @@ uint32 CollisionManager::update(Clock clock)
 		// load the current shape to check against
 		Shape shapeToCheck = Shape::safeCast(auxNode->data);
 
-		// compare only different ready, different shapes against it other if
-		// the layer of the shapeToCheck are not excluded by the current shape
+		// compare only different ready, different shapes against each other if
+		// the layers of the shapeToCheck are not excluded by the current shape
 		if(isDeleted(shapeToCheck) || !shapeToCheck->enabled || !shapeToCheck->ready)
 		{
 			continue;
