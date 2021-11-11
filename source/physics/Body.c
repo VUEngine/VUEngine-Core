@@ -450,7 +450,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	// and if the velocity minimum threshold is not reached
 	if(previousVelocity.x && !this->externalForce.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (!this->externalForce.x && 0 == this->acceleration.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->acceleration.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
@@ -458,7 +458,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(previousVelocity.y && !this->externalForce.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (!this->externalForce.y && 0 == this->acceleration.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->acceleration.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
@@ -466,7 +466,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(previousVelocity.z && !this->externalForce.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (!this->externalForce.z && 0 == this->acceleration.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->acceleration.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
 		}
