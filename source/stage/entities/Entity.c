@@ -1154,7 +1154,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	}
 
 	// make sure that the new sprites are properly initialized
-	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+	this->invalidateGraphics = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
 }
 
 /**

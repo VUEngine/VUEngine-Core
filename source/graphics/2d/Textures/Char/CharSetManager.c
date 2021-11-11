@@ -245,6 +245,20 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 		return charSet;
 	}
 
+// TODO: implement __CHAR_FORCE_LOADING in config.h file
+#ifdef __CHAR_FORCE_LOADING
+	else
+	{
+		CharSet charSet = new CharSet(charSetSpec, __CHAR_MEMORY_TOTAL_CHARS - charSetSpec->numberOfChars);
+
+		VirtualList::pushBack(this->charSets, charSet);
+		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
+
+		this->preventDefragmentation = false;
+		return charSet;		
+	}
+#endif
+
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 	CharSetManager::print(this, 1, 10);
