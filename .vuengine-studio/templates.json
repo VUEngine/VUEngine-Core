@@ -1,190 +1,257 @@
-[
-	{
-		"event": {
-			"type": "fileWithEndingChanged",
-			"value": ".brep.json"
+{
+	"events": {
+		"fileChanged": {
+			"config/Engine.json": [
+				"config.h"
+			],
+			"config/Events.json": [
+				"GameEvents.h"
+			],
+			"config/ROM.json": [
+				"romHeader.h"
+			],
+			"config/Compiler.json": [
+				"config.make",
+				"vb_release.ld",
+				"vb_beta.ld",
+				"vb_tools.ld",
+				"vb_debug.ld",
+				"config.h"
+			]
 		},
-		"targets": [
-			{
-				"root": "relative",
-				"value": "Spec/${name}BrightnessRepeatSpec.c",
-				"template": "BrightnessRepeat.c.nj"
-			}
+		"fileWithEndingChanged": {
+			".brep.json": [
+				"BrightnessRepeatSpec.c"
+			],
+			".colTable.json": [
+				"ColumnTableSpec.c"
+			],
+			".font.json": [
+				"FontSpec.c",
+				"Fonts.c",
+				"Fonts.h"
+			],
+			".waveform.json": [
+				"WaveFormSpec.c",
+				"WaveForms.h"
+			]
+		},
+		"installedPluginsChanged": [
+			"Fonts.c",
+			"Fonts.h"
 		]
 	},
-	{
-		"event": {
-			"type": "fileWithEndingChanged",
-			"value": ".colTable.json"
+	"templates": {
+		"BrightnessRepeatSpec.c": {
+			"data": [
+				{
+					"key": "brep",
+					"type": "changedFile"
+				}
+			],
+			"root": "relative",
+			"target": "Spec/${brep.name}BrightnessRepeatSpec.c",
+			"template": "BrightnessRepeat.c.nj"
 		},
-		"targets": [
-			{
-				"root": "relative",
-				"value": "Spec/${name}ColumnTableSpec.c",
-				"template": "ColumnTable.c.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileChanged",
-			"value": "config/Engine.json"
+		"ColumnTableSpec.c": {
+			"data": [
+				{
+					"key": "colTable",
+					"type": "changedFile"
+				}
+			],
+			"root": "relative",
+			"target": "Spec/${colTable.name}ColumnTableSpec.c",
+			"template": "ColumnTable.c.nj"
 		},
-		"data": [
-			{
-				"key": "compiler",
-				"type": "file",
-				"root": "workspace",
-				"value": "config/Compiler.json"
-			}
-		],
-		"targets": [
-			{
-				"root": "workspace",
-				"value": "source/config.h",
-				"template": "config.h.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileChanged",
-			"value": "config/Events.json"
+		"config.h": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				},
+				{
+					"key": "engine",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Engine.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/config.h",
+			"template": "config.h.nj"
 		},
-		"targets": [
-			{
-				"root": "workspace",
-				"value": "source/GameEvents.h",
-				"template": "GameEvents.h.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileChanged",
-			"value": "config/ROM.json"
+		"config.make": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				}
+			],
+			"root": "workspace",
+			"target": "config.make",
+			"template": "config.make.nj"
 		},
-		"targets": [
-			{
-				"root": "workspace",
-				"value": "source/romHeader.h",
-				"template": "romHeader.h.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileWithEndingChanged",
-			"value": ".font.json"
+		"Fonts.c": {
+			"data": [
+				{
+					"key": "fonts",
+					"type": "filesWithEnding",
+					"root": "installedPlugins",
+					"value": ".font.json"
+				},
+				{
+					"key": "fonts",
+					"type": "filesWithEnding",
+					"root": "workspace",
+					"value": ".font.json"
+				}
+			],
+			"root": "workspace",
+			"target": "assets/fonts/Fonts.c",
+			"template": "Fonts.c.nj"
 		},
-		"data": [
-			{
-				"key": "fonts",
-				"type": "filesWithEnding",
-				"root": "installedPlugins",
-				"value": ".font.json"
-			},
-			{
-				"key": "fonts",
-				"type": "filesWithEnding",
-				"root": "workspace",
-				"value": ".font.json"
-			}
-		],
-		"targets": [
-			{
-				"root": "relative",
-				"value": "Spec/${name}FontSpec.c",
-				"template": "Font.c.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "assets/fonts/Fonts.c",
-				"template": "Fonts.c.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "source/assets/Fonts.h",
-				"template": "Fonts.h.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileChanged",
-			"value": "config/Compiler.json"
+		"Fonts.h": {
+			"data": [
+				{
+					"key": "fonts",
+					"type": "filesWithEnding",
+					"root": "installedPlugins",
+					"value": ".font.json"
+				},
+				{
+					"key": "fonts",
+					"type": "filesWithEnding",
+					"root": "workspace",
+					"value": ".font.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/assets/Fonts.h",
+			"template": "Fonts.h.nj"
 		},
-		"data": [
-			{
-				"key": "engine",
-				"type": "file",
-				"root": "workspace",
-				"value": "config/Engine.json"
-			}
-		],
-		"targets": [
-			{
-				"root": "workspace",
-				"value": "config.make",
-				"template": "config.make.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "lib/compiler/linker/vb_release.ld",
-				"template": "vb.ld.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "lib/compiler/linker/vb_beta.ld",
-				"template": "vb.ld.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "lib/compiler/linker/vb_tools.ld",
-				"template": "vb_tools.ld.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "lib/compiler/linker/vb_debug.ld",
-				"template": "vb_tools.ld.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "source/config.h",
-				"template": "config.h.nj"
-			}
-		]
-	},
-	{
-		"event": {
-			"type": "fileWithEndingChanged",
-			"value": ".waveform.json"
+		"FontSpec.c": {
+			"data": [
+				{
+					"key": "font",
+					"type": "changedFile"
+				}
+			],
+			"root": "relative",
+			"target": "Spec/${font.name}FontSpec.c",
+			"template": "Font.c.nj"
 		},
-		"data": [
-			{
-				"key": "waveForms",
-				"type": "filesWithEnding",
-				"root": "engine",
-				"value": ".waveform.json"
-			},
-			{
-				"key": "waveForms",
-				"type": "filesWithEnding",
-				"root": "workspace",
-				"value": ".waveform.json"
-			}
-		],
-		"targets": [
-			{
-				"root": "relative",
-				"value": "Spec/${name}WaveFormSpec.c",
-				"template": "WaveForm.c.nj"
-			},
-			{
-				"root": "workspace",
-				"value": "source/assets/WaveForms.h",
-				"template": "WaveForms.h.nj"
-			}
-		]
+		"GameEvents.h": {
+			"data": [
+				{
+					"key": "events",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Events.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/GameEvents.h",
+			"template": "GameEvents.h.nj"
+		},
+		"romHeader.h": {
+			"data": [
+				{
+					"key": "rom",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/ROM.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/romHeader.h",
+			"template": "romHeader.h.nj"
+		},
+		"vb_release.ld": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				}
+			],
+			"root": "workspace",
+			"target": "lib/compiler/linker/vb_release.ld",
+			"template": "vb.ld.nj"
+		},
+		"vb_beta.ld": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				}
+			],
+			"root": "workspace",
+			"target": "lib/compiler/linker/vb_beta.ld",
+			"template": "vb.ld.nj"
+		},
+		"vb_tools.ld": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				}
+			],
+			"root": "workspace",
+			"target": "lib/compiler/linker/vb_tools.ld",
+			"template": "vb_tools.ld.nj"
+		},
+		"vb_debug.ld": {
+			"data": [
+				{
+					"key": "compiler",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Compiler.json"
+				}
+			],
+			"root": "workspace",
+			"target": "lib/compiler/linker/vb_debug.ld",
+			"template": "vb_tools.ld.nj"
+		},
+		"WaveForms.h": {
+			"data": [
+				{
+					"key": "waveForms",
+					"type": "filesWithEnding",
+					"root": "engine",
+					"value": ".waveform.json"
+				},
+				{
+					"key": "waveForms",
+					"type": "filesWithEnding",
+					"root": "workspace",
+					"value": ".waveform.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/assets/WaveForms.h",
+			"template": "WaveForms.h.nj"
+		},
+		"WaveFormSpec.c": {
+			"data": [
+				{
+					"key": "waveForm",
+					"type": "changedFile"
+				}
+			],
+			"root": "relative",
+			"target": "Spec/${waveForm.name}WaveFormSpec.c",
+			"template": "WaveForm.c.nj"
+		}
 	}
-]
+}
