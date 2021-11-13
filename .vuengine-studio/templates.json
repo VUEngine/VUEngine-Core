@@ -43,6 +43,7 @@
 	},
 	"templates": {
 		"BrightnessRepeatSpec.c": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "brep",
@@ -54,6 +55,7 @@
 			"template": "BrightnessRepeat.c.nj"
 		},
 		"ColumnTableSpec.c": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "colTable",
@@ -65,6 +67,7 @@
 			"template": "ColumnTable.c.nj"
 		},
 		"config.h": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -84,6 +87,7 @@
 			"template": "config.h.nj"
 		},
 		"config.make": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -97,6 +101,7 @@
 			"template": "config.make.nj"
 		},
 		"Fonts.c": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "fonts",
@@ -116,6 +121,7 @@
 			"template": "Fonts.c.nj"
 		},
 		"Fonts.h": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "fonts",
@@ -135,6 +141,7 @@
 			"template": "Fonts.h.nj"
 		},
 		"FontSpec.c": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "font",
@@ -146,6 +153,7 @@
 			"template": "Font.c.nj"
 		},
 		"GameEvents.h": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "events",
@@ -159,6 +167,7 @@
 			"template": "GameEvents.h.nj"
 		},
 		"romHeader.h": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "rom",
@@ -172,6 +181,7 @@
 			"template": "romHeader.h.nj"
 		},
 		"vb_release.ld": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -185,6 +195,7 @@
 			"template": "vb.ld.nj"
 		},
 		"vb_beta.ld": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -198,6 +209,7 @@
 			"template": "vb.ld.nj"
 		},
 		"vb_tools.ld": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -211,6 +223,7 @@
 			"template": "vb_tools.ld.nj"
 		},
 		"vb_debug.ld": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "compiler",
@@ -224,6 +237,7 @@
 			"template": "vb_tools.ld.nj"
 		},
 		"WaveForms.h": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "waveForms",
@@ -243,6 +257,7 @@
 			"template": "WaveForms.h.nj"
 		},
 		"WaveFormSpec.c": {
+			"mode": "single",
 			"data": [
 				{
 					"key": "waveForm",
