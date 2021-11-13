@@ -38,7 +38,8 @@
 		},
 		"installedPluginsChanged": [
 			"Fonts.c",
-			"Fonts.h"
+			"Fonts.h",
+			"WaveForms.h"
 		]
 	},
 	"templates": {
@@ -243,6 +244,12 @@
 					"key": "waveForms",
 					"type": "filesWithEnding",
 					"root": "engine",
+					"value": ".waveform.json"
+				},
+				{
+					"key": "waveForms",
+					"type": "filesWithEnding",
+					"root": "installedPlugins",
 					"value": ".waveform.json"
 				},
 				{

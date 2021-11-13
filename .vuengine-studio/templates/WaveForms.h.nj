@@ -7,7 +7,7 @@
 
 {{ macros.sectionHeader('Includes') }}
 
-{% for waveForm in waveForms -%}
+{% for waveForm in waveForms | unique('name') | sort(attribute='name') -%}
 extern const int8 {{ waveForm.name }}WaveForm[];
 {% endfor %}
 
