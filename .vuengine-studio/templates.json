@@ -17,6 +17,9 @@
 				"vb_tools.ld",
 				"vb_debug.ld",
 				"config.h"
+			],
+			"config/Plugins.json": [
+				"config.make"
 			]
 		},
 		"fileWithEndingChanged": {
@@ -95,6 +98,12 @@
 					"type": "file",
 					"root": "workspace",
 					"value": "config/Compiler.json"
+				},
+				{
+					"key": "plugins",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/Plugins.json"
 				}
 			],
 			"root": "workspace",

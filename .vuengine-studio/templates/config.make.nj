@@ -1,7 +1,7 @@
 {% include('partials/fileHeader.make.nj') %}
 
 # VUEngine based plugins that the project uses
-PLUGINS 						= {% if compiler.plugins is iterable %}{{ compiler.plugins | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}
+PLUGINS 						= {% if plugins is iterable %}{{ plugins | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}
 
 # Compiler's output
 COMPILER_OUTPUT					= {{ compiler.compiler.output }}
