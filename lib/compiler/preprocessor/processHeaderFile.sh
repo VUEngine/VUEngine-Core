@@ -473,6 +473,10 @@ isStaticClass=false
 isFinalClass=false
 isExtensionClass=false
 
+if [ ! -z "$classModifiers" ] && [ -z "${classModifiers##*extension *}" ];
+then
+	isExtensionClass=true
+fi
 
 virtualMethodDeclarations="#define "$className"_METHODS(ClassName)"
 virtualMethodOverrides="#define "$className"_SET_VTABLE(ClassName)"
@@ -488,15 +492,19 @@ echo "Writing owned methods on caller $CALLER"  >> $CLASS_LOG_FILE
 # Process each method to generate the final header
 methodDeclarations=
 
-# Create method dictionaries
 CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
-rm -f $CLASS_OWNED_METHODS_DICTIONARY
-touch $CLASS_OWNED_METHODS_DICTIONARY
-
-echo "Writing inherited methods on caller $CALLER"  >> $CLASS_LOG_FILE
 
 CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsInherited.txt"
-rm -f $CLASS_INHERITED_METHODS_DICTIONARY
+
+if [ ! "$isExtensionClass" = true ];
+then
+	# Create method dictionaries
+	rm -f $CLASS_OWNED_METHODS_DICTIONARY
+	echo "Writing inherited methods on caller $CALLER"  >> $CLASS_LOG_FILE
+	rm -f $CLASS_INHERITED_METHODS_DICTIONARY
+fi
+
+touch $CLASS_OWNED_METHODS_DICTIONARY
 touch $CLASS_INHERITED_METHODS_DICTIONARY
 
 echo "Writing virtual methods on caller $CALLER"  >> $CLASS_LOG_FILE
@@ -574,6 +582,7 @@ do
 	fi
 done
 
+
 if [ ! -z "$baseClassesNames" ];
 then
 	echo " $INPUT_FILE " >> $CLASS_DEPENDENCIES_FILE
@@ -643,7 +652,6 @@ echo "Writing inherited methods dictionary on caller $CALLER"  >> $CLASS_LOG_FIL
 awk '!x[$0]++' $CLASS_INHERITED_METHODS_DICTIONARY > $CLASS_INHERITED_METHODS_DICTIONARY.tmp
 mv $CLASS_INHERITED_METHODS_DICTIONARY.tmp $CLASS_INHERITED_METHODS_DICTIONARY
 
-
 #echo methodDeclarations
 #echo "$methodDeclarations"
 echo "Computing class modifiers on caller $CALLER"  >> $CLASS_LOG_FILE
@@ -677,12 +685,6 @@ do
 	then
 
 		isStaticClass=true
-	fi
-
-	if [ -z "${classModifier##*extension *}" ];
-	then
-
-		isExtensionClass=true
 	fi
 
 done <<< "$classModifiers"
@@ -824,7 +826,13 @@ echo "Done on caller $CALLER"  >> $CLASS_LOG_FILE
 
 clean_up
 
-echo "Preprocessed class: $className"
+if [ ! "$isExtensionClass" = true ];
+then
+	echo "Preprocessed class: $className"
+else
+	echo "Preprocessed extension for: $className"
+fi
+
 releaseLocks
 
 echo "Released locks on caller $CALLER"  >> $CLASS_LOG_FILE
