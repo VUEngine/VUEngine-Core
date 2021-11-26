@@ -168,7 +168,6 @@ abstract class Sprite : Object
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
 	const PixelVector* getPosition();
-	PixelVector getDisplacedPosition();
 	uint16 getHead();
 	uint16 getMode();
 	Texture getTexture();
@@ -218,6 +217,7 @@ abstract class Sprite : Object
 	void hide();
 	void show();
 	uint8 getIndex();
+	virtual PixelVector getDisplacedPosition();
 	virtual void hideForDebug();
 	virtual void showForDebug();
 	virtual void addDisplacement(const PixelVector* displacement);
