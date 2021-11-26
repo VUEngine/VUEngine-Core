@@ -329,6 +329,14 @@ Size Stage::getSize()
 	return Size::getFromPixelSize(this->stageSpec->level.pixelSize);
 }
 
+PixelSize Stage::getPixelSize()
+{
+	ASSERT(this->stageSpec, "Stage::getPixelSize: null stageSpec");
+
+	// set world's limits
+	return this->stageSpec->level.pixelSize;
+}
+
 CameraFrustum Stage::getCameraFrustum()
 {
 	ASSERT(this->stageSpec, "Stage::getCameraFrustum: null stageSpec");

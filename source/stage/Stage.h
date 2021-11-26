@@ -215,6 +215,7 @@ class Stage : Container
 	void loadPostProcessingEffects();
 	void setupTimer();
 	Size getSize();
+	PixelSize getPixelSize();
 	CameraFrustum getCameraFrustum();
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
