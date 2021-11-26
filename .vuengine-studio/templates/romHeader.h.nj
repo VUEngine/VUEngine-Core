@@ -8,13 +8,13 @@
 {{ macros.sectionHeader('ROM Header Info') }}
 
 // game title (20 chars) 	 ####################
-#define __GAME_TITLE		"{{ (v.gameTitle ~ '                    ') | truncate(20, true, '') }}"
+#define __GAME_TITLE		"{{ (rom.gameTitle ~ '                    ') | truncate(20, true, '') }}"
 // maker code (2 chars)		 ##
-#define __MAKER_CODE		"{{ (v.makerCode ~ '  ') | truncate(2, true, '') }}"
+#define __MAKER_CODE		"{{ (rom.makerCode ~ '  ') | truncate(2, true, '') }}"
 // game code (4 chars)		 ####
-#define __GAME_CODE			"{{ (v.gameCodeSystem ~ ' ') | truncate(1, true, '') }}{{ (v.gameCodeId ~ '  ') | truncate(2, true, '') }}{{ (v.gameCodeLanguage ~ ' ') | truncate(1, true, '') }}"
+#define __GAME_CODE			"{{ (rom.gameCodeSystem ~ ' ') | truncate(1, true, '') }}{{ (rom.gameCodeId ~ '  ') | truncate(2, true, '') }}{{ (rom.gameCodeLanguage ~ ' ') | truncate(1, true, '') }}"
 // revision (1.x)			 #
-#define __ROM_VERSION		 {{ (v.revision ~ '') | truncate(1, true, '') }}
+#define __ROM_VERSION		 {{ (rom.revision ~ '') | truncate(1, true, '') }}
 
 
 #endif

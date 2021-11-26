@@ -12,10 +12,10 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if v.length > 0 -%}
+{% if events.length > 0 -%}
 enum GameEvents
 {
-	{%- for event in v %}
+	{%- for event in events %}
 	kEvent{{ event }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };

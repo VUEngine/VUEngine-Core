@@ -8,40 +8,40 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern BYTE {{ v.tiles }}[];
+extern BYTE {{ font.tiles }}[];
 
 
 {{ macros.sectionHeader('Definitions') }}
 
-CharSetROMSpec {{ v.name }}FontCharSet =
+CharSetROMSpec {{ font.name }}FontCharSet =
 {
 	// number of chars
-	{{ v.characterCount * v.size.x * v.size.y }},
+	{{ font.characterCount * font.size.x * font.size.y }},
 
 	// allocation type
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ v.tiles }},
+	{{ font.tiles }},
 };
 
-FontROMSpec {{ v.name }}Font =
+FontROMSpec {{ font.name }}Font =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&{{ v.name }}FontCharSet,
+	(CharSetSpec*)&{{ font.name }}FontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
-	{{ v.offset }},
+	{{ font.offset }},
 
 	// number of characters in this font
-	{{ v.characterCount }},
+	{{ font.characterCount }},
 
 	// number of characters per line in charset
-	{{ v.charactersPerLine }},
+	{{ font.charactersPerLine }},
 
 	// size of a single character (in chars) ({width, height})
-	{{ "{" }}{{ v.size.x }}, {{ v.size.y }}{{ "}" }},
+	{{ "{" }}{{ font.size.x }}, {{ font.size.y }}{{ "}" }},
 
 	// font's name
-	"{{ v.name }}",
+	"{{ font.name }}",
 };

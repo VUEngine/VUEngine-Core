@@ -15,7 +15,7 @@
 
 extern FontSpec DefaultFont;
 extern FontSpec ProfilerFont;
-{% for font in fonts|sort(attribute='name') -%}
+{% for font in fonts | unique('name') | sort(attribute='name') -%}
 extern FontSpec {{ font.name }}Font;
 {% endfor %}
 

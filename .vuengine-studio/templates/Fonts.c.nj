@@ -12,7 +12,7 @@ FontSpec* const _fonts[] =
 {
 	(FontSpec*)&DefaultFont,
 	(FontSpec*)&ProfilerFont,
-	{% for font in fonts|sort(attribute='name') -%}
+	{% for font in fonts | unique('name') | sort(attribute='name') -%}
 	(FontSpec*)&{{ font.name }}Font,
 	{% endfor %}
 	NULL
