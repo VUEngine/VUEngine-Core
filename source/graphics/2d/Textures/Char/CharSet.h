@@ -41,10 +41,10 @@
 #define __ANIMATED_MULTI					0x06
 
 // Bytes per CHAR
-#define __BYTES_PER_CHARS(n)			((n) << 4)
+#define __BYTES_PER_CHARS(n)				((n) << 4)
 
-#define DRM_WRINTING_PASSES_TO_ENABLE_CACHE		256
-
+// Compression types
+#define __CHAR_SET_COMPRESSION_RLE			0x0001	
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS

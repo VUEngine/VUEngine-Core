@@ -155,16 +155,68 @@ uint32 CharSet::getNumberOfChars()
 	return this->charSetSpec->numberOfChars;
 }
 
+void CharSet::writeRLE()
+{
+	uint32 totalPoxels = 64 * this->charSetSpec->numberOfChars / 2;
+
+	WORD* destination = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
+	WORD* source = (WORD*)(this->charSetSpec->charSpec);
+
+	uint32 uncompressedData = 0;
+	uint32 uncompressedDataSize = 0;
+
+	for(uint32 poxel = 0; poxel < totalPoxels; poxel++)
+	{
+		uint32 compressedData = source[poxel];
+
+		uint32 cycles = 4;
+
+		while(cycles--)
+		{
+			uint32 counter = ((0xF0000000 & compressedData) >> 28) + 1;
+			uint32 data = (0x0F000000 & compressedData) >> 24;
+
+			while(counter--)
+			{
+				uncompressedData = (uncompressedData << 4) | data;
+				uncompressedDataSize++;
+
+				if(8 <= uncompressedDataSize)
+				{
+					*destination = uncompressedData;
+					destination++;
+					uncompressedData = 0;
+					uncompressedDataSize = 0;
+				}
+			}
+
+			compressedData <<= 8;
+		}
+	}	
+}
+
 /**
  * Write the CHARs to DRAM
  */
 void CharSet::write()
 {
-	Mem::copyWORD(
-		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
-		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
-		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
-	);
+	switch(this->charSetSpec->charSpec[0])
+	{
+		case __CHAR_SET_COMPRESSION_RLE:
+
+			CharSet::writeRLE(this);
+			break;
+
+		default:
+
+			Mem::copyWORD(
+				(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
+				(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
+				__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
+			);
+
+			break;
+	}
 }
 
 /**
