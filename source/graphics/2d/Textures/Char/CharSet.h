@@ -44,7 +44,7 @@
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
 // Compression types
-#define __CHAR_SET_COMPRESSION_RLE			0x0001	
+#define __CHAR_SET_COMPRESSION_RLE			0x00000001	
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
