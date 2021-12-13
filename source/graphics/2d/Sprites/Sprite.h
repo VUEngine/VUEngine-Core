@@ -164,6 +164,8 @@ abstract class Sprite : Object
 	bool registered;
 	// Flag for making it transparent
 	uint8 transparent;
+	// Flag to check if rendered even if outside the screen
+	bool checkIfWithinScreenSpace;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
@@ -218,9 +220,9 @@ abstract class Sprite : Object
 	void show();
 	uint8 getIndex();
 	PixelVector getDisplacedPosition();
+	void setPosition(const PixelVector* position);
 	virtual void hideForDebug();
 	virtual void showForDebug();
-	virtual void addDisplacement(const PixelVector* displacement);
 	virtual Scale getScale();
 	virtual void position(const Vector3D* position);
 	virtual void processEffects();
@@ -228,7 +230,6 @@ abstract class Sprite : Object
 	virtual void resize(Scale scale, fix10_6 z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(uint16 display, uint16 mode) = 0;
-	virtual void setPosition(const PixelVector* position);
 	virtual void writeAnimation();
 	virtual bool writeTextures();
 	virtual void print(int32 x, int32 y);

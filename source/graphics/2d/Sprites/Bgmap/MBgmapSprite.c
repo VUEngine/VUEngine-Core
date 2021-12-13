@@ -57,6 +57,8 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
 {
 	Base::constructor(&mBgmapSpriteSpec->bgmapSpriteSpec, owner);
 
+	this->checkIfWithinScreenSpace = false;
+
 	this->mBgmapSpriteSpec = mBgmapSpriteSpec;
 
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
@@ -176,21 +178,6 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 }
 
 /**
- * Calculate 2D position
- *
- * @memberof			MBgmapSprite
- * @public
- *
- * @param position		3D position
- */
-void MBgmapSprite::position(const Vector3D* position)
-{
-	Base::position(this, position);
-
-	MBgmapSprite::setPosition(this, &this->position);
-}
-
-/**
  * Set 2D position
  *
  * @memberof			BgmapSprite
@@ -198,109 +185,19 @@ void MBgmapSprite::position(const Vector3D* position)
  *
  * @param position		New 2D position
  */
-void MBgmapSprite::setPosition(const PixelVector* position)
+void MBgmapSprite::computeTextureMDisplacement()
 {
-	PixelVector auxPosition = *position;
-
-	Base::setPosition(this, position);
-
 	if(this->mBgmapSpriteSpec->xLoop)
 	{
+		this->drawSpec.textureSource.mx = -this->position.x;
 		this->position.x = 0;
-		this->drawSpec.textureSource.mx = -auxPosition.x;
-	}
-	else
-	{
-		this->drawSpec.textureSource.mx = this->textureXOffset;
-		this->position.x = auxPosition.x;
-/*
-		if(0 > auxPosition.x + this->displacement.x)
-		{
-			this->drawSpec.textureSource.mx -= auxPosition.x + this->displacement.x;
-		}
-*/
 	}
 
 	if(this->mBgmapSpriteSpec->yLoop)
 	{
+		this->drawSpec.textureSource.my = -this->position.y;
 		this->position.y = 0;
-		this->drawSpec.textureSource.my = -auxPosition.y;
 	}
-	else
-	{
-		this->drawSpec.textureSource.my = this->textureYOffset;
-		this->position.y = auxPosition.y;
-/*
-		if(0 > auxPosition.y + this->displacement.y)
-		{
-			this->drawSpec.textureSource.my -= auxPosition.y + this->displacement.y;
-		}
-*/
-	}
-
-	fix10_6 previousZPosition = this->position.z;
-	this->position.z = auxPosition.z;
-
-	if(previousZPosition != this->position.z)
-	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this, this->position.z);
-	}
-}
-
-/**
- * Add displacement to position
- *
- * @memberof				MBgmapSprite
- * @public
- *
- * @param displacement		2D position displacement
- */
-void MBgmapSprite::addDisplacement(const PixelVector* displacement)
-{
-	if(!this->registered)
-	{
-		BgmapSprite::registerWithManager(this);
-	}
-
-	this->positioned = true;
-
-	if(this->mBgmapSpriteSpec->xLoop)
-	{
-		this->position.x = 0;
-		this->drawSpec.textureSource.mx -= displacement->x;
-	}
-	else
-	{
-		this->drawSpec.textureSource.mx = this->textureXOffset;
-		this->position.x += displacement->x;
-/*
-		if(0 > this->position.x + this->displacement.x)
-		{
-			this->drawSpec.textureSource.mx -= this->position.x + this->displacement.x;
-		}
-*/
-	}
-
-	if(this->mBgmapSpriteSpec->yLoop)
-	{
-		this->position.y = 0;
-		this->drawSpec.textureSource.my -= displacement->y;
-	}
-	else
-	{
-		this->drawSpec.textureSource.my = this->textureYOffset;
-		this->position.y += displacement->y;
-/*
-		if(0 > this->position.y + this->displacement.y)
-		{
-			this->drawSpec.textureSource.my -= this->position.y + this->displacement.y;
-		}
-*/
-	}
-
-	this->position.z += displacement->z;
-	this->position.parallax += displacement->parallax;
 }
 
 /**
@@ -314,6 +211,8 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
 int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
+
+	MBgmapSprite::computeTextureMDisplacement(this);
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 

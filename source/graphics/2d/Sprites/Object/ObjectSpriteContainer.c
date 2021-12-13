@@ -340,24 +340,6 @@ int32 ObjectSpriteContainer::getLastObjectIndex()
 }
 
 /**
- * Add displacement to position
- *
- * @param displacement		2D position displacement
- */
-void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
-{
-	if(this->objectSprites)
-	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
-		{
-			Sprite::addDisplacement(node->data, displacement);
-		}
-	}
-}
-
-/**
  * Print the container's status
  *
  * @param x			Camera x coordinate

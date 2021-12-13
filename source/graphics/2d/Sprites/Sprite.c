@@ -60,6 +60,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->writeAnimationFrame = false;
 	this->positioned = false;
 	this->registered = false;
+	this->checkIfWithinScreenSpace = true;
 }
 
 /**
@@ -129,7 +130,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
-	if(!Sprite::isWithinScreenSpace(this))
+	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
 		if(this->writeAnimationFrame)
 		{
@@ -149,24 +150,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	}
 
 	return this->index;
-}
-
-
-
-/**
- * Add displacement to position
- *
- * @memberof				Sprite
- * @public
- *
- * @param displacement		2D position displacement
- */
-void Sprite::addDisplacement(const PixelVector* displacement)
-{
-	this->position.x += displacement->x;
-	this->position.y += displacement->y;
-	this->position.z += displacement->z;
-	this->position.parallax += displacement->parallax;
 }
 
 /**
