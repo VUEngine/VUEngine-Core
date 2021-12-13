@@ -131,11 +131,11 @@ class Container : SpatialObject
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	bool getChildren(ClassPointer classPointer, VirtualList children);
+	void transformChildren(uint8 invalidateTransformationFlag);
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
 	virtual void update(uint32 elapsedTime);
 	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	virtual void transformChildren(uint8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
 	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
