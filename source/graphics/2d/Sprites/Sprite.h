@@ -217,7 +217,7 @@ abstract class Sprite : Object
 	void hide();
 	void show();
 	uint8 getIndex();
-	virtual PixelVector getDisplacedPosition();
+	PixelVector getDisplacedPosition();
 	virtual void hideForDebug();
 	virtual void showForDebug();
 	virtual void addDisplacement(const PixelVector* displacement);
