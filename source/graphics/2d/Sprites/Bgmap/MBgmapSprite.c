@@ -178,29 +178,6 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 }
 
 /**
- * Set 2D position
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param position		New 2D position
- */
-void MBgmapSprite::computeTextureMDisplacement()
-{
-	if(this->mBgmapSpriteSpec->xLoop)
-	{
-		this->drawSpec.textureSource.mx = -this->position.x;
-		this->position.x = 0;
-	}
-
-	if(this->mBgmapSpriteSpec->yLoop)
-	{
-		this->drawSpec.textureSource.my = -this->position.y;
-		this->position.y = 0;
-	}
-}
-
-/**
  * Write WORLD data to DRAM
  *
  * @memberof		MBgmapSprite
@@ -212,14 +189,37 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 
-	MBgmapSprite::computeTextureMDisplacement(this);
+	TextureSource textureSource = this->drawSpec.textureSource;
+
+	PixelVector position = this->position;
+
+	if(this->mBgmapSpriteSpec->xLoop)
+	{
+		textureSource.mx = -this->position.x;
+		position.x = 0;
+	}
+	else
+ 	{
+ 		textureSource.mx = this->textureXOffset;
+	}
+
+	if(this->mBgmapSpriteSpec->yLoop)
+	{
+		textureSource.my = -this->position.y;
+		position.y = 0;
+	}
+	else
+ 	{
+ 		textureSource.my = this->textureYOffset;
+	}
+
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
-	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
-	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
-	int16 gp = this->position.parallax + this->displacement.parallax;
+	int16 gx = position.x + this->displacement.x - this->halfWidth;
+	int16 gy = position.y + this->displacement.y - this->halfHeight;
+	int16 gp = position.parallax + this->displacement.parallax;
 
 	int32 mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
@@ -235,9 +235,9 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 		gy = _cameraFrustum->y0;
 	}
 
-	int16 mx = this->drawSpec.textureSource.mx + mxDisplacement;
-	int16 my = this->drawSpec.textureSource.my + myDisplacement;
-	int16 mp = this->drawSpec.textureSource.mp;
+	int16 mx = textureSource.mx + mxDisplacement;
+	int16 my = textureSource.my + myDisplacement;
+	int16 mp = textureSource.mp;
 
 	int16 w = 0;
 	int16 h = 0;

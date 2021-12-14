@@ -67,7 +67,6 @@ typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class MBgmapSprite : BgmapSprite
 {
-	// this is our texture
 	VirtualList textures;
 	// pinter to spec
 	const MBgmapSpriteSpec* mBgmapSpriteSpec;
