@@ -14,7 +14,7 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VUEngineProfilerFontTiles[];
+extern uint32 VUEngineProfilerFontTiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -31,6 +31,9 @@ CharSetROMSpec ProfilerFontCharSet =
 
 	// char spec
 	VUEngineProfilerFontTiles,
+
+	// pointer to the frames offsets
+	NULL
 };
 
 FontROMSpec ProfilerFont =

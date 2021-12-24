@@ -213,7 +213,6 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
  		textureSource.my = this->textureYOffset;
 	}
 
-
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates

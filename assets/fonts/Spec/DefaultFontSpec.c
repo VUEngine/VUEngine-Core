@@ -14,7 +14,7 @@
 //                                              DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VUEngineFontTiles[];
+extern uint32 VUEngineFontTiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -31,6 +31,9 @@ CharSetROMSpec DefaultFontCharSet =
 
 	// char spec
 	VUEngineFontTiles,
+
+	// pointer to the frames offsets
+	NULL
 };
 
 FontROMSpec DefaultFont =

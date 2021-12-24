@@ -541,7 +541,7 @@ CharSet Texture::getCharSet(uint32 loadIfNeeded)
  *
  * @return	Pointer to the map spec
  */
-BYTE* Texture::getMapSpec()
+uint16* Texture::getMapSpec()
 {
 	return this->textureSpec ? this->textureSpec->mapSpec : NULL;
 }

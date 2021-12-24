@@ -26,9 +26,9 @@ typedef signed short 		int16;
 typedef signed int	 		int32;
 typedef signed long long 	int64;
 
-typedef unsigned char 		BYTE;
-typedef unsigned short 		HWORD;
-typedef unsigned long 		WORD;
+typedef uint8		 		BYTE;
+typedef uint16		 		HWORD;
+typedef uint32		 		WORD;
 
 // define of boolean type
 typedef uint8				bool;

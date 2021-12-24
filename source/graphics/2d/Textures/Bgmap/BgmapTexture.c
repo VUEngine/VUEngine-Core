@@ -236,6 +236,31 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
     );
 }
 
+// TODO: inlining this causes trouble with ANIMATED_MULTI animations
+static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward)
+{
+	int16 increment = backward ? -2 : 2;
+
+	const HWORD* finalSource = source + numberOfHWORDS;
+
+    asm("					\n\t"      \
+		"jr end%=			\n\t"      \
+		"loop%=:			\n\t"      \
+		"ld.h 0[%1],r10		\n\t"      \
+		"xor %4,r10			\n\t"      \
+		"add %3,r10			\n\t"      \
+		"st.h r10,0[%0]		\n\t"      \
+		"add %5,%0			\n\t"      \
+		"add 2,%1			\n\t"      \
+		"end%=:				\n\t"      \
+		"cmp %1,%2			\n\t"      \
+		"bgt loop%=			\n\t"      \
+    : // No Output
+    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset), "r" (flip), "r" (increment)
+	: "r10", "sp", "lp" // regs used
+    );
+}
+
 /**
  * Write Texture to DRAM
  *

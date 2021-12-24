@@ -69,7 +69,10 @@ typedef struct CharSetSpec
 	uint8 allocationType;
 
 	/// pointer to the char spec in ROM
-	BYTE* charSpec;
+	uint32* charSpec;
+
+	/// pointer to the frames offsets
+	uint32* frameOffsets;
 
 } CharSetSpec;
 

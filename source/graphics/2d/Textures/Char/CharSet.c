@@ -20,6 +20,8 @@
 #include <VirtualList.h>
 
 
+#define __UINT32S_PER_CHAR(n)		((n) << 2)
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -157,10 +159,13 @@ uint32 CharSet::getNumberOfChars()
 
 void CharSet::writeRLE()
 {
-	uint32 totalPoxels = 64 * this->charSetSpec->numberOfChars / 2;
+	// 1 poxel = 2 pixels = 4 bits = 1 hex digit
+	// So, each char has 32 poxels
+	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
 
-	WORD* destination = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
-	WORD* source = (WORD*)(this->charSetSpec->charSpec);
+	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
+	uint32* limit = destination + __UINT32S_PER_CHAR(this->charSetSpec->numberOfChars);
+	uint32* source = this->charSetSpec->charSpec + this->charSpecDisplacement;
 
 	uint32 uncompressedData = 0;
 	uint32 uncompressedDataSize = 0;
@@ -183,8 +188,14 @@ void CharSet::writeRLE()
 
 				if(8 <= uncompressedDataSize)
 				{
+					if(limit <= destination)
+					{
+						return;
+					}
+
 					*destination = uncompressedData;
 					destination++;
+					
 					uncompressedData = 0;
 					uncompressedDataSize = 0;
 				}
@@ -200,6 +211,11 @@ void CharSet::writeRLE()
  */
 void CharSet::write()
 {
+	if(0 == this->charSetSpec->numberOfChars)
+	{
+		return;
+	}
+	
 	switch(this->charSetSpec->charSpec[0])
 	{
 		case __CHAR_SET_COMPRESSION_RLE:
@@ -210,9 +226,9 @@ void CharSet::write()
 		default:
 
 			Mem::copyWORD(
-				(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
-				(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
-				__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
+				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
+				this->charSetSpec->charSpec + this->charSpecDisplacement,
+				__UINT32S_PER_CHAR(this->charSetSpec->numberOfChars)
 			);
 
 			break;
@@ -317,5 +333,12 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 void CharSet::setFrame(uint16 frame)
 {
-	CharSet::setCharSpecDisplacement(this, this->charSetSpec->numberOfChars * frame);
+	if(NULL != this->charSetSpec->frameOffsets)
+	{
+		CharSet::setCharSpecDisplacement(this, this->charSetSpec->frameOffsets[frame]);
+	}
+	else
+	{
+		CharSet::setCharSpecDisplacement(this, __UINT32S_PER_CHAR(this->charSetSpec->numberOfChars * frame) + 1);
+	}
 }
