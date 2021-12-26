@@ -39,7 +39,7 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 
 	// save spec
 	this->charSetSpec = charSetSpec;
-	this->charSpecDisplacement = 0;
+	this->charSpecDisplacement = 1;
 
 	// set the offset
 	this->offset = offset;
