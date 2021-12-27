@@ -102,7 +102,7 @@ class BgmapSprite : Sprite
 	int16 getParamTableRow();
 	uint32 getParam();
 	void setParam(uint32 param);
-	void putChar(Point* texturePixel, BYTE* newChar);
+	void putChar(Point* texturePixel, uint32* newChar);
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 	void processAffineEffects();
 	void processHbiasEffects();

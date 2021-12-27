@@ -117,7 +117,7 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
-		if(charSet && CharSet::getCharSetSpec(charSet)->charSpec == charSetSpec->charSpec && CharSet::getAllocationType(charSet) == charSetSpec->allocationType)
+		if(charSet && CharSet::getCharSetSpec(charSet)->tiles == charSetSpec->tiles && CharSet::getAllocationType(charSet) == charSetSpec->allocationType)
 		{
 			return charSet;
 		}

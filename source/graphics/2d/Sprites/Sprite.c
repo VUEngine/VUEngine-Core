@@ -967,7 +967,7 @@ void Sprite::print(int32 x, int32 y)
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::putChar(Point* texturePixel, BYTE* newChar)
+void Sprite::putChar(Point* texturePixel, uint32* newChar)
 {
 	if(this->texture && newChar && texturePixel)
 	{

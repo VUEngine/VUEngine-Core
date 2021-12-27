@@ -20,8 +20,6 @@
 #include <VirtualList.h>
 
 
-#define __UINT32S_PER_CHAR(n)		((n) << 2)
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -39,7 +37,7 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 
 	// save spec
 	this->charSetSpec = charSetSpec;
-	this->charSpecDisplacement = 1;
+	this->tilesDisplacement = 1;
 
 	// set the offset
 	this->offset = offset;
@@ -164,8 +162,8 @@ void CharSet::writeRLE()
 	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
 
 	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
-	uint32* limit = destination + __UINT32S_PER_CHAR(this->charSetSpec->numberOfChars);
-	uint32* source = this->charSetSpec->charSpec + this->charSpecDisplacement;
+	uint32* limit = destination + __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars);
+	uint32* source = this->charSetSpec->tiles + this->tilesDisplacement;
 
 	uint32 uncompressedData = 0;
 	uint32 uncompressedDataSize = 0;
@@ -216,7 +214,7 @@ void CharSet::write()
 		return;
 	}
 	
-	switch(this->charSetSpec->charSpec[0])
+	switch(this->charSetSpec->tiles[0])
 	{
 		case __CHAR_SET_COMPRESSION_RLE:
 
@@ -227,8 +225,8 @@ void CharSet::write()
 
 			Mem::copyWORD(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
-				this->charSetSpec->charSpec + this->charSpecDisplacement,
-				__UINT32S_PER_CHAR(this->charSetSpec->numberOfChars)
+				this->charSetSpec->tiles + this->tilesDisplacement,
+				__UINT32S_PER_CHARS(this->charSetSpec->numberOfChars)
 			);
 
 			break;
@@ -250,11 +248,11 @@ void CharSet::rewrite()
 /**
  * Set displacement to add to the offset within the CHAR memory
  *
- * @param charSpecDisplacement		Displacement
+ * @param tilesDisplacement		Displacement
  */
-void CharSet::setCharSpecDisplacement(uint32 charSpecDisplacement)
+void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 {
-	this->charSpecDisplacement = charSpecDisplacement;
+	this->tilesDisplacement = tilesDisplacement;
 }
 
 /**
@@ -263,14 +261,20 @@ void CharSet::setCharSpecDisplacement(uint32 charSpecDisplacement)
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::putChar(uint32 charToReplace, BYTE* newChar)
+void CharSet::putChar(uint32 charToReplace, uint32* newChar)
 {
 	if(newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
 		Mem::copyWORD(
-			(WORD*)(__CHAR_SPACE_BASE_ADDRESS + ((((uint32)this->offset) << 4) + (charToReplace << 4))),
-			(WORD*)newChar,
-			__BYTES_PER_CHARS(1) / sizeof(WORD)
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
+			this->charSetSpec->tiles + this->tilesDisplacement,
+			__UINT32S_PER_CHARS(this->charSetSpec->numberOfChars)
+		);
+
+		Mem::copyWORD(
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
+			(uint32*)newChar,
+			__UINT32S_PER_CHARS(1)
 		);
 	}
 }
@@ -335,10 +339,10 @@ void CharSet::setFrame(uint16 frame)
 {
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		CharSet::setCharSpecDisplacement(this, this->charSetSpec->frameOffsets[frame]);
+		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame]);
 	}
 	else
 	{
-		CharSet::setCharSpecDisplacement(this, __UINT32S_PER_CHAR(this->charSetSpec->numberOfChars * frame) + 1);
+		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame) + 1);
 	}
 }

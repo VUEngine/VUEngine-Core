@@ -46,7 +46,7 @@ typedef struct TextureSpec
 	CharSetSpec* charSetSpec;
 
 	/// pointer to the bgtexture spec in ROM
-	uint16* mapSpec;
+	uint16* map;
 
 	/// x size, 1 column represents 8 pixels
 	uint8 cols;
@@ -118,7 +118,7 @@ abstract class Texture : Object
 	uint32 getTotalRows();
 	uint32 getNumberOfFrames();
 	CharSet getCharSet(uint32 loadIfNeeded);
-	uint16* getMapSpec();
+	uint16* getMap();
 	void setPalette(uint8 palette);
 	uint8 getPalette();
 	uint32 getRows();
@@ -127,7 +127,7 @@ abstract class Texture : Object
 	uint8 getUsageCount();
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	void putChar(Point* texturePixel, BYTE* newChar);
+	void putChar(Point* texturePixel, uint32* newChar);
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	bool isWritten();
 	void setMapDisplacement(uint32 mapDisplacement);

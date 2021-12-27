@@ -178,7 +178,7 @@ void BgmapTexture::writeAnimatedMulti()
 		for(; j <= frames; j++)
 		{
 			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureSpec->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
-				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
+				(const HWORD*)this->textureSpec->map + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
 				this->textureSpec->cols,
 				(palette) | (charLocation + area * (j - 1)));
 		}
@@ -295,7 +295,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
 				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + ((this->remainingRowsToBeWritten) << 6) + numberOfHWORDS - 1,
-						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
+						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
 						numberOfHWORDS,
 						offset,
 						flip,
@@ -308,7 +308,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
 				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6) + numberOfHWORDS - 1,
-						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
 						numberOfHWORDS,
 						offset,
 						flip,
@@ -324,7 +324,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
 				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
+						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
 						numberOfHWORDS,
 						offset,
 						flip,
@@ -337,7 +337,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 			for(; counter && this->remainingRowsToBeWritten--; counter--)
 			{
 				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-						(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
+						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
 						numberOfHWORDS,
 						offset,
 						flip,
@@ -376,7 +376,7 @@ void BgmapTexture::writeAnimatedSingleOptimized()
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		Mem::add ((uint8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
-				(const uint8*)(this->textureSpec->mapSpec + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureSpec->cols) << 1)),
+				(const uint8*)(this->textureSpec->map + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureSpec->cols) << 1)),
 				this->textureSpec->cols << 1,
 				(palette) | (charLocation));
 	}

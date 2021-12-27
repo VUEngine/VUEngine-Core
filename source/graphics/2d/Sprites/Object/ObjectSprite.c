@@ -105,7 +105,7 @@ void ObjectSprite::rewrite()
 
 	int16 jDisplacement = 0;
 
-	uint8* framePointer = (uint8*)(this->texture->textureSpec->mapSpec + this->texture->mapDisplacement);
+	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
 
 	ObjectAttributes* objectPointer = NULL;
 
@@ -262,7 +262,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint8* framePointer = (uint8*)(this->texture->textureSpec->mapSpec + this->texture->mapDisplacement);
+	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
 	uint16 result = 0;
 
 	ObjectAttributes* objectPointer = NULL;

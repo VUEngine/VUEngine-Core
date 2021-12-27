@@ -357,8 +357,8 @@ void Texture::writeHBiasMode()
 	{
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this spec
 		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureSpec->mapSpec+(i<<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+64* const this->yOffset+64*i)<<1), this->textureSpec->mapSpec+(i<<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
+		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureSpec->map<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
+		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+64* const this->yOffset+64*i)<<1), this->textureSpec->map<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
 	}
 	*/
 }
@@ -541,9 +541,9 @@ CharSet Texture::getCharSet(uint32 loadIfNeeded)
  *
  * @return	Pointer to the map spec
  */
-uint16* Texture::getMapSpec()
+uint16* Texture::getMap()
 {
-	return this->textureSpec ? this->textureSpec->mapSpec : NULL;
+	return this->textureSpec ? this->textureSpec->map : NULL;
 }
 
 /**
@@ -626,12 +626,12 @@ void Texture::onCharSetDeleted(Object eventFirer)
  * @param texturePixel	Coordinates within the map spec to write
  * @param newChar		CHAR data to write
  */
-void Texture::putChar(Point* texturePixel, BYTE* newChar)
+void Texture::putChar(Point* texturePixel, uint32* newChar)
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
 		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		uint32 charToReplace = this->textureSpec->mapSpec[displacement];
+		uint32 charToReplace = this->textureSpec->map[displacement];
 		CharSet::putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -648,7 +648,7 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
 		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		uint32 charToReplace = this->textureSpec->mapSpec[displacement];
+		uint32 charToReplace = this->textureSpec->map[displacement];
 		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
@@ -666,7 +666,7 @@ bool Texture::isWritten()
 /**
  * Set displacement to add to the offset within the BGMAP memory
  *
- * @param mapSpecDisplacement	Displacement
+ * @param mapDisplacement	Displacement
  */
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {

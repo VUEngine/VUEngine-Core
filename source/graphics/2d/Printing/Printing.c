@@ -250,7 +250,7 @@ void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
 		(uint8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
-		(uint8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
+		(uint8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles),
 		VUENGINE_DEBUG_FONT_SIZE << 4
 	);
 }

@@ -43,6 +43,9 @@
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
+// uint32s per CHAR
+#define __UINT32S_PER_CHARS(n)				((n) << 2)
+
 // Compression types
 #define __CHAR_SET_COMPRESSION_RLE			0x00000001	
 
@@ -69,7 +72,7 @@ typedef struct CharSetSpec
 	uint8 allocationType;
 
 	/// pointer to the char spec in ROM
-	uint32* charSpec;
+	uint32* tiles;
 
 	/// pointer to the frames offsets
 	uint32* frameOffsets;
@@ -94,7 +97,7 @@ class CharSet : Object
 	// Charset spec
 	CharSetSpec* charSetSpec;
 	// Array spec of the charSet
-	uint32 charSpecDisplacement;
+	uint32 tilesDisplacement;
 	// Memory displacement
 	uint16 offset;
 	// How many textures are using me
@@ -112,8 +115,8 @@ class CharSet : Object
 	uint32 getNumberOfChars();
 	void write();
 	void rewrite();
-	void setCharSpecDisplacement(uint32 charSpecDisplacement);
-	void putChar(uint32 charToReplace, BYTE* newChar);
+	void setTilesDisplacement(uint32 tilesDisplacement);
+	void putChar(uint32 charToReplace, uint32* newChar);
 	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 	void setFrame(uint16 frame);
 }

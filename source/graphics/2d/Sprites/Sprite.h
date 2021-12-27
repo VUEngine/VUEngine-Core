@@ -208,7 +208,7 @@ abstract class Sprite : Object
 	void setFrameDuration(uint8 frameDuration);
 	void update();
 	bool updateAnimation();
-	void putChar(Point* texturePixel, BYTE* newChar);
+	void putChar(Point* texturePixel, uint32* newChar);
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	AnimationController getAnimationController();
 	bool isVisible();
