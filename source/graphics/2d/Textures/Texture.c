@@ -299,7 +299,6 @@ bool Texture::update()
 
 						CharSet::setFrame(this->charSet, this->frame);
 						CharSet::write(this->charSet);
-						Texture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * this->frame);
 						Texture::write(this);
 						break;
 
@@ -403,6 +402,15 @@ void Texture::setFrame(uint16 frame)
 
 	if(statusChanged && kTextureFrameChanged == this->status)
 	{
+		// write according to the allocation type
+		switch(CharSet::getAllocationType(this->charSet))
+		{
+			case __ANIMATED_SINGLE_OPTIMIZED:
+
+				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+				break;
+		}
+
 		Texture::prepare(this);
 	}
 }
@@ -672,7 +680,7 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
 
-	this->status = this->mapDisplacement != mapDisplacement ? kTextureMapDisplacementChanged : this->status;
+	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
 	this->mapDisplacement = mapDisplacement;
 
