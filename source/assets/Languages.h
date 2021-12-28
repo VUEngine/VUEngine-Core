@@ -2,23 +2,18 @@
 //                              THIS FILE WAS AUTO-GENERATED - DO NOT EDIT                               //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//---------------------------------------------------------------------------------------------------------
-//                                                INCLUDES                                                 
-//---------------------------------------------------------------------------------------------------------
-
-#include <Fonts.h>
-
+#ifndef LANGUAGES_H_
+#define LANGUAGES_H_
 
 //---------------------------------------------------------------------------------------------------------
 //                                               DEFINITIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
-FontSpec* const _fonts[] =
+enum LanguageStrings
 {
-	(FontSpec*)&DefaultFont,
-	(FontSpec*)&ProfilerFont,
-	(FontSpec*)&DefaultFont,
-	(FontSpec*)&ProfilerFont,
-	
-	NULL
+	kStringAutomaticPauseBody,
+	kStringAutomaticPauseTitle,
 };
+
+
+#endif

@@ -6,19 +6,16 @@
 //                                                INCLUDES                                                 
 //---------------------------------------------------------------------------------------------------------
 
-#include <Fonts.h>
+#include <I18n.h>
+#include <Languages.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //                                               DEFINITIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
-FontSpec* const _fonts[] =
+LangROMSpec* const _languages[] =
 {
-	(FontSpec*)&DefaultFont,
-	(FontSpec*)&ProfilerFont,
-	(FontSpec*)&DefaultFont,
-	(FontSpec*)&ProfilerFont,
 	
 	NULL
 };
