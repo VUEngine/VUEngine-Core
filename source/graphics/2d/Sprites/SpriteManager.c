@@ -591,6 +591,11 @@ void SpriteManager::render()
 
 	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
 	{
+		if(isDeleted(node->data))
+		{
+			continue;
+		}
+		
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		// Saves on method calls quite a bit when there are lots of
