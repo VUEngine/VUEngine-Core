@@ -695,7 +695,7 @@ void SoundManager::releaseWaveform(int8 waveFormIndex, const int8* waveFormData)
 {
 	if(0 <= waveFormIndex && waveFormIndex < __TOTAL_CHANNELS)
 	{
-		if(this->waveforms[waveFormIndex].data == waveFormData)
+		if(NULL == waveFormData || this->waveforms[waveFormIndex].data == waveFormData)
 		{
 			this->waveforms[waveFormIndex].usageCount -= 1;
 
@@ -725,11 +725,9 @@ void SoundManager::releaseSoundChannel(Channel* channel)
 {
 	if(channel)
 	{
-		NM_ASSERT(!isDeleted(channel->sound), "SoundManager::releaseSoundChannel: NULL sound");
-		
 		if(kChannelNoise != channel->type)
 		{
-			SoundManager::releaseWaveform(this, channel->soundChannelConfiguration.SxRAM, channel->sound->soundChannels[channel->soundChannel]->soundChannelConfiguration->waveFormData);
+			SoundManager::releaseWaveform(this, channel->soundChannelConfiguration.SxRAM, !isDeleted(channel->sound) ? channel->sound->soundChannels[channel->soundChannel]->soundChannelConfiguration->waveFormData: NULL);
 		}
 
 		channel->soundChannelConfiguration.trackType = kUnknownType;
