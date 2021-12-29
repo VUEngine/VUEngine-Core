@@ -174,7 +174,7 @@ void ObjectSpriteContainer::sortProgressively()
 		{
 			Sprite sprite = Sprite::safeCast(node->data);
 
-			if(!sprite->positioned)
+			if(isDeleted(sprite) || !sprite->positioned)
 			{
 				continue;
 			}
