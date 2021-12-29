@@ -172,9 +172,14 @@ void ObjectSpriteContainer::sortProgressively()
 
 		if(nextNode)
 		{
+			if(isDeleted(node->data))
+			{
+				continue;
+			}
+
 			Sprite sprite = Sprite::safeCast(node->data);
 
-			if(isDeleted(sprite) || !sprite->positioned)
+			if(!sprite->positioned)
 			{
 				continue;
 			}
@@ -269,6 +274,11 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	{
 		for(VirtualNode node = this->objectSprites->head; node && 0 < _objectIndex; node = node->next)
 		{
+			if(isDeleted(node->data))
+			{
+				continue;
+			}
+
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
 			// Saves on method calls quite a bit when there are lots of
