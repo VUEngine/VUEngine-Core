@@ -481,8 +481,6 @@ void SoundWrapper::release()
 {
 	SoundWrapper::stop(this);
 
-	this->sound = NULL;
-
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
 	if(this->events)
@@ -490,6 +488,8 @@ void SoundWrapper::release()
 		SoundWrapper::fireEvent(this, kEventSoundReleased);
 		NM_ASSERT(!isDeleted(this), "SoundWrapper::release: deleted this during kEventSoundReleased");
 	}
+
+	this->sound = NULL;
 }
 
 /**

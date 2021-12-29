@@ -725,6 +725,8 @@ void SoundManager::releaseSoundChannel(Channel* channel)
 {
 	if(channel)
 	{
+		NM_ASSERT(!isDeleted(channel->sound), "SoundManager::releaseSoundChannel: NULL sound");
+		
 		if(kChannelNoise != channel->type)
 		{
 			SoundManager::releaseWaveform(this, channel->soundChannelConfiguration.SxRAM, channel->sound->soundChannels[channel->soundChannel]->soundChannelConfiguration->waveFormData);
