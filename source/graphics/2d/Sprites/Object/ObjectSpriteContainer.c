@@ -172,10 +172,7 @@ void ObjectSpriteContainer::sortProgressively()
 
 		if(nextNode)
 		{
-			if(isDeleted(node->data))
-			{
-				continue;
-			}
+			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
 
 			Sprite sprite = Sprite::safeCast(node->data);
 
@@ -274,10 +271,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	{
 		for(VirtualNode node = this->objectSprites->head; node && 0 < _objectIndex; node = node->next)
 		{
-			if(isDeleted(node->data))
-			{
-				continue;
-			}
+			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::doRender: NULL node's data");
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
