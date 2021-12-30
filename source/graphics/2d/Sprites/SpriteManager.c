@@ -343,6 +343,8 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 {
 	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
+
 		Sprite otherSprite = Sprite::safeCast(node->data);
 
 		if(otherSprite == sprite)
@@ -383,6 +385,8 @@ bool SpriteManager::sortProgressively()
 
 		if(nextNode)
 		{
+			NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
+	
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			if(!sprite->positioned)
@@ -553,6 +557,8 @@ void SpriteManager::writeGraphicsToDRAM()
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
+
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite->hidden | !sprite->positioned)
@@ -591,11 +597,8 @@ void SpriteManager::render()
 
 	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
 	{
-		if(isDeleted(node->data))
-		{
-			continue;
-		}
-		
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
+
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		// Saves on method calls quite a bit when there are lots of
@@ -661,6 +664,8 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 {
 	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::hideSprites: NULL node's data");
+
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite == spareSprite)
@@ -701,6 +706,8 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 {
 	for(VirtualNode node = this->sprites->tail; node; node = node->previous)
 	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::showSprites: NULL node's data");
+
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite == spareSprite)
@@ -917,6 +924,8 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 	for(; node; node = node->next)
 	{
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
+
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite->visible && sprite->positioned && !sprite->hidden)
