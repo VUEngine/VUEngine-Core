@@ -33,7 +33,7 @@ CharSetROMSpec DefaultFontCharSet =
 	VUEngineFontTiles,
 
 	// pointer to the frames offsets
-	NULL
+	NULL,
 };
 
 FontROMSpec DefaultFont =
