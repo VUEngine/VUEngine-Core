@@ -111,12 +111,16 @@ bool BgmapTexture::write()
 	switch(this->textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
-		case __ANIMATED_SINGLE_OPTIMIZED:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 		case __NOT_ANIMATED:
 
 			BgmapTexture::doWrite(this, kTexturePendingRewriting == status);
+			break;
+
+		case __ANIMATED_SINGLE_OPTIMIZED:
+
+			BgmapTexture::doWrite(this, kTextureFrameChanged >= status);
 			break;
 
 		case __ANIMATED_MULTI:
