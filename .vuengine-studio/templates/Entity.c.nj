@@ -97,6 +97,9 @@ CharSetROMSpec {{ spriteName }}Charset =
 
 	// char spec
 	{{ sprite.texture.image.name }}Tiles,
+
+	// pointer to the frames offsets
+	NULL,
 };
 
 TextureROMSpec {{ spriteName }}Texture =

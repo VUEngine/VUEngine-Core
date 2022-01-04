@@ -23,6 +23,9 @@ CharSetROMSpec {{ font.name }}FontCharSet =
 
 	// char spec
 	{{ font.tiles }},
+
+	// pointer to the frames offsets
+	NULL,
 };
 
 FontROMSpec {{ font.name }}Font =
