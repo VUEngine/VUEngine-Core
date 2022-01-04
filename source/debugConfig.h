@@ -123,6 +123,11 @@
 #define __FORCE_PRINTING_LAYER
 #endif
 
+#ifdef __PRINT_FRAME_TIMES
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
+#endif
+
 #endif
 #undef __DIMM_FOR_PROFILING
 
