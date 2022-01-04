@@ -263,6 +263,7 @@ singleton class VIPManager : Object
 	bool processingXPEND;
 	bool drawingEnded;
 	bool frameStarted;
+	bool forceDrawingSync;
 
 	/// @publicsection
 	static VIPManager getInstance();
@@ -281,6 +282,7 @@ singleton class VIPManager : Object
 	void displayHide();
 	void clearScreen();
 	void clearBgmapSegment(int32 segment, int32 size);
+	void setForceDrawingSync(bool forceDrawingSync);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
 	void setupBrightness(Brightness* brightness);

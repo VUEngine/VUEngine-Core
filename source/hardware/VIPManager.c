@@ -108,6 +108,12 @@ void VIPManager::constructor()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 
+#ifdef __FORCE_VIP_SYNC
+	this->forceDrawingSync = true;
+#else
+	this->forceDrawingSync = false;
+#endif
+
 	_vipManager = this;
 	_timerManager = TimerManager::getInstance();
 	_spriteManager = SpriteManager::getInstance();
@@ -134,6 +140,12 @@ void VIPManager::reset()
 {
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
+
+#ifdef __FORCE_VIP_SYNC
+	this->forceDrawingSync = true;
+#else
+	this->forceDrawingSync = false;
+#endif
 }
 
 void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
@@ -326,9 +338,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 
 				// Prevent VIP's drawing operations
-#ifdef __FORCE_VIP_SYNC
-				VIPManager::disableDrawing(this);
-#endif
+				if(this->forceDrawingSync)
+				{
+					VIPManager::disableDrawing(this);
+				}
+
 				// Allow frame start interrupt
 				VIPManager::enableInterrupts(this, __FRAMESTART);
 
@@ -341,10 +355,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				// Write to the frame buffers
 				VIPManager::processFrameBuffers(this);
 
-#ifdef __FORCE_VIP_SYNC
-				// allow VIP's drawing operations
-				VIPManager::enableDrawing(this);
-#endif
+				if(this->forceDrawingSync)
+				{
+					// allow VIP's drawing operations
+					VIPManager::enableDrawing(this);
+				}
 
 				// flag completions
 				this->drawingEnded = true;
@@ -536,6 +551,16 @@ void VIPManager::clearScreen()
 void VIPManager::clearBgmapSegment(int32 segment, int32 size)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
+}
+
+/**
+ * Set setForceDrawingSync
+ *
+ * @param forceDrawingSync	Bool
+ */
+void VIPManager::setForceDrawingSync(bool forceDrawingSync)
+{
+	this->forceDrawingSync = forceDrawingSync;
 }
 
 /**
