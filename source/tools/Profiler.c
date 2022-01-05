@@ -22,6 +22,8 @@
 #include <VIPManager.h>
 #include <debugConfig.h>
 
+#define __ENABLE_PROFILER_SKIP_FRAMES				10
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S MACROS
@@ -273,8 +275,6 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	TimerManager::enable(this->timerManager, false);
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 
-	TimerManager::enable(this->timerManager, true);
-
 	if(this->previousTimerCounter < currentTimerCounter)
 	{
 		this->previousTimerCounter += this->timerCounter;
@@ -323,6 +323,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	uint8 printingColumn = this->lastLapIndex / 2;
 
 	Profiler::printValue(this, processName, elapsedTime, printingColumn);
+
 	this->lastLapIndex += entries;
 	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
@@ -331,6 +332,8 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 	{
 		Profiler::printValue(this, "TOTAL", this->totalTime, 46);
 	}
+
+	TimerManager::enable(this->timerManager, true);
 
 	HardwareManager::enableInterrupts();
 }
