@@ -3,7 +3,7 @@
 
 function waitRandom()
 {
-	delay="0.000"$(( ( ( RANDOM % 900 ) + 10 ) ))
+	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
 	sleep $delay
 }
 
@@ -199,6 +199,10 @@ do
 		LIBRARIES_ARGUMENT="$2"
 		shift # past argument
 		;;
+		-t)
+		PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR="$2"
+		shift # past argument
+		;;
 	esac
 
 	shift
@@ -313,7 +317,7 @@ then
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -u $USER_LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -u $USER_LIBRARIES_PATH -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR -l "$LIBRARIES_ARGUMENT"
 			else
 				mustBeReprocessed=true
 			fi

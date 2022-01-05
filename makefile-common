@@ -146,12 +146,13 @@ MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -pru
 MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
 ifeq ($(MUST_PREPROCESS_ENGINE), 1)
 preprocessEngine:
-	@$(MAKE) --no-print-directory preprocessClasses																								\
-		-f $(ENGINE_HOME)/makefile																												\
-		-e GAME_HOME=$(GAME_HOME)																												\
-		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
-		-e NAME=$(ENGINE_NAME)																													\
-		-e MAKE_JOBS=$(MAKE_JOBS)																												\
+	@$(MAKE) --no-print-directory preprocessClasses																									\
+		-f $(ENGINE_HOME)/makefile																													\
+		-e GAME_HOME=$(GAME_HOME)																													\
+		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
+		-e NAME=$(ENGINE_NAME)																														\
+		-e MAKE_JOBS=$(MAKE_JOBS)																													\
+		-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)														\
 		-e COMPONENTS=$(COMPONENTS)
 else
 preprocessEngine:
@@ -185,6 +186,7 @@ preprocessPlugins:
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e NAME=$(PLUGIN)																													\
 				-e MAKE_JOBS=$(MAKE_JOBS)																											\
+				-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)												\
 				-e COMPONENTS=$(COMPONENTS);																										\
 		fi;																																			\
 	)
@@ -200,6 +202,7 @@ preprocessHeaderFiles:
 		-e MY_HOME=$(MY_HOME)																														\
 		-e CLASSES_HIERARCHY_FILE=$(CLASSES_HIERARCHY_FILE) 																						\
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
+		-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)														\
 		-e PLUGINS="$(PLUGINS)"
 
 compile:
