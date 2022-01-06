@@ -8,7 +8,7 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern BYTE {{ font.tiles }}[];
+extern uint32 {{ font.tiles }}[];
 
 
 {{ macros.sectionHeader('Definitions') }}
