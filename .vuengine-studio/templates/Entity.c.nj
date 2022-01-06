@@ -20,8 +20,8 @@
 {{ macros.sectionHeader('Declarations') }}
 
 {% for sprite in entity.sprites -%}
-extern BYTE {{ sprite.texture.image.name }}Tiles[];
-extern BYTE {{ sprite.texture.image.name }}Map[];
+extern uint32 {{ sprite.texture.image.name }}Tiles[];
+extern uint16 {{ sprite.texture.image.name }}Map[];
 {% endfor %}
 
 {% if entity.animations.definitions.length -%}
