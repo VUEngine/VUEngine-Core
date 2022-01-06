@@ -294,7 +294,9 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 				break;
 			}
 
-			if(_objectIndex == ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame) + objectSprite->totalObjects)
+			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
+			// but calling ObjectSprite::getTotalObjects is too costly
+			if(ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame) == _objectIndex - objectSprite->totalObjects)
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}

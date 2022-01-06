@@ -615,7 +615,7 @@ void SpriteManager::render()
 			continue;
 		}
 
-		if(this->freeLayer == Sprite::render(sprite, this->freeLayer, this->evenFrame))
+		if(Sprite::render(sprite, this->freeLayer, this->evenFrame) == this->freeLayer)
 		{
 			this->freeLayer--;
 		}
