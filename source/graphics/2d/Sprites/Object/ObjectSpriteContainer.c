@@ -292,7 +292,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 				break;
 			}
 
-			if(__NO_RENDER_INDEX != ObjectSprite::render(objectSprite, _objectIndex, evenFrame))
+			if(_objectIndex == ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame) + objectSprite->totalObjects)
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}
@@ -421,11 +421,11 @@ bool ObjectSpriteContainer::writeTextures()
 static void ObjectSpriteContainer::prepareForRendering()
 {
 	// clear OBJ memory
-	for(int32 i = _objectIndex; i < __AVAILABLE_CHAR_OBJECTS; i++)
+/*	for(int32 i = _objectIndex; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
-
+*/
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
 

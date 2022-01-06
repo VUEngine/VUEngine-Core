@@ -218,8 +218,6 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	index -= this->totalObjects;
-
 	if(0 > index)
 	{
 		return __NO_RENDER_INDEX;
