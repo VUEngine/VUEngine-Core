@@ -29,6 +29,15 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct Lap
+{
+	const char* processName;
+	float elapsedTime;
+	uint32 lapType;
+	uint8 column;
+} Lap;
+
+
 static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 {
 	// mirror spec?
@@ -46,6 +55,7 @@ static BrightnessRepeatSpec profileBrightnessRepeatSpec =
 };
 
 static Printing _printing = NULL;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -70,6 +80,8 @@ void Profiler::constructor()
 {
 	Base::constructor();
 
+	this->laps = new VirtualList();
+
 	Profiler::reset(this);
 
 	_printing = Printing::getInstance();
@@ -80,13 +92,19 @@ void Profiler::constructor()
  */
 void Profiler::destructor()
 {
+	VirtualList::deleteData(this->laps);
+
+	delete this->laps;
+	this->laps = NULL;
+
 	// allow a new construct
 	Base::destructor();
 }
 
 void Profiler::reset()
 {
-	this->lapTypeFlags = 0;
+	VirtualList::deleteData(this->laps);
+	
 	this->started = false;
 	this->timerManager = TimerManager::getInstance();
 	this->initialized = false;
@@ -146,18 +164,11 @@ void Profiler::start()
 		return;
 	}
 
-	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
+	VirtualList::deleteData(this->laps);
 
 	this->started = true;
-	this->lapTypeFlags = 0;
-
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
-
-	Printing::clear(_printing);
-	Printing::text(_printing, "================================================", 0, 27, "Profiler");
-
 	this->printedProcessesNames = true;
-
 	this->currentProfilingProcess = 0;
 	this->previousTimerCounter = this->timerCounter;
 	this->totalTime = 0;
@@ -182,7 +193,7 @@ void Profiler::end()
 
 	this->started = false;
 
-	Profiler::computeLap(this, "HEADROOM", true);
+	Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
 
 	Brightness brightness =
 	{
@@ -199,47 +210,73 @@ void Profiler::end()
 	{
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
 	}
+
+	Profiler::print(this);
 }
 
-void Profiler::printValue(const char* processName, float elapsedTime, uint8 column)
+void Profiler::print()
 {
-	if(NULL == processName)
+	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
+	Printing::clear(_printing);
+	Printing::text(_printing, "================================================", 0, 27, "Profiler");
+
+	uint32 previousLapType = kProfilerLapTypeNormalProcess;
+
+	for(VirtualNode node = VirtualList::begin(this->laps); node; node = VirtualNode::getNext(node))
 	{
-		Printing::text(_printing, "<", column, 27, "Profiler");
+		Lap* lap = (Lap*)VirtualNode::getData(node);
+		Profiler::printValue(this, lap, previousLapType); 
+		previousLapType = lap->lapType;
+	}
+}
+
+void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
+{
+	Lap* lap = new Lap;
+
+	lap->processName = NULL == processName ? "NO NAMe" : processName;
+	lap->elapsedTime = elapsedTime;
+	lap->lapType = lapType;
+	lap->column = column;
+
+	VirtualList::pushBack(this->laps, lap);
+}
+
+void Profiler::printValue(Lap* lap, uint32 previousLapType)
+{
+	if(NULL == lap->processName)
+	{
+		Printing::text(_printing, "<", lap->column, 27, "Profiler");
 	}
 	else
 	{
-
-		Printing::text(_printing, "<", column, 27, "Profiler");
+		Printing::text(_printing, "<", lap->column, 27, "Profiler");
 
 		Printing::setOrientation(_printing, kPrintingOrientationVertical);
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
-		Printing::text(_printing, /*Utilities::toUppercase(*/processName/*)*/, column, 26, "Profiler");
-		Printing::float(_printing, elapsedTime, column, 14 + (10 > elapsedTime ? 0 : 1), 2, "Profiler");
-		Printing::text(_printing, ":;", column, 10, "Profiler"); // "ms"
+		Printing::text(_printing, /*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
+		Printing::float(_printing, lap->elapsedTime, lap->column, 14 + (10 > lap->elapsedTime ? 0 : 1), 2, "Profiler");
+		Printing::text(_printing, ":;", lap->column, 10, "Profiler"); // "ms"
 
 		uint8 indicatorRow = 8;
 
-		if(kProfilerLapTypeVIPInterruptProcess & this->lapTypeFlags)
+		if(kProfilerLapTypeVIPInterruptProcess & previousLapType)
 		{
-			Printing::text(_printing, ">", column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
-			this->lapTypeFlags &= ~kProfilerLapTypeVIPInterruptProcess;
 		}
 
-		if(kProfilerLapTypeTimerInterruptProcess & this->lapTypeFlags)
+		if(kProfilerLapTypeTimerInterruptProcess & previousLapType)
 		{
-			Printing::text(_printing, "?", column, indicatorRow, "Profiler"); // "(s)"
+			Printing::text(_printing, "?", lap->column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
-			this->lapTypeFlags &= ~kProfilerLapTypeTimerInterruptProcess;
 		}
 
-		if(kProfilerLapTypeCommunicationsInterruptProcess & this->lapTypeFlags)
+		if(kProfilerLapTypeCommunicationsInterruptProcess & previousLapType)
 		{
-			Printing::text(_printing, "@", column, indicatorRow, "Profiler"); // "(c)"
+			Printing::text(_printing, "@", lap->column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
-			this->lapTypeFlags &= ~kProfilerLapTypeCommunicationsInterruptProcess;
 		}
 
 		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
@@ -254,11 +291,10 @@ void Profiler::lap(uint32 lapType, const char* processName)
 		return;
 	}
 
-	Profiler::computeLap(this, processName, false);
-	this->lapTypeFlags |= lapType;
+	Profiler::computeLap(this, processName, lapType, false);
 }
 
-void Profiler::computeLap(const char* processName, bool isHeadroom)
+void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadroom)
 {
 	if(!this->started && !isHeadroom)
 	{
@@ -322,7 +358,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 
 	uint8 printingColumn = this->lastLapIndex / 2;
 
-	Profiler::printValue(this, processName, elapsedTime, printingColumn);
+	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn);
 
 	this->lastLapIndex += entries;
 	this->previousTimerCounter = currentTimerCounter;
@@ -330,7 +366,7 @@ void Profiler::computeLap(const char* processName, bool isHeadroom)
 
 	if(isHeadroom)
 	{
-		Profiler::printValue(this, "TOTAL", this->totalTime, 46);
+		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, 46);
 	}
 
 	TimerManager::enable(this->timerManager, true);

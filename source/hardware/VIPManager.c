@@ -313,7 +313,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				SpriteManager::render(_spriteManager);
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_RENDER);
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
 
 				_vipManager->processingFRAMESTART = false;

@@ -17,6 +17,7 @@
 
 #include <Object.h>
 #include <TimerManager.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ enum ProfilerLapTypes
 /// @ingroup hardware
 singleton class Profiler : Object
 {
+	VirtualList laps;
 	TimerManager timerManager;
 	float timeProportion;
 	float totalTime;
@@ -56,7 +58,6 @@ singleton class Profiler : Object
 	bool xpend;
 	bool playedMIDISounds;
 	bool processedCommunications;
-	uint32 lapTypeFlags;
 
 	/// @publicsection
 	static Profiler getInstance();
