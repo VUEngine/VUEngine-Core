@@ -166,6 +166,8 @@ abstract class Sprite : Object
 	uint8 transparent;
 	// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
+	// Flag to avoid rewriting DRAM's cache if not needed
+	uint8 renderFlag;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);

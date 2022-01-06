@@ -61,6 +61,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->positioned = false;
 	this->registered = false;
 	this->checkIfWithinScreenSpace = true;
+	this->renderFlag = true;
 }
 
 /**
@@ -87,8 +88,16 @@ void Sprite::processEffects()
 
 int16 Sprite::render(int16 index, bool evenFrame)
 {
+	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
+
+	if(0 > index)
+	{
+		return __NO_RENDER_INDEX;
+	}
+
 	this->visible = false;
+
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -140,7 +149,15 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	this->index = Sprite::doRender(this, index, evenFrame);
+	if(previousIndex != index || this->renderFlag || this->writeAnimationFrame)
+	{
+		this->renderFlag = false;
+		this->index = Sprite::doRender(this, index, evenFrame);
+	}
+	else
+	{
+		this->index = previousIndex;
+	}
 
 	this->visible = __NO_RENDER_INDEX != this->index;
 
@@ -257,7 +274,11 @@ void Sprite::registerWithManager()
  */
 void Sprite::position(const Vector3D* position)
 {
-	this->position = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
+	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
+
+	this->renderFlag |= (this->position.x != position2D.x) || (this->position.y != position2D.y) || (this->position.z != position2D.z) || (this->position.parallax != position2D.parallax);
+
+	this->position = position2D;
 	this->positioned = true;
 
 	if(!this->registered)
@@ -273,6 +294,8 @@ void Sprite::position(const Vector3D* position)
  */
 void Sprite::setPosition(const PixelVector* position)
 {
+	this->renderFlag |= (this->position.x != position->x) || (this->position.y != position->y) || (this->position.z != position->z) || (this->position.parallax != position->parallax);
+
 	this->position = *position;
 	this->positioned = true;
 
@@ -289,7 +312,9 @@ void Sprite::setPosition(const PixelVector* position)
  */
 void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
 {
-	this->position.parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+	int16 parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+	this->renderFlag |= this->position.parallax != parallax;
+	this->position.parallax = parallax;
 }
 
 /**
@@ -509,6 +534,7 @@ const PixelVector* Sprite::getDisplacement()
  */
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
+	this->renderFlag |= (this->displacement.x != displacement->x) || (this->displacement.y != displacement->y) || (this->displacement.z != displacement->z) || (this->displacement.parallax != displacement->parallax);
 	this->displacement = *displacement;
 }
 

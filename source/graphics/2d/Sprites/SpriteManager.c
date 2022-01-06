@@ -605,11 +605,13 @@ void SpriteManager::render()
 		// sprites. Don't remove.
 		if(sprite->hidden | !sprite->positioned)
 		{
+			sprite->index = __NO_RENDER_INDEX;
 			continue;
 		}
 
 		if(sprite->transparent & this->evenFrame)
 		{
+			sprite->index = __NO_RENDER_INDEX;
 			continue;
 		}
 
