@@ -95,6 +95,47 @@ void VirtualList::clear()
 	}
 }
 
+
+/**
+ * Delete all nodes' data and clear
+ */
+void VirtualList::deleteData()
+{
+	if(this->head)
+	{
+		// point to the head
+		VirtualNode node = this->head;
+
+		// move the head to next node
+		this->head = this->head->next;
+
+		// while there are nodes
+		while(node)
+		{
+			if(!isDeleted(node->data))
+			{
+				delete node->data;
+			}
+
+			// call destructor
+			delete node;
+
+			// move the node to the head
+			node = this->head;
+
+			// move the head
+			if(this->head)
+			{
+				this->head = this->head->next;
+			}
+		}
+
+		ASSERT(!this->head, "VirtualList::deleteData: head is not NULL");
+
+		this->tail = NULL;
+	}
+}
+
 /**
  * Add a new node to the beginning of the list
  *

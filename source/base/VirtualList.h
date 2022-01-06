@@ -36,6 +36,7 @@ class VirtualList : Object
 	void* back();
 	VirtualNode begin();
 	void clear();
+	void deleteData();
 	void copy(VirtualList sourceList);
 	void add(VirtualList sourceList);
 	void substract(VirtualList sourceList);
