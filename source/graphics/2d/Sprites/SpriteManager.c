@@ -621,6 +621,8 @@ void SpriteManager::render()
 		}
 	}
 
+	ObjectSpriteContainer::finishRendering();
+
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
 	SpriteManager::stopRendering(this);

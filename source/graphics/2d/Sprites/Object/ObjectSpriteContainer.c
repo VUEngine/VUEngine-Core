@@ -36,6 +36,7 @@ friend class VirtualList;
 
 static int32 _spt;
 static int16 _objectIndex;
+static int16 _previousObjectIndex;
 static uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
 //---------------------------------------------------------------------------------------------------------
@@ -424,12 +425,6 @@ bool ObjectSpriteContainer::writeTextures()
 
 static void ObjectSpriteContainer::prepareForRendering()
 {
-	// clear OBJ memory
-	for(int32 i = _objectIndex; i < __AVAILABLE_CHAR_OBJECTS; i++)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
 
@@ -437,6 +432,17 @@ static void ObjectSpriteContainer::prepareForRendering()
 	{
 		_vipRegistersCache[i] = _objectIndex;
 	}
+}
+
+static void ObjectSpriteContainer::finishRendering()
+{
+	// clear OBJ memory
+	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_previousObjectIndex = _objectIndex;
 }
 
 static void ObjectSpriteContainer::writeDRAM()
