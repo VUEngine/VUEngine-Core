@@ -283,10 +283,10 @@ void Sprite::position(const Vector3D* position)
 
 	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
 
-	if((this->position.x == position2D.x) && 
-		(this->position.y == position2D.y) && 
-		(this->position.z == position2D.z) && 
-		(this->position.parallax == position2D.parallax))
+	if(!((this->position.x - position2D.x) | 
+		(this->position.y - position2D.y) | 
+		(this->position.z - position2D.z) | 
+		(this->position.parallax - position2D.parallax)))
 	{
 		return;
 	}
@@ -307,18 +307,19 @@ void Sprite::setPosition(const PixelVector* position)
 		Sprite::registerWithManager(this);
 	}
 
-	this->positioned = true;
+	this->positioned = 	true;
 
-	if((this->position.x == position->x) && 
-		(this->position.y == position->y) && 
-		(this->position.z == position->z) && 
-		(this->position.parallax == position->parallax))
+	if(!((this->position.x - position->x) | 
+		(this->position.y - position->y) | 
+		(this->position.z - position->z) | 
+		(this->position.parallax - position->parallax)))
 	{
 		return;
 	}
 
 	this->position = *position;
 	this->renderFlag = true;
+
 }
 
 /**
@@ -550,10 +551,10 @@ const PixelVector* Sprite::getDisplacement()
  */
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
-	if((this->displacement.x == displacement->x) && 
-		(this->displacement.y == displacement->y) && 
-		(this->displacement.z == displacement->z) && 
-		(this->displacement.parallax == displacement->parallax))
+	if(!((this->displacement.x - displacement->x) | 
+		(this->displacement.y - displacement->y) | 
+		(this->displacement.z - displacement->z) | 
+		(this->displacement.parallax - displacement->parallax)))
 	{
 		return;
 	}
