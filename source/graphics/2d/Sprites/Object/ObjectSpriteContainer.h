@@ -48,6 +48,7 @@ class ObjectSpriteContainer : Sprite
 	/// @publicsection
 	static void reset();
 	static void prepareForRendering();
+	static void finishRendering();
 	static void writeDRAM();
 
 	void constructor();

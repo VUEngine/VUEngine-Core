@@ -310,7 +310,6 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	}
 
 	_objectIndex--;
-	_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 
 	// Make sure that the rest of spt segments only run up to the last
 	// used object index
@@ -447,14 +446,6 @@ static void ObjectSpriteContainer::reset()
 
 static void ObjectSpriteContainer::prepareForRendering()
 {
-	// clear OBJ memory
-	for(int32 i = _objectIndex + 1; _previousObjectIndex <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	_previousObjectIndex = _objectIndex;
-
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
 
@@ -464,6 +455,17 @@ static void ObjectSpriteContainer::prepareForRendering()
 	}
 }
 
+static void ObjectSpriteContainer::finishRendering()
+{
+	// clear OBJ memory
+	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_previousObjectIndex = _objectIndex;
+}
+
 static void ObjectSpriteContainer::writeDRAM()
 {
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
@@ -471,5 +473,5 @@ static void ObjectSpriteContainer::writeDRAM()
 		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
 	}
 
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + (_objectIndex - 1)), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - (_objectIndex - 1)) >> 2);
 }

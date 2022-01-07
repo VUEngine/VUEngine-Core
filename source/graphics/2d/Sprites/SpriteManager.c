@@ -624,6 +624,8 @@ void SpriteManager::render()
 
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
+	ObjectSpriteContainer::finishRendering();
+
 	SpriteManager::stopRendering(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
