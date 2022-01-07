@@ -274,17 +274,22 @@ void Sprite::registerWithManager()
  */
 void Sprite::position(const Vector3D* position)
 {
-	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
-
-	this->renderFlag |= (this->position.x != position2D.x) || (this->position.y != position2D.y) || (this->position.z != position2D.z) || (this->position.parallax != position2D.parallax);
-
-	this->position = position2D;
-	this->positioned = true;
-
 	if(!this->registered)
 	{
 		Sprite::registerWithManager(this);
 	}
+
+	this->positioned = true;
+
+	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
+
+	if(0 == (this->position.x - position2D.x) + (this->position.y - position2D.y) + (this->position.z - position2D.z) + (this->position.parallax - position2D.parallax))
+	{
+		return;
+	}
+
+	this->position = position2D;
+	this->renderFlag = true;
 }
 
 /**
@@ -294,15 +299,20 @@ void Sprite::position(const Vector3D* position)
  */
 void Sprite::setPosition(const PixelVector* position)
 {
-	this->renderFlag |= (this->position.x != position->x) || (this->position.y != position->y) || (this->position.z != position->z) || (this->position.parallax != position->parallax);
-
-	this->position = *position;
-	this->positioned = true;
-
 	if(!this->registered)
 	{
 		Sprite::registerWithManager(this);
 	}
+
+	this->positioned = true;
+
+	if(0 == (this->position.x - position->x) + (this->position.y - position->y) + (this->position.z - position->z) + (this->position.parallax - position->parallax))
+	{
+		return;
+	}
+
+	this->position = *position;
+	this->renderFlag = true;
 }
 
 /**
@@ -534,8 +544,13 @@ const PixelVector* Sprite::getDisplacement()
  */
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
-	this->renderFlag |= (this->displacement.x != displacement->x) || (this->displacement.y != displacement->y) || (this->displacement.z != displacement->z) || (this->displacement.parallax != displacement->parallax);
+	if(0 == (this->displacement.x - displacement->x) + (this->displacement.y - displacement->y) + (this->displacement.z - displacement->z) + (this->displacement.parallax - displacement->parallax))
+	{
+		return;
+	}
+
 	this->displacement = *displacement;
+	this->renderFlag = true;
 }
 
 /**
