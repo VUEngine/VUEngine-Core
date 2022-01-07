@@ -149,7 +149,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	if(previousIndex != index || this->renderFlag || this->writeAnimationFrame)
+	if(previousIndex != index || this->renderFlag)
 	{
 		this->renderFlag = false;
 		this->index = Sprite::doRender(this, index, evenFrame);
