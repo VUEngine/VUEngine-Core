@@ -297,7 +297,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
 			// but calling ObjectSprite::getTotalObjects is too costly
-			if(ObjectSprite::render(objectSprite, _objectIndex - objectSprite->totalObjects, evenFrame) == _objectIndex - objectSprite->totalObjects)
+			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), evenFrame) == _objectIndex - (objectSprite->totalObjects - 1))
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}
@@ -307,9 +307,8 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	if(this->firstObjectIndex == _objectIndex)
 	{
 		_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+		_objectIndex--;
 	}
-
-	_objectIndex--;
 
 	// Make sure that the rest of spt segments only run up to the last
 	// used object index
@@ -473,5 +472,5 @@ static void ObjectSpriteContainer::writeDRAM()
 		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
 	}
 
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + (_objectIndex - 1)), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - (_objectIndex - 1)) >> 2);
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
 }
