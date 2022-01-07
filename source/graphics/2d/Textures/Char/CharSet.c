@@ -209,11 +209,8 @@ void CharSet::writeRLE()
  */
 void CharSet::write()
 {
-	if(0 == this->charSetSpec->numberOfChars)
-	{
-		return;
-	}
-	
+	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
+
 	switch(this->charSetSpec->tiles[0])
 	{
 		case __CHAR_SET_COMPRESSION_RLE:
