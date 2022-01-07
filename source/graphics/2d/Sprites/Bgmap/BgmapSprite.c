@@ -317,10 +317,8 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	int16 auxGp = __ABS(gp);
 
 	// get sprite's size
-	int16 width = this->halfWidth << 1;
-	int16 height = this->halfHeight << 1;
-	int16 w = width;
-	int16 h = height;
+	int16 w = this->halfWidth << 1;
+	int16 h = this->halfHeight << 1;
 
 	// set the head
 	int32 mx = this->drawSpec.textureSource.mx;
