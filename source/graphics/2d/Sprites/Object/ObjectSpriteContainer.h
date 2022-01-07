@@ -46,8 +46,8 @@ class ObjectSpriteContainer : Sprite
 	bool hideSprites;
 
 	/// @publicsection
+	static void reset();
 	static void prepareForRendering();
-	static void finishRendering();
 	static void writeDRAM();
 
 	void constructor();

@@ -304,7 +304,13 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 		}
 	}
 
+	if(this->firstObjectIndex == _objectIndex)
+	{
+		_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
 	_objectIndex--;
+	_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 
 	// Make sure that the rest of spt segments only run up to the last
 	// used object index
@@ -423,8 +429,13 @@ bool ObjectSpriteContainer::writeTextures()
 	return true;
 }
 
-static void ObjectSpriteContainer::prepareForRendering()
+static void ObjectSpriteContainer::reset()
 {
+	for(int32 i = __AVAILABLE_CHAR_OBJECTS - 1; 0 <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
 
@@ -434,15 +445,23 @@ static void ObjectSpriteContainer::prepareForRendering()
 	}
 }
 
-static void ObjectSpriteContainer::finishRendering()
+static void ObjectSpriteContainer::prepareForRendering()
 {
 	// clear OBJ memory
-	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	for(int32 i = _objectIndex + 1; _previousObjectIndex <= i; i--)
 	{
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
 
 	_previousObjectIndex = _objectIndex;
+
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
+
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegistersCache[i] = _objectIndex;
+	}
 }
 
 static void ObjectSpriteContainer::writeDRAM()

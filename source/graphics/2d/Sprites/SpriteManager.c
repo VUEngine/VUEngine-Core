@@ -155,6 +155,7 @@ void SpriteManager::reset()
 	this->lockSpritesLists = true;
 
 	SpriteManager::cleanUp(this);
+	ObjectSpriteContainer::reset();
 
 	int32 i = 0;
 	// clean OBJ memory
@@ -620,8 +621,6 @@ void SpriteManager::render()
 			this->freeLayer--;
 		}
 	}
-
-	ObjectSpriteContainer::finishRendering();
 
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
