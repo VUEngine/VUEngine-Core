@@ -666,6 +666,7 @@ void Sprite::setTransparent(uint8 value)
 {
 	this->transparent = value;
 	this->visible = true;
+	this->renderFlag = true;
 }
 
 /**
@@ -681,6 +682,7 @@ bool Sprite::updateAnimation()
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
 		
 		stillAnimating |= AnimationController::isPlaying(this->animationController);
+		this->renderFlag |= this->writeAnimationFrame;
 	}
 
 	return stillAnimating;
