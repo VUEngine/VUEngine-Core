@@ -573,11 +573,11 @@ void SpriteManager::writeGraphicsToDRAM()
 
 void SpriteManager::writeDRAM()
 {
-	SpriteManager::writeGraphicsToDRAM(this);
-
 	ObjectSpriteContainer::writeDRAM();
 
 	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
+
+	SpriteManager::writeGraphicsToDRAM(this);
 }
 
 /**
