@@ -41,6 +41,11 @@
 bool _triggeringException = false;
 
 
+uint32 _vuengineEIPC = 0;
+uint32 _vuengineFEPC = 0;
+uint32 _vuengineECR = 0;
+
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -95,6 +100,10 @@ static int32 Error::triggerException(char* message, char* detail)
 
 	int32 lp = _vuengineLinkPointer;
 	int32 sp = _vuengineStackPointer;
+	int32 eipc = _vuengineEIPC;
+	int32 fepc = _vuengineFEPC;
+	int32 ecr = _vuengineECR;
+
 	int32 x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int32 y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
@@ -132,9 +141,16 @@ static int32 Error::triggerException(char* message, char* detail)
 	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing::text(Printing::getInstance(), Game::isConstructed() ? Game::getLastProcessName(Game::getInstance()) : "constructor", x + 15, y++, NULL);
 	Printing::text(Printing::getInstance(), " LP:                                  " , x, y, NULL);
-	Printing::hex(Printing::getInstance(), lp, x + 5, y, 8, NULL);
+	Printing::hex(Printing::getInstance(), lp, x + 8, y, 8, NULL);
 	Printing::text(Printing::getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), sp, x + 5, y, 8, NULL);
+	Printing::hex(Printing::getInstance(), sp, x + 8, y, 8, NULL);
+
+	Printing::text(Printing::getInstance(), " EIPC:                                  " , x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), eipc, x + 8, y, 8, NULL);
+	Printing::text(Printing::getInstance(), " FEPC: 		                         " , x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), fepc, x + 8, y, 8, NULL);
+	Printing::text(Printing::getInstance(), " ECR: 		                         " , x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), ecr, x + 8, y, 8, NULL);
 
 	if(message)
 	{
@@ -221,7 +237,7 @@ static void Error::zeroDivisionException()
 	: "r10" // regs used
     );
 
-	_vuengineLinkPointer = eipc;
+	_vuengineEIPC = eipc;
 
 	Error::triggerException("Zero division", NULL);
 #endif
@@ -230,17 +246,43 @@ static void Error::zeroDivisionException()
 static void Error::invalidOpcodeException()
 {
 #ifndef __RELEASE
+
+	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
+	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));
+
 	uint32 eipc = 0;
 	// Save EIPC
-    asm("					\n\t"      \
-		"stsr	eipc, r10	\n\t"      \
+    asm("						\n\t"      \
+		"stsr	eipc, r10		\n\t"      \
 		"mov	r10, %[eipc]	\n\t"
     : [eipc] "=r" (eipc)
     : // No Input
 	: "r10" // regs used
     );
 
-	_vuengineLinkPointer = eipc;
+	uint32 fepc = 0;
+	// Save FEPC
+    asm("						\n\t"      \
+		"stsr	fepc, r11		\n\t"      \
+		"mov	r11, %[fepc]	\n\t"
+    : [fepc] "=r" (fepc)
+    : // No Input
+	: "r11" // regs used
+    );
+
+	uint32 ecr = 0;
+	// Save ECR
+    asm("						\n\t"      \
+		"stsr	ecr, r12		\n\t"      \
+		"mov	r12, %[ecr]		\n\t"
+    : [ecr] "=r" (ecr)
+    : // No Input
+	: "r12" // regs used
+    );
+
+	_vuengineEIPC = eipc;
+	_vuengineFEPC = fepc;
+	_vuengineECR = ecr;
 
 	Error::triggerException("Invalid opcode", NULL);
 #endif
