@@ -112,8 +112,7 @@ void VirtualNode::setPrevious(VirtualNode previous)
  */
 void VirtualNode::swapData(VirtualNode node)
 {
-	// check that both nodes are valid and are not the same
-	if(!(this && node && (this != node)))
+	if(isDeleted(node))
 	{
 		return;
 	}

@@ -145,14 +145,14 @@ int32 VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
+	// assign the node to the head of the list
+	newNode->next = this->head;
+
 	// set previous if list isn't empty
 	if(this->head)
 	{
 		this->head->previous = newNode;
 	}
-
-	// assign the node to the head of the list
-	newNode->next = this->head;
 
 	// move the head
 	this->head = newNode;
@@ -763,6 +763,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 		}
 
 		newNode->previous = node->previous;
+		newNode->next = node;
 
 		if(node->previous)
 		{
@@ -770,9 +771,6 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 		}
 
 		node->previous = newNode;
-
-		newNode->next = node;
-
 	}
 
 	return newNode;
