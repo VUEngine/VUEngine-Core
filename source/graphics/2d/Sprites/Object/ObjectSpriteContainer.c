@@ -64,7 +64,7 @@ void ObjectSpriteContainer::constructor()
 	this->lockSpritesLists = false;
 	this->hideSprites = false;
 
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	ObjectSpriteContainer::registerWithManager(this);
 }
 
 /**
@@ -76,18 +76,30 @@ void ObjectSpriteContainer::destructor()
 
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	VirtualList objectSprites = new VirtualList();
+	VirtualList::copy(objectSprites, this->objectSprites);
+
+	for(VirtualNode node = objectSprites->head; node; node = node->next)
 	{
-		ObjectSprite::invalidateObjectSpriteContainer(node->data);
 		delete node->data;
 	}
 
+	delete objectSprites;
 	delete this->objectSprites;
 	this->objectSprites = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Register
+ *
+ */
+void ObjectSpriteContainer::registerWithManager()
+{
+	this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
 
 /**
@@ -101,7 +113,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 
 	NM_ASSERT(!VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::registerSprite: already registered");
 
-	if(objectSprite)
+	if(!isDeleted(objectSprite))
 	{
 		this->lockSpritesLists = true;
 
@@ -161,6 +173,11 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  */
 void ObjectSpriteContainer::sortProgressively()
 {
+	if(this->lockSpritesLists)
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 	{
 		VirtualNode nextNode = node->next;

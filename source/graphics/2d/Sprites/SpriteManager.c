@@ -376,7 +376,6 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 		if(otherSprite->position.z + otherSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
-
 			return;
 		}
 	}
@@ -392,9 +391,7 @@ bool SpriteManager::sortProgressively()
 {
 	bool swapped = false;
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 
@@ -426,9 +423,7 @@ bool SpriteManager::sortProgressively()
 
 	if(!isDeleted(this->objectSpriteContainers))
 	{
-		VirtualNode node = this->objectSpriteContainers->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -446,24 +441,31 @@ bool SpriteManager::sortProgressively()
  * @param sprite	Sprite to assign the WORLD layer
  * @param hasEffects	Flag to signal that the sprite has special effects applied to it
  */
-void SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
+bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::registerSprite: exceding available WORLDS");
 	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
 	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
-	this->lockSpritesLists = true;
-
-	SpriteManager::doRegisterSprite(this, sprite);
-
-	if(hasEffects)
+	if(!isDeleted(sprite))
 	{
-		VirtualList::pushBack(this->specialSprites, sprite);
+		this->lockSpritesLists = true;
+
+		SpriteManager::doRegisterSprite(this, sprite);
+
+		if(hasEffects)
+		{
+			VirtualList::pushBack(this->specialSprites, sprite);
+		}
+
+		this->lockSpritesLists = false;
+
+		return true;
 	}
 
-	this->lockSpritesLists = false;
+	NM_ASSERT(sprite, "SpriteManager::registerSprite: null sprite");
+	return false;
 }
 
 /**
@@ -477,9 +479,9 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
-	this->lockSpritesLists = true;
-
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
+
+	this->lockSpritesLists = true;
 
 	VirtualList::removeElement(this->sprites, sprite);
 
@@ -523,9 +525,7 @@ void SpriteManager::writeTextures()
 	// allow complete texture writing
 	this->texturesMaximumRowsToWrite = -1;
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		Sprite::writeTextures(node->data);
 	}
@@ -600,6 +600,22 @@ void SpriteManager::writeDRAM()
 void SpriteManager::deleteDisposedSprites()
 {
 	VirtualList::deleteData(this->disposedSprites);
+
+#ifndef __RELEASE
+	for(VirtualNode node = this->sprites->head; node;)
+	{
+		VirtualNode auxNode = node;
+
+		node = node->next;
+
+		NM_ASSERT(isDeleted(auxNode->data), "SpriteManager::deleteDisposedSprites: deleted node");
+
+		if(isDeleted(auxNode->data))
+		{
+			VirtualList::removeNode(this->sprites, auxNode);
+		}
+	}
+#endif
 }
 
 /**
@@ -607,13 +623,15 @@ void SpriteManager::deleteDisposedSprites()
  */
 void SpriteManager::render()
 {
-	SpriteManager::deleteDisposedSprites(this);
+	if(!this->lockSpritesLists)
+	{
+		SpriteManager::deleteDisposedSprites(this);
+		SpriteManager::sortProgressively(this);
+	}
 
 	ObjectSpriteContainer::prepareForRendering();
 
 	ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
-
-	SpriteManager::sortProgressively(this);
 
 	// switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
@@ -790,11 +808,9 @@ Sprite SpriteManager::getSpriteAtPosition(int16 position)
 		return NULL;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	int32 counter = 0;
 
-	for(; node; node = node->next, counter++)
+	for(VirtualNode node = this->sprites->head; node; node = node->next, counter++)
 	{
 		if(counter == position)
 		{
@@ -949,9 +965,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 {
 	int32 totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
 
@@ -995,9 +1009,8 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	int32 auxX = x;
 
 	int32 counter = __TOTAL_LAYERS - 1;
-	VirtualNode node = this->sprites->tail;
-
-	for(; node; node = node->previous, counter--)
+	
+	for(VirtualNode node = this->sprites->tail; node; node = node->previous, counter--)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = Sprite::safeCast(node->data);

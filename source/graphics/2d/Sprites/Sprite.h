@@ -236,7 +236,7 @@ abstract class Sprite : Object
 	virtual bool writeTextures();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels();
-	virtual void registerWithManager();
+	virtual void registerWithManager() = 0;
 	virtual void releaseTexture();
 }
 

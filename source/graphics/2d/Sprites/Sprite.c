@@ -266,15 +266,6 @@ void Sprite::releaseTexture()
 }
 
 /**
- * Register
- *
- */
-void Sprite::registerWithManager()
-{
-	this->registered = true;
-}
-
-/**
  * Calculate 2D position
  *
  * @param position		3D position

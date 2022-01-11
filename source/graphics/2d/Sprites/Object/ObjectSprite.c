@@ -199,10 +199,8 @@ void ObjectSprite::registerWithManager()
 	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
 	{
 		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->position.z + this->displacement.z);
-		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
+		this->registered = ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
 	}
-
-	Base::registerWithManager(this);
 }
 
 /**

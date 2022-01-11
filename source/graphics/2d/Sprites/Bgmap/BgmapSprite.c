@@ -635,10 +635,8 @@ void BgmapSprite::registerWithManager()
 {
 	if(!this->registered)
 	{
-		SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+		this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
 	}
-
-	Base::registerWithManager(this);
 }
 
 /**
