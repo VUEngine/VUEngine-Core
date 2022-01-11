@@ -99,9 +99,6 @@ void MBgmapSprite::releaseTexture()
 			// free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
 		}
-
-		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
 	this->texture = NULL;
