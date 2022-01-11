@@ -76,9 +76,7 @@ void ObjectSpriteContainer::destructor()
 
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-	VirtualNode node = this->objectSprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 	{
 		ObjectSprite::invalidateObjectSpriteContainer(node->data);
 		delete node->data;
@@ -145,9 +143,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 {
 	if(this->objectSprites)
 	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -165,9 +161,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  */
 void ObjectSpriteContainer::sortProgressively()
 {
-	VirtualNode node = this->objectSprites->head;
-
-	for(; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 
@@ -416,9 +410,7 @@ bool ObjectSpriteContainer::writeTextures()
 {
 	if(!isDeleted(this->objectSprites))
 	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
 		{
 			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data));
 		}
