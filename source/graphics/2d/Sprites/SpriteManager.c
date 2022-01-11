@@ -608,7 +608,7 @@ void SpriteManager::deleteDisposedSprites()
 
 		node = node->next;
 
-		NM_ASSERT(isDeleted(auxNode->data), "SpriteManager::deleteDisposedSprites: deleted node");
+		NM_ASSERT(!isDeleted(auxNode->data), "SpriteManager::deleteDisposedSprites: deleted node");
 
 		if(isDeleted(auxNode->data))
 		{
