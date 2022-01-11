@@ -75,13 +75,7 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
  */
 void MBgmapSprite::destructor()
 {
-	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
-	{
-		// free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
-	}
-
-	MBgmapSprite::releaseTextures(this);
+	MBgmapSprite::releaseTexture(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -94,9 +88,25 @@ void MBgmapSprite::destructor()
  * @memberof		MBgmapSprite
  * @public
  */
-void MBgmapSprite::releaseTextures()
+void MBgmapSprite::releaseTexture()
 {
-	if(this->textures)
+	// free the texture
+	if(!isDeleted(this->texture))
+	{
+		// if affine or bgmap
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+		{
+			// free param table space
+			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
+		}
+
+		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+	}
+
+	this->texture = NULL;
+
+	if(!isDeleted(this->textures))
 	{
 		VirtualNode node = this->textures->head;
 
@@ -109,7 +119,6 @@ void MBgmapSprite::releaseTextures()
 
 		delete this->textures;
 		this->textures = NULL;
-		this->texture = NULL;
 	}
 }
 

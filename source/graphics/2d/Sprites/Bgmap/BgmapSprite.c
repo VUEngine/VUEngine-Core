@@ -107,13 +107,6 @@ void BgmapSprite::destructor()
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
-	// if affine or bgmap
-	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
-	{
-		// free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), this);
-	}
-
 	BgmapSprite::releaseTexture(this);
 
 	// destroy the super object
@@ -141,6 +134,13 @@ void BgmapSprite::releaseTexture()
 	// free the texture
 	if(!isDeleted(this->texture))
 	{
+		// if affine or bgmap
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+		{
+			// free param table space
+			ParamTableManager::free(ParamTableManager::getInstance(), this);
+		}
+
 		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}

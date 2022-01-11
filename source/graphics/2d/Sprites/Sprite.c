@@ -258,9 +258,16 @@ bool Sprite::isHidden()
 }
 
 /**
+ * Release texture
+ *
+ */
+void Sprite::releaseTexture()
+{
+}
+
+/**
  * Register
  *
- * @param position		
  */
 void Sprite::registerWithManager()
 {
