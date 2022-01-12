@@ -362,18 +362,38 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(isDeleted(object))
 	{
-	/*
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
-	*/
+	
 		_vuengineLinkPointer = lp;
 		_vuengineStackPointer = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
 	}
 
-	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, object), "Object::getCast: null getClassName");
-	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object), "Object::getCast: null getBaseClass");
+#ifndef __RELEASE
+	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+	
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: null getClassName");
+	}
+
+	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+	
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: null getBaseClass");
+	}
+#endif
 
 	if(!baseClassGetClassMethod)
 	{
