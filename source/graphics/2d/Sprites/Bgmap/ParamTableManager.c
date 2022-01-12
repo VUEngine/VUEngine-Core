@@ -63,7 +63,6 @@ void ParamTableManager::constructor()
 	Base::constructor();
 
 	this->bgmapSprites = new VirtualList();
-	this->removedBgmapSpritesSizes = new VirtualList();
 	this->previouslyMovedBgmapSprite = NULL;
 
 	ParamTableManager::reset(this);
@@ -79,9 +78,6 @@ void ParamTableManager::destructor()
 	delete this->bgmapSprites;
 	this->bgmapSprites = NULL;
 
-	delete this->removedBgmapSpritesSizes;
-	this->removedBgmapSpritesSizes = NULL;
-
 	// allow a new construct
 	Base::destructor();
 }
@@ -92,15 +88,6 @@ void ParamTableManager::destructor()
 void ParamTableManager::reset()
 {
 	VirtualList::clear(this->bgmapSprites);
-
-	VirtualNode node = this->removedBgmapSpritesSizes->head;
-
-	for(; node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	VirtualList::clear(this->removedBgmapSpritesSizes);
 
 	this->paramTableBase = __PARAM_TABLE_END;
 
