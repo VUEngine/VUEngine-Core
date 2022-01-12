@@ -197,11 +197,6 @@ void ObjectSpriteContainer::sortProgressively()
 
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
-		if(!nextSprite->positioned)
-		{
-			continue;
-		}
-
 		// check if z positions are swapped
 		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 		{
@@ -279,11 +274,8 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 {
 	// Setup spt
 	this->spt = _spt;
-	_vipRegistersCache[_spt] = _objectIndex;
 
 	this->firstObjectIndex = _objectIndex;
-
-	_worldAttributesCache[index].head = this->head;
 
 	if(!this->hideSprites)
 	{
@@ -321,22 +313,29 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 		}
 	}
 
+	bool renderedObjectSprites = true;
+
 	if(this->firstObjectIndex == _objectIndex)
 	{
 		_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 		_objectIndex--;
+		renderedObjectSprites = false;
 	}
-
-	// Make sure that the rest of spt segments only run up to the last
-	// used object index
-	for(int32 i = _spt--; i--;)
+	else
 	{
-		_vipRegistersCache[i] = _objectIndex;
+		_worldAttributesCache[index].head = this->head;
+
+		// Make sure that the rest of spt segments only run up to the last
+		// used object index
+		for(int32 i = _spt--; i--;)
+		{
+			_vipRegistersCache[i] = _objectIndex;
+		}
 	}
 
 	this->lastObjectIndex = _objectIndex;
 
-	return index;
+	return !renderedObjectSprites ? __NO_RENDER_INDEX : index;
 }
 
 /**

@@ -317,7 +317,6 @@ void Sprite::setPosition(const PixelVector* position)
 
 	this->position = *position;
 	this->renderFlag = true;
-
 }
 
 /**
