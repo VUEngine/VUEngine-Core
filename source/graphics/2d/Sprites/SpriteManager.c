@@ -122,8 +122,6 @@ void SpriteManager::cleanUp()
 
 	if(!isDeleted(this->sprites))
 	{
-		NM_ASSERT(0 == VirtualList::getSize(this->sprites), "SpriteManager::cleanUp: sprites list not empty");
-
 		VirtualList sprites = new VirtualList();
 		VirtualList::copy(sprites, this->sprites);
 

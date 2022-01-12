@@ -183,7 +183,7 @@ void ObjectSpriteContainer::sortProgressively()
 		VirtualNode nextNode = node->next;
 
 		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL node's data cast");
+		NM_ASSERT(__GET_CAST(Sprite, node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data cast");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
