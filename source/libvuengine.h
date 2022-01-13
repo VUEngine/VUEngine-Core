@@ -22,6 +22,7 @@
 #include <Error.h>
 #include <MemoryPool.h>
 #include <Printing.h>
+#include <HardwareManager.h>
 #include <debugUtilities.h>
 
 

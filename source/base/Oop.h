@@ -410,7 +410,13 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		/* restore class vTable */																		\
 		void ClassName ## _restoreMethods()																\
 		{																								\
+			/* must prevent any interrupt from calling methods on unstable vtables */					\
+			HardwareManager_suspendInterrupts();														\
+																										\
 			ClassName ## _setVTable(true);																\
+																										\
+			/* resume interrupts */																	\
+			HardwareManager_resumeInterrupts();															\
 		}																								\
 																										\
 		const void* ClassName ## _getClass()															\
