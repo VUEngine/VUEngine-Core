@@ -415,7 +415,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																										\
 			ClassName ## _setVTable(true);																\
 																										\
-			/* resume interrupts */																	\
+			/* resume interrupts */																		\
 			HardwareManager_resumeInterrupts();															\
 		}																								\
 																										\
