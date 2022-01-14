@@ -24,8 +24,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ENABLE_PROFILER_SKIP_FRAMES				25
-
 enum ProfilerLapTypes
 {
 	kProfilerLapTypeNormalProcess 					= 0x00000001 << 0,
@@ -34,6 +32,7 @@ enum ProfilerLapTypes
 	kProfilerLapTypeCommunicationsInterruptProcess	= 0x00000001 << 3,
 
 };
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
