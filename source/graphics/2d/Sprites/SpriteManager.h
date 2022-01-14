@@ -54,8 +54,6 @@ singleton class SpriteManager : Object
 {
 	// Sprites to render
 	VirtualList sprites;
-	// Sprites to delete, used to prevent race conditions
-	VirtualList disposedSprites;
 	// Object sprite containers
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects

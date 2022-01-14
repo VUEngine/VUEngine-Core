@@ -258,14 +258,6 @@ bool Sprite::isHidden()
 }
 
 /**
- * Release texture
- *
- */
-void Sprite::releaseTexture()
-{
-}
-
-/**
  * Calculate 2D position
  *
  * @param position		3D position

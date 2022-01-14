@@ -71,7 +71,6 @@ void SpriteManager::constructor()
 	this->objectSpriteContainers = NULL;
 	this->texturesToUpdate = NULL;
 	this->specialSprites = NULL;
-	this->disposedSprites = NULL;
 
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
@@ -100,13 +99,6 @@ void SpriteManager::destructor()
  */
 void SpriteManager::cleanUp()
 {
-	if(!isDeleted(this->disposedSprites))
-	{
-		VirtualList::deleteData(this->disposedSprites);
-		delete this->disposedSprites;
-		this->disposedSprites = NULL;
-	}
-
 	if(!isDeleted(this->objectSpriteContainers))
 	{
 		VirtualNode node = this->objectSpriteContainers->head;
@@ -178,7 +170,6 @@ void SpriteManager::reset()
 	this->objectSpriteContainers = new VirtualList();
 	this->texturesToUpdate = new VirtualList();
 	this->specialSprites = new VirtualList();
-	this->disposedSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -333,12 +324,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
 	}
 
 	Sprite::hide(sprite);
-	Sprite::releaseTexture(sprite);
-
-	if(!VirtualList::find(this->disposedSprites, sprite))
-	{
-		VirtualList::pushBack(this->disposedSprites, sprite);
-	}
+	delete sprite;
 }
 
 /**
@@ -594,37 +580,12 @@ void SpriteManager::writeDRAM()
 }
 
 /**
- * Delete disposed sprites
- */
-void SpriteManager::deleteDisposedSprites()
-{
-	VirtualList::deleteData(this->disposedSprites);
-
-#ifndef __RELEASE
-	for(VirtualNode node = this->sprites->head; node;)
-	{
-		VirtualNode auxNode = node;
-
-		node = node->next;
-
-		NM_ASSERT(!isDeleted(auxNode->data), "SpriteManager::deleteDisposedSprites: deleted node");
-
-		if(isDeleted(auxNode->data))
-		{
-			VirtualList::removeNode(this->sprites, auxNode);
-		}
-	}
-#endif
-}
-
-/**
  * Write WORLD data to DRAM
  */
 void SpriteManager::render()
 {
 	if(!this->lockSpritesLists)
 	{
-		SpriteManager::deleteDisposedSprites(this);
 		SpriteManager::sortProgressively(this);
 	}
 

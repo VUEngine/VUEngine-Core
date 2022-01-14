@@ -119,7 +119,6 @@ class BgmapSprite : Sprite
 	override void resize(Scale scale, fix10_6 z);
 	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
-	override void releaseTexture();
 }
 
 

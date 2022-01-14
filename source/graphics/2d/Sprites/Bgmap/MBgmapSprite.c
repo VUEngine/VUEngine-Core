@@ -75,7 +75,7 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
  */
 void MBgmapSprite::destructor()
 {
-	MBgmapSprite::releaseTexture(this);
+	MBgmapSprite::releaseTextures(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -88,7 +88,7 @@ void MBgmapSprite::destructor()
  * @memberof		MBgmapSprite
  * @public
  */
-void MBgmapSprite::releaseTexture()
+void MBgmapSprite::releaseTextures()
 {
 	// free the texture
 	if(!isDeleted(this->texture))
@@ -111,7 +111,7 @@ void MBgmapSprite::releaseTexture()
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+			BgmapTextureManager::releaseTextures(BgmapTextureManager::getInstance(), bgmapTexture);
 		}
 
 		delete this->textures;
