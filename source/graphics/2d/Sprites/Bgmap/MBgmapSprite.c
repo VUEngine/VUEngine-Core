@@ -111,7 +111,7 @@ void MBgmapSprite::releaseTextures()
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-			BgmapTextureManager::releaseTextures(BgmapTextureManager::getInstance(), bgmapTexture);
+			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
 		}
 
 		delete this->textures;
