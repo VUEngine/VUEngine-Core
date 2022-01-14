@@ -30,7 +30,6 @@ enum ProfilerLapTypes
 	kProfilerLapTypeVIPInterruptProcess				= 0x00000001 << 1,
 	kProfilerLapTypeTimerInterruptProcess			= 0x00000001 << 2,
 	kProfilerLapTypeCommunicationsInterruptProcess	= 0x00000001 << 3,
-
 };
 
 
