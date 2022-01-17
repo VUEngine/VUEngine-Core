@@ -50,8 +50,8 @@
 #include <DebugState.h>
 #endif
 #ifdef __STAGE_EDITOR
-#include <StageEditorState.h>
 #endif
+#include <StageEditorState.h>
 #ifdef __ANIMATION_INSPECTOR
 #include <AnimationInspectorState.h>
 #endif
@@ -910,9 +910,6 @@ bool Game::hasCurrentFrameEnded()
 
 void Game::run()
 {
-	// sync entities with their sprites
-	Game::synchronizeGraphics(this);
-
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
@@ -933,6 +930,9 @@ void Game::run()
 
 	// focus the camera once collisions are resolved
 	Game::focusCamera(this);
+
+	// sync entities with their sprites
+	Game::synchronizeGraphics(this);
 
 	// dispatch delayed messages
 	Game::dispatchDelayedMessages(this);
