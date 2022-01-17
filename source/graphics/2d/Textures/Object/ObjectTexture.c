@@ -57,18 +57,3 @@ void ObjectTexture::setFrameAnimatedMulti(uint16 frame)
 {
 	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
 }
-
-/**
- * Write the texture to DRAM
- */
-void ObjectTexture::rewrite()
-{
-	Base::rewrite(this);
-
-	if(isDeleted(this->owner))
-	{
-		return;
-	}
-
-	ObjectSprite::rewrite(this->owner);
-}
