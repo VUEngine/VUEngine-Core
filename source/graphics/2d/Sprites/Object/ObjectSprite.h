@@ -75,7 +75,6 @@ class ObjectSprite : Sprite
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
 	int16 getTotalObjects();
-	void rewrite();
 	void invalidateObjectSpriteContainer();
 	void resetTotalObjects();
 
@@ -84,6 +83,7 @@ class ObjectSprite : Sprite
 	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 	override void registerWithManager();
+	override void rewrite();
 }
 
 

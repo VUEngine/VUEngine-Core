@@ -30,6 +30,10 @@
 
 #define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
+int32 _writtenTiles = 0;
+int32 _writtenTextureTiles = 0;
+int32 _writtenObjectTiles = 0;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -572,11 +576,31 @@ void SpriteManager::writeGraphicsToDRAM()
 
 void SpriteManager::writeDRAM()
 {
+#ifdef __SHOW_SPRITES_PROFILING
+	_writtenTiles = 0;
+	_writtenTextureTiles = 0;
+	_writtenObjectTiles = 0;
+#endif
+
 	ObjectSpriteContainer::writeDRAM();
 
 	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
 
 	SpriteManager::writeGraphicsToDRAM(this);
+
+#ifdef __SHOW_SPRITES_PROFILING
+	if(!Game::isInSpecialMode(Game::getInstance()))
+	{
+		static int32 counter = __TARGET_FPS / 5;
+
+		if(0 >= --counter)
+		{
+			counter = __TARGET_FPS / 10;
+			SpriteManager::print(this, 1, 15, true);
+		}
+	}
+#endif
+
 }
 
 /**
@@ -637,18 +661,6 @@ void SpriteManager::render()
 	}
 #endif
 
-#ifdef __SHOW_SPRITES_PROFILING
-	if(!Game::isInSpecialMode(Game::getInstance()))
-	{
-		static int32 counter = __TARGET_FPS / 10;
-
-		if(0 >= --counter)
-		{
-			counter = __TARGET_FPS / 10;
-			SpriteManager::print(this, 1, 15, true);
-		}
-	}
-#endif
 }
 
 /**
@@ -950,7 +962,9 @@ int32 SpriteManager::getTotalPixelsDrawn()
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
 	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, 0, 0);
+#ifndef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
+#endif
 
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
@@ -959,6 +973,12 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Written chars:              ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenTiles, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Written texture tiles:              ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenTextureTiles, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Written object tiles:              ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenObjectTiles, x + 18, y, NULL);
 
 	if(resumed)
 	{

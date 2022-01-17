@@ -186,7 +186,6 @@ abstract class Sprite : Object
 	int16 getWorldMX();
 	int16 getWorldMY();
 	bool isHidden();
-	void rewrite();
 	void setTransparent(uint8 value);
 	int16 getActualFrame();
 	const PixelVector* getDisplacement();
@@ -223,6 +222,7 @@ abstract class Sprite : Object
 	uint8 getIndex();
 	PixelVector getDisplacedPosition();
 	void setPosition(const PixelVector* position);
+	virtual void rewrite();
 	virtual void hideForDebug();
 	virtual void showForDebug();
 	virtual Scale getScale();

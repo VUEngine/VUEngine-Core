@@ -18,6 +18,7 @@
 #include <Mem.h>
 #include <VIPManager.h>
 #include <VirtualList.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -210,6 +211,11 @@ void CharSet::writeRLE()
 void CharSet::write()
 {
 	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
+
+#ifdef __SHOW_SPRITES_PROFILING
+	extern int32 _writtenTiles;
+	_writtenTiles += this->charSetSpec->numberOfChars;
+#endif
 
 	switch(this->charSetSpec->tiles[0])
 	{

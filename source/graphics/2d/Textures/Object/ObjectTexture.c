@@ -70,5 +70,5 @@ void ObjectTexture::rewrite()
 		return;
 	}
 
-	ObjectSprite_rewrite(this->owner);
+	ObjectSprite::rewrite(this->owner);
 }

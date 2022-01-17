@@ -18,6 +18,7 @@
 #include <HardwareManager.h>
 #include <Mem.h>
 #include <VIPManager.h>
+#include <debugConfig.h>
 #include <debugUtilities.h>
 
 
@@ -185,6 +186,11 @@ void BgmapTexture::writeAnimatedMulti()
 				(const HWORD*)this->textureSpec->map + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
 				this->textureSpec->cols,
 				(palette) | (charLocation + area * (j - 1)));
+
+#ifdef __SHOW_SPRITES_PROFILING
+				extern int32 _writtenTextureTiles;
+				_writtenTextureTiles += this->textureSpec->cols;
+#endif
 		}
 	}
 
@@ -200,6 +206,11 @@ void BgmapTexture::writeAnimatedMulti()
 				this->textureSpec->cols,
 				0
 			);
+
+#ifdef __SHOW_SPRITES_PROFILING
+			extern int32 _writtenTextureTiles;
+			_writtenTextureTiles += this->textureSpec->cols;
+#endif
 		}
 	}
 }
@@ -218,6 +229,11 @@ void BgmapTexture::setFrameAnimatedMulti(uint16 frame __attribute__((unused)))
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
 static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward)
 {
+#ifdef __SHOW_SPRITES_PROFILING
+	extern int32 _writtenTextureTiles;
+	_writtenTextureTiles += numberOfHWORDS;
+#endif
+
 	int16 increment = backward ? -2 : 2;
 
 	const HWORD* finalSource = source + numberOfHWORDS;

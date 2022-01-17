@@ -487,4 +487,9 @@ static void ObjectSpriteContainer::writeDRAM()
 	}
 
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
+
+#ifdef __SHOW_SPRITES_PROFILING
+	extern int32 _writtenObjectTiles;
+	_writtenObjectTiles = __AVAILABLE_CHAR_OBJECTS - _objectIndex;
+#endif
 }
