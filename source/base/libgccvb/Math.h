@@ -233,12 +233,40 @@ static const int16 _sinLut[] =
 static class Math : Object
 {
 	/// @publicsection
-	static float squareRoot(float number);
+	static inline float squareRoot(float number);
 	static int32 powerFast(int32 base, int32 power);
 	static int32 intInfinity();
 	static fix10_6 fix10_6Infinity();
 	static fix10_6_ext fix10_6_extInfinity();
 	static int32 getAngle(fix7_9 x, fix7_9 y);
+}
+
+
+// retrieve the square root
+// this code was taken from the Doom engine
+static inline float Math::squareRoot(float number)
+{
+// Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
+	if(0 >= (* ( long * ) &number))
+    {
+    	return 0;
+    }
+
+    // Doom's code causes a warning because of breaking of aliasing rules
+	long i;
+	float x, y;
+#define F 	1.5F
+
+	x = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;
+	i  = 0x5f3759df - ( i >> 1 );
+	y  = * ( float * ) &i;
+	y  = y * ( F - ( x * y * y ) );
+
+	return number * y;
 }
 
 

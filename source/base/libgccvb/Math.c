@@ -27,33 +27,6 @@ extern float sqrtf (float);
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-// retrieve the square root
-// this code was taken from the Doom engine
-static float Math::squareRoot(float number)
-{
-// Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-
-	if(0 >= (* ( long * ) &number))
-    {
-    	return 0;
-    }
-
-    // Doom's code causes a warning because of breaking of aliasing rules
-	long i;
-	float x, y;
-#define F 	1.5F
-
-	x = number * 0.5F;
-	y  = number;
-	i  = * ( long * ) &y;
-	i  = 0x5f3759df - ( i >> 1 );
-	y  = * ( float * ) &i;
-	y  = y * ( F - ( x * y * y ) );
-
-	return number * y;
-}
-
 static int32 Math::powerFast(int32 base, int32 power)
 {
 	int32 i=0;
