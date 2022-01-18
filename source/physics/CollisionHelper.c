@@ -648,7 +648,7 @@ SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ba
 
 	if(0 > position)
 	{
-		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineField->a, lineField->b);
+		Vector3D projection = Vector3D::projectOnto(ballSideToCheck, lineField->a, lineField->b);
 
 		bool collision = Vector3D::isVectorInsideLine(projection, lineField->a, lineField->b);
 
