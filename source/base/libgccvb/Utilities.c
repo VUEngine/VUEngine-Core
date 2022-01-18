@@ -138,16 +138,6 @@ static uint32 Utilities::randomSeed()
 	return _seed;
 }
 
-// These real versions are due to Isaku Wada, 2002/01/09 added
-static int32 Utilities::random(uint32 seed, int32 randnums)
-{
-#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
-#endif
-
-	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
-}
-
 /*
  * Returns a random number in the requested range from the random seed
  */

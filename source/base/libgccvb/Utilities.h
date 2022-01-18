@@ -42,7 +42,7 @@ static class Utilities : Object
 	static void setKeypadManager(KeypadManager keypadManager);
 	static void resetRandomSeed();
 	static uint32 randomSeed();
-	static int32 random(uint32 seed, int32 randnums);
+	static inline int32 random(uint32 seed, int32 randnums);
 	static char* itoa(uint32 num, uint32 base, uint32 digits);
 	static const char* toUppercase(const char* string);
 	static const char* toLowercase(const char* string);
@@ -50,7 +50,17 @@ static class Utilities : Object
 	static int32 getDigitCount(int32 value);
 	static int32 intLength(int32 value);
 	static uint32 reverse(uint32 x, int32 bits);
-	static float Utilities::floor(float x);
+	static float floor(float x);
+}
+
+// These real versions are due to Isaku Wada, 2002/01/09 added
+static inline int32 Utilities::random(uint32 seed, int32 randnums)
+{
+#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
+#endif
+
+	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
 }
 
 
