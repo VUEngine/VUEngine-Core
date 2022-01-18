@@ -124,7 +124,7 @@ CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, 
 	this->center.z += displacement.z;
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), Shape::safeCast(this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
 
 	// restore state
 	this->center = center;

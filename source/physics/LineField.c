@@ -239,7 +239,7 @@ static void LineField::project(Vector3D center, fix10_6 radius, Vector3D vector,
 CollisionInformation LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fix10_6 sizeIncrement __attribute__((unused)))
 {
 	// TODO
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), Shape::safeCast(this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
 
 	return collisionInformation;
 }

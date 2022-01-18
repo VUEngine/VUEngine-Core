@@ -24,11 +24,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-3d
-singleton class CollisionHelper : Object
+static class CollisionHelper : Object
 {
 	/// @publicsection
-	static CollisionHelper getInstance();
-	CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
+	static CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
 }
 
 

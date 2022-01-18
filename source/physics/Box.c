@@ -450,7 +450,7 @@ CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, f
 	Box::projectOntoItself(this);
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), Shape::safeCast(this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
 
 	// put back myself
 	this->rightBox = rightBox;
