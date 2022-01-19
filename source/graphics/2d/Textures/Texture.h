@@ -105,6 +105,8 @@ abstract class Texture : Object
 	uint8 status;
 	// How many sprites are using me
 	uint8 usageCount;
+	// update flag
+	bool update;
 
 	/// @publicsection
 	void constructor(TextureSpec* textureSpec, uint16 id);

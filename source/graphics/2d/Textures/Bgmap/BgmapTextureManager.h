@@ -46,6 +46,7 @@ enum OffsetIndex
 /// @ingroup graphics-2d-textures-bgmap
 singleton class BgmapTextureManager : Object
 {
+	VirtualList bgmapTextures;
 	// Number of chars occupied
 	uint16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];
 	// Current x offset to set the next bgmap
@@ -55,7 +56,7 @@ singleton class BgmapTextureManager : Object
 	// 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment
 	int8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];
 	// The textures allocated
-	BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];
+	BgmapTexture bgmapTexturesMap[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];
 	// Number of available bgmap segments
 	int16 availableBgmapSegmentsForTextures;
 	// Segment for printing
@@ -74,6 +75,7 @@ singleton class BgmapTextureManager : Object
 	void releaseTexture(BgmapTexture bgmapTexture);
 	void reset();
 	void setSpareBgmapSegments(uint8 paramTableSegments);
+	void updateTextures();
 }
 
 

@@ -14,7 +14,7 @@
 
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <SpriteManager.h>
+#include <ObjectTextureManager.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Camera.h>
@@ -62,7 +62,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0, this));
+		this->texture = ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec);
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
@@ -76,6 +76,29 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	{
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture spec");
 	}
+}
+
+/**
+ * Class destructor
+ *
+ * @memberof						ObjectSprite
+ * @public
+ */
+void ObjectSprite::destructor()
+{
+	// remove from sprite container before I become invalid
+	// and the VPU triggers a new render cycle
+	if(this->registered && this->objectSpriteContainer)
+	{
+		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
+	}
+
+	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), this->texture);
+	this->texture = NULL;
+
+	// destroy the super object
+	// must always be called at the end of the destructor
+	Base::destructor();
 }
 
 void ObjectSprite::rewrite()
@@ -123,33 +146,6 @@ void ObjectSprite::rewrite()
 			objectPointer->tile = fourthWordValue | charNumber;
 		}
 	}
-}
-
-/**
- * Class destructor
- *
- * @memberof						ObjectSprite
- * @public
- */
-void ObjectSprite::destructor()
-{
-	// remove from sprite container before I become invalid
-	// and the VPU triggers a new render cycle
-	if(this->registered && this->objectSpriteContainer)
-	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
-	}
-
-	if(!isDeleted(this->texture))
-	{
-		delete this->texture;
-	}
-
-	this->texture = NULL;
-
-	// destroy the super object
-	// must always be called at the end of the destructor
-	Base::destructor();
 }
 
 /**

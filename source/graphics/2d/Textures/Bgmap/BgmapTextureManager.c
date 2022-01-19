@@ -20,6 +20,15 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												CLASS'S DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+friend class Texture;
+friend class VirtualList;
+friend class VirtualNode;
+
+
+//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -41,6 +50,7 @@ void BgmapTextureManager::constructor()
 {
 	Base::constructor();
 
+	this->bgmapTextures = new VirtualList();
 	BgmapTextureManager::reset(this);
 }
 
@@ -93,13 +103,15 @@ void BgmapTextureManager::reset()
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
 
-		if(this->bgmapTextures[i])
+		if(this->bgmapTexturesMap[i])
 		{
-			delete this->bgmapTextures[i];
+			delete this->bgmapTexturesMap[i];
 		}
 
-		this->bgmapTextures[i] = NULL;
+		this->bgmapTexturesMap[i] = NULL;
 	}
+
+	VirtualList::clear(this->bgmapTextures);
 }
 
 /**
@@ -244,8 +256,9 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 			case __ANIMATED_SINGLE_OPTIMIZED:
 			case __ANIMATED_SHARED_COORDINATED:
 
+				VirtualList::removeElement(this->bgmapTextures, bgmapTexture);
 				delete bgmapTexture;
-				this->bgmapTextures[i] = NULL;
+				this->bgmapTexturesMap[i] = NULL;
 				break;
 
 			case __ANIMATED_SHARED:
@@ -254,6 +267,24 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 
 				Texture::releaseCharSet(bgmapTexture);
 				break;
+		}
+	}
+}
+
+/**
+ * Update textures
+ *
+ * @public
+ */
+void BgmapTextureManager::updateTextures()
+{
+	for(VirtualNode node = this->bgmapTextures->head; node; node = node->next)
+	{
+		Texture texture = Texture::safeCast(node->data);
+
+		if(kTextureWritten != texture->status && texture->update)
+		{
+			texture->update = !Texture::update(texture);
 		}
 	}
 }
@@ -273,10 +304,10 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	// try to find a texture with the same bgmap spec
 	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if(this->bgmapTextures[i])
+		if(this->bgmapTexturesMap[i])
 		{
-			CharSet charSet = Texture::getCharSet(this->bgmapTextures[i], false);
-			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(this->bgmapTextures[i]);
+			CharSet charSet = Texture::getCharSet(this->bgmapTexturesMap[i], false);
+			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(this->bgmapTexturesMap[i]);
 
 			if(allocatedTextureSpec == (TextureSpec*)textureSpec &&
 				(!charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
@@ -284,7 +315,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			)
 			{
 				// return if found
-				return this->bgmapTextures[i];
+				return this->bgmapTexturesMap[i];
 			}
 		}
 	}
@@ -300,7 +331,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	// try to find a texture with the same bgmap spec
 	for(i = 0; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		BgmapTexture bgmapTexture = this->bgmapTextures[i];
+		BgmapTexture bgmapTexture = this->bgmapTexturesMap[i];
 
 		if(bgmapTexture && 0 == BgmapTexture::getUsageCount(bgmapTexture))
 		{
@@ -360,15 +391,17 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 	// find an empty slot
 	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if(!this->bgmapTextures[i])
+		if(!this->bgmapTexturesMap[i])
 		{
 			// create new texture and register it
-			this->bgmapTextures[i] = new BgmapTexture(bgmapTextureSpec, i);
+			this->bgmapTexturesMap[i] = new BgmapTexture(bgmapTextureSpec, i);
 
 			//if not, then allocate
-			BgmapTextureManager::doAllocate(this, this->bgmapTextures[i], minimumSegment, mustLiveAtEvenSegment);
+			BgmapTextureManager::doAllocate(this, this->bgmapTexturesMap[i], minimumSegment, mustLiveAtEvenSegment);
 
-			return this->bgmapTextures[i];
+			VirtualList::pushBack(this->bgmapTextures, this->bgmapTexturesMap[i]);
+
+			return this->bgmapTexturesMap[i];
 		}
 	}
 
@@ -509,7 +542,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	int32 textureCount = 0;
 	for(;index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
 	{
-		if(this->bgmapTextures[index])
+		if(this->bgmapTexturesMap[index])
 		{
 			textureCount++;
 		}
@@ -544,7 +577,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	// try to find a texture with the same bgmap spec
 	for(index = 0; index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
 	{
-		BgmapTexture bgmapTexture = this->bgmapTextures[index];
+		BgmapTexture bgmapTexture = this->bgmapTexturesMap[index];
 
 		if(bgmapTexture)
 		{

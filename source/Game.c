@@ -196,11 +196,8 @@ void Game::initialize()
 	this->frameRate = FrameRate::getInstance();
 	this->soundManager = SoundManager::getInstance();
 
-	CharSetManager::reset(CharSetManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
 	SpriteManager::reset(SpriteManager::getInstance());
 	DirectDraw::reset(DirectDraw::getInstance());
-	ParamTableManager::reset(ParamTableManager::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 
 	// setup vectorInterrupts
@@ -472,9 +469,6 @@ void Game::reset()
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
 	SpriteManager::reset(SpriteManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	CharSetManager::reset(CharSetManager::getInstance());
-	ParamTableManager::reset(ParamTableManager::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 
 	// Enable timer

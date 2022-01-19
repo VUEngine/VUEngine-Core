@@ -48,6 +48,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	this->palette = textureSpec->palette;
 	this->status = kTexturePendingWriting;
 	this->frame = 0;
+	this->update = false;
 }
 
 /**
@@ -224,7 +225,7 @@ bool Texture::prepare()
 
 		case kTexturePendingRewriting:
 
-			SpriteManager::updateTexture(SpriteManager::getInstance(), this);
+			this->update = true;
 			return true;
 			break;
 
@@ -237,7 +238,7 @@ bool Texture::prepare()
 			}
 			else
 			{
-				SpriteManager::updateTexture(SpriteManager::getInstance(), this);
+				this->update = true;
 				return true;
 			}
 

@@ -30,12 +30,10 @@
  * @param objectTextureSpec		Texture spec
  * @param id							Identifier
  */
-void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, uint16 id, ObjectSprite owner)
+void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, uint16 id)
 {
 	// construct base object
 	Base::constructor((TextureSpec*)objectTextureSpec, id);
-
-	this->owner = owner;
 }
 
 /**

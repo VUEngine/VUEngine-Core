@@ -19,6 +19,7 @@
 #include <VIPManager.h>
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
+#include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <TimerManager.h>
 #include <debugConfig.h>
@@ -73,7 +74,6 @@ void SpriteManager::constructor()
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
-	this->texturesToUpdate = NULL;
 	this->specialSprites = NULL;
 
 	this->texturesMaximumRowsToWrite = -1;
@@ -82,7 +82,6 @@ void SpriteManager::constructor()
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->lockTextureList = false;
 
 	SpriteManager::reset(this);
 }
@@ -134,12 +133,6 @@ void SpriteManager::cleanUp()
 		this->sprites = NULL;
 	}
 
-	if(!isDeleted(this->texturesToUpdate))
-	{
-		delete this->texturesToUpdate;
-		this->texturesToUpdate = NULL;
-	}
-
 	if(!isDeleted(this->specialSprites))
 	{
 		delete this->specialSprites;
@@ -153,6 +146,9 @@ void SpriteManager::cleanUp()
 void SpriteManager::reset()
 {
 	Printing::reset(Printing::getInstance());
+	CharSetManager::reset(CharSetManager::getInstance());
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	ParamTableManager::reset(ParamTableManager::getInstance());
 
 	this->lockSpritesLists = true;
 
@@ -172,7 +168,6 @@ void SpriteManager::reset()
 
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
-	this->texturesToUpdate = new VirtualList();
 	this->specialSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
@@ -186,7 +181,6 @@ void SpriteManager::reset()
 
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->lockTextureList = false;
 }
 
 /**
@@ -524,40 +518,11 @@ void SpriteManager::writeTextures()
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 }
 
-void SpriteManager::updateTexture(Texture texture)
-{
-	if(!isDeleted(texture) && !VirtualList::find(this->texturesToUpdate, texture))
-	{
-		this->lockTextureList = true;
-		VirtualList::pushBack(this->texturesToUpdate, texture);
-		this->lockTextureList = false;
-	}
-}
-
 void SpriteManager::writeGraphicsToDRAM()
 {
 	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
-
-	if(!this->lockTextureList)
-	{
-		for(VirtualNode node = this->texturesToUpdate->head; node;)
-		{
-			Texture texture = Texture::safeCast(node->data);
-
-			VirtualNode auxNode = node;
-			node = node->next;
-
-			if(!isDeleted(texture))
-			{
-				if(kTextureWritten != texture->status && !Texture::update(texture))
-				{
-					continue;
-				}
-			}
-
-			VirtualList::removeNode(this->texturesToUpdate, auxNode);
-		}
-	}
+	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance());
+	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance());
 
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{

@@ -58,8 +58,6 @@ singleton class SpriteManager : Object
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects
 	VirtualList specialSprites;
-	// Textures pending update during writeDRAM
-	VirtualList texturesToUpdate;
 	// pixels drawn
 	int32 totalPixelsDrawn;
 	// number of rows to write in affine transformations
@@ -76,8 +74,6 @@ singleton class SpriteManager : Object
 	int8 deferParamTableEffects;
 	// delay before writing again
 	int8 waitToWriteSpriteTextures;
-	// flag to prevent race conditions on texturesToUpdate list
-	bool lockTextureList;
 
 	/// @publicsection
 	static SpriteManager getInstance();
@@ -85,7 +81,6 @@ singleton class SpriteManager : Object
 	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
-	void updateTexture(Texture texture);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);

@@ -7,58 +7,38 @@
  * that was distributed with this source code.
  */
 
-#ifndef OBJECT_TEXTURE_H_
-#define OBJECT_TEXTURE_H_
+#ifndef OBJECT_TEXTURE_MANAGER_H_
+#define OBJECT_TEXTURE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Texture.h>
-#include <ObjectSprite.h>
-#include <CharSet.h>
-#include <Telegram.h>
+#include <Object.h>
+#include <ObjectTexture.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * A ObjectTexture spec
- *
- * @memberof ObjectTexture
- */
-typedef const TextureSpec ObjectTextureSpec;
-
-/**
- * A ObjectTexture spec that is stored in ROM
- *
- * @memberof ObjectTexture
- */
-typedef const ObjectTextureSpec ObjectTextureROMSpec;
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup graphics-2d-textures-object
-class ObjectTexture : Texture
+/// @ingroup graphics-2d-textures-bgmap
+singleton class ObjectTextureManager : Object
 {
-	ObjectSprite owner;
+	VirtualList objectTextures;
 
 	/// @publicsection
-	void constructor(ObjectTextureSpec* objectTextureSpec, uint16 id);
-
-	override void setFrameAnimatedMulti(uint16 frame);
+	static ObjectTextureManager getInstance();
+	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
+	void releaseTexture(ObjectTexture bgmapTexture);
+	void reset();
+	void updateTextures();
 }
 
 
