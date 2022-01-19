@@ -73,9 +73,9 @@ singleton class BgmapTextureManager : Object
 	int16 getYOffset(int32 id);
 	void print(int32 x, int32 y);
 	void releaseTexture(BgmapTexture bgmapTexture);
+	void updateTextures();
 	void reset();
 	void setSpareBgmapSegments(uint8 paramTableSegments);
-	void updateTextures();
 }
 
 

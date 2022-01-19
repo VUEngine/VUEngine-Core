@@ -20,6 +20,7 @@
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
 #include <BgmapTextureManager.h>
+#include <ObjectTextureManager.h>
 #include <Camera.h>
 #include <TimerManager.h>
 #include <debugConfig.h>

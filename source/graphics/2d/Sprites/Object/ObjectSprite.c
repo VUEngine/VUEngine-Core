@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSprite.h>
+#include <SpriteManager.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
 #include <ObjectTexture.h>
@@ -62,7 +63,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec);
+		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
@@ -93,7 +94,7 @@ void ObjectSprite::destructor()
 		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
 	}
 
-	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), this->texture);
+	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));
 	this->texture = NULL;
 
 	// destroy the super object
