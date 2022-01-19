@@ -378,9 +378,6 @@ void MemoryPool::free(BYTE* object)
  */
 BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
-	extern mmeconteinr;
-	mmeconteinr++;
-
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
 #ifndef __RELEASE
