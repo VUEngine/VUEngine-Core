@@ -295,10 +295,6 @@ void Object::fireEvent(uint32 eventCode)
 			}
 		}
 
-#ifndef __RELEASE
-		const char* className = __GET_CLASS_NAME(this);
-#endif
-
 		for(VirtualNode node = eventsToFire->head; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
@@ -316,7 +312,7 @@ void Object::fireEvent(uint32 eventCode)
 				Printing::setDebugMode(Printing::getInstance());
 				Printing::clear(Printing::getInstance());
 				Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
-				Printing::text(Printing::getInstance(), className, 13, 12, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
 				Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
 				Printing::hex(Printing::getInstance(), (int32)event->method, 13, 13, 8, NULL);
 				Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
