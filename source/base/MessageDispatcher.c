@@ -25,7 +25,9 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+friend class Telegram;
 
+static MessageDispatcher _messageDispatcher = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -51,6 +53,11 @@ friend class VirtualList;
 	this->delayedMessages = new VirtualList();
 	this->delayedMessagesToDiscard = new VirtualList();
 	this->delayedMessagesToDispatch = new VirtualList();
+
+	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
+	this->helperTelegramIsInUse = false;
+
+	_messageDispatcher = this;
 }
 
 /**
@@ -58,8 +65,11 @@ friend class VirtualList;
  */
 void MessageDispatcher::destructor()
 {
+	_messageDispatcher = NULL;
+
 	delete this->delayedMessages;
 	delete this->delayedMessagesToDiscard;
+	delete this->helperTelegram;
 
 	// allow a new construct
 	Base::destructor();
@@ -84,12 +94,33 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 	if(0 >= delay)
 	{
 		// create the telegram
-		Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
+		bool result = false;
 
-		// send the telegram to the recipient
-		bool result =  Object::handleMessage(receiver, telegram);
+		// Only create a new telegram if the persistent one is in use
+		if(_messageDispatcher->helperTelegramIsInUse)
+		{
+			Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
-		delete telegram;
+			// send the telegram to the recipient
+			result = Object::handleMessage(receiver, telegram);
+
+			delete telegram;
+		}
+		else
+		{
+			_messageDispatcher->helperTelegram->sender = sender;
+			_messageDispatcher->helperTelegram->receiver = receiver;
+			_messageDispatcher->helperTelegram->message = message;
+			_messageDispatcher->helperTelegram->extraInfo = extraInfo;
+
+			_messageDispatcher->helperTelegramIsInUse = true;
+
+			// send the telegram to the recipient
+			result = Object::handleMessage(receiver, _messageDispatcher->helperTelegram);
+
+			_messageDispatcher->helperTelegramIsInUse = false;
+		}
+
 		return result;
 	}
 	else

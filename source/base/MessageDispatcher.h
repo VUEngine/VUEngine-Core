@@ -56,6 +56,9 @@ singleton class MessageDispatcher : Object
 	VirtualList delayedMessagesToDiscard;
 	// Delayed messages to dispatch
 	VirtualList delayedMessagesToDispatch;
+	// Telegram used when there is no stacking of telegrams
+	Telegram helperTelegram;
+	bool helperTelegramIsInUse;
 
 	/// @publicsection
 	static MessageDispatcher getInstance();
