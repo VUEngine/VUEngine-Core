@@ -30,7 +30,8 @@
 	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
 	this->poolSizes[pool][eBlockSize] = BlockSize;														\
-	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
+	this->poolLastFreeBlock[pool] = &this->poolLocation[pool][0];										\
+	pool++;																								\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ enum MemoryPoolSizes
 {
 	ePoolSize = 0,
 	eBlockSize,
-	eLastFreeBlockIndex,
+	eLastFreeBlock,
 };
 
 
@@ -59,7 +60,9 @@ singleton class MemoryPool : Object
 	// pointer to the beginning of each memory pool
 	BYTE* poolLocation[__MEMORY_POOLS];
 	// pool's size and pool's block size
-	uint16 poolSizes[__MEMORY_POOLS][3];
+	uint16 poolSizes[__MEMORY_POOLS][2];
+	// pool's size and pool's block size
+	BYTE* poolLastFreeBlock[__MEMORY_POOLS];
 
 	/// @publicsection
 	static MemoryPool getInstance();
