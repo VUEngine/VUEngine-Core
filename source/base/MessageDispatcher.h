@@ -38,6 +38,8 @@ typedef struct DelayedMessage
 	uint32 timeOfArrival;
 	/// reference to clock
 	Clock clock;
+	/// Discarded flag
+	bool discarded;
 
 } DelayedMessage;
 
@@ -52,8 +54,6 @@ singleton class MessageDispatcher : Object
 {
 	// Delayed messages
 	VirtualList delayedMessages;
-	// Delayed messages to discard
-	VirtualList delayedMessagesToDiscard;
 	// Delayed messages to dispatch
 	VirtualList delayedMessagesToDispatch;
 	// Telegram used when there is no stacking of telegrams

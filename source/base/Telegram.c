@@ -46,7 +46,6 @@ void Telegram::constructor(void* sender, void* receiver, int32 message, void* ex
 void Telegram::destructor()
 {
 	this->sender = NULL;
-
 	this->receiver = NULL;
 
 	// free the memory
