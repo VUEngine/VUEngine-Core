@@ -871,7 +871,7 @@ void Body::reset()
 
 void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
-	if(this->normals)
+	if(this->normals && !isDeleted(this->normals->head))
 	{
 		VirtualList normalsToRemove = new VirtualList();
 
