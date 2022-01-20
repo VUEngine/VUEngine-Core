@@ -348,7 +348,6 @@ void Game::setNextState(GameState state)
 
 					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
 					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
-
 				}
 
 				StateMachine::popAllStates(this->stateMachine);
