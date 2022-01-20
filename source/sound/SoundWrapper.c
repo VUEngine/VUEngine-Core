@@ -75,9 +75,8 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
 
-	this->channels = new VirtualList();
+	this->channels = channels;
 
-	VirtualList::copy(this->channels, channels);
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
 

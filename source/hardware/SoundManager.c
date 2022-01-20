@@ -974,13 +974,15 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 			break;
 	}
 
-	delete availableChannels;
-
 	if(!isDeleted(soundWrapper))
 	{
 		this->hasPCMSounds |= soundWrapper->hasPCMTracks;
 
 		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onSoundWrapperReleased, kEventSoundReleased);
+	}
+	else
+	{
+		delete availableChannels;
 	}
 
 	return soundWrapper;
