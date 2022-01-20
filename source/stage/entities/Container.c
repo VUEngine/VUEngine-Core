@@ -321,7 +321,7 @@ void Container::purgeChildren()
 
 			if(child->deleteMe)
 			{
-				VirtualList::removeElement(this->children, child);
+				VirtualList::removeNode(this->children, node);
 				child->parent = NULL;
 				delete child;
 			}

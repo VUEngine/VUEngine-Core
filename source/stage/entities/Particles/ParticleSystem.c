@@ -237,34 +237,22 @@ void ParticleSystem::processExpiredParticles()
 {
 	if(!isDeleted(this->particles) && !this->particleSystemSpec->recycleParticles)
 	{
-		VirtualList expiredParticles = new VirtualList();
-
-		VirtualNode node = this->particles->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->particles->head, nextNode; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Particle particle = Particle::safeCast(node->data);
 
 			if(particle->expired)
 			{
-				VirtualList::pushBack(expiredParticles, particle);
+				VirtualList::removeNode(this->particles, node);
+
+				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+
+				delete particle;
+				this->particleCount--;
 			}
 		}
-
-		node = expiredParticles->head;
-
-		for(; node; node = node->next)
-		{
-			Particle particle = Particle::safeCast(node->data);
-			VirtualList::removeElement(this->particles, particle);
-
-			NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
-
-			delete particle;
-			this->particleCount--;
-		}
-
-		delete expiredParticles;
 	}
 }
 

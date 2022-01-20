@@ -873,12 +873,10 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
 	if(this->normals && !isDeleted(this->normals->head))
 	{
-		VirtualList normalsToRemove = new VirtualList();
-
-		VirtualNode node = this->normals->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->normals->head, nextNode = NULL; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
 			if(isDeleted(normalRegistry->referent) ||
@@ -887,23 +885,10 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 				((__Z_AXIS & axis) && normalRegistry->direction.z)
 			)
 			{
-				VirtualList::pushBack(normalsToRemove, normalRegistry);
-			}
-		}
-
-		node = normalsToRemove->head;
-
-		for(; node; node = node->next)
-		{
-			VirtualList::removeElement(this->normals, node->data);
-
-			if(!isDeleted(node->data))
-			{
+				VirtualList::removeNode(this->normals, node);
 				delete node->data;
 			}
 		}
-
-		delete normalsToRemove;
 	}
 
 	Body::computeTotalNormal(this);
@@ -915,9 +900,7 @@ void Body::clearNormal(Object referent)
 
 	if(this->normals)
 	{
-		VirtualNode node = this->normals->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->normals->head; node; node = node->next)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
@@ -926,7 +909,7 @@ void Body::clearNormal(Object referent)
 			if(normalRegistry->referent == referent)
 			{
 				ASSERT(!isDeleted(normalRegistry), "Body::clearNormal: dead normal registry");
-				VirtualList::removeElement(this->normals, normalRegistry);
+				VirtualList::removeNode(this->normals, node);
 				delete normalRegistry;
 				break;
 			}
