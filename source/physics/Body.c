@@ -901,12 +901,6 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 			{
 				delete node->data;
 			}
-			else
-			{
-				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this->owner), 20, 1, NULL);
-				while(1);
-			}
-
 		}
 
 		delete normalsToRemove;
