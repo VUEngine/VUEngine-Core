@@ -62,6 +62,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
+	this->released = false;
 
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
@@ -478,6 +479,8 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
+	this->released = true;
+
 	SoundWrapper::stop(this);
 
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));

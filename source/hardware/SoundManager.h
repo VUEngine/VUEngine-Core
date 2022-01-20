@@ -93,7 +93,6 @@ enum ChannelTypes
 singleton class SoundManager : Object
 {
 	VirtualList soundWrappers;
-	VirtualList releasedSoundWrappers;
 	VirtualNode soundWrapperMIDINode;
 	VirtualList queuedSounds;
 	Channel channels[__TOTAL_CHANNELS];

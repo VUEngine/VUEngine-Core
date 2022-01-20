@@ -83,7 +83,6 @@ void SoundManager::constructor()
 	Base::constructor();
 
 	this->soundWrappers = NULL;
-	this->releasedSoundWrappers = NULL;
 	this->hasPCMSounds = false;
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
@@ -96,14 +95,6 @@ void SoundManager::constructor()
  */
 void SoundManager::destructor()
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
-	if(!isDeleted(this->releasedSoundWrappers))
-	{
-		delete this->releasedSoundWrappers;
-		this->releasedSoundWrappers = NULL;
-	}
-
 	if(!isDeleted(this->queuedSounds))
 	{
 		VirtualNode node = this->queuedSounds->head;
@@ -146,29 +137,38 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	if(!isDeleted(this->releasedSoundWrappers))
+	if(!isDeleted(this->soundWrappers))
 	{
-		VirtualNode node = this->releasedSoundWrappers->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = this->soundWrappers->head, nextNode = NULL; node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-			this->soundWrapperMIDINode = NULL;
+			if(soundWrapper->released)
+			{
+				// Release soundWrapper's channels
+				VirtualNode auxNode = soundWrapper->channels->head;
 
-			VirtualList::removeElement(this->soundWrappers, soundWrapper);
+				for(; auxNode; auxNode = auxNode->next)
+				{
+					Channel* channel = (Channel*)auxNode->data;
 
-			delete soundWrapper;
+					SoundManager::releaseSoundChannel(this, channel);
+				}
+
+				VirtualList::removeNode(this->soundWrappers, node);
+
+				delete soundWrapper;
+
+				this->soundWrapperMIDINode = NULL;
+			}
 		}
-
-		VirtualList::clear(this->releasedSoundWrappers);
 	}
 }
 
 void SoundManager::reset()
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	if(!isDeleted(this->queuedSounds))
 	{
 		VirtualNode node = this->queuedSounds->head;
@@ -208,14 +208,6 @@ void SoundManager::reset()
 	}
 
 	this->soundWrappers = new VirtualList();
-
-	if(!isDeleted(this->releasedSoundWrappers))
-	{
-		delete this->releasedSoundWrappers;
-		this->releasedSoundWrappers = NULL;
-	}
-
-	this->releasedSoundWrappers = new VirtualList();
 
 	int32 i = 0;
 
@@ -861,16 +853,6 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 	}
 }
 
-void SoundManager::onSoundWrapperReleased(Object eventFirer)
-{
-	SoundWrapper releasedSoundWrapper = SoundWrapper::safeCast(eventFirer);
-
-	if(!isDeleted(releasedSoundWrapper))
-	{
-		SoundManager::releaseSoundWrapper(this, releasedSoundWrapper);
-	}
-}
-
 /**
  * Request a new sound
  *
@@ -977,8 +959,6 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	if(!isDeleted(soundWrapper))
 	{
 		this->hasPCMSounds |= soundWrapper->hasPCMTracks;
-
-		SoundWrapper::addEventListener(soundWrapper, Object::safeCast(this), (EventListener)SoundManager::onSoundWrapperReleased, kEventSoundReleased);
 	}
 	else
 	{
@@ -986,35 +966,6 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	}
 
 	return soundWrapper;
-}
-
-/**
- * Release sound wrapper
- */
-void SoundManager::releaseSoundWrapper(SoundWrapper soundWrapper)
-{
-//	NM_ASSERT(!isDeleted(VirtualList::find(this->soundWrappers, soundWrapper)), "SoundManager::releaseSoundWrapper: invalid soundWrapper");
-//	NM_ASSERT(NULL == VirtualList::find(this->releasedSoundWrappers, soundWrapper), "SoundManager::releaseSoundWrapper: already released soundWrapper");
-
-	if(isDeleted(soundWrapper))
-	{
-		return;
-	}
-
-	if(!VirtualList::find(this->releasedSoundWrappers, soundWrapper))
-	{
-		// Release soundWrapper's channels
-		VirtualNode auxNode = soundWrapper->channels->head;
-
-		for(; auxNode; auxNode = auxNode->next)
-		{
-			Channel* channel = (Channel*)auxNode->data;
-
-			SoundManager::releaseSoundChannel(this, channel);
-		}
-
-		VirtualList::pushBack(this->releasedSoundWrappers, soundWrapper);
-	}
 }
 
 /**

@@ -229,6 +229,7 @@ class SoundWrapper : Object
 	bool hasPCMTracks;
 	bool unmute;
 	bool autoReleaseOnFinish;
+	bool released;
 
 	/// @publicsection
 	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
