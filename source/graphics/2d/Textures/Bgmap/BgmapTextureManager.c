@@ -59,6 +59,9 @@ void BgmapTextureManager::constructor()
  */
 void BgmapTextureManager::destructor()
 {
+	delete this->bgmapTextures;
+	this->bgmapTextures = NULL;
+
 	// allow a new construct
 	Base::destructor();
 }
