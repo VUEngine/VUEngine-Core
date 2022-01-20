@@ -93,7 +93,7 @@ void ObjectTextureManager::reset()
  */
 ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureSpec)
 {
-	NM_ASSERT(NULL >= objectTextureSpec, "ObjectTextureManager::getTexture: NULL objectTextureSpec");
+	NM_ASSERT(NULL != objectTextureSpec, "ObjectTextureManager::getTexture: NULL objectTextureSpec");
 
 	if(NULL == objectTextureSpec)
 	{
