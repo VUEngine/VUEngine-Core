@@ -484,7 +484,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 			this->streamingHeadNode = this->streamingHeadNode->previous;
 		}
 
-		VirtualList::removeElement(this->stageEntities, node->data);
+		VirtualList::removeNode(this->stageEntities, node);
 		delete node->data;
 	}
 }
@@ -522,7 +522,7 @@ void Stage::unloadChild(Container child)
 			// if the entity is not to be respawned
 			if(!Entity::respawn(child))
 			{
-				VirtualList::removeElement(this->stageEntities, node->data);
+				VirtualList::removeNode(this->stageEntities, node);
 			}
 
 			break;

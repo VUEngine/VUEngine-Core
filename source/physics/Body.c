@@ -895,7 +895,7 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 
 		for(; node; node = node->next)
 		{
-			VirtualList::removeElement(this->normals, node->data);
+			VirtualList::removeNode(this->normals, node);
 
 			if(!isDeleted(node->data))
 			{

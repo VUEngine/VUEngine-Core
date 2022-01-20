@@ -453,7 +453,9 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 bool VirtualList::removeNode(VirtualNode node)
 {
 	// if node isn't null
+#ifndef __RELEASE
 	if(VirtualList::checkThatNodeIsPresent(this, node))
+#endif
 	{
 		return VirtualList::doRemoveNode(this, node);
 	}

@@ -256,7 +256,7 @@ void ParticleSystem::processExpiredParticles()
 		for(; node; node = node->next)
 		{
 			Particle particle = Particle::safeCast(node->data);
-			VirtualList::removeElement(this->particles, particle);
+			VirtualList::removeNode(this->particles, node);
 
 			NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
 

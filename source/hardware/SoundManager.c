@@ -156,7 +156,7 @@ void SoundManager::purgeReleasedSoundWrappers()
 
 			this->soundWrapperMIDINode = NULL;
 
-			VirtualList::removeElement(this->soundWrappers, soundWrapper);
+			VirtualList::removeNode(this->soundWrappers, node);
 
 			delete soundWrapper;
 		}

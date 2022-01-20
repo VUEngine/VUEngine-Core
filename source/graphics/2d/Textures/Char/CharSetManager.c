@@ -368,7 +368,7 @@ bool CharSetManager::defragmentProgressively()
 					CharSet::rewrite(charSet);
 					this->freedOffset += CharSet::getNumberOfChars(charSet);
 
-					VirtualList::removeElement(this->charSetsPendingWriting, charSet);
+					VirtualList::removeNode(this->charSetsPendingWriting, node);
 					return true;
 				}
 				else if(this->freedOffset == offset)
