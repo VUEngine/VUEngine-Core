@@ -882,13 +882,14 @@ void Game::currentFrameStarted()
 {
 	this->nextFrameStarted = false;
 	this->currentFrameEnded = false;
+
+	Game::updateFrameRate(this);
 }
+
 
 void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
-
-	Game::updateFrameRate(this);
 
 #ifdef __SHOW_TORN_FRAMES_COUNT
 	if(this->nextFrameStarted)
