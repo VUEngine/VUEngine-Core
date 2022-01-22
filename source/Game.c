@@ -87,12 +87,6 @@ static char* _processNameDuringFRAMESTART = NULL;
 static char* _processNameDuringXPEND = NULL;
 #endif
 
-#ifdef __SHOW_TORN_FRAMES_COUNT
-
-int16 _tornGameFrameCount = 0;
-
-#endif
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -428,10 +422,6 @@ void Game::setNextState(GameState state)
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
-
-#ifdef __SHOW_TORN_FRAMES_COUNT
-	_tornGameFrameCount = 0;
-#endif
 }
 
 // erase engine's current status
@@ -809,16 +799,6 @@ void Game::nextFrameStarted()
 	{
 		totalTime = 0;
 
-#ifdef __SHOW_TORN_FRAMES_COUNT
-		static int32 previousTornGameFrameCount = 0;
-		if(_tornGameFrameCount != previousTornGameFrameCount)
-		{
-			previousTornGameFrameCount = _tornGameFrameCount;
-			PRINT_TEXT("Torn Frames:    ", 1, 27);
-			PRINT_INT(_tornGameFrameCount, 13, 27);
-		}
-#endif
-
 #ifdef __SHOW_STREAMING_PROFILING
 
 		if(!Game::isInSpecialMode(this))
@@ -886,17 +866,9 @@ void Game::currentFrameStarted()
 	Game::updateFrameRate(this);
 }
 
-
 void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
-
-#ifdef __SHOW_TORN_FRAMES_COUNT
-	if(this->nextFrameStarted)
-	{
-		++_tornGameFrameCount;
-	}
-#endif
 }
 
 bool Game::hasCurrentFrameEnded()
