@@ -435,7 +435,7 @@ void TimerManager::enable(bool flag)
 static void TimerManager::interruptHandler()
 {
 	//disable
-#ifndef __PRINT_FRAMERATE
+#ifndef __ENABLE_PROFILER
 	TimerManager::enable(_timerManager, false);
 	TimerManager::clearStat(_timerManager);
 #else
@@ -486,14 +486,11 @@ static void TimerManager::interruptHandler()
 	}
 #endif
 
-	// enable
-#ifndef __PRINT_FRAMERATE
+// enable
+#ifndef __ENABLE_PROFILER
 	TimerManager::enable(_timerManager, true);
 #else
 	TimerManager::enableInterrupt(_timerManager, true);
-#endif
-
-#ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
 #endif
 }

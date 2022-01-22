@@ -797,6 +797,8 @@ void Game::updateFrameRate()
 
 void Game::nextFrameStarted()
 {
+	FrameRate::gameFrameStarted(this->frameRate, this->currentFrameEnded);
+
 	this->nextFrameStarted = true;
 
 	static uint16 totalTime = 0;

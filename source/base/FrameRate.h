@@ -16,7 +16,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Stopwatch.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -26,16 +25,17 @@
 /// @ingroup base
 singleton class FrameRate : Object
 {
-	Stopwatch stopwatch;
 	// elapsed time in current 50hz cycle
 	float gameFrameTotalTime;
 	// Frames per second
 	uint16 fps;
+	uint16 gameFrameStarts;
 	uint16 unevenFps;
 
 	/// @publicsection
 	static FrameRate getInstance();
 	uint16 getFps();
+	void gameFrameStarted(bool gameFrameEnded);
 	void update();
 	void print(int32 col, int32 row);
 	void reset();
