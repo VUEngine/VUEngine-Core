@@ -82,12 +82,12 @@ void SoundManager::constructor()
 {
 	Base::constructor();
 
-	this->soundWrappers = NULL;
+	this->soundWrappers = new VirtualList();
+	this->queuedSounds = new VirtualList();
 	this->hasPCMSounds = false;
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
 	this->lock = false;
-	this->queuedSounds = new VirtualList();
 }
 
 /**
@@ -105,7 +105,7 @@ void SoundManager::destructor()
 		}
 
 		delete this->queuedSounds;
-		this->soundWrappers = NULL;
+		this->queuedSounds = NULL;
 	}
 
 	if(!isDeleted(this->soundWrappers))
@@ -137,60 +137,15 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	if(!isDeleted(this->soundWrappers))
+	for(VirtualNode node = this->soundWrappers->head, nextNode = NULL; node; node = nextNode)
 	{
-		for(VirtualNode node = this->soundWrappers->head, nextNode = NULL; node; node = nextNode)
+		nextNode = node->next;
+
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(soundWrapper->released)
 		{
-			nextNode = node->next;
-
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-
-			if(soundWrapper->released)
-			{
-				// Release soundWrapper's channels
-				VirtualNode auxNode = soundWrapper->channels->head;
-
-				for(; auxNode; auxNode = auxNode->next)
-				{
-					Channel* channel = (Channel*)auxNode->data;
-
-					SoundManager::releaseSoundChannel(this, channel);
-				}
-
-				VirtualList::removeNode(this->soundWrappers, node);
-
-				delete soundWrapper;
-
-				this->soundWrapperMIDINode = NULL;
-			}
-		}
-	}
-}
-
-void SoundManager::reset()
-{
-	if(!isDeleted(this->queuedSounds))
-	{
-		VirtualNode node = this->queuedSounds->head;
-
-		for(; node; node = node->next)
-		{
-			delete node->data;
-		}
-
-		VirtualList::clear(this->queuedSounds);
-	}
-
-	if(!isDeleted(this->soundWrappers))
-	{
-		VirtualNode node = this->soundWrappers->head;
-
-		for(; node; node = node->next)
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-
-			NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::reset: deleted sound wrapper");
-
+			// Release soundWrapper's channels
 			VirtualNode auxNode = soundWrapper->channels->head;
 
 			for(; auxNode; auxNode = auxNode->next)
@@ -200,14 +155,43 @@ void SoundManager::reset()
 				SoundManager::releaseSoundChannel(this, channel);
 			}
 
-			delete soundWrapper;
-		}
+			VirtualList::removeNode(this->soundWrappers, node);
 
-		delete this->soundWrappers;
-		this->soundWrappers = NULL;
+			delete soundWrapper;
+
+			this->soundWrapperMIDINode = NULL;
+		}
+	}
+}
+
+void SoundManager::reset()
+{
+	for(VirtualNode node = this->queuedSounds->head; node; node = node->next)
+	{
+		delete node->data;
 	}
 
-	this->soundWrappers = new VirtualList();
+	VirtualList::clear(this->queuedSounds);
+
+	for(VirtualNode node = this->soundWrappers->head; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::reset: deleted sound wrapper");
+
+		VirtualNode auxNode = soundWrapper->channels->head;
+
+		for(; auxNode; auxNode = auxNode->next)
+		{
+			Channel* channel = (Channel*)auxNode->data;
+
+			SoundManager::releaseSoundChannel(this, channel);
+		}
+
+		delete soundWrapper;
+	}
+
+	VirtualList::clear(this->soundWrappers);
 
 	int32 i = 0;
 
@@ -336,11 +320,8 @@ void SoundManager::tryToPlayQueuedSounds()
 
 void SoundManager::update()
 {
-	this->lockSoundWrappersList = true;	
 	SoundManager::purgeReleasedSoundWrappers(this);
-
 	SoundManager::tryToPlayQueuedSounds(this);
-	this->lockSoundWrappersList = false;	
 }
 
 bool SoundManager::isPlayingSound(const Sound* sound)
@@ -362,10 +343,6 @@ bool SoundManager::isPlayingSound(const Sound* sound)
 
 bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
-	bool lockSoundWrappersList = this->lockSoundWrappersList;	
-
-	this->lockSoundWrappersList = true;	
-
 	if(0 < this->MIDIPlaybackCounterPerInterrupt)
 	{
 		static uint32 accumulatedElapsedMicroseconds = 0;
@@ -406,8 +383,6 @@ bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 		}
 	}
 
-	this->lockSoundWrappersList = lockSoundWrappersList;
-
 	return true;
 }
 
@@ -417,8 +392,6 @@ bool SoundManager::playPCMSounds()
 	{
 		return false;
 	}
-
-	this->lockSoundWrappersList = true;	
 
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
@@ -441,8 +414,6 @@ bool SoundManager::playPCMSounds()
 			SoundWrapper::updatePCMPlayback(soundWrapper, 0);
 		}
 	}
-
-	this->lockSoundWrappersList = false;
 
 	return true;
 }
@@ -824,9 +795,6 @@ void SoundManager::unlock()
 
 void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope)
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-	SoundManager::tryToPlayQueuedSounds(this);
-
 	if(this->lock || NULL == sound)
 	{
 		return;
@@ -992,7 +960,7 @@ void SoundManager::stopAllSounds(bool release)
 		}
 	}
 
-	if(release && !this->lockSoundWrappersList)
+	if(release)
 	{
 		SoundManager::purgeReleasedSoundWrappers(this);
 	}

@@ -103,7 +103,6 @@ singleton class SoundManager : Object
 	uint16 MIDIPlaybackCounterPerInterrupt;
 	bool hasPCMSounds;
 	bool lock;
-	bool lockSoundWrappersList;
 
 	/// @publicsection
 	static SoundManager getInstance();
