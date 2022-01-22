@@ -53,10 +53,9 @@ void Stopwatch::reset()
 {
 	this->interrupts = 0;
 	this->milliSeconds = 0;
-	this->previousTimerCounter = 0;
 	this->timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance());
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
-	this->previousTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	this->previousTimerCounter = this->timerCounter;
 }
 
 void Stopwatch::update()
@@ -70,25 +69,39 @@ float Stopwatch::lap()
 
 	TimerManager::enable(TimerManager::getInstance(), false);
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
-	TimerManager::enable(TimerManager::getInstance(), true);
 
-	if(this->previousTimerCounter < currentTimerCounter)
+	uint16 timerCounter = 0;
+
+	if(0 == this->interrupts)
 	{
-		if(0 < this->interrupts)
+		if(currentTimerCounter > this->previousTimerCounter)
 		{
-			this->interrupts--;
+			timerCounter = __GAME_FRAME_DURATION / this->timeProportion;
 		}
-
-		this->previousTimerCounter += this->timerCounter;
+		else
+		{
+			timerCounter = this->previousTimerCounter - currentTimerCounter;
+		}
 	}
-	
-	float elapsedTime = ((this->previousTimerCounter + this->interrupts * this->timerCounter) - currentTimerCounter) * this->timeProportion;
+	else if(1 == this->interrupts)
+	{
+		timerCounter = this->previousTimerCounter + (this->timerCounter - currentTimerCounter);
+	}
+	else
+	{
+		timerCounter = this->previousTimerCounter + (this->timerCounter - currentTimerCounter);
+		timerCounter += (this->interrupts - 1) * this->timerCounter;
+	}
+
+	float elapsedTime = timerCounter * this->timeProportion;
 
 	this->interrupts = 0;
 
 	this->previousTimerCounter = currentTimerCounter;
 
-	this->milliSeconds += (uint32)elapsedTime;
+	this->milliSeconds += elapsedTime;
+
+	TimerManager::enable(TimerManager::getInstance(), true);
 
 	return elapsedTime;
 }
