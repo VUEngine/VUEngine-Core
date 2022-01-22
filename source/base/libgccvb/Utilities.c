@@ -24,7 +24,7 @@ KeypadManager _keypadManager = NULL;
 //											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-static uint32 _seed = 7; /* Seed value */
+uint32 _seed = 7; /* Seed value */
 static char numbers[17] = "0123456789ABCDEF";
 
 static void Utilities::setClock(Clock clock)
@@ -119,23 +119,6 @@ static const char* Utilities::toLowercase(const char* string)
 static void Utilities::resetRandomSeed()
 {
 	_seed = 7; /* Seed value */
-}
-
-/*
- * Taken from Shokwav's N64 demo
- */
-static uint32 Utilities::randomSeed()
-{
-	if(!_seed)
-	{
-		_seed = 7;
-	}
-
-	_seed ^= _seed << 13;
-	_seed ^= _seed >> 17;
-	_seed ^= _seed << 5;
-
-	return _seed;
 }
 
 /*

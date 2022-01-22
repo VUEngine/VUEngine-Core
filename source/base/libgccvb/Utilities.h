@@ -30,6 +30,8 @@
 #define GET_BIT(var,bit) 	(0x01 & (var >> bit))
 
 
+extern uint32 _seed;
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ static class Utilities : Object
 	static void setClock(Clock clock);
 	static void setKeypadManager(KeypadManager keypadManager);
 	static void resetRandomSeed();
-	static uint32 randomSeed();
+	static inline uint32 randomSeed();
 	static inline int32 random(uint32 seed, int32 randnums);
 	static char* itoa(uint32 num, uint32 base, uint32 digits);
 	static const char* toUppercase(const char* string);
@@ -63,5 +65,21 @@ static inline int32 Utilities::random(uint32 seed, int32 randnums)
 	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
 }
 
+/*
+ * Taken from Shokwav's N64 demo
+ */
+static inline uint32 Utilities::randomSeed()
+{
+	if(!_seed)
+	{
+		_seed = 7;
+	}
+
+	_seed ^= _seed << 13;
+	_seed ^= _seed >> 17;
+	_seed ^= _seed << 5;
+
+	return _seed;
+}
 
 #endif
