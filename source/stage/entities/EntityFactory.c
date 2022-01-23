@@ -166,6 +166,21 @@ uint32 EntityFactory::instantiateEntities()
 		{
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
+/*
+				if(0 == positionedEntityDescription->shapeSpecIndex)
+				{
+					Entity::addSprites(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->spriteSpecs);
+					positionedEntityDescription->shapeSpecIndex++;
+					return __ENTITY_PENDING_PROCESSING;
+				}
+
+				if(0 == positionedEntityDescription->shapeSpecIndex)
+				{
+					Entity::addShapes(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->shapeSpecs);
+					positionedEntityDescription->shapeSpecIndex++;
+					return __ENTITY_PENDING_PROCESSING;
+				}
+*/
 				if(0 <= positionedEntityDescription->spriteSpecIndex && Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
 				{
 					return __ENTITY_PENDING_PROCESSING;

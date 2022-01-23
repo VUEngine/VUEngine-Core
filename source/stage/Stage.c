@@ -994,7 +994,7 @@ bool Stage::stream()
 	return _streamingPhases[this->streamingPhase](this, this->streaming.deferred);
 }
 
-void Stage::streamAll()
+bool Stage::streamAll()
 {
 	this->streamingPhase = 0;
 	do 
@@ -1004,6 +1004,8 @@ void Stage::streamAll()
 
 	// Force deletion
 	Stage::purgeChildren(this);
+
+	return EntityFactory::hasEntitiesPending(this->entityFactory);
 }
 
 void Stage::streamAllOut()

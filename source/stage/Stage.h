@@ -231,12 +231,12 @@ class Stage : Container
 	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
 	VirtualList getSoundWrappers();
+	bool streamAll();
 	void streamAllOut();
 	void forceNoPopIn(bool forceNoPopIn);
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
-	virtual void streamAll();
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();

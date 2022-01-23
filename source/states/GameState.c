@@ -309,24 +309,33 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
-	// Make sure that the focus entity is transformed before focusing the camera
-	GameState::transform(this);
+	do
+	{
+		// Make sure that the focus entity is transformed before focusing the camera
+		GameState::transform(this);
 
-	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance(), false);
+		// Move the camera to its initial position
+		Camera::focus(Camera::getInstance(), false);
 
-	// Transformation everything so anything outside the camera
-	// can be streamed out
-	GameState::transform(this);
+		// Transformation everything so anything outside the camera
+		// can be streamed out
+		GameState::transform(this);
 
-	// Froce graphics to get ready
-	GameState::synchronizeGraphics(this);
+		// Froce graphics to get ready
+		GameState::synchronizeGraphics(this);
 
-	// Stream in and out all relevant entities
-	Stage::streamAll(this->stage);
+		// Stream in and out all relevant entities
+		bool streamedComplete = !Stage::streamAll(this->stage);
 
-	// Make sure all sprites are ready
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+		// Make sure all sprites are ready
+		SpriteManager::prepareAll(SpriteManager::getInstance());
+
+		if(streamedComplete)
+		{
+			break;
+		}
+	}
+	while(true);
 }
 
 /**
