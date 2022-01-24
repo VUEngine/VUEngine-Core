@@ -107,6 +107,7 @@ void VIPManager::constructor()
 	this->processingFRAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
+	this->skipFrameBuffersProcessing = true;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -140,12 +141,18 @@ void VIPManager::reset()
 {
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
+	this->skipFrameBuffersProcessing = true;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
 #else
 	this->forceDrawingSync = false;
 #endif
+}
+
+void VIPManager::setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing)
+{
+	this->skipFrameBuffersProcessing = skipFrameBuffersProcessing;
 }
 
 void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
@@ -415,7 +422,7 @@ void VIPManager::processFrameBuffers()
 				delete postProcessingEffectRegistry;
 			}
 		}
-		else if(!VIPManager::hasFrameStartedDuringXPEND(this))
+		else if(!this->skipFrameBuffersProcessing || !VIPManager::hasFrameStartedDuringXPEND(this))
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
 		}

@@ -264,11 +264,13 @@ singleton class VIPManager : Object
 	bool drawingEnded;
 	bool frameStarted;
 	bool forceDrawingSync;
+	bool skipFrameBuffersProcessing;
 
 	/// @publicsection
 	static VIPManager getInstance();
 	static void interruptHandler();
 	void reset();
+	void setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing);
 	void enableCustomInterrupts(uint16 customInterrupts);
 	void enableDrawing();
 	void disableDrawing();
