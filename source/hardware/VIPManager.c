@@ -619,7 +619,7 @@ void VIPManager::setupBrightness(Brightness* brightness)
 {
 	_vipRegisters[__BRTA] = brightness->darkRed;
 	_vipRegisters[__BRTB] = brightness->mediumRed;
-	_vipRegisters[__BRTC] = brightness->brightRed - brightness->mediumRed - brightness->darkRed;
+	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
 }
 
 /**
