@@ -116,6 +116,7 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@echo $(OBJECT_FILES) | tr " " "\n" > objectifiles.txt
 	@echo Linking scrambled game
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(FINAL_SETUP_CLASSES_OBJECT).o $(OBJECT_FILES) $(ASSETS_OBJECTS) -Wl,-Map=$(TARGET).map
+	@cp $(TARGET).map $(BUILD_DIR)/output.map
 	@echo
 	@du -h build/*.a
 	@echo
@@ -128,6 +129,7 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@echo 
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) $(VUENGINE) -Wl,-Map=$(TARGET).map
+	@cp $(TARGET).map $(BUILD_DIR)/output.map
 	@echo
 	@du -h build/*.a
 	@echo
