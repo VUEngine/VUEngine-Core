@@ -13,6 +13,7 @@
 //                                               DEFINITIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
+/*
 FontSpec* const _fonts[] =
 {
 	(FontSpec*)&DefaultFont,
@@ -22,3 +23,4 @@ FontSpec* const _fonts[] =
 	
 	NULL
 };
+*/

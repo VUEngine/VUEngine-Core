@@ -170,6 +170,10 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
 	@rm -f $*.dd
+	@$(eval OBJECT_FILE=$@)
+	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
+	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
+	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
 
 $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -203,7 +207,11 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
+	@$(eval OBJECT_FILE=$@)
+	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
+	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@$(AS) -o $@ $<
+	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.bin: $(MY_HOME)/%.mid
 	@$(eval OLD_SYMBOL_NAME=_binary_$(shell echo $< | sed -e "s@[/-]@_@g" | sed -e "s@.mid@_mid_start@g"))

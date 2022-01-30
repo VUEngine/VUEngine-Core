@@ -43,6 +43,7 @@ SECTIONS
 	{
 		PROVIDE (__tp = .);
 		*(.text*)
+		PROVIDE (__tp_end = .);
 	} >rom = 0xFF
 
 	.rodata :

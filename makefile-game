@@ -106,18 +106,32 @@ $(TARGET).vb: compile $(TARGET).elf
 	@du -h $(BUILD_DIR)/*.vb
 	@echo
 
+ifeq ($(SCRAMBLE_BINARY),1)
+$(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+	@echo 
+	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
+	@echo Linking $(TARGET).elf...
+	@echo 
+	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/hashes -name "*.o" | sort -R))
+	@echo $(OBJECT_FILES) | tr " " "\n" > objectifiles.txt
+	@echo Linking scrambled game
+	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(FINAL_SETUP_CLASSES_OBJECT).o $(OBJECT_FILES) $(ASSETS_OBJECTS) -Wl,-Map=$(TARGET).map
+	@echo
+	@du -h build/*.a
+	@echo
+else
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo 
 	@echo Linking game library
 	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
 	@echo Linking $(TARGET).elf...
 	@echo 
-#	@echo $(PLUGINS)
-	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(LD_PARAMS) \
+	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) $(VUENGINE) -Wl,-Map=$(TARGET).map
 	@echo
 	@du -h build/*.a
 	@echo
+endif
 
 deleteLibraries:
 	@rm -f $(PLUGINS_PATH)/*.a
