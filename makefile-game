@@ -113,7 +113,6 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@echo Linking $(TARGET).elf...
 	@echo 
 	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/hashes -name "*.o" | sort -R))
-	@echo $(OBJECT_FILES) | tr " " "\n" > objectifiles.txt
 	@echo Linking scrambled game
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(FINAL_SETUP_CLASSES_OBJECT).o $(OBJECT_FILES) $(ASSETS_OBJECTS) -Wl,-Map=$(TARGET).map
 	@cp $(TARGET).map $(BUILD_DIR)/output.map
