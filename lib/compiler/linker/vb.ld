@@ -67,6 +67,8 @@ SECTIONS
 
     .dram_data __dram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
     {
+		PROVIDE (__dram_dirty_start = .);
+		*(.dram_dirty*)
     	PROVIDE (__dram_data_start = .);
         *(.dram_data*)
     	PROVIDE (__dram_data_end = .);
@@ -93,7 +95,7 @@ SECTIONS
     	PROVIDE (__bss_end = .);
     } >wram = 0xFF
 
-    .dram_bss (NOLOAD):
+	.dram_bss (NOLOAD): AT(__dram_data_end)
     {
         PROVIDE(__dram_bss_start = .);
         *(.dram_bss*)

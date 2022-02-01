@@ -173,8 +173,8 @@ static uint16* const	_columnTableBaseAddressRight				=	(uint16*)0x0003DE00; // b
 #define	__WORLD_END				0x0040
 
 // param table for affine and hbias render
-extern uint32 _dram_data_start;
-#define __PARAM_TABLE_END 		((uint32)&_dram_data_start)
+extern uint32 _dram_dirty_start;
+#define __PARAM_TABLE_END 		((uint32)&_dram_dirty_start)
 
 #define	__COLOR_BLACK			0x00
 #define	__COLOR_DARK_RED		0x01
