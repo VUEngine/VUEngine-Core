@@ -58,6 +58,8 @@ enum Events
 
 	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
+	kEventVIPManagerScanError,
+	kEventVIPManagerFrameBuffersProcessingSuspended,
 
 	// do not remove me
 	kEventEngineLast

@@ -109,6 +109,7 @@ void VIPManager::constructor()
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
 	this->timeErrorCounter = 0;
+	this->scanErrorCounter = 0;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -143,7 +144,6 @@ void VIPManager::reset()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
-//	this->timeErrorCounter = 0;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -208,7 +208,7 @@ void VIPManager::enableInterrupts(uint16 interruptCode)
 
 	interruptCode |= this->customInterrupts;
 
-	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
+	_vipRegisters[__INTENB]= interruptCode | __TIMEERR | __SCANERR;
 }
 
 /**
@@ -271,13 +271,14 @@ static void VIPManager::interruptHandler()
  */
 void VIPManager::processInterrupt(uint16 interrupt)
 {
-#define INTERRUPTS	3
+#define INTERRUPTS	4
 
 	static uint16 interruptTable[] =
 	{
 		__FRAMESTART,
 		__XPEND,
-		__TIMEERR
+		__TIMEERR,
+		__SCANERR
 	};
 
 	int32 i = 0;
@@ -389,7 +390,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 			case __TIMEERR:
 
+				this->timeErrorCounter++;
 				VIPManager::fireEvent(_vipManager, kEventVIPManagerTimeError);
+				break;
+
+			case __SCANERR:
+
+				this->scanErrorCounter++;
+				VIPManager::fireEvent(_vipManager, kEventVIPManagerScanError);
 				break;
 		}
 	}
@@ -402,11 +410,15 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
+	bool hasFrameStartedDuringXPEND = false;
+
 	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; node; node = previousNode)
 	{
 		previousNode = node->previous;
 
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
+
+		hasFrameStartedDuringXPEND = VIPManager::hasFrameStartedDuringXPEND(this);
 
 		if(isDeleted(postProcessingEffectRegistry) || postProcessingEffectRegistry->remove)
 		{
@@ -417,10 +429,15 @@ void VIPManager::processFrameBuffers()
 				delete postProcessingEffectRegistry;
 			}
 		}
-		else if(!this->skipFrameBuffersProcessing || !VIPManager::hasFrameStartedDuringXPEND(this))
+		else if(!this->skipFrameBuffersProcessing || !hasFrameStartedDuringXPEND)
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
 		}
+	}
+
+	if(hasFrameStartedDuringXPEND)
+	{
+		VIPManager::fireEvent(_vipManager, kEventVIPManagerFrameBuffersProcessingSuspended);
 	}
 }
 
@@ -824,16 +841,6 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 }
 
 /**
- * Retrieve the time error counters
- *
- * @return	The number of times TIMEERR has triggered since the last reset
- */
-uint32 VIPManager::getTimeErrorCounter()
-{
-	return this->timeErrorCounter;
-}
-
-/**
  * Print VIP's status
  *
  */
@@ -842,4 +849,6 @@ void VIPManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "TIMEERR counter:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->timeErrorCounter, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "SCANERR counter:                ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->scanErrorCounter, x + 18, y, NULL);
 }
