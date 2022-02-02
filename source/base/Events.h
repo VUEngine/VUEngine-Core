@@ -57,6 +57,7 @@ enum Events
 	kEventSoundReleased,
 
 	kEventVIPManagerInterrupt,
+	kEventVIPManagerTimeError,
 
 	// do not remove me
 	kEventEngineLast

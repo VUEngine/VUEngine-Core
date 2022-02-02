@@ -108,6 +108,7 @@ void VIPManager::constructor()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
+	this->timeErrorCounter = 0;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -142,6 +143,7 @@ void VIPManager::reset()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
+//	this->timeErrorCounter = 0;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -206,11 +208,7 @@ void VIPManager::enableInterrupts(uint16 interruptCode)
 
 	interruptCode |= this->customInterrupts;
 
-#ifdef __SHOW_VIP_OVERTIME_COUNT
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
-#else
-	_vipRegisters[__INTENB]= interruptCode;
-#endif
 }
 
 /**
@@ -262,6 +260,10 @@ static void VIPManager::interruptHandler()
 
 	// enable interrupts
 	VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
+
+#ifdef __SHOW_VIP_STATUS
+	VIPManager::print(_vipManager, 1, 2);
+#endif
 }
 
 /**
@@ -385,17 +387,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->processingXPEND = false;
 				break;
 
-#ifdef __SHOW_VIP_OVERTIME_COUNT
 			case __TIMEERR:
 
-				{
-					static uint32 count = 0;
-					PRINT_TEXT("VIP Overtime!    (   )", 10, 27);
-					PRINT_INT(++count, 28, 27);
-				}
-
+				VIPManager::fireEvent(_vipManager, kEventVIPManagerTimeError);
 				break;
-#endif
 		}
 	}
 }
@@ -826,4 +821,25 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 	while(!(_vipRegisters[__XPSTTS] & __SBOUT));
 
 	return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
+}
+
+/**
+ * Retrieve the time error counters
+ *
+ * @return	The number of times TIMEERR has triggered since the last reset
+ */
+uint32 VIPManager::getTimeErrorCounter()
+{
+	return this->timeErrorCounter;
+}
+
+/**
+ * Print VIP's status
+ *
+ */
+void VIPManager::print(int32 x, int32 y)
+{
+	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "TIMEERR counter:                ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->timeErrorCounter, x + 18, y, NULL);
 }
