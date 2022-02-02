@@ -59,6 +59,8 @@ enum Events
 	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
 	kEventVIPManagerScanError,
+	kEventVIPManagerFRAMESTARTDuringFRAMESTART,
+	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerFrameBuffersProcessingSuspended,
 
 	// do not remove me

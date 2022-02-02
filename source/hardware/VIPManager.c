@@ -108,6 +108,8 @@ void VIPManager::constructor()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
+	this->multiplexedFRAMESTARTCounter = 0;
+	this->multiplexedXPENDCounter = 0;
 	this->timeErrorCounter = 0;
 	this->scanErrorCounter = 0;
 
@@ -260,10 +262,6 @@ static void VIPManager::interruptHandler()
 
 	// enable interrupts
 	VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
-
-#ifdef __SHOW_VIP_STATUS
-	VIPManager::print(_vipManager, 1, 2);
-#endif
 }
 
 /**
@@ -291,10 +289,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				if(_vipManager->processingFRAMESTART)
 				{
+					this->multiplexedFRAMESTARTCounter++;
+					VIPManager::fireEvent(_vipManager, kEventVIPManagerFRAMESTARTDuringFRAMESTART);
+
 					if(!_vipManager->processingXPEND)
 					{
 						this->drawingEnded = false;
 					}
+
 					break;
 				}
 
@@ -328,12 +330,17 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				_vipManager->processingFRAMESTART = false;
 
+#ifdef __SHOW_VIP_STATUS
+				VIPManager::print(_vipManager, 1, 2);
+#endif
 				break;
 
 			case __XPEND:
 
 				if(_vipManager->processingXPEND)
 				{
+					this->multiplexedXPENDCounter++;
+					VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringXPEND);
 					break;
 				}
 
@@ -851,4 +858,8 @@ void VIPManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->timeErrorCounter, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "SCANERR counter:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->scanErrorCounter, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Multi FRAMESTARTS:                ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->multiplexedFRAMESTARTCounter, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Multi XPENDs:                ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->multiplexedXPENDCounter, x + 18, y, NULL);
 }

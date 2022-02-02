@@ -257,6 +257,8 @@ singleton class VIPManager : Object
 {
 	VirtualList postProcessingEffects;
 	uint32 currentDrawingFrameBufferSet;
+	uint16 multiplexedFRAMESTARTCounter;
+	uint16 multiplexedXPENDCounter;
 	uint16 timeErrorCounter;
 	uint16 scanErrorCounter;
 	uint16 customInterrupts;
