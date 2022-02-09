@@ -25,7 +25,7 @@
 #define	__SRAM_DUMMY_READ_CYCLES		8
 #define	__SRAM_DUMMY_READ_LENGTH		100
 
-extern uint32 _sram_bss_end;
+extern uint32 _sramBssEnd;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void SRAMManager::constructor()
 {
 	Base::constructor();
 
-	this->saveSpaceStartAddress = (uint16*)&_sram_bss_end;
+	this->saveSpaceStartAddress = (uint16*)&_sramBssEnd;
 
 	SRAMManager::initialize(this);
 }

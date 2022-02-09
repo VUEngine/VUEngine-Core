@@ -148,7 +148,7 @@ void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));													\
 																											\
 		if((0x05000000 & _vuengineStackPointer) &&															\
-			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bss_end)									\
+			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)									\
 		{																									\
 			_stackHeadroomViolation = true;																	\
 			Printing_setDebugMode(Printing_getInstance());													\

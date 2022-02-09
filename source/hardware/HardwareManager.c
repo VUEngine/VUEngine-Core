@@ -37,8 +37,8 @@ extern uint32 vipVector;
 extern uint32 zeroDivisionVector;
 extern uint32 invalidOpcodeVector;
 
-extern uint32 _dram_bss_end;
-extern uint32 _dram_data_start;
+extern uint32 _dramBssEnd;
+extern uint32 _dramDataStart;
 
 int32 _vuengineLinkPointer = 0;
 int32 _vuengineStackPointer = 0;
@@ -126,13 +126,13 @@ void HardwareManager::destructor()
  */
 static void HardwareManager::checkMemoryMap()
 {
-	if((uint32)&_dram_data_start < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dram_bss_end >= __WORLD_SPACE_BASE_ADDRESS)
+	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
 	{
 		MemoryPool::getInstance();
 		Printing::setDebugMode(Printing::getInstance());
 		int32 y = 15;
-		uint32 missingSpace = (uint32)&_dram_bss_end - __WORLD_SPACE_BASE_ADDRESS;
-		uint32 recommendedDramStart = (uint32)&_dram_data_start - missingSpace;
+		uint32 missingSpace = (uint32)&_dramBssEnd - __WORLD_SPACE_BASE_ADDRESS;
+		uint32 recommendedDramStart = (uint32)&_dramDataStart - missingSpace;
 		uint32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
 		uint32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
 
@@ -143,9 +143,9 @@ static void HardwareManager::checkMemoryMap()
 		Printing::text(Printing::getInstance(), "WORLD space: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "DRAM start: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)&_dram_data_start, 17, y, 4, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)&_dramDataStart, 17, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "DRAM end: ", 1, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (uint32)&_dram_bss_end, 17, y++, 4, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)&_dramBssEnd, 17, y++, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), recommendedDramStart, 25, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
@@ -442,7 +442,7 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 	int32 sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 
-	int32 room = sp - (int32)&_bss_end;
+	int32 room = sp - (int32)&_bssEnd;
 
 	if(resumed)
 	{
@@ -463,7 +463,7 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 
 		Printing::text(Printing::getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
 		Printing::text(Printing::getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int32)&_bss_end, x + 15, y, 4, NULL);
+		Printing::hex(Printing::getInstance(), (int32)&_bssEnd, x + 15, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Stack Pointer:" , x, ++y, NULL);
 		Printing::hex(Printing::getInstance(), sp, x + 15, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Minimum Room:           " , x, ++y, NULL);

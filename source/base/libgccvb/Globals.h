@@ -19,6 +19,6 @@ extern bool _stackHeadroomViolation;
 extern int32 _vuengineLinkPointer;
 extern int32 _vuengineStackPointer;
 extern bool _triggeringException;
-extern uint32 _bss_end;
+extern uint32 _bssEnd;
 
 #endif

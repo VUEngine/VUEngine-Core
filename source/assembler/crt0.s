@@ -35,6 +35,27 @@ _invalidOpcodeVector = 0x0500FFD8
 
 _start:
 
+/* read WRAM's sample */
+	mov		0, r10
+	ld.b	1280[r10], r18
+	add		2, r10
+	ld.b	1280[r10], r19
+	add		2, r10
+	ld.b	1280[r10], r20
+	add		2, r10
+	ld.b	1280[r10], r21
+
+/* store WRAM's sample */
+	movhi	hi(__wramSample), r0, r10
+	movea	lo(__wramSample), r10, r10
+	st.b	r18,    0[r10]
+	add		1, 		r10
+	st.b	r19,    0[r10]
+	add		1, 		r10
+	st.b	r20,    0[r10]
+	add		1, 		r10
+	st.b	r21,    0[r10]
+
 /* wait for WRAM */
 	movea	0x2000, r0, r6
 wait_for_wram_loop:
@@ -42,8 +63,8 @@ wait_for_wram_loop:
 	bnz		wait_for_wram_loop
 
 /* dummy reads */
-	movhi	hi(__data_start),   r0, r7
-	movea	lo(__data_start),   r7, r7
+	movhi	hi(__dataStart),   r0, r7
+	movea	lo(__dataStart),   r7, r7
 	movea	0x0008, 			r0, r8
 dummy_read_cycle:
 	ld.b	0[r7], r9
@@ -52,12 +73,12 @@ dummy_read_cycle:
 	blt	    dummy_read_cycle
 
 /* initiallize .data section */
-	movhi	hi(__data_lma), 	r0, r6
-	movea	lo(__data_lma), 	r6, r6
-	movhi	hi(__data_start),   r0, r7
-	movea	lo(__data_start),   r7, r7
-	movhi	hi(__data_end),		r0, r8
-	movea	lo(__data_end),		r8, r8
+	movhi	hi(__dataLma), 	r0, r6
+	movea	lo(__dataLma), 	r6, r6
+	movhi	hi(__dataStart),   r0, r7
+	movea	lo(__dataStart),   r7, r7
+	movhi	hi(__dataEnd),		r0, r8
+	movea	lo(__dataEnd),		r8, r8
 	jr	    end_init_data
 
 top_init_data:
@@ -70,10 +91,10 @@ end_init_data:
 	blt	    top_init_data
 
 /* initiallize .dram_data section */
-	movhi	hi(__dram_data_start), r0, r7
-	movea	lo(__dram_data_start), r7, r7
-	movhi	hi(__dram_data_end),   r0, r8
-	movea	lo(__dram_data_end),   r8, r8
+	movhi	hi(__dramDataStart), r0, r7
+	movea	lo(__dramDataStart), r7, r7
+	movhi	hi(__dram_dataEnd),   r0, r8
+	movea	lo(__dram_dataEnd),   r8, r8
 	jr	    end_init_dram_data
 
 top_init_dram_data:
@@ -86,26 +107,26 @@ end_init_dram_data:
 	blt	    top_init_dram_data
 
 /* initiallize .sram_data section */
-	movhi	hi(__sram_data_start), r0, r7
-	movea	lo(__sram_data_start), r7, r7
-	movhi	hi(__sram_data_end),   r0, r8
-	movea	lo(__sram_data_end),   r8, r8
-	jr	    end_init_sram_data
+	movhi	hi(__sramDataStart), r0, r7
+	movea	lo(__sramDataStart), r7, r7
+	movhi	hi(__sramDataEnd),   r0, r8
+	movea	lo(__sramDataEnd),   r8, r8
+	jr	    end_init_sramData
 
-top_init_sram_data:
+top_init_sramData:
 	ld.b	0[r6], r9
 	st.b	r9,    0[r7]
 	add	    1,     r6
 	add	    1,     r7
-end_init_sram_data:
+end_init_sramData:
 	cmp	    r8,    r7
-	blt	    top_init_sram_data
+	blt	    top_init_sramData
 
 /* clear .bss section */
-	movhi	hi(__bss_start), r0, r6
-	movea	lo(__bss_start), r6, r6
-	movhi	hi(__bss_end),   r0, r7
-	movea	lo(__bss_end),   r7, r7
+	movhi	hi(__bssStart), r0, r6
+	movea	lo(__bssStart), r6, r6
+	movhi	hi(__bssEnd),   r0, r7
+	movea	lo(__bssEnd),   r7, r7
 	jr	    end_init_bss
 top_init_bss:
 	st.h	r0, 0[r6]
@@ -115,10 +136,10 @@ end_init_bss:
 	blt	    top_init_bss
 
 /* clear .dram_bss section */
-	movhi   hi(__dram_bss_start),   r0, r6
-	movea   lo(__dram_bss_start),   r6, r6
-	movhi   hi(__dram_bss_end),     r0, r7
-	movea   lo(__dram_bss_end),     r7, r7
+	movhi   hi(__dramBssStart),   r0, r6
+	movea   lo(__dramBssStart),   r6, r6
+	movhi   hi(__dramBssEnd),     r0, r7
+	movea   lo(__dramBssEnd),     r7, r7
 	jr      end_init_dram_bss
 top_init_dram_bss:
 	st.b    r0, 0[r6]
@@ -127,11 +148,32 @@ end_init_dram_bss:
 	cmp     r7, r6
 	blt     top_init_dram_bss
 
+/* read SRAM's sample */
+	mov		0, r10
+	ld.b	1536[r10], r18
+	add		2, r10
+	ld.b	1536[r10], r19
+	add		2, r10
+	ld.b	1536[r10], r20
+	add		2, r10
+	ld.b	1536[r10], r21
+
+/* store SRAM's sample */
+	movhi	hi(__sramSample), r0, r10
+	movea	lo(__sramSample), r10, r10
+	st.b	r18,    0[r10]
+	add		1, 		r10
+	st.b	r19,    0[r10]
+	add		1, 		r10
+	st.b	r20,    0[r10]
+	add		1, 		r10
+	st.b	r21,    0[r10]
+
 /* clear .sram_bss section */
-	movhi   hi(__sram_bss_start),   r0, r6
-	movea   lo(__sram_bss_start),   r6, r6
-	movhi   hi(__sram_bss_end),     r0, r7
-	movea   lo(__sram_bss_end),     r7, r7
+	movhi   hi(__sramBssStart),   r0, r6
+	movea   lo(__sramBssStart),   r6, r6
+	movhi   hi(__sramBssEnd),     r0, r7
+	movea   lo(__sramBssEnd),     r7, r7
 	jr      end_init_sram_bss
 top_init_sram_bss:
 	st.b    r0, 0[r6]
@@ -150,8 +192,8 @@ end_init_sram_bss:
 	movhi	hi(__gp), r0, gp
 	movea   lo(__gp), gp, gp
 
-	movhi	hi(__tp), r0,tp
-	movea   lo(__tp), tp, tp
+	movhi	hi(__textStart), r0,tp
+	movea   lo(__textStart), tp, tp
 
 /* long call setup classes */
 	.global	_setupClasses

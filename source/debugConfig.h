@@ -21,6 +21,7 @@
 //#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_STREAMING
 //#define __SHOW_STREAMING_PROFILING
+//#define __SHOW_VIP_STATUS
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
 //#define __SHOW_VIP_OVERTIME_COUNT
@@ -90,6 +91,11 @@
 #ifdef __SHOW_STREAMING_PROFILING
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
+#endif
+
+#ifdef __SHOW_VIP_STATUS
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
 #endif
 
 // show sprites's profiling during game

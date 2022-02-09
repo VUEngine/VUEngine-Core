@@ -19,28 +19,28 @@ If not defined, define interrupt
 Handlers as system reset
 */
 
-__dram_vma = ORIGIN(dram);
-__data_vma = ORIGIN(wram);
-__exp_vma = ORIGIN(exp);
-__sram_vma = ORIGIN(sram);
-__text_vma = ORIGIN(rom);
+__dramVma = ORIGIN(dram);
+__dataVma = ORIGIN(wram);
+__expVma = ORIGIN(exp);
+__sramVma = ORIGIN(sram);
+__textVma = ORIGIN(rom);
 __stack = ORIGIN(wram) + LENGTH(wram) - 64;
 
 SECTIONS
 {
     /* Read-only sections, merged into text segment: */
-	.expdata __exp_vma (NOLOAD):
+	.expdata __expVma (NOLOAD):
 	{
-		PROVIDE (__exp_data_start = .);
+		PROVIDE (__expDataStart = .);
 		*(.expdata*)
-		PROVIDE (__exp_data_end = .);
+		PROVIDE (__expDataEnd = .);
 	} >exp = 0xFF
 
-    .text __text_vma :
+    .text __textVma :
     {
-    	PROVIDE (__tp = .);
+    	PROVIDE (__textStart = .);
         *(.text*)
-		PROVIDE (__tp_end = .);
+		PROVIDE (__textEnd = .);
     } >rom = 0xFF
 
     .rodata :
@@ -51,10 +51,10 @@ SECTIONS
     v = .;
 
     /* Ram memory */
-    __data_lma = .;
-    .data __data_vma : AT(__data_lma)
+    __dataLma = .;
+    .data __dataVma : AT(__dataLma)
     {
-    	PROVIDE (__data_start = .);
+    	PROVIDE (__dataStart = .);
         *(.data*)
     } >wram = 0xFF
 
@@ -62,28 +62,28 @@ SECTIONS
     {
     	PROVIDE (__gp = . + 0x8000);
         *(.sdata*)
-    	PROVIDE (__data_end = .);
+    	PROVIDE (__dataEnd = .);
     } >wram = 0xFF
 
-    .dram_data __dram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
+    .dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
     {
 		PROVIDE (__dram_dirty_start = .);
 		*(.dram_dirty*)
-    	PROVIDE (__dram_data_start = .);
+    	PROVIDE (__dramDataStart = .);
         *(.dram_data*)
-    	PROVIDE (__dram_data_end = .);
+    	PROVIDE (__dram_dataEnd = .);
     } >dram = 0xFF
 
-    .sram_data __sram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.dram_data)) SUBALIGN(2)
+    .sram_data __sramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.dram_data)) SUBALIGN(2)
     {
-    	PROVIDE (__sram_data_start = .);
+    	PROVIDE (__sramDataStart = .);
         *(.sram_data*)
-    	PROVIDE (__sram_data_end = .);
+    	PROVIDE (__sramDataEnd = .);
     } >sram = 0xFF
 
     .sbss (NOLOAD):
     {
-    	PROVIDE (__bss_start = .);
+    	PROVIDE (__bssStart = .);
         *(.sbss*)
         *(.scommon*)
     } >wram = 0xFF
@@ -92,22 +92,22 @@ SECTIONS
     {
         *(.bss*)
         *(COMMON)
-    	PROVIDE (__bss_end = .);
+    	PROVIDE (__bssEnd = .);
     } >wram = 0xFF
 
-	.dram_bss (NOLOAD): AT(__dram_data_end)
+	.dram_bss (NOLOAD): AT(__dram_dataEnd)
     {
-        PROVIDE(__dram_bss_start = .);
+        PROVIDE(__dramBssStart = .);
         *(.dram_bss*)
-        PROVIDE(__dram_bss_end = .);
+        PROVIDE(__dramBssEnd = .);
     } >dram = 0xFF
 
     /* SRAM Work RAM */
     .sram_bss (NOLOAD): SUBALIGN(2)
     {
-        PROVIDE(__sram_bss_start = .);
+        PROVIDE(__sramBssStart = .);
         *(.sram_bss*)
-        PROVIDE(__sram_bss_end = .);
+        PROVIDE(__sramBssEnd = .);
     } >sram
 
     /* Prevent overlaps with vbvectors */
@@ -125,7 +125,7 @@ SECTIONS
     v7 = v6 | (v6 >> 8);
     v8 = v7 | (v7 >> 16);
 
-    __vbvectors_vma = __text_vma + v8 - 0x1FF;
+    __vbvectors_vma = __textVma + v8 - 0x1FF;
     __rominfo_vma = __vbvectors_vma - 0x20;
 
     /* Place rom's info before the interrupt vectors */
