@@ -88,7 +88,9 @@ void FrameRate::gameFrameStarted(bool gameFrameEnded)
 	if(!gameFrameEnded)
 	{
 		this->unevenFps++;
+		FrameRate::fireEvent(this, kEventTornFrame);
 	}
+
 
 #ifdef __PRINT_FRAMERATE
 	if(__TARGET_FPS <= this->gameFrameStarts)

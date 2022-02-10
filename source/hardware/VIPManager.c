@@ -194,6 +194,7 @@ bool VIPManager::isDrawingAllowed()
 /**
  * Return true if FRAMESTART happened during XPEND's processing
  */
+__attribute__((noinline))
 bool VIPManager::hasFrameStartedDuringXPEND()
 {
 	return this->frameStarted;
@@ -417,15 +418,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-	bool hasFrameStartedDuringXPEND = false;
+	volatile bool hasFrameStartedDuringXPEND = false;
 
 	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; node; node = previousNode)
 	{
 		previousNode = node->previous;
 
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
-
-		hasFrameStartedDuringXPEND = VIPManager::hasFrameStartedDuringXPEND(this);
 
 		if(isDeleted(postProcessingEffectRegistry) || postProcessingEffectRegistry->remove)
 		{
@@ -439,12 +438,15 @@ void VIPManager::processFrameBuffers()
 		else if(!this->skipFrameBuffersProcessing || !hasFrameStartedDuringXPEND)
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
+
+			hasFrameStartedDuringXPEND = VIPManager::hasFrameStartedDuringXPEND(this);
 		}
 	}
 
 	if(hasFrameStartedDuringXPEND)
 	{
-		VIPManager::fireEvent(_vipManager, kEventVIPManagerFrameBuffersProcessingSuspended);
+		PRINT_TEXT("hasFrameStartedDuringXPEND", 0, 27);
+		VIPManager::fireEvent(this, kEventVIPManagerFrameBuffersProcessingSuspended);
 	}
 }
 

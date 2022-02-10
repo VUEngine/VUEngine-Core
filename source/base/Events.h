@@ -21,6 +21,8 @@ enum Events
 	kEventEngineFirst = 0,
 
 	// add events here
+	kEventTornFrame,
+
 	kEventSpatialObjectDeleted,
 	kEventContainerDeleted,
 	kEventEntityLoaded,

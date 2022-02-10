@@ -266,7 +266,7 @@ singleton class VIPManager : Object
 	bool processingFRAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
-	bool frameStarted;
+	volatile bool frameStarted;
 	bool forceDrawingSync;
 	bool skipFrameBuffersProcessing;
 
