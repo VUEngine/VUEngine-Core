@@ -445,7 +445,6 @@ void VIPManager::processFrameBuffers()
 
 	if(hasFrameStartedDuringXPEND)
 	{
-		PRINT_TEXT("hasFrameStartedDuringXPEND", 0, 27);
 		VIPManager::fireEvent(this, kEventVIPManagerFrameBuffersProcessingSuspended);
 	}
 }
