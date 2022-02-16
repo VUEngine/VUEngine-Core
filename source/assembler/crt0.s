@@ -35,6 +35,27 @@ _invalidOpcodeVector = 0x0500FFD8
 
 _start:
 
+/* read SRAM's sample */
+	mov		0, r10
+	ld.b	1536[r10], r18
+	add		2, r10
+	ld.b	1536[r10], r19
+	add		2, r10
+	ld.b	1536[r10], r20
+	add		2, r10
+	ld.b	1536[r10], r21
+
+/* store SRAM's sample */
+	movhi	hi(__sramSample), r0, r10
+	movea	lo(__sramSample), r10, r10
+	st.b	r18,    0[r10]
+	add		1, 		r10
+	st.b	r19,    0[r10]
+	add		1, 		r10
+	st.b	r20,    0[r10]
+	add		1, 		r10
+	st.b	r21,    0[r10]
+
 /* read WRAM's sample */
 	mov		0, r10
 	ld.b	1280[r10], r18
@@ -147,27 +168,6 @@ top_init_dram_bss:
 end_init_dram_bss:
 	cmp     r7, r6
 	blt     top_init_dram_bss
-
-/* read SRAM's sample */
-	mov		0, r10
-	ld.b	1536[r10], r18
-	add		2, r10
-	ld.b	1536[r10], r19
-	add		2, r10
-	ld.b	1536[r10], r20
-	add		2, r10
-	ld.b	1536[r10], r21
-
-/* store SRAM's sample */
-	movhi	hi(__sramSample), r0, r10
-	movea	lo(__sramSample), r10, r10
-	st.b	r18,    0[r10]
-	add		1, 		r10
-	st.b	r19,    0[r10]
-	add		1, 		r10
-	st.b	r20,    0[r10]
-	add		1, 		r10
-	st.b	r21,    0[r10]
 
 /* clear .sram_bss section */
 	movhi   hi(__sramBssStart),   r0, r6
