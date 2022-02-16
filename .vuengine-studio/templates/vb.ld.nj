@@ -48,6 +48,9 @@ SECTIONS
 
 	.rodata :
 	{
+		PROVIDE (__stringsStart = .);
+		*(.strings*)
+		PROVIDE (__stringsEnd = .);
 		*(.rodata*)
 	} >rom = 0xFF
 
