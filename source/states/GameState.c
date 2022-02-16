@@ -458,7 +458,12 @@ uint32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
-	NM_ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
+	if(NULL == stageSpec)
+	{
+		extern StageROMSpec EmptyStageSpec;
+
+		stageSpec = (StageSpec*)&EmptyStageSpec;
+	}
 
 	if(this->stage)
 	{
