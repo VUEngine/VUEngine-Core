@@ -34,49 +34,6 @@ _invalidOpcodeVector = 0x0500FFD8
 	.global	_start
 
 _start:
-
-/* read SRAM's sample */
-	mov		0, r10
-	ld.b	1536[r10], r18
-	add		2, r10
-	ld.b	1536[r10], r19
-	add		2, r10
-	ld.b	1536[r10], r20
-	add		2, r10
-	ld.b	1536[r10], r21
-
-/* store SRAM's sample */
-	movhi	hi(__sramSample), r0, r10
-	movea	lo(__sramSample), r10, r10
-	st.b	r18,    0[r10]
-	add		1, 		r10
-	st.b	r19,    0[r10]
-	add		1, 		r10
-	st.b	r20,    0[r10]
-	add		1, 		r10
-	st.b	r21,    0[r10]
-
-/* read WRAM's sample */
-	mov		0, r10
-	ld.b	1280[r10], r18
-	add		2, r10
-	ld.b	1280[r10], r19
-	add		2, r10
-	ld.b	1280[r10], r20
-	add		2, r10
-	ld.b	1280[r10], r21
-
-/* store WRAM's sample */
-	movhi	hi(__wramSample), r0, r10
-	movea	lo(__wramSample), r10, r10
-	st.b	r18,    0[r10]
-	add		1, 		r10
-	st.b	r19,    0[r10]
-	add		1, 		r10
-	st.b	r20,    0[r10]
-	add		1, 		r10
-	st.b	r21,    0[r10]
-
 /* wait for WRAM */
 	movea	0x2000, r0, r6
 wait_for_wram_loop:
