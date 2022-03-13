@@ -34,16 +34,12 @@ _invalidOpcodeVector = 0x0500FFD8
 	.global	_start
 
 _start:
-
-/* read SRAM's sample */
-	mov		0, r10
-	ld.b	1536[r10], r18
-	add		2, r10
-	ld.b	1536[r10], r19
-	add		2, r10
-	ld.b	1536[r10], r20
-	add		2, r10
-	ld.b	1536[r10], r21
+	movhi	1536, r0, r10
+	movea	0, r10, r10
+	ld.b	0[r10], r18
+	ld.b	2[r10], r19
+	ld.b	4[r10], r20
+	ld.b	6[r10], r21
 
 /* store SRAM's sample */
 	movhi	hi(__sramSample), r0, r10
@@ -55,6 +51,18 @@ _start:
 	st.b	r20,    0[r10]
 	add		1, 		r10
 	st.b	r21,    0[r10]
+
+/* read SRAM's sample */
+	movhi	hi(__stack), r0,sp
+	movea	lo(__stack), sp,sp
+	movhi	hi(_continue),r0,lp
+	movea	lo(_continue),lp,lp
+	movhi	hi(_readSRAM),r0,r1
+	movea	lo(_readSRAM),r1,r1
+	jmp	    [r1]
+
+_continue:
+
 
 /* read WRAM's sample */
 	mov		0, r10
