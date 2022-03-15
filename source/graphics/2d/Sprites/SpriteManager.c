@@ -934,17 +934,17 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->totalPixelsDrawn, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Used layers:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Written chars:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenTiles, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenTiles, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Written texture tiles:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenTextureTiles, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenTextureTiles, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Written object tiles:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenObjectTiles, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), _writtenObjectTiles, x + 22, y, NULL);
 
 	if(resumed)
 	{
