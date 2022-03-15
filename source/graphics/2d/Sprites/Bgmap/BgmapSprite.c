@@ -328,14 +328,21 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
-		mx += (_cameraFrustum->x0 - auxGp - gx);
-		w -= (_cameraFrustum->x0 - auxGp - gx);
-		gx = _cameraFrustum->x0 - auxGp;
+		if(0 == this->param)
+		{
+			mx += (_cameraFrustum->x0 - auxGp - gx);
+			w -= (_cameraFrustum->x0 - auxGp - gx);
+			gx = _cameraFrustum->x0 - auxGp;
+		}
 	}
+
+	int16 myDisplacement = 0;
 
 	if(_cameraFrustum->y0 > gy)
 	{
-		my += (_cameraFrustum->y0 - gy);
+		myDisplacement = (_cameraFrustum->y0 - gy);
+
+		my += myDisplacement;
 		h -= (_cameraFrustum->y0 - gy);
 		gy = _cameraFrustum->y0;
 	}
@@ -394,7 +401,7 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-	worldPointer->param = (uint16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
+	worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 	return index;
 }
@@ -421,25 +428,6 @@ void BgmapSprite::processAffineEffects()
 		// camera moves vertically
 		// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
-
-		// un-cap x coordinate in affine mode
-		if(_cameraFrustum->x0 > worldPointer->gx)
-		{
-			worldPointer->gx = this->position.x + this->displacement.x - this->halfWidth;
-			worldPointer->w = this->halfWidth << 1;
-		}
-
-		int16 myDisplacement = 0;
-		int16 gy = this->position.y + this->displacement.y - this->halfHeight;
-
-		if(_cameraFrustum->y0 > gy)
-		{
-			myDisplacement = (_cameraFrustum->y0 - gy);
-		}
-
-		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
-
-		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{
