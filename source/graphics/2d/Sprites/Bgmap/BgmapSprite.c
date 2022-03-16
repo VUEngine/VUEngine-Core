@@ -420,9 +420,6 @@ void BgmapSprite::processAffineEffects()
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-//		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
-
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
 		// camera moves vertically
