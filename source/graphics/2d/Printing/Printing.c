@@ -248,10 +248,10 @@ void Printing::setFontPage(const char* font, uint16 page)
 
 void Printing::loadDebugFont()
 {
-	Mem::copyBYTE(
-		(uint8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
-		(uint8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles),
-		VUENGINE_DEBUG_FONT_SIZE << 4
+	Mem::copyWORD(
+		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
+		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
+		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)
 	);
 }
 
