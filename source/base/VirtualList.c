@@ -425,9 +425,9 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 		if(node == this->tail)
 		{
 			// set the tail
-			this->tail->previous->next = NULL;
-
 			this->tail = this->tail->previous;
+
+			this->tail->next = NULL;
 		}
 		else
 		{
@@ -673,6 +673,7 @@ bool VirtualList::checkThatNodeIsPresent(VirtualNode node)
 {
 	if(!node)
 	{
+		NM_ASSERT(false, "VirtualList::checkThatNodeIsPresent: NULL node");
 		return false;
 	}
 
@@ -686,6 +687,7 @@ bool VirtualList::checkThatNodeIsPresent(VirtualNode node)
 		}
 	}
 
+	NM_ASSERT(false, "VirtualList::checkThatNodeIsPresent: node not found");
 	return false;
 }
 
