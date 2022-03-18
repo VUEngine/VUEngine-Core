@@ -189,7 +189,7 @@ void TimerManager::setResolution(uint16 resolution)
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::setResolution: wrong timer resolution scale");
 			break;
 	}
 
@@ -232,7 +232,7 @@ float TimerManager::getTimePerInterruptInMS()
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::getTimePerInterruptInMS: wrong timer resolution scale");
 			break;
 	}
 
@@ -255,7 +255,7 @@ uint32 TimerManager::getTimePerInterruptInUS()
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::getTimePerInterruptInUS: wrong timer resolution scale");
 			break;
 	}
 
