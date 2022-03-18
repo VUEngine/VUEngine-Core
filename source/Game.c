@@ -840,7 +840,7 @@ void Game::nextFrameStarted()
 		if(!Game::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
-			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
 		}
 #endif
 	}
