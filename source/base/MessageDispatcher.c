@@ -201,21 +201,13 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 
 		if(isDeleted(delayedMessage))
 		{	
-			VirtualList::removeNode(this->delayedMessages, node);	
-		}
-		else if(delayedMessage->discarded)
-		{
-			if(!isDeleted(delayedMessage->telegram))
-			{
-				delete delayedMessage->telegram;
-			}
-	
-			VirtualList::removeNode(this->delayedMessages, node);	
+			VirtualList::removeNode(this->delayedMessages, node);
 
-			delete delayedMessage;
+			continue;	
 		}
-		else if(!Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
+		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 		{
+
 			Telegram telegram = delayedMessage->telegram;
 
 			if(!isDeleted(telegram))
@@ -236,6 +228,18 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 
 			delayedMessage->discarded = true;
 		}	
+
+		if(delayedMessage->discarded)
+		{
+			if(!isDeleted(delayedMessage->telegram))
+			{
+				delete delayedMessage->telegram;
+			}
+	
+			VirtualList::removeNode(this->delayedMessages, node);	
+
+			delete delayedMessage;
+		}
 	}
 
 	return messagesDispatched;
