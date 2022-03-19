@@ -566,7 +566,6 @@ void SpriteManager::writeDRAM()
 		}
 	}
 #endif
-
 }
 
 /**
@@ -927,7 +926,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
  */
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
-	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, 0, 0);
+	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, Printing::getSpritePosition(Printing::getInstance()).z, 0);
 #ifndef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
@@ -968,10 +967,13 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		Printing::int32(Printing::getInstance(), counter, auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
+//		Printing::int32(Printing::getInstance(), sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
 //		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 //		Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
-		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
+		++auxY;
+		if(__TOTAL_LAYERS / 2 == counter)
+//		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
 		{
 			auxY = y + 2;
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;

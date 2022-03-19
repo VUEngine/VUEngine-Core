@@ -390,6 +390,13 @@ singleton class Printing : Object
 	int16 getWorldCoordinatesP();
 
 	/**
+	 * Retrieve sprite's position
+	 *
+	 * @return			Sprite's position
+	 */
+	PixelVector getSpritePosition();
+
+	/**
 	 * Print a string
 	 *
 	 * @param string	String to print
