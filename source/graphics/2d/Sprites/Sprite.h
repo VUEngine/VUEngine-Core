@@ -221,7 +221,7 @@ abstract class Sprite : Object
 	void show();
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
-	void setPosition(const PixelVector* position);
+	virtual void setPosition(const PixelVector* position);
 	virtual void rewrite();
 	virtual void hideForDebug();
 	virtual void showForDebug();
