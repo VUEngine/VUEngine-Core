@@ -107,6 +107,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 {
 	Base::constructor();
 
+	this->destroy = false;
 	this->owner = owner;
 	this->normals = NULL;
 	this->mass = __MIN_MASS < physicalSpecification->mass ? __MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MASS : __MIN_MASS;
@@ -713,8 +714,6 @@ void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 void Body::setActive(bool active)
 {
 	this->active = active;
-
-	PhysicalWorld::bodySetInactive(Game::getPhysicalWorld(Game::getInstance()), this);
 }
 
 // is active?
@@ -1028,12 +1027,8 @@ void Body::awake(uint16 axisOfAwakening)
 {
 	bool dispatchMessage = false;
 
-	if(!this->awake)
-	{
-		this->awake = true;
-
-		PhysicalWorld::bodyAwake(Game::getPhysicalWorld(Game::getInstance()), this);
-	}
+	this->awake = true;
+	this->active = true;
 
 	if(this->sendMessages)
 	{
@@ -1062,12 +1057,7 @@ void Body::awake(uint16 axisOfAwakening)
 // go to sleep
 void Body::sleep()
 {
-	if(this->awake)
-	{
-		this->awake = false;
-
-		PhysicalWorld::bodySleep(Game::getPhysicalWorld(Game::getInstance()), this);
-	}
+	this->awake = false;
 }
 
 // is it moving?

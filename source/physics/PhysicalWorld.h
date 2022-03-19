@@ -45,8 +45,6 @@ class PhysicalWorld : Object
 {
 	// list of registered bodies
 	VirtualList	bodies;
-	// a list of bodies which must detect collisions
-	VirtualList	activeBodies;
 	// gravity
 	Acceleration gravity;
 	// frictionCoefficient

@@ -46,7 +46,6 @@ void PhysicalWorld::constructor()
 
 	// create the shape list
 	this->bodies = new VirtualList();
-	this->activeBodies = new VirtualList();
 
 	this->bodyToCheckForGravityNode = NULL;
 
@@ -82,10 +81,8 @@ void PhysicalWorld::destructor()
 
 	// delete lists
 	delete this->bodies;
-	delete this->activeBodies;
 
 	this->bodies = NULL;
-	this->activeBodies = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -137,14 +134,9 @@ void PhysicalWorld::destroyBody(Body body)
 	ASSERT(!isDeleted(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 
-	if(!isDeleted(body) && VirtualList::find(this->bodies, body))
+	if(!isDeleted(body))
 	{
-		// place in the removed bodies list
-		VirtualList::removeElement(this->bodies, body);
-		VirtualList::removeElement(this->activeBodies, body);
-
-		delete body;
-		this->bodyToCheckForGravityNode = NULL;
+		body->destroy = true;
 	}
 }
 
@@ -263,9 +255,26 @@ void PhysicalWorld::update(Clock clock)
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
 
-	for(VirtualNode node = this->activeBodies->head; node; node = node->next)
+	for(VirtualNode node = this->bodies->head, nextNode = NULL; node; node = nextNode)
 	{
+		nextNode = node->next;
+
 		Body body = Body::safeCast(node->data);
+
+		if(isDeleted(body) || body->destroy)
+		{
+			// place in the removed bodies list
+			VirtualList::removeNode(this->bodies, node);
+
+			delete body;
+			this->bodyToCheckForGravityNode = NULL;
+			continue;
+		}
+
+		if(!body->active || !body->awake)
+		{
+			continue;
+		}
 
 		Body::update(body);
 	}
@@ -292,7 +301,6 @@ void PhysicalWorld::reset()
 
 	// empty the lists
 	VirtualList::clear(this->bodies);
-	VirtualList::clear(this->activeBodies);
 
 	this->bodyToCheckForGravityNode = NULL;
 }
@@ -396,50 +404,6 @@ uint32 PhysicalWorld::getTimeScale()
 	return this->timeScale;
 }
 
-/**
- * A body has awoken
- *
- * @param body
- */
-void PhysicalWorld::bodyAwake(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodyAwake: non body");
-	ASSERT(SpatialObject::safeCast(body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
-	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
-
-	if(!VirtualList::find(this->activeBodies, body))
-	{
-		VirtualList::pushBack(this->activeBodies, body);
-	}
-}
-
-/**
- * Inform of a change in the body
- *
- * @param body
- */
-void PhysicalWorld::bodySleep(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodySleep: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
-
-	VirtualList::removeElement(this->activeBodies, body);
-}
-
-/**
- * Inform that body has been inactivated
- *
- * @param body
- */
-void PhysicalWorld::bodySetInactive(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
-
-	VirtualList::removeElement(this->activeBodies, body);
-}
-
 // set gravity
 void PhysicalWorld::setGravity(Acceleration gravity)
 {
@@ -480,9 +444,4 @@ void PhysicalWorld::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
-	Printing::text(Printing::getInstance(), "Active bodies:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->activeBodies), x + 19, y, NULL);
-
-//	Printing::text(Printing::getInstance(), "Error:                 ", x, ++y, NULL);
-//	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies) - (VirtualList::getSize(this->activeBodies)), x + 19, y, NULL);
 }

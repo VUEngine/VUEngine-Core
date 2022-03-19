@@ -125,6 +125,8 @@ class Body : Object
 	bool changedDirection;
 	// Flag to enable messages
 	bool sendMessages;
+	// Delete flag
+	bool destroy;
 
 	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);

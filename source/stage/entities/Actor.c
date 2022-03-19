@@ -113,10 +113,6 @@ void Actor::iAmDeletingMyself()
 	if(this->body)
 	{
 		Body::setActive(this->body, false);
-
-		// remove a body
-//		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
-//		this->body = NULL;
 	}
 }
 
@@ -605,6 +601,7 @@ bool Actor::handleMessage(Telegram telegram)
 			}
 		}
 	}
+
 	return false;
 }
 
