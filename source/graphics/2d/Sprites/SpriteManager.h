@@ -96,6 +96,7 @@ singleton class SpriteManager : Object
 	void showSprites(Sprite spareSprite, bool showPrinting);
 	void hideSprites(Sprite spareSprite, bool hidePrinting);
 	void render();
+	void renderAndDraw();
 	void stopRendering();
 	void reset();
 	void setMaximumParamTableRowsToComputePerCall(int32 maximumAffineRowsToComputePerCall);
