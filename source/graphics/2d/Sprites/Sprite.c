@@ -367,7 +367,7 @@ AnimationController Sprite::getAnimationController()
  *
  * @return 		World layer
  */
-uint8 Sprite::getIndex()
+int16 Sprite::getIndex()
 {
 	return this->index;
 }

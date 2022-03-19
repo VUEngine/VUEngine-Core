@@ -219,7 +219,7 @@ abstract class Sprite : Object
 	void calculateParallax(fix10_6 z);
 	void hide();
 	void show();
-	uint8 getIndex();
+	int16 getIndex();
 	PixelVector getDisplacedPosition();
 	void setPosition(const PixelVector* position);
 	virtual void rewrite();
