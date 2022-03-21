@@ -96,8 +96,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	this->visible = false;
-
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -149,6 +147,11 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
+	if(this->visible && this->writeAnimationFrame)
+	{
+		Sprite::update(this);
+	}
+
 	if((previousIndex == index) && !this->renderFlag)
 	{
 		this->index = previousIndex;
@@ -160,11 +163,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	}
 
 	this->visible = __NO_RENDER_INDEX != this->index;
-
-	if(this->visible && this->writeAnimationFrame)
-	{
-		Sprite::update(this);
-	}
 
 	return this->index;
 }
