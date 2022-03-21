@@ -38,7 +38,7 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 
 	// save spec
 	this->charSetSpec = charSetSpec;
-	this->tilesDisplacement = 1;
+	this->tilesDisplacement = 0;
 
 	// set the offset
 	this->offset = offset;
@@ -164,7 +164,7 @@ void CharSet::writeRLE()
 
 	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
 	uint32* limit = destination + __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars);
-	uint32* source = this->charSetSpec->tiles + this->tilesDisplacement;
+	uint32* source = &this->charSetSpec->tiles[1] + this->tilesDisplacement;
 
 	uint32 uncompressedData = 0;
 	uint32 uncompressedDataSize = 0;
@@ -225,10 +225,10 @@ void CharSet::write()
 			break;
 
 		default:
-
+			
 			Mem::copyWORD(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
-				this->charSetSpec->tiles + this->tilesDisplacement,
+				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
 				__UINT32S_PER_CHARS(this->charSetSpec->numberOfChars)
 			);
 
@@ -336,10 +336,10 @@ void CharSet::setFrame(uint16 frame)
 {
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame]);
+		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
 	}
 	else
 	{
-		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame) + 1);
+		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
 	}
 }

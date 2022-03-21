@@ -639,8 +639,9 @@ void Texture::putChar(Point* texturePixel, uint32* newChar)
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		uint32 charToReplace = this->textureSpec->map[displacement];
+		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
+
 		CharSet::putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -656,8 +657,8 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		uint32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
-		uint32 charToReplace = this->textureSpec->map[displacement];
+		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
 		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
