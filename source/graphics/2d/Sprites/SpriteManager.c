@@ -519,12 +519,8 @@ void SpriteManager::writeTextures()
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 }
 
-void SpriteManager::writeGraphicsToDRAM()
+void SpriteManager::applySpecialEffects()
 {
-	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
-	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance());
-	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance());
-
 	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
@@ -540,6 +536,11 @@ void SpriteManager::writeGraphicsToDRAM()
 	}
 }
 
+void SpriteManager::writeWORLDAttributesToDRAM()
+{
+	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
+}
+
 void SpriteManager::writeDRAM()
 {
 #ifdef __SHOW_SPRITES_PROFILING
@@ -548,11 +549,24 @@ void SpriteManager::writeDRAM()
 	_writtenObjectTiles = 0;
 #endif
 
+	// Update all graphical data
+
+	// Update CHAR memory
+	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
+
+	// Update BGMAP memory
+	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance());
+
+	// Update OBJECT Memory
+	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance());
+
+	// Update param tables
+	SpriteManager::applySpecialEffects(this);
+
+	// Finally, write OBJ and WORLD attributes to DRAM
 	ObjectSpriteContainer::writeDRAM();
+	SpriteManager::writeWORLDAttributesToDRAM(this);
 
-	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
-
-	SpriteManager::writeGraphicsToDRAM(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
