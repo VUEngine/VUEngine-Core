@@ -383,11 +383,6 @@ bool SpriteManager::sortProgressively()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(!sprite->positioned)
-		{
-			continue;
-		}
-
 		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
 		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
 

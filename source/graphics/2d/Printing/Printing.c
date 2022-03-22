@@ -142,6 +142,13 @@ void Printing::setupSprite()
 	};
 
 	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&PRINTING_SP, NULL));
+
+	PixelVector position = 
+	{
+		0, 0, 0, 0
+	};
+
+	PrintingSprite::setPosition(this->printingSprite, &position);	
 }
 
 void Printing::setOrientation(uint8 value)
