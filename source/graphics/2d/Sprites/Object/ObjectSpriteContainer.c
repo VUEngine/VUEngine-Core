@@ -202,6 +202,8 @@ void ObjectSpriteContainer::sortProgressively()
 		{
 			// swap nodes' data
 			VirtualNode::swapData(node, previousNode);
+
+			sprite->renderFlag = nextSprite->renderFlag = true;
 		}
 	}
 }
@@ -332,6 +334,8 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	}
 
 	this->lastObjectIndex = _objectIndex;
+
+	this->renderFlag = true;
 
 	return !renderedObjectSprites ? __NO_RENDER_INDEX : index;
 }

@@ -399,6 +399,8 @@ bool SpriteManager::sortProgressively()
 			// swap nodes' data
 			VirtualNode::swapData(node, nextNode);
 
+			sprite->renderFlag = nextSprite->renderFlag = true;
+
 			node = nextNode;
 
 			swapped = true;

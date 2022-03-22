@@ -270,7 +270,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 jDisplacement = 0;
 
 	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
-	uint16 result = 0;
+	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
 
