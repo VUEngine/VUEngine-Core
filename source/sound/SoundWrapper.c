@@ -97,20 +97,10 @@ void SoundWrapper::destructor()
 		MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 	}
 
-	VirtualNode node = this->channels->head;
-
-	// Silence all channels first
-	for(; node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		channel->cursor = 0;
-		_soundRegistries[channel->number].SxINT = 0x00;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-	}
-
 	if(!isDeleted(this->channels))
 	{
+		SoundManager::releaseChannels(SoundManager::getInstance(), this->channels);
+
 		delete this->channels;
 		this->channels = NULL;
 	}
@@ -487,6 +477,14 @@ void SoundWrapper::release()
 	this->released = true;
 
 	SoundWrapper::stop(this);
+
+	if(!isDeleted(this->channels))
+	{
+		SoundManager::releaseChannels(SoundManager::getInstance(), this->channels);
+
+		delete this->channels;
+		this->channels = NULL;
+	}
 
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
@@ -991,6 +989,11 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds __attribute__((u
 
 void SoundWrapper::print(int32 x, int32 y)
 {
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	int32 xDisplacement = 9;
 
 	VirtualNode node = this->channels->head;

@@ -46,8 +46,7 @@ enum SoundChannelTypes
 {
 	kChannelNormal 			= (1 << 0),
 	kChannelModulation		= (1 << 1),
-	kChannelNoise			= (1 << 2),
-	kChannelNormalExtended	= (1 << 3)
+	kChannelNoise			= (1 << 2)
 };
 
 typedef struct SoundChannelConfiguration

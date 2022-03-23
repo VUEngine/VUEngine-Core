@@ -445,7 +445,10 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 
 void SoundTest::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
 {
-	this->soundWrapper = NULL;
+	if(SoundWrapper::safeCast(eventFirer) == this->soundWrapper)
+	{
+		this->soundWrapper = NULL;
+	}
 }
 
 void SoundTest::printTimer()

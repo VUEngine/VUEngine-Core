@@ -121,6 +121,7 @@ singleton class SoundManager : Object
 	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
+	void releaseChannels(VirtualList channels);
 	void deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt);
 	void startPCMPlayback();
 	bool isPlayingSound(const Sound* sound);
