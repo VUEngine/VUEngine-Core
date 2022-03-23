@@ -526,42 +526,6 @@ void Container::changeEnvironment(Transformation* environmentTransform)
 }
 
 /**
- * Initial transformation
- *
- * @param environmentTransform
- * @param recursive
- */
-void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
-{
-	// concatenate transformation
-	Container::applyEnvironmentToRotation(this, environmentTransform);
-	Container::applyEnvironmentToScale(this, environmentTransform);
-	Container::applyEnvironmentToPosition(this, environmentTransform);
-
-	Container::invalidateGlobalTransformation(this);
-
-	// if I have children
-	if(recursive && this->children)
-	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
-			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-
-			Container::initialTransform(child, &this->transformation, true);
-		}
-	}
-
-	this->transformed = !this->hidden;
-}
-
-/**
  *
  *
  * @private
@@ -613,6 +577,53 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 	this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
 	this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
 	this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
+}
+
+/**
+ * Initial transformation
+ *
+ * @param environmentTransform
+ * @param recursive
+ */
+void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
+{
+	// concatenate transformation
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToRotation(this, environmentTransform);
+	}
+
+	if(__INHERIT_SCALE & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	if(__INHERIT_POSITION & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToPosition(this, environmentTransform);
+	}
+
+	Container::invalidateGlobalTransformation(this);
+
+	// if I have children
+	if(recursive && this->children)
+	{
+		for(VirtualNode node = this->children->head; node; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			if(child->deleteMe)
+			{
+				continue;
+			}
+
+			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
+
+			Container::initialTransform(child, &this->transformation, true);
+		}
+	}
+
+	this->transformed = !this->hidden;
 }
 
 /**
