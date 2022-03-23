@@ -92,6 +92,11 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
  */
 void SoundWrapper::destructor()
 {
+	if(!this->released)
+	{
+		MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
+	}
+
 	VirtualNode node = this->channels->head;
 
 	// Silence all channels first
