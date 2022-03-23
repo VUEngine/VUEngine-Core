@@ -524,7 +524,7 @@ void SpriteManager::applySpecialEffects()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->hidden | !sprite->positioned)
+		if(sprite->hidden || !sprite->positioned)
 		{
 			continue;
 		}
@@ -606,7 +606,7 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(sprite->hidden | !sprite->positioned)
+		if(sprite->hidden || !sprite->positioned)
 		{
 			sprite->index = __NO_RENDER_INDEX;
 			continue;
