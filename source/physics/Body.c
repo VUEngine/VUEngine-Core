@@ -395,9 +395,9 @@ uint8 Body::applyGravity(uint16 axis)
 }
 
 // add force
-void Body::applySustainedForcerce(const Force* force)
+void Body::applySustainedForce(const Force* force)
 {
-	ASSERT(force, "Body::applySustainedForcerce: null force");
+	ASSERT(force, "Body::applySustainedForce: null force");
 
 	this->clearExternalForce = ~Body::applyForce(this, force);
 }
