@@ -162,7 +162,7 @@ void Particle::synchronizeGraphics()
  * @param force
  * @param movementType
  */
-void Particle::addForce(const Force* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
+void Particle::applySustainedForce(const Force* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
 {
 }
 
@@ -303,7 +303,7 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* forc
 
 	if(force->x | force->y | force->z)
 	{
-		Particle::addForce(this, force, movementType);
+		Particle::applySustainedForce(this, force, movementType);
 	}
 	
 	Particle::show(this);

@@ -68,6 +68,9 @@ typedef struct ParticleSystemSpec
 	/// type of movement for the particles
 	uint32 movementType;
 
+	/// use particle system movement vector for the force to apply to the particles
+	bool useMovementVector;
+
 } ParticleSystemSpec;
 
 /**
@@ -85,6 +88,8 @@ typedef const ParticleSystemSpec ParticleSystemROMSpec;
 /// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
+	// Vector for particles' movement
+	Vector3D previousGlobalPosition;
 	// system's spec
 	const ParticleSystemSpec* particleSystemSpec;
 	// particle list

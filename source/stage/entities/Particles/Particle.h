@@ -80,7 +80,7 @@ class Particle : SpatialObject
 	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
 	void expire();
 	virtual void synchronizeGraphics();
-	virtual void addForce(const Force* force, uint32 movementType);
+	virtual void applySustainedForce(const Force* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
 	virtual void resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName);

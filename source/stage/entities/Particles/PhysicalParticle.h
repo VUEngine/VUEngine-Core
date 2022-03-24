@@ -61,7 +61,7 @@ class PhysicalParticle : Particle
 	void constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
-	override void addForce(const Force* force, uint32 movementType);
+	override void applySustainedForce(const Force* force, uint32 movementType);
 	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
 	override void setMass(fix10_6 mass);
