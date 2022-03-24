@@ -127,15 +127,17 @@ class Body : Object
 	bool sendMessages;
 	// Delete flag
 	bool destroy;
+	// flag to clear the external force after each update
+	bool clearExternalForce;
 
 	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
 	static void setCurrentWorldFrictionCoefficient(fix10_6 _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
-	void addForce(const Force* force);
-	void applyForce(const Force* force);
-	void applyGravity(uint16 axis);
+	void applySustainedForce(const Force* force);
+	uint8 applyForce(const Force* force);
+	uint8 applyGravity(uint16 axis);
 	void bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
 	void clearAcceleration(uint16 axis);
 	void clearExternalForce();
@@ -157,6 +159,7 @@ class Body : Object
 	bool isActive();
 	bool isAwake();
 	uint16 getMovementOnAllAxis();
+	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
 	void moveUniformly(Velocity velocity);
 	void setActive(bool active);

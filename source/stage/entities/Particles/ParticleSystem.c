@@ -59,6 +59,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
 	this->animationChanged = true;
+	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -404,6 +405,14 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
  */
 Force ParticleSystem::getParticleSpawnForce()
 {
+	if(this->particleSystemSpec->useMovementVector)
+	{
+		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
+//		fix10_6 strength = (Vector3D::length(this->particleSystemSpec->minimumForce) + Vector3D::length(this->particleSystemSpec->maximumForce)) >> 1;
+		fix10_6 strength = Vector3D::length(this->particleSystemSpec->minimumForce);
+		return Vector3D::scalarProduct(direction, strength);
+	}
+
 	Force force = this->particleSystemSpec->minimumForce;
 
 	if(this->spawnForceDelta.x)
@@ -477,7 +486,7 @@ Particle ParticleSystem::spawnParticle()
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
-	Particle::addForce(particle, &force, this->particleSystemSpec->movementType);
+	Particle::applySustainedForce(particle, &force, this->particleSystemSpec->movementType);
 
 	ParticleSystem::particleSpawned(this, particle);
 
@@ -489,6 +498,8 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
+	this->previousGlobalPosition = this->transformation.globalPosition;
+
 	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
 	bool transformed = this->transformed;

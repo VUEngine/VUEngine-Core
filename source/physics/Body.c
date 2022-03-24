@@ -56,6 +56,8 @@ friend class VirtualNode;
 #ifndef __FRICTION_FORCE_FACTOR_POWER
 #define __FRICTION_FORCE_FACTOR_POWER					2
 #endif
+
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -139,6 +141,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
+	this->clearExternalForce 	= __NO_AXIS;
 
 	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
@@ -314,13 +317,24 @@ void Body::moveUniformly(Velocity velocity)
 // clear force
 void Body::clearExternalForce()
 {
-	this->externalForce.x = 0;
-	this->externalForce.y = 0;
-	this->externalForce.z = 0;
+	if(__X_AXIS & this->clearExternalForce)
+	{
+		this->externalForce.x = 0;
+	}
+
+	if(__Y_AXIS & this->clearExternalForce)
+	{
+		this->externalForce.y = 0;
+	}
+
+	if(__Z_AXIS & this->clearExternalForce)
+	{
+		this->externalForce.z = 0;
+	}
 }
 
 // apply force
-void Body::applyForce(const Force* force)
+uint8 Body::applyForce(const Force* force)
 {
 	if(force)
 	{
@@ -351,11 +365,17 @@ void Body::applyForce(const Force* force)
 			Body::setMovementType(this, __ACCELERATED_MOVEMENT, axisOfExternalForce);
 			Body::awake(this, axisOfExternalForce);
 		}
+
+		this->clearExternalForce |= axisOfExternalForce;
+
+		return axisOfExternalForce;
 	}
+
+	return __NO_AXIS;
 }
 
 // apply gravity
-void Body::applyGravity(uint16 axis)
+uint8 Body::applyGravity(uint16 axis)
 {
 	if(axis)
 	{
@@ -368,16 +388,18 @@ void Body::applyGravity(uint16 axis)
 			__Z_AXIS & axis ? gravityForce.z : 0,
 		};
 
-		Body::applyForce(this, &force);
+		return Body::applyForce(this, &force);
 	}
+
+	return __NO_AXIS;
 }
 
 // add force
-void Body::addForce(const Force* force)
+void Body::applySustainedForce(const Force* force)
 {
-	ASSERT(force, "Body::addForce: null force");
+	ASSERT(force, "Body::applySustainedForce: null force");
 
-	Body::applyForce(this, force);
+	this->clearExternalForce = ~Body::applyForce(this, force);
 }
 
 // update movement

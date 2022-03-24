@@ -99,7 +99,7 @@ void PhysicalParticle::transform()
  * @param force
  * @param movementType
  */
-void PhysicalParticle::addForce(const Force* force, uint32 movementType)
+void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementType)
 {
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
@@ -130,7 +130,7 @@ void PhysicalParticle::addForce(const Force* force, uint32 movementType)
 	}
 	else
 	{
-		Body::addForce(this->body, force);
+		Body::applySustainedForce(this->body, force);
 	}
 }
 
