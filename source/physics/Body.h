@@ -157,6 +157,7 @@ class Body : Object
 	bool isActive();
 	bool isAwake();
 	uint16 getMovementOnAllAxis();
+	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
 	void moveUniformly(Velocity velocity);
 	void setActive(bool active);
