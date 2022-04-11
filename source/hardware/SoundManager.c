@@ -385,7 +385,7 @@ bool SoundManager::playPCMSounds()
 
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
-	volatile uint16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
+	volatile int16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
@@ -415,23 +415,15 @@ void SoundManager::updateFrameRate()
 		return;
 	}
 
-	int16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
+	int16 deviation = this->pcmPlaybackCycles - (this->pcmTargetPlaybackFrameRate + 500)/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION);
 
-	if(2 < deviation)
+	if(0 < deviation)
 	{
-		deviation = 2;
+		this->pcmPlaybackCyclesToSkip++;
 	}
-	else if(-2 > deviation)
+	else if(0 > deviation)
 	{
-		deviation = -2;
-	}
-
-	// Dubious optimization
-	this->pcmPlaybackCyclesToSkip += deviation;
-
-	if(0 > this->pcmPlaybackCyclesToSkip)
-	{
-		this->pcmPlaybackCyclesToSkip = 1;
+		this->pcmPlaybackCyclesToSkip--;
 	}
 
 #ifdef __SOUND_MANAGER_PROFILE
@@ -440,9 +432,9 @@ void SoundManager::updateFrameRate()
 	if(++counter > 20)
 	{
 		counter = 0;
-		PRINT_TEXT("    ", 35, 20);
-		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
-	//	PRINT_INT(this->pcmPlaybackCycles, 40, 20);
+		PRINT_TEXT("    ", 25, 20);
+		PRINT_INT(this->pcmPlaybackCycles, 20, 20);
+		PRINT_INT(this->pcmPlaybackCyclesToSkip, 25, 20);
 	}
 #endif
 	this->pcmPlaybackCycles = 0;
