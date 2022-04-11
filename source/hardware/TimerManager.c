@@ -473,8 +473,8 @@ static void TimerManager::interruptHandler()
 	_timerManager->milliseconds += elapsedMilliseconds;
 	_timerManager->totalMilliseconds += elapsedMilliseconds;
 
-	// update MIDI sounds
-	SoundManager::playMIDISounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
+	// update sounds
+	SoundManager::playSounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
 
 	// update Stopwatchs
 	StopwatchManager::update(StopwatchManager::getInstance());

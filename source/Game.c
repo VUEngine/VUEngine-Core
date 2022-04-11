@@ -221,15 +221,6 @@ void Game::initialize()
 #endif
 }
 
-bool Game::updateSpecialProcesses()
-{
-	bool result = false;
-
-	result |= SoundManager::playPCMSounds(this->soundManager);
-
-	return result;
-}
-
 void Game::debug()
 {
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
@@ -273,7 +264,7 @@ void Game::start(GameState state)
 			while(!this->nextFrameStarted)
 			{
 				// This breaks PCM playback but reports torn frames more accurately
-				if(!Game::updateSpecialProcesses(this) && !this->nextFrameStarted)
+				if(!this->nextFrameStarted)
 				{
 					// Halting the CPU seems to only affect the profiling in Mednafen
 					// But still haven't tested it on hardware

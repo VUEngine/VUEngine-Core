@@ -36,7 +36,6 @@
 #include <MBgmapSprite.h>
 #include <KeypadManager.h>
 #include <SRAMManager.h>
-//#include <I18n.h>
 #include <Camera.h>
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>

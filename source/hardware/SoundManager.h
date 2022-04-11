@@ -112,8 +112,7 @@ singleton class SoundManager : Object
 
 	void update();
 
-	bool playMIDISounds(uint32 elapsedMicroseconds);
-	bool playPCMSounds();
+	bool playSounds(uint32 elapsedMicroseconds);
 	void stopAllSounds(bool release);
 	void flushQueuedSounds();
 

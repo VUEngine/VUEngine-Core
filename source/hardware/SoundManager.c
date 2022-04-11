@@ -24,7 +24,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#undef __SOUND_MANAGER_PROFILE
+#define __SOUND_MANAGER_PROFILE
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -329,6 +329,11 @@ bool SoundManager::isPlayingSound(const Sound* sound)
 	}
 
 	return false;
+}
+
+bool SoundManager::playSounds(uint32 elapsedMicroseconds)
+{
+	return SoundManager::playPCMSounds(this) && SoundManager::playMIDISounds(this, elapsedMicroseconds);
 }
 
 bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
