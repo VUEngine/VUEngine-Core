@@ -916,7 +916,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	}
 }
 
-void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds __attribute__((unused)))
+void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	// Skip if sound is NULL since this should be purged
 	if((!this->sound) | (this->paused))
@@ -943,7 +943,8 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds __attribute__((u
 			continue;
 		}
 */
-		channel->cursor++;
+		this->elapsedMicroseconds += elapsedMicroseconds;
+		channel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
 		uint8 volume = this->unmute * SoundWrapper::clampPCMOutputValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction - this->volumeReduction);
 

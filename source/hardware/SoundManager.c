@@ -24,8 +24,6 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#undef __SOUND_MANAGER_PROFILE
-
 
 //---------------------------------------------------------------------------------------------------------
 //											 CLASS' DEFINITIONS
@@ -88,6 +86,9 @@ void SoundManager::constructor()
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
 	this->lock = false;
+	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
+	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 }
 
 /**
@@ -244,11 +245,11 @@ void SoundManager::reset()
 		this->channels[i].type = kChannelNoise;
 	}
 
-	this->pcmPlaybackCycles = 0;
-	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
 	this->MIDIPlaybackCounterPerInterrupt = 0;
 	this->soundWrapperMIDINode = NULL;
+	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
+	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 
 	SoundManager::stopAllSounds(this, false);
 	SoundManager::unlock(this);
@@ -261,8 +262,8 @@ void SoundManager::deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt)
 
 void SoundManager::startPCMPlayback()
 {
-	this->pcmPlaybackCycles = 0;
-	this->pcmPlaybackCyclesToSkip = 100;
+	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
+	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 
 	SoundManager::muteAllSounds(this, kPCM);
 }
@@ -333,7 +334,9 @@ bool SoundManager::isPlayingSound(const Sound* sound)
 
 bool SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	return SoundManager::playPCMSounds(this) && SoundManager::playMIDISounds(this, elapsedMicroseconds);
+	this->elapsedMicrosecondsPerSecond += elapsedMicroseconds;
+
+	return SoundManager::playPCMSounds(this, elapsedMicroseconds) && SoundManager::playMIDISounds(this, elapsedMicroseconds);
 }
 
 bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
@@ -381,19 +384,12 @@ bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 	return true;
 }
 
-bool SoundManager::playPCMSounds()
+bool SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
 {
 	if(!this->hasPCMSounds)
 	{
 		return false;
 	}
-
-	// Gives good results on hardware
-	// Do not waste CPU cycles returning to the call point
-	volatile int16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
-	while(0 < --pcmReimainingPlaybackCyclesToSkip);
-
-	this->pcmPlaybackCycles++;
 
 	VirtualNode node = this->soundWrappers->head;
 
@@ -406,7 +402,7 @@ bool SoundManager::playPCMSounds()
 		if(soundWrapper->hasPCMTracks)
 		{
 			this->hasPCMSounds = true;
-			SoundWrapper::updatePCMPlayback(soundWrapper, 0);
+			SoundWrapper::updatePCMPlayback(soundWrapper, elapsedMicroseconds, this->targetPCMUpdates);
 		}
 	}
 
@@ -420,29 +416,8 @@ void SoundManager::updateFrameRate()
 		return;
 	}
 
-	int16 deviation = this->pcmPlaybackCycles - (this->pcmTargetPlaybackFrameRate + 500)/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION);
-
-	if(0 < deviation)
-	{
-		this->pcmPlaybackCyclesToSkip++;
-	}
-	else if(0 > deviation)
-	{
-		this->pcmPlaybackCyclesToSkip--;
-	}
-
-#ifdef __SOUND_MANAGER_PROFILE
-	static uint16 counter = 20;
-
-	if(++counter > 20)
-	{
-		counter = 0;
-		PRINT_TEXT("    ", 25, 20);
-		PRINT_INT(this->pcmPlaybackCycles, 20, 20);
-		PRINT_INT(this->pcmPlaybackCyclesToSkip, 25, 20);
-	}
-#endif
-	this->pcmPlaybackCycles = 0;
+	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
+	this->elapsedMicrosecondsPerSecond = 0;
 }
 
 void SoundManager::rewindAllSounds(uint32 type)
@@ -473,7 +448,7 @@ void SoundManager::rewindAllSounds(uint32 type)
 
 			default:
 
-				NM_ASSERT(false, "SoundManager::playSounds: unknown track type");
+				NM_ASSERT(false, "SoundManager::rewindAllSounds: unknown track type");
 				break;
 
 		}

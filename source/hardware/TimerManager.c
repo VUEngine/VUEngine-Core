@@ -361,7 +361,7 @@ uint16 TimerManager::computeTimerCounter()
 	{
 		case kUS:
 
-			timerCounter = __TIME_US(this->timePerInterrupt);
+			timerCounter = __TIME_US(this->timePerInterrupt) - (__TIMER_20US == this->resolution ? 1 : 0);
 			break;
 
 		case kMS:

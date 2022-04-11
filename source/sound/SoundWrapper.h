@@ -250,7 +250,7 @@ class SoundWrapper : Object
 	void unmute();
 	void autoReleaseOnFinish(bool value);
 	void updateMIDIPlayback(uint32 elapsedMicroseconds);
-	void updatePCMPlayback(uint32 elapsedMicroseconds);
+	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
 	void setSpeed(fix17_15 speed);
 	void setVolumeReduction(int8 volumeReduction);
 	int8 getVolumeReduction();

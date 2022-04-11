@@ -766,8 +766,6 @@ void Game::checkForNewState()
 
 void Game::updateFrameRate()
 {
-	SoundManager::updateFrameRate(this->soundManager);
-
 	if(Game::isInSpecialMode(this))
 	{
 		return;
@@ -788,6 +786,8 @@ void Game::nextFrameStarted()
 
 	if(__MILLISECONDS_PER_SECOND < totalTime)
 	{
+		SoundManager::updateFrameRate(this->soundManager);
+
 		totalTime = 0;
 
 #ifdef __SHOW_STREAMING_PROFILING

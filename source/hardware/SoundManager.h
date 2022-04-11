@@ -97,9 +97,9 @@ singleton class SoundManager : Object
 	VirtualList queuedSounds;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_WAVEFORMS];
-	uint16 pcmPlaybackCycles;
+	uint32 targetPCMUpdates;
+	uint32 elapsedMicrosecondsPerSecond;
 	uint16 pcmTargetPlaybackFrameRate;
-	int16 pcmPlaybackCyclesToSkip;
 	uint16 MIDIPlaybackCounterPerInterrupt;
 	bool hasPCMSounds;
 	bool lock;
