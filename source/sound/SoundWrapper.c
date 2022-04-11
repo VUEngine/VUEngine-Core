@@ -927,7 +927,8 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	VirtualNode node = this->channels->tail;
 
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
-	//this->elapsedMicroseconds += __I_TO_FIX17_15(1);
+	this->elapsedMicroseconds += elapsedMicroseconds;
+
 	Channel* channel = NULL;
 
 	for(; node; node = node->previous)
@@ -943,7 +944,6 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 			continue;
 		}
 */
-		this->elapsedMicroseconds += elapsedMicroseconds;
 		channel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
 		uint8 volume = this->unmute * SoundWrapper::clampPCMOutputValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction - this->volumeReduction);
