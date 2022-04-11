@@ -36,21 +36,21 @@ FILE *fptr;
 unsigned int length;
 
 //Handy functions for reading from the file
-unsigned int read_u32(void)
+unsigned int read_uint32(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr) | (fgetc(fptr)<<8) | (fgetc(fptr)<<16) | (fgetc(fptr)<<24);
 	return ret;
 }
 
-unsigned short read_u16(void)
+unsigned short read_uint16(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr) | (fgetc(fptr)<<8);
 	return ret;
 }
 
-unsigned short read_u8(void)
+unsigned short read_uint8(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr);
@@ -75,24 +75,24 @@ void show_syntax(void)
 //Make sure it is a WAV file in the correct format
 int check_file(void)
 {
-	if(read_u8() != 'R')
+	if(read_uint8() != 'R')
 	{
 		printf("Fatal Error: File does not appear to be a WAV file!\n");
 		show_requirements();
 		return 1;
 	}
 	fseek(fptr, 3, SEEK_CUR);
-	length = read_u32();
+	length = read_uint32();
 
 	fseek(fptr, 22, SEEK_SET);
-	if(read_u16() != 0x01)
+	if(read_uint16() != 0x01)
 	{
 		show_requirements();
 		return 1;
 	}
-	printf("Sampling rate: %d Hz\n", read_u32());
+	printf("Sampling rate: %d Hz\n", read_uint32());
 	fseek(fptr, 6, SEEK_CUR);
-	if(read_u16() != 8)
+	if(read_uint16() != 8)
 	{
 		show_requirements();
 		return 1;
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 	//copy file to memory, also track how big the biggest byte is
 	for(i=0;i<length;i++)
 	{
-		wave[i] = read_u8();
+		wave[i] = read_uint8();
 		if(wave[i] > max_size)
 			max_size = wave[i];
 	}
