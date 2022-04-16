@@ -784,8 +784,11 @@ void Game::nextFrameStarted()
 
 	totalTime += __GAME_FRAME_DURATION;
 
+	TimerManager::nextFrameStarted(this->timerManager, __GAME_FRAME_DURATION * __MICROSECONDS_PER_MILLISECOND);
+
 	if(__MILLISECONDS_PER_SECOND < totalTime)
 	{
+		TimerManager::nextSecondStarted(this->timerManager);
 		SoundManager::updateFrameRate(this->soundManager);
 
 		totalTime = 0;

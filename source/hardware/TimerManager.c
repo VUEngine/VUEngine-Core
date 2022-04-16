@@ -66,13 +66,16 @@ void TimerManager::constructor()
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
+	this->interruptsPerGameFrame = 0;
+	this->microsecondsPerInterrupt = 0;
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
 }
 
 /**
- * Class destructor
+ *
+  Class destructor
  */
 void TimerManager::destructor()
 {
@@ -98,12 +101,15 @@ void TimerManager::reset()
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
+	this->interruptsPerGameFrame = 0;
+	this->microsecondsPerInterrupt = 0;
 }
 
 /**
  * Get resolution in US
  *
  * @return resolution in us	uint16
+ 
  */
 uint16 TimerManager::getResolutionInUS()
 {
@@ -429,6 +435,41 @@ void TimerManager::enable(bool flag)
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
+void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
+{
+	if(0 >= this->interruptsPerGameFrame)
+	{
+		this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
+	}
+	else
+	{
+		this->microsecondsPerInterrupt = elapsedMicroseconds / this->interruptsPerGameFrame;
+	}
+
+	this->interruptsPerGameFrame = 0;
+}
+
+void TimerManager::nextSecondStarted()
+{
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+	TimerManager::printStatus(this, 1, 10);
+#endif
+
+	this->interruptsPerSecond = 0;
+}
+
+void TimerManager::printStatus(int32 x, int32 y)
+{
+	PRINT_TEXT("TIMER MANAGER", x, y++);
+
+	PRINT_TEXT("Interrupts/second:          ", x, ++y);
+	PRINT_INT(this->interruptsPerSecond, x + 22, y);
+	PRINT_TEXT("Interrupts/frame:          ", x, ++y);
+	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 22, y);
+	PRINT_TEXT("Average us/interrupt:          ", x, ++y);
+	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 22, y);
+}
+
 /**
  * Interrupt handler
  */
@@ -441,6 +482,9 @@ static void TimerManager::interruptHandler()
 #else
 	TimerManager::enableInterrupt(_timerManager, false);
 #endif
+
+	_timerManager->interruptsPerGameFrame++;
+	_timerManager->interruptsPerSecond++;
 
 	uint32 elapsedMilliseconds = 0;
 
@@ -474,7 +518,7 @@ static void TimerManager::interruptHandler()
 	_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 	// update sounds
-	SoundManager::playSounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
+	SoundManager::playSounds(_soundManager, _timerManager->microsecondsPerInterrupt);
 
 	// update Stopwatchs
 	StopwatchManager::update(StopwatchManager::getInstance());

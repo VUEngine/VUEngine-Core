@@ -62,6 +62,9 @@ singleton class TimerManager : Object
 	uint32 microseconds;
 	uint32 totalMilliseconds;
 	uint16 resolution;
+	uint16 interruptsPerSecond;
+	uint16 interruptsPerGameFrame;
+	uint32 microsecondsPerInterrupt;
 	uint16 timePerInterrupt;
 	uint16 timePerInterruptUnits;
 	uint16 minimumTimePerInterruptUS;
@@ -86,6 +89,8 @@ singleton class TimerManager : Object
 	void setTimePerInterrupt(uint16 timePerInterrupt);
 	void setTimePerInterruptUnits(uint16 timePerInterruptUnits);
 	void enable(bool flag);
+	void nextFrameStarted(uint32 elapsedMicroseconds);
+	void nextSecondStarted();
 	uint32 getMillisecondsElapsed();
 	uint32 getTotalMillisecondsElapsed();
 	uint32 resetMilliseconds();
