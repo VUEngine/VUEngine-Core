@@ -336,7 +336,7 @@ bool SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
 	this->elapsedMicrosecondsPerSecond += elapsedMicroseconds;
 
-	return SoundManager::playPCMSounds(this, elapsedMicroseconds) && SoundManager::playMIDISounds(this, elapsedMicroseconds);
+	return !SoundManager::playPCMSounds(this, elapsedMicroseconds) || SoundManager::playMIDISounds(this, elapsedMicroseconds);
 }
 
 bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
