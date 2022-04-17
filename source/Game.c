@@ -788,7 +788,9 @@ void Game::nextFrameStarted()
 
 	if(__MILLISECONDS_PER_SECOND < totalTime)
 	{
+#ifdef __SHOW_TIMER_MANAGER_STATUS
 		TimerManager::nextSecondStarted(this->timerManager);
+#endif
 		SoundManager::updateFrameRate(this->soundManager);
 
 		totalTime = 0;
