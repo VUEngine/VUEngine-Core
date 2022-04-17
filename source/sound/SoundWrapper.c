@@ -537,7 +537,6 @@ void SoundWrapper::setupChannels(int8* waves)
 		channel->soundChannel = i;
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
-		channel->volumeReduction = 0;
 
 		switch(channel->soundChannelConfiguration.trackType)
 		{
@@ -555,7 +554,6 @@ void SoundWrapper::setupChannels(int8* waves)
 				channel->soundTrack.dataPCM = (uint8*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
 				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
 				SoundWrapper::computePCMNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
-				channel->volumeReduction = SoundWrapper::computePCMVolumeReduction((uint8*)channel->soundTrack.dataPCM, channel->length);
 				break;
 
 			default:
@@ -695,12 +693,6 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 	}
 
 	return (uint8)value;
-}
-
-static inline uint8 SoundWrapper::clampPCMOutputValue(int8 value)
-{
-    value &= -(value >= 0);
-    return (uint8)(value | ((__MAXIMUM_VOLUME - value) >> 7));
 }
 
 bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
@@ -919,70 +911,53 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	// Skip if sound is NULL since this should be purged
-	if((!this->sound) | (this->paused))
+	if((!this->sound) || this->paused)
 	{
 		return;
 	}
 
-	VirtualNode node = this->channels->tail;
-
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
 	this->elapsedMicroseconds += elapsedMicroseconds;
 
-	Channel* channel = NULL;
+	VirtualNode node = this->channels->tail;
 
-	for(; node; node = node->previous)
+	Channel* mainChannel = NULL;
+
+	if(node)
 	{
-		channel = (Channel*)node->data;
-/*
-		// Since this is commented out, there is no support for sounds
-		// with mixed types of tracks
-		// TODO: optimize playback of types
-		if(kPCM != channel->soundChannelConfiguration.trackType)
+		mainChannel = (Channel*)node->data;
+
+		mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
+
+		if(mainChannel->cursor == mainChannel->previousCursor)
 		{
-			finished &= channel->finished;
-			continue;
+			return;
 		}
-*/
-		channel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-		uint8 volume = this->unmute * SoundWrapper::clampPCMOutputValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction - this->volumeReduction);
+		mainChannel->previousCursor = mainChannel->cursor;
 
-#ifdef __SOUND_TEST
-		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
-		// No volume printing because it is too heavy on hardware
-//		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
-#else
-#ifndef __RELEASE
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
-#else
-		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
-#endif
-#endif
-/*
-//	This uses DogP's format
-		uint8 volume = this->unmute * channel->soundTrack.dataPCM[channel->cursor];
-		uint8 leftVolume = SoundWrapper::clampPCMOutputValue(((channel->soundTrack.dataPCM[channel->cursor] & 0xF0) >> 4) - this->volumeReduction);
-		uint8 rightVolume = SoundWrapper::clampPCMOutputValue((channel->soundTrack.dataPCM[channel->cursor] & 0x0F) - this->volumeReduction);
+		uint8 volume = mainChannel->soundTrack.dataPCM[mainChannel->cursor] & mainChannel->soundChannelConfiguration.volume;
 
+		if(__MAXIMUM_VOLUME <= volume)
+		{
+			volume = 0xFF;
+		}
+		else
+		{
+			volume = (volume << 4) | volume;
+		}
 
-#ifdef __SOUND_TEST
-		_soundRegistries[channel->number].SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
-		// No volume printing because it is too heavy on hardware
-//		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
-#else
-#ifndef __RELEASE
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
-#else
-		_soundRegistries[channel->number].SxLRV = ((leftVolume << 4) | (rightVolume)) & channel->soundChannelConfiguration.volume;
-#endif
-#endif
-*/
+		for(; node; node = node->previous)
+		{
+			Channel* channel = (Channel*)node->data;
+
+			_soundRegistries[channel->number].SxLRV = volume;
+		}
 	}
 
 	// PCM playback must be totally sync on all channels, so, check if completed only
 	// in the first one
-	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel))
+	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, mainChannel))
 	{
 		SoundWrapper::completedPlayback(this);
 	}
