@@ -67,7 +67,7 @@ void show_requirements(void)
 
 void show_syntax(void)
 {
-	printf("Correct syntax is vbwav <file.wav>\n");
+	printf("Correct syntax is vbwav <file.wav> [8/15/32/45]\n");
 	printf("Output file will be file.h\n");
 }
 
@@ -113,13 +113,22 @@ int main(int argc, char *argv[])
 	printf("version 1.00 (30-July-2003)\n");
 	printf("(c) 2003 frostgiant\n\n");
 	
-	if(argc!=2)
+	if(argc!=2 && argc!=3)
 	{
 		show_syntax();
 		return 1;
 	}
 	
 	fptr = fopen(argv[1], "rb");
+
+	int levelAmplitude = 30;
+
+	if(argv[2])
+	{
+		levelAmplitude = atoi(argv[2]);
+	}
+
+	printf("Amplitude: %d\n", levelAmplitude);
 
 	if(!fptr)
 	{
@@ -141,7 +150,8 @@ int main(int argc, char *argv[])
 		printf("Fatal Error: Could not allocate memory!\n");
 		return 1;
 	}
-	
+
+
 	//copy file to memory, also track how big the biggest byte is
 	for(i=0;i<length;i++)
 	{
@@ -151,6 +161,12 @@ int main(int argc, char *argv[])
 	}
 	fclose(fptr);
 
+	
+	float scale = (float)levelAmplitude / 0x3F;
+
+	printf("Scale: %f\n", scale);
+
+
 	//is the sample already 6 bit?
 	if(max_size>0x3F)
 	{
@@ -158,16 +174,20 @@ int main(int argc, char *argv[])
 		if(max_size>0x7F)
 		{
 			for(i=0;i<length;i++)
-				wave[i] = wave[i]>>2;
+				wave[i] = (wave[i]>>2); 
 		}
 		
 		//if 7 bit, shift away lowest 1
 		else
 		{
 			for(i=0;i<length;i++)
-				wave[i] = wave[i]>>1;
+				wave[i] = (wave[i]>>1);
 		}
 	}
+
+	for(i=0;i<length;i++)
+		wave[i] = (float)wave[i] * scale;
+
 
 	//find the '.' in the file argument and make the string end there
 	i=0;
