@@ -365,7 +365,7 @@ uint16 TimerManager::getMinimumTimePerInterruptStep()
 
 uint16 TimerManager::computeTimerCounter()
 {
-	uint16 timerCounter = 0;
+	int16 timerCounter = 0;
 
 	switch(this->timePerInterruptUnits)
 	{
@@ -383,7 +383,7 @@ uint16 TimerManager::computeTimerCounter()
 			break;
 	}
 
-	return timerCounter;
+	return (uint16)(0 >= timerCounter ? 1 : timerCounter);
 }
 
 
