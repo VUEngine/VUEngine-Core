@@ -786,7 +786,7 @@ void Game::nextFrameStarted()
 
 	TimerManager::nextFrameStarted(this->timerManager, __GAME_FRAME_DURATION * __MICROSECONDS_PER_MILLISECOND);
 
-	if(__MILLISECONDS_PER_SECOND < totalTime)
+	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
 #ifdef __SHOW_TIMER_MANAGER_STATUS
 		TimerManager::nextSecondStarted(this->timerManager);
@@ -877,9 +877,6 @@ void Game::run()
 {
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
-
-	// reset timer
-	TimerManager::resetMilliseconds(this->timerManager);
 
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();

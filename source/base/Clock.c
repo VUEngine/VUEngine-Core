@@ -82,23 +82,26 @@ void Clock::update(uint32 millisecondsElapsed)
 
 	this->milliSeconds += millisecondsElapsed;
 
-	uint32 currentSecond = Clock::getSeconds(this);
-
-	if(currentSecond != this->previousSecond)
+	if(this->events)
 	{
-		this->previousSecond = currentSecond;
+		uint32 currentSecond = Clock::getSeconds(this);
 
-		Clock::fireEvent(this, kEventSecondChanged);
-		NM_ASSERT(!isDeleted(this), "Clock::update: deleted this during kEventSecondChanged");
-
-		uint32 currentMinute = Clock::getMinutes(this);
-
-		if(currentMinute != this->previousMinute)
+		if(currentSecond != this->previousSecond)
 		{
-			this->previousMinute = currentMinute;
+			this->previousSecond = currentSecond;
 
-			Clock::fireEvent(this, kEventMinuteChanged);
-			NM_ASSERT(!isDeleted(this), "Clock::update: deleted this during kEventMinuteChanged");
+			Clock::fireEvent(this, kEventSecondChanged);
+			NM_ASSERT(!isDeleted(this), "Clock::update: deleted this during kEventSecondChanged");
+
+			uint32 currentMinute = Clock::getMinutes(this);
+
+			if(currentMinute != this->previousMinute)
+			{
+				this->previousMinute = currentMinute;
+
+				Clock::fireEvent(this, kEventMinuteChanged);
+				NM_ASSERT(!isDeleted(this), "Clock::update: deleted this during kEventMinuteChanged");
+			}
 		}
 	}
 }

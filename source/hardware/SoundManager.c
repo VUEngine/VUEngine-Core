@@ -35,6 +35,7 @@ SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegi
 #define __MODULATION_DATA			(uint8*)0x01000280;
 #define __SSTOP						*(uint8*)0x01000580
 
+static SoundManager _soundManager = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												 FRIENDS
@@ -81,14 +82,18 @@ void SoundManager::constructor()
 	Base::constructor();
 
 	this->soundWrappers = new VirtualList();
+	this->soundWrappersMIDI = new VirtualList();
+	this->soundWrappersPCM = new VirtualList();
+
 	this->queuedSounds = new VirtualList();
-	this->hasPCMSounds = false;
 	this->MIDIPlaybackCounterPerInterrupt = false;
 	this->soundWrapperMIDINode = NULL;
 	this->lock = false;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
 	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
 	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
+
+	_soundManager = this;
 }
 
 /**
@@ -96,6 +101,8 @@ void SoundManager::constructor()
  */
 void SoundManager::destructor()
 {
+	_soundManager = NULL;
+
 	if(!isDeleted(this->queuedSounds))
 	{
 		VirtualNode node = this->queuedSounds->head;
@@ -123,6 +130,9 @@ void SoundManager::destructor()
 		delete this->soundWrappers;
 		this->soundWrappers = NULL;
 	}
+
+	delete this->soundWrappersMIDI;
+	delete this->soundWrappersPCM;
 
 	Base::destructor();
 }
@@ -157,6 +167,8 @@ void SoundManager::purgeReleasedSoundWrappers()
 		if(soundWrapper->released)
 		{
 			VirtualList::removeNode(this->soundWrappers, node);
+			VirtualList::removeNode(this->soundWrappersMIDI, node);
+			VirtualList::removeNode(this->soundWrappersPCM, node);
 
 			delete soundWrapper;
 
@@ -184,6 +196,8 @@ void SoundManager::reset()
 	}
 
 	VirtualList::clear(this->soundWrappers);
+	VirtualList::clear(this->soundWrappersMIDI);
+	VirtualList::clear(this->soundWrappersPCM);
 
 	int32 i = 0;
 
@@ -332,90 +346,54 @@ bool SoundManager::isPlayingSound(const Sound* sound)
 	return false;
 }
 
-bool SoundManager::playSounds(uint32 elapsedMicroseconds)
+/* Static because it is more performant */
+static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	this->elapsedMicrosecondsPerSecond += elapsedMicroseconds;
+	_soundManager->elapsedMicrosecondsPerSecond += elapsedMicroseconds;
 
-	return !SoundManager::playPCMSounds(this, elapsedMicroseconds) || SoundManager::playMIDISounds(this, elapsedMicroseconds);
+	SoundManager::playPCMSounds(elapsedMicroseconds);
+	SoundManager::playMIDISounds(elapsedMicroseconds);
 }
 
-bool SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
+static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
-	if(0 < this->MIDIPlaybackCounterPerInterrupt)
+	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
 	{
 		static uint32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
-		if(NULL == this->soundWrapperMIDINode)
+		if(NULL == _soundManager->soundWrapperMIDINode)
 		{
-			this->soundWrapperMIDINode = this->soundWrappers->head;
+			_soundManager->soundWrapperMIDINode = _soundManager->soundWrappersMIDI->head;
 			accumulatedElapsedMicroseconds = elapsedMicroseconds;
 		}
 
-		uint16 counter = this->MIDIPlaybackCounterPerInterrupt;
-
-		for(; counter-- && this->soundWrapperMIDINode;)
+		for(uint16 counter = _soundManager->MIDIPlaybackCounterPerInterrupt; counter-- && _soundManager->soundWrapperMIDINode;)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(this->soundWrapperMIDINode->data);
+			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(_soundManager->soundWrapperMIDINode->data), accumulatedElapsedMicroseconds);
 
-			if(soundWrapper->hasMIDITracks)
-			{
-				SoundWrapper::updateMIDIPlayback(soundWrapper, accumulatedElapsedMicroseconds);
-			}
-
-			this->soundWrapperMIDINode = this->soundWrapperMIDINode->next;
+			_soundManager->soundWrapperMIDINode = _soundManager->soundWrapperMIDINode->next;
 		}
 	}
 	else
 	{
-		VirtualNode node = this->soundWrappers->head;
-
-		for(; node; node = node->next)
+		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; node; node = node->next)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-
-			if(soundWrapper->hasMIDITracks)
-			{
-				SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
-			}
+			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
 	}
-
-	return true;
 }
 
-bool SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
+static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
 {
-	if(!this->hasPCMSounds)
+	for(VirtualNode node = _soundManager->soundWrappersPCM->head; node; node = node->next)
 	{
-		return false;
+		SoundWrapper::updatePCMPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 	}
-
-	VirtualNode node = this->soundWrappers->head;
-
-	this->hasPCMSounds = false;
-
-	for(; node; node = node->next)
-	{
-		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-
-		if(soundWrapper->hasPCMTracks)
-		{
-			this->hasPCMSounds = true;
-			SoundWrapper::updatePCMPlayback(soundWrapper, elapsedMicroseconds, this->targetPCMUpdates);
-		}
-	}
-
-	return true;
 }
 
 void SoundManager::updateFrameRate()
 {
-	if(!this->hasPCMSounds)
-	{
-		return;
-	}
-
 	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 	this->elapsedMicrosecondsPerSecond = 0;
 }
@@ -450,7 +428,6 @@ void SoundManager::rewindAllSounds(uint32 type)
 
 				NM_ASSERT(false, "SoundManager::rewindAllSounds: unknown track type");
 				break;
-
 		}
 	}
 }
@@ -877,7 +854,24 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 				{
 					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope);
 
+					HardwareManager::suspendInterrupts();
 					VirtualList::pushBack(this->soundWrappers, soundWrapper);
+					HardwareManager::resumeInterrupts();
+
+					if(soundWrapper->hasMIDITracks)
+					{
+						HardwareManager::suspendInterrupts();
+						VirtualList::pushBack(this->soundWrappersMIDI, soundWrapper);
+						HardwareManager::resumeInterrupts();
+					}
+
+					if(soundWrapper->hasPCMTracks)
+					{
+						HardwareManager::suspendInterrupts();
+						VirtualList::pushBack(this->soundWrappersPCM, soundWrapper);
+						HardwareManager::resumeInterrupts();
+					}
+
 				}
 			}
 			break;
@@ -889,11 +883,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 			break;
 	}
 
-	if(!isDeleted(soundWrapper))
-	{
-		this->hasPCMSounds |= soundWrapper->hasPCMTracks;
-	}
-	else
+	if(isDeleted(soundWrapper))
 	{
 		delete availableChannels;
 	}

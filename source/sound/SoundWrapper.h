@@ -156,9 +156,6 @@ typedef struct Channel
 	/// Position within the sound track
 	uint32 cursor;
 
-	/// Previous position within the sound track
-	uint32 previousCursor;	
-
 	/// Ticks before moving the cursor
 	fix17_15 ticksPerNote;
 

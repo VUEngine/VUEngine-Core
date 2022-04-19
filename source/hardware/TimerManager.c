@@ -30,6 +30,7 @@
 // use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
 static SoundManager _soundManager;
+static StopwatchManager _stopwatchManager;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,10 +68,12 @@ void TimerManager::constructor()
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 	this->interruptsPerGameFrame = 0;
-	this->microsecondsPerInterrupt = 0;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
+
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
+	_stopwatchManager = StopwatchManager::getInstance();
 }
 
 /**
@@ -102,7 +105,7 @@ void TimerManager::reset()
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 	this->interruptsPerGameFrame = 0;
-	this->microsecondsPerInterrupt = 0;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 }
 
 /**
@@ -306,6 +309,7 @@ void TimerManager::setTimePerInterrupt(uint16 timePerInterrupt)
 	}
 
 	this->timePerInterrupt = timePerInterrupt;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 }
 
 /**
@@ -437,6 +441,9 @@ void TimerManager::enable(bool flag)
 
 void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 {
+	// reset timer
+	TimerManager::resetMilliseconds(this);
+
 	if(0 >= this->interruptsPerGameFrame)
 	{
 		this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
@@ -449,18 +456,20 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 	this->interruptsPerGameFrame = 0;
 }
 
+#ifdef __SHOW_TIMER_MANAGER_STATUS
 void TimerManager::nextSecondStarted()
 {
-#ifdef __SHOW_TIMER_MANAGER_STATUS
 	TimerManager::printStatus(this, 1, 10);
-#endif
 
 	this->interruptsPerSecond = 0;
 }
+#endif
 
 void TimerManager::printStatus(int32 x, int32 y)
 {
-	PRINT_TEXT("TIMER MANAGER", x, y++);
+	PRINT_INT(this->interruptsPerSecond, x + 22, y);
+	PRINT_INT(this->microsecondsPerInterrupt, x + 22, ++y);
+/*	PRINT_TEXT("TIMER MANAGER", x, y++);
 
 	PRINT_TEXT("Interrupts/second:          ", x, ++y);
 	PRINT_INT(this->interruptsPerSecond, x + 22, y);
@@ -468,6 +477,9 @@ void TimerManager::printStatus(int32 x, int32 y)
 	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 22, y);
 	PRINT_TEXT("Average us/interrupt:          ", x, ++y);
 	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 22, y);
+	PRINT_TEXT("Real us/interrupt:          ", x, ++y);
+	PRINT_INT(this->microsecondsPerInterrupt, x + 22, y);
+	*/
 }
 
 /**
@@ -483,52 +495,35 @@ static void TimerManager::interruptHandler()
 	TimerManager::enableInterrupt(_timerManager, false);
 #endif
 
-	_timerManager->interruptsPerGameFrame++;
+#ifdef __SHOW_TIMER_MANAGER_STATUS
 	_timerManager->interruptsPerSecond++;
+#endif
 
-	uint32 elapsedMilliseconds = 0;
+	_timerManager->interruptsPerGameFrame++;
 
-	// update clocks
-	switch(_timerManager->timePerInterruptUnits)
+	_timerManager->microseconds += _timerManager->microsecondsPerInterrupt;
+
+	if(_timerManager->microseconds > __MICROSECONDS_PER_MILLISECOND)
 	{
-		case kUS:
+		uint32 elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
 
-			_timerManager->microseconds += _timerManager->timePerInterrupt;
+		_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_PER_MILLISECOND;
 
-			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
+		_timerManager->milliseconds += elapsedMilliseconds;
 
-			if(_timerManager->microseconds > __MICROSECONDS_PER_MILLISECOND)
-			{
-				_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_PER_MILLISECOND;
-			}
-			break;
-
-		case kMS:
-
-			elapsedMilliseconds = _timerManager->timePerInterrupt;
-			break;
-
-		default:
-
-			ASSERT(false, "TimerManager::setResolution: wrong resolution scale");
-			break;
+#ifdef __SOUND_TEST
+		if(Game::isInSoundTest(Game::getInstance()))
+		{
+			SoundManager::printPlaybackTime(SoundManager::getInstance());
+		}
+#endif
 	}
-
-	_timerManager->milliseconds += elapsedMilliseconds;
-	_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 	// update sounds
-	SoundManager::playSounds(_soundManager, _timerManager->microsecondsPerInterrupt);
+	SoundManager::playSounds(_timerManager->microsecondsPerInterrupt);
 
-	// update Stopwatchs
-	StopwatchManager::update(StopwatchManager::getInstance());
-	
-#ifdef __SOUND_TEST
-	if(Game::isInSoundTest(Game::getInstance()))
-	{
-		SoundManager::printPlaybackTime(SoundManager::getInstance());
-	}
-#endif
+	// update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
+	//StopwatchManager::update(_stopwatchManager);
 
 // enable
 #ifndef __ENABLE_PROFILER
@@ -568,6 +563,7 @@ uint32 TimerManager::resetMilliseconds()
 
 	this->milliseconds = 0;
 	this->microseconds = 0;
+	this->totalMilliseconds += milliseconds;
 
 	return milliseconds;
 }

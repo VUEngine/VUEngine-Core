@@ -93,6 +93,8 @@ enum ChannelTypes
 singleton class SoundManager : Object
 {
 	VirtualList soundWrappers;
+	VirtualList soundWrappersMIDI;
+	VirtualList soundWrappersPCM;
 	VirtualNode soundWrapperMIDINode;
 	VirtualList queuedSounds;
 	Channel channels[__TOTAL_CHANNELS];
@@ -101,18 +103,18 @@ singleton class SoundManager : Object
 	uint32 elapsedMicrosecondsPerSecond;
 	uint16 pcmTargetPlaybackFrameRate;
 	uint16 MIDIPlaybackCounterPerInterrupt;
-	bool hasPCMSounds;
 	bool lock;
 
 	/// @publicsection
 	static SoundManager getInstance();
+	static void playSounds(uint32 elapsedMicroseconds);
+
 	void reset();
 
 	void setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate);
 
 	void update();
 
-	bool playSounds(uint32 elapsedMicroseconds);
 	void stopAllSounds(bool release);
 	void flushQueuedSounds();
 

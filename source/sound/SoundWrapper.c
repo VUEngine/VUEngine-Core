@@ -911,7 +911,9 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
 	// Skip if sound is NULL since this should be purged
-	if((!this->sound) || this->paused)
+//	if((!this->sound) + this->paused)
+	// Optimization, if no sound or paused, the sum will be different than 0
+	if((!this->sound) + this->paused)
 	{
 		return;
 	}
@@ -919,45 +921,33 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
 	this->elapsedMicroseconds += elapsedMicroseconds;
 
-	VirtualNode node = this->channels->tail;
+	uint32 cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-	Channel* mainChannel = NULL;
+	// The following assumes that the channels list is valid and non empty
+	VirtualNode node = this->channels->head;
+	Channel* firstChannel = (Channel*)node->data;
 
-	if(node)
+	if(firstChannel->cursor == cursor)
 	{
-		mainChannel = (Channel*)node->data;
-
-		mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
-
-		if(mainChannel->cursor == mainChannel->previousCursor)
-		{
-			return;
-		}
-
-		mainChannel->previousCursor = mainChannel->cursor;
-
-		uint8 volume = mainChannel->soundTrack.dataPCM[mainChannel->cursor] & mainChannel->soundChannelConfiguration.volume;
-
-		if(__MAXIMUM_VOLUME <= volume)
-		{
-			volume = 0xFF;
-		}
-		else
-		{
-			volume = (volume << 4) | volume;
-		}
-
-		for(; node; node = node->previous)
-		{
-			Channel* channel = (Channel*)node->data;
-
-			_soundRegistries[channel->number].SxLRV = volume;
-		}
+		return;
 	}
 
-	// PCM playback must be totally sync on all channels, so, check if completed only
+	firstChannel->cursor = cursor;
+
+	while(node)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		uint8 volume = channel->soundTrack.dataPCM[cursor];
+
+		_soundRegistries[channel->number].SxLRV = volume;		
+
+		node = node->next;
+	}
+
+	// PCM playback must be totally in sync on all channels, so, check if completed only
 	// in the first one
-	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, mainChannel))
+	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, firstChannel))
 	{
 		SoundWrapper::completedPlayback(this);
 	}
@@ -1214,7 +1204,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 {
 	if(this->hasPCMTracks)
 	{
-		return;
+	//	return;
 	}
 
 	VirtualNode node = this->channels->head;
@@ -1251,11 +1241,15 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 		++y;
 	}
 
+	uint16 totalVolume = 0;
+
 	for(node = this->channels->head; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
 		uint8 volume = channel->soundChannelConfiguration.SxLRV;
+
+		totalVolume += volume;
 
 		uint8 leftVolume = (volume) >> 4;
 		uint8 rightVolume = (volume & 0x0F);
@@ -1286,6 +1280,10 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 				break;
 		}
 
+		PRINT_INT(leftVolume, x + 33, y);
+		PRINT_INT(rightVolume, x + 38, y);
+		PRINT_INT(channel->soundTrack.dataPCM[channel->cursor], x + 43, y);
+
 		for(i = 0; i < leftValue; i++)
 		{
 			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 0, y);
@@ -1308,4 +1306,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 		y++;
 	}
+
+	PRINT_INT(totalVolume, x + 16+ 8 + 12, ++y);
+
 }
