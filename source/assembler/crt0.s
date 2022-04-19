@@ -232,10 +232,7 @@ __interrupt_handler_prolog:
 	andi	0x003C,r6,r6
 	add	    r6,r1
 	ld.w	-4[r1],r1
-	cmp	    r0,r1
-	be	    __interrupt_handler_epilogue
-	jal	    __interrupt_handler
-
+	jal     __interrupt_handler
 
 __interrupt_handler_epilogue:
 	ld.w	0x0000[sp],lp
@@ -262,6 +259,7 @@ __interrupt_handler_epilogue:
 	ld.w	0x0044[sp],r1
 	addi	0x0050,sp,sp
 	reti
+
 
 __zero_exception:
 	movhi	hi(_zeroDivisionVector), r0, r1
