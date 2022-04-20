@@ -260,7 +260,6 @@ __interrupt_handler_epilogue:
 	addi	0x0050,sp,sp
 	reti
 
-
 __zero_exception:
 	movhi	hi(_zeroDivisionVector), r0, r1
 	movea	lo(_zeroDivisionVector), r1, r1
