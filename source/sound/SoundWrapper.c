@@ -76,6 +76,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
 
+	this->mainChannel = NULL;
 	this->channels = channels;
 
 	SoundWrapper::setupChannels(this, waves);
@@ -524,6 +525,7 @@ void SoundWrapper::setupChannels(int8* waves)
 	}
 
 	VirtualNode node = this->channels->head;
+	this->mainChannel = (Channel*)node->data;
 
 	uint16 i = 0;
 
@@ -924,30 +926,21 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	uint32 cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
 	// The following assumes that the channels list is valid and non empty
-	VirtualNode node = this->channels->head;
-	Channel* firstChannel = (Channel*)node->data;
-
-	if(firstChannel->cursor == cursor)
+	if(this->mainChannel->cursor == cursor)
 	{
 		return;
 	}
 
-	firstChannel->cursor = cursor;
+	this->mainChannel->cursor = cursor;
 
-	while(node)
-	{
-		Channel* channel = (Channel*)node->data;
+	uint8 volume = this->mainChannel->soundTrack.dataPCM[cursor];
 
-		uint8 volume = channel->soundTrack.dataPCM[cursor];
+	_soundRegistries[this->mainChannel->number].SxLRV = volume;		
 
-		_soundRegistries[channel->number].SxLRV = volume;		
-
-		node = node->next;
-	}
 
 	// PCM playback must be totally in sync on all channels, so, check if completed only
 	// in the first one
-	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, firstChannel))
+	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, this->mainChannel))
 	{
 		SoundWrapper::completedPlayback(this);
 	}

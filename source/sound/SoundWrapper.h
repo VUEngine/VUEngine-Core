@@ -213,6 +213,7 @@ class SoundWrapper : Object
 	const Sound* sound;
 	const Vector3D* position;
 	VirtualList channels;
+	Channel* mainChannel;
 	fix17_15 speed;
 	fix17_15 targetTimerResolutionFactor;
 	uint32 elapsedMicroseconds;
