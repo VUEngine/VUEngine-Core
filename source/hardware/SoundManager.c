@@ -166,9 +166,13 @@ void SoundManager::purgeReleasedSoundWrappers()
 
 		if(soundWrapper->released)
 		{
+			HardwareManager::suspendInterrupts();
+
 			VirtualList::removeNode(this->soundWrappers, node);
-			VirtualList::removeNode(this->soundWrappersMIDI, node);
-			VirtualList::removeNode(this->soundWrappersPCM, node);
+			VirtualList::removeElement(this->soundWrappersMIDI, soundWrapper);
+			VirtualList::removeElement(this->soundWrappersPCM, soundWrapper);
+
+			HardwareManager::resumeInterrupts();
 
 			delete soundWrapper;
 
@@ -299,6 +303,8 @@ void SoundManager::flushQueuedSounds()
 
 void SoundManager::tryToPlayQueuedSounds()
 {
+	SoundManager::purgeReleasedSoundWrappers(this);
+	
 	for(VirtualNode node = this->queuedSounds->head; node;)
 	{
 		QueuedSound* queuedSound = (QueuedSound*)node->data;
