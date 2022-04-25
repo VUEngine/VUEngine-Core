@@ -511,6 +511,8 @@ static void TimerManager::interruptHandler()
 
 		_timerManager->milliseconds += elapsedMilliseconds;
 
+		_timerManager->totalMilliseconds += elapsedMilliseconds;
+
 #ifdef __SOUND_TEST
 		if(Game::isInSoundTest(Game::getInstance()))
 		{
@@ -563,7 +565,6 @@ uint32 TimerManager::resetMilliseconds()
 
 	this->milliseconds = 0;
 	this->microseconds = 0;
-	this->totalMilliseconds += milliseconds;
 
 	return milliseconds;
 }
@@ -620,9 +621,9 @@ void TimerManager::wait(uint32 milliSeconds)
 {
 	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid
-	volatile uint32 currentMilliseconds = this->milliseconds;
-	uint32 waitStartTime = this->milliseconds;
-	volatile uint32 *milliseconds = (uint32*)&this->milliseconds;
+	volatile uint32 currentMilliseconds = this->totalMilliseconds;
+	uint32 waitStartTime = this->totalMilliseconds;
+	volatile uint32 *milliseconds = (uint32*)&this->totalMilliseconds;
 
 	while ((*milliseconds - waitStartTime) < milliSeconds)
 	{
