@@ -61,7 +61,11 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
 
 	this->mBgmapSpriteSpec = mBgmapSpriteSpec;
 
-	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
+	if(!isDeleted(this->texture))
+	{
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+	}
+
 	this->textures = NULL;
 	MBgmapSprite::loadTextures(this);
 	MBgmapSprite::calculateSize(this);
