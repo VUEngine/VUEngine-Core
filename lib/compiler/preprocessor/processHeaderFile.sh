@@ -427,7 +427,7 @@ then
 
 		if (set -f ; IFS=$'\n'; set -- x${baseBaseClassNameLine}x ; [ $# = 1 ]) ; 
 		then
-			baseBaseClassName=`cut -d ":" -f 2 << "$baseBaseClassNameLine"`
+			baseBaseClassName=`echo $baseBaseClassNameLine | cut -d ":" -f 2`
 			baseClassesNames="$baseBaseClassName $baseClassesNames"
 			baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
 		else
