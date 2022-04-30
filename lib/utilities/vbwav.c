@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	
 	fptr = fopen(argv[1], "rb");
 
-	int levelAmplitude = 30;
+	int levelAmplitude = 45;
 
 	if(argv[2])
 	{
@@ -190,9 +190,15 @@ int main(int argc, char *argv[])
 */
 	for(i=0;i<length;i++) {
 
+		wave[i] = (float)(wave[i] >> 2) * scale;
+	}
+/*
+	for(i=0;i<length;i++) {
+
 		wave[i] >>= 4; 
 		wave[i] = (wave[i] << 4) | wave[i];
 	}
+*/
 //		wave[i] = (float)wave[i] * scale + 0.5f;
 	/*
 

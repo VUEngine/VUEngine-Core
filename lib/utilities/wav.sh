@@ -1,10 +1,27 @@
 #!/bin/bash
 files=`find . -name "*.wav"`
 VUENGINE_HOME="/Users/jorgeche/Documents/work/workspaces/ves/vuengine/core/lib/utilities"
-amplitude=15
+amplitude=$1
 output=".h"
 
+if [ -z "$1" ]; then
+	amplitude=15
+fi
+
+levels=$(( amplitude / 15 ))
+
 mkdir -p Spec/
+
+channels=""
+
+echo $levels
+
+for (( i = 1; i <= $levels; i++ )) do
+
+	channels="\&PCMSoundChannel, $channels"
+done
+
+echo channels $channels
 
 for file in $files; do
 
@@ -20,13 +37,12 @@ for file in $files; do
 	sed -i -e 's@sample_@'$finalDestination'@g' Binary/$finalDestination.c
 	sed -i -e "s@static@@g" Binary/$finalDestination.c
 	length=`grep _LEN Binary/$finalDestination.c | sed -E "s@.*_LEN@@g"`
-#	echo $length
-	ls $VUENGINE_HOME/PCMSoundSpec.c
+	echo $length
 	specFile=$name"Spec.c"
-#	echo $specFile
 	cp $VUENGINE_HOME/PCMSoundSpec.c Spec/$specFile
+	sed -i -e 's@&PCMSoundChannel,@'"$channels"'@g' Spec/$specFile
 	sed -i -e 's@PCMSound@'$name'Sound@g' Spec/$specFile
-	sed -i -e 's@#define '"$name"'Length.*@#define '"$name"'Length '"$length"'@g' Spec/$specFile
+	sed -i -e 's@#define .*TrackLength.*@#define '"$name"'SoundTrackLength '"$length"'@g' Spec/$specFile
 	sed -i -e 's@PCM Sound Name@'$name'@g' Spec/$specFile
 	rm Binary/*-e
 	rm Spec/*-e

@@ -459,7 +459,7 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 #ifdef __SHOW_TIMER_MANAGER_STATUS
 void TimerManager::nextSecondStarted()
 {
-	TimerManager::printStatus(this, 1, 10);
+	TimerManager::printStatus(this, 1, 0);
 
 	this->interruptsPerSecond = 0;
 }
@@ -467,9 +467,7 @@ void TimerManager::nextSecondStarted()
 
 void TimerManager::printStatus(int32 x, int32 y)
 {
-	PRINT_INT(this->interruptsPerSecond, x + 22, y);
-	PRINT_INT(this->microsecondsPerInterrupt, x + 22, ++y);
-/*	PRINT_TEXT("TIMER MANAGER", x, y++);
+	PRINT_TEXT("TIMER MANAGER", x, y++);
 
 	PRINT_TEXT("Interrupts/second:          ", x, ++y);
 	PRINT_INT(this->interruptsPerSecond, x + 22, y);
@@ -479,7 +477,6 @@ void TimerManager::printStatus(int32 x, int32 y)
 	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 22, y);
 	PRINT_TEXT("Real us/interrupt:          ", x, ++y);
 	PRINT_INT(this->microsecondsPerInterrupt, x + 22, y);
-	*/
 }
 
 /**

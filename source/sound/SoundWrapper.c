@@ -935,8 +935,25 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 	uint8 volume = this->mainChannel->soundTrack.dataPCM[cursor];
 
-	_soundRegistries[this->mainChannel->number].SxLRV = volume;		
+	for(VirtualNode node = this->channels->head; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
 
+		if(__MAXIMUM_VOLUME < volume)
+		{
+			_soundRegistries[channel->number].SxLRV = 0xFF;
+			volume -= __MAXIMUM_VOLUME;
+		}
+		else if(0 < volume)
+		{
+			_soundRegistries[channel->number].SxLRV = (volume << 4) | volume;
+			volume = 0;
+		}
+		else
+		{
+			_soundRegistries[channel->number].SxLRV = 0;	
+		}
+	}
 
 	// PCM playback must be totally in sync on all channels, so, check if completed only
 	// in the first one
