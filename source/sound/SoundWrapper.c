@@ -923,23 +923,20 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
 	this->elapsedMicroseconds += elapsedMicroseconds;
 
-	uint32 cursor = this->elapsedMicroseconds / targetPCMUpdates;
+	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-	// The following assumes that the channels list is valid and non empty
-	if(this->mainChannel->cursor == cursor)
+	uint8 volume = this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor];
+
+	if(!this->unmute)
 	{
-		return;
+		volume = 0;
 	}
-
-	this->mainChannel->cursor = cursor;
-
-	uint8 volume = this->mainChannel->soundTrack.dataPCM[cursor];
 
 	for(VirtualNode node = this->channels->head; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		if(__MAXIMUM_VOLUME < volume)
+		if(__MAXIMUM_VOLUME <= volume)
 		{
 			_soundRegistries[channel->number].SxLRV = 0xFF;
 			volume -= __MAXIMUM_VOLUME;
