@@ -17,6 +17,8 @@
 #include <SpatialObject.h>
 #include <Game.h>
 #include <Camera.h>
+#include <DirectDraw.h>
+#include <debugConfig.h>
 #include <debugUtilities.h>
 
 
@@ -165,6 +167,10 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
 	{
 		Wireframe::draw(node->data, true);
 	}
+
+#ifdef __PROFILE_DIRECT_DRAWING
+	DirectDraw::reset(DirectDraw::getInstance();)
+#endif
 }
 
 /**

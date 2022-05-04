@@ -26,6 +26,8 @@
 /// @ingroup graphics-3d
 singleton class DirectDraw : Object
 {
+	uint16 totalDrawPixels;
+
 	/// @publicsection
 	static DirectDraw getInstance();
 
