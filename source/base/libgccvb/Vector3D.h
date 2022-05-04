@@ -54,6 +54,10 @@ static class Vector3D : Object
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
 	static inline bool isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB);
 	static inline bool isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd);
+	static inline Vector3D rotateXAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotateYAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
 	static inline void print(Vector3D vector, int32 x, int32 y);
 }
 
@@ -417,6 +421,59 @@ static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D lineSt
 		&&
 		Vector3D::isValueInRange(vector.z, lineStart.z, lineEnd.z)
 	);
+}
+
+static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			vector.x,
+			__FIX10_6_MULT(vector.z, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			__FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees)))
+		};
+}
+
+static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			vector.y,
+			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
+		};
+}
+
+
+static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			vector.z,
+		};
+}
+
+static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
+{
+	Vector3D result = vector;
+
+	if(rotation.x)
+	{
+		result = Vector3D::rotateXAxis(result, rotation.x);
+	}
+
+	if(rotation.y)
+	{
+		result = Vector3D::rotateYAxis(result, rotation.y);
+	}
+
+	if(rotation.z)
+	{
+		result = Vector3D::rotateZAxis(result, rotation.z);
+	}
+
+	return result;
 }
 
 static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)

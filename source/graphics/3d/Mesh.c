@@ -47,7 +47,7 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	this->position = NULL;
 	this->rotation = NULL;
 
-	Mesh::setup(this, this->meshSpec);
+	Mesh::addSegments(this);
 }
 
 /**
@@ -87,7 +87,7 @@ void Mesh::deleteSegments()
 	this->segments = NULL;
 }
 
-void Mesh::setup(MeshSpec* meshSpec)
+void Mesh::addSegments()
 {
 	if(NULL != this->segments->head)
 	{
@@ -101,8 +101,8 @@ void Mesh::setup(MeshSpec* meshSpec)
 
 	do
 	{
-		Vector3D startVector = meshSpec->segments[i][0];
-		Vector3D endVector = meshSpec->segments[i][1];
+		Vector3D startVector = this->meshSpec->segments[i][0];
+		Vector3D endVector = this->meshSpec->segments[i][1];
 
 		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
 
@@ -176,54 +176,11 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 /**
  * Class draw
  */
-static inline Vector3D Vector3D_rotateXAxis(Vector3D vector, int16 degrees)
-{
-	return (Vector3D) 
-		{
-			vector.x,
-			__FIX10_6_MULT(vector.z, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			__FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees)))
-		};
-/*
-	o->x = v->x;
-	o->y = (F_MUL(v->z, -sine[degrees])) + (F_MUL(cosine[degrees], v->y));
-	o->z = (F_MUL(v->z, cosine[degrees])) + (F_MUL(sine[degrees], v->y));
-*/
-}
-
-static inline Vector3D Vector3D_rotateYAxis(Vector3D vector, int16 degrees)
-{
-	return (Vector3D) 
-		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
-			vector.y,
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
-		};
-/*
-	o->y = v->y;
-	o->x = (F_MUL(v->x, cosine[degrees])) + (F_MUL(sine[degrees], v->z));
-	o->z = (F_MUL(v->x, -sine[degrees])) + (F_MUL(cosine[degrees], v->z));
-*/
-}
-
-
-static inline Vector3D Vector3D_rotateZAxis(Vector3D vector, int16 degrees)
-{
-	return (Vector3D) 
-		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			vector.z,
-		};
-/*
-	o->x = (F_MUL(v->x, cosine[degrees])) + (F_MUL(sine[degrees], v->y));
-	o->y = (F_MUL(v->x, -sine[degrees])) + (F_MUL(cosine[degrees], v->y));
-	o->z = v->z;
-*/
-}
-
 void Mesh::render()
 {
+	Vector3D position = *this->position;
+	Rotation rotation = *this->rotation;
+	
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
@@ -231,24 +188,7 @@ void Mesh::render()
 		// project to 2d coordinates
 		if(!meshSegment->startPoint->projected)
 		{
-			Vector3D realStartPoint = meshSegment->startPoint->vector;
-			
-			if(0 != this->rotation->x)
-			{
-				realStartPoint = Vector3D_rotateXAxis(realStartPoint, this->rotation->x);
-			}
-
-			if(0 != this->rotation->y)
-			{
-				realStartPoint = Vector3D_rotateYAxis(realStartPoint, this->rotation->y);
-			}
-
-			if(0 != this->rotation->z)
-			{
-				realStartPoint = Vector3D_rotateZAxis(realStartPoint, this->rotation->z);
-			}
-
-			realStartPoint = Vector3D::sum(*this->position, realStartPoint);
+			Vector3D realStartPoint = Vector3D::sum(position, Vector3D::rotate(meshSegment->startPoint->vector, rotation));
 
 			meshSegment->startPoint->pixelVector = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(realStartPoint), 
 			Optics::calculateParallax(realStartPoint.x, realStartPoint.z));
@@ -257,24 +197,7 @@ void Mesh::render()
 
 		if(!meshSegment->endPoint->projected)
 		{
-			Vector3D realEndPoint = meshSegment->endPoint->vector;
-
-			if(0 != this->rotation->x)
-			{
-				realEndPoint = Vector3D_rotateXAxis(realEndPoint, this->rotation->x);
-			}
-
-			if(0 != this->rotation->y)
-			{
-				realEndPoint = Vector3D_rotateYAxis(realEndPoint, this->rotation->y);
-			}
-
-			if(0 != this->rotation->z)
-			{
-				realEndPoint = Vector3D_rotateZAxis(realEndPoint, this->rotation->z);
-			}
-
-			realEndPoint = Vector3D::sum(*this->position, realEndPoint);
+			Vector3D realEndPoint = Vector3D::sum(position, Vector3D::rotate(meshSegment->endPoint->vector, rotation));
 
 			meshSegment->endPoint->pixelVector = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(realEndPoint), 
 			Optics::calculateParallax(realEndPoint.x, realEndPoint.z));
