@@ -1157,7 +1157,7 @@ void Entity::addMeshes(const MeshSpec* meshSpecs, bool destroyPreviousMeshes)
 	// go through n sprites in entity's spec
 	for(; meshSpecs[i].allocator; i++)
 	{
-		Mesh mesh = ((Mesh (*)(MeshSpec*)) meshSpecs[i].allocator)(&meshSpecs[i]);
+		Mesh mesh = ((Mesh (*)(MeshSpec*)) meshSpecs[i].allocator)((MeshSpec*)&meshSpecs[i]);
 		Mesh::setup(mesh, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
 		VirtualList::pushBack(this->meshes, mesh);
 		Mesh::show(mesh);
