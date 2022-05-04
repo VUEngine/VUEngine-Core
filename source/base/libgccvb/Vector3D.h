@@ -49,6 +49,7 @@ static class Vector3D : Object
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
+	static inline bool areEqual(Vector3D a, Vector3D b);
 	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
 	static inline bool isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB);
@@ -219,7 +220,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	}
 	else
 	{
-		x += (__ABS(displacementX) >> _optical->maximumYViewDistancePower);
+		x += (__ABS(displacementX) >> _optical->maximumXViewDistancePower);
 	}
 
 	fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
@@ -317,6 +318,11 @@ static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
 	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));
+}
+
+static inline bool Vector3D::areEqual(Vector3D a, Vector3D b)
+{
+	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
 static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)

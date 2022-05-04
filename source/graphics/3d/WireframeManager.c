@@ -86,10 +86,12 @@ void WireframeManager::register(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		VirtualList::pushBack(this->wireframes, wireframe);
+		if(0 == VirtualList::getSize(this->wireframes))
+		{
+			Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+		}
 
-		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-		Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 }
 
@@ -118,6 +120,21 @@ void WireframeManager::reset()
 	VirtualList::clear(this->wireframes);
 
 	Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+}
+
+/**
+ * Render the wireframes
+ */
+void WireframeManager::render()
+{
+	// comparing against the other shapes
+	VirtualNode node = this->wireframes->head;
+
+	// check the shapes
+	for(; node; node = node->next)
+	{
+		Wireframe::render(Wireframe::safeCast(node->data));
+	}
 }
 
 /**

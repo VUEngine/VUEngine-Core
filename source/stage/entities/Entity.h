@@ -20,6 +20,7 @@
 #include <BgmapSprite.h>
 #include <ObjectSprite.h>
 #include <Telegram.h>
+#include <Mesh.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -39,6 +40,8 @@ class Entity : Container
 	VirtualList sprites;
 	// Shapes for collision detection
 	VirtualList shapes;
+	// meshes
+	VirtualList meshes;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement

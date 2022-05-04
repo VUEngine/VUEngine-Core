@@ -31,6 +31,7 @@ singleton class DirectDraw : Object
 
 	void reset();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
+	void drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
 	void drawPoint(PixelVector point, int32 color);
 }
 

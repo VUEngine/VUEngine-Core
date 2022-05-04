@@ -91,6 +91,39 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
 	*pointer |= (color << ((y & 3) << 1));
 }
 
+
+/**
+ * Draws a non black pixel on the screen.
+ * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
+ * instead.
+ *
+ * @param buffer	Buffer base address
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
+ * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
+ */
+static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color)
+{
+	if(__SCREEN_HEIGHT <= y)
+	{
+		return;
+	}
+
+	if(__SCREEN_WIDTH <= x - parallax || __SCREEN_WIDTH <= x + parallax)
+	{
+		return;
+	}
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	leftBuffer  += (((x - parallax) << 6) + (y >> 2));
+	rightBuffer += (((x + parallax) << 6) + (y >> 2));
+
+	// draw the pixel
+	*leftBuffer  |= (color << ((y & 3) << 1));
+	*rightBuffer |= (color << ((y & 3) << 1));
+}
+
 /**
  * Draws a black pixel on the screen.
  * We have a separate function for black pixes since nulling bits requires a slightly different way than
@@ -288,5 +321,72 @@ void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 colo
 		fromPointX += stepX;
 		fromPointY += stepY;
 		auxParallax += parallaxStep;
+	}
+}
+
+void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color)
+{
+	if(color == __COLOR_BLACK)
+	{
+		return;
+	}
+
+	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+	fix10_6 fromPointX = __I_TO_FIX10_6(fromPoint.x);
+	fix10_6 fromPointY = __I_TO_FIX10_6(fromPoint.y);
+
+	fix10_6 toPointX = __I_TO_FIX10_6(toPoint.x);
+	fix10_6 toPointY = __I_TO_FIX10_6(toPoint.y);
+
+	fix10_6 dx = toPointX - fromPointX;
+	fix10_6 dy = toPointY - fromPointY;
+
+	if(0 == dx && 0 == dy)
+	{
+		return;
+	}
+
+	fix10_6 dp = __I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax);
+
+	fix10_6 dxABS = __ABS(dx);
+	fix10_6 dyABS = __ABS(dy);
+
+	fix10_6 stepX = toPointX < fromPointX ? - __I_TO_FIX10_6(1) : __I_TO_FIX10_6(1);
+	fix10_6 stepY = toPointY < fromPointY ? - __I_TO_FIX10_6(1) : __I_TO_FIX10_6(1);
+	fix10_6 parallaxStep = 0;
+
+	fix10_6* fromCoordinate = NULL;
+	fix10_6* toCoordinate = NULL;
+
+	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
+	{
+		fromCoordinate = &fromPointX;
+		toCoordinate = &toPointX;
+
+		stepY = __FIX10_6_DIV(dy, dxABS);
+		parallaxStep = __FIX10_6_DIV(dp, dxABS);		
+	}
+	else if(dxABS < dyABS || 0 == dx)
+	{
+		fromCoordinate = &fromPointY;
+		toCoordinate = &toPointY;
+
+		// make sure that no software based divisions is introduced
+		stepX = __FIX10_6_DIV(dx, dyABS);
+		parallaxStep = __FIX10_6_DIV(dp, dyABS);
+	}
+
+	fix10_6 parallax = __I_TO_FIX10_6(fromPoint.parallax / 2);
+	parallaxStep = __FIX10_6_DIV(parallaxStep, __I_TO_FIX10_6(2));
+
+	while(*toCoordinate != *fromCoordinate)
+	{
+		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color);
+
+		fromPointX += stepX;
+		fromPointY += stepY;
+		parallax += parallaxStep;
 	}
 }

@@ -67,3 +67,18 @@ void Wireframe::hide()
 {
 	WireframeManager::remove(WireframeManager::getInstance(), this);
 }
+
+/**
+ * Rendered
+ */
+void Wireframe::render()
+{
+}
+
+/**
+ * Position
+ */
+void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)))
+{
+}
+

@@ -324,6 +324,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				SpriteManager::render(_spriteManager);
+				WireframeManager::render(_wireframeManager);
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
