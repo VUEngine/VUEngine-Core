@@ -28,6 +28,7 @@ const Optical* _optical = NULL;
 const Vector3D* _cameraPosition = NULL;
 const Vector3D* _cameraPreviousPosition = NULL;
 const Vector3D* _cameraDisplacement = NULL;
+const Rotation* _cameraRotation = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
 
@@ -75,6 +76,8 @@ void Camera::constructor()
 	this->positionBackup = Vector3D::zero();
 	this->lastDisplacement = Vector3D::zero();
 
+	this->rotation = (Rotation){0, 0, 0};
+
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
 	this->cameraFrustum.x1 = __SCREEN_WIDTH;
@@ -99,6 +102,7 @@ void Camera::constructor()
 	_cameraPreviousPosition = &this->previousPosition;
 	_cameraDisplacement = &this->lastDisplacement;
 	_cameraFrustum = &this->cameraFrustum;
+	_cameraRotation = &this->rotation;
 }
 
 /**
@@ -309,6 +313,37 @@ void Camera::setPosition(Vector3D position)
 
 	this->previousPosition = this->position;
 	this->position = position;
+}
+
+/**
+ * Set camera's position
+ *
+ * @param position	Camera position
+ */
+void Camera::rotate(const Rotation* rotation)
+{
+	this->rotation.x += rotation->x;
+	this->rotation.y += rotation->y;
+	this->rotation.z += rotation->z;
+
+	this->rotation.x = __MODULO(this->rotation.x, 512);
+	this->rotation.y = __MODULO(this->rotation.y, 512);
+	this->rotation.z = __MODULO(this->rotation.z, 512);
+
+	if(0 > this->rotation.x)
+	{
+		this->rotation.x += 512;
+	}
+
+	if(0 > this->rotation.y)
+	{
+		this->rotation.y += 512;
+	}
+
+	if(0 > this->rotation.z)
+	{
+		this->rotation.z += 512;
+	}
 }
 
 /**

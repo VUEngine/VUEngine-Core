@@ -62,6 +62,7 @@ extern const Vector3D* _cameraPosition;
 extern const Vector3D* _cameraPreviousPosition;
 extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
+extern const Rotation* _cameraRotation;
 extern const Optical* _optical;
 
 
@@ -80,6 +81,8 @@ singleton class Camera : Object
 	Vector3D previousPosition;
 	// Backup of Camera position
 	Vector3D positionBackup;
+	// Rotation
+	Rotation rotation;
 	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
 	// Camera effect manager
@@ -121,6 +124,7 @@ singleton class Camera : Object
 	void setFocusGameEntity(Entity focusEntity);
 	void setOptical(Optical optical);
 	void setPosition(Vector3D position);
+	void rotate(const Rotation* rotation);
 	void setStageSize(Size size);
 	void startEffect(int32 effect, ...);
 	void stopEffect(int32 effect);

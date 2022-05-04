@@ -32,6 +32,7 @@ static class Vector3D : Object
 	static inline Vector3D unit(uint16 axis);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
+	static inline Vector3D sub(Vector3D a, Vector3D b);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fix10_6_ext dotProduct(Vector3D vectorA, Vector3D vectorB);
@@ -88,6 +89,11 @@ static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x + b.x, a.y + b.y, a.z + b.z};
+}
+
+static inline Vector3D Vector3D::sub(Vector3D a, Vector3D b)
+{
+	return (Vector3D){a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
 static inline Vector3D Vector3D::perpedicular(Vector3D a, bool left)
@@ -216,27 +222,8 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
-	fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
-
-	if(0 <= displacementX)
-	{
-		x -= (displacementX >> _optical->maximumXViewDistancePower);	
-	}
-	else
-	{
-		x += (__ABS(displacementX) >> _optical->maximumXViewDistancePower);
-	}
-
-	fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
-
-	if(0 <= displacementY)
-	{
-		y -= (displacementY >> _optical->maximumYViewDistancePower);	
-	}
-	else
-	{
-		y += (__ABS(displacementY) >> _optical->maximumYViewDistancePower);
-	}
+	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
 	
 	PixelVector projection =
 	{

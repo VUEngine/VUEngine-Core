@@ -104,12 +104,12 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  */
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color)
 {
-	if(__SCREEN_HEIGHT <= y)
+	if(__SCREEN_HEIGHT <= (unsigned)y)
 	{
 		return;
 	}
 
-	if(__SCREEN_WIDTH <= x - parallax || __SCREEN_WIDTH <= x + parallax)
+	if(__SCREEN_WIDTH <= (unsigned)(x - parallax) || __SCREEN_WIDTH <= (unsigned)(x + parallax))
 	{
 		return;
 	}
@@ -324,11 +324,40 @@ void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 colo
 	}
 }
 
-void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color)
+static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
+{
+	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vector.x)
+	{
+		vector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vector.x)
+	{
+		vector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+
+	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vector.y)
+	{
+		vector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vector.y)
+	{
+		vector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+
+	return vector;
+}
+
+void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit)
 {
 	if(color == __COLOR_BLACK)
 	{
 		return;
+	}
+
+	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
+	{
+		fromPoint = DirectDraw::clampPixelVector(fromPoint);
+		toPoint = DirectDraw::clampPixelVector(toPoint);
 	}
 
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;

@@ -19,6 +19,8 @@
 #include <WireframeManager.h>
 #include <PixelVector.h>
 #include <Math.h>
+#include <Camera.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S DECLARATIONS
@@ -173,6 +175,67 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);	
 }
 
+/*
+static inline PixelVector Mesh::projectToPixelVector(Vector3D vector3D, int16 parallax)
+{
+	extern const Optical* _optical;
+
+	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
+	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
+	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
+
+	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
+	
+	PixelVector projection =
+	{
+		__METERS_TO_PIXELS(x),
+		__METERS_TO_PIXELS(y),
+		__METERS_TO_PIXELS(z),
+		parallax
+	};
+
+	return projection;
+}
+*/
+
+static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotation rotation)
+{
+	extern Vector3D _cameraRealPosition;
+	extern Rotation _cameraRealRotation;
+
+	vector = Vector3D::sum(position, Vector3D::rotate(vector, rotation));
+
+	vector = Vector3D::sub(vector, _cameraRealPosition);
+	vector = Vector3D::rotate(vector, _cameraRealRotation);
+	vector = Vector3D::sum(vector, _cameraRealPosition);
+
+	vector = Vector3D::getRelativeToCamera(vector);
+
+	PixelVector pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
+
+	// Pre clamp to prevent weird glitches due to overflows and speed up drawing
+	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
+	{
+		pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.x)
+	{
+		pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+
+	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.y)
+	{
+		pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.y)
+	{
+		pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
+	}
+
+	return pixelVector;
+}
+
 /**
  * Class draw
  */
@@ -180,7 +243,7 @@ void Mesh::render()
 {
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
-	
+
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
@@ -188,19 +251,13 @@ void Mesh::render()
 		// project to 2d coordinates
 		if(!meshSegment->startPoint->projected)
 		{
-			Vector3D realStartPoint = Vector3D::sum(position, Vector3D::rotate(meshSegment->startPoint->vector, rotation));
-
-			meshSegment->startPoint->pixelVector = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(realStartPoint), 
-			Optics::calculateParallax(realStartPoint.x, realStartPoint.z));
+			meshSegment->startPoint->pixelVector = Mesh::projectVector(meshSegment->startPoint->vector, position, rotation);
 			meshSegment->startPoint->projected = true;
 		}
 
 		if(!meshSegment->endPoint->projected)
 		{
-			Vector3D realEndPoint = Vector3D::sum(position, Vector3D::rotate(meshSegment->endPoint->vector, rotation));
-
-			meshSegment->endPoint->pixelVector = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(realEndPoint), 
-			Optics::calculateParallax(realEndPoint.x, realEndPoint.z));
+			meshSegment->endPoint->pixelVector = Mesh::projectVector(meshSegment->endPoint->vector, position, rotation);
 			meshSegment->endPoint->projected = true;
 		}
 	}
@@ -215,7 +272,7 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		meshSegment->endPoint->projected = false;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color);
+		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
 	}
 }
 

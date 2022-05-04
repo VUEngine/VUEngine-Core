@@ -16,6 +16,7 @@
 #include <VirtualList.h>
 #include <SpatialObject.h>
 #include <Game.h>
+#include <Camera.h>
 #include <debugUtilities.h>
 
 
@@ -25,6 +26,9 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+
+Vector3D _cameraRealPosition = {0, 0, 0};
+Rotation _cameraRealRotation = {0, 0, 0};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -127,6 +131,15 @@ void WireframeManager::reset()
  */
 void WireframeManager::render()
 {
+	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0});
+
+	_cameraRealRotation = (Rotation)
+	{
+		512 -_cameraRotation->x,
+		512 - _cameraRotation->y,
+		512 - _cameraRotation->z
+	};
+
 	// comparing against the other shapes
 	VirtualNode node = this->wireframes->head;
 
