@@ -175,30 +175,6 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);	
 }
 
-/*
-static inline PixelVector Mesh::projectToPixelVector(Vector3D vector3D, int16 parallax)
-{
-	extern const Optical* _optical;
-
-	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
-	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
-	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
-
-	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
-	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
-	
-	PixelVector projection =
-	{
-		__METERS_TO_PIXELS(x),
-		__METERS_TO_PIXELS(y),
-		__METERS_TO_PIXELS(z),
-		parallax
-	};
-
-	return projection;
-}
-*/
-
 static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotation rotation)
 {
 	extern Vector3D _cameraRealPosition;
