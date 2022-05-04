@@ -234,7 +234,7 @@ void Entity::setupMeshes()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
-	if(!this->meshes)
+	if(NULL == this->meshes)
 	{
 		Entity::addMeshes(this, this->entitySpec->meshSpecs, false);
 	}
