@@ -169,7 +169,7 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
 	}
 
 #ifdef __PROFILE_DIRECT_DRAWING
-	DirectDraw::reset(DirectDraw::getInstance();)
+	DirectDraw::reset(DirectDraw::getInstance());
 #endif
 }
 

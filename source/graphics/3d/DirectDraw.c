@@ -26,7 +26,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern uint32* _currentDrawingFrameBufferSet;
-
+#ifdef __PROFILE_DIRECT_DRAWING
+DirectDraw _directDraw = NULL;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -51,6 +53,10 @@ void DirectDraw::constructor()
 	Base::constructor();
 
 	this->totalDrawPixels = 0;
+
+#ifdef __PROFILE_DIRECT_DRAWING
+	_directDraw = this;
+#endif
 }
 
 /**
@@ -131,7 +137,7 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint
 	*rightBuffer |= (color << ((y & 3) << 1));
 
 #ifdef __PROFILE_DIRECT_DRAWING
-	this->totalDrawPixels++;
+	_directDraw->totalDrawPixels++;
 #endif
 }
 
