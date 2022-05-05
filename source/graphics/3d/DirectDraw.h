@@ -30,6 +30,7 @@ singleton class DirectDraw : Object
 
 	/// @publicsection
 	static DirectDraw getInstance();
+	static void writeToFrameBuffers();
 
 	void reset();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);

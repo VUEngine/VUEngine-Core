@@ -255,27 +255,8 @@ static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector
 
 	if(0 != z)
 	{
-		fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
-
-		if(0 <= displacementX)
-		{
-			projection.x -= (displacementX >> _optical->maximumXViewDistancePower);	
-		}
-		else
-		{
-			projection.x += (__ABS(displacementX) >> _optical->maximumXViewDistancePower);
-		}
-
-		fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
-
-		if(0 <= displacementY)
-		{
-			projection.y -= (displacementY >> _optical->maximumYViewDistancePower);	
-		}
-		else
-		{
-			projection.y += ((__ABS(displacementY) >> _optical->maximumYViewDistancePower));
-		}
+		projection.x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+		projection.y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
 	}
 
 	return projection;

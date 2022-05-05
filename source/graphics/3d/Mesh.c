@@ -20,6 +20,7 @@
 #include <PixelVector.h>
 #include <Math.h>
 #include <Camera.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -172,7 +173,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 		newMeshSegment->endPoint->projected = false;
 	}
 
-	VirtualList::pushBack(this->segments, newMeshSegment);	
+	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
 static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotation rotation)
@@ -220,6 +221,15 @@ void Mesh::render()
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
+#ifdef __USE_DRAM_FRAMEBUFFER
+	for(VirtualNode node = this->segments->head; node; node = node->next)
+	{
+		MeshSegment* meshSegment = (MeshSegment*)node->data;
+		meshSegment->startPoint->projected = false;
+		meshSegment->endPoint->projected = false;
+	}
+#endif
+
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
@@ -236,6 +246,10 @@ void Mesh::render()
 			meshSegment->endPoint->pixelVector = Mesh::projectVector(meshSegment->endPoint->vector, position, rotation);
 			meshSegment->endPoint->projected = true;
 		}
+
+#ifdef __USE_DRAM_FRAMEBUFFER
+		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
+#endif
 	}
 }
 

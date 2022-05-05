@@ -92,11 +92,6 @@ void WireframeManager::register(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		if(0 == VirtualList::getSize(this->wireframes))
-		{
-			Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-		}
-
 		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 }
@@ -111,11 +106,6 @@ void WireframeManager::remove(Wireframe wireframe)
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
 	VirtualList::removeElement(this->wireframes, wireframe);
-
-	if(0 == VirtualList::getSize(this->wireframes))
-	{
-		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-	}
 }
 
 /**
@@ -124,8 +114,6 @@ void WireframeManager::remove(Wireframe wireframe)
 void WireframeManager::reset()
 {
 	VirtualList::clear(this->wireframes);
-
-	Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
 }
 
 /**
@@ -150,12 +138,18 @@ void WireframeManager::render()
 	{
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
+
+#ifdef __USE_DRAM_FRAMEBUFFER
+#ifdef __PROFILE_DIRECT_DRAWING
+	DirectDraw::reset(DirectDraw::getInstance());
+#endif
+#endif
 }
 
 /**
  * Draw the wireframes to the frame buffers
  */
-static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
+static void WireframeManager::drawWireframes()
 {
 	WireframeManager this = WireframeManager::getInstance();
 
@@ -168,8 +162,10 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
 		Wireframe::draw(node->data, true);
 	}
 
+#ifndef __USE_DRAM_FRAMEBUFFER
 #ifdef __PROFILE_DIRECT_DRAWING
 	DirectDraw::reset(DirectDraw::getInstance());
+#endif
 #endif
 }
 

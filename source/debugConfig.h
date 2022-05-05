@@ -16,7 +16,7 @@
 
 
 // define / undefine as you see fit
-//#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE
 //#define __PRINT_FRAME_TIMES
 //#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_STREAMING
@@ -48,7 +48,8 @@
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __SHOW_TIMER_MANAGER_STATUS
 //#define __PROFILE_DIRECT_DRAWING
-
+#define __PROFILE_DIRECT_DRAWING
+//#define __USE_DRAM_FRAMEBUFFER
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object

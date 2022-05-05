@@ -323,14 +323,24 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				this->frameStarted = _vipManager->processingXPEND;
 
+				WireframeManager::render(_wireframeManager);
+
+#ifdef __USE_DRAM_FRAMEBUFFER
+				if(this->drawingEnded)
+				{
+					VIPManager::disableDrawing(this);
+					DirectDraw::writeToFrameBuffers();
+					VIPManager::enableDrawing(this);
+				}
+
 				if(!_vipManager->processingXPEND)
 				{
 					this->drawingEnded = false;
 				}
 
 				SpriteManager::render(_spriteManager);
-				WireframeManager::render(_wireframeManager);
 
+#endif
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
@@ -377,7 +387,25 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				SpriteManager::writeDRAM(_spriteManager);
 
 				// Write to the frame buffers
-				VIPManager::processFrameBuffers(this);
+				VIPManager::applyPostProcessingEffects(this);
+
+#ifdef __USE_DRAM_FRAMEBUFFER
+				if(!_vipManager->processingFRAMESTART)
+				{
+					if(this->forceDrawingSync)
+					{
+						DirectDraw::writeToFrameBuffers();
+					}
+					else
+					{
+						VIPManager::disableDrawing(this);
+						DirectDraw::writeToFrameBuffers();
+						VIPManager::enableDrawing(this);
+					}
+				}
+#else
+				WireframeManager::drawWireframes();
+#endif
 
 				if(this->forceDrawingSync)
 				{
@@ -422,7 +450,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
  *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
-void VIPManager::processFrameBuffers()
+void VIPManager::applyPostProcessingEffects()
 {
 	volatile bool hasFrameStartedDuringXPEND = false;
 
