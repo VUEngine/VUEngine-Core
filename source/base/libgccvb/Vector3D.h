@@ -396,8 +396,8 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 	return (Vector3D) 
 		{
 			vector.x,
-			__FIX10_6_MULT(vector.z, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			__FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees)))
+			__FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
 		};
 }
 
@@ -405,20 +405,19 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
 	return (Vector3D) 
 		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
 			vector.y,
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
 		};
 }
-
 
 static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 {
 	return (Vector3D) 
 		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			vector.z,
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			vector.z
 		};
 }
 

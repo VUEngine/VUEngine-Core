@@ -138,7 +138,6 @@ void WireframeManager::render()
 	{
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
-
 }
 
 /**
