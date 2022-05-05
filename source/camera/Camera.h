@@ -112,7 +112,7 @@ singleton class Camera : Object
 	Optical getOptical();
 	Vector3D getPosition();
 	Size getStageSize();
-	void move(Vector3D translation, int32 cap);
+	void translate(const Vector3D*, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
 	void prepareForUI();
 	void reset();

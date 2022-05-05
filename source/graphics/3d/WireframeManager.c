@@ -146,10 +146,15 @@ void WireframeManager::render()
  */
 static void WireframeManager::drawWireframes()
 {
+	DirectDraw::reset(DirectDraw::getInstance());
+
 	WireframeManager this = WireframeManager::getInstance();
 
 	// comparing against the other shapes
 	VirtualNode node = this->wireframes->head;
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
 
 	// check the shapes
 	for(; node; node = node->next)
@@ -157,9 +162,8 @@ static void WireframeManager::drawWireframes()
 		Wireframe::draw(node->data, true);
 	}
 
-#ifdef __PROFILE_DIRECT_DRAWING
-	DirectDraw::reset(DirectDraw::getInstance());
-#endif
+	CACHE_ENABLE;
+
 }
 
 /**

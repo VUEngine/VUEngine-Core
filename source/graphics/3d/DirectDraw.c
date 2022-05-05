@@ -30,7 +30,7 @@ extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 #endif
 
-
+#define __DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME		4000
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -142,9 +142,7 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint
 	*leftBuffer  |= pixel;
 	*rightBuffer |= pixel;
 
-#ifdef __PROFILE_DIRECT_DRAWING
-	_directDraw->totalDrawPixels++;
-#endif
+	_directDraw->totalDrawPixels += 2;
 }
 #else
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color, uint8 bufferIndex)
@@ -181,9 +179,7 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint
 	// draw the pixel
 	*buffer |= pixel;
 
-#ifdef __PROFILE_DIRECT_DRAWING
 	_directDraw->totalDrawPixels++;
-#endif
 }
 #endif
 
@@ -410,8 +406,13 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex)
+static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex)
 {
+	if(__DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME < _directDraw->totalDrawPixels)
+	{
+		return;
+	}
+
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
 		fromPoint = DirectDraw::clampPixelVector(fromPoint);
@@ -451,14 +452,19 @@ void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32
 		stepY = __FIX10_6_DIV(dy, dxABS);
 		parallaxStep = __FIX10_6_DIV(dp, dxABS) >> 1;		
 
+	CACHE_ENABLE;
+
 		while(toPointX != fromPointX)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color, bufferIndex);
 			fromPointX += stepX;
 			fromPointY += stepY;
 			parallax += parallaxStep;
+#ifdef __DIRECT_DRAW_INTERLACED
 			bufferIndex = !bufferIndex;
+#endif
 		}
+	CACHE_DISABLE;
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
@@ -466,15 +472,21 @@ void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32
 		stepX = __FIX10_6_DIV(dx, dyABS);
 		parallaxStep = __FIX10_6_DIV(dp, dyABS) >> 1;
 
+	CACHE_ENABLE;
+
 		while(toPointY != fromPointY)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color, bufferIndex);
 			fromPointX += stepX;
 			fromPointY += stepY;
 			parallax += parallaxStep;
+#ifdef __DIRECT_DRAW_INTERLACED
 			bufferIndex = !bufferIndex;
+#endif
 		}
+	CACHE_DISABLE;
 	}
+
 }
 
 

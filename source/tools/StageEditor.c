@@ -984,7 +984,7 @@ void StageEditor::printEntityPosition()
  */
 void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
-	Camera::move(Camera::getInstance(), translation, true);
+	Camera::translate(Camera::getInstance(), &translation, true);
 	GameState::transform(this->gameState);
 	GameState::synchronizeGraphics(this->gameState);
 	StageEditor::printCameraPosition(this);

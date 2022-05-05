@@ -252,7 +252,7 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
+		DirectDraw::drawColorLine(meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
 	}
 }
 
