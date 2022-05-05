@@ -30,21 +30,6 @@ extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 #endif
 
-#define __REAL_STATE_SCREEN_HEIGHT										(__SCREEN_HEIGHT - 64)
-
-#ifdef __USE_DRAM_FRAMEBUFFER
-#define __BYTES_PER_FRAMEBUFFER											(__SCREEN_WIDTH * __REAL_STATE_SCREEN_HEIGHT * 2 / 8)
-static uint8 cacheFrameBuffers[2][__BYTES_PER_FRAMEBUFFER] __attribute__((section(".sbss")));
-#endif
-
-#define __BYTES_PER_COLUMN_IN_FRAMEBUFFERS								((256 * 2) / 8)
-#define __WORDS_PER_COLUMN_IN_FRAMEBUFFERS								(__BYTES_PER_COLUMN_IN_FRAMEBUFFERS / sizeof(uint32))
-
-#define __BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS						(((__SCREEN_HEIGHT) * 2) / 8)
-#define __WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS						(__BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS / sizeof(uint32))
-
-#define __REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS					((__REAL_STATE_SCREEN_HEIGHT * 2) / 8)
-#define __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS					(__REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS / sizeof(uint32))
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -131,7 +116,8 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-static void DirectDraw::drawColorPixel1(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color)
+#ifndef __DIRECT_DRAW_INTERLACED
+static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color, uint8 bufferIndex __attribute__((unused)))
 {
 	if(__SCREEN_HEIGHT <= (unsigned)y)
 	{
@@ -160,8 +146,8 @@ static void DirectDraw::drawColorPixel1(BYTE* leftBuffer, BYTE* rightBuffer, uin
 	_directDraw->totalDrawPixels++;
 #endif
 }
-
-static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color)
+#else
+static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint16 x, uint16 y, uint16 parallax, int32 color, uint8 bufferIndex)
 {
 	if(__SCREEN_HEIGHT <= (unsigned)y)
 	{
@@ -175,34 +161,31 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, uint
 
 	uint16 yHelper = y >> 2;
 
-	static uint8 bufferIndex = 0;
 	BYTE* buffer = 0;
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	if(0 == bufferIndex)
 	{
-		bufferIndex = 1;
 		buffer = leftBuffer + (((x - parallax) << 6) + yHelper);
 	}
 	else
 	{
-		bufferIndex = 0;
 		buffer = rightBuffer + (((x + parallax) << 6) + yHelper);
 	}
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-
 	uint8 pixel = color << ((y & 3) << 1);
 
 	// draw the pixel
-	*buffer  |= pixel;
+	*buffer |= pixel;
 
 #ifdef __PROFILE_DIRECT_DRAWING
 	_directDraw->totalDrawPixels++;
 #endif
 }
+#endif
 
 /**
  * Draws a black pixel on the screen.
@@ -427,7 +410,7 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit)
+void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex)
 {
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
@@ -435,10 +418,8 @@ void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32
 		toPoint = DirectDraw::clampPixelVector(toPoint);
 	}
 
-#ifndef __USE_DRAM_FRAMEBUFFER
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
-#endif
 
 	fix10_6 fromPointX = __I_TO_FIX10_6(fromPoint.x);
 	fix10_6 fromPointY = __I_TO_FIX10_6(fromPoint.y);
@@ -472,14 +453,11 @@ void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32
 
 		while(toPointX != fromPointX)
 		{
-#ifndef __USE_DRAM_FRAMEBUFFER
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color);
-#else
-			DirectDraw::drawColorPixelToDRAMBuffer((uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color);
-#endif
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color, bufferIndex);
 			fromPointX += stepX;
 			fromPointY += stepY;
 			parallax += parallaxStep;
+			bufferIndex = !bufferIndex;
 		}
 	}
 	else if(dxABS < dyABS || 0 == dx)
@@ -490,164 +468,13 @@ void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32
 
 		while(toPointY != fromPointY)
 		{
-#ifndef __USE_DRAM_FRAMEBUFFER
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color);
-#else
-			DirectDraw::drawColorPixelToDRAMBuffer((uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color);
-#endif
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (uint16)__FIX10_6_TO_I(fromPointX), (uint16)__FIX10_6_TO_I(fromPointY), __FIX10_6_TO_I(parallax), color, bufferIndex);
 			fromPointX += stepX;
 			fromPointY += stepY;
 			parallax += parallaxStep;
+			bufferIndex = !bufferIndex;
 		}
 	}
 }
 
-#ifdef __USE_DRAM_FRAMEBUFFER
-static void DirectDraw::drawColorPixelToDRAMBuffer1(uint16 x, uint16 y, uint16 parallax, int32 color)
-{
-	if(__REAL_STATE_SCREEN_HEIGHT <= (unsigned)y)
-	{
-		return;
-	}
-
-	if(__SCREEN_WIDTH <= (unsigned)(x - parallax) || __SCREEN_WIDTH <= (unsigned)(x + parallax))
-	{
-		return;
-	}
-
-	uint16 yHelper = y >> 2;
-
-	static bool buffer = false;
-
-	uint8* leftBuffer = cacheFrameBuffers[buffer];
-
-	buffer = !buffer;
-	uint8* rightBuffer = cacheFrameBuffers[1];
-
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	leftBuffer  += (((x - parallax) * __REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS) + yHelper);
-	rightBuffer += (((x + parallax) * __REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS) + yHelper);
-
-	uint8 pixel = color << ((y & 3) << 1);
-
-	// draw the pixel
-	*leftBuffer  |= pixel;
-	*rightBuffer |= pixel;
-
-#ifdef __PROFILE_DIRECT_DRAWING
-	_directDraw->totalDrawPixels++;
-#endif
-}
-
-static void DirectDraw::drawColorPixelToDRAMBuffer(uint16 x, uint16 y, uint16 parallax, int32 color)
-{
-	if(__REAL_STATE_SCREEN_HEIGHT <= (unsigned)y)
-	{
-		return;
-	}
-
-	if(__SCREEN_WIDTH <= (unsigned)(x - parallax) || __SCREEN_WIDTH <= (unsigned)(x + parallax))
-	{
-		return;
-	}
-
-	uint16 yHelper = y >> 2;
-
-	static uint16 bufferIndex = 0;
-
-	uint8* cacheBuffer = cacheFrameBuffers[bufferIndex];
-
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	if(0 == bufferIndex)
-	{
-		bufferIndex = 1;
-		cacheBuffer  += (((x - parallax) * __REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS) + yHelper);
-	}
-	else
-	{
-		bufferIndex = 0;
-		cacheBuffer += (((x + parallax) * __REAL_BYTES_PER_COLUMN_IN_CACHE_FRAMEBUFFERS) + yHelper);
-	}
-
-	// draw the pixel
-	*cacheBuffer |= color << ((y & 3) << 1);
-
-#ifdef __PROFILE_DIRECT_DRAWING
-	_directDraw->totalDrawPixels++;
-#endif
-}
-
-static void DirectDraw::writeToFrameBuffers1()
-{
-	static uint16 bufferIndex = 0;
-
-	uint32 bufferSide = 0 == bufferIndex ? __LEFT_FRAME_BUFFER_0 : __RIGHT_FRAME_BUFFER_0;
-
-	if(0 == bufferIndex)
-	{
-		bufferIndex = 1;
-	}
-	else
-	{
-		bufferIndex = 0;
-	}
-	
-	uint32* buffer = (uint32*)(*_currentDrawingFrameBufferSet | bufferSide);
-
-	uint32* cacheFrameBuffersHelper = (uint32*)cacheFrameBuffers[bufferIndex];
-
-	for(uint16 i = 0; i < __BYTES_PER_FRAMEBUFFER / sizeof(uint32);)
-	{
-		for(uint16 j = 0; j < __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS; j++, i++)
-		{
-			if(0 != cacheFrameBuffersHelper[i])
-			{
-				*buffer = cacheFrameBuffersHelper[i];
-			}
-
-			cacheFrameBuffersHelper[i] = 0;
-
-			buffer++;
-		}
-
-		buffer += __WORDS_PER_COLUMN_IN_FRAMEBUFFERS - __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS;
-	}
-}
-
-static void DirectDraw::writeToFrameBuffers()
-{
-	uint32* leftBuffer = (uint32*)(*_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0);
-	uint32* rightBuffer = (uint32*)(*_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0);
-
-	uint32* cacheLeftFrameBuffersHelper = (uint32*)cacheFrameBuffers[0];
-	uint32* cacheRightFrameBuffersHelper = (uint32*)cacheFrameBuffers[1];
-
-	for(uint16 i = 0; i < __BYTES_PER_FRAMEBUFFER / sizeof(uint32);)
-	{
-		for(uint16 j = 0; j < __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS; j++, i++)
-		{
-			if(0 != cacheLeftFrameBuffersHelper[i])
-			{
-				*leftBuffer = cacheLeftFrameBuffersHelper[i];
-				cacheLeftFrameBuffersHelper[i] = 0;
-			}
-
-			if(0 != cacheRightFrameBuffersHelper[i])
-			{
-				*rightBuffer = cacheRightFrameBuffersHelper[i];
-				cacheRightFrameBuffersHelper[i] = 0;
-			}
-
-
-			leftBuffer++;
-			rightBuffer++;
-		}
-
-		leftBuffer += __WORDS_PER_COLUMN_IN_FRAMEBUFFERS - __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS;
-		rightBuffer += __WORDS_PER_COLUMN_IN_FRAMEBUFFERS - __REAL_WORDS_PER_COLUMN_IN_CACHE_FRAMEBUFFERS;
-	}
-}
-#endif
 

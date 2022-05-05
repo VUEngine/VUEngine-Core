@@ -139,11 +139,6 @@ void WireframeManager::render()
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
 
-#ifdef __USE_DRAM_FRAMEBUFFER
-#ifdef __PROFILE_DIRECT_DRAWING
-	DirectDraw::reset(DirectDraw::getInstance());
-#endif
-#endif
 }
 
 /**
@@ -162,10 +157,8 @@ static void WireframeManager::drawWireframes()
 		Wireframe::draw(node->data, true);
 	}
 
-#ifndef __USE_DRAM_FRAMEBUFFER
 #ifdef __PROFILE_DIRECT_DRAWING
 	DirectDraw::reset(DirectDraw::getInstance());
-#endif
 #endif
 }
 

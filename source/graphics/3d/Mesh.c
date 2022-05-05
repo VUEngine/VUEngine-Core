@@ -129,6 +129,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	MeshSegment* newMeshSegment = new MeshSegment;
 	newMeshSegment->startPoint = NULL;
 	newMeshSegment->endPoint = NULL;
+	newMeshSegment->bufferIndex = 0;
 
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
@@ -221,15 +222,6 @@ void Mesh::render()
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
-#ifdef __USE_DRAM_FRAMEBUFFER
-	for(VirtualNode node = this->segments->head; node; node = node->next)
-	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
-		meshSegment->startPoint->projected = false;
-		meshSegment->endPoint->projected = false;
-	}
-#endif
-
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
@@ -246,10 +238,6 @@ void Mesh::render()
 			meshSegment->endPoint->pixelVector = Mesh::projectVector(meshSegment->endPoint->vector, position, rotation);
 			meshSegment->endPoint->projected = true;
 		}
-
-#ifdef __USE_DRAM_FRAMEBUFFER
-		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
-#endif
 	}
 }
 
@@ -261,8 +249,10 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		meshSegment->startPoint->projected = false;
 		meshSegment->endPoint->projected = false;
 
+		meshSegment->bufferIndex = !meshSegment->bufferIndex;
+
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
+		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
 	}
 }
 

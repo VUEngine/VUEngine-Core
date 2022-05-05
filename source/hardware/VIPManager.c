@@ -323,24 +323,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				this->frameStarted = _vipManager->processingXPEND;
 
-				WireframeManager::render(_wireframeManager);
-
-#ifdef __USE_DRAM_FRAMEBUFFER
-				if(this->drawingEnded)
-				{
-					VIPManager::disableDrawing(this);
-					DirectDraw::writeToFrameBuffers();
-					VIPManager::enableDrawing(this);
-				}
-
 				if(!_vipManager->processingXPEND)
 				{
 					this->drawingEnded = false;
 				}
 
 				SpriteManager::render(_spriteManager);
+				WireframeManager::render(_wireframeManager);
 
-#endif
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
@@ -389,23 +379,8 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				// Write to the frame buffers
 				VIPManager::applyPostProcessingEffects(this);
 
-#ifdef __USE_DRAM_FRAMEBUFFER
-				if(!_vipManager->processingFRAMESTART)
-				{
-					if(this->forceDrawingSync)
-					{
-						DirectDraw::writeToFrameBuffers();
-					}
-					else
-					{
-						VIPManager::disableDrawing(this);
-						DirectDraw::writeToFrameBuffers();
-						VIPManager::enableDrawing(this);
-					}
-				}
-#else
+				// Draw wireframes
 				WireframeManager::drawWireframes();
-#endif
 
 				if(this->forceDrawingSync)
 				{
