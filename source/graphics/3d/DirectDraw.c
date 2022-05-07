@@ -28,7 +28,7 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#undef __DIRECT_DRAW_INTERLACED
+#define __DIRECT_DRAW_INTERLACED
 
 
 #define __FRAME_BUFFER_SIDE_BIT_INDEX				16
@@ -558,10 +558,14 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		CACHE_ENABLE;
 
 #ifndef __DIRECT_DRAW_INTERLACED
-		for(;mainCoordinateEnd >= mainCoordinate;)
+		for(;mainCoordinateEnd >= mainCoordinate;
 #else
-		for(;mainCoordinateEnd - 1 >= mainCoordinate;)
+		for(;mainCoordinateEnd - 1 >= mainCoordinate;
 #endif
+			mainCoordinate += 1,
+			secondaryCoordinate += secondaryStep,
+			parallax += parallaxStep
+		)
 		{
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
@@ -572,25 +576,23 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			{
 				break;
 			}
-			else if(kDirectDrawTestPointOk == pointTest)
+			else if(kDirectDrawTestPointContinue == pointTest)
 			{
-				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
-
-#ifdef __DIRECT_DRAW_INTERLACED
-				mainCoordinate += 1;
-				secondaryCoordinate += secondaryStep;
-				parallax += parallaxStep;
-
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper = __FIX10_6_TO_I(parallax);
-
-				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate + 1, secondaryHelper, -parallaxHelper, color);
-#endif
+				continue;
 			}
 
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
+
+#ifdef __DIRECT_DRAW_INTERLACED
 			mainCoordinate += 1;
 			secondaryCoordinate += secondaryStep;
 			parallax += parallaxStep;
+
+			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+			parallaxHelper = __FIX10_6_TO_I(parallax);
+
+			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
+#endif
 		}
 	}
 	else if(dxABS < dyABS || 0 == dx)
@@ -626,10 +628,14 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		CACHE_ENABLE;
 
 #ifndef __DIRECT_DRAW_INTERLACED
-		for(;mainCoordinateEnd >= mainCoordinate;)
+		for(;mainCoordinateEnd >= mainCoordinate;
 #else
-		for(;mainCoordinateEnd - 1 >= mainCoordinate;)
+		for(;mainCoordinateEnd - 1 >= mainCoordinate;
 #endif
+			mainCoordinate += 1,
+			secondaryCoordinate += secondaryStep,
+			parallax += parallaxStep
+		)
 		{
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
@@ -640,25 +646,23 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			{
 				break;
 			}
-			else if(kDirectDrawTestPointOk == pointTest)
+			else if(kDirectDrawTestPointContinue == pointTest)
 			{
-				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
-
-#ifdef __DIRECT_DRAW_INTERLACED
-				mainCoordinate += 1;
-				secondaryCoordinate += secondaryStep;
-				parallax += parallaxStep;
-
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper = __FIX10_6_TO_I(parallax);
-
-				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate + 1, -parallaxHelper, color);
-#endif
+				continue;
 			}
 
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
+
+#ifdef __DIRECT_DRAW_INTERLACED
 			mainCoordinate += 1;
 			secondaryCoordinate += secondaryStep;
 			parallax += parallaxStep;
+
+			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+			parallaxHelper = __FIX10_6_TO_I(parallax);
+
+			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
+#endif
 		}
 	}
 
