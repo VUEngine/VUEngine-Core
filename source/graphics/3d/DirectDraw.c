@@ -419,7 +419,7 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 	}
 	else if(__SCREEN_WIDTH <= (unsigned)(x + parallax))
 	{
-		if(0 > x - parallax)
+		if(0 > x + parallax)
 		{
 			if(0 > stepX)
 			{
@@ -476,13 +476,12 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
 {
-/*
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
 		fromPoint = DirectDraw::clampPixelVector(fromPoint);
 		toPoint = DirectDraw::clampPixelVector(toPoint);
 	}
-*/
+
 	if(__SCREEN_WIDTH <= (unsigned)(fromPoint.x) && __SCREEN_WIDTH <= (unsigned)(toPoint.x))
 	{
 		return;
