@@ -25,15 +25,17 @@
 /// @ingroup graphics-3d
 abstract class Wireframe : Object
 {
+	const Vector3D* position;
+	const Rotation* rotation;
 	uint8 color;
 
 	/// @publicsection
 	void constructor(uint8 color);
 	void hide();
 	void show();
+	void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 	virtual void draw(bool calculateParallax) = 0;
 	virtual void render();
-	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 }
 
 

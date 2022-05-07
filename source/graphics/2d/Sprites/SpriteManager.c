@@ -366,7 +366,6 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 	VirtualList::pushFront(this->sprites, sprite);
 }
 
-// check if any entity must be assigned another world layer
 /**
  * Deferred sorting sprites according to their z coordinate
  */

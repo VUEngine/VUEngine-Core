@@ -50,6 +50,7 @@ typedef struct MeshSegment
 {
 	MeshPoint* startPoint;
 	MeshPoint* endPoint;
+	uint8 bufferIndex;
 
 } MeshSegment;
 
@@ -60,14 +61,11 @@ class Mesh : Wireframe
 {
 	MeshSpec* meshSpec;
 	VirtualList segments;
-	const Vector3D* position;
-	const Rotation* rotation;
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
 	override void draw(bool calculateParallax);
 	override void render();
-	override void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 }
 
 

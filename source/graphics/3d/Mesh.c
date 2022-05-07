@@ -47,8 +47,6 @@ void Mesh::constructor(MeshSpec* meshSpec)
 
 	this->segments = new VirtualList();
 	this->meshSpec = meshSpec;
-	this->position = NULL;
-	this->rotation = NULL;
 
 	Mesh::addSegments(this);
 }
@@ -222,9 +220,7 @@ void Mesh::render()
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
-	VIPManager vipManager = VIPManager::getInstance();
-
-	for(VirtualNode node = this->segments->head; node  && !VIPManager::hasFrameStartedDuringXPEND(vipManager); node = node->next)
+	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
@@ -255,10 +251,4 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		// draw the line in both buffers
 		DirectDraw::drawColorLine(meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
 	}
-}
-
-void Mesh::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)))
-{
-	this->position = position;
-	this->rotation = rotation;
 }

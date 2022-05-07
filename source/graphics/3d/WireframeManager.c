@@ -27,6 +27,7 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+friend class Wireframe;
 
 Vector3D _cameraRealPosition = {0, 0, 0};
 Rotation _cameraRealRotation = {0, 0, 0};
@@ -116,6 +117,55 @@ void WireframeManager::reset()
 }
 
 /**
+ * Sort wireframes according to their z coordinate
+ */
+void WireframeManager::sort()
+{
+	while(WireframeManager::sortProgressively(this));
+}
+
+/**
+ * Deferred sorting wireframes according to their z coordinate
+ */
+bool WireframeManager::sortProgressively()
+{
+	bool swapped = false;
+
+	for(VirtualNode node = this->wireframes->head; node && node->next; node = node->next)
+	{
+		VirtualNode nextNode = node->next;
+
+		NM_ASSERT(!isDeleted(node->data), "WireframeManager::sortProgressively: NULL node's data");
+		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
+
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data");
+		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
+
+		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
+
+		fix10_6 squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, _cameraRealPosition));
+		fix10_6 nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, _cameraRealPosition));
+
+		// check if z positions are swapped
+		if(nextSquareDistanceToCamera < squareDistanceToCamera)
+		{
+			// swap nodes' data
+			VirtualNode::swapData(node, nextNode);
+
+			node = nextNode;
+
+			swapped = true;
+
+			break;
+		}
+	}
+
+	return swapped;
+}
+
+/**
  * Render the wireframes
  */
 void WireframeManager::render()
@@ -137,6 +187,8 @@ void WireframeManager::render()
 	{
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
+
+	WireframeManager::sortProgressively(this);
 }
 
 /**
