@@ -182,16 +182,16 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
 	extern Vector3D _cameraRealPosition;
 	extern Rotation _cameraRealRotation;
 
-	vector = Vector3D::sum(position, Vector3D::rotate(vector, rotation));
+	vector = Vector3D::sum(position, Vector3D::rotate(vector, _cameraRealRotation));
 
 	vector = Vector3D::sub(vector, _cameraRealPosition);
-	vector = Vector3D::rotate(vector, _cameraRealRotation);
+//	vector = Vector3D::rotate(vector, _cameraRealRotation);
 	vector = Vector3D::sum(vector, _cameraRealPosition);
 
 	vector = Vector3D::getRelativeToCamera(vector);
 
 	PixelVector pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
-
+/*
 	// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
 	{
@@ -210,7 +210,7 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
 	{
 		pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 	}
-
+*/
 	return pixelVector;
 }
 
