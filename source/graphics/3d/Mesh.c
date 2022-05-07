@@ -31,6 +31,8 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
+VIPManager _vipManager = NULL;
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -49,6 +51,11 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	this->meshSpec = meshSpec;
 
 	Mesh::addSegments(this);
+
+	if(NULL == _vipManager)
+	{
+		_vipManager = VIPManager::getInstance();
+	}
 }
 
 /**
@@ -241,7 +248,7 @@ void Mesh::render()
 
 void Mesh::draw(bool calculateParallax __attribute__((unused)))
 {
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	for(VirtualNode node = this->segments->head; node && !VIPManager::hasFrameStartedDuringXPEND(_vipManager); node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 		meshSegment->startPoint->projected = false;
