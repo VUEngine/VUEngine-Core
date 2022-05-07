@@ -28,16 +28,8 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#define __MAXIMUM_PIXELS_PER_FRAME					(1125 << __FRAME_CYCLE)
+#undef __DIRECT_DRAW_INTERLACED
 
-#define __DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME		__MAXIMUM_PIXELS_PER_FRAME
-
-#define __DIRECT_DRAW_INTERLACED
-
-#ifdef __DIRECT_DRAW_INTERLACED
-#undef __DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME
-#define __DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME		(__MAXIMUM_PIXELS_PER_FRAME << 1)
-#endif
 
 #define __FRAME_BUFFER_SIDE_BIT_INDEX				16
 #define __FRAME_BUFFER_SIDE_BIT						__RIGHT_FRAME_BUFFER_0
@@ -484,12 +476,6 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
 {
-/*
-	if(__DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME < _directDraw->totalDrawPixels)
-	{
-		return;
-	}
-*/
 /*
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
