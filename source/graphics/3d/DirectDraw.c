@@ -494,11 +494,12 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 #ifndef __DIRECT_DRAW_INTERLACED
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 #else
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+	uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 #endif
 
-	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 	fix10_6 fromPointX = __I_TO_FIX10_6(fromPoint.x);
 	fix10_6 fromPointY = __I_TO_FIX10_6(fromPoint.y);
@@ -524,17 +525,20 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 parallaxStart = __I_TO_FIX10_6(fromPoint.parallax);
 
-#ifndef __DIRECT_DRAW_INTERLACED
-	uint16 stepFactor = 0;
-#else
-	uint16 stepFactor = 1;
-#endif
-
 	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
 	{
-		int16 mainCoordinateStep = (toPointX < fromPointX ? -1 : 1) << stepFactor;
-		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS) << stepFactor;
-		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dxABS) << stepFactor;
+		if(toPointX < fromPointX)
+		{
+			fix10_6 auxPoint = fromPointX;
+			fromPointX = toPointX;
+			toPointX = auxPoint;
+
+			dxABS = -dxABS;
+			fromPointY = toPointY;
+		}
+
+		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS);
+		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dxABS);
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
@@ -551,63 +555,58 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		fix10_6 secondaryCoordinate = secondaryStart;
 		fix10_6 parallax = parallaxStart;
 
-		int16 displacement = 0;
-
-		if(0 != __MODULO(__ABS(mainCoordinateEnd - mainCoordinateStart), 2))
-		{
-			displacement = -(mainCoordinateStep >> stepFactor);
-		}
-
 		CACHE_ENABLE;
 
-#ifdef __DIRECT_DRAW_INTERLACED
-		for(int16 buffers = 0; buffers < 2; buffers++)
-		{
-#endif		
-			for(;mainCoordinateEnd + displacement != mainCoordinate;
-				mainCoordinate += mainCoordinateStep,
-				secondaryCoordinate += secondaryStep,
-				parallax += parallaxStep
-			)
-			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
-
-				uint8 pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, mainCoordinateStep, secondaryStep);
-
-				if(kDirectDrawTestPointContinue == pointTest)
-				{
-					continue;
-				}
-				else if(kDirectDrawTestPointBreak == pointTest)
-				{
-					break;
-				}
-
-				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
-			}
-
-#ifdef __DIRECT_DRAW_INTERLACED
-			leftBuffer ^= __FRAME_BUFFER_SIDE_BIT;
-			
-			mainCoordinate = mainCoordinateStart + (mainCoordinateStep >> stepFactor);
-			secondaryCoordinate = secondaryStart + secondaryStep;
-			parallaxStep = -parallaxStep;
-			parallax = -parallaxStart + (parallaxStep >> stepFactor);
-			displacement = 0;
-
-			if(0 == __MODULO(__ABS(mainCoordinateEnd - mainCoordinateStart), 2))
-			{
-				displacement -= (mainCoordinateStep >> stepFactor);
-			}
-		}
+#ifndef __DIRECT_DRAW_INTERLACED
+		for(;mainCoordinateEnd >= mainCoordinate;)
+#else
+		for(;mainCoordinateEnd - 1 >= mainCoordinate;)
 #endif
+		{
+			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+
+			uint8 pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
+
+			if(kDirectDrawTestPointBreak == pointTest)
+			{
+				break;
+			}
+			else if(kDirectDrawTestPointOk == pointTest)
+			{
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
+
+#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
+
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate + 1, secondaryHelper, -parallaxHelper, color);
+#endif
+			}
+
+			mainCoordinate += 1;
+			secondaryCoordinate += secondaryStep;
+			parallax += parallaxStep;
+		}
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
-		int16 mainCoordinateStep = (toPointY < fromPointY ? -1 : 1) << stepFactor;
-		fix10_6 secondaryStep = __FIX10_6_DIV(dx, dyABS) << stepFactor;
-		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dyABS) << stepFactor;
+		if(toPointY < fromPointY)
+		{
+			fix10_6 auxPoint = fromPointY;
+			fromPointY = toPointY;
+			toPointY = auxPoint;
+
+			dyABS = -dyABS;
+			fromPointX = toPointX;
+		}
+
+		fix10_6 secondaryStep = __FIX10_6_DIV(dx, dyABS);
+		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dyABS);
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
@@ -624,57 +623,43 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		fix10_6 secondaryCoordinate = secondaryStart;
 		fix10_6 parallax = parallaxStart;
 
-		int16 displacement = 0;
-
-		if(0 != __MODULO(__ABS(mainCoordinateEnd - mainCoordinateStart), 2))
-		{
-			displacement = -(mainCoordinateStep >> stepFactor);
-		}
-
 		CACHE_ENABLE;
 
-#ifdef __DIRECT_DRAW_INTERLACED
-		for(int16 buffers = 0; buffers < 2; buffers++)
-		{
-#endif		
-			for(;mainCoordinateEnd + displacement != mainCoordinate;
-				mainCoordinate += mainCoordinateStep,
-				secondaryCoordinate += secondaryStep,
-				parallax += parallaxStep
-			)
-			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
-
-				uint8 pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, mainCoordinateStep, secondaryStep);
-
-				if(kDirectDrawTestPointContinue == pointTest)
-				{
-					continue;
-				}
-				else if(kDirectDrawTestPointBreak == pointTest)
-				{
-					break;
-				}
-
-				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
-			}
-
-#ifdef __DIRECT_DRAW_INTERLACED
-			leftBuffer ^= __FRAME_BUFFER_SIDE_BIT;
-			
-			mainCoordinate = mainCoordinateStart + (mainCoordinateStep >> stepFactor);
-			secondaryCoordinate = secondaryStart + secondaryStep;
-			parallaxStep = -parallaxStep;
-			parallax = -parallaxStart + (parallaxStep >> stepFactor);
-			displacement = 0;
-
-			if(0 == __MODULO(__ABS(mainCoordinateEnd - mainCoordinateStart), 2))
-			{
-				displacement -= (mainCoordinateStep >> stepFactor);
-			}
-		}
+#ifndef __DIRECT_DRAW_INTERLACED
+		for(;mainCoordinateEnd >= mainCoordinate;)
+#else
+		for(;mainCoordinateEnd - 1 >= mainCoordinate;)
 #endif
+		{
+			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+
+			uint8 pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
+
+			if(kDirectDrawTestPointBreak == pointTest)
+			{
+				break;
+			}
+			else if(kDirectDrawTestPointOk == pointTest)
+			{
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
+
+#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
+
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate + 1, -parallaxHelper, color);
+#endif
+			}
+
+			mainCoordinate += 1;
+			secondaryCoordinate += secondaryStep;
+			parallax += parallaxStep;
+		}
 	}
 
 	CACHE_DISABLE;
