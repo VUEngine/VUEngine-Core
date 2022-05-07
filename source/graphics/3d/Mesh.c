@@ -182,10 +182,10 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
 	extern Vector3D _cameraRealPosition;
 	extern Rotation _cameraRealRotation;
 
-	vector = Vector3D::sum(position, Vector3D::rotate(vector, _cameraRealRotation));
+	vector = Vector3D::sum(position, Vector3D::rotate(vector, rotation));
 
 	vector = Vector3D::sub(vector, _cameraRealPosition);
-//	vector = Vector3D::rotate(vector, _cameraRealRotation);
+	vector = Vector3D::rotate(vector, _cameraRealRotation);
 	vector = Vector3D::sum(vector, _cameraRealPosition);
 
 	vector = Vector3D::getRelativeToCamera(vector);
@@ -222,7 +222,9 @@ void Mesh::render()
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	VIPManager vipManager = VIPManager::getInstance();
+
+	for(VirtualNode node = this->segments->head; node  && !VIPManager::hasFrameStartedDuringXPEND(vipManager); node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
@@ -248,7 +250,6 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 		meshSegment->startPoint->projected = false;
 		meshSegment->endPoint->projected = false;
-
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers

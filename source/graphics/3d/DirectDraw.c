@@ -84,13 +84,21 @@ void DirectDraw::destructor()
 	Base::destructor();
 }
 
-uint32 pixelCount = 0;
 /**
  * Reset
  */
 void DirectDraw::reset()
 {
-	pixelCount = this->totalDrawPixels; 
+#ifdef __PROFILE_DIRECT_DRAWING
+	static int counter = 0;
+
+	if(__TARGET_FPS > counter++)
+	{
+		PRINT_TEXT("Total pixels:       ", 1, 27);
+		PRINT_INT(this->totalDrawPixels, 14, 27);
+		counter = 0;
+	}
+#endif
 
 	// dummy, don't remove
 	this->totalDrawPixels = 0;
@@ -478,7 +486,7 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 	return kDirectDrawTestPointOk;
 }
 
-static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex __attribute__((unused)))
+static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
 {
 //	if(__DIRECT_DRAW_MAXIMUM_PIXELS_PER_FRAME < _directDraw->totalDrawPixels)
 	{

@@ -93,11 +93,6 @@ void FrameRate::gameFrameStarted(bool gameFrameEnded)
 
 	if(__TARGET_FPS <= this->gameFrameStarts)
 	{
-		extern uint32 pixelCount;
-#ifdef __PROFILE_DIRECT_DRAWING
-//		PRINT_TEXT("Total pixels:       ", 1, 27);
-		PRINT_INT(pixelCount, 14, 27);
-#endif
 
 #ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(Game::getInstance()))
