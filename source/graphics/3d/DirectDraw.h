@@ -26,11 +26,14 @@
 /// @ingroup graphics-3d
 singleton class DirectDraw : Object
 {
+	uint16 totalDrawPixels;
+
 	/// @publicsection
 	static DirectDraw getInstance();
 
 	void reset();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
+	void drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit);
 	void drawPoint(PixelVector point, int32 color);
 }
 

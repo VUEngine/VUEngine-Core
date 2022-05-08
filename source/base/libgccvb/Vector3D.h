@@ -32,6 +32,7 @@ static class Vector3D : Object
 	static inline Vector3D unit(uint16 axis);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
+	static inline Vector3D sub(Vector3D a, Vector3D b);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fix10_6_ext dotProduct(Vector3D vectorA, Vector3D vectorB);
@@ -49,10 +50,15 @@ static class Vector3D : Object
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
+	static inline bool areEqual(Vector3D a, Vector3D b);
 	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
 	static inline bool isValueInRange(fix10_6 value, fix10_6 limitA, fix10_6 limitB);
 	static inline bool isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd);
+	static inline Vector3D rotateXAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotateYAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
+	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
 	static inline void print(Vector3D vector, int32 x, int32 y);
 }
 
@@ -83,6 +89,11 @@ static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x + b.x, a.y + b.y, a.z + b.z};
+}
+
+static inline Vector3D Vector3D::sub(Vector3D a, Vector3D b)
+{
+	return (Vector3D){a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
 static inline Vector3D Vector3D::perpedicular(Vector3D a, bool left)
@@ -211,27 +222,8 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
-	fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
-
-	if(0 <= displacementX)
-	{
-		x -= (displacementX >> _optical->maximumXViewDistancePower);	
-	}
-	else
-	{
-		x += (__ABS(displacementX) >> _optical->maximumYViewDistancePower);
-	}
-
-	fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
-
-	if(0 <= displacementY)
-	{
-		y -= (displacementY >> _optical->maximumYViewDistancePower);	
-	}
-	else
-	{
-		y += (__ABS(displacementY) >> _optical->maximumYViewDistancePower);
-	}
+	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
 	
 	PixelVector projection =
 	{
@@ -317,6 +309,11 @@ static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
 	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));
+}
+
+static inline bool Vector3D::areEqual(Vector3D a, Vector3D b)
+{
+	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
 static inline Vector3D Vector3D::projectOnto(Vector3D p, Vector3D a, Vector3D b)
@@ -411,6 +408,59 @@ static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D lineSt
 		&&
 		Vector3D::isValueInRange(vector.z, lineStart.z, lineEnd.z)
 	);
+}
+
+static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			vector.x,
+			__FIX10_6_MULT(vector.z, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			__FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees)))
+		};
+}
+
+static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			vector.y,
+			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
+		};
+}
+
+
+static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
+{
+	return (Vector3D) 
+		{
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			vector.z,
+		};
+}
+
+static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
+{
+	Vector3D result = vector;
+
+	if(rotation.x)
+	{
+		result = Vector3D::rotateXAxis(result, rotation.x);
+	}
+
+	if(rotation.y)
+	{
+		result = Vector3D::rotateYAxis(result, rotation.y);
+	}
+
+	if(rotation.z)
+	{
+		result = Vector3D::rotateZAxis(result, rotation.z);
+	}
+
+	return result;
 }
 
 static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)

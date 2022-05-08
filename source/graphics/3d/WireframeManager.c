@@ -16,6 +16,9 @@
 #include <VirtualList.h>
 #include <SpatialObject.h>
 #include <Game.h>
+#include <Camera.h>
+#include <DirectDraw.h>
+#include <debugConfig.h>
 #include <debugUtilities.h>
 
 
@@ -25,6 +28,9 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+
+Vector3D _cameraRealPosition = {0, 0, 0};
+Rotation _cameraRealRotation = {0, 0, 0};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,10 +92,12 @@ void WireframeManager::register(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		VirtualList::pushBack(this->wireframes, wireframe);
+		if(0 == VirtualList::getSize(this->wireframes))
+		{
+			Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+		}
 
-		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-		Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 }
 
@@ -121,6 +129,30 @@ void WireframeManager::reset()
 }
 
 /**
+ * Render the wireframes
+ */
+void WireframeManager::render()
+{
+	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0});
+
+	_cameraRealRotation = (Rotation)
+	{
+		512 -_cameraRotation->x,
+		512 - _cameraRotation->y,
+		512 - _cameraRotation->z
+	};
+
+	// comparing against the other shapes
+	VirtualNode node = this->wireframes->head;
+
+	// check the shapes
+	for(; node; node = node->next)
+	{
+		Wireframe::render(Wireframe::safeCast(node->data));
+	}
+}
+
+/**
  * Draw the wireframes to the frame buffers
  */
 static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
@@ -135,6 +167,10 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
 	{
 		Wireframe::draw(node->data, true);
 	}
+
+#ifdef __PROFILE_DIRECT_DRAWING
+	DirectDraw::reset(DirectDraw::getInstance());
+#endif
 }
 
 /**

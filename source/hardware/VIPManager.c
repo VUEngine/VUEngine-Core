@@ -262,7 +262,7 @@ static void VIPManager::interruptHandler()
 	HardwareManager::disableMultiplexedInterrupts();
 
 	// enable interrupts
-	VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
+	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
 }
 
 /**
@@ -275,6 +275,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 	static uint16 interruptTable[] =
 	{
 		__FRAMESTART,
+		__GAMESTART,
 		__XPEND,
 		__TIMEERR,
 		__SCANERR
@@ -287,6 +288,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		switch(interrupt & interruptTable[i])
 		{
 			case __FRAMESTART:
+
+				break;
+
+			case __GAMESTART:
 
 				if(_vipManager->processingFRAMESTART)
 				{
@@ -324,6 +329,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				SpriteManager::render(_spriteManager);
+				WireframeManager::render(_wireframeManager);
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
@@ -362,7 +368,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				// Allow frame start interrupt
-				VIPManager::enableInterrupts(this, __FRAMESTART);
+				VIPManager::enableInterrupts(this, __GAMESTART);
 
 				// Do not remove this, it prevents
 				// graphical glitches when the VIP

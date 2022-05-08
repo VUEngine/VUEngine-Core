@@ -32,6 +32,8 @@ abstract class Wireframe : Object
 	void hide();
 	void show();
 	virtual void draw(bool calculateParallax) = 0;
+	virtual void render();
+	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 }
 
 

@@ -66,6 +66,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->shapes = NULL;
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
+	this->meshes = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -83,6 +84,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 void Entity::destructor()
 {
 	Entity::destroyShapes(this);
+	Entity::destroyMeshes(this);
 
 	Entity::releaseSprites(this);
 
@@ -187,6 +189,30 @@ void Entity::destroyShapes()
 }
 
 /**
+ * Destroy meshes
+ *
+ * @private
+ */
+void Entity::destroyMeshes()
+{
+	if(this->meshes)
+	{
+		ASSERT(!isDeleted(this->meshes), "Entity::destroyMeshes: dead meshes");
+
+		VirtualNode node = this->meshes->head;
+
+		for(; node; node = node->next)
+		{
+			delete node->data;
+		}
+
+		delete this->meshes;
+		this->meshes = NULL;
+	}
+}
+
+
+/**
  * Add shapes
  */
 void Entity::setupShapes()
@@ -200,6 +226,20 @@ void Entity::setupShapes()
 
 	Entity::transformShapes(this);
 }
+
+/**
+ * Add meshes
+ */
+void Entity::setupMeshes()
+{
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(NULL == this->meshes)
+	{
+		Entity::addMeshes(this, this->entitySpec->meshSpecs, false);
+	}
+}
+
 
 /**
  * Delete all of the Entity's sprites
@@ -996,9 +1036,9 @@ void Entity::transformShapes()
 	if(this->shapes && this->transformShapes)
 	{
 		// setup shape
-		const Vector3D* myPosition =  SpatialObject::getPosition(this);
-		const Rotation* myRotation =  SpatialObject::getRotation(this);
-		const Scale* myScale =  SpatialObject::getScale(this);
+		const Vector3D* myPosition =  Entity::getPosition(this);
+		const Rotation* myRotation =  Entity::getRotation(this);
+		const Scale* myScale =  Entity::getScale(this);
 
 		Direction currentDirection = Entity::getDirection(this);
 		VirtualNode node = this->shapes->head;
@@ -1045,13 +1085,7 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 
 		if(!isDeleted(shape))
 		{
-			const Vector3D* myPosition =  SpatialObject::getPosition(this);
-			const Rotation* myRotation =  SpatialObject::getRotation(this);
-			const Scale* myScale =  SpatialObject::getScale(this);
-
-			Direction currentDirection = Entity::getDirection(this);
-
-			Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, shapeSpecIndex);
+			Entity::transformShape(this, shape, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), Entity::getDirection(this), shapeSpecIndex);
 		}
 
 		return true;
@@ -1068,7 +1102,7 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
  */
 void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 {
-	if(!shapeSpecs)
+	if(NULL == shapeSpecs)
 	{
 		return;
 	}
@@ -1080,7 +1114,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 
 	int32 i = 0;
 
-	if(!this->shapes)
+	if(NULL == this->shapes)
 	{
 		this->shapes = new VirtualList();
 	}
@@ -1091,6 +1125,42 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
+	}
+}
+
+
+/**
+ * Setup mesh
+ *
+ * @private
+ * @param meshSpecs		List of meshes
+ */
+void Entity::addMeshes(const MeshSpec* meshSpecs, bool destroyPreviousMeshes)
+{
+	if(NULL == meshSpecs)
+	{
+		return;
+	}
+
+	if(destroyPreviousMeshes)
+	{
+		Entity::destroyMeshes(this);
+	}
+
+	int32 i = 0;
+
+	if(NULL == this->meshes)
+	{
+		this->meshes = new VirtualList();
+	}
+
+	// go through n sprites in entity's spec
+	for(; meshSpecs[i].allocator; i++)
+	{
+		Mesh mesh = ((Mesh (*)(MeshSpec*)) meshSpecs[i].allocator)((MeshSpec*)&meshSpecs[i]);
+		Mesh::setup(mesh, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+		VirtualList::pushBack(this->meshes, mesh);
+		Mesh::show(mesh);
 	}
 }
 
@@ -1110,7 +1180,7 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
  */
 void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 {
-	if(!behaviorSpecs)
+	if(NULL == behaviorSpecs)
 	{
 		return;
 	}
@@ -1132,7 +1202,7 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
  */
 void Entity::addSprites(SpriteSpec** spriteSpecs)
 {
-	if(!spriteSpecs)
+	if(NULL == spriteSpecs)
 	{
 		return;
 	}
@@ -1451,6 +1521,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 
 	this->transformShapes = true;
 	Entity::setupShapes(this);
+	Entity::setupMeshes(this);
 
 	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 
