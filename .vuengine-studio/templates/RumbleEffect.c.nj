@@ -12,8 +12,8 @@
 RumbleEffectROMSpec {{ rumbleEffect.name }}RumbleEffect =
 {
 	// Effect #
-	{% if rumbleEffect.haptic >= 1 and rumbleEffect.haptic <= 123 -%}
-		{{ rumbleEffect.haptic }}
+	{% if rumbleEffect.effect >= 1 and rumbleEffect.effect <= 123 -%}
+		{{ rumbleEffect.effect }}
 	{%- else -%}
 		1
 	{%- endif %},
