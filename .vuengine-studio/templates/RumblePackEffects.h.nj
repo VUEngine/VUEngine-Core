@@ -1,0 +1,14 @@
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.h.nj') %}
+
+#ifndef RUMBLE_PACK_EFFECTS_H_
+#define RUMBLE_PACK_EFFECTS_H_
+
+
+{{ macros.sectionHeader('Includes') }}
+
+{% for rumblePackEffect in rumblePackEffects | unique('name') | sort(attribute='name') -%}
+extern const int8 {{ rumblePackEffect.name }}RumblePackEffect[];
+{% endfor %}
+
+#endif
