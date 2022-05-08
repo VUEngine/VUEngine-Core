@@ -23,15 +23,15 @@ RumbleEffectROMSpec {{ rumbleEffect.name }}RumbleEffect =
 	{%- else -%}
 		__RUMBLE_FREQ_160HZ,
 	{%- endif %}
-	// Sustain+
-	{% if rumbleEffect.sustainPlus >= 0 and rumbleEffect.sustainPlus <= 255 -%}
-		{{ rumbleEffect.sustainPlus }}
+	// Positive Sustain
+	{% if rumbleEffect.sustainPositive >= 0 and rumbleEffect.sustainPositive <= 255 -%}
+		{{ rumbleEffect.sustainPositive }}
 	{%- else -%}
 		255
 	{%- endif %},
-	// Sustain-
-	{% if rumbleEffect.sustainMinus >= 0 and rumbleEffect.sustainMinus <= 255 -%}
-		{{ rumbleEffect.sustainMinus }}
+	// Negative Sustain
+	{% if rumbleEffect.sustainNegative >= 0 and rumbleEffect.sustainNegative <= 255 -%}
+		{{ rumbleEffect.sustainNegative }}
 	{%- else -%}
 		255
 	{%- endif %},
