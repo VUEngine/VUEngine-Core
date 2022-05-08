@@ -35,8 +35,8 @@
 				"Fonts.h"
 			],
 			".rumbleEffect.json": [
-				"RumblePackEffectSpec.c",
-				"RumblePackEffects.h"
+				"RumbleEffectSpec.c",
+				"RumbleEffects.h"
 			],
 			".waveform.json": [
 				"WaveFormSpec.c",
@@ -276,31 +276,31 @@
 			"target": "source/assets/WaveForms.h",
 			"template": "WaveForms.h.nj"
 		},
-		"RumblePackEffectSpec.c": {
+		"RumbleEffectSpec.c": {
 			"mode": "single",
 			"data": [
 				{
-					"key": "rumblePackEffect",
+					"key": "rumbleEffect",
 					"type": "changedFile"
 				}
 			],
 			"root": "relative",
-			"target": "Spec/${rumblePackEffect.name}RumblePackEffectSpec.c",
-			"template": "RumblePackEffect.c.nj"
+			"target": "Spec/${rumbleEffect.name}RumbleEffectSpec.c",
+			"template": "RumbleEffect.c.nj"
 		},
-		"RumblePackEffects.h": {
+		"RumbleEffects.h": {
 			"mode": "single",
 			"data": [
 				{
-					"key": "rumblePackEffects",
+					"key": "rumbleEffects",
 					"type": "filesWithEnding",
 					"root": "workspace",
 					"value": ".rumbleEffect.json"
 				}
 			],
 			"root": "workspace",
-			"target": "source/assets/RumblePackEffects.h",
-			"template": "RumblePackEffects.h.nj"
+			"target": "source/assets/RumbleEffects.h",
+			"template": "RumbleEffects.h.nj"
 		},
 		"WaveFormSpec.c": {
 			"mode": "single",
