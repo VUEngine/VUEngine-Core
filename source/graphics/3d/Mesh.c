@@ -48,6 +48,8 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	Base::constructor(meshSpec->color);
 
 	this->segments = new VirtualList();
+	this->vertex = new VirtualList();
+	
 	this->meshSpec = meshSpec;
 
 	Mesh::addSegments(this);
@@ -65,27 +67,27 @@ void Mesh::destructor()
 {
 	Mesh::hide(this);
 
-	Mesh::deleteSegments(this);
+	Mesh::deleteLists(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
-void Mesh::deleteSegments()
+void Mesh::deleteLists()
 {
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
-		if(!isDeleted(meshSegment->startPoint))
+		if(!isDeleted(meshSegment->fromVertex))
 		{
-			delete meshSegment->startPoint;
+			delete meshSegment->fromVertex;
 		}
 
-		if(!isDeleted(meshSegment->endPoint))
+		if(!isDeleted(meshSegment->toVertex))
 		{
-			delete meshSegment->endPoint;
+			delete meshSegment->toVertex;
 		}
 
 		delete meshSegment;
@@ -93,13 +95,16 @@ void Mesh::deleteSegments()
 
 	delete this->segments;
 	this->segments = NULL;
+
+	delete this->vertex;
+	this->vertex = NULL;
 }
 
 void Mesh::addSegments()
 {
 	if(NULL != this->segments->head)
 	{
-		Mesh::deleteSegments(this);
+		Mesh::deleteLists(this);
 
 		this->segments = new VirtualList();
 	}
@@ -132,91 +137,48 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	}
 
 	MeshSegment* newMeshSegment = new MeshSegment;
-	newMeshSegment->startPoint = NULL;
-	newMeshSegment->endPoint = NULL;
+	newMeshSegment->fromVertex = NULL;
+	newMeshSegment->toVertex = NULL;
 	newMeshSegment->bufferIndex = 0;
 
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	for(VirtualNode node = this->vertex->head; node; node = node->next)
 	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
+		Vertex* vertex = (Vertex*)node->data;
 
-		if(Vector3D::areEqual(meshSegment->startPoint->vector, startVector))
+		if(Vector3D::areEqual(vertex->vector, startVector))
 		{
-			newMeshSegment->startPoint = meshSegment->startPoint;
+			newMeshSegment->fromVertex = vertex;
 		}
-		else if(Vector3D::areEqual(meshSegment->startPoint->vector, endVector))
+		else if(Vector3D::areEqual(vertex->vector, endVector))
 		{
-			newMeshSegment->endPoint = meshSegment->startPoint;
-		}
-		else if(Vector3D::areEqual(meshSegment->endPoint->vector, startVector))
-		{
-			newMeshSegment->startPoint = meshSegment->endPoint;
-		}
-		else if(Vector3D::areEqual(meshSegment->endPoint->vector, endVector))
-		{
-			newMeshSegment->endPoint = meshSegment->endPoint;
+			newMeshSegment->toVertex = vertex;
 		}
 
-		if(NULL != newMeshSegment->startPoint && NULL != newMeshSegment->endPoint)
+		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
 		{
 			break;
 		}
 	}
 
-	if(NULL == newMeshSegment->startPoint)
+	if(NULL == newMeshSegment->fromVertex)
 	{
-		newMeshSegment->startPoint = new MeshPoint;
-		newMeshSegment->startPoint->vector = startVector;
-		newMeshSegment->startPoint->pixelVector = (PixelVector){0, 0, 0, 0};
-		newMeshSegment->startPoint->projected = false;
+		newMeshSegment->fromVertex = new Vertex;
+		newMeshSegment->fromVertex->vector = startVector;
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertex, newMeshSegment->fromVertex);
 	}
 
-	if(NULL == newMeshSegment->endPoint)
+	if(NULL == newMeshSegment->toVertex)
 	{
-		newMeshSegment->endPoint = new MeshPoint;
-		newMeshSegment->endPoint->vector = endVector;
-		newMeshSegment->endPoint->pixelVector = (PixelVector){0, 0, 0, 0};
-		newMeshSegment->endPoint->projected = false;
+		newMeshSegment->toVertex = new Vertex;
+		newMeshSegment->toVertex->vector = endVector;
+		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertex, newMeshSegment->toVertex);
 	}
 
 	VirtualList::pushBack(this->segments, newMeshSegment);
-}
-
-static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotation rotation)
-{
-	extern Vector3D _cameraRealPosition;
-	extern Rotation _cameraRealRotation;
-
-	vector = Vector3D::sum(position, Vector3D::rotate(vector, rotation));
-
-	vector = Vector3D::sub(vector, _cameraRealPosition);
-	vector = Vector3D::rotate(vector, _cameraRealRotation);
-	vector = Vector3D::sum(vector, _cameraRealPosition);
-
-	vector = Vector3D::getRelativeToCamera(vector);
-
-	PixelVector pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
-/*
-	// Pre clamp to prevent weird glitches due to overflows and speed up drawing
-	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
-	{
-		pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.x)
-	{
-		pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-
-	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.y)
-	{
-		pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.y)
-	{
-		pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-*/
-	return pixelVector;
 }
 
 /**
@@ -224,38 +186,55 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
  */
 void Mesh::render()
 {
+	extern Vector3D _cameraRealPosition;
+	extern Rotation _cameraRealRotation;
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	CACHE_ENABLE;
+
+	for(VirtualNode node = this->vertex->head; node; node = node->next)
 	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
+		Vertex* vertex = (Vertex*)node->data;
 
-		// project to 2d coordinates
-		if(!meshSegment->startPoint->projected)
+		Vector3D vector = Vector3D::sum(position, Vector3D::rotate(vertex->vector, rotation));
+		vector = Vector3D::sub(vector, _cameraRealPosition);
+		vector = Vector3D::rotate(vector, _cameraRealRotation);
+		vector = Vector3D::sum(vector, _cameraRealPosition);
+		vector = Vector3D::getRelativeToCamera(vector);
+
+		vertex->pixelVector = Vector3D::projectToPixelVectorHighPrecision(vector, 0);
+	/*
+		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
+		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
 		{
-			meshSegment->startPoint->pixelVector = Mesh::projectVector(meshSegment->startPoint->vector, position, rotation);
-			meshSegment->startPoint->projected = true;
+			pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+		}
+		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.x)
+		{
+			pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
 
-		if(!meshSegment->endPoint->projected)
+		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.y)
 		{
-			meshSegment->endPoint->pixelVector = Mesh::projectVector(meshSegment->endPoint->vector, position, rotation);
-			meshSegment->endPoint->projected = true;
+			pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
+		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.y)
+		{
+			pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
+		}
+	*/
 	}
 }
 
 void Mesh::draw(bool calculateParallax __attribute__((unused)))
 {
-	for(VirtualNode node = this->segments->head; node && !VIPManager::hasFrameStartedDuringXPEND(_vipManager); node = node->next)
+	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
-		meshSegment->startPoint->projected = false;
-		meshSegment->endPoint->projected = false;
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
 	}
 }

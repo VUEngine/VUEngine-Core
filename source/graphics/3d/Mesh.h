@@ -37,19 +37,18 @@ typedef struct MeshSpec
 
 } MeshSpec;
 
-typedef struct MeshPoint
+typedef struct Vertex
 {
 	Vector3D vector;
 	PixelVector pixelVector;
-	bool projected;
 
-} MeshPoint;
+} Vertex;
 
 
 typedef struct MeshSegment
 {
-	MeshPoint* startPoint;
-	MeshPoint* endPoint;
+	Vertex* fromVertex;
+	Vertex* toVertex;
 	uint8 bufferIndex;
 
 } MeshSegment;
@@ -61,6 +60,7 @@ class Mesh : Wireframe
 {
 	MeshSpec* meshSpec;
 	VirtualList segments;
+	VirtualList vertex;
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
