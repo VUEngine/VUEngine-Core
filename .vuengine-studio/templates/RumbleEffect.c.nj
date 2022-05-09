@@ -1,0 +1,52 @@
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <RumblePakEffects.h>
+
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+RumbleEffectROMSpec {{ rumbleEffect.name }}RumbleEffect =
+{
+	// Effect #
+	{% if rumbleEffect.effect >= 1 and rumbleEffect.effect <= 123 -%}
+		{{ rumbleEffect.effect }}
+	{%- else -%}
+		1
+	{%- endif %},
+	// Frequency
+	{% if rumbleEffect.frequency == 160 or rumbleEffect.frequency == 240 or rumbleEffect.frequency == 320 or rumbleEffect.frequency == 400 -%}
+		__RUMBLE_FREQ_{{ rumbleEffect.frequency }}HZ,
+	{%- else -%}
+		__RUMBLE_FREQ_160HZ,
+	{%- endif %}
+	// Positive Sustain
+	{% if rumbleEffect.sustainPositive >= 0 and rumbleEffect.sustainPositive <= 255 -%}
+		{{ rumbleEffect.sustainPositive }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Negative Sustain
+	{% if rumbleEffect.sustainNegative >= 0 and rumbleEffect.sustainNegative <= 255 -%}
+		{{ rumbleEffect.sustainNegative }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Overdrive
+	{% if rumbleEffect.overdrive >= 0 and rumbleEffect.overdrive <= 255 -%}
+		{{ rumbleEffect.overdrive }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Break
+	{% if rumbleEffect.break >= 0 and rumbleEffect.break <= 255 -%}
+		{{ rumbleEffect.break }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Stop before starting
+	{% if rumbleEffect.stopBeforeStarting %}true{% else %}false{% endif %},
+};

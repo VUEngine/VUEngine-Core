@@ -76,9 +76,9 @@ typedef struct RumbleEffectSpec
 	uint8 effect;
 	/// Frequency
 	uint8 frequency;
-	/// Sustain+
+	/// Positive Sustain
 	uint8 sustainPositive;
-	/// Sustain-
+	/// Negative Sustain
 	uint8 sustainNegative;
 	/// Overdrive
 	uint8 overdrive;
