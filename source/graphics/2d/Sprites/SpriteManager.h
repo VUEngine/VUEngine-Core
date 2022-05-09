@@ -74,6 +74,8 @@ singleton class SpriteManager : Object
 	int8 deferParamTableEffects;
 	// delay before writing again
 	int8 waitToWriteSpriteTextures;
+	// flag to prevent rendering
+	bool stopRendering;
 
 	/// @publicsection
 	static SpriteManager getInstance();

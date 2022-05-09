@@ -83,6 +83,9 @@ void SpriteManager::constructor()
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->stopRendering = false;
+
+	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	SpriteManager::reset(this);
 }
@@ -92,10 +95,17 @@ void SpriteManager::constructor()
  */
 void SpriteManager::destructor()
 {
+	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
 	SpriteManager::cleanUp(this);
 
 	// allow a new construct
 	Base::destructor();
+}
+
+void SpriteManager::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = true;
 }
 
 /**
@@ -597,7 +607,9 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
+	this->stopRendering = false;
+
+	for(VirtualNode node = this->sprites->tail; !this->stopRendering && node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
 

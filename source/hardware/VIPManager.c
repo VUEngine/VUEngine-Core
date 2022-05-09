@@ -302,10 +302,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						this->drawingEnded = false;
 					}
 
-					if(this->events)
-					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
-					}
+					VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
 					break;
 				}
 
@@ -315,10 +312,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 					this->drawingEnded = false;
 
-					if(this->events)
-					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
-					}
+					VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
 				}
 
 				_vipManager->processingGAMESTART = true;
@@ -339,7 +333,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->frameStarted = _vipManager->processingXPEND;
 
 				SpriteManager::render(_spriteManager);
-				WireframeManager::render();
+				WireframeManager::render(_wireframeManager);
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
@@ -400,7 +394,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VIPManager::applyPostProcessingEffects(this);
 
 				// Draw wireframes
-				WireframeManager::draw();
+				WireframeManager::draw(_wireframeManager);
 
 				if(this->forceDrawingSync)
 				{

@@ -32,6 +32,8 @@ friend class Wireframe;
 Vector3D _cameraRealPosition = {0, 0, 0};
 Rotation _cameraRealRotation = {0, 0, 0};
 
+static DirectDraw _directDraw = NULL;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -62,6 +64,8 @@ void WireframeManager::constructor()
 
 	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
+	_directDraw = DirectDraw::getInstance();
 }
 
 /**
@@ -81,6 +85,10 @@ void WireframeManager::destructor()
 	delete this->wireframes;
 
 	this->wireframes = NULL;
+
+	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
+	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
 
 	// allow a new construct
 	Base::destructor();
@@ -181,10 +189,8 @@ bool WireframeManager::sortProgressively()
 /**
  * Render the wireframes
  */
-static void WireframeManager::render()
+void WireframeManager::render()
 {
-	WireframeManager this = WireframeManager::getInstance();
-
 	this->stopRendering = false;
 
 	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0});
@@ -211,11 +217,9 @@ static void WireframeManager::render()
 /**
  * Draw the wireframes to the frame buffers
  */
-static void WireframeManager::draw()
+void WireframeManager::draw()
 {
-	DirectDraw::reset(DirectDraw::getInstance());
-
-	WireframeManager this = WireframeManager::getInstance();
+	DirectDraw::startDrawing(_directDraw);
 
 	this->stopDrawing = false;
 

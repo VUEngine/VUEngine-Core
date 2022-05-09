@@ -36,9 +36,9 @@ singleton class WireframeManager : Object
 
 	/// @publicsection
 	static WireframeManager getInstance();
-	static void draw();
-	static void render();
 
+	void draw();
+	void render();
 	void print(int32 x, int32 y);
 	void register(Wireframe wireframe);
 	void remove(Wireframe wireframe);

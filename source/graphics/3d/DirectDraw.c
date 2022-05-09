@@ -28,12 +28,13 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#define __DIRECT_DRAW_INTERLACED
+#undef __DIRECT_DRAW_INTERLACED
 
-
-#define __FRAME_BUFFER_SIDE_BIT_INDEX				16
-#define __FRAME_BUFFER_SIDE_BIT						__RIGHT_FRAME_BUFFER_0
-#define __FLIP_FRAME_BUFFER_SIDE_BIT(a)				a ^= __FRAME_BUFFER_SIDE_BIT
+#define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
+#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
+#define __FRAME_BUFFER_SIDE_BIT_INDEX						16
+#define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
+#define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,6 +60,9 @@ void DirectDraw::constructor()
 	Base::constructor();
 
 	this->totalDrawPixels = 0;
+	this->maximuDrawPixels = 0;
+
+	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	_directDraw = this;
 }
@@ -72,10 +76,23 @@ void DirectDraw::destructor()
 	Base::destructor();
 }
 
+void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
+{
+	this->maximuDrawPixels = this->totalDrawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+}
+
 /**
  * Reset
  */
 void DirectDraw::reset()
+{
+	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+}
+
+/**
+ * Reset
+ */
+void DirectDraw::startDrawing()
 {
 #ifdef __PROFILE_DIRECT_DRAWING
 	static int counter = 0;
@@ -476,6 +493,11 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
 {
+	if(_directDraw->totalDrawPixels > _directDraw->maximuDrawPixels)
+	{
+		return;
+	}
+
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
 		fromPoint = DirectDraw::clampPixelVector(fromPoint);
