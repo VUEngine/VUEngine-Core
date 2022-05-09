@@ -30,10 +30,11 @@ singleton class DirectDraw : Object
 
 	/// @publicsection
 	static DirectDraw getInstance();
+	static void writeToFrameBuffers();
+	static void drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex);
 
 	void reset();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
-	void drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit);
 	void drawPoint(PixelVector point, int32 color);
 }
 

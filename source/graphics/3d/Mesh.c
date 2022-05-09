@@ -20,6 +20,7 @@
 #include <PixelVector.h>
 #include <Math.h>
 #include <Camera.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -29,6 +30,8 @@
 friend class VirtualNode;
 friend class VirtualList;
 
+
+VIPManager _vipManager = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -46,10 +49,13 @@ void Mesh::constructor(MeshSpec* meshSpec)
 
 	this->segments = new VirtualList();
 	this->meshSpec = meshSpec;
-	this->position = NULL;
-	this->rotation = NULL;
 
 	Mesh::addSegments(this);
+
+	if(NULL == _vipManager)
+	{
+		_vipManager = VIPManager::getInstance();
+	}
 }
 
 /**
@@ -128,6 +134,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	MeshSegment* newMeshSegment = new MeshSegment;
 	newMeshSegment->startPoint = NULL;
 	newMeshSegment->endPoint = NULL;
+	newMeshSegment->bufferIndex = 0;
 
 	for(VirtualNode node = this->segments->head; node; node = node->next)
 	{
@@ -172,7 +179,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 		newMeshSegment->endPoint->projected = false;
 	}
 
-	VirtualList::pushBack(this->segments, newMeshSegment);	
+	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
 static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotation rotation)
@@ -189,7 +196,7 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
 	vector = Vector3D::getRelativeToCamera(vector);
 
 	PixelVector pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
-
+/*
 	// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
 	{
@@ -208,7 +215,7 @@ static PixelVector Mesh::projectVector(Vector3D vector, Vector3D position, Rotat
 	{
 		pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 	}
-
+*/
 	return pixelVector;
 }
 
@@ -241,19 +248,14 @@ void Mesh::render()
 
 void Mesh::draw(bool calculateParallax __attribute__((unused)))
 {
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	for(VirtualNode node = this->segments->head; node && !VIPManager::hasFrameStartedDuringXPEND(_vipManager); node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 		meshSegment->startPoint->projected = false;
 		meshSegment->endPoint->projected = false;
+		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(DirectDraw::getInstance(), meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
+		DirectDraw::drawColorLine(meshSegment->startPoint->pixelVector, meshSegment->endPoint->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
 	}
-}
-
-void Mesh::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)))
-{
-	this->position = position;
-	this->rotation = rotation;
 }

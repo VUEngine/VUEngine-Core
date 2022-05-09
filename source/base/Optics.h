@@ -45,17 +45,14 @@ static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 	}
 	
 	fix10_6 leftEyePoint, rightEyePoint;
-	fix10_6 leftEyeGx, rightEyeGx;
 
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
 	// set map position and parallax
 	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance);
 	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance);
-	leftEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(leftEyePoint, z) , (_optical->distanceEyeScreen + z));
-	rightEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(rightEyePoint, z) , (_optical->distanceEyeScreen + z));
 
-	return __METERS_TO_PIXELS((rightEyeGx - leftEyeGx) / 2);
+	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) - (x - rightEyePoint), z), (_optical->distanceEyeScreen + z)) >> 1);
 }
 
 #endif

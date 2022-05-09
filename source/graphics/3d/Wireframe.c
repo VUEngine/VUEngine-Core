@@ -38,6 +38,8 @@ void Wireframe::constructor(uint8 color)
 	Base::constructor();
 
 	this->color = color;
+	this->position = NULL;
+	this->rotation = NULL;
 }
 
 /**
@@ -80,5 +82,6 @@ void Wireframe::render()
  */
 void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)))
 {
+	this->position = position;
+	this->rotation = rotation;
 }
-

@@ -226,13 +226,13 @@ void Camera::onFocusEntityDeleted(Entity actor)
  * @param translation
  * @param cap
  */
-void Camera::move(Vector3D translation, int32 cap)
+void Camera::translate(const Vector3D* translation, int32 cap)
 {
-	this->lastDisplacement = translation;
+	this->lastDisplacement = *translation;
 
-	this->position.x += translation.x;
-	this->position.y += translation.y;
-	this->position.z += translation.z;
+	this->position.x += translation->x;
+	this->position.y += translation->y;
+	this->position.z += translation->z;
 
 	if(cap)
 	{

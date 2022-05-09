@@ -255,27 +255,8 @@ static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector
 
 	if(0 != z)
 	{
-		fix10_6_ext displacementX = __FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z);
-
-		if(0 <= displacementX)
-		{
-			projection.x -= (displacementX >> _optical->maximumXViewDistancePower);	
-		}
-		else
-		{
-			projection.x += (__ABS(displacementX) >> _optical->maximumXViewDistancePower);
-		}
-
-		fix10_6_ext displacementY = __FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z);
-
-		if(0 <= displacementY)
-		{
-			projection.y -= (displacementY >> _optical->maximumYViewDistancePower);	
-		}
-		else
-		{
-			projection.y += ((__ABS(displacementY) >> _optical->maximumYViewDistancePower));
-		}
+		projection.x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+		projection.y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
 	}
 
 	return projection;
@@ -415,8 +396,8 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 	return (Vector3D) 
 		{
 			vector.x,
-			__FIX10_6_MULT(vector.z, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			__FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees)))
+			__FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
 		};
 }
 
@@ -424,20 +405,19 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
 	return (Vector3D) 
 		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
 			vector.y,
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
 		};
 }
-
 
 static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 {
 	return (Vector3D) 
 		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
-			__FIX10_6_MULT(vector.x, -__FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
-			vector.z,
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.y, __FIX7_9_TO_FIX10_6(__COS(degrees))),
+			vector.z
 		};
 }
 

@@ -377,7 +377,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				SpriteManager::writeDRAM(_spriteManager);
 
 				// Write to the frame buffers
-				VIPManager::processFrameBuffers(this);
+				VIPManager::applyPostProcessingEffects(this);
+
+				// Draw wireframes
+				WireframeManager::drawWireframes();
 
 				if(this->forceDrawingSync)
 				{
@@ -422,7 +425,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
  *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
-void VIPManager::processFrameBuffers()
+void VIPManager::applyPostProcessingEffects()
 {
 	volatile bool hasFrameStartedDuringXPEND = false;
 

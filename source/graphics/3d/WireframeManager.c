@@ -14,7 +14,6 @@
 
 #include <WireframeManager.h>
 #include <VirtualList.h>
-#include <SpatialObject.h>
 #include <Game.h>
 #include <Camera.h>
 #include <DirectDraw.h>
@@ -28,6 +27,7 @@
 
 friend class VirtualNode;
 friend class VirtualList;
+friend class Wireframe;
 
 Vector3D _cameraRealPosition = {0, 0, 0};
 Rotation _cameraRealRotation = {0, 0, 0};
@@ -92,11 +92,6 @@ void WireframeManager::register(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		if(0 == VirtualList::getSize(this->wireframes))
-		{
-			Game::pushBackProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-		}
-
 		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 }
@@ -111,11 +106,6 @@ void WireframeManager::remove(Wireframe wireframe)
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
 	VirtualList::removeElement(this->wireframes, wireframe);
-
-	if(0 == VirtualList::getSize(this->wireframes))
-	{
-		Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
-	}
 }
 
 /**
@@ -124,8 +114,53 @@ void WireframeManager::remove(Wireframe wireframe)
 void WireframeManager::reset()
 {
 	VirtualList::clear(this->wireframes);
+}
 
-	Game::removePostProcessingEffect(Game::getInstance(), WireframeManager::drawWireframes, NULL);
+/**
+ * Sort wireframes according to their z coordinate
+ */
+void WireframeManager::sort()
+{
+	while(WireframeManager::sortProgressively(this));
+}
+
+/**
+ * Deferred sorting wireframes according to their z coordinate
+ */
+bool WireframeManager::sortProgressively()
+{
+	bool swapped = false;
+
+	for(VirtualNode node = this->wireframes->head; node && node->next; node = node->next)
+	{
+		VirtualNode nextNode = node->next;
+
+		NM_ASSERT(!isDeleted(node->data), "WireframeManager::sortProgressively: NULL node's data");
+		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
+
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data");
+		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
+
+		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
+
+		fix10_6_ext squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, _cameraRealPosition));
+		fix10_6_ext nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, _cameraRealPosition));
+
+		// check if z positions are swapped
+		if(nextSquareDistanceToCamera < squareDistanceToCamera)
+		{
+			VirtualNode::swapData(node, nextNode);
+
+			node = nextNode;
+
+			swapped = true;
+			break;
+		}
+	}
+
+	return swapped;
 }
 
 /**
@@ -150,17 +185,24 @@ void WireframeManager::render()
 	{
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
+
+	WireframeManager::sortProgressively(this);
 }
 
 /**
  * Draw the wireframes to the frame buffers
  */
-static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet __attribute__ ((unused)), SpatialObject spatialObject __attribute__ ((unused)))
+static void WireframeManager::drawWireframes()
 {
+	DirectDraw::reset(DirectDraw::getInstance());
+
 	WireframeManager this = WireframeManager::getInstance();
 
 	// comparing against the other shapes
 	VirtualNode node = this->wireframes->head;
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
 
 	// check the shapes
 	for(; node; node = node->next)
@@ -168,9 +210,8 @@ static void WireframeManager::drawWireframes(uint32 currentDrawingFrameBufferSet
 		Wireframe::draw(node->data, true);
 	}
 
-#ifdef __PROFILE_DIRECT_DRAWING
-	DirectDraw::reset(DirectDraw::getInstance());
-#endif
+	CACHE_ENABLE;
+
 }
 
 /**
