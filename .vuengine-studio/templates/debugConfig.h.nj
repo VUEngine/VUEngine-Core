@@ -1,0 +1,25 @@
+{%- import 'partials/macros.nj' as macros -%}
+{% include('partials/fileHeader.h.nj') %}
+
+#ifndef	DEBUG_CONFIG_H_
+#undef	DEBUG_CONFIG_H_
+
+
+{{ macros.sectionHeader('Debug Macros') }}
+{% for debugMacro in debugMacros %}
+#undef {{ debugMacro.name | toUpperSnakeCase }}
+{% if debugMacro.define -%}
+#define {{ debugMacro.name | toUpperSnakeCase }} 
+{{- ' ' -}}
+{%- if debugMacro.value is string %}"{% endif %}
+{{- debugMacro.value -}}
+{% if debugMacro.value is string %}"{% endif %}
+{% for dependent in debugMacro.dependent -%}
+#undef {{ dependent | toUpperSnakeCase }}
+#define {{ dependent | toUpperSnakeCase }}
+{% endfor -%}
+{% endif %}
+
+{%- endfor %}
+
+#endif
