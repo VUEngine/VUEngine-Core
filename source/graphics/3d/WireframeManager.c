@@ -57,6 +57,11 @@ void WireframeManager::constructor()
 	Base::constructor();
 
 	this->wireframes = new VirtualList();
+	this->stopRendering = false;
+	this->stopDrawing = false;
+
+	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
+	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
 /**
@@ -79,6 +84,16 @@ void WireframeManager::destructor()
 
 	// allow a new construct
 	Base::destructor();
+}
+
+void WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART(Object eventFirer __attribute__ ((unused)))
+{
+	this->stopRendering = true;
+}
+
+void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
+{
+	this->stopDrawing = true;
 }
 
 /**
@@ -166,8 +181,12 @@ bool WireframeManager::sortProgressively()
 /**
  * Render the wireframes
  */
-void WireframeManager::render()
+static void WireframeManager::render()
 {
+	WireframeManager this = WireframeManager::getInstance();
+
+	this->stopRendering = false;
+
 	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0});
 
 	_cameraRealRotation = (Rotation)
@@ -177,11 +196,11 @@ void WireframeManager::render()
 		512 - _cameraRotation->z
 	};
 
-	// comparing against the other shapes
-	VirtualNode node = this->wireframes->head;
+	CACHE_DISABLE;
+	CACHE_CLEAR;
 
 	// check the shapes
-	for(; node; node = node->next)
+	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
 		Wireframe::render(Wireframe::safeCast(node->data));
 	}
@@ -192,26 +211,24 @@ void WireframeManager::render()
 /**
  * Draw the wireframes to the frame buffers
  */
-static void WireframeManager::drawWireframes()
+static void WireframeManager::draw()
 {
 	DirectDraw::reset(DirectDraw::getInstance());
 
 	WireframeManager this = WireframeManager::getInstance();
 
-	// comparing against the other shapes
-	VirtualNode node = this->wireframes->head;
+	this->stopDrawing = false;
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;
 
 	// check the shapes
-	for(; node; node = node->next)
+	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
 		Wireframe::draw(node->data, true);
 	}
 
 	CACHE_ENABLE;
-
 }
 
 /**

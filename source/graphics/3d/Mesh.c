@@ -48,7 +48,7 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	Base::constructor(meshSpec->color);
 
 	this->segments = new VirtualList();
-	this->vertex = new VirtualList();
+	this->vertices = new VirtualList();
 	
 	this->meshSpec = meshSpec;
 
@@ -96,8 +96,8 @@ void Mesh::deleteLists()
 	delete this->segments;
 	this->segments = NULL;
 
-	delete this->vertex;
-	this->vertex = NULL;
+	delete this->vertices;
+	this->vertices = NULL;
 }
 
 void Mesh::addSegments()
@@ -141,7 +141,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	newMeshSegment->toVertex = NULL;
 	newMeshSegment->bufferIndex = 0;
 
-	for(VirtualNode node = this->vertex->head; node; node = node->next)
+	for(VirtualNode node = this->vertices->head; node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
@@ -166,7 +166,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 		newMeshSegment->fromVertex->vector = startVector;
 		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
 
-		VirtualList::pushBack(this->vertex, newMeshSegment->fromVertex);
+		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
 	}
 
 	if(NULL == newMeshSegment->toVertex)
@@ -175,12 +175,14 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 		newMeshSegment->toVertex->vector = endVector;
 		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
 
-		VirtualList::pushBack(this->vertex, newMeshSegment->toVertex);
+		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
 	}
 
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
+extern int projected;
+extern int draw;
 /**
  * Class draw
  */
@@ -193,7 +195,7 @@ void Mesh::render()
 
 	CACHE_ENABLE;
 
-	for(VirtualNode node = this->vertex->head; node; node = node->next)
+	for(VirtualNode node = this->vertices->head; node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 

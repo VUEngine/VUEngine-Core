@@ -263,7 +263,7 @@ singleton class VIPManager : Object
 	uint16 scanErrorCounter;
 	uint16 customInterrupts;
 	uint16 currrentInterrupt;
-	bool processingFRAMESTART;
+	bool processingGAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
 	volatile bool frameStarted;

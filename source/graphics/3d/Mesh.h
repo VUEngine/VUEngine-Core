@@ -60,7 +60,7 @@ class Mesh : Wireframe
 {
 	MeshSpec* meshSpec;
 	VirtualList segments;
-	VirtualList vertex;
+	VirtualList vertices;
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);

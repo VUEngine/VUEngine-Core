@@ -91,12 +91,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
 
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
-
-
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.

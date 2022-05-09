@@ -28,18 +28,21 @@
 
 singleton class WireframeManager : Object
 {
+	volatile bool stopRendering;
+	volatile bool stopDrawing;
+	
 	// Wireframes
 	VirtualList wireframes;
 
 	/// @publicsection
 	static WireframeManager getInstance();
-	static void drawWireframes();
+	static void draw();
+	static void render();
 
 	void print(int32 x, int32 y);
 	void register(Wireframe wireframe);
 	void remove(Wireframe wireframe);
 	void reset();
-	void render();
 }
 
 

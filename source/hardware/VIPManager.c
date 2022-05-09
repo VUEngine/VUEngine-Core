@@ -104,7 +104,7 @@ void VIPManager::constructor()
 	this->drawingEnded = false;
 	this->frameStarted = false;
 	this->processingXPEND = false;
-	this->processingFRAMESTART = false;
+	this->processingGAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = true;
@@ -293,20 +293,35 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 			case __GAMESTART:
 
-				if(_vipManager->processingFRAMESTART)
+				if(_vipManager->processingGAMESTART)
 				{
 					this->multiplexedFRAMESTARTCounter++;
-					VIPManager::fireEvent(_vipManager, kEventVIPManagerFRAMESTARTDuringFRAMESTART);
 
 					if(!_vipManager->processingXPEND)
 					{
 						this->drawingEnded = false;
 					}
 
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
+					}
 					break;
 				}
 
-				_vipManager->processingFRAMESTART = true;
+				if(_vipManager->processingXPEND)
+				{
+					this->multiplexedFRAMESTARTCounter++;
+
+					this->drawingEnded = false;
+
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
+					}
+				}
+
+				_vipManager->processingGAMESTART = true;
 
 				// Allow frame start interrupt
 				VIPManager::enableInterrupts(this, __XPEND);
@@ -323,19 +338,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				this->frameStarted = _vipManager->processingXPEND;
 
-				if(!_vipManager->processingXPEND)
-				{
-					this->drawingEnded = false;
-				}
-
 				SpriteManager::render(_spriteManager);
-				WireframeManager::render(_wireframeManager);
+				WireframeManager::render();
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
 
-				_vipManager->processingFRAMESTART = false;
+				_vipManager->processingGAMESTART = false;
 
 #ifdef __SHOW_VIP_STATUS
 				VIPManager::print(_vipManager, 1, 2);
@@ -349,6 +359,16 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					this->multiplexedXPENDCounter++;
 					VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringXPEND);
 					break;
+				}
+
+				if(_vipManager->processingGAMESTART)
+				{
+					this->multiplexedXPENDCounter++;
+
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringGAMESTART);
+					}
 				}
 
 				this->processingXPEND = true;
@@ -380,7 +400,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VIPManager::applyPostProcessingEffects(this);
 
 				// Draw wireframes
-				WireframeManager::drawWireframes();
+				WireframeManager::draw();
 
 				if(this->forceDrawingSync)
 				{

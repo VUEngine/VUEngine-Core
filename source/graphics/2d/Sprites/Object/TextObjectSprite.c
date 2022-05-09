@@ -88,11 +88,6 @@ int16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool evenF
 {
 	NM_ASSERT(!isDeleted(this->texture), "TextObjectSprite::doRender: null texture");
 
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
-
 	if(!this->printed)
 	{
 		TextObjectSprite::out(this, index);
