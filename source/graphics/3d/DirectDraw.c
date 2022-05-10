@@ -28,7 +28,7 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#define __DIRECT_DRAW_INTERLACED
+#undef __DIRECT_DRAW_INTERLACED
 
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
@@ -401,31 +401,120 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-enum DirectDrawTestPoint
+static bool DirectDraw::reduceToScrenSpace(fix10_6* x0, fix10_6* y0, fix10_6 dx, fix10_6 dy, fix10_6 parallax, fix10_6 x1, fix10_6 y1)
 {
-	kDirectDrawTestPointOk = 0,
-};
+	fix10_6 x = *x0;
+	fix10_6 y = *y0;
 
-static int32 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 stepX, fix10_6 stepY)
-{
-	if(__SCREEN_WIDTH <= (unsigned)(x - parallax))
+	fix10_6 width = __I_TO_FIX10_6(__SCREEN_WIDTH - 1);
+	fix10_6 height = __I_TO_FIX10_6(__SCREEN_HEIGHT - 1);
+
+	if((unsigned)width < (unsigned)(x - parallax)
+		|| (unsigned)width < (unsigned)(x + parallax)
+		|| (unsigned)height < (unsigned)(y)
+	)
 	{
-		// If positive, I'm moving away from the screen
-		return (x - parallax) * stepX;
-	}
-	else if(__SCREEN_WIDTH <= (unsigned)(x + parallax))
-	{
-		// If positive, I'm moving away from the screen
-		return (x + parallax) * stepX;
+		if(0 == dx)
+		{
+			if((unsigned)width < (unsigned)(x - parallax))
+			{
+				return false;
+			}
+
+			if((unsigned)width < (unsigned)(x + parallax))
+			{
+				return false;
+			}
+
+			if(0 > y)
+			{
+				y = 0;
+			}
+			else if(height < y)
+			{
+				y = height;
+			}
+
+			*y0 = y;
+
+			return true;
+		}
+
+		if(0 == dy)
+		{
+			if((unsigned)height < (unsigned)(y))
+			{
+				return false;
+			}
+
+			if(0 > x - parallax)
+			{
+				x = parallax;
+			}
+			else if(width < x - parallax)
+			{
+				x = width + parallax;
+			}
+
+			if(0 > x + parallax)
+			{
+				x = -parallax;
+			}
+			else if(width < x + parallax)
+			{
+				x = width - parallax;
+			}
+
+			*x0 = x;
+			return true;
+		}
+
+		fix10_6 slope = __FIX10_6_DIV(dy, dx);
+
+		//	(y - y1) = (dx/dy)*(x - x1)
+		if(0 > x - parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = parallax;
+			y = __FIX10_6_MULT(slope, x - x1) + y1;
+		}
+		else if(width < x - parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = width + parallax;
+			y = __FIX10_6_MULT(slope, x - x1) + y1;
+		}
+		else if(0 > x + parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = -parallax;
+			y = __FIX10_6_MULT(slope, x - x1) + y1;
+		}
+		else if(width < x + parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = width - parallax;
+			y = __FIX10_6_MULT(slope, x - x1) + y1;
+		}
+
+		if(0 > y)
+		{
+			// x = (y - y1)/(dx/dy) + x1
+			y = 0;
+			x = __FIX10_6_DIV(y - y1, slope) + x1;
+		}
+		else if(height < y)
+		{
+			// x = (y - y1)/(dx/dy) + x1
+			y = height;
+			x = __FIX10_6_DIV(y - y1, slope) + x1;
+		}
 	}
 
-	if(__SCREEN_HEIGHT <= (unsigned)y)
-	{
-		// If positive, I'm moving away from the screen
-		return y * stepY;
-	}
+	*x0 = x;
+	*y0 = y;
 
-	return kDirectDrawTestPointOk;
+	return true;
 }
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
@@ -473,6 +562,16 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
+
+	if(!DirectDraw::reduceToScrenSpace(&fromPointX, &fromPointY, dx, dy, fromPointParallax, toPointX, toPointY))
+	{
+		return;
+	}
+
+	if(!DirectDraw::reduceToScrenSpace(&toPointX, &toPointY, dx, dy, toPointParallax, fromPointX, fromPointY))
+	{
+		return;
+	}
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
@@ -532,20 +631,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		{
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
-
-#ifndef __DIRECT_DRAW_INTERLACED
-			int32 pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
-#else
-			int32 pointTest = DirectDraw::testPoint(mainCoordinate + 1, __FIX10_6_TO_I(secondaryCoordinate + secondaryStep), __FIX10_6_TO_I(parallax + parallaxStep), 2, secondaryStep);
-#endif
-			if(0 < pointTest)
-			{
-				break;
-			}
-			else if(0 > pointTest)
-			{
-				continue;
-			}
 
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
 
@@ -612,21 +697,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		{
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
-
-#ifndef __DIRECT_DRAW_INTERLACED
-			int32 pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
-#else
-			int32 pointTest = DirectDraw::testPoint(__FIX10_6_TO_I(secondaryCoordinate + secondaryStep), mainCoordinate + 1, __FIX10_6_TO_I(parallax + parallaxStep), secondaryStep, 2);
-#endif
-
-			if(0 < pointTest)
-			{
-				break;
-			}
-			else if(0 > pointTest)
-			{
-				continue;
-			}
 
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
 
