@@ -1,6 +1,9 @@
 {
 	"events": {
 		"fileChanged": {
+			"config/DebugMacros.json": [
+				"debugConfig.h"
+			],
 			"config/Engine.json": [
 				"config.h"
 			],
@@ -113,6 +116,20 @@
 			"root": "workspace",
 			"target": "config.make",
 			"template": "config.make.nj"
+		},
+		"debugConfig.h": {
+			"mode": "single",
+			"data": [
+				{
+					"key": "debugMacros",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/DebugMacros.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/debugConfig.h",
+			"template": "debugConfig.h.nj"
 		},
 		"Fonts.c": {
 			"mode": "single",
