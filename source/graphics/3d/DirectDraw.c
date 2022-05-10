@@ -404,90 +404,25 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 enum DirectDrawTestPoint
 {
 	kDirectDrawTestPointOk = 0,
-	kDirectDrawTestPointContinue,
-	kDirectDrawTestPointBreak,
 };
 
-static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 stepX, fix10_6 stepY)
+static int32 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 stepX, fix10_6 stepY)
 {
 	if(__SCREEN_WIDTH <= (unsigned)(x - parallax))
 	{
-		if(0 > x - parallax)
-		{
-			if(0 > stepX)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-
-		}
-		else
-		{
-			if(0 < stepX)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-		}
+		// If positive, I'm moving away from the screen
+		return (x - parallax) * stepX;
 	}
 	else if(__SCREEN_WIDTH <= (unsigned)(x + parallax))
 	{
-		if(0 > x + parallax)
-		{
-			if(0 > stepX)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-
-		}
-		else
-		{
-			if(0 < stepX)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-		}
+		// If positive, I'm moving away from the screen
+		return (x + parallax) * stepX;
 	}
 
 	if(__SCREEN_HEIGHT <= (unsigned)y)
 	{
-		if(0 > y)
-		{
-			if(0 > stepY)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-
-		}
-		else
-		{
-			if(0 < stepY)
-			{
-				return kDirectDrawTestPointBreak;
-			}
-			else
-			{
-				return kDirectDrawTestPointContinue;
-			}
-		}
+		// If positive, I'm moving away from the screen
+		return y * stepY;
 	}
 
 	return kDirectDrawTestPointOk;
@@ -598,13 +533,16 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
 
-			uint8 pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
-
-			if(kDirectDrawTestPointBreak == pointTest)
+#ifndef __DIRECT_DRAW_INTERLACED
+			int32 pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
+#else
+			int32 pointTest = DirectDraw::testPoint(mainCoordinate + 1, __FIX10_6_TO_I(secondaryCoordinate + secondaryStep), __FIX10_6_TO_I(parallax + parallaxStep), 2, secondaryStep);
+#endif
+			if(0 < pointTest)
 			{
 				break;
 			}
-			else if(kDirectDrawTestPointContinue == pointTest)
+			else if(0 > pointTest)
 			{
 				continue;
 			}
@@ -618,17 +556,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			parallaxHelper = __FIX10_6_TO_I(parallax);
-
-			pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
-
-			if(kDirectDrawTestPointBreak == pointTest)
-			{
-				break;
-			}
-			else if(kDirectDrawTestPointContinue == pointTest)
-			{
-				continue;
-			}
 
 			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
 #endif
@@ -686,13 +613,17 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
 
-			uint8 pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
+#ifndef __DIRECT_DRAW_INTERLACED
+			int32 pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
+#else
+			int32 pointTest = DirectDraw::testPoint(__FIX10_6_TO_I(secondaryCoordinate + secondaryStep), mainCoordinate + 1, __FIX10_6_TO_I(parallax + parallaxStep), secondaryStep, 2);
+#endif
 
-			if(kDirectDrawTestPointBreak == pointTest)
+			if(0 < pointTest)
 			{
 				break;
 			}
-			else if(kDirectDrawTestPointContinue == pointTest)
+			else if(0 > pointTest)
 			{
 				continue;
 			}
@@ -706,17 +637,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			parallaxHelper = __FIX10_6_TO_I(parallax);
-
-			pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
-
-			if(kDirectDrawTestPointBreak == pointTest)
-			{
-				break;
-			}
-			else if(kDirectDrawTestPointContinue == pointTest)
-			{
-				continue;
-			}
 
 			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
 #endif
