@@ -28,10 +28,11 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#undef __DIRECT_DRAW_INTERLACED
+#define __DIRECT_DRAW_INTERLACED
 
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
+#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		1
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
@@ -105,8 +106,9 @@ void DirectDraw::startDrawing()
 	}
 #endif
 
-	// dummy, don't remove
 	this->totalDrawPixels = 0;
+
+	_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 }
 
 /**
@@ -493,11 +495,6 @@ static uint8 DirectDraw::testPoint(int16 x, int16 y, int16 parallax, fix10_6 ste
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
 {
-	if(_directDraw->totalDrawPixels > _directDraw->maximuDrawPixels)
-	{
-		return;
-	}
-
 	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
 	{
 		fromPoint = DirectDraw::clampPixelVector(fromPoint);
@@ -522,6 +519,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 #endif
 
+
+	uint16 totalPixels = 0;
 
 	fix10_6 fromPointX = __I_TO_FIX10_6(fromPoint.x);
 	fix10_6 fromPointY = __I_TO_FIX10_6(fromPoint.y);
@@ -549,6 +548,13 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
 	{
+		totalPixels = __ABS(toPoint.x - fromPoint.x);
+
+		if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
+		{
+			return;
+		}
+
 		if(toPointX < fromPointX)
 		{
 			fix10_6 auxPoint = fromPointX;
@@ -613,12 +619,30 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			parallaxHelper = __FIX10_6_TO_I(parallax);
 
+			pointTest = DirectDraw::testPoint(mainCoordinate, secondaryHelper, parallaxHelper, 1, secondaryStep);
+
+			if(kDirectDrawTestPointBreak == pointTest)
+			{
+				break;
+			}
+			else if(kDirectDrawTestPointContinue == pointTest)
+			{
+				continue;
+			}
+
 			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
 #endif
 		}
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
+		totalPixels = __ABS(toPoint.y - fromPoint.y);
+
+		if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
+		{
+			return;
+		}
+
 		if(toPointY < fromPointY)
 		{
 			fix10_6 auxPoint = fromPointY;
@@ -682,6 +706,17 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
 			parallaxHelper = __FIX10_6_TO_I(parallax);
+
+			pointTest = DirectDraw::testPoint(secondaryHelper, mainCoordinate, parallaxHelper, secondaryStep, 1);
+
+			if(kDirectDrawTestPointBreak == pointTest)
+			{
+				break;
+			}
+			else if(kDirectDrawTestPointContinue == pointTest)
+			{
+				continue;
+			}
 
 			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
 #endif
