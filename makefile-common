@@ -91,8 +91,9 @@ ifneq ($(CLEAN_TYPE), all)
 	FOLDER_TO_CLEAN=$(MY_HOME)/build/$(CLEAN_TYPE)*
 endif
 
-# Configuration file
+# Configuration files
 CONFIG_FILE = 			$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo $(MY_HOME)/source/config.h; fi;)
+DEBUG_CONFIG_FILE = 	$(shell if [ -f $(MY_HOME)/source/debugConfig.h ]; then echo $(MY_HOME)/source/debugConfig.h; fi;)
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(NAME)/classesHierarchy.txt
@@ -214,6 +215,7 @@ compile:
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
 		-e PLUGINS="$(PLUGINS)"																														\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
+		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
 		-e GAME_NAME=$(GAME_NAME)																													\
 		-e COMPONENTS=$(COMPONENTS)
 
@@ -222,6 +224,7 @@ engine: deleteLibraries
 		$(GAME_HOME)/build/lib$(ENGINE_NAME).a																										\
 		-f $(ENGINE_HOME)/makefile																													\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
+		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e MAKE_JOBS=$(MAKE_JOBS)																													\
@@ -238,6 +241,7 @@ plugins: deleteLibraries
 				$(PLUGIN_FILE).a 																													\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
+				-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																							\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e GAME_HOME=$(GAME_HOME)																											\
 				-e MAKE_JOBS=$(MAKE_JOBS)																											\

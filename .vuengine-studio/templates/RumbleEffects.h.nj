@@ -7,13 +7,13 @@
 
 {{ macros.sectionHeader('Includes') }}
 
-#include <RumblePakManager.h>
+#include <RumbleManager.h>
 
 
 {{ macros.sectionHeader('Declarations') }}
 
 {% for rumbleEffect in rumbleEffects | unique('name') | sort(attribute='name') -%}
-extern RumbleEffectROMSpec {{ rumbleEffect.name }}RumbleEffect[];
+extern RumbleEffectSpec {{ rumbleEffect.name }}RumbleEffect;
 {% endfor %}
 
 #endif

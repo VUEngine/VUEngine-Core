@@ -40,7 +40,7 @@
 #include <CameraMovementManager.h>
 #include <KeypadManager.h>
 #include <SoundManager.h>
-#include <RumblePakManager.h>
+#include <RumbleManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
 #include <Profiler.h>
@@ -207,7 +207,7 @@ void Game::initialize()
 	SoundManager::reset(this->soundManager);
 
 	// Reset Rumble Pak
-	RumblePakManager::reset(RumblePakManager::getInstance());
+	RumbleManager::reset(RumbleManager::getInstance());
 
 	// start the game's general clock
 	Clock::start(this->clock);
