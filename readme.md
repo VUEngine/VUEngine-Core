@@ -44,7 +44,7 @@ Features:
 	- Multiple memory allocation schemas to improve efficiency
 	- Frame based animation system with callback support
 - Sound:
-	- Sound reproduction of one BGM and up to two FX sounds simultaneous.
+	- Chiptune and PCM playback
 - Physics:
 	- Basic accelerated/uniform movement
 	- Gravity
