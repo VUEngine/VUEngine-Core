@@ -152,7 +152,7 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// current body
 		Body body = Body::safeCast(node->data);
@@ -255,7 +255,7 @@ void PhysicalWorld::update(Clock clock)
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
 
-	for(VirtualNode node = this->bodies->head, nextNode = NULL; node; node = nextNode)
+	for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
@@ -293,7 +293,7 @@ void PhysicalWorld::reset()
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// delete it
 		delete node->data;
@@ -317,7 +317,7 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// current body
 		Body body = Body::safeCast(node->data);

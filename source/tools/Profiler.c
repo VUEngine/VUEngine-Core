@@ -222,7 +222,7 @@ void Profiler::print()
 
 	uint32 previousLapType = kProfilerLapTypeNormalProcess;
 
-	for(VirtualNode node = VirtualList::begin(this->laps); node; node = VirtualNode::getNext(node))
+	for(VirtualNode node = VirtualList::begin(this->laps); NULL != node; node = VirtualNode::getNext(node))
 	{
 		Lap* lap = (Lap*)VirtualNode::getData(node);
 		Profiler::printValue(this, lap, previousLapType); 

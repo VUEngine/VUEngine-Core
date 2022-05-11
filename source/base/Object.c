@@ -54,7 +54,7 @@ void Object::destructor()
 	{
 		VirtualNode node = this->events->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -107,7 +107,7 @@ void Object::addEventListener(Object listener, EventListener method, uint32 even
 		// don't add the same listener twice
 		VirtualNode node = this->events->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
@@ -139,7 +139,7 @@ void Object::removeEventListener(Object listener, EventListener method, uint32 e
 	{
 		VirtualNode node = this->events->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
@@ -164,7 +164,7 @@ void Object::removeEventListeners(EventListener method, uint32 eventCode)
 {
 	if(this->events)
 	{
-		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -197,7 +197,7 @@ void Object::removeEventListenerScopes(Object listener, uint32 eventCode)
 {
 	if(this->events)
 	{
-		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -228,7 +228,7 @@ void Object::removeAllEventListeners(uint32 eventCode)
 {
 	if(this->events)
 	{
-		for(VirtualNode node = this->events->head, nextNode = NULL; node; node = nextNode)
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -272,7 +272,7 @@ void Object::fireEvent(uint32 eventCode)
 		// temporary lists to being able to modify the event lists while firing them
 		VirtualList eventsToFire = new VirtualList();
 
-		for(VirtualNode node = this->events->head, nextNode; node; node = nextNode)
+		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -295,7 +295,7 @@ void Object::fireEvent(uint32 eventCode)
 			}
 		}
 
-		for(VirtualNode node = eventsToFire->head; node; node = node->next)
+		for(VirtualNode node = eventsToFire->head; NULL != node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 

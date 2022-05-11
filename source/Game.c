@@ -327,7 +327,7 @@ void Game::setNextState(GameState state)
 				// Cancel all messages
 				VirtualNode node = VirtualList::begin(stateMachineStack);
 
-				for(; node; node = VirtualNode::getNext(node))
+				for(; NULL != node; node = VirtualNode::getNext(node))
 				{
 					GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 

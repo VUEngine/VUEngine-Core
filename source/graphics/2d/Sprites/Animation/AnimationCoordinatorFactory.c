@@ -73,7 +73,7 @@ void AnimationCoordinatorFactory::reset()
 {
 	VirtualNode node = this->animationCoordinators->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}
@@ -98,7 +98,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 		case __ANIMATED_SHARED_COORDINATED:
 			{
 				// try to find an already created coordinator
-				for(VirtualNode node = this->animationCoordinators->head; node; node = node->next)
+				for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
 				{
 					AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 

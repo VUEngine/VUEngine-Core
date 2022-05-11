@@ -159,7 +159,7 @@ void Body::destructor()
 	{
 		VirtualNode node = this->normals->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -788,7 +788,7 @@ void Body::computeTotalNormal()
 	{
 		VirtualNode node = this->normals->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
@@ -819,7 +819,7 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 
 	VirtualNode node = this->normals->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		ASSERT(!isDeleted(node->data), "DEAD");
 	//	ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
@@ -870,7 +870,7 @@ void Body::reset()
 	{
 		VirtualNode node = this->normals->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -894,7 +894,7 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
 	if(this->normals && !isDeleted(this->normals->head))
 	{
-		for(VirtualNode node = this->normals->head, nextNode = NULL; node; node = nextNode)
+		for(VirtualNode node = this->normals->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -921,7 +921,7 @@ void Body::clearNormal(Object referent)
 
 	if(this->normals)
 	{
-		for(VirtualNode node = this->normals->head; node; node = node->next)
+		for(VirtualNode node = this->normals->head; NULL != node; node = node->next)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 

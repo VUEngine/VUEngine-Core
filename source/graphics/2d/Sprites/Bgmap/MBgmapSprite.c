@@ -111,7 +111,7 @@ void MBgmapSprite::releaseTextures()
 	{
 		VirtualNode node = this->textures->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
@@ -360,7 +360,7 @@ void MBgmapSprite::calculateSize()
 	int32 cols = 0;
 	int32 rows = 0;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// free the texture
 		int32 textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
@@ -419,7 +419,7 @@ bool MBgmapSprite::writeTextures()
 
 	VirtualNode node = this->textures->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
 

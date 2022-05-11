@@ -61,7 +61,7 @@ void EntityFactory::destructor()
 {
 	VirtualNode node = this->entitiesToInstantiate->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -78,7 +78,7 @@ void EntityFactory::destructor()
 
 	node = this->entitiesToTransform->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -95,7 +95,7 @@ void EntityFactory::destructor()
 
 	node = this->entitiesToMakeReady->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -112,7 +112,7 @@ void EntityFactory::destructor()
 
 	node = this->spawnedEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 

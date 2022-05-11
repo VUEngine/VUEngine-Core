@@ -155,7 +155,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  */
 void MessageDispatcher::processDiscardedMessages()
 {
-	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; node; node = nextNode)
+	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
@@ -193,7 +193,7 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 
 	uint32 messagesDispatched = false;
 
-	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; node; node = nextNode)
+	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
@@ -256,7 +256,7 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
@@ -282,7 +282,7 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 me
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
@@ -313,7 +313,7 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
@@ -343,7 +343,7 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
@@ -373,7 +373,7 @@ bool MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 

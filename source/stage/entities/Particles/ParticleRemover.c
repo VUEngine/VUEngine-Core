@@ -68,7 +68,7 @@ void ParticleRemover::reset()
 {
 	VirtualNode node = this->particlesLists->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		VirtualList particlesList = node->data;
 		VirtualNode particleNode = particlesList->head;

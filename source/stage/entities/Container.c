@@ -277,7 +277,7 @@ void Container::setupShapes()
 	// if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -608,7 +608,7 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 	// if I have children
 	if(recursive && this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -679,7 +679,7 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	{
 		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -723,7 +723,7 @@ void Container::synchronizeChildrenGraphics()
 	// if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -954,7 +954,7 @@ void Container::invalidateGlobalTransformation()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalTransformation(node->data);
@@ -974,7 +974,7 @@ void Container::invalidateGlobalPosition()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalPosition(node->data);
@@ -994,7 +994,7 @@ void Container::invalidateGlobalRotation()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalRotation(node->data);
@@ -1014,7 +1014,7 @@ void Container::invalidateGlobalScale()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalScale(node->data);
@@ -1061,7 +1061,7 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 	// propagate if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1258,7 +1258,7 @@ void Container::suspend()
 	{
 		Container::purgeChildren(this);
 
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1289,7 +1289,7 @@ void Container::resume()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1312,7 +1312,7 @@ void Container::show()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1335,7 +1335,7 @@ void Container::hide()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container::hide(node->data);
 		}

@@ -79,7 +79,7 @@ void ObjectSpriteContainer::destructor()
 	VirtualList objectSprites = new VirtualList();
 	VirtualList::copy(objectSprites, this->objectSprites);
 
-	for(VirtualNode node = objectSprites->head; node; node = node->next)
+	for(VirtualNode node = objectSprites->head; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}
@@ -155,7 +155,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 {
 	if(this->objectSprites)
 	{
-		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -208,7 +208,7 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 {
 	ObjectSpriteContainer::hideForDebug(this);
 
-	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -230,7 +230,7 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 {
 	ObjectSpriteContainer::showForDebug(this);
 
-	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -429,7 +429,7 @@ bool ObjectSpriteContainer::writeTextures()
 {
 	if(!isDeleted(this->objectSprites))
 	{
-		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 		{
 			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data));
 		}

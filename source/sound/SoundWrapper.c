@@ -284,7 +284,7 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		VirtualNode node = this->channels->head;
 
 		// Prepare channels
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 			_soundRegistries[channel->number].SxFQH = 0;
@@ -340,7 +340,7 @@ void SoundWrapper::pause()
 		VirtualNode node = this->channels->head;
 
 		// Silence all channels first
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 			_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
@@ -359,7 +359,7 @@ void SoundWrapper::unpause()
 		VirtualNode node = this->channels->head;
 
 		// Silence all channels first
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 			_soundRegistries[channel->number].SxLRV = 0x00;
@@ -381,7 +381,7 @@ void SoundWrapper::turnOff()
 	VirtualNode node = this->channels->head;
 
 	// Silence all channels first
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
@@ -397,7 +397,7 @@ void SoundWrapper::turnOn()
 	VirtualNode node = this->channels->head;
 
 	// Silence all channels first
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxLRV = 0x00;
@@ -417,7 +417,7 @@ void SoundWrapper::rewind()
 
 	this->elapsedMicroseconds = 0;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->finished = false;
@@ -458,7 +458,7 @@ void SoundWrapper::stop()
 	VirtualNode node = this->channels->head;
 
 	// Silence all channels first
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -529,7 +529,7 @@ void SoundWrapper::setupChannels(int8* waves)
 
 	uint16 i = 0;
 
-	for(; node; node = node->next, i++)
+	for(; NULL != node; node = node->next, i++)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -572,7 +572,7 @@ void SoundWrapper::setupChannels(int8* waves)
 	Channel* channelWithLongestTrack = (Channel*)node->data;
 
 	// Find the the channel with the longest track
-	for(node = node->next; node; node = node->next)
+	for(node = node->next; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -594,7 +594,7 @@ void SoundWrapper::configureSoundRegistries()
 
 	VirtualNode node = this->channels->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -853,7 +853,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	int16 leftVolumeFactor = -1;
 	int16 rightVolumeFactor = -1;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 /*
@@ -932,7 +932,7 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 		volume = 0;
 	}
 
-	for(VirtualNode node = this->channels->head; node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -972,7 +972,7 @@ void SoundWrapper::print(int32 x, int32 y)
 	VirtualNode node = this->channels->head;
 
 	// Prepare channels
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -1225,7 +1225,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 		int32 yDisplacement = 0;
 
-		for(node = this->channels->head; node; node = node->next)
+		for(node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 
@@ -1250,7 +1250,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 	uint16 totalVolume = 0;
 
-	for(node = this->channels->head; node; node = node->next)
+	for(node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 

@@ -290,7 +290,7 @@ void Printing::releaseFonts()
 
 	VirtualNode node = VirtualList::begin(this->fonts);
 
-	for(; node; node = VirtualNode::getNext(node))
+	for(; NULL != node; node = VirtualNode::getNext(node))
 	{
 		FontData* fontData = VirtualNode::getData(node);
 
@@ -336,7 +336,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				// iterate over registered fonts to find spec of font to use
 				VirtualNode node = VirtualList::begin(this->fonts);
-				for(; node; node = VirtualNode::getNext(node))
+				for(; NULL != node; node = VirtualNode::getNext(node))
 				{
 					FontData* fontData = VirtualNode::getData(node);
 					if(!strcmp(fontData->fontSpec->name, font))

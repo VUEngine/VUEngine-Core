@@ -473,7 +473,7 @@ bool Actor::canMoveTowards(Vector3D direction)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 			canMove &= Shape::canMoveTowards(shape, displacement, 0);
@@ -496,7 +496,7 @@ fix10_6 Actor::getSurroundingFrictionCoefficient()
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 

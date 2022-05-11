@@ -55,7 +55,7 @@ void StateMachine::destructor()
 	// delete the stack
 	VirtualNode node = this->stateStack->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}

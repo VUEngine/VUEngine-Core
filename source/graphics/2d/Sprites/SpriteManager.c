@@ -117,7 +117,7 @@ void SpriteManager::cleanUp()
 	{
 		VirtualNode node = this->objectSpriteContainers->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -133,7 +133,7 @@ void SpriteManager::cleanUp()
 
 		VirtualNode node = sprites->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -248,7 +248,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fix10_6 z)
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 	VirtualNode node = this->objectSpriteContainers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -288,7 +288,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 seg
 	ObjectSpriteContainer objectSpriteContainer = NULL;
 	VirtualNode node = this->objectSpriteContainers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -349,7 +349,7 @@ void SpriteManager::sort()
  */
 void SpriteManager::doRegisterSprite(Sprite sprite)
 {
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
 
@@ -413,7 +413,7 @@ bool SpriteManager::sortProgressively()
 
 	if(!isDeleted(this->objectSpriteContainers))
 	{
-		for(VirtualNode node = this->objectSpriteContainers->head; node; node = node->next)
+		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -515,7 +515,7 @@ void SpriteManager::writeTextures()
 	// allow complete texture writing
 	this->texturesMaximumRowsToWrite = -1;
 
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		Sprite::writeTextures(node->data);
 	}
@@ -527,7 +527,7 @@ void SpriteManager::writeTextures()
 
 void SpriteManager::applySpecialEffects()
 {
-	for(VirtualNode node = this->specialSprites->head; node; node = node->next)
+	for(VirtualNode node = this->specialSprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::writeGraphicsToDRAM: NULL node's data");
 
@@ -668,7 +668,7 @@ int8 SpriteManager::getFreeLayer()
 #ifdef __TOOLS
 void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 {
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::hideSprites: NULL node's data");
 
@@ -687,7 +687,7 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 	{
 		VirtualNode node = this->objectSpriteContainers->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -710,7 +710,7 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
  */
 void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 {
-	for(VirtualNode node = this->sprites->tail; node; node = node->previous)
+	for(VirtualNode node = this->sprites->tail; NULL != node; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::showSprites: NULL node's data");
 
@@ -733,7 +733,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 	{
 		VirtualNode node = this->objectSpriteContainers->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
@@ -769,7 +769,7 @@ Sprite SpriteManager::getSpriteAtPosition(int16 position)
 
 	int32 counter = 0;
 
-	for(VirtualNode node = this->sprites->head; node; node = node->next, counter++)
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next, counter++)
 	{
 		if(counter == position)
 		{
@@ -924,7 +924,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 {
 	int32 totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
 
-	for(VirtualNode node = this->sprites->head; node; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
 
@@ -977,7 +977,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 
 	int32 counter = __TOTAL_LAYERS - 1;
 	
-	for(VirtualNode node = this->sprites->tail; node; node = node->previous, counter--)
+	for(VirtualNode node = this->sprites->tail; NULL != node; node = node->previous, counter--)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = Sprite::safeCast(node->data);
@@ -1015,7 +1015,7 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 	int32 totalUsedObjects = 0;
 	VirtualNode node = this->objectSpriteContainers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
 	}

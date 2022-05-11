@@ -95,7 +95,7 @@ void Shape::destructor()
 	{
 		VirtualNode node = this->collidingShapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -128,7 +128,7 @@ void Shape::reset()
 	{
 		VirtualNode node = this->collidingShapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -437,7 +437,7 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -759,7 +759,7 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		ASSERT(!isDeleted(node->data), "Shape::findCollidingShapeRegistry: deleted registry");
 
@@ -788,7 +788,7 @@ fix10_6 Shape::getCollidingFrictionCoefficient()
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::getCollidingFriction: dead collidingShapeRegistry");
@@ -815,7 +815,7 @@ int32 Shape::getNumberOfImpenetrableCollidingShapes()
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		count += ((CollidingShapeRegistry*)node->data)->isImpenetrable ? 1 : 0;
 	}

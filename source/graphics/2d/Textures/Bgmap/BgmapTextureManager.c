@@ -281,7 +281,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
  */
 void BgmapTextureManager::updateTextures()
 {
-	for(VirtualNode node = this->bgmapTextures->head; node; node = node->next)
+	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
 

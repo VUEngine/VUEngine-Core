@@ -107,7 +107,7 @@ void SoundManager::destructor()
 	{
 		VirtualNode node = this->queuedSounds->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -120,7 +120,7 @@ void SoundManager::destructor()
 	{
 		VirtualNode node = this->soundWrappers->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -147,7 +147,7 @@ void SoundManager::releaseChannels(VirtualList channels)
 
 		VirtualNode node = channels->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 
@@ -158,7 +158,7 @@ void SoundManager::releaseChannels(VirtualList channels)
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	for(VirtualNode node = this->soundWrappers->head, nextNode = NULL; node; node = nextNode)
+	for(VirtualNode node = this->soundWrappers->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
 		nextNode = node->next;
 
@@ -183,14 +183,14 @@ void SoundManager::purgeReleasedSoundWrappers()
 
 void SoundManager::reset()
 {
-	for(VirtualNode node = this->queuedSounds->head; node; node = node->next)
+	for(VirtualNode node = this->queuedSounds->head; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}
 
 	VirtualList::clear(this->queuedSounds);
 
-	for(VirtualNode node = this->soundWrappers->head; node; node = node->next)
+	for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -293,7 +293,7 @@ void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 
 void SoundManager::flushQueuedSounds()
 {
-	for(VirtualNode node = this->queuedSounds->head; node; node = node->next)
+	for(VirtualNode node = this->queuedSounds->head; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}
@@ -305,7 +305,7 @@ void SoundManager::tryToPlayQueuedSounds()
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 	
-	for(VirtualNode node = this->queuedSounds->head; node;)
+	for(VirtualNode node = this->queuedSounds->head; NULL != node;)
 	{
 		QueuedSound* queuedSound = (QueuedSound*)node->data;
 
@@ -339,7 +339,7 @@ bool SoundManager::isPlayingSound(const Sound* sound)
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -383,7 +383,7 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 	}
 	else
 	{
-		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; node; node = node->next)
+		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; NULL != node; node = node->next)
 		{
 			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
@@ -392,7 +392,7 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
 {
-	for(VirtualNode node = _soundManager->soundWrappersPCM->head; node; node = node->next)
+	for(VirtualNode node = _soundManager->soundWrappersPCM->head; NULL != node; node = node->next)
 	{
 		SoundWrapper::updatePCMPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 	}
@@ -408,7 +408,7 @@ void SoundManager::rewindAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -442,7 +442,7 @@ void SoundManager::unmuteAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -477,7 +477,7 @@ void SoundManager::muteAllSounds(uint32 type)
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -660,7 +660,7 @@ void SoundManager::turnOffPlayingSounds()
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -681,7 +681,7 @@ void SoundManager::turnOnPlayingSounds()
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
@@ -904,7 +904,7 @@ void SoundManager::stopAllSounds(bool release)
 {
 	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 

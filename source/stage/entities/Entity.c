@@ -178,7 +178,7 @@ void Entity::destroyShapes()
 
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), Shape::safeCast(node->data));
 		}
@@ -201,7 +201,7 @@ void Entity::destroyMeshes()
 
 		VirtualNode node = this->meshes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -1057,7 +1057,7 @@ void Entity::transformShapes()
 		}
 		else
 		{
-			for(; node; node = node->next)
+			for(; NULL != node; node = node->next)
 			{
 				Shape shape = Shape::safeCast(node->data);
 
@@ -1996,7 +1996,7 @@ void Entity::activeCollisionChecks(bool active)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2015,7 +2015,7 @@ void Entity::registerCollisions(bool value)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2035,7 +2035,7 @@ void Entity::allowCollisions(bool value)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape::enable(node->data, value);
 		}
@@ -2065,7 +2065,7 @@ void Entity::showShapes()
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape::show(node->data);
 		}
@@ -2078,7 +2078,7 @@ void Entity::hideShapes()
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape::hide(node->data);
 		}
@@ -2161,7 +2161,7 @@ uint32 Entity::getShapesLayers()
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2183,7 +2183,7 @@ void Entity::setShapesLayers(uint32 layers)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2205,7 +2205,7 @@ uint32 Entity::getShapesLayersToIgnore()
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2227,7 +2227,7 @@ void Entity::setShapesLayersToIgnore(uint32 layersToIgnore)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 

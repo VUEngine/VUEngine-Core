@@ -168,7 +168,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 		{
 			VirtualNode node = this->particles->head;
 
-			for(; node; node = node->next)
+			for(; NULL != node; node = node->next)
 			{
 				delete node->data;
 			}
@@ -189,7 +189,7 @@ void ParticleSystem::deleteAllParticles()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -208,7 +208,7 @@ void ParticleSystem::expireAllParticles()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -238,7 +238,7 @@ void ParticleSystem::processExpiredParticles()
 {
 	if(!isDeleted(this->particles) && !this->particleSystemSpec->recycleParticles)
 	{
-		for(VirtualNode node = this->particles->head, nextNode; node; node = nextNode)
+		for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -281,7 +281,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 	void (* behavior)(Particle particle) = this->particleSystemSpec->particleSpec->behavior;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -352,7 +352,7 @@ bool ParticleSystem::recycleParticle()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -518,7 +518,7 @@ void ParticleSystem::resetParticlesPositions()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -536,7 +536,7 @@ void ParticleSystem::transformParticles()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -558,7 +558,7 @@ void ParticleSystem::synchronizeGraphics()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -593,7 +593,7 @@ void ParticleSystem::show()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -617,7 +617,7 @@ void ParticleSystem::hide()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle::hide(Particle::safeCast(node->data));
 	}
@@ -628,7 +628,7 @@ void ParticleSystem::resume()
 	// Must recover the particles first so their sprites are recreated
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -649,7 +649,7 @@ void ParticleSystem::suspend()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle::suspend(node->data);
 	}

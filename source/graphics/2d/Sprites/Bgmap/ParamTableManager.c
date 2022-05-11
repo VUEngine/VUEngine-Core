@@ -271,7 +271,7 @@ bool ParamTableManager::defragmentProgressively()
 	{
 		VirtualNode node = this->bgmapSprites->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			BgmapSprite sprite = BgmapSprite::safeCast(node->data);
 

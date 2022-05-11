@@ -443,7 +443,7 @@ void VIPManager::applyPostProcessingEffects()
 {
 	volatile bool hasFrameStartedDuringXPEND = false;
 
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; node; node = previousNode)
+	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
 
@@ -726,7 +726,7 @@ PostProcessingEffectRegistry* VIPManager::isPostProcessingEffectRegistered(PostP
 {
 	VirtualNode node = this->postProcessingEffects->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
@@ -795,7 +795,7 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
  */
 void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	for(VirtualNode node = this->postProcessingEffects->head; node; node = node->next)
+	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
 	{
 		PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
@@ -812,7 +812,7 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
  */
 void VIPManager::removePostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->head; node; node = node->next)
+	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}

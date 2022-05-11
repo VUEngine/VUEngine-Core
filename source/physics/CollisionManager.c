@@ -181,7 +181,7 @@ uint32 CollisionManager::update(Clock clock)
 		}
 #endif
 		// check the shapes
-		for(VirtualNode node = activeForCollisionCheckingShapes->head; node; node = node->next)
+		for(VirtualNode node = activeForCollisionCheckingShapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -225,7 +225,7 @@ void CollisionManager::reset()
 
 	VirtualNode node = this->shapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// delete it
 		delete node->data;
@@ -272,7 +272,7 @@ void CollisionManager::showShapes()
 	VirtualNode node = this->shapes->head;
 
 	// check the shapes
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Shape::show(node->data);
 	}
@@ -286,7 +286,7 @@ void CollisionManager::hideShapes()
 	VirtualNode node = this->shapes->head;
 
 	// check the shapes
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Shape::hide(node->data);
 	}
@@ -300,7 +300,7 @@ int32 CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
 	VirtualNode node = this->shapes->head;
 
 	// check the shapes
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Shape shape = Shape::safeCast(node->data);
 

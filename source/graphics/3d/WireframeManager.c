@@ -77,7 +77,7 @@ void WireframeManager::destructor()
 
 	VirtualNode node = this->wireframes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		delete node->next;
 	}

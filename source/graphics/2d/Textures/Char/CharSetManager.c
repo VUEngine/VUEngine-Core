@@ -88,7 +88,7 @@ void CharSetManager::reset()
 	{
 		VirtualNode node = this->charSets->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -113,7 +113,7 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	// try to find a charset with the same char spec
 	VirtualNode node = this->charSets->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
@@ -285,7 +285,7 @@ void CharSetManager::writeCharSets()
 
 	VirtualNode node = this->charSetsPendingWriting->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CharSet::write(node->data);
 	}
@@ -346,7 +346,7 @@ bool CharSetManager::defragmentProgressively()
 	{
 		VirtualNode node = this->charSets->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CharSet charSet = CharSet::safeCast(node->data);
 

@@ -76,7 +76,7 @@ void Mesh::destructor()
 
 void Mesh::deleteLists()
 {
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
@@ -141,7 +141,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	newMeshSegment->toVertex = NULL;
 	newMeshSegment->bufferIndex = 0;
 
-	for(VirtualNode node = this->vertices->head; node; node = node->next)
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
@@ -181,8 +181,6 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
-extern int projected;
-extern int draw;
 /**
  * Class draw
  */
@@ -195,7 +193,7 @@ void Mesh::render()
 
 	CACHE_ENABLE;
 
-	for(VirtualNode node = this->vertices->head; node; node = node->next)
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
@@ -231,7 +229,7 @@ void Mesh::render()
 
 void Mesh::draw(bool calculateParallax __attribute__((unused)))
 {
-	for(VirtualNode node = this->segments->head; node; node = node->next)
+	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;

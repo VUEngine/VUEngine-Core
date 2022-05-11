@@ -141,7 +141,7 @@ void Stage::destructor()
 	{
 		VirtualNode node = this->soundWrappers->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			if(!isDeleted(node->data))
 			{
@@ -173,7 +173,7 @@ void Stage::destructor()
 	{
 		VirtualNode node = this->stageEntities->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -431,7 +431,7 @@ bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
 {
 	VirtualNode node = this->stageEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -466,7 +466,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 	VirtualNode node = this->stageEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -510,7 +510,7 @@ void Stage::unloadChild(Container child)
 
 	VirtualNode node = this->stageEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -590,7 +590,7 @@ void Stage::preloadAssets()
 
 		VirtualNode node = VirtualList::begin(recyclableTextures);
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
 		}
@@ -642,7 +642,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 		{
 			VirtualNode node = positionedEntitiesToIgnore->head;
 
-			for(; node; node = node->next)
+			for(; NULL != node; node = node->next)
 			{
 				if(&this->stageSpec->entities.children[i] == (PositionedEntity*)node->data)
 				{
@@ -689,7 +689,7 @@ void Stage::loadInitialEntities()
 	// need a temporary list to remove and delete entities
 	VirtualNode node = this->stageEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -714,7 +714,7 @@ void Stage::loadInitialEntities()
 
 	node = this->children->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Stage::makeChildReady(this, Entity::safeCast(node->data));
 	}
@@ -739,7 +739,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 	VirtualNode node = this->children->head;
 
 	// check which actors must be unloaded
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// get next entity
 		Entity entity = Entity::safeCast(node->data);
@@ -936,7 +936,7 @@ Entity Stage::findChildByInternalId(int16 internalId)
 {
 	VirtualNode node = this->children->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		if(Entity::getInternalId(Entity::safeCast(node->data)) == internalId)
 		{
