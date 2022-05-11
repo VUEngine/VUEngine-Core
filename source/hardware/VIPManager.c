@@ -270,7 +270,7 @@ static void VIPManager::interruptHandler()
  */
 void VIPManager::processInterrupt(uint16 interrupt)
 {
-#define INTERRUPTS	4
+#define INTERRUPTS	5
 
 	static uint16 interruptTable[] =
 	{
