@@ -28,7 +28,7 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#undef __DIRECT_DRAW_INTERLACED
+#define __DIRECT_DRAW_INTERLACED
 
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
@@ -401,7 +401,7 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-static bool DirectDraw::reduceToScrenSpace(fix10_6* x0, fix10_6* y0, fix10_6 dx, fix10_6 dy, fix10_6 parallax, fix10_6 x1, fix10_6 y1)
+static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6 dx, fix10_6 dy, fix10_6 parallax, fix10_6 x1, fix10_6 y1)
 {
 	fix10_6 x = *x0;
 	fix10_6 y = *y0;
@@ -563,12 +563,12 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
 
-	if(!DirectDraw::reduceToScrenSpace(&fromPointX, &fromPointY, dx, dy, fromPointParallax, toPointX, toPointY))
+	if(!DirectDraw::reduceToScreenSpace(&fromPointX, &fromPointY, dx, dy, fromPointParallax, toPointX, toPointY))
 	{
 		return;
 	}
 
-	if(!DirectDraw::reduceToScrenSpace(&toPointX, &toPointY, dx, dy, toPointParallax, fromPointX, fromPointY))
+	if(!DirectDraw::reduceToScreenSpace(&toPointX, &toPointY, dx, dy, toPointParallax, fromPointX, fromPointY))
 	{
 		return;
 	}
