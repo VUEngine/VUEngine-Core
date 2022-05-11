@@ -28,8 +28,6 @@
 extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
-#define __DIRECT_DRAW_INTERLACED
-
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		1
