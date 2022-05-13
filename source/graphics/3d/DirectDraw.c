@@ -533,6 +533,16 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 
+	if((1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)fromPoint.z)
+	{
+		return;
+	}
+
+	if((1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)toPoint.z)
+	{
+		return;
+	}
+
 #ifndef __DIRECT_DRAW_INTERLACED
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
