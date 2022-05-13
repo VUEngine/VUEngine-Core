@@ -595,6 +595,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			dxABS = -dxABS;
 			fromPointY = toPointY;
+
+			parallaxStart = __I_TO_FIX10_6(toPoint.parallax); 
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS);
@@ -661,6 +663,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			dyABS = -dyABS;
 			fromPointX = toPointX;
+			parallaxStart = __I_TO_FIX10_6(toPoint.parallax); 
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dx, dyABS);

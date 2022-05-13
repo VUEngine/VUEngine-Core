@@ -203,27 +203,27 @@ void Mesh::render()
 		vector = Vector3D::sum(vector, _cameraRealPosition);
 		vector = Vector3D::getRelativeToCamera(vector);
 
-		vertex->pixelVector = Vector3D::projectToPixelVectorHighPrecision(vector, 0);
-	/*
+		vertex->pixelVector = Vector3D::projectToPixelVectorHighPrecision(vector, Optics::calculateParallax(vector.x, vector.z));
+/*
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
-		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.x)
+		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
 		{
-			pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+			vertex->pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
-		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.x)
+		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vertex->pixelVector.x)
 		{
-			pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
+			vertex->pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
 
-		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > pixelVector.y)
+		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.y)
 		{
-			pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
+			vertex->pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
-		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < pixelVector.y)
+		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vertex->pixelVector.y)
 		{
-			pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
+			vertex->pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
-	*/
+*/
 	}
 }
 
