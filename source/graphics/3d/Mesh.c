@@ -204,7 +204,7 @@ void Mesh::render()
 		vector = Vector3D::getRelativeToCamera(vector);
 
 		vertex->pixelVector = Vector3D::projectToPixelVectorHighPrecision(vector, Optics::calculateParallax(vector.x, vector.z));
-/*
+
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
 		{
@@ -223,7 +223,6 @@ void Mesh::render()
 		{
 			vertex->pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
-*/
 	}
 }
 
