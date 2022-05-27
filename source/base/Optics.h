@@ -39,7 +39,7 @@ static class Optics : Object
  */
 static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
-	if(0 == z)
+	if(0 == _optical->distanceEyeScreen + z)
 	{
 		return 0;
 	}
