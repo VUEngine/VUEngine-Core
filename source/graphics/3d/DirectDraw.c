@@ -146,6 +146,18 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
 #ifndef __DIRECT_DRAW_INTERLACED
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
+#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
+	if((unsigned)__SCREEN_WIDTH - 1 < (unsigned)x - parallax)
+	{
+		return;
+	}
+
+	if((unsigned)__SCREEN_HEIGHT - 1 < (unsigned)y)
+	{
+		return;
+	}
+#endif
+
 	uint16 yHelper = y >> 2;
 
 	// calculate pixel position
@@ -164,6 +176,18 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 #else
 static void DirectDraw::drawColorPixel(BYTE* buffer, BYTE* dummyBuffer __attribute__((unused)), int16 x, int16 y, int16 parallax, int32 color)
 {
+#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
+	if((unsigned)__SCREEN_WIDTH - 1 < (unsigned)x - parallax)
+	{
+		return;
+	}
+
+	if((unsigned)__SCREEN_HEIGHT - 1 < (unsigned)y)
+	{
+		return;
+	}
+#endif
+
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	buffer += (((x - parallax) << 6) + (y >> 2));
@@ -523,22 +547,22 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		toPoint = DirectDraw::clampPixelVector(toPoint);
 	}
 
-	if(__SCREEN_WIDTH <= (unsigned)(fromPoint.x) && __SCREEN_WIDTH <= (unsigned)(toPoint.x))
+	if((unsigned)__SCREEN_WIDTH <= (unsigned)(fromPoint.x) && (unsigned)__SCREEN_WIDTH <= (unsigned)(toPoint.x))
 	{
 		return;
 	}
 
-	if(__SCREEN_HEIGHT <= (unsigned)(fromPoint.y) && __SCREEN_HEIGHT <= (unsigned)(toPoint.y))
+	if((unsigned)__SCREEN_HEIGHT <= (unsigned)(fromPoint.y) && (unsigned)__SCREEN_HEIGHT <= (unsigned)(toPoint.y))
 	{
 		return;
 	}
 
-	if((1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)fromPoint.z)
+	if((unsigned)(1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)fromPoint.z)
 	{
 		return;
 	}
 
-	if((1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)toPoint.z)
+	if((unsigned)(1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)toPoint.z)
 	{
 		return;
 	}
@@ -571,6 +595,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
 
+#ifndef __DIRECT_DRAW_STRICT_BUFFER_CHECK
 	if(!DirectDraw::reduceToScreenSpace(&fromPointX, &fromPointY, dx, dy, fromPointParallax, toPointX, toPointY))
 	{
 		return;
@@ -580,6 +605,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	{
 		return;
 	}
+#endif
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
