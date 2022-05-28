@@ -20,8 +20,6 @@
 
 extern FontSpec DefaultFont;
 extern FontSpec ProfilerFont;
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
 
 
 #endif
