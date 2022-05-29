@@ -1,5 +1,6 @@
-{%- import 'partials/macros.nj' as macros -%}
-{% include('partials/fileHeader.h.nj') %}
+{%- set events = project.items.Events | values | first -%}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
 
 #ifndef GAME_EVENTS_H_
 #define GAME_EVENTS_H_
@@ -12,10 +13,10 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-{% if events.length > 0 -%}
+{% if events.events.length > 0 -%}
 enum GameEvents
 {
-	{%- for event in events %}
+	{%- for event in events.events | sort %}
 	kEvent{{ event }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };

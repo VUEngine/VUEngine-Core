@@ -1,0 +1,17 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <Fonts.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+FontSpec* const _fonts[] =
+{
+	{% for font in project.combined.items.Font | values | unique('name') | sort(attribute='name') -%}
+	(FontSpec*)&{{ font.name }}Font,
+	{% endfor %}
+	NULL
+};

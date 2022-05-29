@@ -1,5 +1,5 @@
-{%- import 'partials/macros.nj' as macros -%}
-{% include('partials/fileHeader.c.nj') %}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
 
 {%- set entityName = entity.name | toUpperSnakeCase -%}
 {%- set spriteTypes = [] -%}

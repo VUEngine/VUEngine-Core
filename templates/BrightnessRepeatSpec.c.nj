@@ -1,0 +1,26 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <VIPManager.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+BrightnessRepeatROMSpec {{ item.name }}BrightnessRepeat =
+{
+	// mirror spec?
+	{% if item.mirror %}true{% else %}false{% endif %},
+
+	// brightness repeat values
+	{
+		{% for value in item.values -%}
+		{%- if not (item.mirror and loop.index > 48) -%}
+		{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
+		{{- value -}}{{- ', '-}} 
+		{%- if loop.index % 16 == 0 and not (loop.last or (item.mirror and loop.index == 48)) %}{{ "\n		" }}{% endif -%}
+		{%- endif -%}
+		{%- endfor %}
+	}
+};

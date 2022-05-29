@@ -1,5 +1,5 @@
-{%- import 'partials/macros.nj' as macros -%}
-{% include('partials/fileHeader.c.nj') %}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
 
 {{ macros.sectionHeader('Includes') }}
 
@@ -8,43 +8,43 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern uint32 {{ font.tiles }}[];
+extern uint32 {{ item.tiles }}[];
 
 
 {{ macros.sectionHeader('Definitions') }}
 
-CharSetROMSpec {{ font.name }}FontCharSet =
+CharSetROMSpec {{ item.name }}FontCharSet =
 {
 	// number of chars
-	{{ font.characterCount * font.size.x * font.size.y }},
+	{{ item.characterCount * item.size.x * item.size.y }},
 
 	// allocation type
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ font.tiles }},
+	{{ item.tiles }},
 
 	// pointer to the frames offsets
 	NULL,
 };
 
-FontROMSpec {{ font.name }}Font =
+FontROMSpec {{ item.name }}Font =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&{{ font.name }}FontCharSet,
+	(CharSetSpec*)&{{ item.name }}FontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
-	{{ font.offset }},
+	{{ item.offset }},
 
 	// number of characters in this font
-	{{ font.characterCount }},
+	{{ item.characterCount }},
 
 	// number of characters per line in charset
-	{{ font.charactersPerLine }},
+	{{ item.charactersPerLine }},
 
 	// size of a single character (in chars) ({width, height})
-	{{ "{" }}{{ font.size.x }}, {{ font.size.y }}{{ "}" }},
+	{{ "{" }}{{ item.size.x }}, {{ item.size.y }}{{ "}" }},
 
 	// font's name
-	"{{ font.name }}",
+	"{{ item.name }}",
 };

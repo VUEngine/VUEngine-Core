@@ -1,4 +1,6 @@
-{% include('partials/fileHeader.ld.nj') %}
+{%- set compiler = project.combined.items.Compiler | values | first -%}
+{%- set memorySections = compiler.children | typeId('CompilerMemorySections') | first -%}
+{% include('templates/partials/fileHeader.ld.nj') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */
@@ -9,13 +11,12 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-	{%- set extraDram = 3 -%}
-	{%- set dramLength = compiler.memory.sections.dram.length - extraDram %}
-	dram (!r) : ORIGIN = {{ ((compiler.memory.sections.dram.origin | hexToInt) + dramLength*1024) | intToHex(8) }}, LENGTH = {{ -dramLength }}k /* Add additional KBs needed for debug tools */
-	wram (!r) : ORIGIN = {{ compiler.memory.sections.wram.origin }}, LENGTH = {{ compiler.memory.sections.wram.length }}k
-	exp	 (r)  : ORIGIN = {{ compiler.memory.sections.exp.origin }}, LENGTH = {{ compiler.memory.sections.exp.length }}M
-	sram (!r) : ORIGIN = {{ compiler.memory.sections.sram.origin }}, LENGTH = {{ compiler.memory.sections.sram.length }}M
-	rom	 (rx) : ORIGIN = {{ compiler.memory.sections.rom.origin }}, LENGTH = {{ compiler.memory.sections.rom.length }}M
+	{%- set dramLength = memorySections.dram.length %}
+	dram (!r) : ORIGIN = {{ ((memorySections.dram.origin | hexToInt) + dramLength*1024) | intToHex(8) }}, LENGTH = {{ -dramLength }}k
+	wram (!r) : ORIGIN = {{ memorySections.wram.origin }}, LENGTH = {{ memorySections.wram.length }}k
+	exp  (r)  : ORIGIN = {{ memorySections.exp.origin }}, LENGTH = {{ memorySections.exp.length }}M
+	sram (!r) : ORIGIN = {{ memorySections.sram.origin }}, LENGTH = {{ memorySections.sram.length }}M
+	rom  (rx) : ORIGIN = {{ memorySections.rom.origin }}, LENGTH = {{ memorySections.rom.length }}M
 }
 
 /*

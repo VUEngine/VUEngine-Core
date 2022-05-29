@@ -1,0 +1,24 @@
+{%- set debug = project.combined.items.DebugMacros | values | first -%}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
+
+#ifndef	DEBUG_CONFIG_H_
+#undef	DEBUG_CONFIG_H_
+
+
+{{ macros.sectionHeader('Debug Macros') }}
+{% for macro in debug.macros %}
+#undef {{ macro.name | toUpperSnakeCase }}
+{% if macro.define -%}
+#define {{ macro.name | toUpperSnakeCase }} 
+{{- ' ' -}}
+{{- macro.value | formatValue | safe }}
+{% for dependent in macro.dependent -%}
+#undef {{ dependent | toUpperSnakeCase }}
+#define {{ dependent | toUpperSnakeCase }}
+{% endfor -%}
+{% endif %}
+
+{%- endfor %}
+
+#endif

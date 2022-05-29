@@ -1,11 +1,11 @@
-{%- import 'partials/macros.nj' as macros -%}
-{% include('partials/fileHeader.c.nj') %}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
 
 {{ macros.sectionHeader('Definitions') }}
 
-const int8 {{ waveForm.name }}WaveForm[] =
+const int8 {{ item.name }}WaveForm[] =
 {
-	{% for value in waveForm.values -%}
+	{% for value in item.values -%}
 	{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
 	{{- value -}}{{- ', '-}} 
 	{%- if loop.index % 16 == 0 and not loop.last %}{{ "\n	" }}{% endif -%}

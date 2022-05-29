@@ -1,5 +1,5 @@
-{%- import 'partials/macros.nj' as macros -%}
-{% include('partials/fileHeader.h.nj') %}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
 
 #ifndef FONTS_H_
 #define FONTS_H_
@@ -13,9 +13,7 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-{% for font in fonts | unique('name') | sort(attribute='name') -%}
+{% for font in project.combined.items.Font | values | unique('name') | sort(attribute='name') -%}
 extern FontSpec {{ font.name }}Font;
 {% endfor %}
 
