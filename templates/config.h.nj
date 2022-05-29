@@ -1,4 +1,4 @@
-{%- set config = project.combined.items.EngineConfig | values | first -%}
+{%- set config = project.items.EngineConfig | values | first -%}
 {%- set affine = config.children | typeId('EngineConfigAffine') | first -%}
 {%- set animation = config.children | typeId('EngineConfigAnimation') | first -%}
 {%- set brightness = config.children | typeId('EngineConfigBrightness') | first -%}
@@ -16,7 +16,7 @@
 {%- set sprite = config.children | typeId('EngineConfigSprite') | first -%}
 {%- set sram = config.children | typeId('EngineConfigSram') | first -%}
 {%- set texture = config.children | typeId('EngineConfigTexture') | first -%}
-{%- set compiler = project.combined.items.Compiler | values | first -%}
+{%- set compiler = project.items.Compiler | values | first -%}
 {%- set memorySections = compiler.children | typeId('CompilerMemorySections') | first -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}

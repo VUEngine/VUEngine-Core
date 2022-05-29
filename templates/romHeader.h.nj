@@ -1,4 +1,4 @@
-{%- set item = project.combined.items.RomHeader | values | first -%}
+{%- set item = project.items.RomHeader | values | first -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}
 

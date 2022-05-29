@@ -4,7 +4,7 @@
 	}],
 	"items": {
 		"BrightnessRepeat": {
-			"9e82eacc-3c02-4330-91ae-64d8d03d3ee2": {
+			"HJzLvhLSpJs16gla": {
 				"typeId": "BrightnessRepeat",
 				"name": "Default",
 				"mirror": true,
@@ -109,7 +109,7 @@
 			}
 		},
 		"ColumnTable": {
-			"c168adf2-e5f1-47fc-885b-531937f4f02f": {
+			"8pDwzeqM8YmSep1h": {
 				"typeId": "ColumnTable",
 				"name": "Default",
 				"description": "The default column table as provided by Nintendo",
@@ -1143,7 +1143,7 @@
 			}
 		},
 		"Events": {
-			"d0169e33-beef-483d-b7ab-92862c2c7baf": {
+			"OiTWgTHoMOJYsmT7": {
 				"typeId": "Events",
 				"events": [
 					"ActorBounced",
@@ -1173,7 +1173,7 @@
 			}
 		},
 		"Font": {
-			"03984a51-525a-446e-88bc-badacb77d103": {
+			"rxSiRnmucUqeJJNE": {
 				"typeId": "Font",
 				"name": "Default",
 				"tiles": "VUEngineFontTiles",
@@ -1186,7 +1186,7 @@
 					"y": 1
 				}
 			},
-			"e5d20cd5-f6af-4eb2-9386-cb182a423d9e": {
+			"rBCHVLXzP43ZqXCR": {
 				"typeId": "Font",
 				"name": "Profiler",
 				"tiles": "VUEngineProfilerFontTiles",
@@ -1201,7 +1201,7 @@
 			}
 		},
 		"Image": {
-			"722e2349-a9e7-4b19-8779-fca7d4bc9c4a": {
+			"bfdJ9utLumjCiFwm": {
 				"typeId": "Image",
 				"folder": "assets/images/VUEngineFont",
 				"name": "VUEngineFont",
@@ -1234,7 +1234,7 @@
 					}
 				]
 			},
-			"f2464f41-f63d-425b-ae9d-2a978d755a9b": {
+			"S1RY2aSY9ZkLikuh": {
 				"typeId": "Image",
 				"images": "assets/images/VUEngineProfilerFont",
 				"name": "VUEngineProfilerFont",
@@ -1269,7 +1269,7 @@
 			}
 		},
 		"Project": {
-			"decbd0d3-8863-4413-a013-45e425021e29": {
+			"imJC2R0U57vyVVY9": {
 				"typeId": "Project",
 				"name": "VUEngine Core",
 				"author": "Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>",
@@ -1277,7 +1277,7 @@
 			}
 		},
 		"WaveForm": {
-			"a337bf72-0d0e-4990-8277-6fc538e4dc4a": {
+			"zWndaKELk5FT82xf": {
 				"typeId": "WaveForm",
 				"name": "Glocken",
 				"values": [
@@ -1315,7 +1315,7 @@
 					11
 				]
 			},
-			"f61316ef-f37e-431e-a83b-9c953079a2c0": {
+			"GefMmqceDVD6Xk11": {
 				"typeId": "WaveForm",
 				"name": "Linear",
 				"values": [
@@ -1353,7 +1353,7 @@
 					12
 				]
 			},
-			"85fdf6ff-de61-409f-a049-23973424716c": {
+			"BwHW7JNrex6wMinO": {
 				"typeId": "WaveForm",
 				"name": "Organ",
 				"values": [
@@ -1391,7 +1391,7 @@
 					0
 				]
 			},
-			"6bef6d0a-b7dd-4a0e-9a80-66e2c0c757de": {
+			"YLi4OpkvXcUU4BDN": {
 				"typeId": "WaveForm",
 				"name": "PCM",
 				"values": [
@@ -1429,7 +1429,7 @@
 					63
 				]
 			},
-			"3eb5f340-7220-4aa2-9171-22fb7969345b": {
+			"h6pHqEdKMGJU4HHl": {
 				"typeId": "WaveForm",
 				"name": "Piano",
 				"values": [
@@ -1467,7 +1467,7 @@
 					29
 				]
 			},
-			"ef38ebe3-1760-4c48-8e55-5205d5f2f887": {
+			"sxbCyI9EXlWeEmmD": {
 				"typeId": "WaveForm",
 				"name": "SawSquare",
 				"values": [
@@ -1505,7 +1505,7 @@
 					63
 				]
 			},
-			"e3735ca2-edda-4f7a-9b8b-ea123e26055f": {
+			"S17ifoKaHu4DdzeZ": {
 				"typeId": "WaveForm",
 				"name": "Sawtooth",
 				"values": [
@@ -1543,7 +1543,7 @@
 					62
 				]
 			},
-			"658c9c94-e290-45ae-b4fc-c9deed506e54": {
+			"6QP1zxkpXVn9SMlC": {
 				"typeId": "WaveForm",
 				"name": "Sine",
 				"values": [
@@ -1581,7 +1581,7 @@
 					25
 				]
 			},
-			"32a74bd5-dbd0-4238-b50d-64fa5610e752": {
+			"2v98yCQLE9E9Tkok": {
 				"typeId": "WaveForm",
 				"name": "SinePlusAlpha",
 				"values": [
@@ -1619,7 +1619,7 @@
 					3
 				]
 			},
-			"85733eea-4d42-4fdb-a308-e0f3f186421c": {
+			"DyL0pycvSqXcRbj8": {
 				"typeId": "WaveForm",
 				"name": "Square",
 				"values": [
@@ -1657,7 +1657,7 @@
 					63
 				]
 			},
-			"ed9f0a23-a057-41c5-a2fb-85f459c06cb3": {
+			"HhyDChu5lbaTA9YF": {
 				"typeId": "WaveForm",
 				"name": "SquareDuty75",
 				"values": [
@@ -1695,7 +1695,7 @@
 					63
 				]
 			},
-			"d18fd3c3-70ea-46b1-a1c0-1c3f29149090": {
+			"XpMdT55BQzCPKlVX": {
 				"typeId": "WaveForm",
 				"name": "Triangle",
 				"values": [
@@ -1733,7 +1733,7 @@
 					3
 				]
 			},
-			"1cbfa347-57e7-4662-843e-75cf914d6cae": {
+			"D28pZWSn7EQDMtgR": {
 				"typeId": "WaveForm",
 				"name": "Trumpet",
 				"values": [
@@ -1771,7 +1771,7 @@
 					39
 				]
 			},
-			"d8ce419d-cd35-4c62-baed-997529e8e4e8": {
+			"51fdDnFQlDtpmU6W": {
 				"typeId": "WaveForm",
 				"name": "Violin",
 				"values": [

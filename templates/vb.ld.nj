@@ -1,4 +1,4 @@
-{%- set compiler = project.combined.items.Compiler | values | first -%}
+{%- set compiler = project.items.Compiler | values | first -%}
 {%- set memorySections = compiler.children | typeId('CompilerMemorySections') | first -%}
 {% include('templates/partials/fileHeader.ld.nj') %}
 

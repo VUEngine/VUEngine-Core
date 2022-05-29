@@ -1,4 +1,4 @@
-{%- set debug = project.combined.items.DebugMacros | values | first -%}
+{%- set debug = project.items.DebugMacros | values | first -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}
 
