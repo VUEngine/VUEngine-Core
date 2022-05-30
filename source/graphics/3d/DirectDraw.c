@@ -93,6 +93,7 @@ void DirectDraw::reset()
  */
 void DirectDraw::startDrawing()
 {
+#define __PROFILE_DIRECT_DRAWING
 #ifdef __PROFILE_DIRECT_DRAWING
 	static int counter = 0;
 
@@ -143,58 +144,66 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
+#define __DIRECT_DRAW_STRICT_BUFFER_CHECK
+#define __DIRECT_DRAW_INTERLACED
 #ifndef __DIRECT_DRAW_INTERLACED
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
-#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if((unsigned)__SCREEN_WIDTH - 1 < (unsigned)x - parallax)
-	{
-		return;
-	}
-
-	if((unsigned)__SCREEN_HEIGHT - 1 < (unsigned)y)
-	{
-		return;
-	}
-#endif
-
 	uint16 yHelper = y >> 2;
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	leftBuffer  += (((x - parallax) << 6) + yHelper);
-	rightBuffer += (((x + parallax) << 6) + yHelper);
+	int32 displacement = (((x - parallax) << 6) + yHelper);
+
+#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
+	if((unsigned)0x6000 <= (unsigned)displacement)
+	{
+//		PRINT_INT(x, 30, 0);
+//		PRINT_INT(x + parallax, 30, 1);
+//		PRINT_TIME(30, 2);
+		return;
+	}
+#endif
 
 	uint8 pixel = color << ((y & 3) << 1);
+	leftBuffer[displacement] |= pixel;
 
-	// draw the pixel
-	*leftBuffer  |= pixel;
-	*rightBuffer |= pixel;
+	displacement = (((x + parallax) << 6) + yHelper);
+
+#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
+	if((unsigned)0x6000 <= (unsigned)displacement)
+	{
+//		PRINT_INT(x, 40, 0);
+//		PRINT_INT(x + parallax, 40, 1);
+//		PRINT_TIME(40, 2);
+		return;
+	}
+#endif
+
+	rightBuffer[displacement] |= pixel;
 
 	_directDraw->totalDrawPixels++;
 }
 #else
 static void DirectDraw::drawColorPixel(BYTE* buffer, BYTE* dummyBuffer __attribute__((unused)), int16 x, int16 y, int16 parallax, int32 color)
 {
-#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if((unsigned)__SCREEN_WIDTH - 1 < (unsigned)x - parallax)
-	{
-		return;
-	}
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	int32 displacement = (((x - parallax) << 6) + (y >> 2));
 
-	if((unsigned)__SCREEN_HEIGHT - 1 < (unsigned)y)
+#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
+	if((unsigned)0x6000 <= (unsigned)displacement)
 	{
+//		PRINT_INT(x, 40, 0);
+//		PRINT_INT(x + parallax, 40, 1);
+//		PRINT_TIME(40, 2);
 		return;
 	}
 #endif
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	buffer += (((x - parallax) << 6) + (y >> 2));
-
-	// calculate pixel position
-	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	*buffer |= color << ((y & 3) << 1);
+	buffer[displacement] |= color << ((y & 3) << 1);
 
 	_directDraw->totalDrawPixels++;
 }
@@ -423,10 +432,11 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6 dx, fix10_6 dy, fix10_6 parallax, fix10_6 x1, fix10_6 y1)
+static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* parallax0, fix10_6 dx, fix10_6 dy, fix10_6 dParallax, fix10_6 x1, fix10_6 y1, fix10_6 parallax1)
 {
 	fix10_6 x = *x0;
 	fix10_6 y = *y0;
+	fix10_6 parallax = *parallax0;
 
 	fix10_6 width = __I_TO_FIX10_6(__SCREEN_WIDTH - 1);
 	fix10_6 height = __I_TO_FIX10_6(__SCREEN_HEIGHT - 1);
@@ -488,53 +498,90 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6 dx
 			}
 
 			*x0 = x;
+
 			return true;
 		}
 
-		fix10_6 slope = __FIX10_6_DIV(dy, dx);
+		fix10_6 xySlope = __FIX10_6_DIV(dy, dx);
+		fix10_6 xParallaxSlope = __FIX10_6_DIV(dParallax, dx);
+		fix10_6 yParallaxSlope = __FIX10_6_DIV(dParallax, dy);
 
-		//	(y - y1) = (dx/dy)*(x - x1)
-		if(0 > x - parallax)
+		if(0 == xySlope)
 		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = parallax;
-			y = __FIX10_6_MULT(slope, x - x1) + y1;
+			xySlope = 1;
 		}
-		else if(width < x - parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = width + parallax;
-			y = __FIX10_6_MULT(slope, x - x1) + y1;
-		}
-		else if(0 > x + parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = -parallax;
-			y = __FIX10_6_MULT(slope, x - x1) + y1;
-		}
-		else if(width < x + parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = width - parallax;
-			y = __FIX10_6_MULT(slope, x - x1) + y1;
-		}
+
+		//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
 
 		if(0 > y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
 			y = 0;
-			x = __FIX10_6_DIV(y - y1, slope) + x1;
+			x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
 		}
 		else if(height < y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
 			y = height;
-			x = __FIX10_6_DIV(y - y1, slope) + x1;
+			x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
 		}
+
+		if(0 > x)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = 0;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+		}
+		else if(width < x)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = width;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+		}
+
+		//	(y - y1) = (dx/dy)*(x - x1)
+/*		if(0 > x - parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = 0;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			x = parallax;
+		}
+		else if(width < x - parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = width;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			x = width + parallax;
+		}
+		else if(0 > x + parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = 0;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			x = -parallax;
+		}
+		else if(width < x + parallax)
+		{
+			// y = (dx/dy)*(x - x1) + y1
+			x = width;
+			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			x = width - parallax;
+		}
+		*/
 	}
 
 	*x0 = x;
 	*y0 = y;
+	*parallax0 = parallax;
 
 	return true;
 }
@@ -595,20 +642,36 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
 
-#ifndef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if(!DirectDraw::reduceToScreenSpace(&fromPointX, &fromPointY, dx, dy, fromPointParallax, toPointX, toPointY))
-	{
-		return;
-	}
-
-	if(!DirectDraw::reduceToScreenSpace(&toPointX, &toPointY, dx, dy, toPointParallax, fromPointX, fromPointY))
-	{
-		return;
-	}
-#endif
+	fix10_6 fromPointXHelper = fromPointX;
+	fix10_6 fromPointYHelper = fromPointY;
+	fix10_6 fromPointParallaxHelper = fromPointParallax;
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
+//	PixelVector::print(fromPoint, 1, 20);
+//	PixelVector::print(toPoint, 10, 20);
+
+/*
+	if(!DirectDraw::reduceToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
+	{
+		return;
+	}
+
+	if(!DirectDraw::reduceToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointXHelper, fromPointYHelper, fromPointParallaxHelper))
+	{
+		return;
+	}
+	*/
+
+/*
+	PRINT_INT(__FIX10_6_TO_I(fromPointX), 21, 20);
+	PRINT_INT(__FIX10_6_TO_I(fromPointY), 21, 21);
+	PRINT_INT(__FIX10_6_TO_I(fromPointParallax), 21, 23);
+
+	PRINT_INT(__FIX10_6_TO_I(toPointX), 31, 20);
+	PRINT_INT(__FIX10_6_TO_I(toPointY), 31, 21);
+	PRINT_INT(__FIX10_6_TO_I(toPointParallax), 31, 23);
+*/
 	fix10_6 dxABS = __ABS(dx);
 	fix10_6 dyABS = __ABS(dy);
 
