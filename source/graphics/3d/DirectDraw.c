@@ -34,6 +34,14 @@ DirectDraw _directDraw = NULL;
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
+#define __FRAME_BUFFERS_SIZE								0x6000
+
+enum DirectDrawLineShrinkingResult
+{
+	kDirectDrawLineShrinkingInvalid = 0,
+	kDirectDrawLineShrinkingSafe,
+	kDirectDrawLineShrinkingUnsafe
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -144,46 +152,47 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-#define __DIRECT_DRAW_STRICT_BUFFER_CHECK
-#define __DIRECT_DRAW_INTERLACED
 #ifndef __DIRECT_DRAW_INTERLACED
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
 	uint16 yHelper = y >> 2;
+	uint8 pixel = color << ((y & 3) << 1);
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + yHelper);
 
-#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if((unsigned)0x6000 <= (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
 	{
-//		PRINT_INT(x, 30, 0);
-//		PRINT_INT(x + parallax, 30, 1);
-//		PRINT_TIME(30, 2);
-		return;
+		leftBuffer[displacement] |= pixel;
 	}
-#endif
-
-	uint8 pixel = color << ((y & 3) << 1);
-	leftBuffer[displacement] |= pixel;
 
 	displacement = (((x + parallax) << 6) + yHelper);
 
-#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if((unsigned)0x6000 <= (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
 	{
-//		PRINT_INT(x, 40, 0);
-//		PRINT_INT(x + parallax, 40, 1);
-//		PRINT_TIME(40, 2);
-		return;
+		rightBuffer[displacement] |= pixel;
 	}
-#endif
-
-	rightBuffer[displacement] |= pixel;
 
 	_directDraw->totalDrawPixels++;
 }
+
+static void DirectDraw::drawColorPixelUnsafe(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
+{
+	uint16 yHelper = y >> 2;
+	uint8 pixel = color << ((y & 3) << 1);
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	leftBuffer += (((x - parallax) << 6) + yHelper);
+	rightBuffer += (((x + parallax) << 6) + yHelper);
+
+	*leftBuffer |= pixel;
+	*rightBuffer |= pixel;
+
+	_directDraw->totalDrawPixels++;
+}
+
 #else
 static void DirectDraw::drawColorPixel(BYTE* buffer, BYTE* dummyBuffer __attribute__((unused)), int16 x, int16 y, int16 parallax, int32 color)
 {
@@ -191,19 +200,27 @@ static void DirectDraw::drawColorPixel(BYTE* buffer, BYTE* dummyBuffer __attribu
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + (y >> 2));
 
-#ifdef __DIRECT_DRAW_STRICT_BUFFER_CHECK
-	if((unsigned)0x6000 <= (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
 	{
-//		PRINT_INT(x, 40, 0);
-//		PRINT_INT(x + parallax, 40, 1);
-//		PRINT_TIME(40, 2);
 		return;
 	}
-#endif
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	buffer[displacement] |= color << ((y & 3) << 1);
+
+	_directDraw->totalDrawPixels++;
+}
+
+static void DirectDraw::drawColorPixelUnsafe(BYTE* buffer, BYTE* dummyBuffer __attribute__((unused)), int16 x, int16 y, int16 parallax, int32 color)
+{
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	buffer += (((x - parallax) << 6) + (y >> 2));
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	*buffer |= color << ((y & 3) << 1);
 
 	_directDraw->totalDrawPixels++;
 }
@@ -432,8 +449,10 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 	return vector;
 }
 
-static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* parallax0, fix10_6 dx, fix10_6 dy, fix10_6 dParallax, fix10_6 x1, fix10_6 y1, fix10_6 parallax1)
+static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* parallax0, fix10_6 dx, fix10_6 dy, fix10_6 dParallax, fix10_6 x1, fix10_6 y1, fix10_6 parallax1)
 {
+	bool reducedUnsafely = false;
+
 	fix10_6 x = *x0;
 	fix10_6 y = *y0;
 	fix10_6 parallax = *parallax0;
@@ -450,12 +469,12 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* p
 		{
 			if((unsigned)width < (unsigned)(x - parallax))
 			{
-				return false;
+				return kDirectDrawLineShrinkingInvalid;
 			}
 
 			if((unsigned)width < (unsigned)(x + parallax))
 			{
-				return false;
+				return kDirectDrawLineShrinkingInvalid;
 			}
 
 			if(0 > y)
@@ -469,14 +488,14 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* p
 
 			*y0 = y;
 
-			return true;
+			return kDirectDrawLineShrinkingSafe;
 		}
 
 		if(0 == dy)
 		{
 			if((unsigned)height < (unsigned)(y))
 			{
-				return false;
+				return kDirectDrawLineShrinkingInvalid;
 			}
 
 			if(0 > x - parallax)
@@ -499,7 +518,7 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* p
 
 			*x0 = x;
 
-			return true;
+			return kDirectDrawLineShrinkingSafe;
 		}
 
 		fix10_6 xySlope = __FIX10_6_DIV(dy, dx);
@@ -510,8 +529,6 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* p
 		{
 			xySlope = 1;
 		}
-
-		//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
 
 		if(0 > y)
 		{
@@ -528,62 +545,70 @@ static bool DirectDraw::reduceToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* p
 			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
 		}
 
+		//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
+		fix10_6 parallaxHelper = 0 <= parallax ? parallax : -parallax;
+
 		if(0 > x)
 		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = 0;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			if(0 > x - parallax && 0 > x + parallax)
+			{
+				fix10_6 xHelper = x + parallaxHelper;
+
+				dx = x1 - xHelper;
+				fix10_6 xySlopeHelper = __FIX10_6_DIV(dy, dx);
+
+				if(0 == xySlopeHelper)
+				{
+					xySlopeHelper = 1;
+				}
+
+				if(0 > xySlope * xySlopeHelper)
+				{
+					xySlopeHelper *= -1;
+				}
+
+				x = 0;
+				y = __FIX10_6_MULT(xySlopeHelper, x - (x1 + parallaxHelper)) + y1;
+				parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+				x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+
+				reducedUnsafely = true;
+			}
 		}
 		else if(width < x)
 		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = width;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-		}
+			if(width < x - parallax && width < x + parallax)
+			{
+				fix10_6 xHelper = x - parallaxHelper;
 
-		//	(y - y1) = (dx/dy)*(x - x1)
-/*		if(0 > x - parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = 0;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = parallax;
+				dx = x1 - xHelper;
+				fix10_6 xySlopeHelper = __FIX10_6_DIV(dy, dx);
+
+				if(0 == xySlopeHelper)
+				{
+					xySlopeHelper = 1;
+				}
+
+				if(0 > xySlope * xySlopeHelper)
+				{
+					xySlopeHelper *= -1;
+				}
+
+				x = width;
+				y = __FIX10_6_MULT(xySlopeHelper, x - (x1 - parallaxHelper)) + y1;
+				parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+				x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+
+				reducedUnsafely = true;
+			}
 		}
-		else if(width < x - parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = width;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = width + parallax;
-		}
-		else if(0 > x + parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = 0;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = -parallax;
-		}
-		else if(width < x + parallax)
-		{
-			// y = (dx/dy)*(x - x1) + y1
-			x = width;
-			y = __FIX10_6_MULT(xySlope, x - x1) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = width - parallax;
-		}
-		*/
 	}
 
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;
 
-	return true;
+	return reducedUnsafely ? kDirectDrawLineShrinkingUnsafe : kDirectDrawLineShrinkingSafe;
 }
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
@@ -648,30 +673,33 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
-//	PixelVector::print(fromPoint, 1, 20);
-//	PixelVector::print(toPoint, 10, 20);
+	bool useUnsafeDrawPixel = true;
 
-/*
-	if(!DirectDraw::reduceToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
+	switch(DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 	{
-		return;
+		case kDirectDrawLineShrinkingInvalid:
+
+			return;
+
+		case kDirectDrawLineShrinkingUnsafe:
+
+			useUnsafeDrawPixel = false;
+			break;
 	}
 
-	if(!DirectDraw::reduceToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointXHelper, fromPointYHelper, fromPointParallaxHelper))
+	switch(DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 	{
-		return;
+		case kDirectDrawLineShrinkingInvalid:
+
+			return;
+
+		case kDirectDrawLineShrinkingUnsafe:
+
+			useUnsafeDrawPixel = false;
+			break;
 	}
-	*/
 
-/*
-	PRINT_INT(__FIX10_6_TO_I(fromPointX), 21, 20);
-	PRINT_INT(__FIX10_6_TO_I(fromPointY), 21, 21);
-	PRINT_INT(__FIX10_6_TO_I(fromPointParallax), 21, 23);
 
-	PRINT_INT(__FIX10_6_TO_I(toPointX), 31, 20);
-	PRINT_INT(__FIX10_6_TO_I(toPointY), 31, 21);
-	PRINT_INT(__FIX10_6_TO_I(toPointParallax), 31, 23);
-*/
 	fix10_6 dxABS = __ABS(dx);
 	fix10_6 dyABS = __ABS(dy);
 
@@ -716,33 +744,67 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		fix10_6 secondaryCoordinate = secondaryStart;
 		fix10_6 parallax = parallaxStart;
 
-		CACHE_ENABLE;
-
-#ifndef __DIRECT_DRAW_INTERLACED
-		for(;mainCoordinateEnd >= mainCoordinate;
-#else
-		for(;mainCoordinateEnd - 1 >= mainCoordinate;
-#endif
-			mainCoordinate += 1,
-			secondaryCoordinate += secondaryStep,
-			parallax += parallaxStep
-		)
+		if(useUnsafeDrawPixel)
 		{
-			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+			CACHE_ENABLE;
 
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
+	#ifndef __DIRECT_DRAW_INTERLACED
+			for(;mainCoordinateEnd >= mainCoordinate;
+	#else
+			for(;mainCoordinateEnd - 1 >= mainCoordinate;
+	#endif
+				mainCoordinate += 1,
+				secondaryCoordinate += secondaryStep,
+				parallax += parallaxStep
+			)
+			{
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
 
-#ifdef __DIRECT_DRAW_INTERLACED
-			mainCoordinate += 1;
-			secondaryCoordinate += secondaryStep;
-			parallax += parallaxStep;
+				DirectDraw::drawColorPixelUnsafe((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
 
-			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-			parallaxHelper = __FIX10_6_TO_I(parallax);
+	#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
 
-			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
-#endif
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixelUnsafe((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
+	#endif
+			}			
+		}
+		else
+		{
+			CACHE_ENABLE;
+
+	#ifndef __DIRECT_DRAW_INTERLACED
+			for(;mainCoordinateEnd >= mainCoordinate;
+	#else
+			for(;mainCoordinateEnd - 1 >= mainCoordinate;
+	#endif
+				mainCoordinate += 1,
+				secondaryCoordinate += secondaryStep,
+				parallax += parallaxStep
+			)
+			{
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper, color);
+
+	#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
+
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper, color);
+	#endif
+			}
 		}
 	}
 	else if(dxABS < dyABS || 0 == dx)
@@ -783,33 +845,67 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		fix10_6 secondaryCoordinate = secondaryStart;
 		fix10_6 parallax = parallaxStart;
 
-		CACHE_ENABLE;
-
-#ifndef __DIRECT_DRAW_INTERLACED
-		for(;mainCoordinateEnd >= mainCoordinate;
-#else
-		for(;mainCoordinateEnd - 1 >= mainCoordinate;
-#endif
-			mainCoordinate += 1,
-			secondaryCoordinate += secondaryStep,
-			parallax += parallaxStep
-		)
+		if(useUnsafeDrawPixel)
 		{
-			int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-			int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+			CACHE_ENABLE;
 
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
+	#ifndef __DIRECT_DRAW_INTERLACED
+			for(;mainCoordinateEnd >= mainCoordinate;
+	#else
+			for(;mainCoordinateEnd - 1 >= mainCoordinate;
+	#endif
+				mainCoordinate += 1,
+				secondaryCoordinate += secondaryStep,
+				parallax += parallaxStep
+			)
+			{
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
 
-#ifdef __DIRECT_DRAW_INTERLACED
-			mainCoordinate += 1;
-			secondaryCoordinate += secondaryStep;
-			parallax += parallaxStep;
+				DirectDraw::drawColorPixelUnsafe((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
 
-			secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-			parallaxHelper = __FIX10_6_TO_I(parallax);
+	#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
 
-			DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
-#endif
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixelUnsafe((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
+	#endif
+			}
+		}
+		else
+		{
+			CACHE_ENABLE;
+
+	#ifndef __DIRECT_DRAW_INTERLACED
+			for(;mainCoordinateEnd >= mainCoordinate;
+	#else
+			for(;mainCoordinateEnd - 1 >= mainCoordinate;
+	#endif
+				mainCoordinate += 1,
+				secondaryCoordinate += secondaryStep,
+				parallax += parallaxStep
+			)
+			{
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				int16 parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper, color);
+
+	#ifdef __DIRECT_DRAW_INTERLACED
+				mainCoordinate += 1;
+				secondaryCoordinate += secondaryStep;
+				parallax += parallaxStep;
+
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
+				parallaxHelper = __FIX10_6_TO_I(parallax);
+
+				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper, color);
+	#endif
+			}
 		}
 	}
 
