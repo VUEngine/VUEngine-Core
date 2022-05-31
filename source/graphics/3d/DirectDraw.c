@@ -483,11 +483,6 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 				return kDirectDrawLineShrinkingInvalid;
 			}
 
-			if(0 != parallax)
-			{
-				return kDirectDrawLineShrinkingUnsafe;
-			}
-
 			if(_frustum.y0 > y)
 			{
 				y = _frustum.y0;
@@ -499,7 +494,7 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 			*y0 = y;
 
-			return kDirectDrawLineShrinkingSafe;
+			return 0 == parallax ? kDirectDrawLineShrinkingSafe : kDirectDrawLineShrinkingUnsafe;
 		}
 
 		if(0 == dy)
@@ -540,6 +535,8 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 			return kDirectDrawLineShrinkingUnsafe;
 		}
+
+		NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
 
 		fix19_13 xySlope = __FIX19_13_DIV(__FIX10_6_TO_FIX19_13(dy), __FIX10_6_TO_FIX19_13(dx));
 		fix10_6 yParallaxSlope = __FIX10_6_DIV(dParallax, dy);
@@ -598,6 +595,19 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 			xHelper += parallaxHelper0;
 
 			fix10_6 dxHelper = (x1 + parallaxHelper1) - xHelper;
+
+			if(0 == dxHelper)
+			{
+				y = __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(x - x1), xySlope)) + y1;
+				parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+
+				*x0 = x;
+				*y0 = y;
+				*parallax0 = parallax;
+
+				return kDirectDrawLineShrinkingUnsafe;
+			}
+
 			fix10_6 xySlopeHelper = __FIX10_6_DIV(dy, dxHelper);
 
 			if(0 == xySlopeHelper)
