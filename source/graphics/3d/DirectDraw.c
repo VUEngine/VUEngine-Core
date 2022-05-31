@@ -595,8 +595,8 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 		{
 			// x = (y - y1)/(dx/dy) + x1
 			y = 0;
-			x = __FIX10_6_DIV(y - y1, xySlope) + x1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			x = __FIX10_6_DIV(-y1, xySlope) + x1;
+			parallax = __FIX10_6_MULT(yParallaxSlope, -y1) + parallax1;
 		}
 		else if(height < y)
 		{
@@ -723,7 +723,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix10_6 dxABS = __ABS(dx);
 	fix10_6 dyABS = __ABS(dy);
 
-	fix10_6 parallaxStart = __I_TO_FIX10_6(fromPoint.parallax);
+	fix10_6 parallaxStart = fromPointParallax;
 
 	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
 	{
@@ -743,7 +743,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			dxABS = -dxABS;
 			fromPointY = toPointY;
 
-			parallaxStart = __I_TO_FIX10_6(toPoint.parallax); 
+			parallaxStart = toPointParallax; 
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS);
