@@ -17,6 +17,7 @@
 
 #include <Object.h>
 #include <Shape.h>
+#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,6 +39,7 @@ singleton class DirectDraw : Object
 	void startDrawing();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
 	void drawPoint(PixelVector point, int32 color);
+	void setFrustum(CameraFrustum frustum);
 }
 
 
