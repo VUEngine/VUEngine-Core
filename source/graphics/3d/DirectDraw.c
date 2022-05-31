@@ -39,6 +39,7 @@ DirectDraw _directDraw = NULL;
 enum DirectDrawLineShrinkingResult
 {
 	kDirectDrawLineShrinkingInvalid = 0,
+	kDirectDrawLineShrinkingNone,
 	kDirectDrawLineShrinkingSafe,
 	kDirectDrawLineShrinkingUnsafe
 };
@@ -451,8 +452,6 @@ static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
 
 static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* parallax0, fix10_6 dx, fix10_6 dy, fix10_6 dParallax, fix10_6 x1, fix10_6 y1, fix10_6 parallax1)
 {
-	bool reducedUnsafely = false;
-
 	fix10_6 x = *x0;
 	fix10_6 y = *y0;
 	fix10_6 parallax = *parallax0;
@@ -521,12 +520,12 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 			return kDirectDrawLineShrinkingSafe;
 		}
 
-		fix10_6 xySlope = __FIX10_6_DIV(dy, dx);
+		fix19_13 xySlope = __FIX19_13_DIV(__FIX10_6_TO_FIX19_13(dy), __FIX10_6_TO_FIX19_13(dx));
 		fix10_6 yParallaxSlope = __FIX10_6_DIV(dParallax, dy);
 
 		if(0 == xySlope)
 		{
-			xySlope = 1;
+			return kDirectDrawLineShrinkingUnsafe;
 		}
 
 		//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
@@ -535,19 +534,22 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 		fix10_6 xHelper = x;
 
+		bool shrinkOnXAxis = false;
+
 		if(0 > x)
 		{
 			// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
 			if(0 > x - parallax && 0 > x + parallax)
 			{
 				x = 0;
-				reducedUnsafely = true;
 
 				if(0 > parallax)
 				{
 					parallaxHelper0 = -parallaxHelper0;
 					parallaxHelper1 = -parallaxHelper1;
 				}
+
+				shrinkOnXAxis = true;
 			}
 		}
 		else if(width < x)
@@ -556,17 +558,18 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 			if(width < x - parallax && width < x + parallax)
 			{
 				x = width;
-				reducedUnsafely = true;
 
 				if(0 < parallax)
 				{
 					parallaxHelper0 = -parallaxHelper0;
 					parallaxHelper1 = -parallaxHelper1;
 				}
+
+				shrinkOnXAxis = true;
 			}
 		}
 
-		if(reducedUnsafely)
+		if(shrinkOnXAxis)
 		{
 			// This will compute the y coordinate at which the line for the relevant display (left or right)
 			// intersects the screen's left or right border and uses the result to compute the x coordinate 
@@ -578,7 +581,7 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 			if(0 == xySlopeHelper)
 			{
-				xySlopeHelper = 1;
+				return kDirectDrawLineShrinkingUnsafe;
 			}
 			
 			if(0 > xySlope * xySlopeHelper)
@@ -588,30 +591,32 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 			y = __FIX10_6_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
 			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
 		}
 
 		if(0 > y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
 			y = 0;
-			x = __FIX10_6_DIV(-y1, xySlope) + x1;
+			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(-y1), xySlope)) + x1;
 			parallax = __FIX10_6_MULT(yParallaxSlope, -y1) + parallax1;
 		}
 		else if(height < y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
 			y = height;
-			x = __FIX10_6_DIV(y - y1, xySlope) + x1;
+			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
 			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
 		}
+
+		*x0 = x;
+		*y0 = y;
+		*parallax0 = parallax;
+
+		return kDirectDrawLineShrinkingUnsafe;
 	}
 
-	*x0 = x;
-	*y0 = y;
-	*parallax0 = parallax;
-
-	return reducedUnsafely ? kDirectDrawLineShrinkingUnsafe : kDirectDrawLineShrinkingSafe;
+	return kDirectDrawLineShrinkingNone;
 }
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit __attribute__((unused)), uint8 bufferIndex __attribute__((unused)))
@@ -678,15 +683,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	bool useUnsafeDrawPixel = true;
 
-/*
-	PRINT_INT(__FIX10_6_TO_I(fromPointX), 1, 20);
-	PRINT_INT(__FIX10_6_TO_I(fromPointY), 1, 21);
-	PRINT_INT(__FIX10_6_TO_I(fromPointParallax), 1, 22);
-
-	PRINT_INT(__FIX10_6_TO_I(toPointX), 11, 20);
-	PRINT_INT(__FIX10_6_TO_I(toPointY), 11, 21);
-	PRINT_INT(__FIX10_6_TO_I(toPointParallax), 11, 22);
-*/
 	switch(DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 	{
 		case kDirectDrawLineShrinkingInvalid:
@@ -711,15 +707,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			break;
 	}
 
-/*
-	PRINT_INT(__FIX10_6_TO_I(fromPointX), 31, 20);
-	PRINT_INT(__FIX10_6_TO_I(fromPointY), 31, 21);
-	PRINT_INT(__FIX10_6_TO_I(fromPointParallax), 31, 22);
-
-	PRINT_INT(__FIX10_6_TO_I(toPointX), 41, 20);
-	PRINT_INT(__FIX10_6_TO_I(toPointY), 41, 21);
-	PRINT_INT(__FIX10_6_TO_I(toPointParallax), 41, 22);
-*/
 	fix10_6 dxABS = __ABS(dx);
 	fix10_6 dyABS = __ABS(dy);
 
@@ -844,7 +831,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			dyABS = -dyABS;
 			fromPointX = toPointX;
-			
+
 			parallaxStart = toPointParallax; 
 		}
 
