@@ -234,6 +234,7 @@ abstract class Sprite : Object
 	virtual void setMode(uint16 display, uint16 mode) = 0;
 	virtual void writeAnimation();
 	virtual bool writeTextures();
+	virtual bool prepareTexture();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels();
 	virtual void registerWithManager() = 0;

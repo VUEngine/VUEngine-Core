@@ -64,6 +64,7 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
 	if(!isDeleted(this->texture))
 	{
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		this->texture = NULL;
 	}
 
 	this->textures = NULL;
@@ -137,12 +138,12 @@ void MBgmapSprite::loadTextures()
 		{
 			this->textures = new VirtualList();
 
-			for(int32 i = 0; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
+			for(int32 i = 0; NULL != this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
 
-			this->texture = Texture::safeCast(VirtualList::front(this->textures));
+			this->texture = Texture::safeCast(VirtualList::back(this->textures));
 			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
 			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
@@ -178,8 +179,8 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures);
 
-	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
-	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
+	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
+	NM_ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
 	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
@@ -433,4 +434,33 @@ bool MBgmapSprite::writeTextures()
 	return !node;
 }
 
+/**
+ * Prepare textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @return			true it all textures are written
+ */
+bool MBgmapSprite::prepareTexture()
+{
+	bool allTextureAreWritten = true;
+
+	VirtualNode node = this->textures->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Texture texture = Texture::safeCast(node->data);
+
+		if(kTextureWritten != texture->status)
+		{
+			if(!Texture::prepare(texture))
+			{
+				allTextureAreWritten = false;
+			}
+		}
+	}
+
+	return allTextureAreWritten;
+}
 

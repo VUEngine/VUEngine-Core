@@ -60,7 +60,6 @@ typedef struct CameraFrustum
 
 extern const Vector3D* _cameraPosition;
 extern const Vector3D* _cameraPreviousPosition;
-extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
 extern const Rotation* _cameraRotation;
 extern const Optical* _optical;
@@ -78,8 +77,6 @@ singleton class Camera : Object
 	// Camera position
 	Vector3D position;
 	// Backup of Camera position
-	Vector3D previousPosition;
-	// Backup of Camera position
 	Vector3D positionBackup;
 	// Rotation
 	Rotation rotation;
@@ -93,19 +90,18 @@ singleton class Camera : Object
 	Entity focusEntity;
 	// Position of actor to center the camera around
 	const Vector3D* focusEntityPosition;
-	// World's camera's last displacement
-	Vector3D lastDisplacement;
 	// Stage's size in pixels
 	Size stageSize;
 	// Camera frustum
 	CameraFrustum cameraFrustum;
+	// Transformation flags
+	uint8 transformationFlags;
 
 	/// @publicsection
 	static Camera getInstance();
 	void capPosition();
 	void doneUITransform();
 	void focus(uint32 checkIfFocusEntityIsMoving);
-	void forceDisplacement(int32 flag);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
 	Vector3D getLastDisplacement();
@@ -131,6 +127,7 @@ singleton class Camera : Object
 	void unsetFocusEntity();
 	Vector3D getFocusEntityPosition();
 	Vector3D getFocusEntityPositionDisplacement();
+	uint8 getTransformationFlags();
 	void print(int32 x, int32 y, bool inPixels);
 }
 

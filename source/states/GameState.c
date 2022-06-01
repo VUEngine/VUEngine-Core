@@ -374,11 +374,8 @@ void GameState::transform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	uint8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_PROJECTION : 0;
-	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
-
 	// then transformation loaded entities
-	Container::transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
+	Container::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 /**
@@ -388,7 +385,6 @@ bool GameState::isVersusMode()
 {
 	return false;
 }
-
 
 /**
  * Call the initial transformation on the Stage to setup its children

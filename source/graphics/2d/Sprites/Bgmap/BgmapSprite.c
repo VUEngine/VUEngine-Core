@@ -197,6 +197,8 @@ void BgmapSprite::computeDimensions()
  */
 void BgmapSprite::rotate(const Rotation* rotation)
 {
+	Base::rotate(this, rotation);
+	
 	if(this->param)
 	{
 		this->drawSpec.rotation = *rotation;
@@ -455,113 +457,6 @@ void BgmapSprite::processHbiasEffects()
 		}
 	}
 }
-
-// handles affine transformations accurately by translating using translations
-// to clip the image to the camera space, but kill the CPU
-/*
-// render a world layer with the map's information
-void BgmapSprite::displacement()
-{
-	ASSERT(this->texture, "BgmapSprite::render: null texture");
-
-	if(!this->positioned)
-	{
-		return;
-	}
-
-	// if render flag is set
-	if(this->initialized)
-	{
-		if(this->hidden)
-		{
-			WORLD_HEAD(index, 0x0000);
-			return;
-		}
-
-		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
-
-		// set the world camera position
-		int32 gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
-		int32 gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
-
-		int32 w = Texture::getCols(this->texture)<< 3;
-		int32 h = Texture::getRows(this->texture)<< 3;
-
-		int32 mxDisplacement = 0 > gx ? -gx : 0;
-		int32 myDisplacement = 0 > gy ? -gy : 0;
-
-		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
-		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
-		worldPointer->gp = this->position.parallax + __FIX10_6_TO_I(this->displacement.z & 0xFFFFE000);
-
-		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
-		worldPointer->mp = this->drawSpec.textureSource.mp;
-
-		// -1 because 0 means 1 pixel for width
-		w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
-		h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
-
-		worldPointer->w = 0;
-		worldPointer->h = 0;
-
-		if(w + worldPointer->gx >= _cameraFrustum->x1)
-		{
-			worldPointer->w = _cameraFrustum->x1 - worldPointer->gx;
-		}
-		else if (0 <= w)
-		{
-			worldPointer->w = w;
-		}
-
-		if(h + worldPointer->gy >= _cameraFrustum->y1)
-		{
-			worldPointer->h = _cameraFrustum->y1 - worldPointer->gy;
-		}
-		else if (0 <= h)
-		{
-			worldPointer->h = h;
-		}
-
-		// set the world size according to the zoom
-		if(__WORLD_AFFINE & this->head)
-		{
-			if(__UPDATE_G)
-			{
-				if(0 > this->paramTableRow && (0 > gx || 0 > gy))
-				{
-					this->paramTableRow = 0;
-				}
-			}
-
-			if(_cameraDisplacement->y && 0 > this->paramTableRow)
-			{
-				this->paramTableRow = 0;
-			}
-
-			worldPointer->w *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.x));
-			worldPointer->h *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.y));
-
-			if(0 <= this->paramTableRow)
-			{
-				h = Texture::getRows(this->texture)<< 3;
-				int32 lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
-
-				BgmapSprite::doApplyAffineTransformations(this, lastRow);
-
-				if(0 >= this->paramTableRow)
-				{
-					this->paramTableRow = -1;
-				}
-			}
-
-			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-		}
-
-		worldPointer->head = this->head | BgmapTexture::getSegment(this->texture);
-	}
-}
-*/
 
 /**
  * Set Sprite's render mode

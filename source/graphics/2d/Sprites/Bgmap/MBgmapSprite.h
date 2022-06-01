@@ -82,6 +82,7 @@ class MBgmapSprite : BgmapSprite
 	override int16 doRender(int16 index, bool evenFrame);
 	override void resize(Scale scale, fix10_6 z);
 	override void setMode(uint16 display, uint16 mode);
+	override bool prepareTexture();
 	override bool writeTextures();
 }
 

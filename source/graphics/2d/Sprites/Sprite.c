@@ -86,6 +86,30 @@ void Sprite::processEffects()
 {
 }
 
+/**
+ * Prepare textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @return			true it all textures are written
+ */
+bool Sprite::prepareTexture()
+{
+	if(isDeleted(this->texture))
+	{
+		return false;
+	}
+
+	if(kTextureWritten != this->texture->status)
+	{
+		return Texture::prepare(this->texture);
+	}
+
+	return true;
+}
+
+
 int16 Sprite::render(int16 index, bool evenFrame)
 {
 	int16 previousIndex = this->index;
@@ -116,7 +140,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(kTextureWritten != this->texture->status)
 	{
-		if(!Texture::prepare(this->texture))
+		if(!Sprite::prepareTexture(this))
 		{
 			return __NO_RENDER_INDEX;
 		}
@@ -550,7 +574,9 @@ void Sprite::setDisplacement(const PixelVector* displacement)
  * @param rotation	Rotation struct
  */
 void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
-{}
+{
+	this->renderFlag = true;
+}
 
 /**
  * Get half width

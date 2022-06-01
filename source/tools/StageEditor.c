@@ -639,11 +639,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 	Camera::setOptical(Camera::getInstance(), optical);
 
-	// this hack forces the Entity to recalculate its sprites' value.
-	// must hack this global, otherwise will need another variable which most likely will only
-	// take up the previous RAM, or another branching computation in the Entity's render method.
-	Camera::forceDisplacement(Camera::getInstance(), true);
-
 	StageEditor::printProjectionValues(this);
 	GameState::transform(this->gameState);
 	GameState::synchronizeGraphics(this->gameState);
@@ -772,11 +767,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		Container::setLocalPosition(container, &localPosition);
 		Container::invalidateGlobalPosition(container);
-
-		// this hack forces the Entity to recalculate its sprites' value.
-		// must hack this global, otherwise will need another variable which most likely will only
-		// take up the previous RAM, or another branching computation in the Entity's render method.
-		Camera::forceDisplacement(Camera::getInstance(), true);
 
 		GameState::transform(this->gameState);
 		GameState::synchronizeGraphics(this->gameState);

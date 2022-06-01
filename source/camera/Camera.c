@@ -26,8 +26,6 @@
 
 const Optical* _optical = NULL;
 const Vector3D* _cameraPosition = NULL;
-const Vector3D* _cameraPreviousPosition = NULL;
-const Vector3D* _cameraDisplacement = NULL;
 const Rotation* _cameraRotation = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
@@ -72,9 +70,7 @@ void Camera::constructor()
 	this->focusEntityPosition = NULL;
 
 	this->position = Vector3D::zero();
-	this->previousPosition = Vector3D::zero();
 	this->positionBackup = Vector3D::zero();
-	this->lastDisplacement = Vector3D::zero();
 
 	this->rotation = (Rotation){0, 0, 0};
 
@@ -99,8 +95,6 @@ void Camera::constructor()
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
 	_cameraPosition = &this->position;
-	_cameraPreviousPosition = &this->previousPosition;
-	_cameraDisplacement = &this->lastDisplacement;
 	_cameraFrustum = &this->cameraFrustum;
 	_cameraRotation = &this->rotation;
 }
@@ -157,6 +151,8 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
  */
 void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 {
+	this->transformationFlags = false;
+
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
@@ -191,10 +187,6 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 void Camera::unsetFocusEntity()
 {
 	this->focusEntity = NULL;
-
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
 }
 
 /**
@@ -228,7 +220,15 @@ void Camera::onFocusEntityDeleted(Entity actor)
  */
 void Camera::translate(const Vector3D* translation, int32 cap)
 {
-	this->lastDisplacement = *translation;
+	if(translation->z)
+	{
+		this->transformationFlags |= __INVALIDATE_PROJECTION;
+		this->transformationFlags |= __INVALIDATE_SCALE;
+	}
+	else if(translation->x || translation->y)
+	{
+		this->transformationFlags |= __INVALIDATE_PROJECTION;
+	}
 
 	this->position.x += translation->x;
 	this->position.y += translation->y;
@@ -306,12 +306,17 @@ Vector3D Camera::getPosition()
 void Camera::setPosition(Vector3D position)
 {
 	position = Camera::getCappedPosition(this, position);
+	
+	if(position.z != this->position.z)
+	{
+		this->transformationFlags |= __INVALIDATE_PROJECTION;
+		this->transformationFlags |= __INVALIDATE_SCALE;
+	}
+	else if(position.x != this->position.x || position.y != this->position.y)
+	{
+		this->transformationFlags |= __INVALIDATE_PROJECTION;
+	}
 
-	this->lastDisplacement.x = position.x - this->position.x;
-	this->lastDisplacement.y = position.y - this->position.y;
-	this->lastDisplacement.z = position.z - this->position.z;
-
-	this->previousPosition = this->position;
 	this->position = position;
 }
 
@@ -322,6 +327,11 @@ void Camera::setPosition(Vector3D position)
  */
 void Camera::rotate(const Rotation* rotation)
 {
+	if(rotation->x || rotation->y || rotation->z)
+	{
+		this->transformationFlags |= __INVALIDATE_ROTATION;
+	}
+
 	this->rotation.x += rotation->x;
 	this->rotation.y += rotation->y;
 	this->rotation.z += rotation->z;
@@ -384,6 +394,8 @@ Optical Camera::getOptical()
 void Camera::setOptical(Optical optical)
 {
 	this->optical = optical;
+
+	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
 }
 
 /**
@@ -394,22 +406,6 @@ void Camera::setOptical(Optical optical)
 void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
 {
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
-
-	// focus now
-//	Camera::focus(this, false);
-
-	// make sure that any other entity knows about the change
-//	Camera::forceDisplacement(this, true);
-}
-
-/**
- * Retrieve last displacement
- *
- * @return		Last displacement vector
- */
-Vector3D Camera::getLastDisplacement()
-{
-	return this->lastDisplacement;
 }
 
 /**
@@ -430,18 +426,6 @@ Size Camera::getStageSize()
 void Camera::setStageSize(Size size)
 {
 	this->stageSize = size;
-}
-
-/**
- * Force values as if camera is moving
- *
- * @param flag
- */
-void Camera::forceDisplacement(int32 flag)
-{
-	this->lastDisplacement.x = flag ? __1I_FIX10_6 : 0;
-	this->lastDisplacement.y = flag ? __1I_FIX10_6 : 0;
-	this->lastDisplacement.z = flag ? __1I_FIX10_6 : 0;
 }
 
 /**
@@ -476,8 +460,6 @@ void Camera::reset()
 	Camera::setFocusGameEntity(this, NULL);
 
 	this->position = Vector3D::zero();
-	this->previousPosition = this->position;
-	this->lastDisplacement = Vector3D::zero();
 
 	Camera::resetCameraFrustum(this);
 }
@@ -564,6 +546,16 @@ Vector3D Camera::getFocusEntityPosition()
 Vector3D Camera::getFocusEntityPositionDisplacement()
 {
 	return this->focusEntityPositionDisplacement;
+}
+
+/**
+ * Retrieve the status of the camera's transformation
+ *
+ * @return		Transformation's status flag
+ */
+uint8 Camera::getTransformationFlags()
+{
+	return this->transformationFlags;
 }
 
 /**
