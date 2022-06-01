@@ -29,7 +29,7 @@ static class Rotation : Object
 {
 	/// @publicsection
 	static inline Rotation zero();
-	static inline Rotation clamp(Rotation rotation);
+	static inline Rotation clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z);
 	static inline Rotation sum(Rotation a, Rotation b);
 	static inline Rotation sub(Rotation a, Rotation b);
 	static inline Rotation intermediate(Rotation a, Rotation b);
@@ -50,38 +50,34 @@ static inline Rotation Rotation::zero()
 	return (Rotation){0, 0, 0};
 }
 
-static inline Rotation Rotation::clamp(Rotation rotation)
+static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z)
 {
-	rotation.x = __MODULO(__FIX10_6_TO_I(rotation.x), __SIN_LUT_ENTRIES);
-	rotation.y = __MODULO(__FIX10_6_TO_I(rotation.y), __SIN_LUT_ENTRIES);
-	rotation.z = __MODULO(__FIX10_6_TO_I(rotation.z), __SIN_LUT_ENTRIES);
-
-	if(0 > rotation.x)
+	if(0 > x)
 	{
-		rotation.x += __SIN_LUT_ENTRIES;
+		x += __FULL_ROTATION_DEGREES;
 	}
 
-	if(0 > rotation.y)
+	if(0 > y)
 	{
-		rotation.y += __SIN_LUT_ENTRIES;
+		y += __FULL_ROTATION_DEGREES;
 	}
 
-	if(0 > rotation.z)
+	if(0 > z)
 	{
-		rotation.z += __SIN_LUT_ENTRIES;
+		z += __FULL_ROTATION_DEGREES;
 	}
 
-	return rotation;
+	return (Rotation){__FIX10_6_EXT_TO_FIX10_6(x), __FIX10_6_EXT_TO_FIX10_6(y), __FIX10_6_EXT_TO_FIX10_6(z)};
 }
 
 static inline Rotation Rotation::sum(Rotation a, Rotation b)
 {
-	return Rotation::clamp((Rotation){a.x + b.x, a.y + b.y, a.z + b.z});
+	return Rotation::clamp(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 static inline Rotation Rotation::sub(Rotation a, Rotation b)
 {
-	return Rotation::clamp((Rotation){a.x - b.x, a.y - b.y, a.z - b.z});
+	return Rotation::clamp(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
 static inline Rotation Rotation::intermediate(Rotation a, Rotation b)
@@ -96,14 +92,14 @@ static inline Rotation Rotation::intermediate(Rotation a, Rotation b)
 
 static inline Rotation Rotation::scalarProduct(Rotation rotation, int16 scalar)
 {
-	return Rotation::clamp((Rotation){__FIX10_6_MULT(rotation.x, scalar), __FIX10_6_MULT(rotation.y, scalar), __FIX10_6_MULT(rotation.z, scalar)});
+	return Rotation::clamp(__FIX10_6_EXT_MULT(rotation.x, scalar), __FIX10_6_EXT_MULT(rotation.y, scalar), __FIX10_6_EXT_MULT(rotation.z, scalar));
 }
 
 static inline Rotation Rotation::scalarDivision(Rotation rotation, int16 scalar)
 {
 	if(0 != scalar)
 	{
-		return Rotation::clamp((Rotation){__FIX10_6_DIV(rotation.x, scalar), __FIX10_6_DIV(rotation.y, scalar), __FIX10_6_DIV(rotation.z, scalar)});
+		return Rotation::clamp(__FIX10_6_EXT_DIV(rotation.x, scalar), __FIX10_6_EXT_DIV(rotation.y, scalar), __FIX10_6_EXT_DIV(rotation.z, scalar));
 	}
 
 	return Rotation::zero();
@@ -113,12 +109,12 @@ static inline Rotation Rotation::getRelativeToCamera(Rotation rotation)
 {
 	extern const Rotation* _cameraRotation;
 
-	return Rotation::clamp(Rotation::sub(rotation, *_cameraRotation));
+	return Rotation::clamp(rotation.x - _cameraRotation->x, rotation.y - _cameraRotation->y, rotation.z - _cameraRotation->z);
 }
 
 static inline Rotation Rotation::getFromPixelRotation(PixelRotation pixelRotation)
 {
-	return Rotation::clamp((Rotation){__I_TO_FIX10_6(pixelRotation.x), __I_TO_FIX10_6(pixelRotation.y), __I_TO_FIX10_6(pixelRotation.z)});
+	return Rotation::clamp(__I_TO_FIX10_6_EXT(pixelRotation.x), __I_TO_FIX10_6_EXT(pixelRotation.y), __I_TO_FIX10_6_EXT(pixelRotation.z));
 }
 
 static inline bool Rotation::areEqual(Rotation a, Rotation b)

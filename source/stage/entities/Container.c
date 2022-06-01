@@ -820,7 +820,7 @@ const Rotation* Container::getLocalRotation()
  */
 void Container::setLocalRotation(const Rotation* rotation)
 {
-	Rotation auxRotation = Rotation::clamp(*rotation);
+	Rotation auxRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
 
 	if(this->transformation.localRotation.z != auxRotation.z)
 	{
