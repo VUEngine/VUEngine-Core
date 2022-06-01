@@ -50,12 +50,12 @@ void Container::constructor(const char* const name)
 	this->transformation.globalPosition = Vector3D::zero();
 
 	// set rotation
-	this->transformation.localRotation = (Rotation){0, 0, 0};
-	this->transformation.globalRotation = (Rotation){0, 0, 0};
+	this->transformation.localRotation = Rotation::zero();
+	this->transformation.globalRotation = Rotation::zero();
 
 	// set scale
-	this->transformation.localScale = (Scale){__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-	this->transformation.globalScale = (Scale){__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+	this->transformation.localScale = Scale::unit();
+	this->transformation.globalScale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -474,19 +474,13 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
 
 	// tranlate position
-	concatenatedTransformation->globalPosition.x += transformation->localPosition.x;
-	concatenatedTransformation->globalPosition.y += transformation->localPosition.y;
-	concatenatedTransformation->globalPosition.z += transformation->localPosition.z;
+	concatenatedTransformation->globalPosition = Vector3D::sum(concatenatedTransformation->globalPosition, transformation->localPosition);
 
 	// propagate rotation
-	concatenatedTransformation->globalRotation.x += transformation->localRotation.x;
-	concatenatedTransformation->globalRotation.y += transformation->localRotation.y;
-	concatenatedTransformation->globalRotation.z += transformation->localRotation.z;
+	concatenatedTransformation->globalRotation = Rotation::sum(concatenatedTransformation->globalRotation, transformation->localRotation);
 
 	// propagate scale
-	concatenatedTransformation->globalScale.x = __FIX7_9_MULT(concatenatedTransformation->globalScale.x, transformation->localScale.x);
-	concatenatedTransformation->globalScale.y = __FIX7_9_MULT(concatenatedTransformation->globalScale.y, transformation->localScale.y);
-	concatenatedTransformation->globalScale.z = __FIX7_9_MULT(concatenatedTransformation->globalScale.z, transformation->localScale.z);
+	concatenatedTransformation->globalScale = Scale::product(concatenatedTransformation->globalScale, transformation->localScale);
 }
 
 /**
@@ -496,26 +490,9 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
  */
 void Container::changeEnvironment(Transformation* environmentTransform)
 {
-	Vector3D localPosition =
-	{
-		this->transformation.globalPosition.x - environmentTransform->globalPosition.x,
-		this->transformation.globalPosition.y - environmentTransform->globalPosition.y,
-		this->transformation.globalPosition.z - environmentTransform->globalPosition.z,
-	};
-
-	Rotation localRotation =
-	{
-		this->transformation.globalRotation.x - environmentTransform->globalRotation.x,
-		this->transformation.globalRotation.y - environmentTransform->globalRotation.y,
-		this->transformation.globalRotation.z - environmentTransform->globalRotation.z,
-	};
-
-	Scale localScale =
-	{
-		__FIX7_9_DIV(this->transformation.globalScale.x, environmentTransform->globalScale.x),
-		__FIX7_9_DIV(this->transformation.globalScale.y, environmentTransform->globalScale.y),
-		__FIX7_9_DIV(this->transformation.globalScale.z, environmentTransform->globalScale.z),
-	};
+	Vector3D localPosition = Vector3D::sub(this->transformation.globalPosition, environmentTransform->globalPosition);
+	Rotation localRotation = Rotation::sub(this->transformation.globalRotation, environmentTransform->globalRotation);
+	Scale localScale = Scale::division(this->transformation.globalScale, environmentTransform->globalScale);
 
 	Container::setLocalPosition(this, &localPosition);
 	Container::setLocalRotation(this, &localRotation);
@@ -533,9 +510,7 @@ void Container::changeEnvironment(Transformation* environmentTransform)
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
-	this->transformation.globalPosition.x = environmentTransform->globalPosition.x + this->transformation.localPosition.x;
-	this->transformation.globalPosition.y = environmentTransform->globalPosition.y + this->transformation.localPosition.y;
-	this->transformation.globalPosition.z = environmentTransform->globalPosition.z + this->transformation.localPosition.z;
+	this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, this->transformation.localPosition);
 }
 
 /**
@@ -546,24 +521,7 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
  */
 inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
 {
-	this->transformation.globalRotation.x = __MODULO(environmentTransform->globalRotation.x + this->transformation.localRotation.x, 512);
-	this->transformation.globalRotation.y = __MODULO(environmentTransform->globalRotation.y + this->transformation.localRotation.y, 512);
-	this->transformation.globalRotation.z = __MODULO(environmentTransform->globalRotation.z + this->transformation.localRotation.z, 512);
-
-	if(0 > this->transformation.globalRotation.x)
-	{
-		this->transformation.globalRotation.x += 512;
-	}
-
-	if(0 > this->transformation.globalRotation.y)
-	{
-		this->transformation.globalRotation.y += 512;
-	}
-
-	if(0 > this->transformation.globalRotation.z)
-	{
-		this->transformation.globalRotation.z += 512;
-	}
+	this->transformation.globalRotation = Rotation::sum(environmentTransform->globalRotation, this->transformation.localRotation);
 }
 
 /**
@@ -574,9 +532,7 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
  */
 inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
 {
-	this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
-	this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
-	this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
+	this->transformation.globalScale = Scale::product(environmentTransform->globalScale, this->transformation.localScale);
 }
 
 /**
@@ -864,27 +820,7 @@ const Rotation* Container::getLocalRotation()
  */
 void Container::setLocalRotation(const Rotation* rotation)
 {
-	Rotation auxRotation = 
-	{
-		__MODULO(rotation->x, 512),
-		__MODULO(rotation->y, 512),
-		__MODULO(rotation->z, 512)
-	};
-
-	if(0 > auxRotation.x)
-	{
-		auxRotation.x += 512;
-	}
-
-	if(0 > auxRotation.y)
-	{
-		auxRotation.y += 512;
-	}
-
-	if(0 > auxRotation.z)
-	{
-		auxRotation.z += 512;
-	}
+	Rotation auxRotation = Rotation::clamp(*rotation);
 
 	if(this->transformation.localRotation.z != auxRotation.z)
 	{
@@ -940,6 +876,53 @@ void Container::setLocalScale(const Scale* scale)
 
 		this->transformation.localScale = *scale;
 	}
+}
+
+/**
+ * Translate 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::translate(const Vector3D* translation)
+{
+	if(0 != translation->z)
+	{
+		Container::invalidateGlobalPosition(this);
+		Container::invalidateGlobalScale(this);
+	}
+	else if(0 != translation->x || 0 != translation->y)
+	{
+		Container::invalidateGlobalPosition(this);
+	}
+
+	this->transformation.localPosition = Vector3D::sum(this->transformation.localPosition, *translation);	
+}
+
+/**
+ * Rotate 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::rotate(const Rotation* rotation)
+{
+	if(0 != rotation->x || 0 != rotation->y || 0 != rotation->z)
+	{
+		Container::invalidateGlobalRotation(this);
+	}
+
+	this->transformation.localRotation = Rotation::sum(this->transformation.localRotation, *rotation);	
+}
+
+/**
+ * Scale 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::scale(const Scale* scale)
+{
+	Container::invalidateGlobalScale(this);
+
+	this->transformation.localScale = Scale::product(this->transformation.localScale, *scale);	
 }
 
 /**

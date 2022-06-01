@@ -33,6 +33,8 @@
 #include <Types.h>
 #include <Math.h>
 #include <Vector3D.h>
+#include <Rotation.h>
+#include <Scale.h>
 #include <Size.h>
 #include <Optical.h>
 #include <PixelVector.h>

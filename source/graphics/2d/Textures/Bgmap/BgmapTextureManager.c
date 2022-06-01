@@ -169,7 +169,6 @@ int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSe
 
 				segmentStep = 2;
 				break;
-
 		}
 
 		if(0 != minimumSegment % segmentStep)

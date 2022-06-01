@@ -145,7 +145,7 @@ static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fix10_6 scalar)
 
 static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fix10_6 scalar)
 {
-	if(scalar)
+	if(0 != scalar)
 	{
 		return (Vector3D){__FIX10_6_DIV(vector.x, scalar), __FIX10_6_DIV(vector.y, scalar), __FIX10_6_DIV(vector.z, scalar)};
 	}

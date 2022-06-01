@@ -127,6 +127,9 @@ class Container : SpatialObject
 	void updateChildren(uint32 elapsedTime);
 	void updateBehaviors(uint32 elapsedTime);
 	void synchronizeChildrenGraphics();
+	void translate(const Vector3D* translation);
+	void rotate(const Rotation* rotation);
+	void scale(const Scale* scale);
 
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
