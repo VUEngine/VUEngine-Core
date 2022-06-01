@@ -124,9 +124,10 @@ void BgmapTextureManager::reset()
  * @param bgmapTexture		Texture to allocate space for
  * @param minimumSegment				Minimum bgmap segment to use
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
+ * @param scValue					The increment applied when searching for the next free segment (used for MBgmapSprites)
  * @return 					True if the required space was successfully allocated
  */
-int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegment, bool mustLiveAtEvenSegment)
+int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	int32 i = 0;
 	int32 j = 0;
@@ -142,11 +143,38 @@ int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSe
 
 	int32 area = (cols + colsPad) * (rows + rowsPad);
 
+	int16 segmentStep = 1;
+
 	if(mustLiveAtEvenSegment)
 	{
-		if(0 != minimumSegment % 2)
+		switch(scValue)
 		{
-			minimumSegment++;
+			case __WORLD_8x1:
+			case __WORLD_4x2:
+			case __WORLD_2x4:
+			case __WORLD_1x8:
+
+				segmentStep = 8;
+				break;
+
+			case __WORLD_4x1:
+			case __WORLD_2x2:
+			case __WORLD_1x4:
+
+				segmentStep = 4;
+				break;
+
+			case __WORLD_2x1:
+			case __WORLD_1x2:
+
+				segmentStep = 2;
+				break;
+
+		}
+
+		if(0 != minimumSegment % segmentStep)
+		{
+			minimumSegment += (segmentStep - minimumSegment % segmentStep);
 		}
 
 		NM_ASSERT(0 == minimumSegment % 2, "BgmapTextureManager::doAllocate: cannot honor request for even bgmap");
@@ -155,7 +183,7 @@ int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSe
 	// if texture already defined, don't allocate
 	if(Texture::getNumberOfChars(bgmapTexture))
 	{
-		for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += mustLiveAtEvenSegment ? 2 : 1)
+		for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += segmentStep)
 		{
 			int32 maximumRow = i == this->printingBgmapSegment ? 64 - __SCREEN_HEIGHT_IN_CHARS : 64;
 			
@@ -385,9 +413,10 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
  * @param bgmapTextureSpec		Texture to allocate space for
  * @param minimumSegment				Minimum bgmap segment to use
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
+ * @param scValue					The increment applied when searching for the next free segment (used for MBgmapSprites)
  * @return 								True if the required space was successfully allocated
  */
-BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment)
+BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	int32 i = 0;
 
@@ -400,7 +429,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 			this->bgmapTexturesMap[i] = new BgmapTexture(bgmapTextureSpec, i);
 
 			//if not, then allocate
-			BgmapTextureManager::doAllocate(this, this->bgmapTexturesMap[i], minimumSegment, mustLiveAtEvenSegment);
+			BgmapTextureManager::doAllocate(this, this->bgmapTexturesMap[i], minimumSegment, mustLiveAtEvenSegment, scValue);
 
 			VirtualList::pushBack(this->bgmapTextures, this->bgmapTexturesMap[i]);
 
@@ -418,9 +447,10 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
  * @param bgmapTextureSpec		Texture spec to find o allocate a Texture
  * @param minimumSegment				Minimum bgmap segment to use
  * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
+ * @param scValue					The increment applied when searching for the next free segment (used for MBgmapSprites)
  * @return 								Allocated Texture
  */
-BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment)
+BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
 	BgmapTexture bgmapTexture = NULL;
 
@@ -432,7 +462,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 		case __ANIMATED_SHARED_COORDINATED:
 
 			// load a new texture
-			bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment);
+			bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 			break;
@@ -452,7 +482,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 			else
 			{
 				// load it
-				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment);
+				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 			}
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");

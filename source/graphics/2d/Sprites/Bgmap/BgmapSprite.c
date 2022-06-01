@@ -52,7 +52,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 	// create the texture
 	if(bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
+		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false, __WORLD_1x1));
 		NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::constructor: null texture");
 	}
 
