@@ -1001,19 +1001,9 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
 				myPosition->z + ((__Z_AXIS & axisForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
 			};
 
-			Rotation shapeRotation =
-			{
-				myRotation->x + shapeSpecs[shapeSpecIndex].rotation.x,
-				myRotation->y + shapeSpecs[shapeSpecIndex].rotation.y,
-				myRotation->z + shapeSpecs[shapeSpecIndex].rotation.z,
-			};
+			Rotation shapeRotation = Rotation::sum(*myRotation, Rotation::getFromPixelRotation(shapeSpecs[shapeSpecIndex].pixelRotation));
 
-			Scale shapeScale =
-			{
-				__FIX7_9_MULT(myScale->x, shapeSpecs[shapeSpecIndex].scale.x),
-				__FIX7_9_MULT(myScale->y, shapeSpecs[shapeSpecIndex].scale.y),
-				__FIX7_9_MULT(myScale->z, shapeSpecs[shapeSpecIndex].scale.z),
-			};
+			Scale shapeScale = Scale::product(*myScale, shapeSpecs[shapeSpecIndex].scale);
 
 			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
 
@@ -2130,17 +2120,17 @@ Direction Entity::getDirection()
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.y))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.y))
 	{
 		direction.x = __LEFT;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.x))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.x))
 	{
 		direction.y = __UP;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.z))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.z))
 	{
 		direction.z = __NEAR;
 	}

@@ -945,9 +945,9 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->x, 								x + 10, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->y, 								x + 17, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->z, 								x + 24, y, 		NULL);
+		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->x), 								x + 10, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->y), 								x + 17, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->z), 								x + 24, y, 		2, NULL);
 		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		2, NULL);

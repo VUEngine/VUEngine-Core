@@ -265,7 +265,7 @@ void Actor::doSyncRotationWithBody()
 
 					if(direction3D->y)
 					{
-						localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
+						localRotation.x = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z)));
 					}
 					break;
 
@@ -273,7 +273,7 @@ void Actor::doSyncRotationWithBody()
 
 					if(direction3D->x)
 					{
-						localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
+						localRotation.y = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z)));
 					}
 					break;
 
@@ -281,7 +281,7 @@ void Actor::doSyncRotationWithBody()
 
 					if(direction3D->x)
 					{
-						localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
+						localRotation.z = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y)));
 					}
 					break;
 			}
@@ -328,9 +328,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 
 		Transformation surrogateEnvironmentTransformation = *environmentTransform;
 
-		surrogateEnvironmentTransformation.globalRotation.x = 0;
-		surrogateEnvironmentTransformation.globalRotation.y = 0;
-		surrogateEnvironmentTransformation.globalRotation.z = 0;
+		surrogateEnvironmentTransformation.globalRotation = Rotation::zero();
 
 		environmentTransform = &surrogateEnvironmentTransformation;
 

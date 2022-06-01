@@ -332,28 +332,7 @@ void Camera::rotate(const Rotation* rotation)
 		this->transformationFlags |= __INVALIDATE_ROTATION;
 	}
 
-	this->rotation.x += rotation->x;
-	this->rotation.y += rotation->y;
-	this->rotation.z += rotation->z;
-
-	this->rotation.x = __MODULO(this->rotation.x, 512);
-	this->rotation.y = __MODULO(this->rotation.y, 512);
-	this->rotation.z = __MODULO(this->rotation.z, 512);
-
-	if(0 > this->rotation.x)
-	{
-		this->rotation.x += 512;
-	}
-
-	if(0 > this->rotation.y)
-	{
-		this->rotation.y += 512;
-	}
-
-	if(0 > this->rotation.z)
-	{
-		this->rotation.z += 512;
-	}
+	this->rotation = Rotation::sum(this->rotation, *rotation);
 }
 
 /**

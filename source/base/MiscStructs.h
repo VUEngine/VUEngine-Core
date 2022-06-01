@@ -113,6 +113,19 @@ typedef struct MovementType
 typedef struct Rotation
 {
 	// rotation around x axis
+	fix10_6 x;
+
+	// rotation around y axis
+	fix10_6 y;
+
+	// rotation around z axis
+	fix10_6 z;
+
+} Rotation;
+
+typedef struct PixelRotation
+{
+	// rotation around x axis
 	int16 x;
 
 	// rotation around y axis
@@ -121,7 +134,7 @@ typedef struct Rotation
 	// rotation around z axis
 	int16 z;
 
-} Rotation;
+} PixelRotation;
 
 // spatial direction vector
 typedef struct Direction

@@ -75,12 +75,8 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 		this->drawSpec.textureSource.mp = 0;
 	}
 
-	this->drawSpec.scale.x = __1I_FIX7_9;
-	this->drawSpec.scale.y = __1I_FIX7_9;
-
-	this->drawSpec.rotation.x = 0;
-	this->drawSpec.rotation.y = 0;
-	this->drawSpec.rotation.z = 0;
+	this->drawSpec.rotation = Rotation::zero();
+	this->drawSpec.scale = Scale::unit();
 
 	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
@@ -171,7 +167,7 @@ Scale BgmapSprite::getScale()
 void BgmapSprite::computeDimensions()
 {
 	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
+		__FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(this->drawSpec.rotation.y))),
 		__FIX10_6_MULT(
 			__I_TO_FIX10_6((int32)this->texture->textureSpec->cols << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
@@ -179,7 +175,7 @@ void BgmapSprite::computeDimensions()
 	))) + 1;
 
 	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
+		__FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(this->drawSpec.rotation.x))),
 		__FIX10_6_MULT(
 			__I_TO_FIX10_6((int32)this->texture->textureSpec->rows << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
@@ -217,8 +213,8 @@ void BgmapSprite::rotate(const Rotation* rotation)
 	{
 		Direction direction =
 		{
-			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
 			__FAR,
 		};
 

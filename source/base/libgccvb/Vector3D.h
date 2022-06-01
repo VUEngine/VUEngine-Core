@@ -444,19 +444,19 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 {
 	Vector3D result = vector;
 
-	if(rotation.x)
+	if(0 != rotation.x)
 	{
-		result = Vector3D::rotateXAxis(result, rotation.x);
+		result = Vector3D::rotateXAxis(result, __FIX10_6_TO_I(rotation.x));
 	}
 
-	if(rotation.y)
+	if(0 != rotation.y)
 	{
-		result = Vector3D::rotateYAxis(result, rotation.y);
+		result = Vector3D::rotateYAxis(result, __FIX10_6_TO_I(rotation.y));
 	}
 
-	if(rotation.z)
+	if(0 != rotation.z)
 	{
-		result = Vector3D::rotateZAxis(result, rotation.z);
+		result = Vector3D::rotateZAxis(result, __FIX10_6_TO_I(rotation.z));
 	}
 
 	return result;

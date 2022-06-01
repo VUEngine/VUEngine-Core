@@ -136,7 +136,7 @@ typedef struct ShapeSpec
 	PixelVector displacement;
 
 	/// rotation modifier
-	Rotation rotation;
+	PixelRotation pixelRotation;
 
 	/// scale modifier
 	Scale scale;

@@ -60,14 +60,14 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->y)
 		{
-			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->y)));
-			this->a.z = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->y)));
+			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->y))));
+			this->a.z = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->y))));
 			this->a.y = 0;
 		}
 		else if(rotation->z)
 		{
-			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->z)));
-			this->a.y = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->z)));
+			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->z))));
+			this->a.y = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
 
@@ -109,14 +109,14 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->x)
 		{
-			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->x)));
-			this->a.z = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->x)));
+			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->x))));
+			this->a.z = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->x))));
 			this->a.y = 0;
 		}
 		else if(rotation->z)
 		{
-			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->z)));
-			this->a.y = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->z)));
+			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->z))));
+			this->a.y = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
 
@@ -130,14 +130,14 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->x)
 		{
-			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->x)));
+			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->x))));
 			this->a.y = 0;
-			this->a.z = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->x)));
+			this->a.z = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->x))));
 		}
 		else if(rotation->y)
 		{
-			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(rotation->y)));
-			this->a.y = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(rotation->y)));
+			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->y))));
+			this->a.y = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->y))));
 			this->a.z = 0;
 		}
 
