@@ -197,9 +197,9 @@ void WireframeManager::render()
 
 	_cameraRealRotation = (Rotation)
 	{
-		512 -_cameraRotation->x,
-		512 - _cameraRotation->y,
-		512 - _cameraRotation->z
+		__FULL_ROTATION_DEGREES -_cameraRotation->x,
+		__FULL_ROTATION_DEGREES - _cameraRotation->y,
+		__FULL_ROTATION_DEGREES - _cameraRotation->z
 	};
 
 	CACHE_DISABLE;

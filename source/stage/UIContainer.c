@@ -98,23 +98,18 @@ void UIContainer::initialTransform(const Transformation* environmentTransform, u
 	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UIContainer::initialTransform: null camera");
 
-	Vector3D originalCameraPosition  =
-	{
-		0, 0, 0
-	};
+	Vector3D originalCameraPosition  = Vector3D::zero();
+	Rotation originalCameraRotation  = Rotation::zero();
 
 	if(camera)
 	{
 		// must hack the camera position for my children's sprites
 		// being properly rendered
 		originalCameraPosition = Camera::getPosition(camera);
+		originalCameraRotation = Camera::getRotation(camera);
 
-		Vector3D tempCameraPosition =
-		{
-			0, 0, 0
-		};
-
-		Camera::setPosition(camera, tempCameraPosition);
+		Camera::setPosition(camera, Vector3D::zero(), true);
+		Camera::setRotation(camera, Rotation::zero());
 	}
 
 	Base::initialTransform(this, environmentTransform, recursive);
@@ -124,6 +119,7 @@ void UIContainer::initialTransform(const Transformation* environmentTransform, u
 	if(camera)
 	{
 		// recover camera
-		Camera::setPosition(camera, originalCameraPosition);
+		Camera::setPosition(camera, originalCameraPosition, true);
+		Camera::setRotation(camera, originalCameraRotation);
 	}
 }

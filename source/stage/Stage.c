@@ -265,7 +265,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	{
 		Camera::reset(Camera::getInstance());
 		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
-		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition));
+		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition), true);
 	}
 
 	Camera::setCameraFrustum(Camera::getInstance(), this->stageSpec->level.cameraFrustum);

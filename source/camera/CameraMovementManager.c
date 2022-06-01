@@ -96,5 +96,6 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __PIXELS_TO_METERS(__HALF_SCREEN_DEPTH),
 	};
 
-	Camera::setPosition(camera, cameraNewPosition);
+	Camera::setPosition(camera, cameraNewPosition, true);
+	Camera::setRotation(camera, Camera::getFocusEntityRotation(camera));
 }

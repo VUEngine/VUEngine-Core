@@ -68,6 +68,7 @@ void Camera::constructor()
 	// clear focus actor pointer
 	this->focusEntity = NULL;
 	this->focusEntityPosition = NULL;
+	this->focusEntityRotation = NULL;
 
 	this->position = Vector3D::zero();
 	this->positionBackup = Vector3D::zero();
@@ -171,10 +172,12 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 {
 	this->focusEntity = focusEntity;
 	this->focusEntityPosition = NULL;
+	this->focusEntityRotation = NULL;
 
 	if(focusEntity)
 	{
-		this->focusEntityPosition =  SpatialObject::getPosition(this->focusEntity);
+		this->focusEntityPosition = SpatialObject::getPosition(this->focusEntity);
+		this->focusEntityRotation = SpatialObject::getRotation(this->focusEntity);
 
 		// focus now
 		Camera::focus(this, false);
@@ -212,27 +215,31 @@ void Camera::onFocusEntityDeleted(Entity actor)
 	}
 }
 
+static uint8 Camera::computeTranslationFlags(Vector3D translation)
+{
+	if(translation.z)
+	{
+		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
+	}
+	else if(translation.x || translation.y)
+	{
+		return __INVALIDATE_PROJECTION;
+	}
+
+	return false;
+}
+
 /**
  * Translate camera
  *
  * @param translation
  * @param cap
  */
-void Camera::translate(const Vector3D* translation, int32 cap)
+void Camera::translate(Vector3D translation, int32 cap)
 {
-	if(translation->z)
-	{
-		this->transformationFlags |= __INVALIDATE_PROJECTION;
-		this->transformationFlags |= __INVALIDATE_SCALE;
-	}
-	else if(translation->x || translation->y)
-	{
-		this->transformationFlags |= __INVALIDATE_PROJECTION;
-	}
+	this->transformationFlags |= Camera::computeTranslationFlags(translation);
 
-	this->position.x += translation->x;
-	this->position.y += translation->y;
-	this->position.z += translation->z;
+	this->position = Vector3D::sum(this->position, translation);
 
 	if(cap)
 	{
@@ -299,25 +306,13 @@ Vector3D Camera::getPosition()
 }
 
 /**
- * Set camera's position
+ * Get camera's rotation
  *
- * @param position	Camera position
+ * @return		Camera rotation
  */
-void Camera::setPosition(Vector3D position)
+Rotation Camera::getRotation()
 {
-	position = Camera::getCappedPosition(this, position);
-	
-	if(position.z != this->position.z)
-	{
-		this->transformationFlags |= __INVALIDATE_PROJECTION;
-		this->transformationFlags |= __INVALIDATE_SCALE;
-	}
-	else if(position.x != this->position.x || position.y != this->position.y)
-	{
-		this->transformationFlags |= __INVALIDATE_PROJECTION;
-	}
-
-	this->position = position;
+	return this->rotation;
 }
 
 /**
@@ -325,14 +320,50 @@ void Camera::setPosition(Vector3D position)
  *
  * @param position	Camera position
  */
-void Camera::rotate(const Rotation* rotation)
+void Camera::setPosition(Vector3D position, bool cap)
 {
-	if(rotation->x || rotation->y || rotation->z)
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(position, this->position));
+
+	this->position = position;
+
+	if(cap)
 	{
-		this->transformationFlags |= __INVALIDATE_ROTATION;
+		Camera::capPosition(this);
+	}
+}
+
+static uint8 Camera::computeRotationFlags(Rotation rotation)
+{
+	if(rotation.x || rotation.y || rotation.z)
+	{
+		return __INVALIDATE_ROTATION;
 	}
 
-	this->rotation = Rotation::sum(this->rotation, *rotation);
+	return false;
+}
+
+/**
+ * Set camera's rotation
+ *
+ * @param rotation	Camera rotation
+ */
+void Camera::setRotation(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
+
+	this->rotation = rotation;
+}
+
+/**
+ * Set camera's position
+ *
+ * @param position	Camera position
+ */
+void Camera::rotate(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(rotation);
+
+	this->rotation = Rotation::sum(this->rotation, rotation);
 }
 
 /**
@@ -514,7 +545,7 @@ CameraFrustum Camera::getCameraFrustum()
  */
 Vector3D Camera::getFocusEntityPosition()
 {
-	return this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
+	return NULL != this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
 }
 
 /**
@@ -525,6 +556,16 @@ Vector3D Camera::getFocusEntityPosition()
 Vector3D Camera::getFocusEntityPositionDisplacement()
 {
 	return this->focusEntityPositionDisplacement;
+}
+
+/**
+ * Retrieve focus entity rotation
+ *
+ * @return		Focus entity rotation
+ */
+Rotation Camera::getFocusEntityRotation()
+{
+	return NULL != this->focusEntityRotation ? *this->focusEntityRotation : Rotation::zero();
 }
 
 /**

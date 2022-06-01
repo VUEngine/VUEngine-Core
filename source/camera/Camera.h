@@ -90,6 +90,7 @@ singleton class Camera : Object
 	Entity focusEntity;
 	// Position of actor to center the camera around
 	const Vector3D* focusEntityPosition;
+	const Rotation* focusEntityRotation;
 	// Stage's size in pixels
 	Size stageSize;
 	// Camera frustum
@@ -107,8 +108,9 @@ singleton class Camera : Object
 	Vector3D getLastDisplacement();
 	Optical getOptical();
 	Vector3D getPosition();
+	Rotation getRotation();
 	Size getStageSize();
-	void translate(const Vector3D*, int32 cap);
+	void translate(Vector3D, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
 	void prepareForUI();
 	void reset();
@@ -119,14 +121,16 @@ singleton class Camera : Object
 	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
 	void setFocusGameEntity(Entity focusEntity);
 	void setOptical(Optical optical);
-	void setPosition(Vector3D position);
-	void rotate(const Rotation* rotation);
+	void setPosition(Vector3D position, bool cap);
+	void setRotation(Rotation rotation);
+	void rotate(Rotation rotation);
 	void setStageSize(Size size);
 	void startEffect(int32 effect, ...);
 	void stopEffect(int32 effect);
 	void unsetFocusEntity();
 	Vector3D getFocusEntityPosition();
 	Vector3D getFocusEntityPositionDisplacement();
+	Rotation getFocusEntityRotation();
 	uint8 getTransformationFlags();
 	void print(int32 x, int32 y, bool inPixels);
 }
