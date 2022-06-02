@@ -61,9 +61,7 @@ void Camera::constructor()
 	// set the default camera effect manager
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
-	this->focusEntityPositionDisplacement.x = 0;
-	this->focusEntityPositionDisplacement.y = 0;
-	this->focusEntityPositionDisplacement.z = 0;
+	this->focusEntityPositionDisplacement = Vector3D::zero();
 
 	// clear focus actor pointer
 	this->focusEntity = NULL;
@@ -158,8 +156,9 @@ void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
+#define __SHOW_CAMERA_STATUS
 #ifdef __SHOW_CAMERA_STATUS
-	Camera::print(this, 1, 1);
+	Camera::print(this, 1, 1, false);
 #endif
 }
 
@@ -604,4 +603,8 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
 	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
 	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
+	Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.z), x + 24, y, NULL);
 }

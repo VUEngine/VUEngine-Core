@@ -195,12 +195,7 @@ void WireframeManager::render()
 
 	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, -_optical->distanceEyeScreen});
 
-	_cameraRealRotation = (Rotation)
-	{
-		__FULL_ROTATION_DEGREES -_cameraRotation->x,
-		__FULL_ROTATION_DEGREES - _cameraRotation->y,
-		__FULL_ROTATION_DEGREES - _cameraRotation->z
-	};
+	_cameraRealRotation = Rotation::invert(*_cameraRotation);
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;
