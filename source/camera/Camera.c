@@ -156,7 +156,6 @@ void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
-#define __SHOW_CAMERA_STATUS
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, false);
 #endif
@@ -604,7 +603,7 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
 	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), __FIX10_6_TO_I(this->rotation.z), x + 24, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.x), x + 14, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.y), x + 19, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.z), x + 24, y, 2, NULL);
 }
