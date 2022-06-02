@@ -7,8 +7,10 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% for waveForm in project.combined.items.WaveForm | values | unique('name') | sort(attribute='name') -%}
+{% if project.combined.items.WaveForm %}
+{%- for waveForm in project.combined.items.WaveForm | values | unique('name') | sort(attribute='name') -%}
 extern const int8 {{ waveForm.name }}WaveForm[];
-{% endfor %}
+{% endfor -%}
+{% endif %}
 
 #endif

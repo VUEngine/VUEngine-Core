@@ -12,8 +12,10 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% for rumbleEffect in project.combined.items.RumbleEffect | values | unique('name') | sort(attribute='name') -%}
+{% if project.combined.items.RumbleEffect %}
+{%- for rumbleEffect in project.combined.items.RumbleEffect | values | unique('name') | sort(attribute='name') -%}
 extern RumbleEffectSpec {{ rumbleEffect.name }}RumbleEffect;
-{% endfor %}
+{% endfor -%}
+{% endif %}
 
 #endif
