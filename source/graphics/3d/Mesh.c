@@ -181,7 +181,6 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
-
 /**
  * Class draw
  */
@@ -191,6 +190,7 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(position);
+	PixelVector displacement = PixelVector::getProjectionDisplacementHighPrecision(Vector3D::rotate(relativePosition, *_cameraInvertedRotation), 0);
 
 	CACHE_ENABLE;
 
@@ -198,14 +198,11 @@ void Mesh::render()
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		Vector3D vector = Vector3D::sum(position, Vector3D::rotate(vertex->vector, rotation));
-
-		vector = Vector3D::sub(vector, *_cameraPosition);
+		Vector3D vector = Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation));
 		vector = Vector3D::rotate(vector, *_cameraInvertedRotation);
-		vector = Vector3D::sum(vector, *_cameraPosition);
-		vector = Vector3D::getRelativeToCamera(vector);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
+		vertex->pixelVector = PixelVector::sum(vertex->pixelVector, displacement);
 
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
@@ -237,5 +234,8 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 
 		// draw the line in both buffers
 		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
+
+	//	PixelVector::print(meshSegment->fromVertex->pixelVector, 1, 10);
+	//	PixelVector::print(meshSegment->toVertex->pixelVector, 11, 10);
 	}
 }
