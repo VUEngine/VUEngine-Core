@@ -751,7 +751,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS);
-		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX10_6_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dxABS)));
+		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dxABS)));
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
@@ -853,7 +853,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dx, dyABS);
-		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX10_6_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dyABS)));
+		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dyABS)));
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
