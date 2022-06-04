@@ -230,6 +230,7 @@ class Stage : Container
     bool loadInRangeEntities(int32 defer);
 	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
+	EntityFactory getEntityFactory();
 	VirtualList getSoundWrappers();
 	bool streamAll();
 	void streamAllOut();

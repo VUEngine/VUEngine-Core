@@ -74,6 +74,7 @@ class Entity : Container
 	int16 getId();
 	int16 getInternalId();
 	VirtualList getSprites();
+	VirtualList getMeshes();
 	void transformShapes();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);

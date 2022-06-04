@@ -1634,6 +1634,16 @@ VirtualList Entity::getSprites()
 }
 
 /**
+ * Retrieve meshes
+ *
+ * @return		VirtualList of Entity's meshes
+ */
+VirtualList Entity::getMeshes()
+{
+	return this->meshes;
+}
+
+/**
  * Handles incoming messages
  *
  * @param telegram

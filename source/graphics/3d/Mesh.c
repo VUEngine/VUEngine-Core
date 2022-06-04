@@ -114,8 +114,8 @@ void Mesh::addSegments()
 
 	do
 	{
-		Vector3D startVector = this->meshSpec->segments[i][0];
-		Vector3D endVector = this->meshSpec->segments[i][1];
+		Vector3D startVector = Vector3D::getFromPixelVector(this->meshSpec->segments[i][0]);
+		Vector3D endVector = Vector3D::getFromPixelVector(this->meshSpec->segments[i][1]);
 
 		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
 
@@ -238,4 +238,9 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 	//	PixelVector::print(meshSegment->fromVertex->pixelVector, 1, 10);
 	//	PixelVector::print(meshSegment->toVertex->pixelVector, 11, 10);
 	}
+}
+
+VirtualList Mesh::getVertices()
+{
+	return this->vertices;
 }

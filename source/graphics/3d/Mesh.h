@@ -33,7 +33,7 @@ typedef struct MeshSpec
 	uint8 color;
 
 	/// segments
-	Vector3D (*segments)[2];
+	PixelVector (*segments)[2];
 
 } MeshSpec;
 
@@ -64,6 +64,8 @@ class Mesh : Wireframe
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
+	VirtualList getVertices();
+
 	override void draw(bool calculateParallax);
 	override void render();
 }

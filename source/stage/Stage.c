@@ -965,6 +965,11 @@ bool Stage::updateEntityFactory()
 	return preparingEntities;
 }
 
+EntityFactory Stage::getEntityFactory()
+{
+	return this->entityFactory;
+}
+
 VirtualList Stage::getSoundWrappers()
 {
 	return this->soundWrappers;
