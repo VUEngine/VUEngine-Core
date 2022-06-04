@@ -24,7 +24,7 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __SCREEN_PROJECTION_FACTOR			((__SCREEN_WIDTH_METERS + __SCREEN_HEIGHT_METERS) >> 1)
+#define __SCREEN_PROJECTION_FACTOR			((__SCREEN_WIDTH_METERS + __SCREEN_HEIGHT_METERS))
 
 
 //---------------------------------------------------------------------------------------------------------
