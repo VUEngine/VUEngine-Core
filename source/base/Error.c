@@ -157,13 +157,13 @@ static int32 Error::triggerException(char* message, char* detail)
 		Printing::text(Printing::getInstance(), "                                                " , x, ++y + 1, NULL);
 		Printing::text(Printing::getInstance(), " Message:                                       " , x, ++y, NULL);
 
-		int32 stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
+		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
-		int32 stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
-		int32 lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
+		int32 stringLength = strnlen(message, stringMaxLength * rowsAvailable) + 1;
+		int32 lines = stringLength / stringMaxLength + (stringLength % stringMaxLength ? 1 : 0);
 		int32 line = 0;
 
-		for(; line < lines; line++, message += stringMaxLenght)
+		for(; line < lines; line++, message += stringMaxLength)
 		{
 			char messageLine[stringLength];
 			strncpy(messageLine, message, stringLength);
