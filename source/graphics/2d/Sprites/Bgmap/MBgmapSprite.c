@@ -174,7 +174,15 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	if(VirtualList::getSize(this->textures))
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
+
 		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
+
+		// This allows to have bgmaps sprites that are smaller than 512 pixels high
+		// But depends on all the segments being free
+		if(this->mBgmapSpriteSpec->xLoop && 64 > Texture::getRows(bgmapTexture))
+		{
+			minimumSegment += 1;
+		}
 	}
 
 	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, this->mBgmapSpriteSpec->scValue);
