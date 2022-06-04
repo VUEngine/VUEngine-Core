@@ -202,7 +202,7 @@ void Mesh::render()
 		vector = Vector3D::rotate(vector, *_cameraInvertedRotation);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
-		vertex->pixelVector = PixelVector::sum(vertex->pixelVector, displacement);
+		vertex->pixelVector = PixelVector::sub(vertex->pixelVector, displacement);
 
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
