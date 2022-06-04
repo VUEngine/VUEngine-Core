@@ -134,8 +134,8 @@ static inline PixelVector PixelVector::getProjectionDisplacementHighPrecision(Ve
 	
 	PixelVector projection =
 	{
-		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.x - _optical->horizontalViewPointCenter, (fix10_6_ext)vector3D.z) >> _optical->maximumXViewDistancePower),
-		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.y - _optical->verticalViewPointCenter, (fix10_6_ext)vector3D.z) >> _optical->maximumYViewDistancePower),
+		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.x - _optical->horizontalViewPointCenter, (fix10_6_ext)vector3D.z) >> (_optical->maximumXViewDistancePower + __PIXELS_PER_METER_2_POWER)),
+		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.y - _optical->verticalViewPointCenter, (fix10_6_ext)vector3D.z) >> (_optical->maximumYViewDistancePower + __PIXELS_PER_METER_2_POWER)),
 		0,
 		parallax
 	};
