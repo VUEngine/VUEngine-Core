@@ -21,6 +21,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __SCREE_NPROJECTION_FACTOR			(__SCREEN_WIDTH_METERS + __SCREEN_HEIGHT_METERS)
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -251,11 +258,10 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
-
 	if(z!= 0)
 	{
-		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, __SCREEN_WIDTH_METERS << 1), z) + _optical->horizontalViewPointCenter;	
-		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, __SCREEN_HEIGHT_METERS << 1), z) + _optical->verticalViewPointCenter;	
+		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, __SCREE_NPROJECTION_FACTOR), z) + _optical->horizontalViewPointCenter;	
+		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, __SCREE_NPROJECTION_FACTOR), z) + _optical->verticalViewPointCenter;	
 	}
 
 	PixelVector projection =
