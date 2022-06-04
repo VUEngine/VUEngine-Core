@@ -472,12 +472,7 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 	{
 		if(0 == dx)
 		{
-			if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0))
-			{
-				return kDirectDrawLineShrinkingInvalid;
-			}
-
-			if((unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0))
+			if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0) && (unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0))
 			{
 				return kDirectDrawLineShrinkingInvalid;
 			}
@@ -684,13 +679,9 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
-/*
-	if((unsigned)(_frustum.x1 - _frustum.x0 + __ABS(fromPoint.parallax) + __ABS(fromPoint.parallax)) <= (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - toPointParallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x + fromPoint.parallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x + toPointParallax - _frustum.x0))
-	{
-		return;
-	}
-*/
-	if((unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - _frustum.x0))
+
+	if(!((unsigned)(_frustum.x1 - _frustum.x0) >= (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0) || (unsigned)(_frustum.x1 - _frustum.x0) >= (unsigned)(fromPoint.x + fromPoint.parallax - _frustum.x0) ||
+	(unsigned)(_frustum.x1 - _frustum.x0) >= (unsigned)(toPoint.x - toPoint.parallax - _frustum.x0) || (unsigned)(_frustum.x1 - _frustum.x0) >= (unsigned)(toPoint.x + toPoint.parallax - _frustum.x0)))
 	{
 		return;
 	}
@@ -707,7 +698,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
-	bool useUnsafeDrawPixel = false;
+	bool useUnsafeDrawPixel = true;
 
 	switch(DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 	{
@@ -760,12 +751,12 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dy, dxABS);
-		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dxABS);
+		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX10_6_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dxABS)));
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
 		{
-			parallaxStart = -parallaxStart + __I_TO_FIX10_6(1) - parallaxStep;
+			parallaxStart = -parallaxStart;
 			parallaxStep = -parallaxStep;
 		}
 #endif
@@ -862,12 +853,12 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 
 		fix10_6 secondaryStep = __FIX10_6_DIV(dx, dyABS);
-		fix10_6 parallaxStep = __FIX10_6_DIV(dParallax, dyABS);
+		fix10_6 parallaxStep = __FIX19_13_TO_FIX10_6(__FIX10_6_DIV(__FIX10_6_TO_FIX19_13(dParallax), __FIX10_6_TO_FIX19_13(dyABS)));
 
 #ifdef __DIRECT_DRAW_INTERLACED
 		if(bufferIndex)
 		{
-			parallaxStart = -parallaxStart + __I_TO_FIX10_6(1) - parallaxStep;
+			parallaxStart = -parallaxStart;
 			parallaxStep = -parallaxStep;
 		}
 #endif
