@@ -46,7 +46,7 @@ static class Vector3D : Object
 	static inline fix10_6 lengthProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
-	static inline PixelVector projectToPixelVectorHighPrecision(Vector3D vector3D, int16 parallax);
+	static inline PixelVector projectRelativeToPixelVector(Vector3D vector3D, int16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
@@ -215,45 +215,6 @@ static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 	return vector3D;
 }
 
-static inline PixelVector Vector3D::projectToPixelVectorHighPrecision(Vector3D vector3D, int16 parallax)
-{
-	extern const Optical* _optical;
-
-	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
-	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
-	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
-
-	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
-	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
-	
-	PixelVector projection =
-	{
-		__METERS_TO_PIXELS(x),
-		__METERS_TO_PIXELS(y),
-		__METERS_TO_PIXELS(z),
-		parallax
-	};
-
-	return projection;
-}
-
-static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int16 parallax)
-{
-	extern const Optical* _optical;
-
-	vector3D.x -= (__FIX10_6_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumXViewDistancePower);	
-	vector3D.y -= (__FIX10_6_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumYViewDistancePower);	
-	
-	PixelVector projection =
-	{
-		__METERS_TO_PIXELS(vector3D.x),
-		__METERS_TO_PIXELS(vector3D.y),
-		__METERS_TO_PIXELS(vector3D.z),
-		parallax
-	};
-
-	return projection;
-}
 
 static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector3D, int16 parallax)
 {
@@ -268,6 +229,33 @@ static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector
 	{
 		x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
 		y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
+	}
+
+	PixelVector projection =
+	{
+		__METERS_TO_PIXELS(x),
+		__METERS_TO_PIXELS(y),
+		__METERS_TO_PIXELS(z),
+		parallax
+	};
+
+	return projection;
+}
+
+static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int16 parallax)
+{
+	extern const Vector3D* _cameraPosition;
+	extern const Optical* _optical;
+
+	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
+	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
+	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
+
+
+	if(z!= 0)
+	{
+		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, __SCREEN_WIDTH_METERS << 1), z) + _optical->horizontalViewPointCenter;	
+		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, __SCREEN_HEIGHT_METERS << 1), z) + _optical->verticalViewPointCenter;	
 	}
 
 	PixelVector projection =

@@ -27,6 +27,7 @@
 const Optical* _optical = NULL;
 const Vector3D* _cameraPosition = NULL;
 const Rotation* _cameraRotation = NULL;
+const Rotation* _cameraInvertedRotation = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
 
@@ -72,6 +73,7 @@ void Camera::constructor()
 	this->positionBackup = Vector3D::zero();
 
 	this->rotation = (Rotation){0, 0, 0};
+	this->invertedRotation = Rotation::invert(this->rotation);
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
@@ -96,6 +98,7 @@ void Camera::constructor()
 	_cameraPosition = &this->position;
 	_cameraFrustum = &this->cameraFrustum;
 	_cameraRotation = &this->rotation;
+	_cameraInvertedRotation = &this->invertedRotation;
 }
 
 /**
@@ -157,7 +160,7 @@ void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
 #ifdef __SHOW_CAMERA_STATUS
-	Camera::print(this, 1, 1, false);
+	Camera::print(this, 1, 1, true);
 #endif
 }
 
@@ -350,6 +353,7 @@ void Camera::setRotation(Rotation rotation)
 	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
 
 	this->rotation = rotation;
+	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
 /**
@@ -362,6 +366,7 @@ void Camera::rotate(Rotation rotation)
 	this->transformationFlags |= Camera::computeRotationFlags(rotation);
 
 	this->rotation = Rotation::sum(this->rotation, rotation);
+	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
 /**

@@ -62,6 +62,7 @@ extern const Vector3D* _cameraPosition;
 extern const Vector3D* _cameraPreviousPosition;
 extern const CameraFrustum* _cameraFrustum;
 extern const Rotation* _cameraRotation;
+extern const Rotation* _cameraInvertedRotation;
 extern const Optical* _optical;
 
 
@@ -80,6 +81,7 @@ singleton class Camera : Object
 	Vector3D positionBackup;
 	// Rotation
 	Rotation rotation;
+	Rotation invertedRotation;
 	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
 	// Camera effect manager

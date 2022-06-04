@@ -34,11 +34,8 @@ static class Optical : Object
 
 static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical)
 {
-	int16 maximumXViewDistancePower = 0;
-	int16 maximumYViewDistancePower = 0;
-
-	pixelOptical.maximumXViewDistance >>= __PIXELS_PER_METER_2_POWER;
-	pixelOptical.maximumYViewDistance >>= __PIXELS_PER_METER_2_POWER;
+	int16 maximumXViewDistancePower = -__PIXELS_PER_METER_2_POWER;
+	int16 maximumYViewDistancePower = -__PIXELS_PER_METER_2_POWER;
 
 	while(pixelOptical.maximumXViewDistance)
 	{
@@ -54,8 +51,8 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical)
 
 	return (Optical)
 	{
-		__MINIMUM_X_VIEW_DISTANCE_POWER <= maximumXViewDistancePower ? maximumXViewDistancePower - 1 : __MINIMUM_X_VIEW_DISTANCE_POWER,
-		__MINIMUM_Y_VIEW_DISTANCE_POWER <= maximumYViewDistancePower ? maximumYViewDistancePower - 1 : __MINIMUM_Y_VIEW_DISTANCE_POWER,
+		__MINIMUM_X_VIEW_DISTANCE_POWER > maximumXViewDistancePower ? __MINIMUM_X_VIEW_DISTANCE_POWER : maximumXViewDistancePower,
+		__MINIMUM_Y_VIEW_DISTANCE_POWER > maximumYViewDistancePower ? __MINIMUM_Y_VIEW_DISTANCE_POWER : maximumYViewDistancePower,
 		__PIXELS_TO_METERS(pixelOptical.distanceEyeScreen),
 		__PIXELS_TO_METERS(pixelOptical.baseDistance),
 		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),

@@ -1764,7 +1764,7 @@ bool Entity::isVisible(int32 pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
+		PixelVector position2D = PixelVector::project(position3D, 0);
 
 		int16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);

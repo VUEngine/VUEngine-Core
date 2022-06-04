@@ -44,8 +44,8 @@ enum DirectDrawLineShrinkingResult
 	kDirectDrawLineShrinkingUnsafe
 };
 
-static CameraFrustum _frustumLegacy;
-static RightBox _frustum;
+static CameraFrustum _frustum;
+static RightBox _frustumFixedPoint;
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -281,9 +281,9 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	if((unsigned)(point.x - point.parallax - _frustumLegacy.x0) < (unsigned)(_frustumLegacy.x1 - _frustumLegacy.x0)
+	if((unsigned)(point.x - point.parallax - _frustum.x0) < (unsigned)(_frustum.x1 - _frustum.x0)
 		&&
-		(unsigned)(point.y - _frustumLegacy.y0) < (unsigned)(_frustumLegacy.y1 - _frustumLegacy.y0)
+		(unsigned)(point.y - _frustum.y0) < (unsigned)(_frustum.y1 - _frustum.y0)
 	)
 	{
 		if(color == __COLOR_BLACK)
@@ -295,9 +295,9 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 			DirectDraw::drawPixel(leftBuffer, (uint16)(point.x - point.parallax), (uint16)point.y, color);
 		}
 	}
-	if((unsigned)(point.x + point.parallax - _frustumLegacy.x0) < (unsigned)(_frustumLegacy.x1 - _frustumLegacy.x0)
+	if((unsigned)(point.x + point.parallax - _frustum.x0) < (unsigned)(_frustum.x1 - _frustum.x0)
 		&&
-		(unsigned)(point.y - _frustumLegacy.y0) < (unsigned)(_frustumLegacy.y1 - _frustumLegacy.y0)
+		(unsigned)(point.y - _frustum.y0) < (unsigned)(_frustum.y1 - _frustum.y0)
 	)
 	{
 		if(color == __COLOR_BLACK)
@@ -414,14 +414,14 @@ void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 colo
 	{
 		parallax = auxParallax;
 
-		if((unsigned)(fromPointY - __I_TO_FIX19_13(_frustumLegacy.y0)) < (unsigned)(__I_TO_FIX19_13(_frustumLegacy.y1) - __I_TO_FIX19_13(_frustumLegacy.y0)))
+		if((unsigned)(fromPointY - __I_TO_FIX19_13(_frustum.y0)) < (unsigned)(__I_TO_FIX19_13(_frustum.y1) - __I_TO_FIX19_13(_frustum.y0)))
 		{
-			if((unsigned)(fromPointX - parallax - __I_TO_FIX19_13(_frustumLegacy.x0)) < (unsigned)(__I_TO_FIX19_13(_frustumLegacy.x1) - __I_TO_FIX19_13(_frustumLegacy.x0)))
+			if((unsigned)(fromPointX - parallax - __I_TO_FIX19_13(_frustum.x0)) < (unsigned)(__I_TO_FIX19_13(_frustum.x1) - __I_TO_FIX19_13(_frustum.x0)))
 			{
 				drawPixelMethod(leftBuffer, (uint16)__FIX19_13_TO_I(fromPointX - parallax), (uint16)__FIX19_13_TO_I(fromPointY), color);
 			}
 
-			if((unsigned)(fromPointX + parallax - __I_TO_FIX19_13(_frustumLegacy.x0)) < (unsigned)(__I_TO_FIX19_13(_frustumLegacy.x1) - __I_TO_FIX19_13(_frustumLegacy.x0)))
+			if((unsigned)(fromPointX + parallax - __I_TO_FIX19_13(_frustum.x0)) < (unsigned)(__I_TO_FIX19_13(_frustum.x1) - __I_TO_FIX19_13(_frustum.x0)))
 			{
 				drawPixelMethod(rightBuffer, (uint16)__FIX19_13_TO_I(fromPointX + parallax), (uint16)__FIX19_13_TO_I(fromPointY), color);
 			}
@@ -462,33 +462,33 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 	fix10_6 y = *y0;
 	fix10_6 parallax = *parallax0;
 
-	fix10_6 width = _frustum.x1 - _frustum.x0 + __I_TO_FIX10_6(1);
-	fix10_6 height = _frustum.y1 - _frustum.y0 + __I_TO_FIX10_6(1);
+	fix10_6 width = _frustumFixedPoint.x1 - _frustumFixedPoint.x0 + __I_TO_FIX10_6(1);
+	fix10_6 height = _frustumFixedPoint.y1 - _frustumFixedPoint.y0 + __I_TO_FIX10_6(1);
 
-	if((unsigned)width < (unsigned)(x - parallax - _frustum.x0)
-		|| (unsigned)width < (unsigned)(x + parallax - _frustum.x0)
-		|| (unsigned)height < (unsigned)(y - _frustum.y0)
+	if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0)
+		|| (unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0)
+		|| (unsigned)height < (unsigned)(y - _frustumFixedPoint.y0)
 	)
 	{
 		if(0 == dx)
 		{
-			if((unsigned)width < (unsigned)(x - parallax - _frustum.x0))
+			if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0))
 			{
 				return kDirectDrawLineShrinkingInvalid;
 			}
 
-			if((unsigned)width < (unsigned)(x + parallax - _frustum.x0))
+			if((unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0))
 			{
 				return kDirectDrawLineShrinkingInvalid;
 			}
 
-			if(_frustum.y0 > y)
+			if(_frustumFixedPoint.y0 > y)
 			{
-				y = _frustum.y0;
+				y = _frustumFixedPoint.y0;
 			}
-			else if(_frustum.y1 < y)
+			else if(_frustumFixedPoint.y1 < y)
 			{
-				y = _frustum.y1;
+				y = _frustumFixedPoint.y1;
 			}
 
 			*y0 = y;
@@ -498,20 +498,20 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 		if(0 == dy)
 		{
-			if((unsigned)height < (unsigned)(y - _frustum.y0))
+			if((unsigned)height < (unsigned)(y - _frustumFixedPoint.y0))
 			{
 				return kDirectDrawLineShrinkingInvalid;
 			}
 
 			if(0 == parallax)
 			{
-				if(_frustum.x0 > x)
+				if(_frustumFixedPoint.x0 > x)
 				{
-					x = _frustum.x0;
+					x = _frustumFixedPoint.x0;
 				}
-				else if(_frustum.x1 < x)
+				else if(_frustumFixedPoint.x1 < x)
 				{
-					x = _frustum.x1;
+					x = _frustumFixedPoint.x1;
 				}
 
 				*x0 = x;
@@ -521,13 +521,13 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 
 			parallax = __ABS(parallax);
 
-			if(_frustum.x0 > x + parallax)
+			if(_frustumFixedPoint.x0 > x + parallax)
 			{
-				x = _frustum.x0 - parallax;
+				x = _frustumFixedPoint.x0 - parallax;
 			}
-			else if(_frustum.x1 < x - parallax)
+			else if(_frustumFixedPoint.x1 < x - parallax)
 			{
-				x = _frustum.x1 + parallax;
+				x = _frustumFixedPoint.x1 + parallax;
 			}
 
 			*x0 = x;
@@ -556,9 +556,9 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 		if(0 > x)
 		{
 			// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
-			if(_frustum.x0 > x - parallax && _frustum.x0 > x + parallax)
+			if(_frustumFixedPoint.x0 > x - parallax && _frustumFixedPoint.x0 > x + parallax)
 			{
-				x = _frustum.x0;
+				x = _frustumFixedPoint.x0;
 
 				if(0 > parallax)
 				{
@@ -572,9 +572,9 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 		else if(width < x)
 		{
 			// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
-			if(_frustum.x1 < x - parallax && _frustum.x1 < x + parallax)
+			if(_frustumFixedPoint.x1 < x - parallax && _frustumFixedPoint.x1 < x + parallax)
 			{
-				x = _frustum.x1;
+				x = _frustumFixedPoint.x1;
 
 				if(0 < parallax)
 				{
@@ -624,17 +624,17 @@ static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix1
 			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
 		}
 
-		if(_frustum.y0 > y)
+		if(_frustumFixedPoint.y0 > y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
-			y = _frustum.y0;
+			y = _frustumFixedPoint.y0;
 			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(-y1), xySlope)) + x1;
 			parallax = __FIX10_6_MULT(yParallaxSlope, -y1) + parallax1;
 		}
-		else if(_frustum.y1 < y)
+		else if(_frustumFixedPoint.y1 < y)
 		{
 			// x = (y - y1)/(dx/dy) + x1
-			y = _frustum.y1;
+			y = _frustumFixedPoint.y1;
 			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
 			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
 		}
@@ -684,30 +684,30 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix10_6 fromPointParallax = __I_TO_FIX10_6(fromPoint.parallax);
 	fix10_6 toPointParallax = __I_TO_FIX10_6(toPoint.parallax);
-
-	if((unsigned)(_frustum.x1 - _frustum.x0 + __ABS(fromPointParallax) + __ABS(fromPointParallax)) <= (unsigned)(fromPointX - fromPointParallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPointX - toPointParallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPointX + fromPointParallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPointX + toPointParallax - _frustum.x0))
+/*
+	if((unsigned)(_frustum.x1 - _frustum.x0 + __ABS(fromPoint.parallax) + __ABS(fromPoint.parallax)) <= (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - toPointParallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x + fromPoint.parallax - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x + toPointParallax - _frustum.x0))
+	{
+		return;
+	}
+*/
+	if((unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - _frustum.x0))
 	{
 		return;
 	}
 
-	if((unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(fromPointY - _frustum.y0) && (unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(toPointY - _frustum.y0))
+	if((unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(fromPoint.y - _frustum.y0) && (unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(toPoint.y - _frustum.y0))
 	{
 		return;
 	}
 
-	if((unsigned)(1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)fromPoint.z)
-	{
-		return;
-	}
-
-	if((unsigned)(1 << (__PIXELS_PER_METER_2_POWER + _optical->maximumXViewDistancePower)) < (unsigned)toPoint.z)
+	if((unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(fromPoint.z - _frustum.z0) && (unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(toPoint.z - _frustum.z0))
 	{
 		return;
 	}
 
 	fix10_6 dParallax = (toPointParallax - fromPointParallax);
 
-	bool useUnsafeDrawPixel = true;
+	bool useUnsafeDrawPixel = false;
 
 	switch(DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 	{
@@ -979,11 +979,11 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 		frustum.z0 = frustum.z1 - 1;
 	}
 
-	_frustumLegacy = frustum;
+	_frustum = frustum;
 
-	_frustum = (RightBox)
+	_frustumFixedPoint = (RightBox)
 	{
-		__I_TO_FIX10_6(_frustumLegacy.x0), __I_TO_FIX10_6(_frustumLegacy.y0), __I_TO_FIX10_6(_frustumLegacy.z0),
-		__I_TO_FIX10_6(_frustumLegacy.x1), __I_TO_FIX10_6(_frustumLegacy.y1), __I_TO_FIX10_6(_frustumLegacy.z1),
+		__I_TO_FIX10_6(_frustum.x0), __I_TO_FIX10_6(_frustum.y0), __I_TO_FIX10_6(_frustum.z0),
+		__I_TO_FIX10_6(_frustum.x1), __I_TO_FIX10_6(_frustum.y1), __I_TO_FIX10_6(_frustum.z1),
 	};
 }

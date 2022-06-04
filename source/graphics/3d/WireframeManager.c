@@ -29,9 +29,6 @@ friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
 
-Vector3D _cameraRealPosition = {0, 0, 0};
-Rotation _cameraRealRotation = {0, 0, 0};
-
 static DirectDraw _directDraw = NULL;
 
 
@@ -168,8 +165,8 @@ bool WireframeManager::sortProgressively()
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 
-		fix10_6_ext squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, _cameraRealPosition));
-		fix10_6_ext nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, _cameraRealPosition));
+		fix10_6_ext squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, *_cameraPosition));
+		fix10_6_ext nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, *_cameraPosition));
 
 		// check if z positions are swapped
 		if(nextSquareDistanceToCamera < squareDistanceToCamera)
@@ -192,10 +189,6 @@ bool WireframeManager::sortProgressively()
 void WireframeManager::render()
 {
 	this->stopRendering = false;
-
-	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, -_optical->distanceEyeScreen});
-
-	_cameraRealRotation = Rotation::invert(*_cameraRotation);
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;

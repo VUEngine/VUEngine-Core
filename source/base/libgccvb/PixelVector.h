@@ -30,11 +30,14 @@ static class PixelVector : Object
 	static inline PixelVector zero();
 	static inline PixelVector get(PixelVector from, PixelVector to);
 	static inline PixelVector sum(PixelVector a, PixelVector b);
+	static inline PixelVector sub(PixelVector a, PixelVector b);
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, int16 parallax);
 	static inline uint32 squareLength(PixelVector vector);
 	static inline fix10_6 length(PixelVector vector);
 	static inline PixelVector getRelativeToCamera(PixelVector vector);
+	static inline PixelVector project(Vector3D vector3D, int16 parallax);
+	static inline PixelVector projectHighPrecision(Vector3D vector3D, int16 parallax);
 	static inline void print(PixelVector vector, int32 x, int32 y);
 }
 
@@ -55,6 +58,11 @@ static inline PixelVector PixelVector::get(PixelVector from, PixelVector to)
 static inline PixelVector PixelVector::sum(PixelVector a, PixelVector b)
 {
 	return (PixelVector){a.x + b.x, a.y + b.y, a.z + b.z, a.parallax + b.parallax};
+}
+
+static inline PixelVector PixelVector::sub(PixelVector a, PixelVector b)
+{
+	return (PixelVector){a.x - b.x, a.y - b.y, a.z - b.z, a.parallax - b.parallax};
 }
 
 static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax)
@@ -99,6 +107,46 @@ static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 	vector.z -= cameraPosition.z;
 
 	return vector;
+}
+
+static inline PixelVector PixelVector::project(Vector3D vector3D, int16 parallax)
+{
+	extern const Optical* _optical;
+
+	vector3D.x -= (__FIX10_6_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumXViewDistancePower);	
+	vector3D.y -= (__FIX10_6_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumYViewDistancePower);	
+	
+	PixelVector projection =
+	{
+		__METERS_TO_PIXELS(vector3D.x),
+		__METERS_TO_PIXELS(vector3D.y),
+		__METERS_TO_PIXELS(vector3D.z),
+		parallax
+	};
+
+	return projection;
+}
+
+static inline PixelVector PixelVector::projectHighPrecision(Vector3D vector3D, int16 parallax)
+{
+	extern const Optical* _optical;
+
+	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
+	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
+	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
+
+	x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+	y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
+	
+	PixelVector projection =
+	{
+		__METERS_TO_PIXELS(x),
+		__METERS_TO_PIXELS(y),
+		__METERS_TO_PIXELS(z),
+		parallax
+	};
+
+	return projection;
 }
 
 static inline void PixelVector::print(PixelVector vector, int32 x, int32 y)
