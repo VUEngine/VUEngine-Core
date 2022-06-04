@@ -1270,6 +1270,24 @@
                 ]
             }
         },
+        "Messages": {
+            "c5aiN73gemaLA48M": {
+                "typeId": "Messages",
+                "messages": [
+					"BodyBounced",
+					"BodyChangedDirection",
+					"BodyStartedMoving",
+					"BodyStopped",
+					"CheckIfRemoteIsReady",
+					"EntityRemoved",
+					"HighFps",
+					"KeyHold",
+					"KeyPressed",
+					"KeyReleased",
+					"LastCommunicationMessage"
+                ]
+            }
+        },
         "Project": {
             "imJC2R0U57vyVVY9": {
                 "typeId": "Project",
@@ -1930,7 +1948,7 @@
                     }
                 }
             },
-            "icon": "fa fa-hand-paper-o"
+            "icon": "fa fa-hand-paper-o dark-purple"
         },
         "BrightnessRepeats": {
             "schema": {
@@ -1941,7 +1959,7 @@
                     }
                 }
             },
-            "icon": "fa fa-sun-o"
+            "icon": "fa fa-sun-o light-yellow"
         },
         "BrightnessRepeat": {
             "schema": {
@@ -1988,7 +2006,7 @@
                     }
                 }
             },
-            "icon": "fa fa-table"
+            "icon": "fa fa-table medium-cyan"
         },
         "ColumnTable": {
             "schema": {
@@ -2112,7 +2130,7 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-cogs",
+            "icon": "fa fa-cogs medium-green",
             "templates": [
                 "config.make",
                 "vb_release.ld",
@@ -2485,7 +2503,7 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-bug",
+            "icon": "fa fa-bug light-red",
             "templates": [
                 "debugConfig.h"
             ]
@@ -2502,7 +2520,7 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-sliders",
+            "icon": "fa fa-sliders medium-purple",
             "templates": [
                 "config.h"
             ]
@@ -3261,8 +3279,8 @@
                 "required": [],
                 "additionalProperties": false
             },
-            "icon": "fa fa-bullhorn",
             "leaf": true,
+            "icon": "fa fa-bullhorn light-green",
             "templates": [
                 "GameEvents.h"
             ]
@@ -3276,7 +3294,7 @@
                     }
                 }
             },
-            "icon": "fa fa-id-card-o"
+            "icon": "fa fa-id-card-o dark-cyan"
         },
         "Entity": {
             "schema": {
@@ -4159,7 +4177,7 @@
                     }
                 }
             },
-            "icon": "fa fa-font"
+            "icon": "fa fa-font medium-red"
         },
         "Font": {
             "schema": {
@@ -4242,7 +4260,7 @@
                     }
                 }
             },
-            "icon": "fa fa-image"
+            "icon": "fa fa-image medium-yellow"
         },
         "Image": {
             "schema": {
@@ -4525,6 +4543,27 @@
             },
             "icon": "fa fa-image"
         },
+        "Messages": {
+            "schema": {
+                "title": "Messages",
+                "properties": {
+                    "typeId": {
+                        "const": "Messages"
+                    },
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "default": "NewMessage"
+                        }
+                    }
+                },
+                "required": [],
+                "additionalProperties": false
+            },
+            "leaf": true,
+            "icon": "fa fa-commenting-o"
+        },
         "Project": {
             "schema": {
                 "title": "Project",
@@ -4569,7 +4608,7 @@
                 ]
             },
             "leaf": true,
-            "icon": "fa fa-cog"
+            "icon": "fa fa-cog medium-pink"
         },
         "RomHeader": {
             "schema": {
@@ -4685,7 +4724,7 @@
                 ]
             },
             "leaf": true,
-            "icon": "fa fa-microchip",
+            "icon": "fa fa-microchip medium-green",
             "templates": [
                 "romHeader.h"
             ]
@@ -4699,7 +4738,7 @@
                     }
                 }
             },
-            "icon": "codicon codicon-screen-full codicon-rotate-90"
+            "icon": "codicon codicon-screen-full codicon-rotate-90 light-maroon"
         },
         "RumbleEffect": {
             "schema": {
@@ -4778,7 +4817,7 @@
                     }
                 }
             },
-            "icon": "fa fa-music"
+            "icon": "fa fa-music dark-red"
         },
         "Stages": {
             "schema": {
@@ -4789,7 +4828,7 @@
                     }
                 }
             },
-            "icon": "fa fa-cube"
+            "icon": "fa fa-cube light-purple"
         },
         "WaveForms": {
             "schema": {
@@ -4800,7 +4839,7 @@
                     }
                 }
             },
-            "icon": "fa fa-bar-chart-o"
+            "icon": "fa fa-bar-chart-o dark-red"
         },
         "WaveForm": {
             "schema": {
