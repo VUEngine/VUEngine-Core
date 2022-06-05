@@ -782,8 +782,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				parallax += parallaxStep
 			)
 			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixelUnsafe((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper0, color);
 
@@ -792,8 +792,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				secondaryCoordinate += secondaryStep;
 				parallax += parallaxStep;
 
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixelUnsafe((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper0, color);
 	#endif
@@ -813,8 +813,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				parallax += parallaxStep
 			)
 			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, mainCoordinate, secondaryHelper, parallaxHelper0, color);
 
@@ -823,8 +823,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				secondaryCoordinate += secondaryStep;
 				parallax += parallaxStep;
 
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, mainCoordinate, secondaryHelper, -parallaxHelper0, color);
 	#endif
@@ -884,8 +884,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				parallax += parallaxStep
 			)
 			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixelUnsafe((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper0, color);
 
@@ -894,8 +894,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				secondaryCoordinate += secondaryStep;
 				parallax += parallaxStep;
 
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixelUnsafe((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper0, color);
 	#endif
@@ -915,8 +915,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				parallax += parallaxStep
 			)
 			{
-				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				int16 secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				int16 parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, secondaryHelper, mainCoordinate, parallaxHelper0, color);
 
@@ -925,8 +925,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				secondaryCoordinate += secondaryStep;
 				parallax += parallaxStep;
 
-				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate);
-				parallaxHelper0 = __FIX10_6_TO_I(parallax);
+				secondaryHelper = __FIX10_6_TO_I(secondaryCoordinate + __05F_FIX10_6);
+				parallaxHelper0 = __FIX10_6_TO_I(parallax + __05F_FIX10_6);
 
 				DirectDraw::drawColorPixel((BYTE*)rightBuffer, (BYTE*)leftBuffer, secondaryHelper, mainCoordinate, -parallaxHelper0, color);
 	#endif
