@@ -154,6 +154,9 @@
 // affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR					{{ engine.optics.scalingModifierFactor }}{% if not '.' in '' ~ engine.optics.scalingModifierFactor %}.0{% endif %}f
 
+// affects the strength of the scaling
+#define __PROJECTION_PLANE_SIZE						{{ engine.optics.projectionPlaneSize }}
+
 // minimum number of pixels that the camera can move
 #define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ engine.optics.cameraMinimumDisplacementPixelsPower }}
 
