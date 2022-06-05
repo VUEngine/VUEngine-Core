@@ -67,6 +67,7 @@ class Mesh : Wireframe
 	VirtualList getVertices();
 
 	override void draw(bool calculateParallax);
+	void drawInterlaced(bool calculateParallax);
 	override void render();
 }
 

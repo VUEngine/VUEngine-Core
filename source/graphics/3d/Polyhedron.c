@@ -141,7 +141,7 @@ void Polyhedron::draw(bool calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw::drawLine(DirectDraw::getInstance(), fromVertex2D, toVertex2D, this->color);
+			DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0);
 		}
 	}
 }
