@@ -453,8 +453,8 @@ static inline void DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 	{
 		// x = (y - y1)/(dx/dy) + x1
 		y = _frustumFixedPoint.y0;
-		x = __FIX8_8_EXT_DIV(-y1, xySlope) + x1;
-		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, -y1) + parallax1;
+		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
 	else if(_frustumFixedPoint.y1 < y)
 	{
