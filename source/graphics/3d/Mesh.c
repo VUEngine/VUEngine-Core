@@ -192,8 +192,6 @@ void Mesh::render()
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(position);
 	PixelVector displacement = PixelVector::getProjectionDisplacementHighPrecision(Vector3D::rotate(relativePosition, *_cameraInvertedRotation), 0);
 
-	CACHE_ENABLE;
-
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
@@ -232,7 +230,7 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex, false);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, false);
 	}
 }
 
@@ -244,7 +242,7 @@ void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex, true);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, true);
 
 	//	PixelVector::print(meshSegment->fromVertex->pixelVector, 1, 10);
 	//	PixelVector::print(meshSegment->toVertex->pixelVector, 11, 10);

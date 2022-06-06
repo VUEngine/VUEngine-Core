@@ -44,8 +44,23 @@ enum DirectDrawLineShrinkingResult
 	kDirectDrawLineShrinkingUnsafe
 };
 
+
+typedef struct CustomCameraFrustum
+{
+	fix8_8_ext x0;
+	fix8_8_ext y0;
+	fix8_8_ext z0;
+	fix8_8_ext x1;
+	fix8_8_ext y1;
+	fix8_8_ext z1;
+} CustomCameraFrustum;
+
 static CameraFrustum _frustum;
-static RightBox _frustumFixedPoint;
+CustomCameraFrustum _frustumFixedPoint;
+int16 _frustumWidth = __SCREEN_WIDTH;
+int16 _frustumHeight = __SCREEN_HEIGHT;
+int16 _frustumDepth = __SCREEN_DEPTH;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -121,9 +136,12 @@ void DirectDraw::startDrawing()
 	}
 #endif
 
-	this->totalDrawPixels = 0;
+	if(this->totalDrawPixels < _directDraw->maximuDrawPixels)
+	{
+		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+	}
 
-	_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+	this->totalDrawPixels = 0;
 }
 
 void DirectDraw::setFrustum(CameraFrustum frustum)
@@ -160,12 +178,16 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	}
 
 	_frustum = frustum;
+	_frustumWidth = _frustum.x1 - _frustum.x0 + 1;
+	_frustumHeight = _frustum.y1 - _frustum.y0 + 1;
+	_frustumDepth = _frustum.z1 - _frustum.z0 + 1;
 
-	_frustumFixedPoint = (RightBox)
+	_frustumFixedPoint = (CustomCameraFrustum)
 	{
-		__I_TO_FIX10_6(_frustum.x0), __I_TO_FIX10_6(_frustum.y0), __I_TO_FIX10_6(_frustum.z0),
-		__I_TO_FIX10_6(_frustum.x1), __I_TO_FIX10_6(_frustum.y1), __I_TO_FIX10_6(_frustum.z1),
+		__I_TO_FIX8_8_EXT(_frustum.x0), __I_TO_FIX8_8_EXT(_frustum.y0), __I_TO_FIX8_8_EXT(_frustum.z0),
+		__I_TO_FIX8_8_EXT(_frustum.x1), __I_TO_FIX8_8_EXT(_frustum.y1), __I_TO_FIX8_8_EXT(_frustum.z1),
 	};
+
 }
 
 /**
@@ -211,19 +233,25 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + yHelper);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		leftBuffer = 0;
+	}
+	else
 	{
 		leftBuffer[displacement] |= pixel;
 	}
 
 	displacement = (((x + parallax) << 6) + yHelper);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		rightBuffer = 0;
+	}
+	else
 	{
 		rightBuffer[displacement] |= pixel;
 	}
-
-	_directDraw->totalDrawPixels++;
 }
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
@@ -240,8 +268,6 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	buffer[displacement] |= color << ((y & 3) << 1);
-
-	_directDraw->totalDrawPixels++;
 }
 
 /**
@@ -299,236 +325,161 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 	}
 }
 
-static PixelVector DirectDraw::clampPixelVector(PixelVector vector)
+static inline void DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ext* y0, fix8_8_ext* parallax0, fix8_8_ext dx, fix8_8_ext dy, fix8_8_ext dParallax, fix8_8_ext x1, fix8_8_ext y1, fix8_8_ext parallax1)
 {
-	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vector.x)
+	fix8_8_ext x = *x0;
+	fix8_8_ext y = *y0;
+	fix8_8_ext parallax = *parallax0;
+
+	if(0 == dx)
 	{
-		vector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vector.x)
-	{
-		vector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-
-	if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vector.y)
-	{
-		vector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-	else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vector.y)
-	{
-		vector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
-	}
-
-	return vector;
-}
-
-static uint32 DirectDraw::shrinkLineToScreenSpace(fix10_6* x0, fix10_6* y0, fix10_6* parallax0, fix10_6 dx, fix10_6 dy, fix10_6 dParallax, fix10_6 x1, fix10_6 y1, fix10_6 parallax1)
-{
-	fix10_6 x = *x0;
-	fix10_6 y = *y0;
-	fix10_6 parallax = *parallax0;
-
-	fix10_6 width = _frustumFixedPoint.x1 - _frustumFixedPoint.x0 + __I_TO_FIX10_6(1);
-	fix10_6 height = _frustumFixedPoint.y1 - _frustumFixedPoint.y0 + __I_TO_FIX10_6(1);
-
-	if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0)
-		|| (unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0)
-		|| (unsigned)height < (unsigned)(y - _frustumFixedPoint.y0)
-	)
-	{
-		if(0 == dx)
-		{
-			if((unsigned)width < (unsigned)(x - parallax - _frustumFixedPoint.x0) && (unsigned)width < (unsigned)(x + parallax - _frustumFixedPoint.x0))
-			{
-				return kDirectDrawLineShrinkingInvalid;
-			}
-
-			if(_frustumFixedPoint.y0 > y)
-			{
-				y = _frustumFixedPoint.y0;
-			}
-			else if(_frustumFixedPoint.y1 < y)
-			{
-				y = _frustumFixedPoint.y1;
-			}
-
-			*y0 = y;
-
-			return 0 == parallax ? kDirectDrawLineShrinkingSafe : kDirectDrawLineShrinkingUnsafe;
-		}
-
-		if(0 == dy)
-		{
-			if((unsigned)height < (unsigned)(y - _frustumFixedPoint.y0))
-			{
-				return kDirectDrawLineShrinkingInvalid;
-			}
-
-			if(0 == parallax)
-			{
-				if(_frustumFixedPoint.x0 > x)
-				{
-					x = _frustumFixedPoint.x0;
-				}
-				else if(_frustumFixedPoint.x1 < x)
-				{
-					x = _frustumFixedPoint.x1;
-				}
-
-				*x0 = x;
-
-				return kDirectDrawLineShrinkingSafe;
-			}
-
-			parallax = __ABS(parallax);
-
-			if(_frustumFixedPoint.x0 > x + parallax)
-			{
-				x = _frustumFixedPoint.x0 - parallax;
-			}
-			else if(_frustumFixedPoint.x1 < x - parallax)
-			{
-				x = _frustumFixedPoint.x1 + parallax;
-			}
-
-			*x0 = x;
-
-			return kDirectDrawLineShrinkingUnsafe;
-		}
-
-		NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
-
-		fix19_13 xySlope = __FIX19_13_DIV(__FIX10_6_TO_FIX19_13(dy), __FIX10_6_TO_FIX19_13(dx));
-		fix10_6 yParallaxSlope = __FIX10_6_DIV(dParallax, dy);
-
-		if(0 == xySlope)
-		{
-			return kDirectDrawLineShrinkingUnsafe;
-		}
-
-		//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
-		fix10_6 parallaxHelper0 = parallax;
-		fix10_6 parallaxHelper1 = parallax1;
-
-		fix10_6 xHelper = x;
-
-		bool shrinkOnXAxis = false;
-
-		if(0 > x)
-		{
-			// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
-			if(_frustumFixedPoint.x0 > x - parallax && _frustumFixedPoint.x0 > x + parallax)
-			{
-				x = _frustumFixedPoint.x0;
-
-				if(0 > parallax)
-				{
-					parallaxHelper0 = -parallaxHelper0;
-					parallaxHelper1 = -parallaxHelper1;
-				}
-
-				shrinkOnXAxis = true;
-			}
-		}
-		else if(width < x)
-		{
-			// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
-			if(_frustumFixedPoint.x1 < x - parallax && _frustumFixedPoint.x1 < x + parallax)
-			{
-				x = _frustumFixedPoint.x1;
-
-				if(0 < parallax)
-				{
-					parallaxHelper0 = -parallaxHelper0;
-					parallaxHelper1 = -parallaxHelper1;
-				}
-
-				shrinkOnXAxis = true;
-			}
-		}
-
-		if(shrinkOnXAxis)
-		{
-			// This will compute the y coordinate at which the line for the relevant display (left or right)
-			// intersects the screen's left or right border and uses the result to compute the x coordinate 
-			// of the actual line
-			xHelper += parallaxHelper0;
-
-			fix10_6 dxHelper = (x1 + parallaxHelper1) - xHelper;
-
-			if(0 == dxHelper)
-			{
-				y = __FIX19_13_TO_FIX10_6(__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(x - x1), xySlope)) + y1;
-				parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-
-				*x0 = x;
-				*y0 = y;
-				*parallax0 = parallax;
-
-				return kDirectDrawLineShrinkingUnsafe;
-			}
-
-			fix10_6 xySlopeHelper = __FIX10_6_DIV(dy, dxHelper);
-			
-			if(0 == xySlopeHelper)
-			{
-				return kDirectDrawLineShrinkingUnsafe;
-			}
-			
-			if(0 > xySlope * xySlopeHelper)
-			{
-				xySlopeHelper = -xySlopeHelper;
-			}
-
-			y = __FIX10_6_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
-			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
-		}
-
 		if(_frustumFixedPoint.y0 > y)
 		{
-			// x = (y - y1)/(dx/dy) + x1
-			y = _frustumFixedPoint.y0;
-			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(-y1), xySlope)) + x1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, -y1) + parallax1;
+			*y0 = _frustumFixedPoint.y0;
 		}
 		else if(_frustumFixedPoint.y1 < y)
 		{
-			// x = (y - y1)/(dx/dy) + x1
-			y = _frustumFixedPoint.y1;
-			x = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX10_6_TO_FIX19_13(y - y1), xySlope)) + x1;
-			parallax = __FIX10_6_MULT(yParallaxSlope, y - y1) + parallax1;
+			*y0 = _frustumFixedPoint.y1;
 		}
 
-		*x0 = x;
-		*y0 = y;
-		*parallax0 = parallax;
-
-		return 0 != parallax ? kDirectDrawLineShrinkingUnsafe : kDirectDrawLineShrinkingSafe;
+		return;
 	}
 
-	return kDirectDrawLineShrinkingNone;
+	if(0 == dy)
+	{
+		parallax = __ABS(parallax);
+
+		if(_frustumFixedPoint.x0 > x + parallax)
+		{
+			*x0 = _frustumFixedPoint.x0 - parallax;
+		}
+		else if(_frustumFixedPoint.x1 < x - parallax)
+		{
+			*x0 = _frustumFixedPoint.x1 + parallax;
+		}
+
+		return;
+	}
+
+	NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
+
+	fix8_8_ext xySlope = __FIX8_8_EXT_DIV(dy, dx);
+	fix8_8_ext yParallaxSlope = __FIX8_8_EXT_DIV(dParallax, dy);
+
+	if(0 == xySlope)
+	{
+		return;
+	}
+
+	//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
+	fix8_8_ext parallaxHelper0 = parallax;
+	fix8_8_ext parallaxHelper1 = parallax1;
+
+	fix8_8_ext xHelper = x;
+
+	bool shrinkOnXAxis = false;
+
+	if(_frustumFixedPoint.x0 > x)
+	{
+		// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
+		if(_frustumFixedPoint.x0 > x - __ABS(parallax) && _frustumFixedPoint.x0 > x + __ABS(parallax))
+		{
+			x = _frustumFixedPoint.x0;
+
+			if(0 > parallax)
+			{
+				parallaxHelper0 = -parallaxHelper0;
+				parallaxHelper1 = -parallaxHelper1;
+			}
+
+			shrinkOnXAxis = true;
+		}
+	}
+	else if(_frustumFixedPoint.x1 < x)
+	{
+		// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
+		if(_frustumFixedPoint.x1 < x - __ABS(parallax) && _frustumFixedPoint.x1 < x + __ABS(parallax))
+		{
+			x = _frustumFixedPoint.x1;
+
+			if(0 < parallax)
+			{
+				parallaxHelper0 = -parallaxHelper0;
+				parallaxHelper1 = -parallaxHelper1;
+			}
+
+			shrinkOnXAxis = true;
+		}
+	}
+
+	if(shrinkOnXAxis)
+	{
+		// This will compute the y coordinate at which the line for the relevant display (left or right)
+		// intersects the screen's left or right border and uses the result to compute the x coordinate 
+		// of the actual line
+		xHelper += parallaxHelper0;
+
+		fix8_8_ext dxHelper = (x1 + parallaxHelper1) - xHelper;
+
+		if(0 == dxHelper)
+		{
+			y = __FIX8_8_EXT_MULT(x - x1, xySlope) + y1;
+			parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+
+			*y0 = y;
+			*parallax0 = parallax;
+
+			return;
+		}
+
+		fix8_8_ext xySlopeHelper = __FIX8_8_EXT_DIV(dy, dxHelper);
+		
+		if(0 == xySlopeHelper)
+		{
+			return;
+		}
+		
+		if(0 > xySlope * xySlopeHelper)
+		{
+			xySlopeHelper = -xySlopeHelper;
+		}
+
+		y = __FIX8_8_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
+		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
+	}
+
+	if(_frustumFixedPoint.y0 > y)
+	{
+		// x = (y - y1)/(dx/dy) + x1
+		y = _frustumFixedPoint.y0;
+		x = __FIX8_8_EXT_DIV(-y1, xySlope) + x1;
+		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, -y1) + parallax1;
+	}
+	else if(_frustumFixedPoint.y1 < y)
+	{
+		// x = (y - y1)/(dx/dy) + x1
+		y = _frustumFixedPoint.y1;
+		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+	}
+
+	*x0 = x;
+	*y0 = y;
+	*parallax0 = parallax;
 }
 
-static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, int32 clampLimit, uint8 bufferIndex, bool interlaced)
+static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	if(0 == clampLimit || __FIX10_6_MAXIMUM_VALUE_TO_I < clampLimit)
-	{
-		fromPoint = DirectDraw::clampPixelVector(fromPoint);
-		toPoint = DirectDraw::clampPixelVector(toPoint);
-	}
+	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustumFixedPoint.x0);
+	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustumFixedPoint.y0);
+	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustumFixedPoint.z0);
 
-	if((unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - _frustum.x0))
-	{
-		return;
-	}
+	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(toPoint.x - _frustumFixedPoint.x0);
+	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustumFixedPoint.y0);
+	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustumFixedPoint.z0);
 
-	if((unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(fromPoint.y - _frustum.y0) && (unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(toPoint.y - _frustum.y0))
-	{
-		return;
-	}
-
-	if((unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(fromPoint.z - _frustum.z0) || (unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(toPoint.z - _frustum.z0))
+	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside) || (zFromOutside || zToOutside))
 	{
 		return;
 	}
@@ -538,21 +489,30 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	fix8_8_ext fromPointX = __I_TO_FIX8_8_EXT(fromPoint.x);
 	fix8_8_ext fromPointY = __I_TO_FIX8_8_EXT(fromPoint.y);
+	fix8_8_ext fromPointParallax = __I_TO_FIX8_8_EXT(fromPoint.parallax);
 
 	fix8_8_ext toPointX = __I_TO_FIX8_8_EXT(toPoint.x);
 	fix8_8_ext toPointY = __I_TO_FIX8_8_EXT(toPoint.y);
+	fix8_8_ext toPointParallax = __I_TO_FIX8_8_EXT(toPoint.parallax);
 
 	fix8_8_ext dx = toPointX - fromPointX;
 	fix8_8_ext dy = toPointY - fromPointY;
+	fix8_8_ext dParallax = (toPointParallax - fromPointParallax);
 
 	if(0 == dx && 0 == dy)
 	{
 		return;
 	}
 
-	fix8_8_ext fromPointParallax = __I_TO_FIX8_8_EXT(fromPoint.parallax);
-	fix8_8_ext toPointParallax = __I_TO_FIX8_8_EXT(toPoint.parallax);
-	fix8_8_ext dParallax = (toPointParallax - fromPointParallax);
+	if(xFromOutside || yFromOutside)
+	{
+		DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax);
+	}
+
+	if(xToOutside || yToOutside)
+	{
+		DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax);
+	}
 
 	fix8_8_ext dxABS = __ABS(dx);
 	fix8_8_ext dyABS = __ABS(dy);
@@ -607,9 +567,9 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		mainCoordinateEnd = toPointY;
 	}
 
-	fix8_8_ext totalPixels = __ABS(mainCoordinateEnd - mainCoordinateStart);
+	int16 totalPixels = __FIX8_8_EXT_TO_I(__ABS(mainCoordinateEnd - mainCoordinateStart));
 
-	if(_directDraw->totalDrawPixels + __FIX8_8_EXT_TO_I(totalPixels) > _directDraw->maximuDrawPixels)
+	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
 		return;
 	}
@@ -651,5 +611,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
 		}
 	}
+
+	_directDraw->totalDrawPixels += totalPixels;
+
 }
 

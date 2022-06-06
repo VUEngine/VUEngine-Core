@@ -63,7 +63,6 @@ void Line::draw(bool calculateParallax __attribute__((unused)))
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->b), 0),
 		this->color,
 		0,
-		0,
 		false
 	);
 
@@ -71,7 +70,6 @@ void Line::draw(bool calculateParallax __attribute__((unused)))
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(this->a, this->b)), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)), 0),
 		__COLOR_BRIGHT_RED,
-		0,
 		0,
 		false
 	);
