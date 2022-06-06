@@ -281,14 +281,22 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	int32 displacement = (((x - parallax) << 6) + yHelper);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		leftBuffer = 0;
+	}
+	else
 	{
 		leftBuffer[displacement] &= pixel;
 	}
 
 	displacement = (((x + parallax) << 6) + yHelper);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		rightBuffer = 0;
+	}
+	else
 	{
 		rightBuffer[displacement] &= pixel;
 	}
@@ -525,10 +533,10 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			fromPointX = toPointX;
 			toPointX = auxPoint;
 
-			dxABS = -dxABS;
 			fromPointY = toPointY;
-
 			parallaxStart = toPointParallax; 
+
+			dxABS = -dxABS;
 		}
 
 		yStep = __FIX8_8_EXT_DIV(dy, dxABS);
@@ -544,10 +552,10 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			fromPointY = toPointY;
 			toPointY = auxPoint;
 
-			dyABS = -dyABS;
 			fromPointX = toPointX;
-
 			parallaxStart = toPointParallax; 
+
+			dyABS = -dyABS;
 		}
 
 		xStep = __FIX8_8_EXT_DIV(dx, dyABS);
@@ -571,11 +579,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(interlaced)
 	{
-		for(; 1 < totalPixels; totalPixels -=2,
-			fromPointX += xStep,
-			fromPointY += yStep,
-			parallaxStart += parallaxStep
-		)
+		for(; 1 < totalPixels; totalPixels -=2)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
 
@@ -584,17 +588,21 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			parallaxStart += parallaxStep;
 
 			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), -__FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
+
+			fromPointX += xStep;
+			fromPointY += yStep;
+			parallaxStart += parallaxStep;
 		}
 	}
 	else
 	{
-		for(; 0 < totalPixels; totalPixels -=1,
-			fromPointX += xStep,
-			fromPointY += yStep,
-			parallaxStart += parallaxStep
-		)
+		for(; 0 < totalPixels; totalPixels -=1)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
+
+			fromPointX += xStep;
+			fromPointY += yStep;
+			parallaxStart += parallaxStep;
 		}
 	}
 }
