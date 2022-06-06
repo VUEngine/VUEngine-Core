@@ -54,8 +54,19 @@ inline int32 customAbs(int32 number)
 // usable only when m is a power of 2
 #define __MODULO(n, m)			((n) & ((m) - 1))
 
+// use for faster rounding on fix* values
+#define __1I_FIX7_9 			0x0200
+#define __05F_FIX7_9			0x0100
+#define __1I_FIX8_8 			0x00000100
+#define __05F_FIX8_8			0x00000080
+#define __1I_FIX10_6			0x0040
+#define __05F_FIX10_6			0x0020
+#define __1I_FIX19_13			0x00002000
+#define __05F_FIX19_13			0x00001000
+
 // fixed point macros
 #define fix7_9					int16
+#define fix8_8_ext				int32
 #define fix13_3					int16
 #define fix13_3					int16
 #define fix10_6					int16
@@ -74,6 +85,7 @@ inline int32 customAbs(int32 number)
 
 // convert a float to fixed point and back
 #define __F_TO_FIX7_9(n)			(fix7_9)		((n) 	* 512.0f + 0.5f)
+#define __F_TO_FIX8_8_EXT(n)		(fix8_8_ext)	((n) 	* 256.0f + 0.5f)
 #define __F_TO_FIX13_3(n)			(fix13_3)		((n) 	* 8.0f + 0.5f)
 #define __F_TO_FIX10_6(n)			(fix10_6)		((n) 	* 64.0f + 0.5f)
 #define __F_TO_FIX10_6_EXT(n)		(fix10_6_ext)	((n) 	* 64.0f + 0.5f)
@@ -81,6 +93,7 @@ inline int32 customAbs(int32 number)
 #define __F_TO_FIX17_15(n)			(fix17_15)		((n) 	* 32768.0f + 0.5f)
 
 #define __FIX7_9_TO_F(n)			(float)((n) / 512.0f)
+#define __FIX8_8_EXT_TO_F(n)		(int32)((n) / 256.0f)
 #define __FIX13_3_TO_F(n)			(float)((n) / 8.0f)
 #define __FIX10_6_TO_F(n)			(float)((n) / 64.0f)
 #define __FIX10_6_EXT_TO_F(n)		(float)((n) / 64.0f)
@@ -89,6 +102,7 @@ inline int32 customAbs(int32 number)
 
 // convert an int32 to fixed point and back
 #define __I_TO_FIX7_9(n)			(fix7_9)		((n) << 9)
+#define __I_TO_FIX8_8_EXT(n)		(fix8_8_ext)	((n) << 8)
 #define __I_TO_FIX13_3(n)			(fix13_3)		((n) << 3)
 #define __I_TO_FIX10_6(n)			(fix10_6)		((n) << 6)
 #define __I_TO_FIX10_6_EXT(n)		(fix10_6_ext)	((n) << 6)
@@ -96,6 +110,7 @@ inline int32 customAbs(int32 number)
 #define __I_TO_FIX17_15(n)			(fix17_15)		((n) << 15)
 
 #define __FIX7_9_TO_I(n)			(int16)((n) >> 9)
+#define __FIX8_8_EXT_TO_I(n)		(int32)((n) >> 8)
 #define __FIX13_3_TO_I(n)			(int16)((n) >> 3)
 #define __FIX10_6_TO_I(n)			(int32)((n) >> 6)
 #define __FIX10_6_EXT_TO_I(n)		(int32)((n) >> 6)
@@ -131,6 +146,7 @@ inline int32 customAbs(int32 number)
 // fixed multiplication, what a mess of brackets
 // TODO: how do we return an int32 from int16*int16 without forcing a promotion to int32?
 #define __FIX7_9_MULT(a,b)			(fix7_9)		((((int32)(a)) * ((int32)(b))) >> 9)
+#define __FIX8_8_EXT_MULT(a,b)		(fix8_8_ext)	((((int32)(a)) * ((int32)(b))) >> 8)
 #define __FIX13_3_MULT(a,b)			(fix13_3)		((((int32)(a)) * ((int32)(b))) >> 3)
 #define __FIX10_6_MULT(a,b)			(fix10_6)		((((int32)(a)) * ((int32)(b))) >> 6)
 #define __FIX10_6_EXT_MULT(a,b)		(fix10_6_ext)	((((int32)(a)) * ((int32)(b))) >> 6)
@@ -140,6 +156,7 @@ inline int32 customAbs(int32 number)
 
 // fixed division
 #define __FIX7_9_DIV(a,b)			(fix7_9)		((((int32)(a)) << 9) / ((int32)(b)))
+#define __FIX8_8_EXT_DIV(a,b)		(fix8_8_ext)	((((int32)(a)) << 8) / ((int32)(b)))
 #define __FIX13_3_DIV(a,b)			(fix13_3)		((((int32)(a)) << 3) / ((int32)(b)))
 #define __FIX10_6_DIV(a,b)			(fix10_6)		((((int32)(a)) << 6) / ((int32)(b)))
 #define __FIX10_6_EXT_DIV(a,b)		(fix10_6_ext)	((((int32)(a)) << 6) / ((int32)(b)))

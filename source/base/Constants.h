@@ -69,11 +69,6 @@
 #define __EXCEPTIONS_BGMAP		0
 #define __EXCEPTIONS_WORLD		31
 
-// use for faster rounding on fix* values
-#define __1I_FIX7_9 			0x0200
-#define __1I_FIX10_6			0x0040
-#define __05F_FIX10_6			0x0020
-
 // override null spec (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
 
