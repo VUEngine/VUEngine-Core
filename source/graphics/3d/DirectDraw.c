@@ -518,6 +518,16 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		toPoint = DirectDraw::clampPixelVector(toPoint);
 	}
 
+	if((unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(fromPoint.x - _frustum.x0) && (unsigned)(_frustum.x1 - _frustum.x0) <= (unsigned)(toPoint.x - _frustum.x0))
+	{
+		return;
+	}
+
+	if((unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(fromPoint.y - _frustum.y0) && (unsigned)(_frustum.y1 - _frustum.y0) <= (unsigned)(toPoint.y - _frustum.y0))
+	{
+		return;
+	}
+
 	if((unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(fromPoint.z - _frustum.z0) || (unsigned)(_frustum.z1 - _frustum.z0) <= (unsigned)(toPoint.z - _frustum.z0))
 	{
 		return;
