@@ -190,9 +190,6 @@ void WireframeManager::render()
 {
 	this->stopRendering = false;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
@@ -211,16 +208,11 @@ void WireframeManager::draw()
 
 	this->stopDrawing = false;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
 		Wireframe::draw(node->data, true);
 	}
-
-	CACHE_ENABLE;
 }
 
 /**

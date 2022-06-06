@@ -232,7 +232,7 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex, false);
 	}
 }
 
@@ -244,7 +244,7 @@ void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
 		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLineInterlaced(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, __FIX10_6_MAXIMUM_VALUE_TO_I, meshSegment->bufferIndex, true);
 
 	//	PixelVector::print(meshSegment->fromVertex->pixelVector, 1, 10);
 	//	PixelVector::print(meshSegment->toVertex->pixelVector, 11, 10);
