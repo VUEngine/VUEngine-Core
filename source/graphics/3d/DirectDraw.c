@@ -515,8 +515,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix8_8_ext yStep = __1I_FIX8_8;
 	fix8_8_ext parallaxStep = 0;
 	
-	fix8_8_ext mainCoordinateStart = 0;
-	fix8_8_ext mainCoordinateEnd = 0;
+	int16 totalPixels = 0;
 
 	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
 	{
@@ -535,8 +534,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		yStep = __FIX8_8_EXT_DIV(dy, dxABS);
 		parallaxStep = __FIX8_8_EXT_DIV(dParallax, dxABS);
 
-		mainCoordinateStart = fromPointX;
-		mainCoordinateEnd = toPointX;
+		totalPixels = __FIX8_8_EXT_TO_I(toPointX - fromPointX);
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
@@ -555,16 +553,15 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		xStep = __FIX8_8_EXT_DIV(dx, dyABS);
 		parallaxStep = __FIX8_8_EXT_DIV(dParallax, dyABS);
 
-		mainCoordinateStart = fromPointY;
-		mainCoordinateEnd = toPointY;
+		totalPixels = __FIX8_8_EXT_TO_I(toPointY - fromPointY);
 	}
-
-	int16 totalPixels = __FIX8_8_EXT_TO_I(__ABS(mainCoordinateEnd - mainCoordinateStart));
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
 		return;
 	}
+
+	_directDraw->totalDrawPixels += totalPixels;
 
 	if(0 != bufferIndex)
 	{
@@ -574,8 +571,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(interlaced)
 	{
-		for(fix8_8_ext mainCoordinate = mainCoordinateStart; mainCoordinateEnd - __1I_FIX8_8 >= mainCoordinate;
-			mainCoordinate += __1I_FIX8_8,
+		for(; 1 < totalPixels; totalPixels -=2,
 			fromPointX += xStep,
 			fromPointY += yStep,
 			parallaxStart += parallaxStep
@@ -583,7 +579,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
 
-			mainCoordinate += __1I_FIX8_8;
 			fromPointX += xStep;
 			fromPointY += yStep;
 			parallaxStart += parallaxStep;
@@ -593,8 +588,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	}
 	else
 	{
-		for(fix8_8_ext mainCoordinate = mainCoordinateStart; mainCoordinateEnd >= mainCoordinate;
-			mainCoordinate += __1I_FIX8_8,
+		for(; 0 < totalPixels; totalPixels -=1,
 			fromPointX += xStep,
 			fromPointY += yStep,
 			parallaxStart += parallaxStep
@@ -603,8 +597,5 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
 		}
 	}
-
-	_directDraw->totalDrawPixels += totalPixels;
-
 }
 
