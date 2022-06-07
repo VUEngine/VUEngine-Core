@@ -222,7 +222,7 @@ void Shape::setPosition(const Vector3D* position __attribute__((unused)))
  */
 void Shape::enterCollision(CollisionData* collisionData)
 {
-	if( SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
+	if(SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, collisionData->collisionInformation.collidingShape);
 
@@ -244,6 +244,7 @@ void Shape::updateCollision(CollisionData* collisionData)
 	{
 		if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT + __PIXELS_TO_METERS(1))
 		{
+			collisionData->collisionInformation.solutionVector.magnitude -= __STILL_COLLIDING_CHECK_SIZE_INCREMENT;
 			Shape::resolveCollision(this, &collisionData->collisionInformation, false);
 		}
 	}
@@ -331,7 +332,7 @@ CollisionData Shape::collides(Shape shape)
 	// to determine if I'm not colliding against them anymore
 	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionData.collisionInformation =  Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		collisionData.collisionInformation = Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
