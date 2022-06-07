@@ -178,9 +178,9 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	}
 
 	_frustum = frustum;
-	_frustumWidth = _frustum.x1 - _frustum.x0 + 1;
-	_frustumHeight = _frustum.y1 - _frustum.y0 + 1;
-	_frustumDepth = _frustum.z1 - _frustum.z0 + 1;
+	_frustumWidth = _frustum.x1 - _frustum.x0;
+	_frustumHeight = _frustum.y1 - _frustum.y0;
+	_frustumDepth = _frustum.z1 - _frustum.z0;
 
 	_frustumFixedPoint = (CustomCameraFrustum)
 	{
@@ -449,23 +449,25 @@ static inline void DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
 	}
 
+	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
+	// (x0 - x1) / dx = (y0 - y1) / dy
+	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
+	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
+	// x0 = (y0 - y1) / (dy / dx) + x1
+	// x0 = (y0 - y1) / xySlope + x1
 	if(_frustumFixedPoint.y0 > y)
 	{
-		// x = (y - y1)/(dx/dy) + x1
-		// x = (y - y1)*(dy/dx) + x1
 		y = _frustumFixedPoint.y0;
-		x = __FIX8_8_EXT_MULT(y - y1, xySlope) + x1;
+		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
 		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
 	else if(_frustumFixedPoint.y1 < y)
 	{
-		// x = (y - y1)/(dx/dy) + x1
-		// x = (y - y1)*(dy/dx) + x1
 		y = _frustumFixedPoint.y1;
-		x = __FIX8_8_EXT_MULT(y - y1, xySlope) + x1;
+		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
 		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
-
+	
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;
@@ -473,13 +475,13 @@ static inline void DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustumFixedPoint.x0);
-	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustumFixedPoint.y0);
-	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustumFixedPoint.z0);
+	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustum.x0);
+	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustum.y0);
+	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
 
-	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(toPoint.x - _frustumFixedPoint.x0);
-	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustumFixedPoint.y0);
-	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustumFixedPoint.z0);
+	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(toPoint.x - _frustum.x0);
+	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustum.y0);
+	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
 	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside) || (zFromOutside || zToOutside))
 	{
