@@ -343,7 +343,6 @@ uint32 EntityFactory::cleanUp()
 		{
 			Entity::fireEvent(positionedEntityDescription->entity, kEventEntityLoaded);
 			NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::cleanUp: deleted entity during kEventEntityLoaded");
-
 			Entity::removeAllEventListeners(positionedEntityDescription->entity, kEventEntityLoaded);
 		}
 

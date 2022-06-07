@@ -103,6 +103,12 @@ static uint32 entityFactoryHighestTime = 0;
 static uint32 timeBeforeProcess = 0;
 #endif
 
+typedef struct EntityLoadingListener
+{
+	Object context;
+	EventListener callback;
+} EntityLoadingListener;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -117,6 +123,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->entityFactory = new EntityFactory();
 	this->particleRemover = new ParticleRemover();
 	this->children = new VirtualList();
+	this->entityLoadingListeners = NULL;
 
 	this->stageSpec = stageSpec;
 	this->stageEntities = NULL;
@@ -136,6 +143,22 @@ void Stage::constructor(StageSpec *stageSpec)
 void Stage::destructor()
 {
 	Stage::setFocusEntity(this, NULL);
+
+	if(!isDeleted(this->entityLoadingListeners))
+	{
+		VirtualNode node = this->entityLoadingListeners->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			if(!isDeleted(node->data))
+			{
+				delete node->data;
+			}
+		}
+
+		delete this->entityLoadingListeners;
+		this->entityLoadingListeners = NULL;
+	}
 
 	if(!isDeleted(this->soundWrappers))
 	{
@@ -195,20 +218,23 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	onScreenPosition.y -= cameraPosition->y;
 	onScreenPosition.z -= cameraPosition->z;
 
+	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
+	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
+
 	// check x visibility
-	if(onScreenPosition.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || onScreenPosition.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
+	if(position2D.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position2D.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(onScreenPosition.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || onScreenPosition.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(position2D.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || position2D.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(onScreenPosition.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || onScreenPosition.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(position2D.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || position2D.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
@@ -216,19 +242,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	if(forceNoPopIn)
 	{
 		// check x visibility
-		if(onScreenPosition.x + pixelRightBox->x1 < 0 || onScreenPosition.x + pixelRightBox->x0 > __SCREEN_WIDTH)
+		if(position2D.x + pixelRightBox->x1 < 0 || position2D.x + pixelRightBox->x0 > __SCREEN_WIDTH)
 		{
 			return true;
 		}
 
 		// check y visibility
-		if(onScreenPosition.y + pixelRightBox->y1 < 0 || onScreenPosition.y + pixelRightBox->y0 > __SCREEN_HEIGHT)
+		if(position2D.y + pixelRightBox->y1 < 0 || position2D.y + pixelRightBox->y0 > __SCREEN_HEIGHT)
 		{
 			return true;
 		}
 
 		// check z visibility
-		if(onScreenPosition.z + pixelRightBox->z1 < 0 || onScreenPosition.z + pixelRightBox->z0 > __SCREEN_DEPTH)
+		if(position2D.z + pixelRightBox->z1 < 0 || position2D.z + pixelRightBox->z0 > __SCREEN_DEPTH)
 		{
 			return true;
 		}
@@ -370,6 +396,39 @@ void Stage::setupUI()
 	}
 }
 
+void Stage::onEntityLoaded(Object eventFirer)
+{
+	Entity entity = Entity::safeCast(eventFirer);
+
+	if(!isDeleted(entity))
+	{
+		Entity::removeAllEventListeners(entity, kEventEntityLoaded);
+		Stage::alertOfLoadedEntity(this, entity);
+	}
+}
+
+void Stage::alertOfLoadedEntity(Entity entity)
+{
+	if(isDeleted(entity) && isDeleted(this->entityLoadingListeners))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->entityLoadingListeners->head; NULL != node; node = node->next)
+	{
+		EntityLoadingListener* entityLoadingListener = (EntityLoadingListener*)node->data;
+
+		if(!isDeleted(entityLoadingListener->context))
+		{
+			Entity::addEventListener(entity, entityLoadingListener->context, entityLoadingListener->callback, kEventEntityLoaded);
+		}
+	}
+
+	Entity::fireEvent(entity, kEventEntityLoaded);
+	NM_ASSERT(!isDeleted(entity), "Stage::alertOfLoadedEntity: deleted entity during kEventEntityLoaded");
+	Entity::removeAllEventListeners(entity, kEventEntityLoaded);
+}
+
 // add entity to the stage
 Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
 {
@@ -389,7 +448,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 		Entity entity = Entity::loadEntity(positionedEntity, internalId);
 		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
 
-		if(entity)
+		if(!isDeleted(entity))
 		{
 			// create the entity and add it to the world
 			Stage::addChild(this, Container::safeCast(entity));
@@ -401,6 +460,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			{
 				Stage::makeChildReady(this, entity);
 			}
+
+			Stage::alertOfLoadedEntity(this, entity);
 		}
 /*
 		if(permanent)
@@ -425,6 +486,25 @@ void Stage::makeChildReady(Entity entity)
 		Entity::synchronizeGraphics(entity);
 		Entity::ready(entity, true);
 	}
+}
+
+void Stage::addEntityLoadingListener(Object context, EventListener callback)
+{
+	if(isDeleted(context) || NULL == callback)
+	{
+		return;
+	}
+
+	if(isDeleted(this->entityLoadingListeners))
+	{
+		this->entityLoadingListeners = new VirtualList();
+	}
+
+	EntityLoadingListener* entityLoadingListener = new EntityLoadingListener;
+	entityLoadingListener->context = context;
+	entityLoadingListener->callback = callback;
+
+	VirtualList::pushBack(this->entityLoadingListeners, entityLoadingListener);
 }
 
 bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
@@ -868,7 +948,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), (EventListener)Stage::onEntityLoaded, stageEntityDescription->internalId);
 					}
 					else
 					{
@@ -910,7 +990,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), (EventListener)Stage::onEntityLoaded, stageEntityDescription->internalId);
 					}
 					else
 					{

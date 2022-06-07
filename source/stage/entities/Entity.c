@@ -1774,30 +1774,26 @@ bool Entity::isVisible(int32 pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		PixelVector position2D = PixelVector::project(position3D, 0);
+		PixelVector position2D = Vector3D::projectToPixelVector(Vector3D::rotate(position3D, *_cameraInvertedRotation), 0);
 
 		int16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
 		int16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
-		int32 x = position2D.x;
-		int32 y = position2D.y;
-		int32 z = position2D.z;
-
 		// check x visibility
-		if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
+		if((position2D.x + halfWidth < _cameraFrustum->x0 - pad) || (position2D.x - halfWidth > _cameraFrustum->x1 + pad))
 		{
 			return false;
 		}
 
 		// check y visibility
-		if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
+		if((position2D.y + halfHeight < _cameraFrustum->y0 - pad) || (position2D.y - halfHeight > _cameraFrustum->y1 + pad))
 		{
 			return false;
 		}
 
 		// check z visibility
-		if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
+		if((position2D.z + halfDepth < _cameraFrustum->z0 - pad) || (position2D.z - halfDepth > _cameraFrustum->z1 + pad))
 		{
 			return false;
 		}

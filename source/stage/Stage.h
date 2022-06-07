@@ -190,6 +190,8 @@ class Stage : Container
 	VirtualNode streamingHeadNode;
 	// The sounds
 	VirtualList soundWrappers;
+	// List of listeners for entity loading
+	VirtualList entityLoadingListeners;
 	// Streaming settings
 	Streaming streaming;
 	// counter to control the streaming phases
@@ -217,6 +219,7 @@ class Stage : Container
 	Size getSize();
 	PixelSize getPixelSize();
 	CameraFrustum getCameraFrustum();
+	void addEntityLoadingListener(Object context, EventListener callback);
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
