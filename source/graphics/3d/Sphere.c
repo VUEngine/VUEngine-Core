@@ -97,7 +97,7 @@ void Sphere::setRadius(fix10_6 radius)
  */
 void Sphere::draw(bool calculateParallax)
 {
-	Vector3D normalizedCenter3D = Vector3D::getRelativeToCamera(this->center);
+	Vector3D normalizedCenter3D = Vector3D::rotate(Vector3D::getRelativeToCamera(this->center), *_cameraInvertedRotation);
 
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
 
@@ -106,7 +106,7 @@ void Sphere::draw(bool calculateParallax)
 		// draw on XY plane
 		-this->radius,
 		0,
-		this->center.z
+		normalizedCenter3D.z
 	};
 
 	for(; relativePoint3D.x < this->radius; relativePoint3D.x += __METERS_PER_PIXEL)
@@ -116,8 +116,8 @@ void Sphere::draw(bool calculateParallax)
 		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
 
 		int16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
-		PixelVector topPoint2D = PixelVector::project(topTranslatedPoint3D, parallax);
-		PixelVector bottomPoint2D = PixelVector::project(bottomTranslatedPoint3D, parallax);
+		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);
+		PixelVector bottomPoint2D = Vector3D::projectToPixelVector(bottomTranslatedPoint3D, parallax);
 
 		DirectDraw::drawPoint(DirectDraw::getInstance(), topPoint2D, this->color);
 		DirectDraw::drawPoint(DirectDraw::getInstance(), bottomPoint2D, this->color);

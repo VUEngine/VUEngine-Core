@@ -141,7 +141,7 @@ Vector3D Ball::getPosition()
 // configure Polyhedron
 void Ball::configureWireframe()
 {
-	if(this->wireframe)
+	if(!isDeleted(this->wireframe))
 	{
 		Sphere::setCenter(this->wireframe, this->center);
 		return;
