@@ -190,7 +190,20 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(position);
-	PixelVector displacement = PixelVector::getProjectionDisplacementHighPrecision(Vector3D::rotate(relativePosition, *_cameraInvertedRotation), 0);
+	Vector3D rotatedPosition = Vector3D::rotate(relativePosition, *_cameraInvertedRotation);
+
+	fix10_6 cosAngle = Vector3D::dotProduct(Vector3D::normalize(rotatedPosition), Vector3D::unit(__Z_AXIS));
+
+	// cull off at 45 degrees
+	if(__FIX7_9_TO_FIX10_6(__COS(64)) > cosAngle)
+	{
+		this->culled = true;
+		return;
+	}
+
+	this->culled = false;
+
+	PixelVector displacement = PixelVector::getProjectionDisplacementHighPrecision(rotatedPosition, 0);
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
@@ -201,7 +214,7 @@ void Mesh::render()
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
 		vertex->pixelVector = PixelVector::sub(vertex->pixelVector, displacement);
-
+/*
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
 		{
@@ -220,6 +233,7 @@ void Mesh::render()
 		{
 			vertex->pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
+		*/
 	}
 }
 

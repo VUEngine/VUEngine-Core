@@ -40,6 +40,7 @@ void Wireframe::constructor(uint8 color)
 	this->color = color;
 	this->position = NULL;
 	this->rotation = NULL;
+	this->culled = false;
 }
 
 /**

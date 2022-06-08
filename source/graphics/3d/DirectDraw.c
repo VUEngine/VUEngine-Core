@@ -352,7 +352,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 
 	if(0 == dy)
 	{
-		if((unsigned)(_frustumFixedPoint.y1 - _frustumFixedPoint.y0) < y)
+		if((unsigned)(_frustumFixedPoint.y1 - _frustumFixedPoint.y0) < (unsigned)(y - _frustumFixedPoint.y0))
 		{
 			return false;
 		}
@@ -378,7 +378,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 
 	if(0 == xySlope)
 	{
-		return true;
+		return false;
 	}
 
 	//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
@@ -487,7 +487,16 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	if((unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustum.z0) || (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0))
+	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustum.x0);
+	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustum.y0);
+	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
+
+	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(toPoint.x - _frustum.x0);
+	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustum.y0);
+	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
+
+//	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside) || (zFromOutside || zToOutside))
+	if(zFromOutside || zToOutside)
 	{
 		return;
 	}
@@ -512,7 +521,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 
-	if((unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustum.x0) || (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustum.y0))
+	if(xFromOutside || yFromOutside)
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 		{
@@ -520,7 +529,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 	}
 
-	if((unsigned)_frustumWidth < (unsigned)(toPoint.x - _frustum.x0) || (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustum.y0))
+	if(xToOutside || yToOutside)
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 		{
