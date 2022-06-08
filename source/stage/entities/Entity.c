@@ -982,7 +982,7 @@ uint32 Entity::areAllChildrenReady()
  *
  * @private
  */
-void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection, int32 shapeSpecIndex)
+void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection __attribute__((unused)), int32 shapeSpecIndex)
 {
 	if(shape)
 	{
