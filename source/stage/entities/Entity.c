@@ -990,16 +990,18 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 
-			uint16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
+			//uint16 axisForShapeSyncWithDirection = Entity::getAxisForShapeSyncWithDirection(this);
 
-			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement);
+			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), (this->transformation.globalRotation));
 
-			Vector3D shapePosition =
+			Vector3D shapePosition = Vector3D::sum(*myPosition, shapeDisplacement);
+			/*
 			{
 				myPosition->x + ((__X_AXIS & axisForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
 				myPosition->y + ((__Y_AXIS & axisForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
 				myPosition->z + ((__Z_AXIS & axisForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
 			};
+			*/
 
 			Rotation shapeRotation = Rotation::sum(*myRotation, Rotation::getFromPixelRotation(shapeSpecs[shapeSpecIndex].pixelRotation));
 
