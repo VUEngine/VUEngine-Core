@@ -240,7 +240,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 
 		x = (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
 		y = (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
-		*/
+*/
 #else
 	if(0 != z + _optical->distanceEyeScreen)
 	{
