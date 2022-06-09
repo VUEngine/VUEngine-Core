@@ -582,14 +582,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 	{
 		optical.verticalViewPointCenter += __PIXELS_TO_METERS(this->translationStepSize);
 	}
-	else if(pressedKey & K_RU)
-	{
-		optical.distanceEyeScreen -= __PIXELS_TO_METERS(this->translationStepSize);
-	}
-	else if(pressedKey & K_RD)
-	{
-		optical.distanceEyeScreen += __PIXELS_TO_METERS(this->translationStepSize);
-	}
 	else if(pressedKey & K_A)
 	{
 		optical.maximumXViewDistancePower += __MAXIMUM_VIEW_DISTANCE_STEP;
@@ -1018,8 +1010,6 @@ void StageEditor::printProjectionValues()
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Distance Eye to Camera:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum X View Distance:        ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum Y View Distance:        ", x, ++y, NULL);

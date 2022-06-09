@@ -117,7 +117,7 @@ static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fix10_6 x, fix1
 		fix19_13 scaleX = topEdgeScaleX;
 		fix19_13 scaleY = topEdgeScaleY;
 
-		fix10_6 parallaxIncrement = -__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(__FIX19_13_DIV((bottomEdgeSizeZ - topEdgeSizeZ), __I_TO_FIX19_13(lastRow))), _optical->distanceEyeScreen);
+		fix10_6 parallaxIncrement = -__FIX19_13_TO_FIX10_6(__FIX19_13_DIV((bottomEdgeSizeZ - topEdgeSizeZ), __I_TO_FIX19_13(lastRow)));
 		fix10_6 parallax = -__FIX10_6_MULT(__I_TO_FIX10_6(lastRow / 2), parallaxIncrement) + __FIX10_6_MULT(parallaxIncrement, __I_TO_FIX10_6(i));
 
 /*

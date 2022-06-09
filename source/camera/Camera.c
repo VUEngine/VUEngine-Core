@@ -77,21 +77,22 @@ void Camera::constructor()
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
 	this->cameraFrustum.x1 = __SCREEN_WIDTH;
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
 	PixelOptical pixelOptical =
     {
     	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
     	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-    	__DISTANCE_EYE_SCREEN,
     	__BASE_FACTOR,							// distance from left to right eye (depth perception)
     	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
     	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
     	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
     };
 
-	Camera::setOptical(this, Optical::getFromPixelOptical(pixelOptical));
+	Camera::setOpticalFromPixelOptical(this, pixelOptical);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
@@ -412,6 +413,18 @@ void Camera::setOptical(Optical optical)
 }
 
 /**
+ * Set optical config structure from PixelOptical
+ *
+ * @param optical
+ */
+void Camera::setOpticalFromPixelOptical(PixelOptical pixelOptical)
+{
+	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
+
+	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+}
+
+/**
  * Set camera's position displacement
  *
  * @param focusEntityPositionDisplacement
@@ -529,6 +542,8 @@ void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
 	{
 		this->cameraFrustum.z0 = this->cameraFrustum.z1 - 1;
 	}
+
+	this->optical = Optical::updateWithCameraFrustum(this->optical, this->cameraFrustum);
 }
 
 /**

@@ -282,7 +282,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Stage::setupTimer(this);
 
 	// set optical values
-	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
+	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
 
 	// stop all sounds
 	SoundManager::stopAllSounds(SoundManager::getInstance(), true);
@@ -1179,7 +1179,7 @@ void Stage::suspend()
 void Stage::resume()
 {
 	// set back optical values
-	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
+	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
 
 	// set physics
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);

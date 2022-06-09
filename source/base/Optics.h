@@ -39,7 +39,7 @@ static class Optics : Object
  */
 static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
-	if(0 == _optical->distanceEyeScreen + z)
+	if(0 == z)
 	{
 		return 0;
 	}
@@ -52,7 +52,7 @@ static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance);
 	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance);
 
-	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) - (x - rightEyePoint), z), (_optical->distanceEyeScreen + z)) >> 1);
+	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) - (x - rightEyePoint), z), (_optical->halfWidth << 1) + z) >> 1);
 }
 
 #endif

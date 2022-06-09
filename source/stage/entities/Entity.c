@@ -1300,7 +1300,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 		return;
 	}
 
-	Vector3D relativeGlobalPosition = this->transformation.globalPosition;
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
 
 	updatePosition |= updateRotation;
 	updatePosition |= updateProjection;
@@ -1318,7 +1318,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1328,7 +1328,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Sprite::rotate(sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
@@ -1342,7 +1342,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1364,14 +1364,14 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
 			Sprite::setPosition(sprite, &projectedPosition);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 		}
 	}
 	else if(updatePosition)
@@ -1385,7 +1385,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
 
-			PixelVector projectedPosition = Vector3D::projectRelativeToPixelVector(position, parallax);
+			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
 
 			// update sprite's 2D position
@@ -1399,7 +1399,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 
 			// calculate sprite's parallax
 			Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
@@ -1417,12 +1417,14 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	updatePosition |= updateRotation;
 	updatePosition |= updateProjection;
 
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
+
 	VirtualNode node = this->sprites->head;
 
 	if(updatePosition && updateRotation && updateScale)
 	{
-		int16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
-		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
+		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.x - _cameraPosition->x, relativeGlobalPosition.z);
+		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, parallax);
 
 		for(; node ; node = node->next)
 		{
@@ -1435,12 +1437,12 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Sprite::rotate(sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
 	{
-		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, 0);
+		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, 0);
 
 		for(; node ; node = node->next)
 		{
@@ -1457,8 +1459,8 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	}
 	else if(updatePosition && updateScale)
 	{
-		int16 parallax = Optics::calculateParallax(this->transformation.globalPosition.x - _cameraPosition->x, this->transformation.globalPosition.z);
-		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, parallax);
+		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.x - _cameraPosition->x, relativeGlobalPosition.z);
+		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, parallax);
 
 		for(; node ; node = node->next)
 		{
@@ -1468,12 +1470,12 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Sprite::setPosition(sprite, &position);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 		}
 	}
 	else if(updatePosition)
 	{
-		PixelVector position = Vector3D::projectRelativeToPixelVector(this->transformation.globalPosition, 0);
+		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, 0);
 
 		for(; node ; node = node->next)
 		{
@@ -1492,10 +1494,10 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
 
 			// calculate sprite's parallax
-			Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
+			Sprite::calculateParallax(sprite, relativeGlobalPosition.z);
 		}
 	}
 }

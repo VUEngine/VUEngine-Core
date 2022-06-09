@@ -287,7 +287,7 @@ void Sprite::position(const Vector3D* position)
 
 	this->positioned = true;
 
-	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
+	PixelVector position2D = Vector3D::projectToPixelVector(*position, this->position.parallax);
 
 	if(!((this->position.x - position2D.x) | 
 		(this->position.y - position2D.y) | 

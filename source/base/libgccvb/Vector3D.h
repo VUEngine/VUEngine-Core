@@ -24,8 +24,6 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PROJECTION_PLANE_SIZE_METERS			(__PIXELS_TO_METERS(__PROJECTION_PLANE_SIZE))
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -258,11 +256,37 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
-	if(z!= 0)
+	if(0 != z)
 	{
-		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, __PROJECTION_PLANE_SIZE_METERS), z) + _optical->horizontalViewPointCenter;	
-		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, __PROJECTION_PLANE_SIZE_METERS), z) + _optical->verticalViewPointCenter;	
+		/*
+		// Mathematically correct version
+		// but produces distorted results on the y axis
+		// x = x * aspect ratio * fov
+		x = __FIX10_6_EXT_MULT(x, _optical->aspectRatioXfov);
+		// y = y * fov
+		// since fov = 1 because it is assumed and angle of 90, there is no
+		// need to make the computation
+		y = __FIX10_6_EXT_MULT(y, _optical->fov);
+		// z = z * (far + near) / (far - near) + (2 * far * near) / (near - far)
+		// since the near plane will always be 0, there is no need to perform 
+		// this product		
+		z = __FIX10_6_EXT_MULT(z, _optical->farRatio1Near) + _optical->farRatio2Near;
+
+		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, _optical->halfHeight), z) + _optical->horizontalViewPointCenter;	
+		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, _optical->halfWidth), z) + _optical->verticalViewPointCenter;
+		*/
+
+		// Fast and produces the expected result
+		// x = x * aspect ratio * fov
+		x = __FIX10_6_EXT_MULT(x, _optical->aspectRatioXfov);
+		// y = y * fov
+		// But it doesn't work properly 
+		y = __FIX10_6_EXT_MULT(y, _optical->aspectRatioXfov);
+
+		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, _optical->halfWidth), z) + _optical->horizontalViewPointCenter;	
+		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, _optical->halfWidth), z) + _optical->verticalViewPointCenter;
 	}
+
 
 	PixelVector projection =
 	{

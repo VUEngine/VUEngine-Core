@@ -130,9 +130,6 @@
 // screen depth in pixels
 #define __SCREEN_DEPTH								{{ engine.optics.screenDepth }}
 
-// distance from player's eyes to the virtual screen
-#define __DISTANCE_EYE_SCREEN						{{ engine.optics.distanceEyeScreen }}
-
 // maximum x view distance (depth) (power of two)
 #define __MAXIMUM_X_VIEW_DISTANCE					{{ engine.optics.maximumXViewDistance }}
 
@@ -153,9 +150,6 @@
 
 // affects the strength of the scaling
 #define __SCALING_MODIFIER_FACTOR					{{ engine.optics.scalingModifierFactor }}{% if not '.' in '' ~ engine.optics.scalingModifierFactor %}.0{% endif %}f
-
-// affects the strength of the scaling
-#define __PROJECTION_PLANE_SIZE						{{ engine.optics.projectionPlaneSize }}
 
 // minimum number of pixels that the camera can move
 #define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ engine.optics.cameraMinimumDisplacementPixelsPower }}

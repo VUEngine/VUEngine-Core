@@ -254,11 +254,15 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
 		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
 
-		z -= _cameraPosition->z;
+		if(0 == z + (_optical->halfWidth << 1))
+		{
+			return;
+		}
 
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, _optical->scalingFactor));
+		fix10_6_ext x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((_optical->halfWidth << 1), _optical->halfHeight), z + (_optical->halfWidth << 1));
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__FIX10_6_EXT_MULT(__FIX10_6_EXT_DIV(x, _optical->scalingReferenceCoordinate), _optical->scalingFactor));
 
-		ratio = 0 > ratio? 0 : ratio;
+		ratio = 0 > ratio? __1I_FIX10_6 : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
 		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);

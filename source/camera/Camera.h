@@ -123,6 +123,7 @@ singleton class Camera : Object
 	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
 	void setFocusGameEntity(Entity focusEntity);
 	void setOptical(Optical optical);
+	void setOpticalFromPixelOptical(PixelOptical pixelOptical);
 	void setPosition(Vector3D position, bool cap);
 	void setRotation(Rotation rotation);
 	void rotate(Rotation rotation);

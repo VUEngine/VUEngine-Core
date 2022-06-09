@@ -195,15 +195,13 @@ void Mesh::render()
 	fix10_6 cosAngle = Vector3D::dotProduct(Vector3D::normalize(rotatedPosition), Vector3D::unit(__Z_AXIS));
 
 	// cull off at 45 degrees
-	if(__FIX7_9_TO_FIX10_6(__COS(64)) > cosAngle)
+	if(__FIX7_9_TO_FIX10_6(__COS(__CAMERA_FOV_DEGREES >> 1)) > cosAngle)
 	{
 		this->culled = true;
 		return;
 	}
 
 	this->culled = false;
-
-	PixelVector displacement = PixelVector::getProjectionDisplacementHighPrecision(rotatedPosition, 0);
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
@@ -213,8 +211,7 @@ void Mesh::render()
 		vector = Vector3D::rotate(vector, *_cameraInvertedRotation);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.x, vector.z));
-		vertex->pixelVector = PixelVector::sub(vertex->pixelVector, displacement);
-/*
+
 		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
 		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
 		{
@@ -233,7 +230,6 @@ void Mesh::render()
 		{
 			vertex->pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
 		}
-		*/
 	}
 }
 
@@ -257,9 +253,6 @@ void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
 
 		// draw the line in both buffers
 		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, true);
-
-	//	PixelVector::print(meshSegment->fromVertex->pixelVector, 1, 10);
-	//	PixelVector::print(meshSegment->toVertex->pixelVector, 11, 10);
 	}
 }
 

@@ -64,6 +64,8 @@
 // Camera half depth in meters
 #define __HALF_SCREEN_DEPTH_METERS				__PIXELS_TO_METERS(__SCREEN_DEPTH >> 1)
 
+// Camera's FOV (128 fix7_9 = 90)
+#define __CAMERA_FOV_DEGREES						128
 
 // used for exceptions
 #define __EXCEPTIONS_BGMAP		0
