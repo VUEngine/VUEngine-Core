@@ -259,7 +259,7 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 			return;
 		}
 
-		fix10_6_ext x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((_optical->halfWidth << 1), _optical->halfHeight), z + (_optical->halfWidth << 1));
+		fix10_6_ext x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(__FIX10_6_EXT_MULT(_optical->halfWidth << 1, _optical->aspectRatioXfov), _optical->halfWidth), z + _optical->distanceEyeScreen);
 		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__FIX10_6_EXT_MULT(__FIX10_6_EXT_DIV(x, _optical->scalingReferenceCoordinate), _optical->scalingFactor));
 
 		ratio = 0 > ratio? __1I_FIX10_6 : ratio;

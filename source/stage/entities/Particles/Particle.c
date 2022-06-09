@@ -152,8 +152,10 @@ void Particle::synchronizeGraphics()
 		this->previousZ = this->position.z;
 	}
 
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+
 	// update sprite's 2D position
-	Sprite::position(this->sprite, &this->position);
+	Sprite::position(this->sprite, &relativeGlobalPosition);
 }
 
 /**

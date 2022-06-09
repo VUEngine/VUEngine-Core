@@ -70,7 +70,7 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 	optical.farRatio1Near = __FIX10_6_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);
 	// farRatio2Near = // (2 * far * near) / (near - far)
 	optical.farRatio2Near = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
-	optical.scalingReferenceCoordinate = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(optical.halfWidth << 1, optical.halfHeight), optical.halfWidth << 1);
+	optical.scalingReferenceCoordinate = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(__FIX10_6_EXT_MULT(optical.halfWidth << 1, optical.aspectRatioXfov), optical.halfWidth), 0 < optical.distanceEyeScreen ? optical.distanceEyeScreen : __I_TO_FIX10_6(329));
 
 	return optical;
 }
@@ -90,7 +90,8 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 	result.farRatio1Near = __FIX10_6_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);
 	// farRatio2Near = // (2 * far * near) / (near - far)
 	result.farRatio2Near = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
-	result.scalingReferenceCoordinate = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(result.halfWidth << 1, result.halfHeight), optical.halfWidth << 1);
+	result.scalingReferenceCoordinate = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(__FIX10_6_EXT_MULT(result.halfWidth << 1, result.aspectRatioXfov), result.halfWidth), 0 < result.distanceEyeScreen ? result.distanceEyeScreen : __I_TO_FIX10_6(329));
+
 	
 	return result;
 }

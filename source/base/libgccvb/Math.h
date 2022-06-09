@@ -173,7 +173,7 @@ inline int32 customAbs(int32 number)
 #define __SIN_LUT_ENTRIES				(64 * 8)
 #define __QUARTER_ROTATION_DEGREES		__I_TO_FIX10_6((signed)(__SIN_LUT_ENTRIES >> 2))
 #define __HALF_ROTATION_DEGREES			((signed)__I_TO_FIX10_6(__SIN_LUT_ENTRIES >> 1))
-#define __FULL_ROTATION_DEGREES			((signed)__I_TO_FIX10_6(__SIN_LUT_ENTRIES))
+#define __FULL_ROTATION_DEGREES			((signed)__I_TO_FIX10_6_EXT(__SIN_LUT_ENTRIES))
 
 extern const int16 _sinLut[];
 

@@ -97,5 +97,4 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 	};
 
 	Camera::setPosition(camera, cameraNewPosition, true);
-	Camera::setRotation(camera, Camera::getFocusEntityRotation(camera));
 }

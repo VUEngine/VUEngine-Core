@@ -121,6 +121,9 @@
 
 {{ macros.sectionHeader('Optics / Projection') }}
 
+// legacy coordinate system (0, 0, 0) is at the top left corner of the screen
+{% if engine.optics.useLegacyCoordinateProjection %}#define{% else %}#undef{% endif %} __LEGACY_COORDINATE_PROJECTION
+
 // screen width in pixels
 #define __SCREEN_WIDTH								{{ engine.optics.screenWidth }}
 

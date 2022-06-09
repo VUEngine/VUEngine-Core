@@ -24,6 +24,8 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __PROJECTION_PRECISION_INCREMENT				4
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -51,7 +53,6 @@ static class Vector3D : Object
 	static inline fix10_6 lengthProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
-	static inline PixelVector projectRelativeToPixelVector(Vector3D vector3D, int16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
@@ -220,33 +221,6 @@ static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 	return vector3D;
 }
 
-
-static inline PixelVector Vector3D::projectRelativeToPixelVector(Vector3D vector3D, int16 parallax)
-{
-	extern const Optical* _optical;
-	extern const Vector3D* _cameraPosition;
-
-	fix10_6 x = vector3D.x - _cameraPosition->x;
-	fix10_6 y = vector3D.y - _cameraPosition->y;
-	fix10_6 z = vector3D.z - _cameraPosition->z;
-
-	if(0 != z)
-	{
-		x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
-		y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
-	}
-
-	PixelVector projection =
-	{
-		__METERS_TO_PIXELS(x),
-		__METERS_TO_PIXELS(y),
-		__METERS_TO_PIXELS(z),
-		parallax
-	};
-
-	return projection;
-}
-
 static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int16 parallax)
 {
 	extern const Vector3D* _cameraPosition;
@@ -256,7 +230,19 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
 	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
+#ifdef __LEGACY_COORDINATE_PROJECTION
 	if(0 != z)
+	{
+		x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
+		y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
+/*
+		fix10_6_ext factor = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->distanceEyeScreen);
+
+		x = (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
+		y = (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
+		*/
+#else
+	if(0 != z + _optical->distanceEyeScreen)
 	{
 		/*
 		// Mathematically correct version
@@ -278,15 +264,14 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 
 		// Fast and produces the expected result
 		// x = x * aspect ratio * fov
-		x = __FIX10_6_EXT_MULT(x, _optical->aspectRatioXfov);
-		// y = y * fov
-		// But it doesn't work properly 
-		y = __FIX10_6_EXT_MULT(y, _optical->aspectRatioXfov);
 
-		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, _optical->halfWidth), z + _optical->distanceEyeScreen) + _optical->horizontalViewPointCenter;	
-		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, _optical->halfWidth), z + _optical->distanceEyeScreen) + _optical->verticalViewPointCenter;
+		// to reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
+		fix10_6_ext factor = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->distanceEyeScreen);
+
+		x = (__FIX10_6_EXT_MULT(x, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
+		y = (__FIX10_6_EXT_MULT(y, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
+#endif
 	}
-
 
 	PixelVector projection =
 	{
@@ -298,6 +283,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 
 	return projection;
 }
+
 
 static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 {
