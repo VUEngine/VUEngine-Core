@@ -55,7 +55,7 @@ SoundChannelConfigurationROM PCMSoundChannelConfiguration =
 	0x00,
 
 	/// SxEV0
-	0x80,
+	0xF0,
 
 	/// SxEV1
 	0x00,
