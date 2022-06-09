@@ -26,7 +26,7 @@ extern const Optical* _optical;
 static class Optics : Object
 {
 	/// @publicsection
-	static inline int16 calculateParallax(fix10_6 x, fix10_6 z);
+	static inline int16 calculateParallax(fix10_6 z);
 }
 
 
@@ -37,22 +37,16 @@ static class Optics : Object
  * @param z	Z parameter for the calculation of the parallax displacement
  * @return 	Parallax (in pixels)
  */
-static inline int16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
+static inline int16 Optics::calculateParallax(fix10_6 z)
 {
 	if(0 == z)
 	{
 		return 0;
 	}
 	
-	fix10_6 leftEyePoint, rightEyePoint;
-
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
-	// set map position and parallax
-	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance);
-	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance);
-
-	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) - (x - rightEyePoint), z), (_optical->halfWidth << 1) + z) >> 1);
+	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(((unsigned)_optical->baseDistance) << 1, z), (_optical->halfWidth << 1) + z) >> 1);
 }
 
 #endif

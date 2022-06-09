@@ -136,6 +136,9 @@
 // maximum y view distance (depth) (power of two)
 #define __MAXIMUM_Y_VIEW_DISTANCE					{{ engine.optics.maximumYViewDistance }}
 
+// distance from player's eyes to the virtual screen
+#define __DISTANCE_EYE_SCREEN						{{ engine.optics.distanceEyeScreen }}
+
 // distance between eyes
 #define __BASE_FACTOR								{{ engine.optics.baseFactor }}
 

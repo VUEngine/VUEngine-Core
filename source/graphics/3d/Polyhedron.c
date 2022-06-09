@@ -136,8 +136,8 @@ void Polyhedron::draw(bool calculateParallax)
 			// calculate parallax
 			if(calculateParallax)
 			{
-				fromVertex2D.parallax = Optics::calculateParallax(fromVertex3D.x, fromVertex3D.z);
-				toVertex2D.parallax = Optics::calculateParallax(toVertex3D.x, toVertex3D.z);
+				fromVertex2D.parallax = Optics::calculateParallax(fromVertex3D.z);
+				toVertex2D.parallax = Optics::calculateParallax(toVertex3D.z);
 			}
 
 			// draw the line in both buffers

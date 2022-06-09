@@ -334,7 +334,7 @@ void Sprite::setPosition(const PixelVector* position)
  */
 void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
 {
-	int16 parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+	int16 parallax = Optics::calculateParallax(z);
 	this->renderFlag |= this->position.parallax != parallax;
 	this->position.parallax = parallax;
 }

@@ -54,6 +54,7 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 
 	optical.maximumXViewDistancePower = __MINIMUM_X_VIEW_DISTANCE_POWER > maximumXViewDistancePower ? __MINIMUM_X_VIEW_DISTANCE_POWER : maximumXViewDistancePower;
 	optical.maximumYViewDistancePower = __MINIMUM_Y_VIEW_DISTANCE_POWER > maximumYViewDistancePower ? __MINIMUM_Y_VIEW_DISTANCE_POWER : maximumYViewDistancePower;
+	optical.distanceEyeScreen = __PIXELS_TO_METERS(pixelOptical.distanceEyeScreen);
 	optical.baseDistance = __PIXELS_TO_METERS(pixelOptical.baseDistance);
 	optical.horizontalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter);
 	optical.verticalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter);

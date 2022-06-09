@@ -283,8 +283,8 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 		// But it doesn't work properly 
 		y = __FIX10_6_EXT_MULT(y, _optical->aspectRatioXfov);
 
-		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, _optical->halfWidth), z) + _optical->horizontalViewPointCenter;	
-		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, _optical->halfWidth), z) + _optical->verticalViewPointCenter;
+		x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(x, _optical->halfWidth), z + _optical->distanceEyeScreen) + _optical->horizontalViewPointCenter;	
+		y = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(y, _optical->halfWidth), z + _optical->distanceEyeScreen) + _optical->verticalViewPointCenter;
 	}
 
 

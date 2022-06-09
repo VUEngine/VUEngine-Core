@@ -115,7 +115,7 @@ void Sphere::draw(bool calculateParallax)
 		Vector3D topTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y - relativePoint3D.y, normalizedCenter3D.z};
 		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
 
-		int16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
+		int16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.z) : 0;
 		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);
 		PixelVector bottomPoint2D = Vector3D::projectToPixelVector(bottomTranslatedPoint3D, parallax);
 
@@ -137,7 +137,7 @@ void Sphere::draw(bool calculateParallax)
 
 		if(calculateParallax)
 		{
-			point2D.parallax = Optics::calculateParallax(point3D.x, point3D.z);
+			point2D.parallax = Optics::calculateParallax(point3D.z);
 		}
 
 		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);
@@ -160,7 +160,7 @@ void Sphere::draw(bool calculateParallax)
 
 		if(calculateParallax)
 		{
-			point2D.parallax = Optics::calculateParallax(point3D.x, point3D.z);
+			point2D.parallax = Optics::calculateParallax(point3D.z);
 		}
 
 		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);

@@ -1316,7 +1316,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.z);
 
 			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1340,7 +1340,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.z);
 
 			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1362,7 +1362,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.z);
 
 			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1383,7 +1383,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 			Vector3D position = relativeGlobalPosition;
 			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
 
-			int16 parallax = Optics::calculateParallax(position.x - _cameraPosition->x, position.z);
+			int16 parallax = Optics::calculateParallax(position.z);
 
 			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, parallax);
 			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
@@ -1423,7 +1423,7 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 	if(updatePosition && updateRotation && updateScale)
 	{
-		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.x - _cameraPosition->x, relativeGlobalPosition.z);
+		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.z);
 		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, parallax);
 
 		for(; node ; node = node->next)
@@ -1459,7 +1459,7 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	}
 	else if(updatePosition && updateScale)
 	{
-		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.x - _cameraPosition->x, relativeGlobalPosition.z);
+		int16 parallax = Optics::calculateParallax(relativeGlobalPosition.z);
 		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, parallax);
 
 		for(; node ; node = node->next)
