@@ -44,12 +44,6 @@
 #define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->streaming.loadPadding)
-#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->streaming.loadPadding)
-#define __LOAD_LOW_Y_LIMIT		(-this->streaming.loadPadding)
-#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->streaming.loadPadding)
-#define __LOAD_LOW_Z_LIMIT		(-this->streaming.loadPadding)
-#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->streaming.loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -222,19 +216,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
 	// check x visibility
-	if(position2D.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position2D.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
+	if(position2D.x + pixelRightBox->x1 <  _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(position2D.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || position2D.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(position2D.y + pixelRightBox->y1 <  _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(position2D.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || position2D.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(position2D.z + pixelRightBox->z1 <  _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
 	{
 		return false;
 	}
