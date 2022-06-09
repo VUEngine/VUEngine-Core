@@ -394,7 +394,7 @@ void Stage::onEntityLoaded(Object eventFirer)
 {
 	Entity entity = Entity::safeCast(eventFirer);
 
-	if(!isDeleted(entity))
+	if(!isDeleted(entity) && !isDeleted(this->entityLoadingListeners))
 	{
 		Entity::removeAllEventListeners(entity, kEventEntityLoaded);
 		Stage::alertOfLoadedEntity(this, entity);
@@ -403,7 +403,7 @@ void Stage::onEntityLoaded(Object eventFirer)
 
 void Stage::alertOfLoadedEntity(Entity entity)
 {
-	if(isDeleted(entity) && isDeleted(this->entityLoadingListeners))
+	if(isDeleted(entity) || isDeleted(this->entityLoadingListeners))
 	{
 		return;
 	}
