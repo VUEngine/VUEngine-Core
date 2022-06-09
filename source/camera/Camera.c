@@ -72,7 +72,8 @@ void Camera::constructor()
 	this->position = Vector3D::zero();
 	this->positionBackup = Vector3D::zero();
 
-	this->rotation = (Rotation){0, 0, 0};
+	this->rotation = Rotation::zero();
+	this->rotationBackup = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
 
 	this->cameraFrustum.x0 = 0;
@@ -376,18 +377,21 @@ void Camera::rotate(Rotation rotation)
 void Camera::prepareForUI()
 {
 	this->positionBackup = this->position;
+	this->rotationBackup = this->rotation;
 
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.z = 0;
+	this->position = Vector3D::zero();
+	this->rotation = Rotation::zero();
+	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
 /**
  * Set camera's position after UI transformation
  */
-void Camera::doneUITransform()
+void Camera::doneUI()
 {
 	this->position = this->positionBackup;
+	this->rotation = this->rotationBackup;
+	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
 /**

@@ -62,15 +62,27 @@ static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext
 	{
 		x += __FULL_ROTATION_DEGREES;
 	}
+	else if(__FULL_ROTATION_DEGREES <= x)
+	{
+		x -= __FULL_ROTATION_DEGREES;
+	}
 
 	if(0 > y)
 	{
 		y += __FULL_ROTATION_DEGREES;
 	}
+	else if(__FULL_ROTATION_DEGREES <= y)
+	{
+		y -= __FULL_ROTATION_DEGREES;
+	}
 
 	if(0 > z)
 	{
 		z += __FULL_ROTATION_DEGREES;
+	}
+	else if(__FULL_ROTATION_DEGREES <= z)
+	{
+		z -= __FULL_ROTATION_DEGREES;
 	}
 
 	return (Rotation){__FIX10_6_EXT_TO_FIX10_6(x), __FIX10_6_EXT_TO_FIX10_6(y), __FIX10_6_EXT_TO_FIX10_6(z)};

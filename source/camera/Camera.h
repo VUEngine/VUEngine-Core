@@ -81,6 +81,8 @@ singleton class Camera : Object
 	Vector3D positionBackup;
 	// Rotation
 	Rotation rotation;
+	// Backup of Camera rotation
+	Rotation rotationBackup;
 	Rotation invertedRotation;
 	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
@@ -103,7 +105,7 @@ singleton class Camera : Object
 	/// @publicsection
 	static Camera getInstance();
 	void capPosition();
-	void doneUITransform();
+	void doneUI();
 	void focus(uint32 checkIfFocusEntityIsMoving);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
