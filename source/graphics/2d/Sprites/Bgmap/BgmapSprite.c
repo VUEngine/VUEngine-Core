@@ -254,13 +254,14 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
 		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
 
-		if(0 == z + (_optical->halfWidth << 1))
+		if(0 == z + _optical->distanceEyeScreen)
 		{
 			return;
 		}
 
-		fix10_6_ext x = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(__FIX10_6_EXT_MULT(_optical->halfWidth << 1, _optical->aspectRatioXfov), _optical->halfWidth), z + _optical->distanceEyeScreen);
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__FIX10_6_EXT_MULT(__FIX10_6_EXT_DIV(x, _optical->scalingReferenceCoordinate), _optical->scalingFactor));
+		fix10_6_ext width = __PIXELS_TO_METERS(this->halfWidth);
+		fix10_6_ext projectedWidth = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(width, _optical->scalingMultiplier), z + _optical->distanceEyeScreen) >> __PROJECTION_PRECISION_INCREMENT;
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__FIX10_6_EXT_DIV(projectedWidth, width));
 
 		ratio = 0 > ratio? __1I_FIX10_6 : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;

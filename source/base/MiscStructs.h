@@ -162,7 +162,8 @@ typedef struct Optical
 	fix10_6 aspectRatioXfov;				// aspectRatio * fov
 	fix10_6 farRatio1Near;	 				// (far + near) / (far - near)
 	fix10_6 farRatio2Near;	 				// (2 * far * near) / (near - far)
-	fix10_6 scalingReferenceCoordinate;		// used to calculate the scale of Bgmap Sprites
+	fix10_6_ext projectionMultiplierHelper;	// helper to speed up projection operations 
+	fix10_6_ext scalingMultiplier;			// scaling multiplier
 } Optical;
 
 // engine's optical values structure

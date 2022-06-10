@@ -18,13 +18,12 @@
 #include <MiscStructs.h>
 #include <Constants.h>
 #include <Printing.h>
+#include <Optical.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
-
-#define __PROJECTION_PRECISION_INCREMENT				4
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -266,7 +265,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 		// x = x * aspect ratio * fov
 
 		// to reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
-		fix10_6_ext factor = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->distanceEyeScreen);
+		fix10_6_ext factor = __FIX10_6_EXT_DIV(_optical->projectionMultiplierHelper, z + _optical->distanceEyeScreen);
 
 		x = (__FIX10_6_EXT_MULT(x, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
 		y = (__FIX10_6_EXT_MULT(y, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
