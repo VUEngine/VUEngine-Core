@@ -31,6 +31,10 @@ friend class Wireframe;
 
 static DirectDraw _directDraw = NULL;
 
+Vector3D _previousCameraPosition = {0, 0, 0};
+Vector3D _previousCameraPositionBuffer = {0, 0, 0};
+Rotation _previousCameraInvertedRotation = {0, 0, 0};
+Rotation _previousCameraInvertedRotationBuffer = {0, 0, 0};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -197,6 +201,12 @@ void WireframeManager::render()
 	}
 
 	WireframeManager::sortProgressively(this);
+
+	_previousCameraPosition = _previousCameraPositionBuffer;
+	_previousCameraPositionBuffer = *_cameraPosition;
+
+	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
+	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
 }
 
 /**

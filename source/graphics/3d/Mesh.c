@@ -186,11 +186,13 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
+	extern Vector3D _previousCameraPosition;
+	extern Rotation _previousCameraInvertedRotation;
 	Vector3D position = *this->position;
 	Rotation rotation = *this->rotation;
 
-	Vector3D relativePosition = Vector3D::getRelativeToCamera(position);
-	Vector3D rotatedPosition = Vector3D::rotate(relativePosition, *_cameraInvertedRotation);
+	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
+	Vector3D rotatedPosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 
 	fix10_6 cosAngle = Vector3D::dotProduct(Vector3D::normalize(rotatedPosition), Vector3D::unit(__Z_AXIS));
 
@@ -208,7 +210,7 @@ void Mesh::render()
 		Vertex* vertex = (Vertex*)node->data;
 
 		Vector3D vector = Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation));
-		vector = Vector3D::rotate(vector, *_cameraInvertedRotation);
+		vector = Vector3D::rotate(vector, _previousCameraInvertedRotation);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 
