@@ -213,25 +213,6 @@ void Mesh::render()
 		vector = Vector3D::rotate(vector, _previousCameraInvertedRotation);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
-
-		// Pre clamp to prevent weird glitches due to overflows and speed up drawing
-		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.x)
-		{
-			vertex->pixelVector.x = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-		}
-		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vertex->pixelVector.x)
-		{
-			vertex->pixelVector.x = __FIX10_6_MAXIMUM_VALUE_TO_I;
-		}
-
-		if(-__FIX10_6_MAXIMUM_VALUE_TO_I > vertex->pixelVector.y)
-		{
-			vertex->pixelVector.y = -__FIX10_6_MAXIMUM_VALUE_TO_I;
-		}
-		else if(__FIX10_6_MAXIMUM_VALUE_TO_I < vertex->pixelVector.y)
-		{
-			vertex->pixelVector.y = __FIX10_6_MAXIMUM_VALUE_TO_I;
-		}
 	}
 }
 

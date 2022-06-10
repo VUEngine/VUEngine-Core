@@ -1283,6 +1283,10 @@ bool Entity::addShapeFromSpecAtIndex(int32 shapeSpecIndex)
 
 void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
 {
+	updatePosition |= updateRotation;
+	updatePosition |= updateProjection;
+	updateScale |= updateRotation;	
+
 	if(this->entitySpec->useZDisplacementInProjection)
 	{
 		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation, updateProjection);
@@ -1301,9 +1305,6 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	}
 
 	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-
-	updatePosition |= updateRotation;
-	updatePosition |= updateProjection;
 
 	VirtualNode node = this->sprites->head;
 
@@ -1413,9 +1414,6 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	{
 		return;
 	}
-
-	updatePosition |= updateRotation;
-	updatePosition |= updateProjection;
 
 	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
 
