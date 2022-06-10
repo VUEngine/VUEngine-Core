@@ -269,7 +269,7 @@ void SoundManager::reset()
 	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
 	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 
-	SoundManager::stopAllSounds(this, false);
+	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
 }
 
@@ -283,7 +283,7 @@ void SoundManager::startPCMPlayback()
 	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
 	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 
-	SoundManager::muteAllSounds(this, kPCM);
+	//SoundManager::muteAllSounds(this, kPCM);
 }
 
 void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
@@ -769,6 +769,29 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 }
 
 /**
+ * Find a previously loaded sound
+ *
+ * @param sound		Sound*
+ */
+SoundWrapper SoundManager::findSound(const Sound* sound)
+{
+	for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(!isDeleted(soundWrapper))
+		{
+			if(sound == soundWrapper->sound)
+			{
+				return soundWrapper;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+/**
  * Request a new sound
  *
  * @param sound		Sound*
@@ -900,7 +923,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 /**
  * Stop all sound playback
  */
-void SoundManager::stopAllSounds(bool release)
+void SoundManager::stopAllSounds(bool release, Sound** excludedSounds)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -910,13 +933,36 @@ void SoundManager::stopAllSounds(bool release)
 
 		if(!isDeleted(soundWrapper))
 		{
-			if(release)
+			bool excludeSoundWrapper = false;
+
+			if(NULL != excludedSounds)
 			{
-				SoundWrapper::release(soundWrapper);
+				for(int16 i = 0; NULL != excludedSounds[i]; i++)
+				{
+					if(excludedSounds[i] == soundWrapper->sound)
+					{
+						if(release)
+						{
+							SoundWrapper::removeAllEventListeners(soundWrapper);
+						}
+
+						excludeSoundWrapper = true;
+
+						break;
+					}
+				}
 			}
-			else
+
+			if(!excludeSoundWrapper)
 			{
-				SoundWrapper::stop(soundWrapper);
+				if(release)
+				{
+					SoundWrapper::release(soundWrapper);
+				}
+				else
+				{
+					SoundWrapper::stop(soundWrapper);
+				}
 			}
 		}
 	}
@@ -926,7 +972,10 @@ void SoundManager::stopAllSounds(bool release)
 		SoundManager::purgeReleasedSoundWrappers(this);
 	}
 
-	__SSTOP = 0x01;
+	if(NULL == excludedSounds)
+	{
+		__SSTOP = 0x01;
+	}
 }
 
 void SoundManager::print()

@@ -156,16 +156,9 @@ void Stage::destructor()
 
 	if(!isDeleted(this->soundWrappers))
 	{
-		VirtualNode node = this->soundWrappers->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			if(!isDeleted(node->data))
-			{
-				SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-				SoundWrapper::release(soundWrapper);
-			}
-		}
+		// Do not need to release sound wrappers here,
+		// they are taken care by the SoundManager when
+		// I called SoundManager::stopAllSounds
 
 		delete this->soundWrappers;
 		this->soundWrappers = NULL;
@@ -275,11 +268,11 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// Setup timer
 	Stage::setupTimer(this);
 
+	// load background music
+	Stage::setupSounds(this);
+
 	// set optical values
 	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
-
-	// stop all sounds
-	SoundManager::stopAllSounds(SoundManager::getInstance(), true);
 
 	if(overrideCameraPosition)
 	{
@@ -307,9 +300,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// set physics
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
 	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
-
-	// load background music
-	Stage::setupSounds(this);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -396,7 +386,7 @@ void Stage::onEntityLoaded(Object eventFirer)
 
 	if(!isDeleted(entity) && !isDeleted(this->entityLoadingListeners))
 	{
-		Entity::removeAllEventListeners(entity, kEventEntityLoaded);
+		Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 		Stage::alertOfLoadedEntity(this, entity);
 	}
 }
@@ -420,7 +410,7 @@ void Stage::alertOfLoadedEntity(Entity entity)
 
 	Entity::fireEvent(entity, kEventEntityLoaded);
 	NM_ASSERT(!isDeleted(entity), "Stage::alertOfLoadedEntity: deleted entity during kEventEntityLoaded");
-	Entity::removeAllEventListeners(entity, kEventEntityLoaded);
+	Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 }
 
 // add entity to the stage
@@ -576,7 +566,7 @@ void Stage::unloadChild(Container child)
 	Base::removeChild(this, child, true);
 	Container::fireEvent(child, kEventStageChildStreamedOut);
 	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deleted child during kEventStageChildStreamedOut");
-	Container::removeAllEventListeners(child, kEventStageChildStreamedOut);
+	Container::removeEventListeners(child, NULL, kEventStageChildStreamedOut);
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 
@@ -1172,6 +1162,12 @@ void Stage::suspend()
 // resume after pause
 void Stage::resume()
 {
+	// Setup timer
+	Stage::setupTimer(this);
+
+	// load background sounds
+	Stage::setupSounds(this);
+
 	// set back optical values
 	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
 
@@ -1186,12 +1182,6 @@ void Stage::resume()
 		// recover focus entity
 		Camera::setFocusGameEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
 	}
-
-	// Setup timer
-	Stage::setupTimer(this);
-
-	// load background sounds
-	Stage::setupSounds(this);
 
 	Base::resume(this);
 
@@ -1240,13 +1230,24 @@ void Stage::setupSounds()
 
 	int32 i = 0;
 
-	for(; this->stageSpec->assets.sounds[i]; i++)
+	// stop all sounds
+	SoundManager::stopAllSounds(SoundManager::getInstance(), true, this->stageSpec->assets.sounds);
+
+	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundWrapper soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, Object::safeCast(this));
+		SoundWrapper soundWrapper = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i]);
+
+		if(isDeleted(soundWrapper))
+		{
+			soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, Object::safeCast(this));
+		}
 
 		if(!isDeleted(soundWrapper))
 		{
-			SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+			if(SoundWrapper::isPaused(soundWrapper))
+			{
+				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+			}
 
 			if(isDeleted(this->soundWrappers))
 			{

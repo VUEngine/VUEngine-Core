@@ -416,7 +416,7 @@ void Game::setNextState(GameState state)
 }
 
 // erase engine's current status
-void Game::reset()
+void Game::reset(bool resetSounds)
 {
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool::cleanUp(MemoryPool::getInstance());
@@ -429,8 +429,6 @@ void Game::reset()
 	HardwareManager::disableInterrupts();
 
 	// Disable timer
-	TimerManager::enable(this->timerManager, false);
-	TimerManager::reset(this->timerManager);
 
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
@@ -440,7 +438,12 @@ void Game::reset()
 
 	// reset managers
 	WireframeManager::reset(WireframeManager::getInstance());
-	SoundManager::reset(this->soundManager);
+
+	if(resetSounds)
+	{
+		SoundManager::reset(this->soundManager);
+	}
+
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 	CommunicationManager::reset(this->communicationManager);
@@ -451,9 +454,6 @@ void Game::reset()
 	VIPManager::reset(this->vipManager);
 	SpriteManager::reset(SpriteManager::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-
-	// Enable timer
-	TimerManager::enable(this->timerManager, true);
 
 	HardwareManager::enableInterrupts();
 }

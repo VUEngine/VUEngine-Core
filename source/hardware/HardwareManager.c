@@ -245,7 +245,6 @@ void HardwareManager::setupTimer(uint16 timerResolution, uint16 timePerInterrupt
 	TimerManager::setTimePerInterrupt(this->timerManager, timePerInterrupt);
 
 	TimerManager::initialize(this->timerManager);
-	TimerManager::enable(this->timerManager, true);
 }
 
 /**

@@ -223,7 +223,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
 
 		// Reset the engine state
-		Game::reset(Game::getInstance());
+		Game::reset(Game::getInstance(), NULL != Stage::getStageSpec(this->stage)->assets.sounds);
 
 		// Update the stage
 		Container::resume(this->stage);
@@ -468,7 +468,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	}
 
 	// Reset the engine state
-	Game::reset(Game::getInstance());
+	Game::reset(Game::getInstance(), NULL != stageSpec->assets.sounds);
 
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);

@@ -115,11 +115,12 @@ singleton class SoundManager : Object
 
 	void update();
 
-	void stopAllSounds(bool release);
+	void stopAllSounds(bool release, Sound** excludedSounds);
 	void flushQueuedSounds();
 
 	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope);
 	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
+	SoundWrapper findSound(const Sound* sound);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void releaseChannels(VirtualList channels);

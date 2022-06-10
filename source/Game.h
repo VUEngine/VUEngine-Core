@@ -127,7 +127,7 @@ singleton class Game : Object
 	void pause(GameState pauseState);
 	void printClassSizes(int32 x, int32 y);
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void reset();
+	void reset(bool resetSounds);
 	void resetProfiling();
 	void setOptical(Optical optical);
 	void start(GameState state);
