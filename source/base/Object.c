@@ -170,7 +170,7 @@ void Object::removeEventListeners(EventListener method, uint32 eventCode)
 
 			Event* event = (Event*)node->data;
 
-			if(method == event->method && eventCode == event->code)
+			if((NULL == method || method == event->method) && eventCode == event->code)
 			{
 				VirtualList::removeNode(this->events, node);
 
@@ -220,11 +220,10 @@ void Object::removeEventListenerScopes(Object listener, uint32 eventCode)
 }
 
 /**
- * Removes event listeners without specifying a method nor a listener
+ * Removes all event listeners
  *
- * @param eventCode		The code of the event
  */
-void Object::removeAllEventListeners(uint32 eventCode)
+void Object::removeAllEventListeners()
 {
 	if(this->events)
 	{
@@ -234,12 +233,9 @@ void Object::removeAllEventListeners(uint32 eventCode)
 
 			Event* event = (Event*)node->data;
 
-			if(eventCode == event->code)
-			{
-				VirtualList::removeNode(this->events, node);
+			VirtualList::removeNode(this->events, node);
 
-				delete event;
-			}
+			delete event;
 		}
 
 		if(!this->events->head)

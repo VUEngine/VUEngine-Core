@@ -286,7 +286,7 @@ void Printing::clear()
 
 void Printing::releaseFonts()
 {
-	Printing::removeAllEventListeners(this, kEventFontRewritten);
+	Printing::removeEventListeners(this, NULL, kEventFontRewritten);
 
 	VirtualNode node = VirtualList::begin(this->fonts);
 

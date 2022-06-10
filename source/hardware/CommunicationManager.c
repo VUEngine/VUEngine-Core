@@ -253,8 +253,8 @@ bool CommunicationManager::cancelCommunications()
 	this->status = kCommunicationsStatusIdle;
 	this->broadcast = kCommunicationsBroadcastNone;
 
-	CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
-	CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
+	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(this));
 
@@ -502,7 +502,7 @@ void CommunicationManager::processInterrupt()
 			this->connected = true;
 			CommunicationManager::fireEvent(this, kEventCommunicationsConnected);
 			NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsConnected");
-			CommunicationManager::removeAllEventListeners(this, kEventCommunicationsConnected);
+			CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
 
 		default:
 
@@ -533,7 +533,7 @@ void CommunicationManager::processInterrupt()
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
-					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncReceivedByte = NULL;
 #ifdef __ENABLE_PROFILER
 					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeCommunicationsInterruptProcess, PROCESS_NAME_COMMUNICATIONS);
@@ -562,7 +562,7 @@ void CommunicationManager::processInterrupt()
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
-					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->broadcast = kCommunicationsBroadcastNone;
 #ifdef __ENABLE_PROFILER
@@ -596,7 +596,7 @@ void CommunicationManager::processInterrupt()
 				{
 					CommunicationManager::fireEvent(this, kEventCommunicationsTransmissionCompleted);
 					NM_ASSERT(!isDeleted(this), "CommunicationManager::processInterrupt: deleted this during kEventCommunicationsTransmissionCompleted");
-					CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+					CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 					this->asyncSentByte = NULL;
 					this->asyncReceivedByte = NULL;
 
@@ -759,7 +759,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 
 	if(eventLister && !isDeleted(scope))
 	{
-		CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 
@@ -875,7 +875,7 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 
 	if(eventLister && !isDeleted(scope))
 	{
-		CommunicationManager::removeAllEventListeners(this, kEventCommunicationsTransmissionCompleted);
+		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
 	}
 

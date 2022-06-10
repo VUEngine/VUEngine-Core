@@ -66,7 +66,7 @@ abstract class Object : Object
 	void removeEventListener(Object listener, EventListener method, uint32 eventCode);
 	void removeEventListeners(EventListener method, uint32 eventCode);
 	void removeEventListenerScopes(Object listener, uint32 eventCode);
-	void removeAllEventListeners(uint32 eventCode);
+	void removeAllEventListeners();
 	bool hasActiveEventListeners();
 	void fireEvent(uint32 eventCode);
 	void sendMessageTo(Object receiver, uint32 message, uint32 delay, uint32 randomDelay);

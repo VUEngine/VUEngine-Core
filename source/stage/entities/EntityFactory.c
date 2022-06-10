@@ -343,7 +343,7 @@ uint32 EntityFactory::cleanUp()
 		{
 			Entity::fireEvent(positionedEntityDescription->entity, kEventEntityLoaded);
 			NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::cleanUp: deleted entity during kEventEntityLoaded");
-			Entity::removeAllEventListeners(positionedEntityDescription->entity, kEventEntityLoaded);
+			Entity::removeEventListeners(positionedEntityDescription->entity, NULL, kEventEntityLoaded);
 		}
 
 		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);
