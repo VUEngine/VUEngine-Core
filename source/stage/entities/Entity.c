@@ -1289,15 +1289,15 @@ void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 upd
 
 	if(this->entitySpec->useZDisplacementInProjection)
 	{
-		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation, updateProjection);
+		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation);
 	}
 	else
 	{
-		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation, updateProjection);
+		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation);
 	}
 }
 
-void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
+void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
 {
 	if(!this->sprites)
 	{
@@ -1408,7 +1408,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	}
 }
 
-void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
+void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
 {
 	if(!this->sprites)
 	{
