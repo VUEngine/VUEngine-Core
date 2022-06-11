@@ -47,12 +47,12 @@ enum DirectDrawLineShrinkingResult
 
 typedef struct CustomCameraFrustum
 {
-	fix8_8_ext x0;
-	fix8_8_ext y0;
-	fix8_8_ext z0;
-	fix8_8_ext x1;
-	fix8_8_ext y1;
-	fix8_8_ext z1;
+	fix7_9_ext x0;
+	fix7_9_ext y0;
+	fix7_9_ext z0;
+	fix7_9_ext x1;
+	fix7_9_ext y1;
+	fix7_9_ext z1;
 } CustomCameraFrustum;
 
 static CameraFrustum _frustum;
@@ -184,8 +184,8 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 
 	_frustumFixedPoint = (CustomCameraFrustum)
 	{
-		__I_TO_FIX8_8_EXT(_frustum.x0), __I_TO_FIX8_8_EXT(_frustum.y0), __I_TO_FIX8_8_EXT(_frustum.z0),
-		__I_TO_FIX8_8_EXT(_frustum.x1), __I_TO_FIX8_8_EXT(_frustum.y1), __I_TO_FIX8_8_EXT(_frustum.z1),
+		__I_TO_FIX7_9_EXT(_frustum.x0), __I_TO_FIX7_9_EXT(_frustum.y0), __I_TO_FIX7_9_EXT(_frustum.z0),
+		__I_TO_FIX7_9_EXT(_frustum.x1), __I_TO_FIX7_9_EXT(_frustum.y1), __I_TO_FIX7_9_EXT(_frustum.z1),
 	};
 
 }
@@ -325,11 +325,11 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 	}
 }
 
-static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ext* y0, fix8_8_ext* parallax0, fix8_8_ext dx, fix8_8_ext dy, fix8_8_ext dParallax, fix8_8_ext x1, fix8_8_ext y1, fix8_8_ext parallax1)
+static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ext* y0, fix7_9_ext* parallax0, fix7_9_ext dx, fix7_9_ext dy, fix7_9_ext dParallax, fix7_9_ext x1, fix7_9_ext y1, fix7_9_ext parallax1)
 {
-	fix8_8_ext x = *x0;
-	fix8_8_ext y = *y0;
-	fix8_8_ext parallax = *parallax0;
+	fix7_9_ext x = *x0;
+	fix7_9_ext y = *y0;
+	fix7_9_ext parallax = *parallax0;
 
 	if(0 == dx)
 	{
@@ -373,8 +373,8 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 
 	NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
 
-	fix8_8_ext xySlope = __FIX8_8_EXT_DIV(dy, dx);
-	fix8_8_ext yParallaxSlope = __FIX8_8_EXT_DIV(dParallax, dy);
+	fix7_9_ext xySlope = __FIX7_9_EXT_DIV(dy, dx);
+	fix7_9_ext yParallaxSlope = __FIX7_9_EXT_DIV(dParallax, dy);
 
 	if(0 == xySlope)
 	{
@@ -382,10 +382,10 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 	}
 
 	//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
-	fix8_8_ext parallaxHelper0 = parallax;
-	fix8_8_ext parallaxHelper1 = parallax1;
+	fix7_9_ext parallaxHelper0 = parallax;
+	fix7_9_ext parallaxHelper1 = parallax1;
 
-	fix8_8_ext xHelper = x;
+	fix7_9_ext xHelper = x;
 
 	bool shrinkOnXAxis = false;
 
@@ -429,12 +429,12 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 		// of the actual line
 		xHelper += parallaxHelper0;
 
-		fix8_8_ext dxHelper = (x1 + parallaxHelper1) - xHelper;
+		fix7_9_ext dxHelper = (x1 + parallaxHelper1) - xHelper;
 
 		if(0 == dxHelper)
 		{
-			y = __FIX8_8_EXT_MULT(x - x1, xySlope) + y1;
-			parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+			y = __FIX7_9_EXT_MULT(x - x1, xySlope) + y1;
+			parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 
 			*y0 = y;
 			*parallax0 = parallax;
@@ -442,7 +442,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 			return true;
 		}
 
-		fix8_8_ext xySlopeHelper = __FIX8_8_EXT_DIV(dy, dxHelper);
+		fix7_9_ext xySlopeHelper = __FIX7_9_EXT_DIV(dy, dxHelper);
 		
 		if(0 == xySlopeHelper)
 		{
@@ -454,9 +454,9 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 			xySlopeHelper = -xySlopeHelper;
 		}
 
-		y = __FIX8_8_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
-		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
-		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
+		y = __FIX7_9_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
 	}
 
 	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
@@ -468,16 +468,16 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix8_8_ext* x0, fix8_8_ex
 	if(_frustumFixedPoint.y0 > y)
 	{
 		y = _frustumFixedPoint.y0;
-		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
-		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
 	else if(_frustumFixedPoint.y1 < y)
 	{
 		y = _frustumFixedPoint.y1;
-		x = __FIX8_8_EXT_DIV(y - y1, xySlope) + x1;
-		parallax = __FIX8_8_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
-	
+
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;
@@ -495,8 +495,11 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustum.y0);
 	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
-//	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside) || (zFromOutside || zToOutside))
-	if(zFromOutside || zToOutside)
+	bool xOutside = (xFromOutside && xToOutside) && (0 <= (fromPoint.x ^ toPoint.x));
+	bool yOutside = (yFromOutside && yToOutside) && (0 <= (fromPoint.y ^ toPoint.y));
+	bool zOutside = (zFromOutside || zToOutside);
+
+	if(xOutside || yOutside || zOutside)
 	{
 		return;
 	}
@@ -504,17 +507,17 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | (interlaced ? (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX) : __LEFT_FRAME_BUFFER_0);
 	uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
-	fix8_8_ext fromPointX = __I_TO_FIX8_8_EXT(fromPoint.x);
-	fix8_8_ext fromPointY = __I_TO_FIX8_8_EXT(fromPoint.y);
-	fix8_8_ext fromPointParallax = __I_TO_FIX8_8_EXT(fromPoint.parallax);
+	fix7_9_ext fromPointX = __I_TO_FIX7_9_EXT(fromPoint.x);
+	fix7_9_ext fromPointY = __I_TO_FIX7_9_EXT(fromPoint.y);
+	fix7_9_ext fromPointParallax = __I_TO_FIX7_9_EXT(fromPoint.parallax);
 
-	fix8_8_ext toPointX = __I_TO_FIX8_8_EXT(toPoint.x);
-	fix8_8_ext toPointY = __I_TO_FIX8_8_EXT(toPoint.y);
-	fix8_8_ext toPointParallax = __I_TO_FIX8_8_EXT(toPoint.parallax);
+	fix7_9_ext toPointX = __I_TO_FIX7_9_EXT(toPoint.x);
+	fix7_9_ext toPointY = __I_TO_FIX7_9_EXT(toPoint.y);
+	fix7_9_ext toPointParallax = __I_TO_FIX7_9_EXT(toPoint.parallax);
 
-	fix8_8_ext dx = toPointX - fromPointX;
-	fix8_8_ext dy = toPointY - fromPointY;
-	fix8_8_ext dParallax = (toPointParallax - fromPointParallax);
+	fix7_9_ext dx = toPointX - fromPointX;
+	fix7_9_ext dy = toPointY - fromPointY;
+	fix7_9_ext dParallax = (toPointParallax - fromPointParallax);
 
 	if(0 == dx && 0 == dy)
 	{
@@ -537,14 +540,33 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 	}
 
-	fix8_8_ext dxABS = __ABS(dx);
-	fix8_8_ext dyABS = __ABS(dy);
+	xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
+	yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 
-	fix8_8_ext parallaxStart = fromPointParallax;
+	xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
+	yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
 
-	fix8_8_ext xStep = __1I_FIX8_8;
-	fix8_8_ext yStep = __1I_FIX8_8;
-	fix8_8_ext parallaxStep = 0;
+	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
+	{
+		return;
+	}
+
+/*
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointX), 1, 10);
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointY), 1, 11);
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointParallax), 1, 12);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointX), 11, 10);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointY), 11, 11);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointParallax), 11, 12);
+*/
+	fix7_9_ext dxABS = __ABS(dx);
+	fix7_9_ext dyABS = __ABS(dy);
+
+	fix7_9_ext parallaxStart = fromPointParallax;
+
+	fix7_9_ext xStep = __1I_FIX7_9_EXT;
+	fix7_9_ext yStep = __1I_FIX7_9_EXT;
+	fix7_9_ext parallaxStep = 0;
 	
 	int16 totalPixels = 0;
 
@@ -552,7 +574,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	{
 		if(toPointX < fromPointX)
 		{
-			fix8_8_ext auxPoint = fromPointX;
+			fix7_9_ext auxPoint = fromPointX;
 			fromPointX = toPointX;
 			toPointX = auxPoint;
 
@@ -562,16 +584,16 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			dxABS = -dxABS;
 		}
 
-		yStep = __FIX8_8_EXT_DIV(dy, dxABS);
-		parallaxStep = __FIX8_8_EXT_DIV(dParallax, dxABS);
+		yStep = __FIX7_9_EXT_DIV(dy, dxABS);
+		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dxABS);
 
-		totalPixels = __FIX8_8_EXT_TO_I(toPointX - fromPointX);
+		totalPixels = __FIX7_9_EXT_TO_I(toPointX - fromPointX);
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
 		if(toPointY < fromPointY)
 		{
-			fix8_8_ext auxPoint = fromPointY;
+			fix7_9_ext auxPoint = fromPointY;
 			fromPointY = toPointY;
 			toPointY = auxPoint;
 
@@ -581,10 +603,10 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			dyABS = -dyABS;
 		}
 
-		xStep = __FIX8_8_EXT_DIV(dx, dyABS);
-		parallaxStep = __FIX8_8_EXT_DIV(dParallax, dyABS);
+		xStep = __FIX7_9_EXT_DIV(dx, dyABS);
+		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dyABS);
 
-		totalPixels = __FIX8_8_EXT_TO_I(toPointY - fromPointY);
+		totalPixels = __FIX7_9_EXT_TO_I(toPointY - fromPointY);
 	}
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
@@ -604,13 +626,13 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	{
 		for(; 1 < totalPixels; totalPixels -=2)
 		{
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
 			parallaxStart += parallaxStep;
 
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), -__FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), -__FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
@@ -621,7 +643,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	{
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX8_8_EXT_TO_I(fromPointX + __05F_FIX8_8), __FIX8_8_EXT_TO_I(fromPointY + __05F_FIX8_8), __FIX8_8_EXT_TO_I(parallaxStart + __05F_FIX8_8), color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
