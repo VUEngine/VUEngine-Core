@@ -27,7 +27,6 @@ abstract class Wireframe : Object
 {
 	const Vector3D* position;
 	const Rotation* rotation;
-	bool culled;
 	uint8 color;
 
 	/// @publicsection

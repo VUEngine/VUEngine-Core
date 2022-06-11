@@ -51,6 +51,7 @@ static class Vector3D : Object
 	static inline fix10_6_ext squareLength(Vector3D vector);
 	static inline fix10_6 lengthProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
+	static inline fix10_6 getScale(fix10_6 z);
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
@@ -207,6 +208,18 @@ static inline fix10_6 Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 	fix10_6_ext product = __FIX10_6_EXT_MULT(lengthSquareA, lengthSquareB);
 
 	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(product)));
+}
+
+static inline fix10_6 Vector3D::getScale(fix10_6 z)
+{
+	if(0 == _optical->halfWidth || 0 == z + _optical->distanceEyeScreen)
+	{
+		return __1I_FIX10_6;
+	}
+
+	fix10_6_ext projectedWidth = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier), z + _optical->distanceEyeScreen) >> __PROJECTION_PRECISION_INCREMENT;
+
+	return __FIX10_6_EXT_DIV(projectedWidth, _optical->halfWidth);
 }
 
 static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)

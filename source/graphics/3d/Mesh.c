@@ -192,18 +192,6 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
-	Vector3D rotatedPosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-
-	fix10_6 cosAngle = Vector3D::dotProduct(Vector3D::normalize(rotatedPosition), Vector3D::unit(__Z_AXIS));
-
-	// cull off at 45 degrees
-	if(__FIX7_9_TO_FIX10_6(__COS(__CAMERA_FOV_DEGREES >> 1)) > cosAngle)
-	{
-		this->culled = true;
-		return;
-	}
-
-	this->culled = false;
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{

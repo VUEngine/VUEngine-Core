@@ -221,14 +221,7 @@ void WireframeManager::draw()
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		if(wireframe->culled)
-		{
-			continue;
-		}
-
-		Wireframe::draw(wireframe, true);
+		Wireframe::draw(Wireframe::safeCast(node->data), true);
 	}
 }
 

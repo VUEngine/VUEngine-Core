@@ -259,9 +259,7 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 			return;
 		}
 
-		fix10_6_ext width = __PIXELS_TO_METERS(this->halfWidth);
-		fix10_6_ext projectedWidth = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(width, _optical->scalingMultiplier), z + _optical->distanceEyeScreen) >> __PROJECTION_PRECISION_INCREMENT;
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__FIX10_6_EXT_DIV(projectedWidth, width));
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(Vector3D::getScale(z));
 
 		ratio = 0 > ratio? __1I_FIX10_6 : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
