@@ -254,11 +254,6 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
 		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
 		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
 
-		if(0 == z + _optical->cameraNearPlane)
-		{
-			return;
-		}
-
 		fix7_9 ratio = __FIX10_6_TO_FIX7_9(Vector3D::getScale(z));
 
 		ratio = 0 > ratio? __1I_FIX10_6 : ratio;
