@@ -140,7 +140,7 @@
 #define __MAXIMUM_Y_VIEW_DISTANCE					{{ engine.optics.maximumYViewDistance }}
 
 // distance from player's eyes to the virtual screen
-#define __CAMERA_NEAR_PLANE						{{ engine.optics.cameraNearPlane }}
+#define __CAMERA_NEAR_PLANE							{{ engine.optics.cameraNearPlane }}
 
 // distance between eyes
 #define __BASE_FACTOR								{{ engine.optics.baseFactor }}
