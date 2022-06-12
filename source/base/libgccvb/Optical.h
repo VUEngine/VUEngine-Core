@@ -88,6 +88,11 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 	result.farRatio2Near = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
 	result.projectionMultiplierHelper = __FIX10_6_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
 	result.scalingMultiplier = __FIX10_6_EXT_MULT(result.projectionMultiplierHelper, result.scalingFactor);
+
+	if(0 == result.distanceEyeScreen)
+	{
+		result.distanceEyeScreen = result.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+	}
 	
 	return result;
 }

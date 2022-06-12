@@ -75,6 +75,7 @@ singleton class Camera : Object
 {
 	// Optical values used in projection values
 	Optical optical;
+	Optical opticalBackup;
 	// Camera position
 	Vector3D position;
 	// Backup of Camera position

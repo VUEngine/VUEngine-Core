@@ -379,10 +379,12 @@ void Camera::prepareForUI()
 {
 	this->positionBackup = this->position;
 	this->rotationBackup = this->rotation;
+	this->opticalBackup = this->optical;
 
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
+	this->optical.distanceEyeScreen = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
 }
 
 /**
@@ -393,6 +395,7 @@ void Camera::doneUI()
 	this->position = this->positionBackup;
 	this->rotation = this->rotationBackup;
 	this->invertedRotation = Rotation::invert(this->rotation);
+	this->optical = this->opticalBackup;
 }
 
 /**
@@ -425,6 +428,7 @@ void Camera::setOptical(Optical optical)
 void Camera::setOpticalFromPixelOptical(PixelOptical pixelOptical)
 {
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
+	this->opticalBackup = this->optical;
 
 	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
 }
