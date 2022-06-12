@@ -87,7 +87,7 @@ void Camera::constructor()
     {
     	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
     	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-		__DISTANCE_EYE_SCREEN,					// distance from player's eyes to the virtual screen
+		__CAMERA_NEAR_PLANE				// distance from player's eyes to the virtual screen
     	__BASE_FACTOR,							// distance from left to right eye (depth perception)
     	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
     	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
@@ -384,7 +384,7 @@ void Camera::prepareForUI()
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
-	this->optical.distanceEyeScreen = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+	this->optical.cameraNearPlane this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
 }
 
 /**

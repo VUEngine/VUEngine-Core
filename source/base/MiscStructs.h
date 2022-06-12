@@ -150,7 +150,7 @@ typedef struct Optical
 {
 	uint16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
 	uint16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
-	fix10_6 distanceEyeScreen;				// logical distance between the eyes and the screen
+	fix10_6 cameraNearPlane;				// logical distance between the eyes and the screen
 	fix10_6 baseDistance;					// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;		// horizontal View point center
 	fix10_6 verticalViewPointCenter;		// vertical View point center
@@ -171,7 +171,7 @@ typedef struct PixelOptical
 {
 	uint16 maximumXViewDistance;		// maximum distance from the screen to the infinite
 	uint16 maximumYViewDistance;		// maximum distance from the screen to the infinite
-	uint16 distanceEyeScreen;			// logical distance between the eyes and the screen
+	uint16 cameraNearPlane;			// logical distance between the eyes and the screen
 	uint16 baseDistance;				// distance from left to right eye (depth perception)
 	int16 horizontalViewPointCenter;	// horizontal View point center
 	int16 verticalViewPointCenter;		// vertical View point center

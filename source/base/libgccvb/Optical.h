@@ -62,7 +62,7 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 
 	optical.maximumXViewDistancePower = __MINIMUM_X_VIEW_DISTANCE_POWER > maximumXViewDistancePower ? __MINIMUM_X_VIEW_DISTANCE_POWER : maximumXViewDistancePower;
 	optical.maximumYViewDistancePower = __MINIMUM_Y_VIEW_DISTANCE_POWER > maximumYViewDistancePower ? __MINIMUM_Y_VIEW_DISTANCE_POWER : maximumYViewDistancePower;
-	optical.distanceEyeScreen = __PIXELS_TO_METERS(pixelOptical.distanceEyeScreen);
+	optical.cameraNearPlane __PIXELS_TO_METERS(pixelOptical.cacameraNearPlane
 	optical.baseDistance = __PIXELS_TO_METERS(pixelOptical.baseDistance);
 	optical.horizontalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter);
 	optical.verticalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter);
@@ -89,9 +89,9 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 	result.projectionMultiplierHelper = __FIX10_6_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
 	result.scalingMultiplier = __FIX10_6_EXT_MULT(result.projectionMultiplierHelper, result.scalingFactor);
 
-	if(0 == result.distanceEyeScreen)
+	if(0 == result.cameraNearPlane)
 	{
-		result.distanceEyeScreen = result.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+		result.cameraNearPlane = result.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
 	}
 	
 	return result;

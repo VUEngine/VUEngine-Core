@@ -212,12 +212,12 @@ static inline fix10_6 Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 
 static inline fix10_6 Vector3D::getScale(fix10_6 z)
 {
-	if(0 == _optical->halfWidth || 0 == z + _optical->distanceEyeScreen)
+	if(0 == _optical->halfWidth || 0 == z + _optical->cameraNearPlane)
 	{
 		return __1I_FIX10_6;
 	}
 
-	fix10_6_ext projectedWidth = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier), z + _optical->distanceEyeScreen) >> __PROJECTION_PRECISION_INCREMENT;
+	fix10_6_ext projectedWidth = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier), z + _optical->cameraNearPlane) >> __PROJECTION_PRECISION_INCREMENT;
 
 	return __FIX10_6_EXT_DIV(projectedWidth, _optical->halfWidth);
 }
@@ -248,13 +248,13 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 		x -= (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower);	
 		y -= (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower);	
 /*
-		fix10_6_ext factor = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->distanceEyeScreen);
+		fix10_6_ext factor = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(_optical->halfWidth, _optical->aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT, z + _optical->cameraNearPlane);
 
 		x = (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
 		y = (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
 */
 #else
-	if(0 == z + _optical->distanceEyeScreen)
+	if(0 == z + _optical->cameraNearPlane)
 	{
 		x = 0 > x ? -(1 << 15) : (1 << 15);	
 		y = 0 > y ? -(1 << 15) : (1 << 15);	
@@ -283,7 +283,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 		// x = x * aspect ratio * fov
 
 		// to reduce from 4 products and 2 divisions to 3 products, 1 division and 3 bit shifts
-		fix10_6_ext factor = __FIX10_6_EXT_DIV(_optical->projectionMultiplierHelper, z + _optical->distanceEyeScreen);
+		fix10_6_ext factor = __FIX10_6_EXT_DIV(_optical->projectionMultiplierHelper, z + _optical->cameraNearPlane);
 
 		x = (__FIX10_6_EXT_MULT(x, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->horizontalViewPointCenter;	
 		y = (__FIX10_6_EXT_MULT(y, factor) >> __PROJECTION_PRECISION_INCREMENT) + _optical->verticalViewPointCenter;
