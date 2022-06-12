@@ -54,7 +54,7 @@ static inline Rotation Rotation::zero()
 static inline Rotation Rotation::invert(Rotation rotation)
 {
 	return Rotation::clamp(__FULL_ROTATION_DEGREES - rotation.x, __FULL_ROTATION_DEGREES - rotation.y, __FULL_ROTATION_DEGREES - rotation.z);
-};
+}
 
 static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z)
 {

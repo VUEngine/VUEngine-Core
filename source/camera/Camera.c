@@ -384,7 +384,10 @@ void Camera::prepareForUI()
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
+
+#ifndef __LEGACY_COORDINATE_PROJECTION
 	this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+#endif
 }
 
 /**
