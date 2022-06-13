@@ -504,9 +504,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 
-	uint32 leftBuffer = *_currentDrawingFrameBufferSet | (interlaced ? (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX) : __LEFT_FRAME_BUFFER_0);
-	uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
-
 	fix7_9_ext fromPointX = __I_TO_FIX7_9_EXT(fromPoint.x);
 	fix7_9_ext fromPointY = __I_TO_FIX7_9_EXT(fromPoint.y);
 	fix7_9_ext fromPointParallax = __I_TO_FIX7_9_EXT(fromPoint.parallax);
@@ -616,14 +613,17 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	_directDraw->totalDrawPixels += totalPixels;
 
-	if(0 != bufferIndex)
-	{
-		parallaxStart = -parallaxStart;
-		parallaxStep = -parallaxStep;
-	}
-
 	if(interlaced)
 	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			parallaxStart = -parallaxStart;
+			parallaxStep = -parallaxStep;
+		}
+
 		for(; 1 < totalPixels; totalPixels -=2)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
@@ -641,6 +641,9 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	}
 	else
 	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);

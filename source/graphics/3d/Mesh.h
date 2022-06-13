@@ -61,6 +61,7 @@ class Mesh : Wireframe
 	MeshSpec* meshSpec;
 	VirtualList segments;
 	VirtualList vertices;
+	bool interlaced;
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);

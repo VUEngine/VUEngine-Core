@@ -50,6 +50,8 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	this->segments = new VirtualList();
 	this->vertices = new VirtualList();
 	
+	this->interlaced = true;
+	
 	this->meshSpec = meshSpec;
 
 	Mesh::addSegments(this);
@@ -192,13 +194,15 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
+	Vector3D relativeRotatedPosition = relativePosition; //Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
+
+	this->interlaced = __FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < Vector3D::squareLength(relativePosition);
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		Vector3D vector = Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation));
-		vector = Vector3D::rotate(vector, _previousCameraInvertedRotation);
+		Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
 
 		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 	}
@@ -209,9 +213,10 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
+		meshSegment->bufferIndex = !meshSegment->bufferIndex;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, false);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, this->interlaced);
 	}
 }
 
