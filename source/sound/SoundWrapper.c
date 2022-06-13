@@ -938,12 +938,12 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 		if(__MAXIMUM_VOLUME <= volume)
 		{
-			_soundRegistries[channel->number].SxLRV = 0xFF;
+			_soundRegistries[channel->number].SxLRV = 0xFF & channel->soundChannelConfiguration.volume;
 			volume -= __MAXIMUM_VOLUME;
 		}
 		else if(0 < volume)
 		{
-			_soundRegistries[channel->number].SxLRV = (volume << 4) | volume;
+			_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
 			volume = 0;
 		}
 		else
