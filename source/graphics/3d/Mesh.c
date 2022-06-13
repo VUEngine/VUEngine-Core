@@ -194,7 +194,6 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
-	Vector3D relativeRotatedPosition = relativePosition; //Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 
 	this->interlaced = __FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < Vector3D::squareLength(relativePosition);
 
