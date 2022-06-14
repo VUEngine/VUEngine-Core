@@ -681,19 +681,19 @@ MovementResult Body::updateMovement()
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.x, elapsedTime);
-		this->position.x += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.x += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.y, elapsedTime);
-		this->position.y += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.y += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.z, elapsedTime);
-		this->position.z += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.z += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	return Body::getMovementResult(this, previousVelocity);

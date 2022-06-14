@@ -121,7 +121,7 @@
 
 {{ macros.sectionHeader('Direct drawing') }}
 
-#define __DIRECT_DRAW_INTERLACED_THRESHOLD							__PIXELS_TO_METERS({{ engine.directDraw.interlacedThreshold }})
+{% if engine.directDraw.interlacedThreshold %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								{{engine.directDraw.interlacedThreshold}} {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								1{% endif %} 
 
 
 {{ macros.sectionHeader('Optics / Projection') }}
@@ -306,7 +306,7 @@
 #define __FRICTION_FORCE_FACTOR_POWER								{{ engine.physics.frictionForceFactorPower }}
 
 // fixed data 10.6 doesn't have enough precision and in some cases it is necessary to actively correct the cumulative error
-#define __BODY_PRECISION_CORRECTION									{{ engine.physics.movementPrecisionCorrection }}
+{% if engine.physics.movementPrecisionCorrection %}#define __BODY_PRECISION_CORRECTION									{{engine.physics.movementPrecisionCorrection}} {% else %}#define __BODY_PRECISION_CORRECTION									0{% endif %} 
 
 {{ macros.sectionHeader('Sound') }}
 
