@@ -305,6 +305,8 @@
 
 #define __FRICTION_FORCE_FACTOR_POWER								{{ engine.physics.frictionForceFactorPower }}
 
+// fixed data 10.6 doesn't have enough precision and in some cases it is necessary to actively correct the cumulative error
+#define __BODY_PRECISION_CORRECTION									{{ engine.physics.movementPrecisionCorrection }}
 
 {{ macros.sectionHeader('Sound') }}
 

@@ -599,9 +599,9 @@ MovementResult Body::updateMovement()
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
 	
-	this->friction.x += 0 > this->friction.x ? 1 : 0;
-	this->friction.y += 0 > this->friction.y ? 1 : 0;
-	this->friction.z += 0 > this->friction.z ? 1 : 0;
+	this->friction.x += 0 > this->friction.x ? __BODY_PRECISION_CORRECTION : 0;
+	this->friction.y += 0 > this->friction.y ? __BODY_PRECISION_CORRECTION : 0;
+	this->friction.z += 0 > this->friction.z ? __BODY_PRECISION_CORRECTION : 0;
 
 	fix10_6 elapsedTime = _currentPhysicsElapsedTime;
 	Velocity previousVelocity = this->velocity;
@@ -613,7 +613,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
+		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
@@ -636,7 +636,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
+		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.y)
 	{
@@ -659,7 +659,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
+		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{
@@ -681,19 +681,19 @@ MovementResult Body::updateMovement()
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.x, elapsedTime);
-		this->position.x += (0 > delta ? delta : delta + 1);
+		this->position.x += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.y, elapsedTime);
-		this->position.y += (0 > delta ? delta : delta + 1);
+		this->position.y += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.z, elapsedTime);
-		this->position.z += (0 > delta ? delta : delta + 1);
+		this->position.z += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
