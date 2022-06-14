@@ -501,7 +501,7 @@ static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoin
 
 	if(xOutside || yOutside || zOutside)
 	{
-		return;
+		return bufferIndex;
 	}
 
 	fix7_9_ext fromPointX = __I_TO_FIX7_9_EXT(fromPoint.x);
@@ -518,14 +518,14 @@ static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoin
 
 	if(0 == dx && 0 == dy)
 	{
-		return;
+		return bufferIndex;
 	}
 
 	if(xFromOutside || yFromOutside)
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 		{
-			return;
+			return bufferIndex;
 		}
 	}
 
@@ -533,7 +533,7 @@ static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoin
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 		{
-			return;
+			return bufferIndex;
 		}
 	}
 
@@ -545,7 +545,7 @@ static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoin
 
 	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
 	{
-		return;
+		return bufferIndex;
 	}
 
 /*
@@ -608,7 +608,7 @@ static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoin
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
-		return;
+		return bufferIndex;
 	}
 
 	_directDraw->totalDrawPixels += totalPixels;
