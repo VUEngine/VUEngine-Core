@@ -366,7 +366,7 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 {
 	if(value < 0)
 	{
-		value *= -1;
+		value = -value;
 
 		Printing::out(this, x++, y, "-", font);
 		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);

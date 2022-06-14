@@ -599,10 +599,6 @@ MovementResult Body::updateMovement()
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
 	
-	this->friction.x += 0 > this->friction.x ? __BODY_PRECISION_CORRECTION : 0;
-	this->friction.y += 0 > this->friction.y ? __BODY_PRECISION_CORRECTION : 0;
-	this->friction.z += 0 > this->friction.z ? __BODY_PRECISION_CORRECTION : 0;
-
 	fix10_6 elapsedTime = _currentPhysicsElapsedTime;
 	Velocity previousVelocity = this->velocity;
 
@@ -610,10 +606,10 @@ MovementResult Body::updateMovement()
 	{
 		// need to use extended types to prevent overflows
 		fix10_6_ext acceleration = gravity.x + __FIX10_6_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
-		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT_ROUND(acceleration, elapsedTime);
 
 		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
+		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
@@ -633,10 +629,10 @@ MovementResult Body::updateMovement()
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		fix10_6_ext acceleration = gravity.y + __FIX10_6_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
-		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT_ROUND(acceleration, elapsedTime);
 
 		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
+		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.y)
 	{
@@ -656,10 +652,10 @@ MovementResult Body::updateMovement()
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		fix10_6_ext acceleration = gravity.z + __FIX10_6_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
-		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT_ROUND(acceleration, elapsedTime);
 
 		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? __BODY_PRECISION_CORRECTION : 0);
+		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{
@@ -680,20 +676,17 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix10_6 delta = __FIX10_6_MULT(this->velocity.x, elapsedTime);
-		this->position.x += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.x += __FIX10_6_EXT_MULT_ROUND(this->velocity.x, elapsedTime);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix10_6 delta = __FIX10_6_MULT(this->velocity.y, elapsedTime);
-		this->position.y += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.y += __FIX10_6_EXT_MULT_ROUND(this->velocity.y, elapsedTime);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix10_6 delta = __FIX10_6_MULT(this->velocity.z, elapsedTime);
-		this->position.z += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.z += __FIX10_6_EXT_MULT_ROUND(this->velocity.z, elapsedTime);
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
@@ -1192,7 +1185,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 	// compute bouncing vector
 	fix10_6 cosAngle = __I_TO_FIX10_6(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX10_6_EXT_DIV(Vector3D::dotProduct(gravity, bouncingPlaneNormal), Vector3D::lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX10_6;
-	fix10_6 normalMagnitude = __FIX10_6_EXT_MULT(Vector3D::length(this->weight), cosAngle);
+	fix10_6 normalMagnitude = __FIX10_6_EXT_MULT_ROUND(Vector3D::length(this->weight), cosAngle);
 
 	// register normal affecting the body
 	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
