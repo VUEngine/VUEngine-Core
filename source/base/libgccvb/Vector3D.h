@@ -67,6 +67,7 @@ static class Vector3D : Object
 	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
 	static inline void print(Vector3D vector, int32 x, int32 y);
+	static inline void printRaw(Vector3D vector, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -495,5 +496,15 @@ static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
 	PRINT_FLOAT(__FIX10_6_TO_F(vector.z), x + 2, y + 2);
 }
 
+static inline void Vector3D::printRaw(Vector3D vector, int32 x, int32 y)
+{
+	PRINT_TEXT("x:    ", x, y);
+	PRINT_TEXT("y:    ", x, y + 1);
+	PRINT_TEXT("z:    ", x, y + 2);
+
+	PRINT_INT((vector.x), x + 2, y);
+	PRINT_INT((vector.y), x + 2, y + 1);
+	PRINT_INT((vector.z), x + 2, y + 2);
+}
 
 #endif

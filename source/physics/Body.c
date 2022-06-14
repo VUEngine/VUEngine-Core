@@ -469,6 +469,12 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.y ? __NO_AXIS : __Y_AXIS;
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.z ? __NO_AXIS : __Z_AXIS;
 
+	if(Vector3D::squareLength(this->velocity) < __FIX10_6_MULT(__STOP_VELOCITY_THRESHOLD, __STOP_VELOCITY_THRESHOLD) && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
+	{
+		movementResult.axisStoppedMovement = __ALL_AXIS;
+	}
+	return movementResult;
+
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
 	if(previousVelocity.x && !this->externalForce.x && __ACCELERATED_MOVEMENT == this->movementType.x)
@@ -514,8 +520,20 @@ Acceleration Body::getGravity()
 void Body::computeDirectionAndSpeed()
 {
 	this->speed = Vector3D::length(this->velocity);
+	
+	Direction3D newDirection = (Direction3D){0, 0, 0};
 
-	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+	if(this->externalForce.x || this->externalForce.y || this->externalForce.z)
+//	if(this->maximumSpeed && this->maximumSpeed > this->speed)
+	{
+		newDirection = Vector3D::normalize(this->externalForce);
+	}
+	else
+	{
+		newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+	}
+	
+	//	newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
 
 	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
 
@@ -588,7 +606,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
+		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
@@ -611,7 +629,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
+		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.y)
 	{
@@ -634,7 +652,7 @@ MovementResult Body::updateMovement()
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
-		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
+		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta) + (0 > velocityDelta ? 1 : 0);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{
@@ -653,20 +671,32 @@ MovementResult Body::updateMovement()
 
 	Body::clampVelocity(this);
 
+	Vector3D previousPosition = this->position;
+	Vector3D newPosition = this->position;
+
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
+		fix10_6 delta = __FIX10_6_MULT(this->velocity.x, elapsedTime);
+		this->position.x += (0 > delta ? delta : delta + 1);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
+		fix10_6 delta = __FIX10_6_MULT(this->velocity.y, elapsedTime);
+		this->position.y += (0 > delta ? delta : delta + 1);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
+		fix10_6 delta = __FIX10_6_MULT(this->velocity.z, elapsedTime);
+		this->position.z += (0 > delta ? delta : delta + 1);
 	}
+
+	this->direction = Vector3D::normalize(Vector3D::sub(this->position, previousPosition));
+
+	Vector3D::printRaw(this->velocity, 1, 10);
+	Vector3D::printRaw(this->friction, 11, 10);
+	Vector3D::printRaw(this->direction, 21, 10);
 
 	return Body::getMovementResult(this, previousVelocity);
 }
