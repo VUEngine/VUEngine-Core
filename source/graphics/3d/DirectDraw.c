@@ -485,7 +485,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ex
 	return true;
 }
 
-static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
+static uint8 DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(fromPoint.x - _frustum.x0);
 	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(fromPoint.y - _frustum.y0);
@@ -638,6 +638,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			fromPointY += yStep;
 			parallaxStart += parallaxStep;
 		}
+
+		return !bufferIndex;
 	}
 	else
 	{
@@ -653,5 +655,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			parallaxStart += parallaxStep;
 		}
 	}
+
+	return bufferIndex;
 }
 
