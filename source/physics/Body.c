@@ -142,6 +142,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
+	
+	this->movesIndependentlyOnEachAxis = 0 != this->maximumVelocity.x || this->maximumVelocity.y || this->maximumVelocity.z;
 
 	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
@@ -217,7 +219,7 @@ void Body::modifyVelocity(const Velocity* modifier)
 	this->velocity.y += modifier->y;
 	this->velocity.z += modifier->z;
 
-	Body::clampVelocity(this);
+	Body::clampVelocity(this, false);
 }
 
 // retrieve acceleration
@@ -469,12 +471,15 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.y ? __NO_AXIS : __Y_AXIS;
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.z ? __NO_AXIS : __Z_AXIS;
 
-//	if(Vector3D::squareLength(this->velocity) < __FIX10_6_MULT(__STOP_VELOCITY_THRESHOLD, __STOP_VELOCITY_THRESHOLD) && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
-	if(!this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
+	if(!this->movesIndependentlyOnEachAxis)
 	{
-		movementResult.axisStoppedMovement = __ALL_AXIS;
+		if(this->speed < __STOP_VELOCITY_THRESHOLD && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
+		{
+			movementResult.axisStoppedMovement = __ALL_AXIS;
+		}
+	
+		return movementResult;
 	}
-	return movementResult;
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
@@ -518,23 +523,32 @@ Acceleration Body::getGravity()
 	};
 }
 
-void Body::computeDirectionAndSpeed()
+void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 {
 	this->speed = Vector3D::length(this->velocity);
-	
-	Direction3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
 
-	this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
-
-	if(this->changedDirection)
+	if(useExternalForceForDirection)
 	{
-		this->direction = newDirection;
+		this->direction = Vector3D::normalize(this->externalForce);
+		this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
+		this->changedDirection = true;
+	}
+	else
+	{
+		Vector3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+	
+		this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
+
+		if(this->changedDirection)
+		{
+			this->direction = newDirection;
+		}
 	}
 }
 
-void Body::clampVelocity()
+void Body::clampVelocity(bool useExternalForceForDirection)
 {
-	Body::computeDirectionAndSpeed(this);
+	Body::computeDirectionAndSpeed(this, useExternalForceForDirection);
 
 	// First check if must clamp speed
 	if(this->maximumSpeed && this->maximumSpeed < this->speed)
@@ -583,7 +597,11 @@ MovementResult Body::updateMovement()
 	this->weight = Vector3D::scalarProduct(gravity, this->mass);
 
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D::zero();//Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
+	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
+	
+	this->friction.x += 0 > this->friction.x ? 1 : 0;
+	this->friction.y += 0 > this->friction.y ? 1 : 0;
+	this->friction.z += 0 > this->friction.z ? 1 : 0;
 
 	fix10_6 elapsedTime = _currentPhysicsElapsedTime;
 	Velocity previousVelocity = this->velocity;
@@ -658,32 +676,7 @@ MovementResult Body::updateMovement()
 		}
 	}
 
-	if(0 == previousVelocity.x && 0 == previousVelocity.y && 0 == previousVelocity.z)
-	{
-//	Vector3D::printRaw(Vector3D::normalize(this->velocity), 1, 1);
-//	Vector3D::printRaw(Vector3D::normalize(this->externalForce), 11, 1);
-		this->speed = Vector3D::length(this->velocity);
-//		this->speed = this->maximumSpeed;
-		this->direction = Vector3D::normalize(this->externalForce);
-		this->changedDirection = true;
-		this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
-/*
-		this->velocity.x += 0 < this->velocity.x ? 1 : 0;
-		this->velocity.y += 0 < this->velocity.y ? 1 : 0;
-		this->velocity.z += 0 < this->velocity.z ? 1 : 0;
-*/
-//	Vector3D::printRaw(Vector3D::normalize(this->velocity), 1, 5);
-
-	}
-	else
-	{
-/*		this->speed = this->maximumSpeed;
-		this->speed = Vector3D::length(this->velocity);
-//		this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
-		this->direction = Vector3D::normalize(this->velocity);
-		this->velocity = Vector3D::scalarProduct(this->direction, this->maximumSpeed);
-*/		Body::clampVelocity(this);
-	}
+	Body::clampVelocity(this, 0 == previousVelocity.x && 0 == previousVelocity.y && 0 == previousVelocity.z);
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
@@ -1240,7 +1233,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 	this->velocity = Vector3D::get(u, w);
 
-	Body::clampVelocity(this);
+	Body::clampVelocity(this, false);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{

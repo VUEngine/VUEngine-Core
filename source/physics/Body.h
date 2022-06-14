@@ -129,6 +129,8 @@ class Body : Object
 	bool destroy;
 	// flag to clear the external force after each update
 	bool clearExternalForce;
+	// flag that determines the logic for stoping the body
+	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
