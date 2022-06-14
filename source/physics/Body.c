@@ -471,7 +471,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.y ? __NO_AXIS : __Y_AXIS;
 	movementResult.axisOfChangeOfDirection |= 0 <= aux.z ? __NO_AXIS : __Z_AXIS;
 
-	if(!this->movesIndependentlyOnEachAxis)
+	if(!this->movesIndependentlyOnEachAxis && (__ACCELERATED_MOVEMENT == (this->movementType.x | this->movementType.y | this->movementType.z)))
 	{
 		if(this->speed < __STOP_VELOCITY_THRESHOLD && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
 		{
@@ -681,19 +681,19 @@ MovementResult Body::updateMovement()
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.x, elapsedTime);
-		this->position.x += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.x += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.y, elapsedTime);
-		this->position.y += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.y += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		fix10_6 delta = __FIX10_6_MULT(this->velocity.z, elapsedTime);
-		this->position.z += (0 <= delta ? delta : delta + __BODY_PRECISION_CORRECTION);
+		this->position.z += (0 > delta ? delta : delta + __BODY_PRECISION_CORRECTION);
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
