@@ -840,11 +840,12 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 
 	VirtualNode node = this->normals->head;
 
+#ifndef __RELEASE
 	for(; NULL != node; node = node->next)
 	{
-		ASSERT(!isDeleted(node->data), "DEAD");
-	//	ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
+		ASSERT(!isDeleted(node->data), "Body::addNormal: null normal");
 	}
+#endif
 
 	NormalRegistry* normalRegistry = new NormalRegistry;
 	normalRegistry->referent = referent;
