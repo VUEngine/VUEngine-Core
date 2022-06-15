@@ -838,10 +838,8 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 		this->normals = new VirtualList();
 	}
 
-	VirtualNode node = this->normals->head;
-
 #ifndef __RELEASE
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->normals->head; NULL != node; node = node->next)
 	{
 		ASSERT(!isDeleted(node->data), "Body::addNormal: null normal");
 	}
