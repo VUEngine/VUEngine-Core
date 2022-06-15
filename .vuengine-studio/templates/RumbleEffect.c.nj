@@ -3,7 +3,7 @@
 
 {{ macros.sectionHeader('Includes') }}
 
-#include <RumbleManagerger.h>
+#include <RumbleManager.h>
 
 
 
