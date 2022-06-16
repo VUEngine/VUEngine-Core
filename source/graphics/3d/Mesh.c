@@ -53,6 +53,7 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	this->interlaced = true;
 	
 	this->meshSpec = meshSpec;
+	this->color = this->meshSpec->color;
 
 	Mesh::addSegments(this);
 
@@ -195,7 +196,38 @@ void Mesh::render()
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 
-	this->interlaced = __FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < Vector3D::squareLength(relativePosition);
+	fix10_6_ext distanceToCamera = Vector3D::squareLength(relativePosition);
+
+	if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
+	{
+		this->interlaced = true;
+		this->color = __COLOR_DARK_RED;
+	}
+	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
+	{
+		this->interlaced = false;
+		this->color = __COLOR_DARK_RED;
+	}
+	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+	{
+		this->interlaced = true;
+		this->color = __COLOR_MEDIUM_RED;
+	}
+	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+	{
+		this->interlaced = true;
+		this->color = __COLOR_BRIGHT_RED;
+	}
+	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+	{
+		this->interlaced = false;
+		this->color = __COLOR_MEDIUM_RED;
+	}
+	else
+	{
+		this->interlaced = false;
+		this->color = __COLOR_BRIGHT_RED;
+	}
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
@@ -214,7 +246,7 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, this->interlaced);
+		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, meshSegment->bufferIndex, this->interlaced);
 	}
 }
 
@@ -225,7 +257,7 @@ void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->meshSpec->color, meshSegment->bufferIndex, true);
+		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, meshSegment->bufferIndex, true);
 	}
 }
 
