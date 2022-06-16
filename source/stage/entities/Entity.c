@@ -1871,10 +1871,18 @@ void Entity::show()
 	// show all sprites
 	if(this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->sprites->head; node ; node = node->next)
 		{
 			Sprite::show(node->data);
+		}
+	}
+
+	// show all meshes
+	if(!isDeleted(this->meshes))
+	{
+		for(VirtualNode node = this->meshes->head; node ; node = node->next)
+		{
+			Mesh::show(node->data);
 		}
 	}
 }
@@ -1889,12 +1897,21 @@ void Entity::hide()
 	Base::hide(this);
 
 	// hide all sprites
-	if(this->sprites)
+	if(!isDeleted(this->sprites))
 	{
-		VirtualNode node = this->sprites->head;
-		for(; node ; node = node->next)
+		
+		for(VirtualNode node = this->sprites->head; node ; node = node->next)
 		{
 			Sprite::hide(node->data);
+		}
+	}
+
+	// hide all meshes
+	if(!isDeleted(this->meshes))
+	{
+		for(VirtualNode node = this->meshes->head; node ; node = node->next)
+		{
+			Mesh::hide(node->data);
 		}
 	}
 }
