@@ -184,6 +184,53 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
+void Mesh::setupRenderingMode(fix10_6_ext distanceToCamera)
+{
+	if(__COLOR_BLACK != this->meshSpec->color)
+	{
+		this->interlaced = false;
+		this->color = this->meshSpec->color;
+
+		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		{
+			this->interlaced = true;
+		}
+	}
+	else
+	{
+		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_DARK_RED;
+		}
+		else if(__FIX10_6_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		{
+			this->interlaced = false;
+			this->color = __COLOR_DARK_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_MEDIUM_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_BRIGHT_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		{
+			this->interlaced = false;
+			this->color = __COLOR_MEDIUM_RED;
+		}
+		else
+		{
+			this->interlaced = false;
+			this->color = __COLOR_BRIGHT_RED;
+		}
+	}
+}
+
 /**
  * Class draw
  */
@@ -195,39 +242,7 @@ void Mesh::render()
 	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
-
-	fix10_6_ext distanceToCamera = Vector3D::squareLength(relativePosition);
-
-	if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
-	{
-		this->interlaced = true;
-		this->color = __COLOR_DARK_RED;
-	}
-	else if(__FIX10_6_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
-	{
-		this->interlaced = false;
-		this->color = __COLOR_DARK_RED;
-	}
-	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
-	{
-		this->interlaced = true;
-		this->color = __COLOR_MEDIUM_RED;
-	}
-	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
-	{
-		this->interlaced = true;
-		this->color = __COLOR_BRIGHT_RED;
-	}
-	else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
-	{
-		this->interlaced = false;
-		this->color = __COLOR_MEDIUM_RED;
-	}
-	else
-	{
-		this->interlaced = false;
-		this->color = __COLOR_BRIGHT_RED;
-	}
+	Mesh::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
