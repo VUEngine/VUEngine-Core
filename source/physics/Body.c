@@ -143,7 +143,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
 	
-	this->movesIndependentlyOnEachAxis = 0 != this->maximumVelocity.x || this->maximumVelocity.y || this->maximumVelocity.z;
+	this->movesIndependentlyOnEachAxis = 0 != this->maximumVelocity.x || 0 != this->maximumVelocity.y || 0 != this->maximumVelocity.z;
 
 	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);

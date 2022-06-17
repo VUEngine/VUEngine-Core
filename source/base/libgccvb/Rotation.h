@@ -31,6 +31,7 @@ static class Rotation : Object
 	static inline Rotation zero();
 	static inline Rotation invert(Rotation rotation);
 	static inline Rotation clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z);
+	static inline fix10_6 getShortestDifferce(fix10_6 angleFrom, fix10_6 angleTo);
 	static inline Rotation sum(Rotation a, Rotation b);
 	static inline Rotation sub(Rotation a, Rotation b);
 	static inline Rotation intermediate(Rotation a, Rotation b);
@@ -86,6 +87,12 @@ static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext
 	}
 
 	return (Rotation){__FIX10_6_EXT_TO_FIX10_6(x), __FIX10_6_EXT_TO_FIX10_6(y), __FIX10_6_EXT_TO_FIX10_6(z)};
+}
+
+static inline fix10_6 Rotation::getShortestDifferce(fix10_6 angleFrom, fix10_6 angleTo)
+{
+	int32 rotationDifference = (__FIX10_6_TO_I(angleTo) - __FIX10_6_TO_I(angleFrom) + 256 ) % 512 - 256;
+	return __I_TO_FIX10_6(-256 > rotationDifference ? rotationDifference + 512 : rotationDifference);
 }
 
 static inline Rotation Rotation::sum(Rotation a, Rotation b)
