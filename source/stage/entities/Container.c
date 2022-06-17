@@ -1396,3 +1396,37 @@ bool Container::isTransformed()
 {
 	return !this->invalidateGlobalTransformation;
 }
+
+Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)
+{
+	Rotation rotation = this->transformation.localRotation;
+	Vector3D directionHelper = *direction;
+
+	if(__Y_AXIS & axis)
+	{
+		if(directionHelper.x)
+		{
+			rotation.y = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.x), __FIX10_6_TO_FIX7_9(directionHelper.z)));
+			directionHelper = Vector3D::rotate(directionHelper, (Rotation){0, __I_TO_FIX10_6(512) - rotation.y, 0});
+		}
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		if(directionHelper.x)
+		{
+			rotation.z = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.x), __FIX10_6_TO_FIX7_9(directionHelper.y)));
+			directionHelper = Vector3D::rotate(directionHelper, (Rotation){0, 0, __I_TO_FIX10_6(512) - rotation.z});
+		}
+	}
+
+	if(__X_AXIS & axis)
+	{
+		if(directionHelper.y)
+		{
+			rotation.x = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.y), __FIX10_6_TO_FIX7_9(directionHelper.z)));
+		}
+	}
+
+	return rotation;	
+}

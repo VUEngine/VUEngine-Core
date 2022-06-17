@@ -130,6 +130,7 @@ class Container : SpatialObject
 	void translate(const Vector3D* translation);
 	void rotate(const Rotation* rotation);
 	void scale(const Scale* scale);
+	Rotation getRotationFromDirection(const Vector3D* direction, uint8 axis);
 
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);

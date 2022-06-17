@@ -257,34 +257,7 @@ void Actor::doSyncRotationWithBody()
 		}
 		else
 		{
-			Rotation localRotation = this->transformation.localRotation;
-
-			if(__Y_AXIS & this->actorSpec->axisForSynchronizationWithBody)
-			{
-				if(direction3D.x)
-				{
-					localRotation.y = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.z)));
-					direction3D = Vector3D::rotate(direction3D, (Rotation){0, __I_TO_FIX10_6(512) - localRotation.y, 0});
-				}
-			}
-
-			if(__Z_AXIS & this->actorSpec->axisForSynchronizationWithBody)
-			{
-				if(direction3D.x)
-				{
-					localRotation.z = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.y)));
-					direction3D = Vector3D::rotate(direction3D, (Rotation){0, 0, __I_TO_FIX10_6(512) - localRotation.z});
-				}
-			}
-
-			if(__X_AXIS & this->actorSpec->axisForSynchronizationWithBody)
-			{
-				if(direction3D.y)
-				{
-					localRotation.x = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.y), __FIX10_6_TO_FIX7_9(direction3D.z)));
-				}
-			}
-
+			Rotation localRotation = Actor::getRotationFromDirection(this, &direction3D, this->actorSpec->axisForSynchronizationWithBody);
 			Base::setLocalRotation(this, &localRotation);
 		}
 	}
