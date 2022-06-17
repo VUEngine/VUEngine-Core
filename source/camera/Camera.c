@@ -355,7 +355,7 @@ void Camera::setRotation(Rotation rotation)
 {
 	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
 
-	this->rotation = rotation;
+	this->rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
 	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
