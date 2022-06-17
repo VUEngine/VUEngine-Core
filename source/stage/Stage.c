@@ -511,6 +511,12 @@ bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
 
 void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback)
 {
+	if(NULL == requester)
+	{
+		requester = Container::safeCast(this);
+		callback = (EventListener)Stage::onEntityLoaded;
+	}
+
 	EntityFactory::spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
 }
 
