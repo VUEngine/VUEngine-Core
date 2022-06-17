@@ -43,8 +43,6 @@ void Sphere::constructor(Vector3D center, fix10_6 radius, uint8 color)
  */
 void Sphere::destructor()
 {
-	Wireframe::hide(this);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();

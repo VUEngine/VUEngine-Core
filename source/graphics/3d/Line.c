@@ -44,8 +44,6 @@ void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color)
  */
 void Line::destructor()
 {
-	Wireframe::hide(this);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();

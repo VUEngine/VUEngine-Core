@@ -52,8 +52,6 @@ void Polyhedron::constructor(uint8 color)
  */
 void Polyhedron::destructor()
 {
-	Wireframe::hide(this);
-
 	// delete the vertices list
 	if(this->vertices)
 	{
