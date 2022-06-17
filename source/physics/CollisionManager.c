@@ -190,6 +190,11 @@ uint32 CollisionManager::update(Clock clock)
 				continue;
 			}
 
+			if(shape->owner == shapeToCheck->owner)
+			{
+				continue;
+			}
+
 			// load the current shape
 			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || shape == shapeToCheck || (shape->layersToIgnore & shapeToCheck->layers))
 			{
