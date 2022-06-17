@@ -510,7 +510,14 @@ void Container::changeEnvironment(Transformation* environmentTransform)
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
-	this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, this->transformation.localPosition);
+	if(environmentTransform->globalRotation.x || environmentTransform->globalRotation.y || environmentTransform->globalRotation.z)
+	{
+		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, Vector3D::rotate(this->transformation.localPosition, environmentTransform->globalRotation));
+	}
+	else
+	{
+		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, this->transformation.localPosition);
+	}
 }
 
 /**
@@ -554,7 +561,7 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 		Container::applyEnvironmentToScale(this, environmentTransform);
 	}
 
-	if(__INHERIT_POSITION & this->inheritEnvironment)
+	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->inheritEnvironment)
 	{
 		Container::applyEnvironmentToPosition(this, environmentTransform);
 	}
@@ -611,7 +618,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 	if(__INHERIT_POSITION & this->inheritEnvironment)
 	{
 		// apply environment transformation
-		if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+		if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation)
 		{
 			Container::applyEnvironmentToPosition(this, environmentTransform);
 		}

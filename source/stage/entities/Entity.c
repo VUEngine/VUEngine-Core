@@ -992,7 +992,7 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
 
 			//uint16 axisForShapeSyncWithDirection = Entity::getAxisForShapeSyncWithDirection(this);
 
-			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), (this->transformation.globalRotation));
+			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), this->transformation.localRotation);
 
 			Vector3D shapePosition = Vector3D::sum(*myPosition, shapeDisplacement);
 			/*
@@ -1028,19 +1028,18 @@ void Entity::transformShapes()
 	if(this->shapes && this->transformShapes)
 	{
 		// setup shape
-		const Vector3D* myPosition =  Entity::getPosition(this);
-		const Rotation* myRotation =  Entity::getRotation(this);
-		const Scale* myScale =  Entity::getScale(this);
+		const Vector3D* myPosition = Entity::getPosition(this);
+		const Rotation* myRotation = Entity::getRotation(this);
+		const Scale* myScale = Entity::getScale(this);
 
 		Direction currentDirection = Entity::getDirection(this);
-		VirtualNode node = this->shapes->head;
+
 		if(this->entitySpec->shapeSpecs)
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-			VirtualNode node = this->shapes->head;
 			int32 i = 0;
 
-			for(; node && shapeSpecs[i].allocator; node = node->next, i++)
+			for(VirtualNode node = this->shapes->head; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
 				Shape shape = Shape::safeCast(node->data);
 
@@ -1049,7 +1048,7 @@ void Entity::transformShapes()
 		}
 		else
 		{
-			for(; NULL != node; node = node->next)
+			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 			{
 				Shape shape = Shape::safeCast(node->data);
 
