@@ -447,9 +447,9 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
 	return (Vector3D) 
 		{
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) - __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
+			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__COS(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__SIN(degrees))),
 			vector.y,
-			__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
+			-__FIX10_6_MULT(vector.x, __FIX7_9_TO_FIX10_6(__SIN(degrees))) + __FIX10_6_MULT(vector.z, __FIX7_9_TO_FIX10_6(__COS(degrees)))
 		};
 }
 
@@ -467,6 +467,11 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 {
 	Vector3D result = vector;
 
+	if(0 != rotation.x)
+	{
+		result = Vector3D::rotateXAxis(result, __FIX10_6_TO_I(rotation.x + __05F_FIX10_6));
+	}
+
 	if(0 != rotation.y)
 	{
 		result = Vector3D::rotateYAxis(result, __FIX10_6_TO_I(rotation.y + __05F_FIX10_6));
@@ -475,11 +480,6 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 	if(0 != rotation.z)
 	{
 		result = Vector3D::rotateZAxis(result, __FIX10_6_TO_I(rotation.z + __05F_FIX10_6));
-	}
-
-	if(0 != rotation.x)
-	{
-		result = Vector3D::rotateXAxis(result, __FIX10_6_TO_I(rotation.x + __05F_FIX10_6));
 	}
 
 	return result;
