@@ -149,7 +149,7 @@ static fix10_6_ext Math::fix10_6_extInfinity()
 	return 0x3FFFFFFF;
 }
 
-static int32 Math::getAngle(fix7_9 x, fix7_9 y)
+static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 {
 	int32 entry = 0;
 	int32 lastEntry = 0;
@@ -157,40 +157,40 @@ static int32 Math::getAngle(fix7_9 x, fix7_9 y)
 	static int32 totalEntries = (int32)(sizeof(_sinLut) / sizeof(int16));
 
 	// Determine the quadrant
-	if(0 == x)
+	if(0 == cos)
 	{
 		// First quadrant
-		if(0 < y)
+		if(0 < sin)
 		{
 			return entriesPerQuadrant * 1;
 		}
 		// Fourth quadrant
-		else if(0 > y)
+		else if(0 > sin)
 		{
 			return entriesPerQuadrant * 3;
 		}
 
 		return 0;
 	}
-	else if(0 == y)
+	else if(0 == sin)
 	{
 		// First quadrant
-		if(0 < x)
+		if(0 < cos)
 		{
 			return entriesPerQuadrant * 0;
 		}
 		// Fourth quadrant
-		else if(0 > x)
+		else if(0 > cos)
 		{
 			return entriesPerQuadrant * 2;
 		}
 
 		return 0;
 	}
-	else if(0 < x)
+	else if(0 < cos)
 	{
 		// First quadrant
-		if(0 < y)
+		if(0 < sin)
 		{
 			entry = 0;
 			lastEntry = entriesPerQuadrant;
@@ -203,7 +203,7 @@ static int32 Math::getAngle(fix7_9 x, fix7_9 y)
 		}
 	}
 	// Second quadrant
-	else if(0 < y)
+	else if(0 < sin)
 	{
 		entry = entriesPerQuadrant;
 		lastEntry = entry + entriesPerQuadrant;
@@ -216,7 +216,6 @@ static int32 Math::getAngle(fix7_9 x, fix7_9 y)
 	}
 
 	fix7_9 difference = 1024;
-	fix7_9 sin = y;
 	int32 angle = 0;
 
 	for(; entry < lastEntry; entry++)

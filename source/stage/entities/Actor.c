@@ -584,7 +584,7 @@ StateMachine Actor::getStateMachine()
 // stop movement completely
 void Actor::stopAllMovement()
 {
-	Actor::stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
+	Actor::stopMovement(this, __ALL_AXIS);
 }
 
 // stop movement completely
