@@ -1400,33 +1400,72 @@ bool Container::isTransformed()
 Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)
 {
 	Rotation rotation = this->transformation.localRotation;
-	Vector3D directionHelper = *direction;
+
+	if(__X_AXIS & axis)
+	{
+		fix10_6_ext z = direction->z;
+
+		if(direction->x)
+		{
+			z = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->x, direction->x) + __FIX10_6_EXT_MULT(direction->z, direction->z))));
+
+			z = 0 > direction->z ? -z : z;
+		}
+
+		rotation.x = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(direction->y), __FIX10_6_TO_FIX7_9(z))) - __QUARTER_ROTATION_DEGREES;
+	}
+	
+	if(__Y_AXIS & axis)
+	{
+		fix10_6_ext x = direction->x;
+
+		if(direction->y)
+		{
+			x = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->y, direction->y) + __FIX10_6_EXT_MULT(direction->x, direction->x))));
+
+			x = 0 > direction->x ? -x : x;
+		}
+
+		rotation.y = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9((direction->z)), __FIX10_6_TO_FIX7_9(x)));
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		fix10_6_ext y = direction->y;
+
+		if(direction->z)
+		{
+			y = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->z, direction->z) + __FIX10_6_EXT_MULT(direction->y, direction->y))));
+
+			y = 0 > direction->y ? -y : y;
+		}
+
+		rotation.z = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9((direction->x)), __FIX10_6_TO_FIX7_9(y)));
+	}
+
+	if(__X_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.z)
+		{
+			rotation.x = rotation.x - __HALF_ROTATION_DEGREES;
+		}
+	}
 
 	if(__Y_AXIS & axis)
 	{
-		if(directionHelper.x)
+		if(__QUARTER_ROTATION_DEGREES < rotation.x)
 		{
-			rotation.y = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.x), __FIX10_6_TO_FIX7_9(directionHelper.z)));
-			directionHelper = Vector3D::rotate(directionHelper, (Rotation){0, __I_TO_FIX10_6(512) - rotation.y, 0});
+			rotation.y = rotation.y - __HALF_ROTATION_DEGREES;
 		}
 	}
 
 	if(__Z_AXIS & axis)
 	{
-		if(directionHelper.x)
+		if(__QUARTER_ROTATION_DEGREES < rotation.y)
 		{
-			rotation.z = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.x), __FIX10_6_TO_FIX7_9(directionHelper.y)));
-			directionHelper = Vector3D::rotate(directionHelper, (Rotation){0, 0, __I_TO_FIX10_6(512) - rotation.z});
+			rotation.z = rotation.z - __HALF_ROTATION_DEGREES;
 		}
 	}
 
-	if(__X_AXIS & axis)
-	{
-		if(directionHelper.y)
-		{
-			rotation.x = __I_TO_FIX10_6(Math::getAngle(__FIX10_6_TO_FIX7_9(directionHelper.y), __FIX10_6_TO_FIX7_9(directionHelper.z)));
-		}
-	}
-
-	return rotation;	
+	return Rotation::clamp(rotation.x, rotation.y, rotation.z);	
 }
