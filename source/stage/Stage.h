@@ -218,6 +218,7 @@ class Stage : Container
 	void setupTimer();
 	Size getSize();
 	PixelSize getPixelSize();
+	PixelOptical getPixelOptical();
 	CameraFrustum getCameraFrustum();
 	void addEntityLoadingListener(Object context, EventListener callback);
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);

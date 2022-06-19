@@ -271,9 +271,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// load background music
 	Stage::setupSounds(this);
 
-	// set optical values
-	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
-
 	if(overrideCameraPosition)
 	{
 		Camera::reset(Camera::getInstance());
@@ -281,7 +278,8 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition), true);
 	}
 
-	Camera::setCameraFrustum(Camera::getInstance(), this->stageSpec->level.cameraFrustum);
+	// set optical values
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	Stage::prepareGraphics(this);
 
@@ -354,6 +352,15 @@ CameraFrustum Stage::getCameraFrustum()
 	// set world's limits
 	return this->stageSpec->level.cameraFrustum;
 }
+
+PixelOptical Stage::getPixelOptical()
+{
+	ASSERT(this->stageSpec, "Stage::getPixelOptical: null stageSpec");
+
+	// set world's limits
+	return this->stageSpec->rendering.pixelOptical;
+}
+
 // setup ui
 void Stage::setupUI()
 {
@@ -1175,7 +1182,7 @@ void Stage::resume()
 	Stage::setupSounds(this);
 
 	// set back optical values
-	Camera::setOpticalFromPixelOptical(Camera::getInstance(), this->stageSpec->rendering.pixelOptical);
+	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// set physics
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);

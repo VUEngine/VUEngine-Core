@@ -94,7 +94,7 @@ void Camera::constructor()
     	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
     };
 
-	Camera::setOpticalFromPixelOptical(this, pixelOptical);
+	Camera::setup(this, pixelOptical, this->cameraFrustum);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
@@ -427,9 +427,12 @@ void Camera::setOptical(Optical optical)
  * Set optical config structure from PixelOptical
  *
  * @param optical
+ * @param cameraFrustum
  */
-void Camera::setOpticalFromPixelOptical(PixelOptical pixelOptical)
+void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
+	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
+
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->opticalBackup = this->optical;
 
@@ -520,42 +523,40 @@ void Camera::resetCameraFrustum()
  *
  * @param cameraFrustum	Camera frustum
  */
-void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
+CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 {
-	this->cameraFrustum = cameraFrustum;
-
-	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
+	if(cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
-		this->cameraFrustum.x1 = __SCREEN_WIDTH;
+		cameraFrustum.x1 = __SCREEN_WIDTH;
 	}
 
-	if(this->cameraFrustum.y1 > __SCREEN_HEIGHT)
+	if(cameraFrustum.y1 > __SCREEN_HEIGHT)
 	{
-		this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+		cameraFrustum.y1 = __SCREEN_HEIGHT;
 	}
 
 	// 9: 2's power equal to the math type fix10_6
-	if(this->cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
+	if(cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
 	{
-		this->cameraFrustum.z1 = 1;
+		cameraFrustum.z1 = 1;
 	}
 
-	if(this->cameraFrustum.x0 > this->cameraFrustum.x1)
+	if(cameraFrustum.x0 > cameraFrustum.x1)
 	{
-		this->cameraFrustum.x0 = this->cameraFrustum.x1 - 1;
+		cameraFrustum.x0 = cameraFrustum.x1 - 1;
 	}
 
-	if(this->cameraFrustum.y0 > this->cameraFrustum.y1)
+	if(cameraFrustum.y0 > cameraFrustum.y1)
 	{
-		this->cameraFrustum.y0 = this->cameraFrustum.y1 - 1;
+		cameraFrustum.y0 = cameraFrustum.y1 - 1;
 	}
 
-	if(this->cameraFrustum.z0 > this->cameraFrustum.z1)
+	if(cameraFrustum.z0 > cameraFrustum.z1)
 	{
-		this->cameraFrustum.z0 = this->cameraFrustum.z1 - 1;
+		cameraFrustum.z0 = cameraFrustum.z1 - 1;
 	}
 
-	this->optical = Optical::updateWithCameraFrustum(this->optical, this->cameraFrustum);
+	return cameraFrustum;
 }
 
 /**

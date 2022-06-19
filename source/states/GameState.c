@@ -220,7 +220,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		// Set camera to its previous position
 		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
 		Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
-		Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
+		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
 
 		// Reset the engine state
 		Game::reset(Game::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);

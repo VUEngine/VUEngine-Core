@@ -121,12 +121,11 @@ singleton class Camera : Object
 	void reset();
 	void resetCameraFrustum();
 	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
-	void setCameraFrustum(CameraFrustum cameraFrustum);
 	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
 	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
 	void setFocusGameEntity(Entity focusEntity);
 	void setOptical(Optical optical);
-	void setOpticalFromPixelOptical(PixelOptical pixelOptical);
+	void setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
 	void setPosition(Vector3D position, bool cap);
 	void setRotation(Rotation rotation);
 	void rotate(Rotation rotation);
