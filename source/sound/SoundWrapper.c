@@ -93,10 +93,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
  */
 void SoundWrapper::destructor()
 {
-	if(!this->released)
-	{
-		MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
-	}
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
 	if(!isDeleted(this->channels))
 	{
@@ -172,6 +169,11 @@ void SoundWrapper::setVolumeReduction(int8 volumeReduction)
 
 bool SoundWrapper::handleMessage(Telegram telegram)
 {
+	if(this->released)
+	{
+		return false;
+	}
+
 	switch(Telegram::getMessage(telegram))
 	{
 		case kSoundWrapperFadeIn:
@@ -273,6 +275,11 @@ bool SoundWrapper::isFadingOut()
  */
 void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 {
+	if(this->released)
+	{
+		return;
+	}
+
 	bool wasPaused = this->paused;
 	this->paused = false;
 	this->turnedOn = true;
@@ -486,8 +493,6 @@ void SoundWrapper::release()
 		delete this->channels;
 		this->channels = NULL;
 	}
-
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
 
 	if(this->events)
 	{

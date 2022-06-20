@@ -1257,23 +1257,24 @@ void Stage::setupSounds()
 
 		if(!isDeleted(soundWrapper))
 		{
-			if(SoundWrapper::isPaused(soundWrapper))
-			{
-				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
-			}
-
 			if(isDeleted(this->soundWrappers))
 			{
 				this->soundWrappers = new VirtualList();
 			}
 
 			VirtualList::pushBack(this->soundWrappers, soundWrapper);
+
+			if(SoundWrapper::isPaused(soundWrapper))
+			{
+				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+			}
 		}
 	}
 }
 
 void Stage::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
 {
+	VirtualList::removeElement(this->soundWrappers, eventFirer);
 }
 
 void Stage::setupTimer()

@@ -207,7 +207,6 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 		}
 		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 		{
-
 			Telegram telegram = delayedMessage->telegram;
 
 			if(!isDeleted(telegram))
@@ -360,6 +359,38 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 	}
 
 	return messagesWereDiscarded;
+}
+
+/**
+ * Print all delayed messages sent by an object
+ *
+ * @private
+ * @param sender	the object that originally sent the message
+ */
+void MessageDispatcher::printAllDelayedMessagesFromSender(Object sender, int16 x, int16 y)
+{
+	for(VirtualNode node = this->delayedMessages->head; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage))
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(Telegram::getSender(telegram) == sender)
+			{
+				PRINT_INT(telegram->message, x, y);
+				PRINT_TEXT(__GET_CLASS_NAME(telegram->sender), x + 4, y);
+				PRINT_TEXT(__GET_CLASS_NAME(telegram->receiver), x + 15, y++);
+
+				if(27 < y)
+				{
+					x = 24;
+					y = 1;
+				}
+			}
+		}
+	}
 }
 
 /**

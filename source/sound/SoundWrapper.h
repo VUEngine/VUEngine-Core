@@ -200,7 +200,7 @@ enum SoundWrapperPlaybackTypes
 
 enum SoundWrapperMessages
 {
-	kSoundWrapperFadeIn = 0,
+	kSoundWrapperFadeIn = 23,
 	kSoundWrapperFadeOut,
 };
 //---------------------------------------------------------------------------------------------------------
