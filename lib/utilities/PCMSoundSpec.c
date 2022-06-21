@@ -94,7 +94,7 @@ SoundChannelROM PCMSoundChannel =
 };
 
 
-SoundChannelROM* PCMSoundChannels[] =
+SoundChannelROM* const PCMSoundChannels[] =
 {
 	&PCMSoundChannel,
 	NULL
