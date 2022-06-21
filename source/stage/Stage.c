@@ -518,7 +518,7 @@ bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
 
 void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback)
 {
-	if(NULL == requester)
+	if(NULL == requester && !isDeleted(this->entityLoadingListeners))
 	{
 		requester = Container::safeCast(this);
 		callback = (EventListener)Stage::onEntityLoaded;
@@ -945,7 +945,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), (EventListener)Stage::onEntityLoaded, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
 					}
 					else
 					{
@@ -987,7 +987,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), (EventListener)Stage::onEntityLoaded, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
 					}
 					else
 					{

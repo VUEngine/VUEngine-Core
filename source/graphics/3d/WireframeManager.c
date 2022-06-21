@@ -192,6 +192,11 @@ bool WireframeManager::sortProgressively()
  */
 void WireframeManager::render()
 {
+	if(NULL == this->wireframes->head)
+	{
+		return;
+	}
+
 	this->stopRendering = false;
 
 	// check the shapes
@@ -214,6 +219,11 @@ void WireframeManager::render()
  */
 void WireframeManager::draw()
 {
+	if(NULL == this->wireframes->head)
+	{
+		return;
+	}
+
 	DirectDraw::startDrawing(_directDraw);
 
 	this->stopDrawing = false;
