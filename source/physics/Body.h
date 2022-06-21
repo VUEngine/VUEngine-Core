@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <SpatialObject.h>
 
 
@@ -73,7 +73,7 @@ typedef const PhysicalSpecification PhysicalSpecificationROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-class Body : Object
+class Body : ListenerObject
 {
 	// owner
 	SpatialObject owner;
@@ -140,7 +140,7 @@ class Body : Object
 	void applySustainedForce(const Force* force);
 	uint8 applyForce(const Force* force);
 	uint8 applyGravity(uint16 axis);
-	void bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
+	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
 	void clearAcceleration(uint16 axis);
 	void clearExternalForce();
 	Acceleration getAcceleration();
@@ -170,7 +170,7 @@ class Body : Object
 	Force getNormal();
 	Force getLastNormalDirection();
 	void reset();
-	void clearNormal(Object referent);
+	void clearNormal(ListenerObject referent);
 	fix10_6 getFrictionForceMagnitude();
 	fix10_6 getFrictionCoefficient();
 	void setFrictionCoefficient(fix10_6 frictionCoefficient);

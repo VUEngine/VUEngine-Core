@@ -262,9 +262,9 @@ void Container::removeChild(Container child, bool deleteChild)
 	else
 	{
 		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-		Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
+		Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
 		NM_ASSERT(false, "Container::removeChild: not my child");
@@ -310,9 +310,9 @@ void Container::purgeChildren()
 			if(isDeleted(child))
 			{
 				Printing::setDebugMode(Printing::getInstance());
-				Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
 				Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-				Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
 				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
@@ -1352,7 +1352,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(!classPointer || Object::getCast((Object)child, classPointer, NULL))
+			if(!classPointer || Object::getCast((ListenerObject)child, classPointer, NULL))
 			{
 				VirtualList::pushBack(children, child);
 			}
@@ -1377,7 +1377,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
-			if(!classPointer || Object::getCast((Object)behavior, classPointer, NULL))
+			if(!classPointer || Object::getCast((ListenerObject)behavior, classPointer, NULL))
 			{
 				VirtualList::pushBack(behaviors, behavior);
 			}

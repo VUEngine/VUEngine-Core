@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <CharSet.h>
 #include <PrintingSprite.h>
 
@@ -187,7 +187,7 @@ typedef const FontData FontROMData;
  *
  * @ingroup graphics-2d
  */
-singleton class Printing : Object
+singleton class Printing : ListenerObject
 {
 	/// @protectedsection
 

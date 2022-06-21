@@ -187,7 +187,7 @@ void Printing::setDirection(uint8 value)
 	}
 }
 
-void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
+void Printing::onFontCharSetRewritten(ListenerObject eventFirer __attribute__((unused)))
 {
 	Printing::fireEvent(this, kEventFontRewritten);
 	NM_ASSERT(!isDeleted(this), "Printing::onFontCharSetRewritten: deleted this during kEventFontRewritten");
@@ -228,7 +228,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				}
 			}
 		}
@@ -296,7 +296,7 @@ void Printing::releaseFonts()
 
 		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
 		{
-			CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+			CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 
 			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 		}
@@ -352,7 +352,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 			}
 		}
 	}

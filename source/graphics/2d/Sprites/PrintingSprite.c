@@ -42,7 +42,7 @@
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner)
+void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
 

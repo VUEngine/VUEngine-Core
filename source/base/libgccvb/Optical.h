@@ -31,7 +31,7 @@
 //											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static class Optical : Object
+static class Optical : ListenerObject
 {
 	static inline Optical getFromPixelOptical(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
 	static inline Optical updateWithCameraFrustum(Optical optical, CameraFrustum cameraFrustum);

@@ -37,7 +37,7 @@ extern uint32 _seed;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Utilities : Object
+static class Utilities : ListenerObject
 {
 	/// @publicsection
 	static void setClock(Clock clock);

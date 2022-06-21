@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VIPManager.h>
 #include <MiscStructs.h>
 #include <Texture.h>
@@ -132,7 +132,7 @@ typedef const AnimationDescription AnimationDescriptionROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-abstract class Sprite : Object
+abstract class Sprite : ListenerObject
 {
 	// Projected position based on optics configuration
 	PixelVector position;
@@ -143,7 +143,7 @@ abstract class Sprite : Object
 	// Our texture
 	Texture texture;
 	// Owner
-	Object owner;
+	ListenerObject owner;
 	// Head spec for world entry setup
 	uint16 head;
 	// Texture's half width
@@ -170,7 +170,7 @@ abstract class Sprite : Object
 	uint8 renderFlag;
 
 	/// @publicsection
-	void constructor(const SpriteSpec* spriteSpec, Object owner);
+	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);
 	const PixelVector* getPosition();
 	uint16 getHead();
 	uint16 getMode();
@@ -200,7 +200,7 @@ abstract class Sprite : Object
 	bool isPlayingFunction(char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, char* functionName, Object scope);
+	bool play(const AnimationDescription* animationDescription, char* functionName, ListenerObject scope);
 	void stop();
 	bool replay(const AnimationDescription* animationDescription);
 	void previousFrame();

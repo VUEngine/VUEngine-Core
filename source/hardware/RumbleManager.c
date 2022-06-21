@@ -145,7 +145,7 @@ static void RumbleManager::execute()
 		}
 		else
 		{
-	        CommunicationManager::broadcastDataAsync(_rumbleManager->communicationManager, (BYTE*)_rumbleManager->rumbleCommands, _rumbleManager->rumbleCommandIndex, (EventListener)RumbleManager::onBroadcastDataDone, Object::safeCast(_rumbleManager));
+	        CommunicationManager::broadcastDataAsync(_rumbleManager->communicationManager, (BYTE*)_rumbleManager->rumbleCommands, _rumbleManager->rumbleCommandIndex, (EventListener)RumbleManager::onBroadcastDataDone, ListenerObject::safeCast(_rumbleManager));
 		}
     }
     else
@@ -156,7 +156,7 @@ static void RumbleManager::execute()
 #endif
 }
 
-void RumbleManager::onBroadcastDataDone(Object eventFirer __attribute__ ((unused)))
+void RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
 {
     this->rumbleCommandIndex = 0;
 }

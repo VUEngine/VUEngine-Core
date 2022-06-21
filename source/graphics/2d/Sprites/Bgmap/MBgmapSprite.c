@@ -53,7 +53,7 @@ friend class VirtualList;
  * @param mBgmapSpriteSpec		Spec to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner)
+void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&mBgmapSpriteSpec->bgmapSpriteSpec, owner);
 
@@ -115,7 +115,7 @@ void MBgmapSprite::releaseTextures()
 		for(; NULL != node; node = node->next)
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+			BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
 		}
 
@@ -191,7 +191,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	NM_ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
-	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+	BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 	VirtualList::pushBack(this->textures, bgmapTexture);
 }

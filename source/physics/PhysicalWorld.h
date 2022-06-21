@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Body.h>
 #include <SpatialObject.h>
 #include <Clock.h>
@@ -41,7 +41,7 @@ typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, uint1
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-class PhysicalWorld : Object
+class PhysicalWorld : ListenerObject
 {
 	// list of registered bodies
 	VirtualList	bodies;

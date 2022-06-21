@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Clock.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class ClockManager : Object
+singleton class ClockManager : ListenerObject
 {
 	// registered clocks
 	VirtualList clocks;

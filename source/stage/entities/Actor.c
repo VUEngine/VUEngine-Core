@@ -511,7 +511,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 
 			if(Actor::mustBounce(this))
 			{
-				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
 
@@ -722,7 +722,7 @@ void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotC
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 }
 
@@ -737,7 +737,7 @@ void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), S
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 }
 

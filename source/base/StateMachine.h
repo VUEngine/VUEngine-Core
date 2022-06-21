@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <State.h>
 #include <VirtualList.h>
@@ -26,9 +26,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-class StateMachine : Object
+class StateMachine : ListenerObject
 {
-	// Object which owns this instance
+	// ListenerObject which owns this instance
 	void* owner;
 	// Pointer to the current state
 	State currentState;

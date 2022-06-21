@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Wireframe.h>
 #include <VirtualList.h>
 
@@ -26,7 +26,7 @@
 
 /// @ingroup graphics-3d
 
-singleton class WireframeManager : Object
+singleton class WireframeManager : ListenerObject
 {
 	volatile bool stopRendering;
 	volatile bool stopDrawing;

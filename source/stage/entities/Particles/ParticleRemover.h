@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Particle.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities-particles
-class ParticleRemover : Object
+class ParticleRemover : ListenerObject
 {
 	// List of Particles
 	VirtualList particlesLists;

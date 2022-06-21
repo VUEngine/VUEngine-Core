@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Sprite.h>
 #include <ObjectSpriteContainer.h>
 
@@ -50,11 +50,11 @@ typedef struct SpritesList
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-singleton class SpriteManager : Object
+singleton class SpriteManager : ListenerObject
 {
 	// Sprites to render
 	VirtualList sprites;
-	// Object sprite containers
+	// ListenerObject sprite containers
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects
 	VirtualList specialSprites;
@@ -80,7 +80,7 @@ singleton class SpriteManager : Object
 	/// @publicsection
 	static SpriteManager getInstance();
 
-	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
+	Sprite createSprite(SpriteSpec* spriteSpec, ListenerObject owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
 	void deferParamTableEffects(bool deferAffineTransformations);

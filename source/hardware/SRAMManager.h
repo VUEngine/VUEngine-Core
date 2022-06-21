@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ struct SaveData;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class SRAMManager : Object
+singleton class SRAMManager : ListenerObject
 {
 	// save space start address
 	uint16* saveSpaceStartAddress;

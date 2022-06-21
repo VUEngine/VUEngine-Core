@@ -99,7 +99,7 @@ static uint32 timeBeforeProcess = 0;
 
 typedef struct EntityLoadingListener
 {
-	Object context;
+	ListenerObject context;
 	EventListener callback;
 } EntityLoadingListener;
 
@@ -387,7 +387,7 @@ void Stage::setupUI()
 	}
 }
 
-void Stage::onEntityLoaded(Object eventFirer)
+void Stage::onEntityLoaded(ListenerObject eventFirer)
 {
 	Entity entity = Entity::safeCast(eventFirer);
 
@@ -479,7 +479,7 @@ void Stage::makeChildReady(Entity entity)
 	}
 }
 
-void Stage::addEntityLoadingListener(Object context, EventListener callback)
+void Stage::addEntityLoadingListener(ListenerObject context, EventListener callback)
 {
 	if(isDeleted(context) || NULL == callback)
 	{
@@ -580,8 +580,8 @@ void Stage::unloadChild(Container child)
 	Container::fireEvent(child, kEventStageChildStreamedOut);
 	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deleted child during kEventStageChildStreamedOut");
 	Container::removeEventListeners(child, NULL, kEventStageChildStreamedOut);
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
 
 	int16 internalId = Entity::getInternalId(child);
 
@@ -661,7 +661,7 @@ void Stage::preloadAssets()
 			}
 			else
 			{
-				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
+				ASSERT(this, "Stage::preloadAssets: loading an ListenerObject texture");
 			}
 		}
 
@@ -1252,7 +1252,7 @@ void Stage::setupSounds()
 
 		if(isDeleted(soundWrapper))
 		{
-			soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, Object::safeCast(this));
+			soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, ListenerObject::safeCast(this));
 		}
 
 		if(!isDeleted(soundWrapper))
@@ -1272,7 +1272,7 @@ void Stage::setupSounds()
 	}
 }
 
-void Stage::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
+void Stage::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	VirtualList::removeElement(this->soundWrappers, eventFirer);
 }
@@ -1293,7 +1293,7 @@ bool Stage::handlePropagatedMessage(int32 message)
 	return false;
 }
 
-void Stage::onFocusEntityDeleted(Object eventFirer __attribute__ ((unused)))
+void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->focusEntity = NULL;
 
@@ -1310,14 +1310,14 @@ void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(this->focusEntity)
 	{
-		Entity::removeEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(this->focusEntity)
 	{
-		Entity::addEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);

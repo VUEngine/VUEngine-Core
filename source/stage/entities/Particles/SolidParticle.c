@@ -185,7 +185,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
 			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
 
-			Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
 		}
 	}
@@ -307,7 +307,7 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 
 	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));

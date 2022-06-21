@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 
@@ -25,14 +25,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites-animation
-singleton class AnimationCoordinatorFactory : Object
+singleton class AnimationCoordinatorFactory : ListenerObject
 {
 	// entities that use bgmap sprites
 	VirtualList animationCoordinators;
 
 	/// @publicsection
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationController animationController, Object scope, const CharSetSpec* charSetSpec);
+	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
 	void reset();
 }
 

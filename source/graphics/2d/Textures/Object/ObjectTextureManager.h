@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <ObjectTexture.h>
 
 
@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-textures-bgmap
-singleton class ObjectTextureManager : Object
+singleton class ObjectTextureManager : ListenerObject
 {
 	VirtualList objectTextures;
 

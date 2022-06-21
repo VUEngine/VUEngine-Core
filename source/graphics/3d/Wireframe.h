@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-3d
-abstract class Wireframe : Object
+abstract class Wireframe : ListenerObject
 {
 	const Vector3D* position;
 	const Rotation* rotation;

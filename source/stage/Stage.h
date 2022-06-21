@@ -220,7 +220,7 @@ class Stage : Container
 	PixelSize getPixelSize();
 	PixelOptical getPixelOptical();
 	CameraFrustum getCameraFrustum();
-	void addEntityLoadingListener(Object context, EventListener callback);
+	void addEntityLoadingListener(ListenerObject context, EventListener callback);
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);

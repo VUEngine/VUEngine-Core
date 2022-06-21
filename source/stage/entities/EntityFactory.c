@@ -214,7 +214,7 @@ uint32 EntityFactory::instantiateEntities()
 
 			if(positionedEntityDescription->callback)
 			{
-				Entity::addEventListener(positionedEntityDescription->entity, Object::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
+				Entity::addEventListener(positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
 			}
 		}
 	}

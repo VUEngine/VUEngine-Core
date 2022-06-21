@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <MIDI.h>
 #include <VirtualList.h>
 
@@ -208,7 +208,7 @@ enum SoundWrapperMessages
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities-particles
-class SoundWrapper : Object
+class SoundWrapper : ListenerObject
 {
 	const Sound* sound;
 	const Vector3D* position;
@@ -231,7 +231,7 @@ class SoundWrapper : Object
 	bool released;
 
 	/// @publicsection
-	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
+	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope);
 
 	const Channel* getChannel(uint8 index);
 	bool isPaused();

@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Rotation : Object
+static class Rotation : ListenerObject
 {
 	/// @publicsection
 	static inline Rotation zero();

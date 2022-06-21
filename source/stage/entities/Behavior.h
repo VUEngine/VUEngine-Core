@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ typedef const BehaviorSpec BehaviorROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-abstract class Behavior : Object
+abstract class Behavior : ListenerObject
 {
 	bool enabled;
 

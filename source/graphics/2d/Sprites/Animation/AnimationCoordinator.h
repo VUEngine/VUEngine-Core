@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <CharSet.h>
 #include <Sprite.h>
 #include <AnimationController.h>
@@ -26,17 +26,17 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites-animation
-class AnimationCoordinator : Object
+class AnimationCoordinator : ListenerObject
 {
 	// who owns the coordinator
-	Object scope;
+	ListenerObject scope;
 	// Controllers to sync
 	VirtualList animationControllers;
 	// Charset spec shared among entities
 	const CharSetSpec* charSetSpec;
 
 	/// @publicsection
-	void constructor(const CharSetSpec* charSetSpec, Object scope);
+	void constructor(const CharSetSpec* charSetSpec, ListenerObject scope);
 	const CharSetSpec* getCharSetSpec();
 	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
 	void addAnimationController(AnimationController animationController);

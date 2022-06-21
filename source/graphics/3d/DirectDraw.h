@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Shape.h>
 #include <Camera.h>
 
@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-3d
-singleton class DirectDraw : Object
+singleton class DirectDraw : ListenerObject
 {
 	uint16 totalDrawPixels;
 	uint16 maximuDrawPixels;

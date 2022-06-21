@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class FrameRate : Object
+singleton class FrameRate : ListenerObject
 {
 	// elapsed time in current 50hz cycle
 	float gameFrameTotalTime;

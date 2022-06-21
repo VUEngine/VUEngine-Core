@@ -81,7 +81,7 @@ void MessageDispatcher::destructor()
  * @param extraInfo	pointer to any extra data that must accompany the message
  * @return			a flag indicating the status of the processing of the message
  */
-static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Object receiver, int32 message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -98,7 +98,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 			Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
 			// send the telegram to the recipient
-			result = Object::handleMessage(receiver, telegram);
+			result = ListenerObject::handleMessage(receiver, telegram);
 
 			delete telegram;
 		}
@@ -112,7 +112,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 			_messageDispatcher->helperTelegramIsInUse = true;
 
 			// send the telegram to the recipient
-			result = Object::handleMessage(receiver, _messageDispatcher->helperTelegram);
+			result = ListenerObject::handleMessage(receiver, _messageDispatcher->helperTelegram);
 
 			_messageDispatcher->helperTelegramIsInUse = false;
 		}
@@ -137,7 +137,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
- 	Object sender, Object receiver, int32 message, void* extraInfo)
+ 	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// create the telegram
 	DelayedMessage* delayedMessage = new DelayedMessage;
@@ -221,7 +221,7 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 				if(!isDeleted(sender) && !isDeleted(receiver))
 				{
 					messagesDispatched |= true;
-					Object::handleMessage(receiver, telegram);
+					ListenerObject::handleMessage(receiver, telegram);
 				}
 			}
 
@@ -276,7 +276,7 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 message)
+bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -307,7 +307,7 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 me
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32 message)
+bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -337,7 +337,7 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32
  * @private
  * @param sender	the object that originally sent the message
  */
-bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
+bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -367,7 +367,7 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
  * @private
  * @param sender	the object that originally sent the message
  */
-void MessageDispatcher::printAllDelayedMessagesFromSender(Object sender, int16 x, int16 y)
+void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
 {
 	for(VirtualNode node = this->delayedMessages->head; NULL != node; node = node->next)
 	{
@@ -399,7 +399,7 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(Object sender, int16 x
  * @private
  * @param sender	the object that the message was originally sent to
  */
-bool MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
+bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;

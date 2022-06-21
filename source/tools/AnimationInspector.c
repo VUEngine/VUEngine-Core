@@ -748,7 +748,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
@@ -923,7 +923,7 @@ void AnimationInspector::createFrameEditionSelector()
  * @private
  * @param eventFirer		AnimationController
  */
-void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((unused)))
+void AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{

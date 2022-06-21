@@ -638,7 +638,7 @@ void TimerManager::wait(uint32 milliSeconds)
  * @param object			Called method's scope
  * @param method			Method to call
  */
-void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32))
+void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
 {
 	if(!isDeleted(object) && method)
 	{

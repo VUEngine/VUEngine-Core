@@ -586,7 +586,7 @@ void Game::dispatchDelayedMessages()
 	{
 #endif
 
-	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
@@ -818,6 +818,9 @@ void Game::nextFrameStarted()
 		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
 		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
 #endif
+
+#define __SHOW_MEMORY_POOL_STATUS
+#define __SHOW_DETAILED_MEMORY_POOL_STATUS
 
 #ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!Game::isInSpecialMode(this))
@@ -1223,12 +1226,12 @@ void Game::saveProcessNameDuringXPEND()
  *
  * @param saveDataManager
  */
-void Game::registerSaveDataManager(Object saveDataManager)
+void Game::registerSaveDataManager(ListenerObject saveDataManager)
 {
 	this->saveDataManager = saveDataManager;
 }
 
-Object Game::getSaveDataManager()
+ListenerObject Game::getSaveDataManager()
 {
 	return this->saveDataManager;
 }

@@ -48,7 +48,7 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void TextObjectSprite::constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner)
+void TextObjectSprite::constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&textObjectSpriteSpec->objectSpriteSpec, owner);
 

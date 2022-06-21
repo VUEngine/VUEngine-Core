@@ -91,7 +91,7 @@ enum CollidingObjectIndexes
 
 typedef struct NormalRegistry
 {
-	Object referent;
+	ListenerObject referent;
 	Vector3D direction;
 	fix10_6 magnitude;
 
@@ -420,14 +420,14 @@ void Body::update()
 
 				if(movementResult.axisStoppedMovement && this->sendMessages)
 				{
-					MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
+					MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
 				}
 			}
 
 			// no one uses this
 /*			if(movementResult.axisOfChangeOfMovement)
 			{
-				MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyChangedDirection, &movementResult.axisOfChangeOfMovement);
+				MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyChangedDirection, &movementResult.axisOfChangeOfMovement);
 			}
 */		}
 
@@ -829,7 +829,7 @@ void Body::computeTotalNormal()
 	Body::computeFrictionForceMagnitude(this);
 }
 
-void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
+void Body::addNormal(ListenerObject referent, Vector3D direction, fix10_6 magnitude)
 {
 	ASSERT(referent, "Body::addNormal: null referent");
 
@@ -935,7 +935,7 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 	Body::computeTotalNormal(this);
 }
 
-void Body::clearNormal(Object referent)
+void Body::clearNormal(ListenerObject referent)
 {
 	ASSERT(!isDeleted(referent), "Body::clearNormal: dead referent");
 
@@ -1091,7 +1091,7 @@ void Body::awake(uint16 axisOfAwakening)
 
 		if(dispatchMessage)
 		{
-			MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
+			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
 		}
 	}
 }
@@ -1175,7 +1175,7 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 }
 
 // bounce back
-void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
+void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
 {
 	Acceleration gravity = Body::getGravity(this);
 
@@ -1252,7 +1252,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 		if(axisOfStopping && this->sendMessages)
 		{
-			MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
+			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}
 	}
 

@@ -181,7 +181,7 @@ void CommunicationManager::reset()
 	}
 }
 
-void CommunicationManager::enableCommunications(EventListener eventLister, Object scope)
+void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
 {
 	if(this->connected || kCommunicationsStatusIdle != this->status)
 	{
@@ -256,7 +256,7 @@ bool CommunicationManager::cancelCommunications()
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsConnected);
 	CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 
 	return true;
 }
@@ -314,7 +314,7 @@ void CommunicationManager::startClockSignal()
 
 void CommunicationManager::waitForRemote()
 {
-	MessageDispatcher::dispatchMessage(1, Object::safeCast(this), Object::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
+	MessageDispatcher::dispatchMessage(1, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
 }
 
 bool CommunicationManager::handleMessage(Telegram telegram)
@@ -721,7 +721,7 @@ bool CommunicationManager::broadcastData(BYTE* data, int32 numberOfBytes)
 	return true;
 }
 
-void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
+void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(CommunicationManager::isConnected(this))
 	{
@@ -750,7 +750,7 @@ void CommunicationManager::broadcastDataAsync(BYTE* data, int32 numberOfBytes, E
 	return;
 }
 
-bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -866,7 +866,7 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	return true;
 }
 
-bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	if(!data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
@@ -927,7 +927,7 @@ bool CommunicationManager::sendAndReceiveData(WORD message, BYTE* data, int32 nu
 	return CommunicationManager::startBidirectionalDataTransmission(this, message, data, numberOfBytes);
 }
 
-bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope)
+bool CommunicationManager::sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
 	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, message, data, numberOfBytes, eventLister, scope);
 }

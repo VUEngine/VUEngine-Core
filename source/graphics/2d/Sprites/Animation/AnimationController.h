@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Clock.h>
 #include <CharSet.h>
 #include <Sprite.h>
@@ -29,7 +29,7 @@
 class AnimationCoordinator;
 
 /// @ingroup graphics-2d-sprites-animation
-class AnimationController : Object
+class AnimationController : ListenerObject
 {
 	// who owns the animated sprite
 	AnimationCoordinator animationCoordinator;
@@ -64,9 +64,9 @@ class AnimationController : Object
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, const char* functionName, Object scope);
+	bool play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope);
 	bool replay(const AnimationDescription* animationDescription);
-	void playAnimationFunction(const AnimationFunction* animationFunction, Object scope);
+	void playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope);
 	void nextFrame();
 	void previousFrame();
 	bool setActualFrame(int16 actualFrame);

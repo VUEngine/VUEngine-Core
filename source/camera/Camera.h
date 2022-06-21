@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <Entity.h>
 #include <CameraMovementManager.h>
@@ -71,7 +71,7 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup camera
-singleton class Camera : Object
+singleton class Camera : ListenerObject
 {
 	// Optical values used in projection values
 	Optical optical;

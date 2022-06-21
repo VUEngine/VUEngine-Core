@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Scale : Object
+static class Scale : ListenerObject
 {
 	/// @publicsection
 	static inline Scale zero();

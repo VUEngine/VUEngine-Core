@@ -95,7 +95,7 @@ class BgmapSprite : Sprite
 	int16 paramTableRow;
 
 	/// @publicsection
-	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner);
+	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
 	DrawSpec getDrawSpec();
 	void invalidateParamTable();
 	void setDrawSpec(const DrawSpec* const drawSpec);
@@ -106,7 +106,7 @@ class BgmapSprite : Sprite
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 	void processAffineEffects();
 	void processHbiasEffects();
-	void onTextureRewritten(Object eventFirer);
+	void onTextureRewritten(ListenerObject eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
 

@@ -59,7 +59,7 @@ typedef struct QueuedSound
 	bool isPositionValid;
 	uint32 playbackType;
 	EventListener soundReleaseListener;
-	Object scope;
+	ListenerObject scope;
 
 } QueuedSound;
 
@@ -740,7 +740,7 @@ void SoundManager::unlock()
 	this->lock = false;
 }
 
-void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope)
+void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope)
 {
 	if(this->lock || NULL == sound)
 	{
@@ -796,7 +796,7 @@ SoundWrapper SoundManager::findSound(const Sound* sound)
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope)
 {
 	if(this->lock)
 	{
@@ -806,7 +806,7 @@ SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventLis
 	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope);
 }
 
-SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope)
+SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 

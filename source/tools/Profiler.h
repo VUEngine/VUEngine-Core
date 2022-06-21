@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <TimerManager.h>
 #include <VirtualList.h>
 
@@ -38,7 +38,7 @@ enum ProfilerLapTypes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class Profiler : Object
+singleton class Profiler : ListenerObject
 {
 	VirtualList laps;
 	TimerManager timerManager;

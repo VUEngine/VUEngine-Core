@@ -85,7 +85,7 @@ void SpriteManager::constructor()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->stopRendering = false;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	SpriteManager::reset(this);
 }
@@ -95,7 +95,7 @@ void SpriteManager::constructor()
  */
 void SpriteManager::destructor()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	SpriteManager::cleanUp(this);
 
@@ -103,7 +103,7 @@ void SpriteManager::destructor()
 	Base::destructor();
 }
 
-void SpriteManager::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
+void SpriteManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = true;
 }
@@ -306,12 +306,12 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 seg
  *
  * @param sprite	Sprite to dispose
  */
-Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, Object owner)
+Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
 {
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
-	Sprite sprite = ((Sprite (*)(SpriteSpec*, Object)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
+	Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	return sprite;

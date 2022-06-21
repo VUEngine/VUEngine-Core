@@ -637,7 +637,7 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 	ClassSizeData classesSizeData[] =
 	{
 		{&Clock_getObjectSize, 			"Clock"},
-		{&Object_getObjectSize, 		"Object"},
+		{&Object_getObjectSize, 		"ListenerObject"},
 		{&State_getObjectSize, 			"State"},
 		{&StateMachine_getObjectSize, 	"StateMachine"},
 		{&Telegram_getObjectSize, 		"Telegram"},

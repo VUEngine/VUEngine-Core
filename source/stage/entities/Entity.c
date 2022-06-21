@@ -1210,7 +1210,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	// go through n sprites in entity's spec
 	for(; spriteSpecs[i]; i++)
 	{
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], Object::safeCast(this)));
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 
@@ -1244,7 +1244,7 @@ bool Entity::addSpriteFromSpecAtIndex(int32 spriteSpecIndex)
 	}
 
 	// call the appropriate allocator to support inheritance
-	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this)));
+	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
 
 	return true;
 }

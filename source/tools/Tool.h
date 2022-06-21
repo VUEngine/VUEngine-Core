@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <GameState.h>
 
 
@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup tools
-abstract class Tool : Object
+abstract class Tool : ListenerObject
 {
 	GameState gameState;
 

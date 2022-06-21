@@ -38,7 +38,7 @@ extern int32 strcmp(const char *, const char *);
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, Object owner)
+void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, ListenerObject owner)
 {
 	// construct base object
 	Base::constructor(&bgmapAnimatedSpriteSpec->bgmapSpriteSpec, owner);

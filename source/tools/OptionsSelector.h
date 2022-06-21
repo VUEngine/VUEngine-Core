@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VirtualList.h>
 
 
@@ -43,9 +43,9 @@ typedef struct Option
 	/// OptionType
 	uint8 type;
 	/// callback function to be executed for this menu option
-	void (*callback)(Object);
+	void (*callback)(ListenerObject);
 	/// scope of callback function
-	Object callbackScope;
+	ListenerObject callbackScope;
 
 } Option;
 
@@ -80,7 +80,7 @@ enum OptionTypes
 
 /// Utility class to render a menu
 /// @ingroup tools
-class OptionsSelector : Object
+class OptionsSelector : ListenerObject
 {
 	// List of pages, each being a VirtualLists of Options
 	VirtualList pages;

@@ -407,13 +407,13 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, Object::safeCast(this));
+	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
+		SoundWrapper::addEventListener(this->soundWrapper, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
 
 		TimerManager::reset(TimerManager::getInstance());
 		TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
@@ -434,7 +434,7 @@ void SoundTest::loadSound()
 	SoundTest::printGUI(this, false);
 }
 
-void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
+void SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->soundWrapper))
 	{
@@ -443,7 +443,7 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 	}
 }
 
-void SoundTest::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
+void SoundTest::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(SoundWrapper::safeCast(eventFirer) == this->soundWrapper)
 	{

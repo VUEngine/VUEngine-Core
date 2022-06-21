@@ -98,14 +98,14 @@ void AnimatedEntity::setupListeners()
 
 		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
 		{
-			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
+			AnimationController::addEventListener(animationController, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
 		}
 	}
 
 	this->update = true;
 }
 
-void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused)))
+void AnimatedEntity::onAnimationStarted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->update = true;
 }
@@ -181,7 +181,7 @@ void AnimatedEntity::playAnimation(char* animationName)
 
 	VirtualNode node = this->sprites->head;
 
-	Object scope = Object::safeCast(this);
+	ListenerObject scope = ListenerObject::safeCast(this);
 
 	// play animation on each sprite
 	for(; node && this->sprites; node = node->next)
@@ -339,7 +339,7 @@ int32 AnimatedEntity::getNumberOfFrames()
 	return -1;
 }
 
-void AnimatedEntity::onAnimationCompleteHide(Object eventFirer __attribute__((unused)))
+void AnimatedEntity::onAnimationCompleteHide(ListenerObject eventFirer __attribute__((unused)))
 {
 	AnimatedEntity::hide(this);
 }

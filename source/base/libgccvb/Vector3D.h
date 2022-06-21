@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Vector3D : Object
+static class Vector3D : ListenerObject
 {
 	/// @publicsection
 	static inline Vector3D zero();

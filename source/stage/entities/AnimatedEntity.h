@@ -67,7 +67,7 @@ class AnimatedEntity : Entity
 	void previousFrame();
 	void setActualFrame(int16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
-	void onAnimationCompleteHide(Object eventFirer);
+	void onAnimationCompleteHide(ListenerObject eventFirer);
 	virtual void animate();
 	override void ready(bool recursive);
 	override void update(uint32 elapsedTime);

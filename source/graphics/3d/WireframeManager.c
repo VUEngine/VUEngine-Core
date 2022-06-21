@@ -63,8 +63,8 @@ void WireframeManager::constructor()
 	this->stopRendering = false;
 	this->stopDrawing = false;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
-	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	_directDraw = DirectDraw::getInstance();
 }
@@ -87,20 +87,20 @@ void WireframeManager::destructor()
 
 	this->wireframes = NULL;
 
-	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
-	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 
 	// allow a new construct
 	Base::destructor();
 }
 
-void WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART(Object eventFirer __attribute__ ((unused)))
+void WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = true;
 }
 
-void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
+void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopDrawing = true;
 }

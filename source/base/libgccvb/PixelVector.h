@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class PixelVector : Object
+static class PixelVector : ListenerObject
 {
 	/// @publicsection
 	static inline PixelVector zero();

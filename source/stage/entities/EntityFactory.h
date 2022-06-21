@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Sprite.h>
 #include <Container.h>
 #include <Shape.h>
@@ -132,7 +132,7 @@ typedef struct PositionedEntityDescription
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities
-class EntityFactory : Object
+class EntityFactory : ListenerObject
 {
 	// the EntityFactory entities to test for streaming
 	VirtualList entitiesToInstantiate;

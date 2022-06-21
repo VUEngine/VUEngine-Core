@@ -79,11 +79,11 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
 	if(spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this));
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
 
 		if(animationName && animationDescription)
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName, Object::safeCast(this));
+			Sprite::play(this->sprite, animationDescription, (char*)animationName, ListenerObject::safeCast(this));
 		}
 		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
@@ -101,7 +101,7 @@ void Particle::changeAnimation(const AnimationDescription* animationDescription,
 	{
 		if(force || !Sprite::replay(this->sprite, animationDescription))
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName, Object::safeCast(this));
+			Sprite::play(this->sprite, animationDescription, (char*)animationName, ListenerObject::safeCast(this));
 		}
 	}
 }

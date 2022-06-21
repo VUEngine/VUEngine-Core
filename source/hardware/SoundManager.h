@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <MiscStructs.h>
 #include <SoundWrapper.h>
 #include <WaveForms.h>
@@ -90,7 +90,7 @@ enum ChannelTypes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class SoundManager : Object
+singleton class SoundManager : ListenerObject
 {
 	VirtualList soundWrappers;
 	VirtualList soundWrappersMIDI;
@@ -118,8 +118,8 @@ singleton class SoundManager : Object
 	void stopAllSounds(bool release, Sound** excludedSounds);
 	void flushQueuedSounds();
 
-	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope);
-	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
+	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
 	SoundWrapper findSound(const Sound* sound);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);

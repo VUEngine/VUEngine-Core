@@ -39,7 +39,7 @@ extern int32 strcmp(const char *, const char *);
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, Object owner)
+void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, ListenerObject owner)
 {
 	// construct base object
 	Base::constructor(&objectAnimatedSpriteSpec->objectSpriteSpec, owner);

@@ -50,7 +50,7 @@ class BgmapAnimatedSprite : BgmapSprite
 	TextureSource originalTextureSource;
 
 	/// @publicsection
-	void constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, Object owner);
+	void constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, ListenerObject owner);
 	override void writeAnimation();
 }
 

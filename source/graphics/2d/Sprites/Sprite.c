@@ -40,7 +40,7 @@ friend class Texture;
  * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), Object owner)
+void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), ListenerObject owner)
 {
 	Base::constructor();
 
@@ -716,7 +716,7 @@ void Sprite::pause(bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-bool Sprite::play(const AnimationDescription* animationDescription, char* functionName, Object scope)
+bool Sprite::play(const AnimationDescription* animationDescription, char* functionName, ListenerObject scope)
 {
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");

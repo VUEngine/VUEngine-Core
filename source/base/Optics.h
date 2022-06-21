@@ -23,7 +23,7 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-static class Optics : Object
+static class Optics : ListenerObject
 {
 	/// @publicsection
 	static inline int16 calculateParallax(fix10_6 z);

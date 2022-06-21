@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <BgmapSprite.h>
 
 
@@ -98,7 +98,7 @@ typedef struct HbiasEntry
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites-bgmap
-singleton class ParamTableManager : Object
+singleton class ParamTableManager : ListenerObject
 {
 	// total size of param table
 	uint32 size;

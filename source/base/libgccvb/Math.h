@@ -184,7 +184,7 @@ extern const int16 _sinLut[];
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Math : Object
+static class Math : ListenerObject
 {
 	/// @publicsection
 	static inline float squareRoot(float number);

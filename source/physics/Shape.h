@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Wireframe.h>
 
 
@@ -178,7 +178,7 @@ enum ShapeTypes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-abstract class Shape : Object
+abstract class Shape : ListenerObject
 {
 	// the entity to which the shape belongs
 	SpatialObject owner;

@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <SpatialObject.h>
 #include <Shape.h>
 #include <Clock.h>
@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-class CollisionManager : Object
+class CollisionManager : ListenerObject
 {
 	// a list of registered shapes
 	VirtualList	shapes;

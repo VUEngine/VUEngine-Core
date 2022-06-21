@@ -46,7 +46,7 @@ friend class VirtualList;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope)
+void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope)
 {
 	// construct base Container
 	Base::constructor();
@@ -93,7 +93,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
  */
 void SoundWrapper::destructor()
 {
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 
 	if(!isDeleted(this->channels))
 	{
@@ -181,7 +181,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			if(0 < SoundWrapper::getVolumeReduction(this))
 			{
 				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) - 1);
-				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeIn, NULL);
 			}
 			else
 			{
@@ -195,7 +195,7 @@ bool SoundWrapper::handleMessage(Telegram telegram)
 			if(__MAXIMUM_VOLUME > SoundWrapper::getVolumeReduction(this))
 			{
 				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + 1);
-				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeOut, NULL);
 			}
 			else
 			{
@@ -318,14 +318,14 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		case kSoundWrapperPlaybackFadeIn:
 
 			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME);
-			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
-			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeIn, NULL);
 			break;
 
 		case kSoundWrapperPlaybackFadeOut:
 
-			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
-			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeOut, NULL);
 			break;
 
 		case kSoundWrapperPlaybackNormal:

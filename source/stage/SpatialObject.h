@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VirtualList.h>
 #include <Shape.h>
 
@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage
-class SpatialObject : Object
+class SpatialObject : ListenerObject
 {
 	/// @publicsection
 	void constructor();

@@ -58,7 +58,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class Game : Object
+singleton class Game : ListenerObject
 {
 	// game's state machine
 	StateMachine stateMachine;
@@ -79,7 +79,7 @@ singleton class Game : Object
 	//
 	SoundManager soundManager;
 	// current save data manager
-	Object saveDataManager;
+	ListenerObject saveDataManager;
 	//
 	FrameRate frameRate;
 	//
@@ -144,8 +144,8 @@ singleton class Game : Object
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);
-	void registerSaveDataManager(Object saveDataManager);
-	Object getSaveDataManager();
+	void registerSaveDataManager(ListenerObject saveDataManager);
+	ListenerObject getSaveDataManager();
 	long getRandomSeed();
 	void startProfiling();
 }

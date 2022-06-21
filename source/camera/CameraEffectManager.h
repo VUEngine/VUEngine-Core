@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <Entity.h>
 
@@ -41,14 +41,14 @@ enum CameraFX
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup camera
-singleton class CameraEffectManager : Object
+singleton class CameraEffectManager : ListenerObject
 {
 	// Target brightness for current fade effect
 	Brightness fxFadeTargetBrightness;
 	// Delay for current fade effect
 	uint8 fxFadeDelay;
 	// Callback scope for current fade effect
-	Object fxFadeCallbackScope;
+	ListenerObject fxFadeCallbackScope;
 
 	/// @publicsection
 	static CameraEffectManager getInstance();

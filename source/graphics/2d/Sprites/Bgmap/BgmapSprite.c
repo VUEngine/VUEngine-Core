@@ -45,7 +45,7 @@ friend class BgmapTexture;
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner)
+void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner)
 {
 	Base::constructor((SpriteSpec*)&bgmapSpriteSpec->spriteSpec, owner);
 
@@ -58,7 +58,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
 		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
@@ -120,7 +120,7 @@ bool BgmapSprite::hasSpecialEffects()
  *
  * @param eventFirer
  */
-void BgmapSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
+void BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
 }
@@ -137,7 +137,7 @@ void BgmapSprite::releaseTexture()
 			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 
-		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
