@@ -819,9 +819,6 @@ void Game::nextFrameStarted()
 		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
 #endif
 
-#define __SHOW_MEMORY_POOL_STATUS
-#define __SHOW_DETAILED_MEMORY_POOL_STATUS
-
 #ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!Game::isInSpecialMode(this))
 		{
