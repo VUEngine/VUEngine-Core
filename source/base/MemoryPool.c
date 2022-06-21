@@ -403,47 +403,64 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocationRight = poolLocationLeft + blockSize;
 		BYTE* poolLocationEnd = &this->poolLocation[pool][blockSize * (numberOfOjects - 1)];
 
+		BYTE* poolLocation = NULL;
+
 		do
 		{
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight) && poolLocationRight <= poolLocationEnd)
+			if(poolLocationRight < poolLocationEnd)
 			{
-				*((uint32*)poolLocationRight) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationRight;
-				HardwareManager::resumeInterrupts();
-				return poolLocationRight;
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+				{
+					poolLocation = poolLocationRight;
+					break;
+				}
+
+				poolLocationRight += blockSize;
 			}
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft) && poolLocationLeft >= poolLocationStart)
+			if(poolLocationLeft > poolLocationStart)
 			{
-				*((uint32*)poolLocationLeft) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationLeft;
-				HardwareManager::resumeInterrupts();
-				return poolLocationLeft;
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+				{
+					poolLocation = poolLocationLeft;
+					break;
+				}
+
+				poolLocationLeft -= blockSize;
 			}
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart) && poolLocationStart <= poolLocationLeft)
+			if(poolLocationStart < poolLocationLeft)
 			{
-				*((uint32*)poolLocationStart) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationStart;
-				HardwareManager::resumeInterrupts();
-				return poolLocationStart;
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+				{
+					poolLocation = poolLocationStart;
+					break;
+				}
+
+				poolLocationStart += blockSize;
 			}
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd) && poolLocationEnd >= poolLocationRight)
+			if(poolLocationEnd > poolLocationRight)
 			{
-				*((uint32*)poolLocationEnd) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationEnd;
-				HardwareManager::resumeInterrupts();
-				return poolLocationEnd;
-			}
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+				{
+					poolLocation = poolLocationEnd;
+					break;
+				}
 
-			poolLocationStart += blockSize;
-			poolLocationLeft -= blockSize;
-			poolLocationEnd -= blockSize;
-			poolLocationRight += blockSize;
+				poolLocationEnd -= blockSize;
+			}
 		}
-		while((poolLocationStart <= poolLocationLeft) || (poolLocationEnd >= poolLocationRight));
+		while((poolLocationStart < poolLocationLeft) || (poolLocationEnd > poolLocationRight));
 		// keep looking for a free block on a bigger pool
+
+		if(NULL != poolLocation)
+		{
+			*((uint32*)poolLocation) = __MEMORY_USED_BLOCK_FLAG;
+			this->poolLastFreeBlock[pool] = poolLocation;
+			HardwareManager::resumeInterrupts();
+			return poolLocation;
+		}
 	}
 
 #ifndef __SHIPPING
