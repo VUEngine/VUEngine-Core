@@ -411,7 +411,7 @@ bool SpriteManager::sortProgressively()
 		}
 	}
 
-	if(!isDeleted(this->objectSpriteContainers))
+	if(!swapped && !isDeleted(this->objectSpriteContainers))
 	{
 		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
 		{

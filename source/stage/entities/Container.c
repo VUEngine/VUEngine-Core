@@ -412,7 +412,7 @@ void Container::updateChildren(uint32 elapsedTime)
 
 		// update each child
 		for(VirtualNode node = this->children->head; node ; node = node->next)
-		{			
+		{
 			Container child = Container::safeCast(node->data);
 
 			if(child->deleteMe)
