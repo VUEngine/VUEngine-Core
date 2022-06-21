@@ -302,7 +302,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						this->drawingEnded = false;
 					}
 
-					VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
+					}
 					break;
 				}
 
@@ -312,7 +315,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 					this->drawingEnded = false;
 
-					VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
+					}
 				}
 
 				_vipManager->processingGAMESTART = true;
@@ -351,7 +357,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				if(_vipManager->processingXPEND)
 				{
 					this->multiplexedXPENDCounter++;
-					VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringXPEND);
+
+					if(this->events)
+					{
+						VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringXPEND);
+					}
 					break;
 				}
 
@@ -468,7 +478,10 @@ void VIPManager::applyPostProcessingEffects()
 
 	if(hasFrameStartedDuringXPEND)
 	{
-		VIPManager::fireEvent(this, kEventVIPManagerFrameBuffersProcessingSuspended);
+		if(this->events)
+		{
+			VIPManager::fireEvent(this, kEventVIPManagerFrameBuffersProcessingSuspended);
+		}
 	}
 }
 
