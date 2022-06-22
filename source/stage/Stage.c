@@ -656,6 +656,7 @@ void Stage::preloadAssets()
 					else
 					{
 						Texture::write(bgmapTexture);
+						Texture::releaseCharSet(bgmapTexture);
 					}
 				}
 			}
