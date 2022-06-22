@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ enum MemoryPoolSizes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class MemoryPool : ListenerObject
+singleton class MemoryPool : Object
 {
 	// dynamic memory area
 	// must always put together the pools!

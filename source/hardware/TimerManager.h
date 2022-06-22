@@ -15,6 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <ListenerObject.h>
 
 
@@ -56,7 +57,7 @@ enum TimerResolutionScales
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class TimerManager : ListenerObject
+singleton class TimerManager : Object
 {
 	uint32 milliseconds;
 	uint32 microseconds;

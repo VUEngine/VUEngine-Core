@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <Sprite.h>
 #include <ObjectSpriteContainer.h>
 
@@ -50,11 +50,11 @@ typedef struct SpritesList
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-singleton class SpriteManager : ListenerObject
+singleton class SpriteManager : Object
 {
 	// Sprites to render
 	VirtualList sprites;
-	// ListenerObject sprite containers
+	// Object sprite containers
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects
 	VirtualList specialSprites;

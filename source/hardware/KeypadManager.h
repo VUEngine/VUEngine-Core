@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ typedef struct UserInput
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class KeypadManager : ListenerObject
+singleton class KeypadManager : Object
 {
 	long accumulatedUserInput;
 	// User's Input

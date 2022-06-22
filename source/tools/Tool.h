@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup tools
-abstract class Tool : ListenerObject
+abstract class Tool : Object
 {
 	GameState gameState;
 
@@ -48,6 +48,5 @@ abstract class Tool : ListenerObject
 	virtual void dimmGame();
 	virtual void lightUpGame();
 }
-
 
 #endif

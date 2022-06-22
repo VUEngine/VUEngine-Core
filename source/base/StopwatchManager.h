@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <Stopwatch.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class StopwatchManager : ListenerObject
+singleton class StopwatchManager : Object
 {
 	VirtualList stopwatchs;
 

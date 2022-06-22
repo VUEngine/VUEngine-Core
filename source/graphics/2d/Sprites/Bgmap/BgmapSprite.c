@@ -112,7 +112,7 @@ void BgmapSprite::destructor()
 
 bool BgmapSprite::hasSpecialEffects()
 {
-	return 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & this->head);
+	return 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
 
 /**

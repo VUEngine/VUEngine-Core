@@ -15,6 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <ListenerObject.h>
 #include <StateMachine.h>
 #include <Telegram.h>
@@ -50,7 +51,7 @@ typedef struct DelayedMessage
 
 /// @ingroup base
 
-singleton class MessageDispatcher : ListenerObject
+singleton class MessageDispatcher : Object
 {
 	// Delayed messages
 	VirtualList delayedMessages;

@@ -17,7 +17,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <CommunicationManager.h>
 
 //---------------------------------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class RumbleManager : ListenerObject
+singleton class RumbleManager : Object
 {
 	CommunicationManager communicationManager;
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];

@@ -109,8 +109,7 @@ class BgmapSprite : Sprite
 	void onTextureRewritten(ListenerObject eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
-
-	virtual bool hasSpecialEffects();
+	bool hasSpecialEffects();
 
 	override int16 doRender(int16 index, bool evenFrame);
 	override void processEffects();

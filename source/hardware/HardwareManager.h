@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <VIPManager.h>
 
 
@@ -52,7 +52,7 @@ extern bool _enabledInterrupts;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class HardwareManager : ListenerObject
+singleton class HardwareManager : Object
 {
 	// Timer manager
 	TimerManager timerManager;

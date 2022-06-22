@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <CharSet.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-textures-char
-singleton class CharSetManager : ListenerObject
+singleton class CharSetManager : Object
 {
 	// Charsets defined
 	VirtualList charSets;

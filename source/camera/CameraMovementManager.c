@@ -78,7 +78,7 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 	// if focusEntity is defined
 	Entity focusEntity = Camera::getFocusEntity(camera);
 
-	if(isDeleted(focusEntity) || !Entity::isTransformed(focusEntity))
+	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
 	{
 		return;
 	}

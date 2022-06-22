@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Object.h>
 #include <BgmapTexture.h>
 
 
@@ -44,7 +44,7 @@ enum OffsetIndex
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-textures-bgmap
-singleton class BgmapTextureManager : ListenerObject
+singleton class BgmapTextureManager : Object
 {
 	VirtualList bgmapTextures;
 	// Number of chars occupied

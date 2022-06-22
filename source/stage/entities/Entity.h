@@ -98,12 +98,12 @@ class Entity : Container
 	bool updateSpritePosition();
 	bool updateSpriteRotation();
 	bool updateSpriteScale();
+	void releaseSprites();
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual uint16 getAxisForShapeSyncWithDirection();
-	virtual void releaseSprites();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
