@@ -308,22 +308,19 @@ void MemoryPool::free(BYTE* object)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
 
+#ifdef __DEBUG
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
 		return;
 	}
+#endif
 
-#ifdef __DEBUG
-
-	uint32 i;
-	uint32 pool = 0;
-	uint32 displacement = 0;
-	uint32 numberOfOjects = 0;
-
-	if(!object)
+	if(NULL == object)
 	{
 		return;
 	}
+
+	uint32 pool = 0;
 
 	// look for the pool containing the object
 	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
@@ -334,13 +331,16 @@ void MemoryPool::free(BYTE* object)
 	// move one pool back since the above loop passed the target by one
 	pool--;
 
+	this->poolLastFreeBlock[pool] = (uint32)object;
+
+#ifdef __DEBUG
 	// get the total objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+	uint32 numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
 	HardwareManager::suspendInterrupts();
 
 	// search for the pool in which it is allocated
-	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
+	for(uint32 i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found
 		if(object == &this->poolLocation[pool][displacement])
@@ -407,7 +407,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 		do
 		{
-			if(poolLocationRight < poolLocationEnd)
+			if(poolLocationRight <= poolLocationEnd)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
 				{
@@ -418,7 +418,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 				poolLocationRight += blockSize;
 			}
 
-			if(poolLocationLeft > poolLocationStart)
+			if(poolLocationLeft >= poolLocationStart)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
 				{
@@ -451,7 +451,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 				poolLocationEnd -= blockSize;
 			}
 		}
-		while((poolLocationStart < poolLocationLeft) || (poolLocationEnd > poolLocationRight));
+		while((poolLocationStart <= poolLocationLeft) || (poolLocationEnd >= poolLocationRight));
 		// keep looking for a free block on a bigger pool
 
 		if(NULL != poolLocation)
