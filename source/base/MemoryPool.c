@@ -331,7 +331,7 @@ void MemoryPool::free(BYTE* object)
 	// move one pool back since the above loop passed the target by one
 	pool--;
 
-	this->poolLastFreeBlock[pool] = (uint32)object;
+	this->poolLastFreeBlock[pool] = object;
 
 #ifdef __DEBUG
 	// get the total objects in the pool
