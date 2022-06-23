@@ -32,9 +32,11 @@
 
 #define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
+#ifdef __SHOW_SPRITES_PROFILING
 int32 _writtenTiles = 0;
 int32 _writtenTextureTiles = 0;
 int32 _writtenObjectTiles = 0;
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -960,12 +962,14 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 22, y, NULL);
+#ifdef __SHOW_SPRITES_PROFILING
 	Printing::text(Printing::getInstance(), "Written chars:              ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), _writtenTiles, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Written texture tiles:              ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), _writtenTextureTiles, x + 22, y, NULL);
 	Printing::text(Printing::getInstance(), "Written object tiles:              ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), _writtenObjectTiles, x + 22, y, NULL);
+#endif
 
 	if(resumed)
 	{

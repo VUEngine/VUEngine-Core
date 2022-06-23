@@ -39,10 +39,8 @@ volatile uint16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)0
 uint32* _currentDrawingFrameBufferSet = NULL;
 
 static VIPManager _vipManager;
-static TimerManager _timerManager;
 static WireframeManager _wireframeManager;
 static SpriteManager _spriteManager;
-static HardwareManager _hardwareManager;
 
 extern ColumnTableROMSpec DefaultColumnTable;
 extern BrightnessRepeatROMSpec DefaultBrightnessRepeat;
@@ -120,10 +118,8 @@ void VIPManager::constructor()
 #endif
 
 	_vipManager = this;
-	_timerManager = TimerManager::getInstance();
 	_spriteManager = SpriteManager::getInstance();
 	_wireframeManager = WireframeManager::getInstance();
-	_hardwareManager = HardwareManager::getInstance();
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }

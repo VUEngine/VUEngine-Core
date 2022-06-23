@@ -106,8 +106,6 @@ singleton class ParamTableManager : Object
 	uint32 used;
 	// allocated bgmapSprites
 	VirtualList bgmapSprites;
-	// removed bgmapSprites' sizes
-	VirtualList removedBgmapSpritesSizes;
 	// used for defragmentation
 	ParamTableFreeData paramTableFreeData;
 	// used for defragmentation
