@@ -414,8 +414,14 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 					poolLocation = poolLocationRight;
 					break;
 				}
+				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+				{
+					poolLocation = poolLocationEnd;
+					break;
+				}
 
 				poolLocationRight += blockSize;
+				poolLocationEnd -= blockSize;
 			}
 
 			if(poolLocationLeft >= poolLocationStart)
@@ -425,30 +431,14 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 					poolLocation = poolLocationLeft;
 					break;
 				}
-
-				poolLocationLeft -= blockSize;
-			}
-
-			if(poolLocationStart < poolLocationLeft)
-			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
 				{
 					poolLocation = poolLocationStart;
 					break;
 				}
 
+				poolLocationLeft -= blockSize;
 				poolLocationStart += blockSize;
-			}
-
-			if(poolLocationEnd > poolLocationRight)
-			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
-				{
-					poolLocation = poolLocationEnd;
-					break;
-				}
-
-				poolLocationEnd -= blockSize;
 			}
 		}
 		while((poolLocationStart <= poolLocationLeft) || (poolLocationEnd >= poolLocationRight));
