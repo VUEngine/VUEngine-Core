@@ -200,6 +200,8 @@ void ObjectSpriteContainer::sortProgressively()
 			previousNode->data = sprite;
 
 			sprite->renderFlag = previousSprite->renderFlag = true;
+
+			node = previousNode;
 		}
 	}
 }

@@ -464,7 +464,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
 #endif
 
-	NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
+	Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
 #endif
 
 	// return designed address

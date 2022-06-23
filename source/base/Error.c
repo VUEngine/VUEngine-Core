@@ -86,7 +86,7 @@ void Error::destructor()
  * @param message
  * @param detail
  */
-#ifndef __RELEASE
+#ifndef __SHIPPING
 static int32 Error::triggerException(char* message, char* detail)
 {
 	static bool processingException = false;
@@ -226,7 +226,7 @@ static int32 Error::triggerException(char* message, char* detail)
 
 static void Error::zeroDivisionException()
 {
-#ifndef __RELEASE
+#ifndef __SHIPPING
 	uint32 eipc = 0;
 	// Save EIPC
     asm("					\n\t"      \
@@ -245,7 +245,7 @@ static void Error::zeroDivisionException()
 
 static void Error::invalidOpcodeException()
 {
-#ifndef __RELEASE
+#ifndef __SHIPPING
 
 	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
 	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));

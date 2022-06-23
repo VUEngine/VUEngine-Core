@@ -256,6 +256,7 @@ int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSe
 			}
 		}
 
+#ifndef __SHIPPING
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::clear(Printing::getInstance());
 		BgmapTextureManager::print(this, 1, 10);
@@ -264,7 +265,8 @@ int32 BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, int16 minimumSe
 		Printing::hex(Printing::getInstance(), (WORD)&textureSpec, 14, 21, 8, NULL);
 
 		// throw an exception if there is no enough space to allocate the bgmap spec
-		NM_ASSERT(false, "BgmapTextureManager::doAllocate: bgmap segments depleted");
+		Error::triggerException("BgmapTextureManager::doAllocate: bgmap segments depleted", NULL);		
+#endif
 	}
 
 	// through exception if texture has 0 chars
