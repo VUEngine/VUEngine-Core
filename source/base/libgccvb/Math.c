@@ -91,6 +91,9 @@ const int16 _sinLut[] =
  -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6  //64
 };
 
+#define __ENTRIES_PER_QUADRANT	(__SIN_LUT_ENTRIES >> 2)
+#define __TOTAL_ENTRIES 		(__SIN_LUT_ENTRIES)
+
 
 //---------------------------------------------------------------------------------------------------------
 //											FUNCTIONS
@@ -153,8 +156,6 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 {
 	int32 entry = 0;
 	int32 lastEntry = 0;
-	static int32 entriesPerQuadrant = (int32)(sizeof(_sinLut) / sizeof(int16)) >> 2;
-	static int32 totalEntries = (int32)(sizeof(_sinLut) / sizeof(int16));
 
 	// Determine the quadrant
 	if(0 == cos)
@@ -162,12 +163,12 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 		// First quadrant
 		if(0 < sin)
 		{
-			return entriesPerQuadrant * 1;
+			return __ENTRIES_PER_QUADRANT * 1;
 		}
 		// Fourth quadrant
 		else if(0 > sin)
 		{
-			return entriesPerQuadrant * 3;
+			return __ENTRIES_PER_QUADRANT * 3;
 		}
 
 		return 0;
@@ -177,12 +178,12 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 		// First quadrant
 		if(0 < cos)
 		{
-			return entriesPerQuadrant * 0;
+			return __ENTRIES_PER_QUADRANT * 0;
 		}
 		// Fourth quadrant
 		else if(0 > cos)
 		{
-			return entriesPerQuadrant * 2;
+			return __ENTRIES_PER_QUADRANT * 2;
 		}
 
 		return 0;
@@ -193,26 +194,26 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 		if(0 < sin)
 		{
 			entry = 0;
-			lastEntry = entriesPerQuadrant;
+			lastEntry = __ENTRIES_PER_QUADRANT;
 		}
 		// Fourth quadrant
 		else
 		{
-			entry = entriesPerQuadrant * 3;
-			lastEntry = totalEntries;
+			entry = __ENTRIES_PER_QUADRANT * 3;
+			lastEntry = __TOTAL_ENTRIES;
 		}
 	}
 	// Second quadrant
 	else if(0 < sin)
 	{
-		entry = entriesPerQuadrant;
-		lastEntry = entry + entriesPerQuadrant;
+		entry = __ENTRIES_PER_QUADRANT;
+		lastEntry = entry + __ENTRIES_PER_QUADRANT;
 	}
 	// Third quadrant
 	else
 	{
-		entry = entriesPerQuadrant * 2;
-		lastEntry = totalEntries - entriesPerQuadrant;
+		entry = __ENTRIES_PER_QUADRANT * 2;
+		lastEntry = __TOTAL_ENTRIES - __ENTRIES_PER_QUADRANT;
 	}
 
 	fix7_9 difference = 1024;
