@@ -18,7 +18,11 @@
 #include <Object.h>
 #include <Sprite.h>
 #include <ObjectSpriteContainer.h>
-
+#include <Printing.h>
+#include <ParamTableManager.h>
+#include <CharSetManager.h>
+#include <BgmapTextureManager.h>
+#include <ObjectTextureManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,6 +56,11 @@ typedef struct SpritesList
 /// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
+	Printing printing;
+	ParamTableManager paramTableManager;
+	CharSetManager charSetManager;
+	BgmapTextureManager bgmapTextureManager;
+	ObjectTextureManager objectTextureManager;
 	// Sprites to render
 	VirtualList sprites;
 	// Object sprite containers

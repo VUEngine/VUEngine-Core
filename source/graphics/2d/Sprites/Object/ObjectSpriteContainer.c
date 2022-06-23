@@ -190,15 +190,16 @@ void ObjectSpriteContainer::sortProgressively()
 		NM_ASSERT(!isDeleted(previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data");
 		NM_ASSERT(__GET_CAST(Sprite, previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data cast");
 
-		Sprite nextSprite = Sprite::safeCast(previousNode->data);
+		Sprite previousSprite = Sprite::safeCast(previousNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+		if(previousSprite->position.z + previousSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
-			VirtualNode::swapData(node, previousNode);
+			node->data = previousSprite;
+			previousNode->data = sprite;
 
-			sprite->renderFlag = nextSprite->renderFlag = true;
+			sprite->renderFlag = previousSprite->renderFlag = true;
 		}
 	}
 }

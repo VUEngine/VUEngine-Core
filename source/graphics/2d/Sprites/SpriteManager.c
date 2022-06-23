@@ -87,6 +87,12 @@ void SpriteManager::constructor()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->stopRendering = false;
 
+	this->printing = NULL;
+	this->paramTableManager = NULL;
+	this->charSetManager = NULL;
+	this->bgmapTextureManager = NULL;
+	this->objectTextureManager = NULL;
+
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	SpriteManager::reset(this);
@@ -158,10 +164,17 @@ void SpriteManager::cleanUp()
  */
 void SpriteManager::reset()
 {
-	Printing::reset(Printing::getInstance());
-	CharSetManager::reset(CharSetManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	ParamTableManager::reset(ParamTableManager::getInstance());
+	this->printing = Printing::getInstance();
+	this->paramTableManager = ParamTableManager::getInstance();
+	this->charSetManager = CharSetManager::getInstance();
+	this->bgmapTextureManager = BgmapTextureManager::getInstance();
+	this->paramTableManager = ParamTableManager::getInstance();
+	this->objectTextureManager = ObjectTextureManager::getInstance();
+
+	Printing::reset(this->printing);
+	CharSetManager::reset(this->charSetManager);
+	BgmapTextureManager::reset(this->bgmapTextureManager);
+	ParamTableManager::reset(this->paramTableManager);
 
 	this->lockSpritesLists = true;
 
@@ -190,7 +203,7 @@ void SpriteManager::reset()
 
 	SpriteManager::stopRendering(this);
 
-	Printing::setupSprite(Printing::getInstance());
+	Printing::setupSprite(this->printing);
 
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
@@ -403,7 +416,8 @@ bool SpriteManager::sortProgressively()
 		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
-			VirtualNode::swapData(node, nextNode);
+			node->data = nextSprite;
+			nextNode->data = sprite;
 
 			sprite->renderFlag = nextSprite->renderFlag = true;
 
@@ -510,7 +524,7 @@ int32 SpriteManager::getNumberOfSprites()
  */
 void SpriteManager::writeTextures()
 {
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	CharSetManager::writeCharSets(this->charSetManager);
 
 	int8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
@@ -524,7 +538,7 @@ void SpriteManager::writeTextures()
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
 
-	CharSetManager::writeCharSets(CharSetManager::getInstance());
+	CharSetManager::writeCharSets(this->charSetManager);
 }
 
 void SpriteManager::applySpecialEffects()
@@ -560,13 +574,13 @@ void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update CHAR memory
-	CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
+	CharSetManager::writeCharSetsProgressively(this->charSetManager);
 
 	// Update BGMAP memory
-	BgmapTextureManager::updateTextures(BgmapTextureManager::getInstance());
+	BgmapTextureManager::updateTextures(this->bgmapTextureManager);
 
 	// Update OBJECT Memory
-	ObjectTextureManager::updateTextures(ObjectTextureManager::getInstance());
+	ObjectTextureManager::updateTextures(this->objectTextureManager);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -602,7 +616,7 @@ void SpriteManager::render()
 
 	ObjectSpriteContainer::prepareForRendering();
 
-	ParamTableManager::defragmentProgressively(ParamTableManager::getInstance());
+	ParamTableManager::defragmentProgressively(this->paramTableManager);
 
 	// switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
@@ -699,11 +713,11 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 
 	if(hidePrinting)
 	{
-		Printing::hide(Printing::getInstance());
+		Printing::hide(this->printing);
 	}
 	else
 	{
-		Printing::show(Printing::getInstance());
+		Printing::show(this->printing);
 	}
 }
 
@@ -745,11 +759,11 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 	if(showPrinting)
 	{
-		Printing::show(Printing::getInstance());
+		Printing::show(this->printing);
 	}
 	else
 	{
-		Printing::hide(Printing::getInstance());
+		Printing::hide(this->printing);
 	}
 
 	SpriteManager::stopRendering(this);
@@ -950,25 +964,25 @@ int32 SpriteManager::getTotalPixelsDrawn()
  */
 void SpriteManager::print(int32 x, int32 y, bool resumed)
 {
-	Printing::setWorldCoordinates(Printing::getInstance(), 0, 0, Printing::getSpritePosition(Printing::getInstance()).z, 0);
+	Printing::setWorldCoordinates(this->printing, 0, 0, Printing::getSpritePosition(this->printing).z, 0);
 #ifndef __SHOW_SPRITES_PROFILING
 	SpriteManager::computeTotalPixelsDrawn(this);
 #endif
 
-	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->totalPixelsDrawn, x + 22, y, NULL);
-	Printing::text(Printing::getInstance(), "Used layers:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
-	Printing::text(Printing::getInstance(), "Sprites count:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 22, y, NULL);
+	Printing::text(this->printing, "SPRITES USAGE", x, y++, NULL);
+	Printing::text(this->printing, "Total pixels:                ", x, ++y, NULL);
+	Printing::int32(this->printing, this->totalPixelsDrawn, x + 22, y, NULL);
+	Printing::text(this->printing, "Used layers:                ", x, ++y, NULL);
+	Printing::int32(this->printing, __TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
+	Printing::text(this->printing, "Sprites count:              ", x, ++y, NULL);
+	Printing::int32(this->printing, VirtualList::getSize(this->sprites), x + 22, y, NULL);
 #ifdef __SHOW_SPRITES_PROFILING
-	Printing::text(Printing::getInstance(), "Written chars:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenTiles, x + 22, y, NULL);
-	Printing::text(Printing::getInstance(), "Written texture tiles:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenTextureTiles, x + 22, y, NULL);
-	Printing::text(Printing::getInstance(), "Written object tiles:              ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), _writtenObjectTiles, x + 22, y, NULL);
+	Printing::text(this->printing, "Written chars:              ", x, ++y, NULL);
+	Printing::int32(this->printing, _writtenTiles, x + 22, y, NULL);
+	Printing::text(this->printing, "Written texture tiles:              ", x, ++y, NULL);
+	Printing::int32(this->printing, _writtenTextureTiles, x + 22, y, NULL);
+	Printing::text(this->printing, "Written object tiles:              ", x, ++y, NULL);
+	Printing::int32(this->printing, _writtenObjectTiles, x + 22, y, NULL);
 #endif
 
 	if(resumed)
@@ -990,12 +1004,12 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
 
-		Printing::int32(Printing::getInstance(), counter, auxX, auxY, NULL);
-		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
-		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
-//		Printing::int32(Printing::getInstance(), sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
-//		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
-//		Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
+		Printing::int32(this->printing, counter, auxX, auxY, NULL);
+		Printing::text(this->printing, ": ", auxX + 2, auxY, NULL);
+		Printing::text(this->printing, spriteClassName, auxX + 4, auxY, NULL);
+//		Printing::int32(this->printing, sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
+//		Printing::hex(this->printing, _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
+//		Printing::int32(this->printing, Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
 		++auxY;
 		if(__TOTAL_LAYERS / 2 == counter)
@@ -1015,7 +1029,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
  */
 void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "OBJECTS USAGE", x, y++, NULL);
+	Printing::text(this->printing, "OBJECTS USAGE", x, y++, NULL);
 	int32 totalUsedObjects = 0;
 	VirtualNode node = this->objectSpriteContainers->head;
 
@@ -1024,6 +1038,6 @@ void SpriteManager::printObjectSpriteContainersStatus(int32 x, int32 y)
 		totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
 	}
 
-	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
+	Printing::text(this->printing, "Total used objects: ", x, ++y, NULL);
+	Printing::int32(this->printing, totalUsedObjects, x + 20, y, NULL);
 }
