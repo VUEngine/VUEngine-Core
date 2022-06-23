@@ -78,13 +78,13 @@ class Container : SpatialObject
 	// whether to inherit position, rotation and scale from environment (parents)
 	uint8 inheritEnvironment;
 	// Flag to update graphics' attributes
-	bool invalidateGraphics;
-	// Flag for parent to know to delete it
-	uint8 deleteMe;
-	// Flag to hide the entity
-	uint8 hidden;
+	uint8 invalidateGraphics;
 	// Flag to recalculate global transformations
 	uint8 invalidateGlobalTransformation;
+	// Flag for parent to know to delete it
+	bool deleteMe;
+	// Flag to hide the entity
+	bool hidden;
 	// flag to enable calls to update method
 	bool update;
 	// flag to enable calls to update method

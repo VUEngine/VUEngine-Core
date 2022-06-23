@@ -127,7 +127,6 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->cameraPreviousDistance = 0;
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
-	this->streamingCycleCounter = 0;
 	this->soundWrappers = NULL;
 	this->streaming = this->stageSpec->streaming;
 	this->forceNoPopIn = false;

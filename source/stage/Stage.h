@@ -194,12 +194,8 @@ class Stage : Container
 	VirtualList entityLoadingListeners;
 	// Streaming settings
 	Streaming streaming;
-	// counter to control the streaming phases
-	int32 streamingCycleCounter;
 	// index for method to execute
 	int32 streamingPhase;
-	// flag to control streaming
-	uint32 hasRemovedChildren;
 	// the ui container
 	UIContainer uiContainer;
 	// focus entity: needed for streaming
