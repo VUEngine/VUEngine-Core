@@ -175,7 +175,9 @@ bool WireframeManager::sortProgressively()
 		// check if z positions are swapped
 		if(nextSquareDistanceToCamera < squareDistanceToCamera)
 		{
-			VirtualNode::swapData(node, nextNode);
+			// swap nodes' data
+			node->data = nextWireframe;
+			nextNode->data = wireframe;
 
 			node = nextNode;
 
