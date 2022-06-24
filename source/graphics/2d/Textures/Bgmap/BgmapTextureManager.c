@@ -560,14 +560,14 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
 	uint32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
 
-	this->printingBgmapSegment = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
-
-	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment + 1;
+	this->availableBgmapSegmentsForTextures = (uint32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
 		this->availableBgmapSegmentsForTextures = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 	}
+
+	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 }
 
 /**
@@ -592,10 +592,10 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Segments for textures: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
-	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), textureCount, x + 23, y, NULL);
 	Printing::text(Printing::getInstance(), "Printing segment: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
+	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), textureCount, x + 23, y, NULL);
 
 	y++;
 	y++;
