@@ -147,8 +147,20 @@ void Ball::configureWireframe()
 		return;
 	}
 
+	SphereSpec sphereSpec =
+	{
+		{
+			__TYPE(Sphere),
+
+			__COLOR_BRIGHT_RED
+		},
+
+		this->center,
+		this->radius
+	};
+
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Sphere(this->center, this->radius, __COLOR_BRIGHT_RED));
+	this->wireframe = Wireframe::safeCast(new Sphere(&sphereSpec));
 }
 
 // print debug data

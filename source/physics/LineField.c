@@ -257,8 +257,21 @@ void LineField::configureWireframe()
 		return;
 	}
 
+	LineSpec lineSpec =
+	{
+		{
+			__TYPE(Line),
+
+			__COLOR_BRIGHT_RED
+		},
+
+		this->a,
+		this->b,
+		Vector3D::scalarProduct(this->normal, this->normalLength)
+	};
+
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Line(this->a, this->b, Vector3D::scalarProduct(this->normal, this->normalLength), __COLOR_BRIGHT_RED));
+	this->wireframe = Wireframe::safeCast(new Line(&lineSpec));
 }
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])

@@ -32,14 +32,16 @@ friend class VirtualList;
 /**
  * Class constructor
  */
-void Wireframe::constructor(uint8 color)
+void Wireframe::constructor(WireframeSpec* wireframeSpec)
 {
 	// construct base object
 	Base::constructor();
 
-	this->color = color;
+	this->wireframeSpec = wireframeSpec;
+	this->color = wireframeSpec->color;
 	this->position = NULL;
 	this->rotation = NULL;
+	this->interlaced = true;
 }
 
 /**
@@ -84,4 +86,59 @@ void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Ro
 {
 	this->position = position;
 	this->rotation = rotation;
+}
+
+/**
+ * Get vertices
+ */
+VirtualList Wireframe::getVertices()
+{
+	return NULL;
+}
+
+void Wireframe::setupRenderingMode(fix10_6_ext distanceToCamera)
+{
+	if(__COLOR_BLACK != this->wireframeSpec->color)
+	{
+		this->interlaced = false;
+		this->color = this->wireframeSpec->color;
+
+		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		{
+			this->interlaced = true;
+		}
+	}
+	else
+	{
+		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_DARK_RED;
+		}
+		else if(__FIX10_6_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		{
+			this->interlaced = false;
+			this->color = __COLOR_DARK_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_MEDIUM_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_BRIGHT_RED;
+		}
+		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		{
+			this->interlaced = false;
+			this->color = __COLOR_MEDIUM_RED;
+		}
+		else
+		{
+			this->interlaced = false;
+			this->color = __COLOR_BRIGHT_RED;
+		}
+	}
 }

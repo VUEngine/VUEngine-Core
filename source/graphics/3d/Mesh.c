@@ -45,15 +45,10 @@ VIPManager _vipManager = NULL;
 void Mesh::constructor(MeshSpec* meshSpec)
 {
 	// construct base object
-	Base::constructor(meshSpec->color);
+	Base::constructor(&meshSpec->wireframeSpec);
 
 	this->segments = new VirtualList();
 	this->vertices = new VirtualList();
-	
-	this->interlaced = true;
-	
-	this->meshSpec = meshSpec;
-	this->color = this->meshSpec->color;
 
 	Mesh::addSegments(this);
 
@@ -117,8 +112,8 @@ void Mesh::addSegments()
 
 	do
 	{
-		Vector3D startVector = Vector3D::getFromPixelVector(this->meshSpec->segments[i][0]);
-		Vector3D endVector = Vector3D::getFromPixelVector(this->meshSpec->segments[i][1]);
+		Vector3D startVector = Vector3D::getFromPixelVector(((MeshSpec*)this->wireframeSpec)->segments[i][0]);
+		Vector3D endVector = Vector3D::getFromPixelVector(((MeshSpec*)this->wireframeSpec)->segments[i][1]);
 
 		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
 
@@ -184,55 +179,8 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 
-void Mesh::setupRenderingMode(fix10_6_ext distanceToCamera)
-{
-	if(__COLOR_BLACK != this->meshSpec->color)
-	{
-		this->interlaced = false;
-		this->color = this->meshSpec->color;
-
-		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
-		{
-			this->interlaced = true;
-		}
-	}
-	else
-	{
-		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
-		{
-			this->interlaced = true;
-			this->color = __COLOR_DARK_RED;
-		}
-		else if(__FIX10_6_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
-		{
-			this->interlaced = false;
-			this->color = __COLOR_DARK_RED;
-		}
-		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
-		{
-			this->interlaced = true;
-			this->color = __COLOR_MEDIUM_RED;
-		}
-		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
-		{
-			this->interlaced = true;
-			this->color = __COLOR_BRIGHT_RED;
-		}
-		else if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
-		{
-			this->interlaced = false;
-			this->color = __COLOR_MEDIUM_RED;
-		}
-		else
-		{
-			this->interlaced = false;
-			this->color = __COLOR_BRIGHT_RED;
-		}
-	}
-}
-
 /**
- * Class draw
+ * Render
  */
 void Mesh::render()
 {
@@ -254,6 +202,9 @@ void Mesh::render()
 	}
 }
 
+/**
+ * Draw
+ */
 void Mesh::draw(bool calculateParallax __attribute__((unused)))
 {
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
@@ -265,6 +216,9 @@ void Mesh::draw(bool calculateParallax __attribute__((unused)))
 	}
 }
 
+/**
+ * Draw interlaced
+ */
 void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
 {
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)

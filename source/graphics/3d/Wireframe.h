@@ -22,20 +22,36 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct WireframeSpec
+{
+	/// class allocator
+	AllocatorPointer allocator;
+
+	/// color
+	uint8 color;
+
+} WireframeSpec;
+
+
 /// @ingroup graphics-3d
 abstract class Wireframe : ListenerObject
 {
+	WireframeSpec* wireframeSpec;
 	const Vector3D* position;
 	const Rotation* rotation;
+	bool interlaced;
 	uint8 color;
 
 	/// @publicsection
-	void constructor(uint8 color);
+	void constructor(WireframeSpec* wireframeSpec);
 	void hide();
 	void show();
 	void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
+	void setupRenderingMode(fix10_6_ext distanceToCamera);
+
 	virtual void draw(bool calculateParallax) = 0;
 	virtual void render();
+	virtual VirtualList getVertices();
 }
 
 

@@ -16,6 +16,7 @@
 #include <SpriteManager.h>
 #include <Game.h>
 #include <Clock.h>
+#include <Optics.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -153,9 +154,10 @@ void Particle::synchronizeGraphics()
 	}
 
 	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 
 	// update sprite's 2D position
-	Sprite::position(this->sprite, &relativeGlobalPosition);
+	Sprite::setPosition(this->sprite, &position);
 }
 
 /**

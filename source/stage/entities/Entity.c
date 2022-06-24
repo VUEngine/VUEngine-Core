@@ -66,7 +66,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->shapes = NULL;
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
-	this->meshes = NULL;
+	this->wireframes = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -84,7 +84,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 void Entity::destructor()
 {
 	Entity::destroyShapes(this);
-	Entity::destroyMeshes(this);
+	Entity::destroyWireframes(this);
 
 	Entity::releaseSprites(this);
 
@@ -189,28 +189,27 @@ void Entity::destroyShapes()
 }
 
 /**
- * Destroy meshes
+ * Destroy wireframes
  *
  * @private
  */
-void Entity::destroyMeshes()
+void Entity::destroyWireframes()
 {
-	if(this->meshes)
+	if(this->wireframes)
 	{
-		ASSERT(!isDeleted(this->meshes), "Entity::destroyMeshes: dead meshes");
+		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
 
-		VirtualNode node = this->meshes->head;
+		VirtualNode node = this->wireframes->head;
 
 		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
 
-		delete this->meshes;
-		this->meshes = NULL;
+		delete this->wireframes;
+		this->wireframes = NULL;
 	}
 }
-
 
 /**
  * Add shapes
@@ -228,15 +227,15 @@ void Entity::setupShapes()
 }
 
 /**
- * Add meshes
+ * Add wireframes
  */
-void Entity::setupMeshes()
+void Entity::setupWireframes()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
-	if(NULL == this->meshes)
+	if(NULL == this->wireframes)
 	{
-		Entity::addMeshes(this, this->entitySpec->meshSpecs, false);
+		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, false);
 	}
 }
 
@@ -1121,37 +1120,37 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 
 
 /**
- * Setup mesh
+ * Setup wireframe
  *
  * @private
- * @param meshSpecs		List of meshes
+ * @param wireframeSpecs		List of wireframes
  */
-void Entity::addMeshes(const MeshSpec* meshSpecs, bool destroyPreviousMeshes)
+void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPreviousWireframes)
 {
-	if(NULL == meshSpecs)
+	if(NULL == wireframeSpecs)
 	{
 		return;
 	}
 
-	if(destroyPreviousMeshes)
+	if(destroyPreviousWireframes)
 	{
-		Entity::destroyMeshes(this);
+		Entity::destroyWireframes(this);
 	}
 
 	int32 i = 0;
 
-	if(NULL == this->meshes)
+	if(NULL == this->wireframes)
 	{
-		this->meshes = new VirtualList();
+		this->wireframes = new VirtualList();
 	}
 
 	// go through n sprites in entity's spec
-	for(; meshSpecs[i].allocator; i++)
+	for(; wireframeSpecs[i]->allocator; i++)
 	{
-		Mesh mesh = ((Mesh (*)(MeshSpec*)) meshSpecs[i].allocator)((MeshSpec*)&meshSpecs[i]);
-		Mesh::setup(mesh, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
-		VirtualList::pushBack(this->meshes, mesh);
-		Mesh::show(mesh);
+		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
+		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+		VirtualList::pushBack(this->wireframes, wireframe);
+		Wireframe::show(wireframe);
 	}
 }
 
@@ -1382,7 +1381,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 
 	this->transformShapes = true;
 	Entity::setupShapes(this);
-	Entity::setupMeshes(this);
+	Entity::setupWireframes(this);
 
 	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 
@@ -1508,13 +1507,13 @@ VirtualList Entity::getSprites()
 }
 
 /**
- * Retrieve meshes
+ * Retrieve wireframes
  *
- * @return		VirtualList of Entity's meshes
+ * @return		VirtualList of Entity's wireframes
  */
-VirtualList Entity::getMeshes()
+VirtualList Entity::getWireframes()
 {
-	return this->meshes;
+	return this->wireframes;
 }
 
 /**
@@ -1749,12 +1748,12 @@ void Entity::show()
 		}
 	}
 
-	// show all meshes
-	if(!isDeleted(this->meshes))
+	// show all wireframes
+	if(!isDeleted(this->wireframes))
 	{
-		for(VirtualNode node = this->meshes->head; node ; node = node->next)
+		for(VirtualNode node = this->wireframes->head; node ; node = node->next)
 		{
-			Mesh::show(node->data);
+			Wireframe::show(node->data);
 		}
 	}
 }
@@ -1778,12 +1777,12 @@ void Entity::hide()
 		}
 	}
 
-	// hide all meshes
-	if(!isDeleted(this->meshes))
+	// hide all wireframes
+	if(!isDeleted(this->wireframes))
 	{
-		for(VirtualNode node = this->meshes->head; node ; node = node->next)
+		for(VirtualNode node = this->wireframes->head; node ; node = node->next)
 		{
-			Mesh::hide(node->data);
+			Wireframe::hide(node->data);
 		}
 	}
 }

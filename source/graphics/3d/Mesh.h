@@ -23,19 +23,17 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a shape
 typedef struct MeshSpec
 {
-	/// class allocator
-	AllocatorPointer allocator;
-
-	/// color
-	uint8 color;
+	// Wireframe
+	WireframeSpec wireframeSpec;
 
 	/// segments
 	PixelVector (*segments)[2];
 
 } MeshSpec;
+
+typedef const MeshSpec MeshROMSpec;
 
 typedef struct Vertex
 {
@@ -53,20 +51,17 @@ typedef struct MeshSegment
 
 } MeshSegment;
 
-typedef const MeshSpec MeshROMSpec;
 
 /// @ingroup graphics-3d
 class Mesh : Wireframe
 {
-	MeshSpec* meshSpec;
 	VirtualList segments;
 	VirtualList vertices;
-	bool interlaced;
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
-	VirtualList getVertices();
-
+	
+	override VirtualList getVertices();
 	override void draw(bool calculateParallax);
 	void drawInterlaced(bool calculateParallax);
 	override void render();

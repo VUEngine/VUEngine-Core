@@ -20,7 +20,7 @@
 #include <Container.h>
 #include <Shape.h>
 #include <Body.h>
-#include <Mesh.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,8 +59,8 @@ typedef struct EntitySpec
 	/// use z displacement in projection
 	bool useZDisplacementInProjection;
 
-	/// meshes
-	MeshSpec* meshSpecs;
+	/// wireframees
+	WireframeSpec** wireframeSpecs;
 
 	/// collision shapes
 	ShapeSpec* shapeSpecs;

@@ -480,8 +480,17 @@ void Box::configureWireframe()
 		return;
 	}
 
+	PolyhedronSpec polyhedronSpec =
+	{
+		{
+			__TYPE(Polyhedron),
+
+			__COLOR_BRIGHT_RED
+		},
+	};
+
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Polyhedron(__COLOR_BRIGHT_RED));
+	this->wireframe = Wireframe::safeCast(new Polyhedron(&polyhedronSpec));
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{

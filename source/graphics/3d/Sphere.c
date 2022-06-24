@@ -29,13 +29,14 @@
  *
  * @private
  */
-void Sphere::constructor(Vector3D center, fix10_6 radius, uint8 color)
+void Sphere::constructor(SphereSpec* sphereSpec)
 {
 	// construct base object
-	Base::constructor(color);
+	Base::constructor(&sphereSpec->wireframeSpec);
 
-	this->center = center;
-	this->radius = __ABS(radius);
+	this->center = sphereSpec->center;
+	this->radius = __ABS(sphereSpec->radius);
+	this->normalizedCenter3D = Vector3D::zero();
 }
 
 /**
@@ -89,14 +90,31 @@ void Sphere::setRadius(fix10_6 radius)
 }
 
 /**
+ * Render
+ */
+void Sphere::render()
+{
+	extern Vector3D _previousCameraPosition;
+	extern Rotation _previousCameraInvertedRotation;
+	Vector3D position = NULL != this->position ? *this->position : this->center;
+
+	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
+	Sphere::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
+
+	this->normalizedCenter3D = Vector3D::rotate(Vector3D::getRelativeToCamera(this->center), *_cameraInvertedRotation);
+}
+
+/**
+ * Draw
+ */
+
+/**
  * Write to the frame buffers
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
 void Sphere::draw(bool calculateParallax)
 {
-	Vector3D normalizedCenter3D = Vector3D::rotate(Vector3D::getRelativeToCamera(this->center), *_cameraInvertedRotation);
-
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
 
 	Vector3D relativePoint3D =
@@ -104,14 +122,14 @@ void Sphere::draw(bool calculateParallax)
 		// draw on XY plane
 		-this->radius,
 		0,
-		normalizedCenter3D.z
+		this->normalizedCenter3D.z
 	};
 
 	for(; relativePoint3D.x < this->radius; relativePoint3D.x += __METERS_PER_PIXEL)
 	{
 		relativePoint3D.y = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(radiusSquare - __FIX10_6_EXT_MULT(relativePoint3D.x, relativePoint3D.x))));
-		Vector3D topTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y - relativePoint3D.y, normalizedCenter3D.z};
-		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
+		Vector3D topTranslatedPoint3D = {this->normalizedCenter3D.x + relativePoint3D.x, this->normalizedCenter3D.y - relativePoint3D.y, this->normalizedCenter3D.z};
+		Vector3D bottomTranslatedPoint3D = {this->normalizedCenter3D.x + relativePoint3D.x, this->normalizedCenter3D.y + relativePoint3D.y, this->normalizedCenter3D.z};
 
 		int16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.z) : 0;
 		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);

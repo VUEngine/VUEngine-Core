@@ -23,16 +23,27 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct SphereSpec
+{
+	// Wireframe
+	WireframeSpec wireframeSpec;
+
+	Vector3D center;
+	fix10_6 radius;
+
+} SphereSpec;
+
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
 	// Vertices
 	Vector3D center;
+	Vector3D normalizedCenter3D;
 	// Radious
 	fix10_6 radius;
 
 	/// @publicsection
-	void constructor(Vector3D center, fix10_6 radius, uint8 color);
+	void constructor(SphereSpec* sphereSpec);
 	Vector3D getCenter();
 	fix10_6 getRadius();
 	void setCenter(Vector3D center);

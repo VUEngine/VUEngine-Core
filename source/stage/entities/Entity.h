@@ -20,7 +20,7 @@
 #include <BgmapSprite.h>
 #include <ObjectSprite.h>
 #include <Telegram.h>
-#include <Mesh.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,8 +40,8 @@ class Entity : Container
 	VirtualList sprites;
 	// Shapes for collision detection
 	VirtualList shapes;
-	// meshes
-	VirtualList meshes;
+	// wireframes
+	VirtualList wireframes;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement
@@ -74,7 +74,7 @@ class Entity : Container
 	int16 getId();
 	int16 getInternalId();
 	VirtualList getSprites();
-	VirtualList getMeshes();
+	VirtualList getWireframes();
 	void transformShapes();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);

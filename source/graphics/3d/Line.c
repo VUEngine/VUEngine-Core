@@ -29,14 +29,14 @@
  *
  * @private
  */
-void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color)
+void Line::constructor(LineSpec* lineSpec)
 {
 	// construct base object
-	Base::constructor(color);
+	Base::constructor(&lineSpec->wireframeSpec);
 
-	this->a = a;
-	this->b = b;
-	this->normal = normal;
+	this->a = lineSpec->a;
+	this->b = lineSpec->b;
+	this->normal = lineSpec->normal;
 }
 
 /**

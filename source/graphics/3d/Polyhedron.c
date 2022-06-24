@@ -38,10 +38,10 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(uint8 color)
+void Polyhedron::constructor(PolyhedronSpec* polyhedronSpec)
 {
 	// construct base object
-	Base::constructor(color);
+	Base::constructor(&polyhedronSpec->wireframeSpec);
 
 	// don't create the list yet
 	this->vertices = NULL;
