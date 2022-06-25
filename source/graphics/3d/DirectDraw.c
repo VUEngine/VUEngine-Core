@@ -688,6 +688,58 @@ static void DirectDraw::drawColorCircle(PixelVector center, uint16 radius, int32
 		{
 			int16 y = Math::squareRoot(radiusSquare - x * x);
 
+			DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+
+			x++;
+			y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(int16 x = -radius; x < radius; x++)
+		{
+			int16 y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+		}
+	}
+}
+
+static void DirectDraw::drawColorCircumference(PixelVector center, uint16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xOutside = (xFromOutside && xToOutside);
+	bool yOutside = (yFromOutside && yToOutside); 
+	bool zOutside = (zFromOutside || zToOutside);
+
+	if(xOutside || yOutside || zOutside)
+	{
+		return;
+	}
+
+	uint32 radiusSquare = radius * radius;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		for(int16 x = -radius; x < radius - 1; x++)
+		{
+			int16 y = Math::squareRoot(radiusSquare - x * x);
+
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y - y, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y + y, center.parallax, color);
 

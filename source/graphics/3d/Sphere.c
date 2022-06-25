@@ -126,7 +126,7 @@ void Sphere::draw()
 		return;
 	}
 
-	DirectDraw::drawColorCircle(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
 	this->bufferIndex = !this->bufferIndex;
 }

@@ -43,6 +43,7 @@ class Sphere : Wireframe
 	PixelVector center;
 	// Radious
 	fix10_6 radius;
+	fix10_6 radiusDelta;
 	uint16 scaledRadius;
 
 	/// @publicsection
