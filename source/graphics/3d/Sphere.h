@@ -28,8 +28,7 @@ typedef struct SphereSpec
 	// Wireframe
 	WireframeSpec wireframeSpec;
 
-	Vector3D center;
-	fix10_6 radius;
+	uint16 radius;
 
 } SphereSpec;
 
@@ -37,18 +36,19 @@ typedef struct SphereSpec
 class Sphere : Wireframe
 {
 	// Vertices
-	Vector3D center;
-	Vector3D normalizedCenter3D;
+	PixelVector center;
 	// Radious
 	fix10_6 radius;
+	uint16 scaledRadius;
 
 	/// @publicsection
 	void constructor(SphereSpec* sphereSpec);
-	Vector3D getCenter();
+	PixelVector getCenter();
 	fix10_6 getRadius();
-	void setCenter(Vector3D center);
+	void setCenter(PixelVector center);
 	void setRadius(fix10_6 radius);
-	override void draw(bool calculateParallax);
+	override void render();
+	override void draw();
 }
 
 

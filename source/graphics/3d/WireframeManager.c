@@ -233,7 +233,7 @@ void WireframeManager::draw()
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
-		Wireframe::draw(Wireframe::safeCast(node->data), true);
+		Wireframe::draw(Wireframe::safeCast(node->data));
 	}
 }
 

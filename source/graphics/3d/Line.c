@@ -54,7 +54,7 @@ void Line::destructor()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Line::draw(bool calculateParallax __attribute__((unused)))
+void Line::draw()
 {
 	DirectDraw::drawColorLine(
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->a), 0),

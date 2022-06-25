@@ -44,7 +44,7 @@ class Line : Wireframe
 
 	/// @publicsection
 	void constructor(LineSpec* lineSpec);
-	override void draw(bool calculateParallax);
+	override void draw();
 }
 
 

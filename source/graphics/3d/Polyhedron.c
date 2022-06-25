@@ -103,7 +103,7 @@ void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Polyhedron::draw(bool calculateParallax)
+void Polyhedron::draw()
 {
 	// if I have some vertex, draw them
 	if(this->vertices && 2 < VirtualList::getSize(this->vertices))
@@ -130,13 +130,6 @@ void Polyhedron::draw(bool calculateParallax)
 			// project to 2d coordinates
 			fromVertex2D = PixelVector::project(fromVertex3D, 0);
 			toVertex2D = PixelVector::project(toVertex3D, 0);
-
-			// calculate parallax
-			if(calculateParallax)
-			{
-				fromVertex2D.parallax = Optics::calculateParallax(fromVertex3D.z);
-				toVertex2D.parallax = Optics::calculateParallax(toVertex3D.z);
-			}
 
 			// draw the line in both buffers
 			DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0, false);

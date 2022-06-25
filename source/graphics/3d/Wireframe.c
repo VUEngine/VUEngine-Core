@@ -38,10 +38,11 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	Base::constructor();
 
 	this->wireframeSpec = wireframeSpec;
-	this->color = wireframeSpec->color;
+	this->color = NULL == wireframeSpec ? __COLOR_BRIGHT_RED : wireframeSpec->color;
 	this->position = NULL;
 	this->rotation = NULL;
 	this->interlaced = true;
+	this->bufferIndex = 0;
 }
 
 /**
@@ -98,10 +99,18 @@ VirtualList Wireframe::getVertices()
 
 void Wireframe::setupRenderingMode(fix10_6_ext distanceToCamera)
 {
-	if(__COLOR_BLACK != this->wireframeSpec->color)
+	if(NULL == this->wireframeSpec)
+	{
+		this->color = __COLOR_BLACK;
+	}
+	else
+	{
+		this->color = this->wireframeSpec->color;
+	}
+
+	if(__COLOR_BLACK != this->color)
 	{
 		this->interlaced = false;
-		this->color = this->wireframeSpec->color;
 
 		if(__FIX10_6_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
 		{

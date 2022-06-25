@@ -41,6 +41,7 @@ abstract class Wireframe : ListenerObject
 	const Rotation* rotation;
 	bool interlaced;
 	uint8 color;
+	uint8 bufferIndex;
 
 	/// @publicsection
 	void constructor(WireframeSpec* wireframeSpec);
@@ -49,7 +50,7 @@ abstract class Wireframe : ListenerObject
 	void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 	void setupRenderingMode(fix10_6_ext distanceToCamera);
 
-	virtual void draw(bool calculateParallax) = 0;
+	virtual void draw() = 0;
 	virtual void render();
 	virtual VirtualList getVertices();
 }

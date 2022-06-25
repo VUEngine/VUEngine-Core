@@ -143,24 +143,13 @@ void Ball::configureWireframe()
 {
 	if(!isDeleted(this->wireframe))
 	{
-		Sphere::setCenter(this->wireframe, this->center);
 		return;
 	}
 
-	SphereSpec sphereSpec =
-	{
-		{
-			__TYPE(Sphere),
-
-			__COLOR_BRIGHT_RED
-		},
-
-		this->center,
-		this->radius
-	};
-
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Sphere(&sphereSpec));
+	this->wireframe = Wireframe::safeCast(new Sphere(NULL));
+	Wireframe::setup(this->wireframe, &this->center, NULL, NULL);
+	Sphere::setRadius(this->wireframe, this->radius);
 }
 
 // print debug data

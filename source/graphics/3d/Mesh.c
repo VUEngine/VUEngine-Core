@@ -50,7 +50,10 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	this->segments = new VirtualList();
 	this->vertices = new VirtualList();
 
-	Mesh::addSegments(this);
+	if(NULL != this->wireframeSpec)
+	{
+		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments);
+	}
 
 	if(NULL == _vipManager)
 	{
@@ -98,8 +101,13 @@ void Mesh::deleteLists()
 	this->vertices = NULL;
 }
 
-void Mesh::addSegments()
+void Mesh::addSegments(PixelVector (*segments)[2])
 {
+	if(NULL == segments)
+	{
+		return;
+	}
+
 	if(NULL != this->segments->head)
 	{
 		Mesh::deleteLists(this);
@@ -112,8 +120,8 @@ void Mesh::addSegments()
 
 	do
 	{
-		Vector3D startVector = Vector3D::getFromPixelVector(((MeshSpec*)this->wireframeSpec)->segments[i][0]);
-		Vector3D endVector = Vector3D::getFromPixelVector(((MeshSpec*)this->wireframeSpec)->segments[i][1]);
+		Vector3D startVector = Vector3D::getFromPixelVector(segments[i][0]);
+		Vector3D endVector = Vector3D::getFromPixelVector(segments[i][1]);
 
 		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
 
@@ -137,7 +145,6 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	MeshSegment* newMeshSegment = new MeshSegment;
 	newMeshSegment->fromVertex = NULL;
 	newMeshSegment->toVertex = NULL;
-	newMeshSegment->bufferIndex = 0;
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
@@ -184,6 +191,11 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
+	if(NULL == this->position || NULL == this->rotation)
+	{
+		return;
+	}
+
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
 	Vector3D position = *this->position;
@@ -205,29 +217,38 @@ void Mesh::render()
 /**
  * Draw
  */
-void Mesh::draw(bool calculateParallax __attribute__((unused)))
+void Mesh::draw()
 {
+	if(NULL == this->position || NULL == this->rotation)
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, meshSegment->bufferIndex, this->interlaced);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
 	}
+
+	this->bufferIndex = !this->bufferIndex;
 }
 
 /**
  * Draw interlaced
  */
-void Mesh::drawInterlaced(bool calculateParallax __attribute__((unused)))
+void Mesh::drawInterlaced()
 {
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		meshSegment->bufferIndex = DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, meshSegment->bufferIndex, true);
+		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true);
 	}
+
+	this->bufferIndex = !this->bufferIndex;
 }
 
 VirtualList Mesh::getVertices()

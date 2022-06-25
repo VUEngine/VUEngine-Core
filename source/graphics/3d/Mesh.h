@@ -47,7 +47,6 @@ typedef struct MeshSegment
 {
 	Vertex* fromVertex;
 	Vertex* toVertex;
-	uint8 bufferIndex;
 
 } MeshSegment;
 
@@ -62,8 +61,8 @@ class Mesh : Wireframe
 	void constructor(MeshSpec* meshSpec);
 	
 	override VirtualList getVertices();
-	override void draw(bool calculateParallax);
-	void drawInterlaced(bool calculateParallax);
+	override void draw();
+	void drawInterlaced();
 	override void render();
 }
 
