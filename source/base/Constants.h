@@ -228,12 +228,18 @@ void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 
 // round meters to multiples of 4 since that is
 // the size of 1 pixel
-#define __CLAMP_METERS(value)				((((value) + ((1 << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) - 1)) >> __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER)
+#define __CLAMP_METERS(value)					((((value) + ((1 << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) - 1)) >> __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER)
 
 #define __CAMERA_MINIMUM_DISPLACEMENT_ROUNDING(value)		((value) & (0xFFFF << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER))
 
 
 #define __MINIMUM_X_VIEW_DISTANCE_POWER			4
 #define __MINIMUM_Y_VIEW_DISTANCE_POWER			4
+
+
+#define __HIDE									0
+#define __SHOW_NEXT_FRAME						1
+#define __SHOW									2
+
 
 #endif

@@ -44,6 +44,7 @@ abstract class Wireframe : ListenerObject
 	bool interlaced;
 	uint8 color;
 	uint8 bufferIndex;
+	uint8 show;
 
 	/// @publicsection
 	void constructor(WireframeSpec* wireframeSpec);

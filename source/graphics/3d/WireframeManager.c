@@ -204,7 +204,14 @@ void WireframeManager::render()
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
-		Wireframe::render(Wireframe::safeCast(node->data));
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(__HIDE == wireframe->show)
+		{
+			continue;
+		}
+
+		Wireframe::render(wireframe);
 	}
 
 	WireframeManager::sortProgressively(this);
@@ -233,7 +240,20 @@ void WireframeManager::draw()
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
-		Wireframe::draw(Wireframe::safeCast(node->data));
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(__HIDE == wireframe->show)
+		{
+			continue;
+		}
+
+		if(__SHOW_NEXT_FRAME == wireframe->show)
+		{
+			wireframe->show = __SHOW;
+			continue;
+		}
+
+		Wireframe::draw(wireframe);
 	}
 }
 

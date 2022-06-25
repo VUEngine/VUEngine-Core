@@ -43,6 +43,9 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->rotation = NULL;
 	this->interlaced = true;
 	this->bufferIndex = 0;
+	this->show = __SHOW_NEXT_FRAME;
+
+	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
 /**
@@ -51,6 +54,8 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 void Wireframe::destructor()
 {
 	Wireframe::hide(this);
+
+	WireframeManager::remove(WireframeManager::getInstance(), this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -62,7 +67,7 @@ void Wireframe::destructor()
  */
 void Wireframe::show()
 {
-	WireframeManager::register(WireframeManager::getInstance(), this);
+	this->show = __SHOW_NEXT_FRAME;
 }
 
 /**
@@ -70,7 +75,7 @@ void Wireframe::show()
  */
 void Wireframe::hide()
 {
-	WireframeManager::remove(WireframeManager::getInstance(), this);
+	this->show = __HIDE;
 }
 
 /**
