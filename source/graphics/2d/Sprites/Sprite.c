@@ -54,7 +54,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->texture = NULL;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->visible = true;
 	this->writeAnimationFrame = false;
@@ -119,7 +119,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
 /*
-	if(this->hidden || !this->positioned)
+	if(__HIDE == this->show || !this->positioned)
 	{
 		return this->index;
 	}
@@ -230,7 +230,7 @@ Texture Sprite::getTexture()
  */
 void Sprite::show()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 }
 
 /**
@@ -238,7 +238,7 @@ void Sprite::show()
  */
 void Sprite::hide()
 {
-	this->hidden = true;
+	this->show = __HIDE;
 	this->positioned = false;
 }
 
@@ -247,7 +247,7 @@ void Sprite::hide()
  */
 void Sprite::showForDebug()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 
 	Sprite::setPosition(this, &this->position);
 }
@@ -257,20 +257,20 @@ void Sprite::showForDebug()
  */
 void Sprite::hideForDebug()
 {
-	this->hidden = true;
+	this->show = __HIDE;
 	this->positioned = false;
 
 	Sprite::setPosition(this, &this->position);
 }
 
 /**
- * Is the Sprite hidden?
+ * Is the Sprite show?
  *
- * @return		Boolean telling whether the sprite is hidden
+ * @return		Boolean telling whether the sprite is show
  */
 bool Sprite::isHidden()
 {
-	return this->hidden;
+	return __HIDE == this->show;
 }
 
 /**
@@ -626,7 +626,7 @@ void Sprite::update()
  */
 bool Sprite::isVisible()
 {
-	return this->visible && !this->hidden;
+	return this->visible && __HIDE != this->show;
 }
 
 /**
@@ -967,8 +967,8 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
-	Printing::text(Printing::getInstance(), "Hidden:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), (this->hidden > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "show:                         ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);

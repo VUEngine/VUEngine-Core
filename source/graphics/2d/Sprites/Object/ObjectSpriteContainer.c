@@ -57,7 +57,7 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
@@ -251,14 +251,14 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 void ObjectSpriteContainer::showForDebug()
 {
 	Base::showForDebug(this);
-	this->hidden = false;
+	this->show = __HIDE;
 	this->positioned = true;
 	this->hideSprites = false;
 }
 
 void ObjectSpriteContainer::hideForDebug()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->positioned = true;
 	this->hideSprites = true;
 }
@@ -285,8 +285,14 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(objectSprite->hidden || !objectSprite->positioned)
+			if(__HIDE == objectSprite->show || !objectSprite->positioned)
 			{
+				continue;
+			}
+
+			if(__SHOW_NEXT_FRAME == objectSprite->show)
+			{
+				objectSprite->show = __SHOW;
 				continue;
 			}
 

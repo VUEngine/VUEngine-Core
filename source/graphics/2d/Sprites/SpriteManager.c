@@ -549,7 +549,7 @@ void SpriteManager::applySpecialEffects()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->hidden || !sprite->positioned)
+		if(__HIDE == sprite->show || !sprite->positioned)
 		{
 			continue;
 		}
@@ -633,9 +633,15 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(sprite->hidden || !sprite->positioned)
+		if(__HIDE == sprite->show || !sprite->positioned)
 		{
 			sprite->index = __NO_RENDER_INDEX;
+			continue;
+		}
+
+		if(__SHOW_NEXT_FRAME == sprite->show)
+		{
+			sprite->show = __SHOW;
 			continue;
 		}
 
@@ -946,7 +952,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->visible && sprite->positioned && !sprite->hidden)
+		if(sprite->visible && sprite->positioned && !sprite->show)
 		{
 			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
 		}

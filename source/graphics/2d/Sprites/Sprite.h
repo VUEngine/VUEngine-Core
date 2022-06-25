@@ -152,8 +152,8 @@ abstract class Sprite : ListenerObject
 	int16 halfHeight;
 	// World layer where to render the texture
 	int16 index;
-	// Hidden flag
-	bool hidden;
+	// show flag
+	bool show;
 	// Update animation
 	bool writeAnimationFrame;
 	// Flag for transparency control

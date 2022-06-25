@@ -118,7 +118,7 @@ void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((
 
 void ObjectSprite::rewrite()
 {
-	if(this->hidden || !this->positioned)
+	if(__HIDE == this->show || !this->positioned)
 	{
 		return;
 	}
