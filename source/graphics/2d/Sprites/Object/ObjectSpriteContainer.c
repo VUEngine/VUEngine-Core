@@ -283,28 +283,32 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
+			objectSprite->index = __NO_RENDER_INDEX;
+
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(__HIDE == objectSprite->show || !objectSprite->positioned)
+			if(__SHOW != objectSprite->show)
 			{
+				if(__SHOW_NEXT_FRAME == objectSprite->show)
+				{
+					objectSprite->show = __SHOW;
+				}
+				
 				continue;
 			}
 
-			if(__SHOW_NEXT_FRAME == objectSprite->show)
+			if(!objectSprite->positioned)
 			{
-				objectSprite->show = __SHOW;
 				continue;
 			}
 
 			if(objectSprite->transparent & evenFrame)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				continue;
 			}
 
 			if(0 > _objectIndex - objectSprite->totalObjects)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				break;
 			}
 
