@@ -319,6 +319,5 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 void SolidParticle::reset()
 {
 	Base::reset(this);
-
 	Shape::reset(this->shape);
 }

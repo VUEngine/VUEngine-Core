@@ -49,12 +49,12 @@ abstract class Wireframe : ListenerObject
 	void constructor(WireframeSpec* wireframeSpec);
 	void hide();
 	void show();
-	void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 	void setupRenderingMode(fix10_6_ext distanceToCamera);
 
 	virtual void draw() = 0;
 	virtual void render();
 	virtual VirtualList getVertices();
+	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
 }
 
 

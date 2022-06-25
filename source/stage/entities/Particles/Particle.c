@@ -274,10 +274,7 @@ void Particle::expire()
 {
 	this->expired = true;
 
-	if(!isDeleted(this->sprite))
-	{
-		Particle::hide(this);
-	}
+	Particle::hide(this);
 }
 
 /**
@@ -364,6 +361,11 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* forc
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);
+
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::setup(this->wireframe, &this->position, NULL, NULL);
+	}
 
 	if(force->x | force->y | force->z)
 	{
