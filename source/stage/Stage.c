@@ -158,6 +158,15 @@ void Stage::destructor()
 		// Do not need to release sound wrappers here,
 		// they are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
+		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(!isDeleted(soundWrapper))
+			{
+				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
+			}
+		}
 
 		delete this->soundWrappers;
 		this->soundWrappers = NULL;
