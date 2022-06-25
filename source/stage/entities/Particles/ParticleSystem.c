@@ -298,12 +298,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 	}
 
-	if(!this->transformed)
-	{
-		return;
-	}
-
-	if(this->paused)
+	if(!this->transformed || this->paused || this->hidden)
 	{
 		return;
 	}
