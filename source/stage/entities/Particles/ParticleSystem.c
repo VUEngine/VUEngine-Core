@@ -144,8 +144,7 @@ void ParticleSystem::configure()
 
 	// calculate the number of sprite specs
 	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-
-	ASSERT(0 < this->numberOfSpriteSpecs, "ParticleSystem::constructor: 0 sprite specs");
+	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && this->particleSystemSpec->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
 }
 
 /**
@@ -454,14 +453,31 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 		return NULL;
 	}
 
-	int32 spriteSpecIndex = 0;
+	int32 specIndex = 0;
 
 	if(1 < this->numberOfSpriteSpecs)
 	{
-		spriteSpecIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
+		specIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
 	}
 
-	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex];
+	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[specIndex];
+}
+
+const WireframeSpec* ParticleSystem::getWireframeSpec()
+{
+	if(NULL == this->particleSystemSpec || NULL == this->particleSystemSpec->wireframeSpecs[0])
+	{
+		return NULL;
+	}
+
+	int32 specIndex = 0;
+
+	if(1 < this->numberOfWireframeSpecs)
+	{
+		specIndex = Utilities::random(_gameRandomSeed, this->numberOfWireframeSpecs);
+	}
+
+	return (const WireframeSpec*)this->particleSystemSpec->wireframeSpecs[specIndex];
 }
 
 void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
@@ -482,7 +498,7 @@ Particle ParticleSystem::spawnParticle()
 	int16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int32)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
@@ -632,7 +648,7 @@ void ParticleSystem::resume()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
+		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);

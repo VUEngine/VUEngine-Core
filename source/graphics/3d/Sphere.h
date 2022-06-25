@@ -28,9 +28,13 @@ typedef struct SphereSpec
 	// Wireframe
 	WireframeSpec wireframeSpec;
 
+	// radius
 	uint16 radius;
 
 } SphereSpec;
+
+typedef const SphereSpec SphereROMSpec;
+
 
 /// @ingroup graphics-3d
 class Sphere : Wireframe

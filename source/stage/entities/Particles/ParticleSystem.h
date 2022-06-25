@@ -47,6 +47,9 @@ typedef struct ParticleSystemSpec
 	/// array of sprites to select randomly
 	const SpriteSpec** spriteSpecs;
 
+	/// array of wireframes to select randomly
+	const WireframeSpec** wireframeSpecs;
+
 	/// auto start
 	bool autoStart;
 
@@ -101,8 +104,9 @@ class ParticleSystem : Entity
 	int32 nextSpawnTime;
 	// particles' life span increment
 	int16 particleLifeSpanIncrement;
-	// number of sprite specs
-	int16 numberOfSpriteSpecs;
+	// number of specs
+	int8 numberOfSpriteSpecs;
+	int8 numberOfWireframeSpecs;
 	// particle count
 	int8 particleCount;
 	// pause flag

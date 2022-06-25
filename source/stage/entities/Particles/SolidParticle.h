@@ -77,7 +77,7 @@ class SolidParticle : PhysicalParticle
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
+	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
 	Shape getShape();
 	VirtualList getShapes();
 	override fix10_6 getWidth();

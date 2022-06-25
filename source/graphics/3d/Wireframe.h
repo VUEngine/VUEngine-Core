@@ -32,6 +32,8 @@ typedef struct WireframeSpec
 
 } WireframeSpec;
 
+typedef const WireframeSpec WireframeROMSpec;
+
 
 /// @ingroup graphics-3d
 abstract class Wireframe : ListenerObject

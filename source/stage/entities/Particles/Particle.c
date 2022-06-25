@@ -38,18 +38,20 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan)
 {
 	// construct base Container
 	Base::constructor();
 
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
+	this->wireframe = NULL;
 	this->position = Vector3D::zero();
 	this->previousZ = 0;
 	this->expired = false;
 
 	Particle::addSprite(this, spriteSpec, particleSpec->animationDescription, particleSpec->initialAnimation);
+	Particle::addWireframe(this, wireframeSpec, particleSpec->animationDescription, particleSpec->initialAnimation);
 }
 
 /**
@@ -61,6 +63,12 @@ void Particle::destructor()
 	{
 		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
 		this->sprite = NULL;
+	}
+
+	if(!isDeleted(this->wireframe))
+	{
+		delete this->wireframe;
+		this->wireframe = NULL;
 	}
 
 	// destroy the super Container
@@ -77,7 +85,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
 {
 	ASSERT(spriteSpec->allocator, "Particle::load: no sprite allocator");
 
-	if(spriteSpec)
+	if(NULL != spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
 		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
@@ -88,6 +96,26 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
 		}
 		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
+	}
+}
+
+
+/**
+ * Add wireframe
+ *
+ * @private
+ */
+void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription __attribute__((unused)), const char* animationName __attribute__((unused)))
+{
+	ASSERT(wireframeSpec->allocator, "Particle::load: no sprite allocator");
+
+	if(NULL != wireframeSpec)
+	{
+		// call the appropriate allocator to support inheritance
+		this->wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec);
+		Wireframe::setup(this->wireframe, &this->position, NULL, NULL);
+
+		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
 }
 
@@ -130,7 +158,10 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 			behavior(this);
 		}
 
-		Sprite::updateAnimation(this->sprite);
+		if(!isDeleted(this->sprite))
+		{
+			Sprite::updateAnimation(this->sprite);
+		}
 	}
 
 	return false;
@@ -145,19 +176,22 @@ void Particle::synchronizeGraphics()
 {
 	NM_ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
-	if(this->position.z != this->previousZ)
+	if(!isDeleted(this->sprite))
 	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this->sprite, this->position.z);
+		if(this->position.z != this->previousZ)
+		{
+			// calculate sprite's parallax
+			Sprite::calculateParallax(this->sprite, this->position.z);
 
-		this->previousZ = this->position.z;
+			this->previousZ = this->position.z;
+		}
+
+		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+		PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
+
+		// update sprite's 2D position
+		Sprite::setPosition(this->sprite, &position);
 	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
-	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
-
-	// update sprite's 2D position
-	Sprite::setPosition(this->sprite, &position);
 }
 
 /**
@@ -222,9 +256,15 @@ const Vector3D* Particle::getPosition()
  */
 void Particle::show()
 {
-	ASSERT(this->sprite, "Particle::show: null sprite");
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::show(this->sprite);
+	}
 
-	Sprite::show(this->sprite);
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::show(this->wireframe);
+	}
 }
 
 /**
@@ -234,7 +274,10 @@ void Particle::expire()
 {
 	this->expired = true;
 
-	Particle::hide(this);
+	if(!isDeleted(this->sprite))
+	{
+		Particle::hide(this);
+	}
 }
 
 /**
@@ -242,9 +285,15 @@ void Particle::expire()
  */
 void Particle::hide()
 {
-	NM_ASSERT(this->sprite, "Particle::hide: null sprite");
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::hide(this->sprite);
+	}
 
-	Sprite::hide(this->sprite);
+	if(!isDeleted(this->wireframe))
+	{
+		Wireframe::hide(this->wireframe);
+	}
 }
 
 /**
@@ -267,9 +316,10 @@ void Particle::transform()
 /**
  * Resume
  */
-void Particle::resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName)
+void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription, const char* animationName)
 {
 	Particle::addSprite(this, spriteSpec, animationDescription, animationName);
+	Particle::addWireframe(this, wireframeSpec, animationDescription, animationName);
 
 	// Force parallax computation
 	this->previousZ = 0;
@@ -282,8 +332,18 @@ void Particle::resume(const SpriteSpec* spriteSpec, const AnimationDescription* 
  */
 void Particle::suspend()
 {
-	SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
-	this->sprite = NULL;
+	if(!isDeleted(this->sprite))
+	{
+		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
+
+		this->sprite = NULL;
+	}
+
+	if(!isDeleted(this->wireframe))
+	{
+		delete this->wireframe;
+		this->wireframe = NULL;
+	}
 }
 
 /**
@@ -320,35 +380,45 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* forc
  */
 bool Particle::isVisible()
 {
-	PixelVector spritePosition = Sprite::getDisplacedPosition(this->sprite);
-
-	Texture texture = Sprite::getTexture(this->sprite);
+	PixelVector pixelVector;
 
 	int16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
 	int16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
 
-	if(!isDeleted(texture))
+	if(!isDeleted(this->sprite))
 	{
-		halfWidth = Texture::getCols(texture) << 2;
-		halfHeight = Texture::getRows(texture) << 2;
+		pixelVector = Sprite::getDisplacedPosition(this->sprite);
+
+		Texture texture = Sprite::getTexture(this->sprite);
+
+		if(!isDeleted(texture))
+		{
+			halfWidth = Texture::getCols(texture) << 2;
+			halfHeight = Texture::getRows(texture) << 2;
+		}
+	}
+	else
+	{
+		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+		pixelVector = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 	}
 
 	extern const CameraFrustum* _cameraFrustum;
 
 	// check x visibility
-	if(spritePosition.x + halfWidth < _cameraFrustum->x0 || spritePosition.x - halfWidth > _cameraFrustum->x1)
+	if(pixelVector.x + halfWidth < _cameraFrustum->x0 || pixelVector.x - halfWidth > _cameraFrustum->x1)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(spritePosition.y + halfHeight < _cameraFrustum->y0 || spritePosition.y - halfHeight > _cameraFrustum->y1)
+	if(pixelVector.y + halfHeight < _cameraFrustum->y0 || pixelVector.y - halfHeight > _cameraFrustum->y1)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(spritePosition.z > __SCREEN_DEPTH || spritePosition.z < -(__SCREEN_DEPTH >> 1))
+	if(pixelVector.z > __SCREEN_DEPTH || pixelVector.z < -(__SCREEN_DEPTH >> 1))
 	{
 		return false;
 	}

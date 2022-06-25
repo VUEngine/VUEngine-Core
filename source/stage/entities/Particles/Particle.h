@@ -17,6 +17,7 @@
 
 #include <SpatialObject.h>
 #include <Sprite.h>
+#include <Wireframe.h>
 #include <Body.h>
 
 
@@ -69,12 +70,14 @@ class Particle : SpatialObject
 	fix10_6 previousZ;
 	// sprite
 	Sprite sprite;
+	// sprite
+	Wireframe wireframe;
 	// Particle's life span in milliseconds
 	int16 lifeSpan;
 	bool expired;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
 	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
@@ -83,7 +86,7 @@ class Particle : SpatialObject
 	virtual void applySustainedForce(const Force* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
-	virtual void resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName);
+	virtual void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription, const char* animationName);
 	virtual void suspend();
 	virtual void reset();
 	virtual void setMass(fix10_6 mass);

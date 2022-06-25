@@ -38,10 +38,10 @@
  * @param lifeSpan
  * @param mass
  */
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan)
 {
 	// construct base Container
-	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, lifeSpan);
+	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, wireframeSpec, lifeSpan);
 
 	this->physicalParticleSpec = physicalParticleSpec;
 	fix10_6 mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
