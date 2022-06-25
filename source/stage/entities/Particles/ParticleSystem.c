@@ -143,8 +143,9 @@ void ParticleSystem::configure()
 	this->maximumNumberOfAliveParticles = this->particleSystemSpec->maximumNumberOfAliveParticles;
 
 	// calculate the number of sprite specs
-	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && this->particleSystemSpec->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
+	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != this->particleSystemSpec->spriteSpecs && NULL != this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
+	// calculate the number of wireframe specs
+	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != this->particleSystemSpec->wireframeSpecs && NULL != this->particleSystemSpec->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
 }
 
 /**
@@ -443,7 +444,7 @@ void ParticleSystem::spawnAllParticles()
 
 const SpriteSpec* ParticleSystem::getSpriteSpec()
 {
-	if(NULL == this->particleSystemSpec || NULL == this->particleSystemSpec->spriteSpecs[0])
+	if(0 == this->numberOfSpriteSpecs)
 	{
 		return NULL;
 	}
@@ -460,7 +461,7 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 
 const WireframeSpec* ParticleSystem::getWireframeSpec()
 {
-	if(NULL == this->particleSystemSpec || NULL == this->particleSystemSpec->wireframeSpecs[0])
+	if(0 == this->numberOfWireframeSpecs)
 	{
 		return NULL;
 	}
