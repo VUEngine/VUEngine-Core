@@ -159,24 +159,5 @@ static uint32 Utilities::reverse(uint32 x, int32 bits)
 
 static float Utilities::floor(float x) 
 {
-    float xAux = x < 0 ? x *- 1 : x;
-    uint32 zeros = 0;
-    
-	float n = 1;
-    
-	for(; xAux > n * 10; n *= 10, zeros++);
-
-    for(xAux -=n; -1 != (int32)zeros; xAux -= n)
-	{
-        if(xAux < 0)
-        {
-            xAux += n;
-            n /= 10;
-            --zeros;
-        }
-	}
-
-    xAux += n;
-
-    return x < 0 ? (xAux == 0? x : x - ( 1 - xAux) ) : (x - xAux);
+	return (float)((long)(x * 2 + 0.5f) >> 1);
 }
