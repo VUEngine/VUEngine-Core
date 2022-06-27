@@ -203,11 +203,6 @@ static inline float Math::squareRoot(float number)
 // Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
-	if(0 >= (* ( long * ) &number))
-    {
-    	return 0;
-    }
-
     // Doom's code causes a warning because of breaking of aliasing rules
 	long i;
 	float x, y;
