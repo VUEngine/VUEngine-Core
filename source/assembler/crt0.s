@@ -27,6 +27,9 @@ _zeroDivisionVector = 0x0500FFD4
 .global _invalidOpcodeVector
 _invalidOpcodeVector = 0x0500FFD8
 
+.global _floatingPointVector
+_floatingPointVector = 0x0500FFDC
+
 
 /*************************************************
   startup code
@@ -272,6 +275,12 @@ __invalid_opcode_exception:
 	ld.w	0[r1],r1
 	jmp	    [r1]
 
+__floating_point_exception:
+	movhi	hi(_floatingPointVector), r0, r1
+	movea	lo(_floatingPointVector), r1, r1
+	ld.w	0[r1],r1
+	jmp	    [r1]
+
 	.section ".vbvectors","ax"
 	.align	1
 
@@ -302,8 +311,8 @@ _interrupt_table:
 	.fill	0x0110
 
     /* (7FFFF60h) - Float exception */
-	reti
-	.fill	0x0E
+	jr __floating_point_exception
+	.fill	0x0c
 
     /* Unused vector */
 	.fill	0x10

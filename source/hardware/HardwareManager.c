@@ -36,6 +36,7 @@ extern uint32 comVector;
 extern uint32 vipVector;
 extern uint32 zeroDivisionVector;
 extern uint32 invalidOpcodeVector;
+extern uint32 floatingPointVector;
 
 extern uint32 _dramBssEnd;
 extern uint32 _dramDataStart;
@@ -183,6 +184,7 @@ void HardwareManager::setExceptionVectors()
 {
 	zeroDivisionVector = (uint32)Error::zeroDivisionException;
 	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
+	floatingPointVector = (uint32)Error::floatingPointException;
 }
 
 /**
