@@ -188,6 +188,7 @@ static class Math : ListenerObject
 {
 	/// @publicsection
 	static inline float squareRoot(float number);
+	static inline fix10_6 Math::squareRootFix10_6(fix10_6_ext base);
 	static int32 powerFast(int32 base, int32 power);
 	static int32 intInfinity();
 	static fix10_6 fix10_6Infinity();
@@ -195,27 +196,42 @@ static class Math : ListenerObject
 	static int32 getAngle(fix7_9 x, fix7_9 y);
 }
 
+// retrieve the square root
+// this code was taken from the Doom engine
+static inline float Math::squareRoot(float radicand)
+{
+// Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
+// Doom's code causes a warning because of breaking of aliasing rules
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
+	float x = radicand * 0.5F;
+	float y = radicand;
+	long i = *(long*)&y;
+	i = 0x5f3759df - (i >> 1);
+	y = *(float*)&i;
+	y = y * (1.5F - ( x * y * y ));
+
+	return radicand * y;
+}
 
 // retrieve the square root
 // this code was taken from the Doom engine
-static inline float Math::squareRoot(float number)
+static inline fix10_6 Math::squareRootFix10_6(fix10_6_ext base)
 {
 // Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
+// Doom's code causes a warning because of breaking of aliasing rules
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
-    // Doom's code causes a warning because of breaking of aliasing rules
-	long i;
-	float x, y;
-#define F 	1.5F
+	float radicand = (float)base;
 
-	x = number * 0.5F;
-	y  = number;
-	i  = * ( long * ) &y;
-	i  = 0x5f3759df - ( i >> 1 );
-	y  = * ( float * ) &i;
-	y  = y * ( F - ( x * y * y ) );
+	float x = radicand * 0.5F;
+	float y = radicand;
+	long i = *(long*)&y;
+	i = 0x5f3759df - (i >> 1);
+	y = *(float*)&i;
+	y = y * (1.5F - ( x * y * y ));
 
-	return number * y;
+	return (fix10_6)(8 * radicand * y);
 }
 
 

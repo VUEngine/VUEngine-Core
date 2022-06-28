@@ -170,7 +170,7 @@ static SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball 
 
 	if(distanceVectorSquareLength < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
 	{
-		fix10_6 distanceVectorLength = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(distanceVectorSquareLength)));
+		fix10_6 distanceVectorLength = Math::squareRootFix10_6(distanceVectorSquareLength);
 
 		// add padding to prevent rounding problems
 		solutionVector.magnitude = radiusesLength - distanceVectorLength;

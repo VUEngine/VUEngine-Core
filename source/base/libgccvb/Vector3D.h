@@ -193,7 +193,7 @@ static inline fix10_6 Vector3D::length(Vector3D vector)
 {
 	fix10_6_ext lengthSquare = __FIX10_6_EXT_MULT(vector.x, vector.x) + __FIX10_6_EXT_MULT(vector.y, vector.y) + __FIX10_6_EXT_MULT(vector.z, vector.z);
 
-	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(lengthSquare)));
+	return Math_squareRootFix10_6(lengthSquare);
 }
 
 static inline fix10_6_ext Vector3D::squareLength(Vector3D vector)
@@ -208,7 +208,7 @@ static inline fix10_6 Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 
 	fix10_6_ext product = __FIX10_6_EXT_MULT(lengthSquareA, lengthSquareB);
 
-	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(product)));
+	return Math_squareRootFix10_6(product);
 }
 
 static inline fix10_6 Vector3D::getScale(fix10_6 z, bool applyScalingMultiplier)

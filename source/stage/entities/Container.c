@@ -1407,7 +1407,7 @@ Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 ax
 
 		if(direction->x)
 		{
-			z = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->x, direction->x) + __FIX10_6_EXT_MULT(direction->z, direction->z))));
+			z = Math::squareRootFix10_6(__FIX10_6_EXT_MULT(direction->x, direction->x) + __FIX10_6_EXT_MULT(direction->z, direction->z));
 
 			z = 0 > direction->z ? -z : z;
 		}
@@ -1421,7 +1421,7 @@ Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 ax
 
 		if(direction->y)
 		{
-			x = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->y, direction->y) + __FIX10_6_EXT_MULT(direction->x, direction->x))));
+			x = Math::squareRootFix10_6(__FIX10_6_EXT_MULT(direction->y, direction->y) + __FIX10_6_EXT_MULT(direction->x, direction->x));
 
 			x = 0 > direction->x ? -x : x;
 		}
@@ -1435,7 +1435,7 @@ Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 ax
 
 		if(direction->z)
 		{
-			y = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(__FIX10_6_EXT_MULT(direction->z, direction->z) + __FIX10_6_EXT_MULT(direction->y, direction->y))));
+			y = Math::squareRootFix10_6(__FIX10_6_EXT_MULT(direction->z, direction->z) + __FIX10_6_EXT_MULT(direction->y, direction->y));
 
 			y = 0 > direction->y ? -y : y;
 		}
