@@ -83,8 +83,6 @@ void Particle::destructor()
  */
 void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName)
 {
-	ASSERT(spriteSpec->allocator, "Particle::load: no sprite allocator");
-
 	if(NULL != spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
@@ -107,8 +105,6 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
  */
 void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription __attribute__((unused)), const char* animationName __attribute__((unused)))
 {
-	ASSERT(wireframeSpec->allocator, "Particle::load: no sprite allocator");
-
 	if(NULL != wireframeSpec)
 	{
 		// call the appropriate allocator to support inheritance
