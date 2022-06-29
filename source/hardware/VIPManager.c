@@ -289,23 +289,23 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 			case __GAMESTART:
 
-				if(_vipManager->processingGAMESTART)
+				if(this->processingGAMESTART)
 				{
 					this->multiplexedFRAMESTARTCounter++;
 
-					if(!_vipManager->processingXPEND)
+					if(!this->processingXPEND)
 					{
 						this->drawingEnded = false;
 					}
 
 					if(this->events)
 					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringGAMESTART);
+						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringGAMESTART);
 					}
 					break;
 				}
 
-				if(_vipManager->processingXPEND)
+				if(this->processingXPEND)
 				{
 					this->multiplexedFRAMESTARTCounter++;
 
@@ -313,11 +313,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 					if(this->events)
 					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerGAMESTARTDuringXPEND);
+						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 					}
 				}
 
-				_vipManager->processingGAMESTART = true;
+				this->processingGAMESTART = true;
 
 				// Allow frame start interrupt
 				VIPManager::enableInterrupts(this, __XPEND);
@@ -332,7 +332,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				Game::nextFrameStarted(Game::getInstance());
 
-				this->frameStarted = _vipManager->processingXPEND;
+				this->frameStarted = this->processingXPEND;
 
 				SpriteManager::render(_spriteManager);
 				WireframeManager::render(_wireframeManager);
@@ -341,33 +341,33 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
 
-				_vipManager->processingGAMESTART = false;
+				this->processingGAMESTART = false;
 
 #ifdef __SHOW_VIP_STATUS
-				VIPManager::print(_vipManager, 1, 2);
+				VIPManager::print(this, 1, 2);
 #endif
 				break;
 
 			case __XPEND:
 
-				if(_vipManager->processingXPEND)
+				if(this->processingXPEND)
 				{
 					this->multiplexedXPENDCounter++;
 
 					if(this->events)
 					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringXPEND);
+						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringXPEND);
 					}
 					break;
 				}
 
-				if(_vipManager->processingGAMESTART)
+				if(this->processingGAMESTART)
 				{
 					this->multiplexedXPENDCounter++;
 
 					if(this->events)
 					{
-						VIPManager::fireEvent(_vipManager, kEventVIPManagerXPENDDuringGAMESTART);
+						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 					}
 				}
 
@@ -428,13 +428,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 			case __TIMEERR:
 
 				this->timeErrorCounter++;
-				VIPManager::fireEvent(_vipManager, kEventVIPManagerTimeError);
+				VIPManager::fireEvent(this, kEventVIPManagerTimeError);
 				break;
 
 			case __SCANERR:
 
 				this->scanErrorCounter++;
-				VIPManager::fireEvent(_vipManager, kEventVIPManagerScanError);
+				VIPManager::fireEvent(this, kEventVIPManagerScanError);
 				break;
 		}
 	}
