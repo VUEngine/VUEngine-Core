@@ -727,11 +727,17 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 		{
 			int16 y = Math::squareRoot(radiusSquare - x * x);
 
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y + y, center.parallax, color);
+
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y - y, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y + y, center.parallax, color);
 
 			x++;
 			y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
 
 			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
@@ -742,9 +748,12 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-		for(int16 x = -radius; x <= radius; x++)
+		for(int16 x = 0; x <= radius; x++)
 		{
 			int16 y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
 
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y - y, center.parallax, color);
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
