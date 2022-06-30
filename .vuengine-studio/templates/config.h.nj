@@ -315,6 +315,9 @@
 #define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR				{{ engine.sound.stereoHorizontalAttenuationFactor }}
 #define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR					{{ engine.sound.stereoVerticalAttenuationFactor }}
 
+// smaller values allow movement to start when colliding against a shape and trying to move towards it
+#define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if engine.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIX10_6(__COS({{ engine.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIX10_6(0.01f){% endif %}
+
 
 {{ macros.sectionHeader('Brightness') }}
 

@@ -419,7 +419,7 @@ bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attrib
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
 				fix10_6 cosAngle = Vector3D::dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-				canMove &= -__F_TO_FIX10_6(1 - 0.01f) < cosAngle;
+				canMove &= -(__1I_FIX10_6 - __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT) < cosAngle;
 			}
 		}
 	}
