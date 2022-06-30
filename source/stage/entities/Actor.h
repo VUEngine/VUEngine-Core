@@ -52,7 +52,6 @@ typedef const ActorSpec ActorROMSpec;
 class Actor : AnimatedEntity
 {
 	// spec
-	const ActorSpec* actorSpec;
 	// a state machine to handle entity's logic
 	StateMachine stateMachine;
 	// a physical body
@@ -103,7 +102,6 @@ class Actor : AnimatedEntity
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);
-	override void setSpec(void* actorSpec);
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 }
 

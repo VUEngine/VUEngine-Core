@@ -44,9 +44,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// construct base object
 	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
 
-	// save spec
-	this->actorSpec = actorSpec;
-
 	// construct the game state machine
 	this->stateMachine = NULL;
 
@@ -114,17 +111,6 @@ void Actor::iAmDeletingMyself()
 	{
 		Body::setActive(this->body, false);
 	}
-}
-
-// set spec
-void Actor::setSpec(void* actorSpec)
-{
-	ASSERT(actorSpec, "Actor::setSpec: null spec");
-
-	// save spec
-	this->actorSpec = actorSpec;
-
-	Base::setSpec(this, &((ActorSpec*)actorSpec)->animatedEntitySpec);
 }
 
 //set class's local position
@@ -217,12 +203,12 @@ void Actor::doSyncRotationWithBody()
 	{
 		Direction3D direction3D = *Body::getDirection3D(this->body);
 
-		if((uint16)__LOCK_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		if((uint16)__LOCK_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			return;
 		}
 
-		if(__NO_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			Direction direction = Actor::getDirection(this);
 
@@ -257,7 +243,7 @@ void Actor::doSyncRotationWithBody()
 		}
 		else
 		{
-			Rotation localRotation = Actor::getRotationFromDirection(this, &direction3D, this->actorSpec->axisForSynchronizationWithBody);
+			Rotation localRotation = Actor::getRotationFromDirection(this, &direction3D, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
 			Base::setLocalRotation(this, &localRotation);
 		}
 	}
@@ -690,7 +676,7 @@ const Vector3D* Actor::getPosition()
 // get bounciness
 fix10_6 Actor::getBounciness()
 {
-	PhysicalSpecification* physicalSpecification = this->actorSpec->animatedEntitySpec.entitySpec.physicalSpecification;
+	PhysicalSpecification* physicalSpecification = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalSpecification;
 
 	return this->body ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }

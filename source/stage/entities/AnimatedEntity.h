@@ -47,8 +47,6 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 /// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
-	// Pointer to the ROM spec
-	AnimatedEntitySpec* animatedEntitySpec;
 	// Pointer to the animation description
 	AnimationDescription* animationDescription;
 	// need to save for pausing
@@ -72,7 +70,6 @@ class AnimatedEntity : Entity
 	override void ready(bool recursive);
 	override void update(uint32 elapsedTime);
 	override void resume();
-	override void setSpec(void* animatedEntitySpec);
 }
 
 

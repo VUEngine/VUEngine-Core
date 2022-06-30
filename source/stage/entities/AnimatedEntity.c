@@ -45,7 +45,6 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
 	// save ROM spec
-	this->animatedEntitySpec = animatedEntitySpec;
 	this->animationDescription = animatedEntitySpec->animationDescription;
 
 	this->currentAnimationName = NULL;
@@ -59,25 +58,14 @@ void AnimatedEntity::destructor()
 	Base::destructor();
 }
 
-// set spec
-void AnimatedEntity::setSpec(void* animatedEntitySpec)
-{
-	ASSERT(animatedEntitySpec, "AnimatedEntity::setSpec: null spec");
-
-	// save spec
-	this->animatedEntitySpec = animatedEntitySpec;
-
-	Base::setSpec(this, &((AnimatedEntitySpec*)animatedEntitySpec)->entitySpec);
-}
-
 // ready method
 void AnimatedEntity::ready(bool recursive)
 {
-	ASSERT(this->animatedEntitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
+	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
 
 	Base::ready(this, recursive);
 
-	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
+	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
 
 	AnimatedEntity::setupListeners(this);
 }
