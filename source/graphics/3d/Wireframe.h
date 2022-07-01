@@ -41,6 +41,7 @@ abstract class Wireframe : ListenerObject
 	WireframeSpec* wireframeSpec;
 	const Vector3D* position;
 	const Rotation* rotation;
+	const Scale* scale;
 	bool interlaced;
 	uint8 color;
 	uint8 bufferIndex;

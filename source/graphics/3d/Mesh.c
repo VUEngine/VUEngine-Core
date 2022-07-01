@@ -191,7 +191,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
-	if(NULL == this->position || NULL == this->rotation)
+	if(NULL == this->position)
 	{
 		return;
 	}
@@ -199,18 +199,60 @@ void Mesh::render()
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
 	Vector3D position = *this->position;
-	Rotation rotation = *this->rotation;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 	Mesh::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
 
-	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+	if(NULL == this->rotation && NULL == this->scale)
 	{
-		Vertex* vertex = (Vertex*)node->data;
+		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+		{
+			Vertex* vertex = (Vertex*)node->data;
 
-		Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
 
-		vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+		}
+	}
+	else if(NULL == this->rotation)
+	{
+		Scale scale = *this->scale;
+
+		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+		{
+			Vertex* vertex = (Vertex*)node->data;
+
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
+
+			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+		}
+	}
+	else if(NULL == this->scale)
+	{
+		Rotation rotation = *this->rotation;
+
+		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+		{
+			Vertex* vertex = (Vertex*)node->data;
+
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
+
+			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+		}
+	}	
+	else
+	{
+		Rotation rotation = *this->rotation;
+		Scale scale = *this->scale;
+
+		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+		{
+			Vertex* vertex = (Vertex*)node->data;
+
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
+
+			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+		}
 	}
 }
 
@@ -219,7 +261,7 @@ void Mesh::render()
  */
 void Mesh::draw()
 {
-	if(NULL == this->position || NULL == this->rotation)
+	if(NULL == this->position)
 	{
 		return;
 	}

@@ -92,6 +92,7 @@ void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Ro
 {
 	this->position = position;
 	this->rotation = rotation;
+	this->scale = scale;
 }
 
 /**

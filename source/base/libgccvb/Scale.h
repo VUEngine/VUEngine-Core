@@ -77,7 +77,7 @@ static inline Scale Scale::intermediate(Scale a, Scale b)
 
 static inline Scale Scale::product(Scale a, Scale b)
 {
-	return (Scale){__FIX7_9_MULT(a.x, b.x), __FIX7_9_MULT(a.y, b.y), __FIX7_9_MULT(a.z, a.z)};
+	return (Scale){__FIX7_9_MULT(a.x, b.x), __FIX7_9_MULT(a.y, b.y), __FIX7_9_MULT(a.z, b.z)};
 }
 
 static inline Scale Scale::division(Scale a, Scale b)

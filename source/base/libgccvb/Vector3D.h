@@ -39,6 +39,7 @@ static class Vector3D : ListenerObject
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline Vector3D sub(Vector3D a, Vector3D b);
+	static inline Vector3D scale(Vector3D vector, Scale scale);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fix10_6_ext dotProduct(Vector3D vectorA, Vector3D vectorB);
@@ -102,6 +103,11 @@ static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 static inline Vector3D Vector3D::sub(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x - b.x, a.y - b.y, a.z - b.z};
+}
+
+static inline Vector3D Vector3D::scale(Vector3D vector, Scale scale)
+{
+	return (Vector3D){__FIX10_6_EXT_MULT(vector.x, __FIX7_9_TO_FIX10_6(scale.x)), __FIX10_6_EXT_MULT(vector.y, __FIX7_9_TO_FIX10_6(scale.y)), __FIX10_6_EXT_MULT(vector.z, __FIX7_9_TO_FIX10_6(scale.z))};
 }
 
 static inline Vector3D Vector3D::perpedicular(Vector3D a, bool left)
