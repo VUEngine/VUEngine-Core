@@ -170,8 +170,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
  */
 void Particle::synchronizeGraphics()
 {
-	NM_ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
-
 	if(!isDeleted(this->sprite))
 	{
 		if(this->position.z != this->previousZ)
@@ -316,8 +314,6 @@ void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wirefra
 
 	// Force parallax computation
 	this->previousZ = 0;
-
-	NM_ASSERT(this->sprite, "Particle::resume: null sprite");
 }
 
 /**
