@@ -189,6 +189,16 @@ void Entity::destroyShapes()
 }
 
 /**
+ * Become subject to the governing streaming algorithm
+ *
+ * @private
+ */
+void Entity::streamOut()
+{
+	this->dontStreamOut = true;
+}
+
+/**
  * Destroy wireframes
  *
  * @private
@@ -1412,10 +1422,9 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 
 	if(this->invalidateGlobalTransformation)
 	{
-		Entity::transformShapes(this);
-
-		// call base class's transformation method
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+
+		Entity::transformShapes(this);
 	}
 	else if(this->children)
 	{
