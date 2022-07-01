@@ -61,6 +61,7 @@ class Actor : AnimatedEntity
 
 	/// @publicsection
 	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
+	void createBody(PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void initializeStateMachine(State state);
 	bool hasChangedDirection(uint16 axis);
 	void changeDirectionOnAxis(uint16 axis);

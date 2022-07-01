@@ -551,14 +551,14 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	// concatenate transformation
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToRotation(this, environmentTransform);
-	}
-
 	if(__INHERIT_SCALE & this->inheritEnvironment)
 	{
 		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToRotation(this, environmentTransform);
 	}
 
 	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->inheritEnvironment)
@@ -599,19 +599,19 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
-	{
-		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
-		{
-			Container::applyEnvironmentToRotation(this, environmentTransform);
-		}
-	}
-
 	if(__INHERIT_SCALE & this->inheritEnvironment)
 	{
 		if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 		{
 			Container::applyEnvironmentToScale(this, environmentTransform);
+		}
+	}
+
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
+		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+		{
+			Container::applyEnvironmentToRotation(this, environmentTransform);
 		}
 	}
 

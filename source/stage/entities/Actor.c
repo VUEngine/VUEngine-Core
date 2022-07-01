@@ -53,15 +53,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// create body
 	if(actorSpec->createBody)
 	{
-		if(actorSpec->animatedEntitySpec.entitySpec.physicalSpecification)
-		{
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
-		}
-		else
-		{
-			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, Vector3D::zero(), 0};
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axisSubjectToGravity);
-		}
+		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
 	}
 }
 
@@ -88,6 +80,19 @@ void Actor::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void Actor::createBody(PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+{
+	if(NULL != physicalSpecification)
+	{
+		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
+	}
+	else
+	{
+		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, Vector3D::zero(), 0};
+		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
+	}
 }
 
 void Actor::initializeStateMachine(State state)
