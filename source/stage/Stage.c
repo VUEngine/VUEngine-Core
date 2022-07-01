@@ -455,6 +455,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// apply transformations
 			Entity::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
+			entity->dontStreamOut = permanent;
+			
 			if(makeReady)
 			{
 				Stage::makeChildReady(this, entity);
@@ -462,12 +464,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 			Stage::alertOfLoadedEntity(this, entity);
 		}
-/*
-		if(permanent)
-		{
-			// TODO
-		}
-*/
+
 		return entity;
 	}
 
