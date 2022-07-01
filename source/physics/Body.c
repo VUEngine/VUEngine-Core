@@ -450,7 +450,7 @@ Vector3D Body::getLastDisplacement()
 	return displacement;
 }
 
-MovementResult Body::getMovementResult(Vector3D previousVelocity)
+MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration gravity)
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS, __NO_AXIS};
 
@@ -473,7 +473,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(!this->movesIndependentlyOnEachAxis && (__ACCELERATED_MOVEMENT == (this->movementType.x | this->movementType.y | this->movementType.z)))
 	{
-		if(this->speed < __STOP_VELOCITY_THRESHOLD && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z)
+		if(this->speed < __STOP_VELOCITY_THRESHOLD && !this->externalForce.x && !this->externalForce.y && !this->externalForce.z && !gravity.x && !gravity.y && !gravity.z)
 		{
 			movementResult.axisStoppedMovement = __ALL_AXIS;
 		}
@@ -483,7 +483,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(previousVelocity.x && !this->externalForce.x && __ACCELERATED_MOVEMENT == this->movementType.x)
+	if(previousVelocity.x && !this->externalForce.x && !gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->acceleration.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
 		{
@@ -491,7 +491,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		}
 	}
 
-	if(previousVelocity.y && !this->externalForce.y && __ACCELERATED_MOVEMENT == this->movementType.y)
+	if(previousVelocity.y && !this->externalForce.y && !gravity.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->acceleration.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
 		{
@@ -499,7 +499,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 		}
 	}
 
-	if(previousVelocity.z && !this->externalForce.z && __ACCELERATED_MOVEMENT == this->movementType.z)
+	if(previousVelocity.z && !this->externalForce.z && !gravity.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->acceleration.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
 		{
@@ -689,7 +689,7 @@ MovementResult Body::updateMovement()
 		this->position.z += __FIX10_6_EXT_MULT_ROUND(this->velocity.z, elapsedTime);
 	}
 
-	return Body::getMovementResult(this, previousVelocity);
+	return Body::getMovementResult(this, previousVelocity, gravity);
 }
 
 bool Body::changedDirection()
