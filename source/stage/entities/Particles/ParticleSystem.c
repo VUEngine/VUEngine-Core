@@ -689,7 +689,7 @@ void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAlive
 void ParticleSystem::start()
 {
 	this->update = true;
-	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+	this->nextSpawnTime = 0;
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
 	this->transformed = false;
@@ -709,7 +709,7 @@ void ParticleSystem::unpause()
 	{
 		this->paused = false;
 		this->transformed = false;
-		this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+		this->nextSpawnTime = 0;
 	}
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
