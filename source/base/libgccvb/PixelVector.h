@@ -31,6 +31,7 @@ static class PixelVector : ListenerObject
 	static inline PixelVector get(PixelVector from, PixelVector to);
 	static inline PixelVector sum(PixelVector a, PixelVector b);
 	static inline PixelVector sub(PixelVector a, PixelVector b);
+	static inline PixelVector intermediate(PixelVector a, PixelVector b);
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, int16 parallax);
 	static inline uint32 squareLength(PixelVector vector);
@@ -64,6 +65,17 @@ static inline PixelVector PixelVector::sum(PixelVector a, PixelVector b)
 static inline PixelVector PixelVector::sub(PixelVector a, PixelVector b)
 {
 	return (PixelVector){a.x - b.x, a.y - b.y, a.z - b.z, a.parallax - b.parallax};
+}
+
+static inline PixelVector PixelVector::intermediate(PixelVector a, PixelVector b)
+{
+	return (PixelVector)
+	{
+		(a.x + b.x) >> 1,
+		(a.y + b.y) >> 1,
+		(a.z + b.z) >> 1,
+		(a.parallax + b.parallax) >> 1
+	};
 }
 
 static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax)

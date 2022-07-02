@@ -19,6 +19,7 @@
 #include <Constants.h>
 #include <Printing.h>
 #include <Optical.h>
+#include <Optics.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,6 +55,7 @@ static class Vector3D : ListenerObject
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
 	static inline fix10_6 getScale(fix10_6 z, bool applyScalingMultiplier);
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
+	static inline PixelVector transformToPixelVector(Vector3D vector);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
@@ -310,6 +312,14 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 	return projection;
 }
 
+static inline PixelVector Vector3D::transformToPixelVector(Vector3D vector)
+{
+	extern Vector3D _previousCameraPosition;
+	extern Rotation _previousCameraInvertedRotation;
+	vector = Vector3D::rotate(Vector3D::sub(vector, _previousCameraPosition), _previousCameraInvertedRotation);
+	
+	return Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+}
 
 static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 {
