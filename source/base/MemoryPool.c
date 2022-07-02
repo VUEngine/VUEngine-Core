@@ -457,11 +457,11 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 	MemoryPool::printDetailedUsage(this, 1, 8);
-	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
-	Printing::int32(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 26, NULL);
+	Printing::int32(Printing::getInstance(), numberOfBytes, 44, 26, NULL);
 #ifndef __RELEASE
-	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
-	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
+	Printing::text(Printing::getInstance(), "Caller address: ", 20, 27, NULL);
+	Printing::hex(Printing::getInstance(), lp, 36, 27, 8, NULL);
 #endif
 
 	Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
