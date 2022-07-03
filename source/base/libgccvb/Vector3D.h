@@ -314,9 +314,7 @@ static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int1
 
 static inline PixelVector Vector3D::transformToPixelVector(Vector3D vector)
 {
-	extern Vector3D _previousCameraPosition;
-	extern Rotation _previousCameraInvertedRotation;
-	vector = Vector3D::rotate(Vector3D::sub(vector, _previousCameraPosition), _previousCameraInvertedRotation);
+	vector = Vector3D::rotate(Vector3D::sub(vector, *_cameraPosition), *_cameraInvertedRotation);
 	
 	return Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 }
