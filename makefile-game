@@ -59,6 +59,7 @@ printPreBuildingInfo:
 	@$(shell rm -f \$(WORKING_FOLDER)/traces/*omponents.txt*)
 	@$(shell echo "core" > \$(WORKING_FOLDER)/traces/components.txt)
 	@rm -f $(WORKING_FOLDER)/traces/preprocessing.txt
+	@rm -f $(WORKING_FOLDER)/*.a
 
 printComponentsToBuildInformation:
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt > $(WORKING_FOLDER)/traces/components.txt.tmp)
