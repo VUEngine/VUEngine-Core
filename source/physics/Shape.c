@@ -394,7 +394,7 @@ CollisionData Shape::collides(Shape shape)
  *
  * @param displacement		shape displacement
  */
-bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
+bool Shape::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __attribute__ ((unused)))
 {
 	if(!this->collidingShapes)
 	{
@@ -418,8 +418,8 @@ bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attrib
 			// check if solution is valid
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
-				fix10_6 cosAngle = Vector3D::dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-				canMove &= -(__1I_FIX10_6 - __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT) < cosAngle;
+				fixed_t cosAngle = Vector3D::dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
+				canMove &= -(__1I_FIXED - __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT) < cosAngle;
 			}
 		}
 	}
@@ -778,14 +778,14 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
  *
  * @return				The sum of friction coefficients
  */
-fix10_6 Shape::getCollidingFrictionCoefficient()
+fixed_t Shape::getCollidingFrictionCoefficient()
 {
 	if(!this->collidingShapes)
 	{
 		return 0;
 	}
 
-	fix10_6 totalFrictionCoefficient = 0;
+	fixed_t totalFrictionCoefficient = 0;
 
 	VirtualNode node = this->collidingShapes->head;
 

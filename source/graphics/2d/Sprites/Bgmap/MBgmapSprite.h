@@ -80,7 +80,7 @@ class MBgmapSprite : BgmapSprite
 	/// @publicsection
 	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner);
 	override int16 doRender(int16 index, bool evenFrame);
-	override void resize(Scale scale, fix10_6 z);
+	override void resize(Scale scale, fixed_t z);
 	override void setMode(uint16 display, uint16 mode);
 	override bool prepareTexture();
 	override bool writeTextures();

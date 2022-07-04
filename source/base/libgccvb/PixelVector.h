@@ -35,7 +35,7 @@ static class PixelVector : ListenerObject
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, int16 parallax);
 	static inline uint32 squareLength(PixelVector vector);
-	static inline fix10_6 length(PixelVector vector);
+	static inline fixed_t length(PixelVector vector);
 	static inline PixelVector getRelativeToCamera(PixelVector vector);
 	static inline PixelVector project(Vector3D vector3D, int16 parallax);
 	static inline PixelVector getProjectionDisplacementHighPrecision(Vector3D vector3D, int16 parallax);
@@ -105,9 +105,9 @@ static inline uint32 PixelVector::squareLength(PixelVector vector)
 	return ((uint32)vector.x) * ((uint32)vector.x) + ((uint32)vector.y) * ((uint32)vector.y) + ((uint32)vector.z) * ((uint32)vector.z);
 }
 
-static inline fix10_6 PixelVector::length(PixelVector vector)
+static inline fixed_t PixelVector::length(PixelVector vector)
 {
-	return __F_TO_FIX10_6(Math_squareRoot(PixelVector::squareLength(vector)));
+	return __F_TO_FIXED(Math_squareRoot(PixelVector::squareLength(vector)));
 }
 
 static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
@@ -126,8 +126,8 @@ static inline PixelVector PixelVector::project(Vector3D vector3D, int16 parallax
 {
 	extern const Optical* _optical;
 
-	vector3D.x -= (__FIX10_6_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumXViewDistancePower);	
-	vector3D.y -= (__FIX10_6_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumYViewDistancePower);	
+	vector3D.x -= (__FIXED_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumXViewDistancePower);	
+	vector3D.y -= (__FIXED_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumYViewDistancePower);	
 	
 	PixelVector projection =
 	{
@@ -146,8 +146,8 @@ static inline PixelVector PixelVector::getProjectionDisplacementHighPrecision(Ve
 	
 	PixelVector projection =
 	{
-		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.x - _optical->horizontalViewPointCenter, (fix10_6_ext)vector3D.z) >> (_optical->maximumXViewDistancePower + __PIXELS_PER_METER_2_POWER)),
-		-__METERS_TO_PIXELS(__FIX10_6_EXT_MULT((fix10_6_ext)vector3D.y - _optical->verticalViewPointCenter, (fix10_6_ext)vector3D.z) >> (_optical->maximumYViewDistancePower + __PIXELS_PER_METER_2_POWER)),
+		-__METERS_TO_PIXELS(__FIXED_EXT_MULT((fixed_ext_t)vector3D.x - _optical->horizontalViewPointCenter, (fixed_ext_t)vector3D.z) >> (_optical->maximumXViewDistancePower + __PIXELS_PER_METER_2_POWER)),
+		-__METERS_TO_PIXELS(__FIXED_EXT_MULT((fixed_ext_t)vector3D.y - _optical->verticalViewPointCenter, (fixed_ext_t)vector3D.z) >> (_optical->maximumYViewDistancePower + __PIXELS_PER_METER_2_POWER)),
 		0,
 		parallax
 	};

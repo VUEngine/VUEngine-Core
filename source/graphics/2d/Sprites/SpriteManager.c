@@ -258,7 +258,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
  * @param z						Z coordinate
  * @return 						ObjectSpriteContainer instance
  */
-ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fix10_6 z)
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 {
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 	VirtualNode node = this->objectSpriteContainers->head;

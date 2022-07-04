@@ -66,7 +66,7 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 	optical.baseDistance = __PIXELS_TO_METERS(pixelOptical.baseDistance);
 	optical.horizontalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter);
 	optical.verticalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter);
-	optical.scalingFactor = __F_TO_FIX10_6(pixelOptical.scalingFactor);
+	optical.scalingFactor = __F_TO_FIXED(pixelOptical.scalingFactor);
 
 	return Optical::updateWithCameraFrustum(optical, cameraFrustum);
 }
@@ -77,17 +77,17 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 
 	result.halfWidth = __PIXELS_TO_METERS((cameraFrustum.x1 - cameraFrustum.x0) >> 1);
 	result.halfHeight = __PIXELS_TO_METERS((cameraFrustum.y1 - cameraFrustum.y0) >> 1);
-	result.aspectRatio = __FIX10_6_EXT_DIV(result.halfWidth, result.halfHeight);
+	result.aspectRatio = __FIXED_EXT_DIV(result.halfWidth, result.halfHeight);
 	// this assumes and fov of 90 degrees (__CAMERA_FOV_DEGREES fix7_9) to speed up computations
 	// fov = 1 / tan(angle / 2)
-	result.fov = __FIX10_6_EXT_DIV(__I_TO_FIX10_6_EXT(1), __FIX7_9_TO_FIX10_6(__FIX7_9_DIV(__SIN(__CAMERA_FOV_DEGREES >> 1), __COS(__CAMERA_FOV_DEGREES >> 1))));
-	result.aspectRatioXfov = __FIX10_6_MULT(result.aspectRatio, result.fov);
+	result.fov = __FIXED_EXT_DIV(__I_TO_FIXED_EXT(1), __FIX7_9_TO_FIXED(__FIX7_9_DIV(__SIN(__CAMERA_FOV_DEGREES >> 1), __COS(__CAMERA_FOV_DEGREES >> 1))));
+	result.aspectRatioXfov = __FIXED_MULT(result.aspectRatio, result.fov);
 	// farRatio1Near = // (far + near) / (far - near)
-	result.farRatio1Near = __FIX10_6_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);
+	result.farRatio1Near = __FIXED_EXT_DIV(cameraFrustum.z1 + cameraFrustum.z0, cameraFrustum.z1 - cameraFrustum.z0);
 	// farRatio2Near = // (2 * far * near) / (near - far)
-	result.farRatio2Near = __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
-	result.projectionMultiplierHelper = __FIX10_6_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
-	result.scalingMultiplier = __FIX10_6_EXT_MULT(result.projectionMultiplierHelper, result.scalingFactor);
+	result.farRatio2Near = __FIXED_EXT_DIV(__FIXED_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
+	result.projectionMultiplierHelper = __FIXED_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
+	result.scalingMultiplier = __FIXED_EXT_MULT(result.projectionMultiplierHelper, result.scalingFactor);
 
 	if(0 == result.cameraNearPlane)
 	{

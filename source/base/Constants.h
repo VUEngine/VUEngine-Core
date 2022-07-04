@@ -215,12 +215,12 @@ void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 
 
 #define __PIXELS_PER_METER						16
-#define __METERS_PER_PIXEL						__F_TO_FIX10_6(1.0f/(float)__PIXELS_PER_METER)
+#define __METERS_PER_PIXEL						__F_TO_FIXED(1.0f/(float)__PIXELS_PER_METER)
 
 #define __PIXELS_PER_METER_2_POWER				4
-#define __PIXELS_TO_METERS(pixels)				(fix10_6)(__I_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
-#define __REAL_PIXELS_TO_METERS(pixels)			(fix10_6)(__F_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
-#define __METERS_TO_PIXELS(meters)				__FIX10_6_TO_I(__05F_FIX10_6 + (((fix10_6_ext)(meters)) << __PIXELS_PER_METER_2_POWER))
+#define __PIXELS_TO_METERS(pixels)				(fixed_t)(__I_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
+#define __REAL_PIXELS_TO_METERS(pixels)			(fixed_t)(__F_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
+#define __METERS_TO_PIXELS(meters)				__FIXED_TO_I(__05F_FIXED + (((fixed_ext_t)(meters)) << __PIXELS_PER_METER_2_POWER))
 
 #define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
 #define __SCREEN_HEIGHT_METERS					__PIXELS_TO_METERS(__SCREEN_HEIGHT)

@@ -30,8 +30,8 @@ static class Rotation : ListenerObject
 	/// @publicsection
 	static inline Rotation zero();
 	static inline Rotation invert(Rotation rotation);
-	static inline Rotation clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z);
-	static inline fix10_6 getShortestDifferce(fix10_6 angleFrom, fix10_6 angleTo);
+	static inline Rotation clamp(fixed_ext_t x, fixed_ext_t y, fixed_ext_t z);
+	static inline fixed_t getShortestDifferce(fixed_t angleFrom, fixed_t angleTo);
 	static inline Rotation sum(Rotation a, Rotation b);
 	static inline Rotation sub(Rotation a, Rotation b);
 	static inline Rotation intermediate(Rotation a, Rotation b);
@@ -57,7 +57,7 @@ static inline Rotation Rotation::invert(Rotation rotation)
 	return Rotation::clamp(__FULL_ROTATION_DEGREES - rotation.x, __FULL_ROTATION_DEGREES - rotation.y, __FULL_ROTATION_DEGREES - rotation.z);
 }
 
-static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext z)
+static inline Rotation Rotation::clamp(fixed_ext_t x, fixed_ext_t y, fixed_ext_t z)
 {
 	if(0 > x)
 	{
@@ -86,13 +86,13 @@ static inline Rotation Rotation::clamp(fix10_6_ext x, fix10_6_ext y, fix10_6_ext
 		z -= __FULL_ROTATION_DEGREES;
 	}
 
-	return (Rotation){__FIX10_6_EXT_TO_FIX10_6(x), __FIX10_6_EXT_TO_FIX10_6(y), __FIX10_6_EXT_TO_FIX10_6(z)};
+	return (Rotation){__FIXED_EXT_TO_FIXED(x), __FIXED_EXT_TO_FIXED(y), __FIXED_EXT_TO_FIXED(z)};
 }
 
-static inline fix10_6 Rotation::getShortestDifferce(fix10_6 angleFrom, fix10_6 angleTo)
+static inline fixed_t Rotation::getShortestDifferce(fixed_t angleFrom, fixed_t angleTo)
 {
-	int32 rotationDifference = (__FIX10_6_TO_I(angleTo) - __FIX10_6_TO_I(angleFrom) + 256 ) % 512 - 256;
-	return __I_TO_FIX10_6(-256 > rotationDifference ? rotationDifference + 512 : rotationDifference);
+	int32 rotationDifference = (__FIXED_TO_I(angleTo) - __FIXED_TO_I(angleFrom) + 256 ) % 512 - 256;
+	return __I_TO_FIXED(-256 > rotationDifference ? rotationDifference + 512 : rotationDifference);
 }
 
 static inline Rotation Rotation::sum(Rotation a, Rotation b)
@@ -117,14 +117,14 @@ static inline Rotation Rotation::intermediate(Rotation a, Rotation b)
 
 static inline Rotation Rotation::scalarProduct(Rotation rotation, int16 scalar)
 {
-	return Rotation::clamp(__FIX10_6_EXT_MULT(rotation.x, scalar), __FIX10_6_EXT_MULT(rotation.y, scalar), __FIX10_6_EXT_MULT(rotation.z, scalar));
+	return Rotation::clamp(__FIXED_EXT_MULT(rotation.x, scalar), __FIXED_EXT_MULT(rotation.y, scalar), __FIXED_EXT_MULT(rotation.z, scalar));
 }
 
 static inline Rotation Rotation::scalarDivision(Rotation rotation, int16 scalar)
 {
 	if(0 != scalar)
 	{
-		return Rotation::clamp(__FIX10_6_EXT_DIV(rotation.x, scalar), __FIX10_6_EXT_DIV(rotation.y, scalar), __FIX10_6_EXT_DIV(rotation.z, scalar));
+		return Rotation::clamp(__FIXED_EXT_DIV(rotation.x, scalar), __FIXED_EXT_DIV(rotation.y, scalar), __FIXED_EXT_DIV(rotation.z, scalar));
 	}
 
 	return Rotation::zero();
@@ -139,7 +139,7 @@ static inline Rotation Rotation::getRelativeToCamera(Rotation rotation)
 
 static inline Rotation Rotation::getFromPixelRotation(PixelRotation pixelRotation)
 {
-	return Rotation::clamp(__I_TO_FIX10_6_EXT(pixelRotation.x), __I_TO_FIX10_6_EXT(pixelRotation.y), __I_TO_FIX10_6_EXT(pixelRotation.z));
+	return Rotation::clamp(__I_TO_FIXED_EXT(pixelRotation.x), __I_TO_FIXED_EXT(pixelRotation.y), __I_TO_FIXED_EXT(pixelRotation.z));
 }
 
 static inline bool Rotation::areEqual(Rotation a, Rotation b)
@@ -153,9 +153,9 @@ static inline void Rotation::print(Rotation rotation, int32 x, int32 y)
 	PRINT_TEXT("y:    ", x, y + 1);
 	PRINT_TEXT("z:    ", x, y + 2);
 
-	PRINT_FLOAT(__FIX10_6_TO_F(rotation.x), x + 2, y);
-	PRINT_FLOAT(__FIX10_6_TO_F(rotation.y), x + 2, y + 1);
-	PRINT_FLOAT(__FIX10_6_TO_F(rotation.z), x + 2, y + 2);
+	PRINT_FLOAT(__FIXED_TO_F(rotation.x), x + 2, y);
+	PRINT_FLOAT(__FIXED_TO_F(rotation.y), x + 2, y + 1);
+	PRINT_FLOAT(__FIXED_TO_F(rotation.z), x + 2, y + 2);
 }
 
 

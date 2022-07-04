@@ -41,13 +41,13 @@ class Box : Shape
 	Vector3D rotationVertexDisplacement;
 
 	/// @publicsection
-	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max);
+	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 	void constructor(SpatialObject owner);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
+	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
 	override Vector3D getPosition();
 	override void configureWireframe();
 	override void print(int32 x, int32 y);

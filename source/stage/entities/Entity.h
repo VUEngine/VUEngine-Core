@@ -115,16 +115,16 @@ class Entity : Container
 	override bool handleMessage(Telegram telegram);
 	override const Rotation* getRotation();
 	override const Scale* getScale();
-	override fix10_6 getWidth();
-	override fix10_6 getHeight();
-	override fix10_6 getDepth();
+	override fixed_t getWidth();
+	override fixed_t getHeight();
+	override fixed_t getDepth();
 	override void suspend();
 	override void resume();
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void show();
 	override void hide();
-	override fix10_6 getBounciness();
-	override fix10_6 getFrictionCoefficient();
+	override fixed_t getBounciness();
+	override fixed_t getFrictionCoefficient();
 	override uint32 getInGameType();
 }
 

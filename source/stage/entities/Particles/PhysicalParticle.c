@@ -44,7 +44,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, wireframeSpec, lifeSpan);
 
 	this->physicalParticleSpec = physicalParticleSpec;
-	fix10_6 mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
+	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, physicalParticleSpec->axisSubjectToGravity);
 }
@@ -103,7 +103,7 @@ void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementTy
 {
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
-		fix10_6 mass = Body::getMass(this->body);
+		fixed_t mass = Body::getMass(this->body);
 
 		Acceleration acceleration =
 		{
@@ -112,11 +112,11 @@ void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementTy
 			force->z
 		};
 
-		if(mass && __1I_FIX10_6 != mass)
+		if(mass && __1I_FIXED != mass)
 		{
-			acceleration.x = __FIX10_6_DIV(acceleration.x, mass);
-			acceleration.y = __FIX10_6_DIV(acceleration.y, mass);
-			acceleration.z = __FIX10_6_DIV(acceleration.z, mass);
+			acceleration.x = __FIXED_DIV(acceleration.x, mass);
+			acceleration.y = __FIXED_DIV(acceleration.y, mass);
+			acceleration.z = __FIXED_DIV(acceleration.z, mass);
 		}
 
 		Velocity velocity =
@@ -139,7 +139,7 @@ void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementTy
  *
  * @param mass
  */
-void PhysicalParticle::setMass(fix10_6 mass)
+void PhysicalParticle::setMass(fixed_t mass)
 {
 	Body::setMass(this->body, mass);
 }

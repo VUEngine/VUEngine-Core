@@ -79,7 +79,7 @@ void Polyhedron::destructor()
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
  */
-void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
+void Polyhedron::addVertex(fixed_t x, fixed_t y, fixed_t z)
 {
 	// create the vertex
 	Vector3D* vertex = new Vector3D;

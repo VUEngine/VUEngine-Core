@@ -10,7 +10,6 @@
 #include "pluginsConfig.h"
 #include "romHeader.h"
 
-
 {% if engine.game | length -%}
 {{ macros.sectionHeader('Game specific macros') }}
 
@@ -30,6 +29,12 @@
 {% endfor %}
 
 {% endif -%}
+
+
+{{ macros.sectionHeader('Fixed point data type') }}
+
+#define __FIXED_POINT_TYPE 											{% if engine.math.fixedPointPrecision %}{{engine.math.fixedPointPrecision}}{% else %}6{% endif %}
+
 
 {{ macros.sectionHeader('Communications') }}
 
@@ -316,7 +321,7 @@
 #define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR					{{ engine.sound.stereoVerticalAttenuationFactor }}
 
 // smaller values allow movement to start when colliding against a shape and trying to move towards it
-#define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if engine.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIX10_6(__COS({{ engine.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIX10_6(0.01f){% endif %}
+#define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if engine.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIXED(__COS({{ engine.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
 
 
 {{ macros.sectionHeader('Brightness') }}

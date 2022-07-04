@@ -169,8 +169,8 @@ bool WireframeManager::sortProgressively()
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 
-		fix10_6_ext squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, *_cameraPosition));
-		fix10_6_ext nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, *_cameraPosition));
+		fixed_ext_t squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, *_cameraPosition));
+		fixed_ext_t nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, *_cameraPosition));
 
 		// check if z positions are swapped
 		if(nextSquareDistanceToCamera < squareDistanceToCamera)

@@ -156,7 +156,7 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 		frustum.y1 = __SCREEN_HEIGHT - 1;
 	}
 
-	// 9: 2's power equal to the math type fix10_6
+	// 9: 2's power equal to the math type fixed_t
 	if(frustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
 	{
 		frustum.z1 = 1;

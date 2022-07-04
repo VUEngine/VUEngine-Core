@@ -323,7 +323,7 @@
 // the distance between the x coordinate and
 // each ear's position defined by __LEFT_EAR_CENTER
 // and __RIGHT_EAR_CENTER
-#define __SOUND_STEREO_ATTENUATION_FACTOR		__F_TO_FIX10_6(0.75f)
+#define __SOUND_STEREO_ATTENUATION_FACTOR		__F_TO_FIXED(0.75f)
 
 
 //---------------------------------------------------------------------------------------------------------

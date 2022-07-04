@@ -21,8 +21,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-extern fix10_6 _currentWorldFriction;
-extern fix10_6 _currentPhysicsElapsedTime;
+extern fixed_t _currentWorldFriction;
+extern fixed_t _currentPhysicsElapsedTime;
 extern const Acceleration* _currentGravity;
 
 

@@ -32,7 +32,7 @@ typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, uint1
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PHYSICS_TIME_ELAPSED			__FIX10_6_DIV(__1I_FIX10_6, __I_TO_FIX10_6(__TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR))
+#define __PHYSICS_TIME_ELAPSED			__FIXED_DIV(__1I_FIXED, __I_TO_FIXED(__TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR))
 #define __TOTAL_USABLE_BODIES			128
 
 
@@ -48,11 +48,11 @@ class PhysicalWorld : ListenerObject
 	// gravity
 	Acceleration gravity;
 	// frictionCoefficient
-	fix10_6 frictionCoefficient;
+	fixed_t frictionCoefficient;
 	// body to check for gravity
 	VirtualNode bodyToCheckForGravityNode;
 	// time scale
-	fix10_6 timeScale;
+	fixed_t timeScale;
 	// Time scale is handled here, not in the Body class
 	uint8 remainingSkipCycles;
 	uint8 skipCycles;
@@ -60,14 +60,14 @@ class PhysicalWorld : ListenerObject
 	/// @publicsection
 	void constructor();
 	void destructor();
-	void setTimeScale(fix10_6 timeScale);
+	void setTimeScale(fixed_t timeScale);
 	uint32 getTimeScale();
 	void bodyAwake(Body body);
 	void bodySleep(Body body);
 	void bodySetInactive(Body body);
 	Body getBody(SpatialObject owner);
-	fix10_6 getElapsedTime();
-	fix10_6 getFrictionCoefficient();
+	fixed_t getElapsedTime();
+	fixed_t getFrictionCoefficient();
 	const Vector3D* getGravity();
 	bool isSpatialObjectRegistered(SpatialObject owner);
 	void print(int32 x, int32 y);
@@ -76,7 +76,7 @@ class PhysicalWorld : ListenerObject
 	void destroyBody(Body body);
 	void reset();
 	void setGravity(Acceleration gravity);
-	void setFrictionCoefficient(fix10_6 frictionCoefficient);
+	void setFrictionCoefficient(fixed_t frictionCoefficient);
 	void start();
 	void update(Clock clock);
 }

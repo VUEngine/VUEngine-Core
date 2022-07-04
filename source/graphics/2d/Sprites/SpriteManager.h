@@ -113,7 +113,7 @@ singleton class SpriteManager : Object
 	void setMaximumParamTableRowsToComputePerCall(int32 maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
-	ObjectSpriteContainer getObjectSpriteContainer(fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int32 segment);
 	void sort();
 	bool sortProgressively();

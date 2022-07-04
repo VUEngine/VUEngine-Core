@@ -166,19 +166,19 @@ Scale BgmapSprite::getScale()
  */
 void BgmapSprite::computeDimensions()
 {
-	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(this->drawSpec.rotation.y))),
-		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int32)this->texture->textureSpec->cols << 2),
-			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
+	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.y))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+			__FIX7_9_TO_FIXED(this->drawSpec.scale.x)
 		)
 	))) + 1;
 
-	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(this->drawSpec.rotation.x))),
-		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int32)this->texture->textureSpec->rows << 2),
-			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
+	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.x))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+			__FIX7_9_TO_FIXED(this->drawSpec.scale.y)
 		)
 	))) + 1;
 }
@@ -247,16 +247,16 @@ void BgmapSprite::rotate(const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite::resize(Scale scale, fix10_6 z)
+void BgmapSprite::resize(Scale scale, fixed_t z)
 {
 	if(__WORLD_AFFINE & this->head)
 	{
 		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
 		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
 
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(Vector3D::getScale(z, true));
+		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(z, true));
 
-		ratio = 0 > ratio? __1I_FIX10_6 : ratio;
+		ratio = 0 > ratio? __1I_FIXED : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
 		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
@@ -611,12 +611,12 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
 			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
 			// don't do translations
-			__I_TO_FIX10_6(bgmapSprite->halfWidth),
-			__I_TO_FIX10_6(bgmapSprite->halfHeight),
+			__I_TO_FIXED(bgmapSprite->halfWidth),
+			__I_TO_FIXED(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.mx),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.my),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->cols << 2),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->rows << 2),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
 			&bgmapSprite->drawSpec.scale,
 			&bgmapSprite->drawSpec.rotation
 		);

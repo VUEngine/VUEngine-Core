@@ -197,13 +197,13 @@ StageROMSpec EmptyStageSpec =
 	{
 		// gravity
 		{
-			__I_TO_FIX10_6(0),
-			__F_TO_FIX10_6(0),
-			__I_TO_FIX10_6(0),
+			__I_TO_FIXED(0),
+			__F_TO_FIXED(0),
+			__I_TO_FIXED(0),
 		},
 
 		// friction
-		__F_TO_FIX10_6(0.1f),
+		__F_TO_FIXED(0.1f),
 	},
 
 	// assets

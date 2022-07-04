@@ -57,10 +57,10 @@ void PhysicalWorld::constructor()
 	this->skipCycles = 0;
 
 	this->frictionCoefficient = 0;
-	this->timeScale = __1I_FIX10_6;
+	this->timeScale = __1I_FIXED;
 
 	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
-	PhysicalWorld::setTimeScale(this, __1I_FIX10_6);
+	PhysicalWorld::setTimeScale(this, __1I_FIXED);
 }
 
 /**
@@ -228,9 +228,9 @@ void PhysicalWorld::update(Clock clock)
 		return;
 	}
 
-	if(__1I_FIX10_6 > this->timeScale)
+	if(__1I_FIXED > this->timeScale)
 	{
-		if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+		if(__F_TO_FIXED(0.5f) < this->timeScale)
 		{
 			if(++this->remainingSkipCycles > this->skipCycles)
 			{
@@ -340,7 +340,7 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
  *
  * @return		PhysicalWorld's frictionCoefficient
  */
-fix10_6 PhysicalWorld::getFrictionCoefficient()
+fixed_t PhysicalWorld::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
 }
@@ -350,7 +350,7 @@ fix10_6 PhysicalWorld::getFrictionCoefficient()
  *
  * @param frictionCoefficient
  */
-void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
+void PhysicalWorld::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
 	this->frictionCoefficient = frictionCoefficient;
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
@@ -361,36 +361,36 @@ void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
  *
  * @param 			timeScale
  */
-void PhysicalWorld::setTimeScale(fix10_6 timeScale)
+void PhysicalWorld::setTimeScale(fixed_t timeScale)
 {
 	this->timeScale = timeScale;
 
-	if(this->timeScale > __1I_FIX10_6)
+	if(this->timeScale > __1I_FIXED)
 	{
-		this->timeScale = __1I_FIX10_6;
+		this->timeScale = __1I_FIXED;
 	}
 	else if(0 >= timeScale)
 	{
-		this->timeScale = __F_TO_FIX10_6(0.1f);
+		this->timeScale = __F_TO_FIXED(0.1f);
 	}
 
 	this->remainingSkipCycles = 0;
 	this->skipCycles = 0;
 
-	if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+	if(__F_TO_FIXED(0.5f) < this->timeScale)
 	{
 		uint32 gameFramesPerSecond = __TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR;
-		fix10_6 targetUpdatesPerSecond = __FIX10_6_MULT(__I_TO_FIX10_6(gameFramesPerSecond), this->timeScale);
-		fix10_6 targetSkipsPerSecond = __I_TO_FIX10_6(gameFramesPerSecond) - targetUpdatesPerSecond;
+		fixed_t targetUpdatesPerSecond = __FIXED_MULT(__I_TO_FIXED(gameFramesPerSecond), this->timeScale);
+		fixed_t targetSkipsPerSecond = __I_TO_FIXED(gameFramesPerSecond) - targetUpdatesPerSecond;
 
 		if(targetSkipsPerSecond)
 		{
-			this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(targetUpdatesPerSecond, targetSkipsPerSecond) + __05F_FIX10_6);
+			this->skipCycles = __FIXED_TO_I(__FIXED_DIV(targetUpdatesPerSecond, targetSkipsPerSecond) + __05F_FIXED);
 		}
 	}
 	else
 	{
-		this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(__1I_FIX10_6, this->timeScale) - __1I_FIX10_6 + __05F_FIX10_6);
+		this->skipCycles = __FIXED_TO_I(__FIXED_DIV(__1I_FIXED, this->timeScale) - __1I_FIXED + __05F_FIXED);
 	}
 }
 
@@ -426,7 +426,7 @@ const Vector3D* PhysicalWorld::getGravity()
  *
  * @return		Elapsed time
  */
-fix10_6 PhysicalWorld::getElapsedTime()
+fixed_t PhysicalWorld::getElapsedTime()
 {
 	return __PHYSICS_TIME_ELAPSED;
 }

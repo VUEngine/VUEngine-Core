@@ -67,7 +67,7 @@ class Particle : SpatialObject
 	// Particle's life span in milliseconds
 	Vector3D position;
 	// To optimizize parallax computation
-	fix10_6 previousZ;
+	fixed_t previousZ;
 	// sprite
 	Sprite sprite;
 	// sprite
@@ -89,7 +89,7 @@ class Particle : SpatialObject
 	virtual void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription, const char* animationName);
 	virtual void suspend();
 	virtual void reset();
-	virtual void setMass(fix10_6 mass);
+	virtual void setMass(fixed_t mass);
 	virtual void changeMass();
 	virtual void hide();
 	virtual void show();

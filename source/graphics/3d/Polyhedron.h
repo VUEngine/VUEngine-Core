@@ -37,7 +37,7 @@ class Polyhedron : Wireframe
 
 	/// @publicsection
 	void constructor(PolyhedronSpec* polyhedronSpec);
-	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
+	void addVertex(fixed_t x, fixed_t y, fixed_t z);
 	override void draw();
 }
 

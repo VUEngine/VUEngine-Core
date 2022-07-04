@@ -115,7 +115,7 @@ class BgmapSprite : Sprite
 	override void processEffects();
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
-	override void resize(Scale scale, fix10_6 z);
+	override void resize(Scale scale, fixed_t z);
 	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 }

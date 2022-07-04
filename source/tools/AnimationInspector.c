@@ -740,8 +740,8 @@ void AnimationInspector::createSprite()
 
 	Vector3D position = *_cameraPosition;
 
-	position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
-	position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
+	position.x += __I_TO_FIXED(__HALF_SCREEN_WIDTH);
+	position.y += __I_TO_FIXED(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
 	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];

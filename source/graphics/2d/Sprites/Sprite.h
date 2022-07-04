@@ -216,7 +216,7 @@ abstract class Sprite : ListenerObject
 	bool isWithinScreenSpace();
 	bool isDisposed();
 	int16 render(int16 index, bool evenFrame);
-	void calculateParallax(fix10_6 z);
+	void calculateParallax(fixed_t z);
 	void hide();
 	void show();
 	int16 getIndex();
@@ -229,7 +229,7 @@ abstract class Sprite : ListenerObject
 	virtual Scale getScale();
 	virtual void processEffects();
 	virtual int16 doRender(int16 index, bool evenFrame) = 0;
-	virtual void resize(Scale scale, fix10_6 z);
+	virtual void resize(Scale scale, fixed_t z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(uint16 display, uint16 mode) = 0;
 	virtual void writeAnimation();

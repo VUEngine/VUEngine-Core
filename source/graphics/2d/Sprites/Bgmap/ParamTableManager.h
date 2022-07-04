@@ -69,8 +69,8 @@ typedef struct FixedAffineMatrix
  */
 typedef struct AffineInfo
 {
-	fix10_6 	x;
-	fix10_6 	y;
+	fixed_t 	x;
+	fixed_t 	y;
 	fix13_3 	mx;
 	fix13_3 	my;
 	fix13_3 	halfWidth;

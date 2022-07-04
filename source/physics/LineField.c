@@ -60,25 +60,25 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->y)
 		{
-			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->y))));
-			this->a.z = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->y))));
+			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
+			this->a.z = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
 			this->a.y = 0;
 		}
 		else if(rotation->z)
 		{
-			this->a.x = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->z))));
-			this->a.y = __FIX10_6_MULT((size->x >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->z))));
+			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
+			this->a.y = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
 
-		this->b = Vector3D::scalarProduct(this->a, __I_TO_FIX10_6(-1));
+		this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
 
 		this->a = Vector3D::sum(this->a, *position);
 		this->b = Vector3D::sum(this->b, *position);
 
-		fix10_6 dx = this->b.x - this->a.x;
-		fix10_6 dy = this->b.y - this->a.y;
-		fix10_6 dz = this->b.z - this->a.z;
+		fixed_t dx = this->b.x - this->a.x;
+		fixed_t dy = this->b.y - this->a.y;
+		fixed_t dz = this->b.z - this->a.z;
 
 		fix7_9 normalScale = __I_TO_FIX7_9(1);
 
@@ -97,7 +97,7 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 			normalScale = scale->z;
 		}
 
-		this->normalLength = __FIX10_6_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIX10_6(normalScale));
+		this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));
 
 		this->normal = Vector3D::normalize((Vector3D){dy, -dx, dz});
 	}
@@ -109,18 +109,18 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->x)
 		{
-			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->x))));
-			this->a.z = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->x))));
+			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
+			this->a.z = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
 			this->a.y = 0;
 		}
 		else if(rotation->z)
 		{
-			this->a.x = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->z))));
-			this->a.y = __FIX10_6_MULT((size->y >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->z))));
+			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
+			this->a.y = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
 
-		this->normal = (Vector3D){__I_TO_FIX10_6(1), 0, 0};
+		this->normal = (Vector3D){__I_TO_FIXED(1), 0, 0};
 	}
 	else if(size->z)
 	{
@@ -130,18 +130,18 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->x)
 		{
-			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->x))));
+			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
 			this->a.y = 0;
-			this->a.z = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->x))));
+			this->a.z = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
 		}
 		else if(rotation->y)
 		{
-			this->a.x = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__COS(__FIX10_6_TO_I(rotation->y))));
-			this->a.y = __FIX10_6_MULT((size->z >> 1), __FIX7_9_TO_FIX10_6(__SIN(__FIX10_6_TO_I(rotation->y))));
+			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
+			this->a.y = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
 			this->a.z = 0;
 		}
 
-		this->normal = (Vector3D){0, __I_TO_FIX10_6(1), 0};
+		this->normal = (Vector3D){0, __I_TO_FIXED(1), 0};
 	}
 
 	if(this->a.x < this->b.x)
@@ -180,7 +180,7 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 	Base::position(this, position, rotation, scale, size);
 }
 
-void LineField::addDisplacement(fix10_6 displacement)
+void LineField::addDisplacement(fixed_t displacement)
 {
 	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
 	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
@@ -220,23 +220,23 @@ void LineField::addDisplacement(fix10_6 displacement)
 
 }
 
-static void LineField::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
+static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
 {
 	// project this onto the current normal
-	fix10_6 dotProduct = Vector3D::dotProduct(vector, center);
+	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
 
 	*min = dotProduct - radius;
 	*max = dotProduct + radius;
 
 	if(*min > *max)
 	{
-		fix10_6 aux = *min;
+		fixed_t aux = *min;
 		*min = *max;
 		*max = aux;
 	}
 }
 
-CollisionInformation LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fix10_6 sizeIncrement __attribute__((unused)))
+CollisionInformation LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)))
 {
 	// TODO
 	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);

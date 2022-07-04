@@ -74,7 +74,7 @@ void Sphere::setCenter(PixelVector center)
  *
  * @return 	Sphere's this->radius
  */
-fix10_6 Sphere::getRadius()
+fixed_t Sphere::getRadius()
 {
 	return this->radius;
 }
@@ -84,7 +84,7 @@ fix10_6 Sphere::getRadius()
  *
  * @param this->radius New value
  */
-void Sphere::setRadius(fix10_6 radius)
+void Sphere::setRadius(fixed_t radius)
 {
 	this->radius = __ABS(radius);
 }
@@ -107,7 +107,7 @@ void Sphere::render()
 	Sphere::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
 
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
-	this->scaledRadius = __METERS_TO_PIXELS(__FIX10_6_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
+	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
 }
 
 /**

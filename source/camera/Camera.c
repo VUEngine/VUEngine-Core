@@ -535,7 +535,7 @@ CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 		cameraFrustum.y1 = __SCREEN_HEIGHT;
 	}
 
-	// 9: 2's power equal to the math type fix10_6
+	// 9: 2's power equal to the math type fixed_t
 	if(cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
 	{
 		cameraFrustum.z1 = 1;
@@ -628,15 +628,15 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::text(Printing::getInstance(), "MOVE CAMERA", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "              X    Y    Z    ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Stage's size:                   ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIX10_6_TO_I(this->stageSize.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIX10_6_TO_I(this->stageSize.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIXED_TO_I(this->stageSize.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIXED_TO_I(this->stageSize.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIXED_TO_I(this->stageSize.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIXED_TO_I(this->position.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIXED_TO_I(this->position.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIXED_TO_I(this->position.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.x), x + 14, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.y), x + 19, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->rotation.z), x + 24, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.x), x + 14, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.y), x + 19, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.z), x + 24, y, 2, NULL);
 }

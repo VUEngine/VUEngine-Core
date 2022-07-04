@@ -349,7 +349,7 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void MBgmapSprite::resize(Scale scale, fix10_6 z)
+void MBgmapSprite::resize(Scale scale, fixed_t z)
 {
 	Base::resize(this, scale, z);
 

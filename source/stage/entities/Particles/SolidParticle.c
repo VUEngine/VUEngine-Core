@@ -135,7 +135,7 @@ Shape SolidParticle::getShape()
  *
  * @return		Width
  */
-fix10_6 SolidParticle::getWidth()
+fixed_t SolidParticle::getWidth()
 {
 	return this->solidParticleSpec->radius;
 }
@@ -145,7 +145,7 @@ fix10_6 SolidParticle::getWidth()
  *
  * @return		Height
  */
-fix10_6 SolidParticle::getHeight()
+fixed_t SolidParticle::getHeight()
 {
 	return this->solidParticleSpec->radius;
 }
@@ -155,7 +155,7 @@ fix10_6 SolidParticle::getHeight()
  *
  * @return		Depth
  */
-fix10_6 SolidParticle::getDepth()
+fixed_t SolidParticle::getDepth()
 {
 	// must calculate based on the scale because not affine object must be enlarged
 	return this->solidParticleSpec->radius;
@@ -182,8 +182,8 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 		{
 			Shape::resolveCollision(collisionInformation->shape, collisionInformation, false);
 
-			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
-			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
+			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
+			fixed_t bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
 
 			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
@@ -203,7 +203,7 @@ bool SolidParticle::isSubjectToGravity(Acceleration gravity)
 {
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
-	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
 	Vector3D displacement =
 	{

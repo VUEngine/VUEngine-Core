@@ -28,7 +28,7 @@
 #define	__UNIFORM_MOVEMENT			0x01
 #define	__ACCELERATED_MOVEMENT		0x20
 
-#define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIX10_6(1)
+#define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIXED(1)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,15 +53,15 @@ typedef struct MovementResult
 typedef struct PhysicalSpecification
 {
 	/// mass
-	fix10_6 mass;
+	fixed_t mass;
 	/// friction coefficient
-	fix10_6 frictionCoefficient;
+	fixed_t frictionCoefficient;
 	/// bounciness
-	fix10_6 bounciness;
+	fixed_t bounciness;
 	/// maximum velocity
 	Velocity maximumVelocity;
 	/// maximum speed
-	fix10_6 maximumSpeed;
+	fixed_t maximumSpeed;
 
 } PhysicalSpecification;
 
@@ -94,25 +94,25 @@ class Body : ListenerObject
 	// direction
 	Direction3D direction;
 	// speed
-	fix10_6 speed;
+	fixed_t speed;
 	// maximum velocity on each instance
 	Velocity maximumVelocity;
 	// maximum speed
-	fix10_6 maximumSpeed;
+	fixed_t maximumSpeed;
 	// acceleration structure
 	Acceleration acceleration;
 	// bounciness
-	fix10_6 bounciness;
+	fixed_t bounciness;
 	// friction coefficient
-	fix10_6 frictionCoefficient;
+	fixed_t frictionCoefficient;
 	// friction coefficient of the surroundings
-	fix10_6 surroundingFrictionCoefficient;
+	fixed_t surroundingFrictionCoefficient;
 	// friction force magnitude
-	fix10_6 totalFrictionCoefficient;
+	fixed_t totalFrictionCoefficient;
 	// total friction force magnitude
-	fix10_6 frictionForceMagnitude;
+	fixed_t frictionForceMagnitude;
 	// mass
-	fix10_6 mass;
+	fixed_t mass;
 	// movement type on each axis
 	MovementType movementType;
 	// axis that are subject to gravity
@@ -133,30 +133,30 @@ class Body : ListenerObject
 	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
-	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
-	static void setCurrentWorldFrictionCoefficient(fix10_6 _currentWorldFriction);
+	static void setCurrentElapsedTime(fixed_t currentElapsedTime);
+	static void setCurrentWorldFrictionCoefficient(fixed_t _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void applySustainedForce(const Force* force);
 	uint8 applyForce(const Force* force);
 	uint8 applyGravity(uint16 axis);
-	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
+	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
 	void clearAcceleration(uint16 axis);
 	void clearExternalForce();
 	Acceleration getAcceleration();
 	Force getAppliedForce();
 	uint16 getaxisSubjectToGravity();
-	fix10_6 getBounciness();
+	fixed_t getBounciness();
 	Vector3D getLastDisplacement();
-	fix10_6 getMass();
+	fixed_t getMass();
 	MovementType getMovementType();
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
 	Velocity getVelocity();
 	void setVelocity(Velocity* velocity);
 	const Direction3D* getDirection3D();
-	fix10_6 getSpeed();
-	fix10_6_ext getSpeedSquare();
+	fixed_t getSpeed();
+	fixed_ext_t getSpeedSquare();
 	void modifyVelocity(const Velocity* multiplier);
 	bool isActive();
 	bool isAwake();
@@ -166,24 +166,24 @@ class Body : ListenerObject
 	void moveUniformly(Velocity velocity);
 	void setActive(bool active);
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
-	void setBounciness(fix10_6 bounciness);
+	void setBounciness(fixed_t bounciness);
 	Force getNormal();
 	Force getLastNormalDirection();
 	void reset();
 	void clearNormal(ListenerObject referent);
-	fix10_6 getFrictionForceMagnitude();
-	fix10_6 getFrictionCoefficient();
-	void setFrictionCoefficient(fix10_6 frictionCoefficient);
-	void setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoefficient);
-	void setMass(fix10_6 mass);
+	fixed_t getFrictionForceMagnitude();
+	fixed_t getFrictionCoefficient();
+	void setFrictionCoefficient(fixed_t frictionCoefficient);
+	void setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoefficient);
+	void setMass(fixed_t mass);
 	void setOwner(SpatialObject owner);
 	void setPosition(const Vector3D* position, SpatialObject caller);
 	uint16 stopMovement(uint16 axis);
 	void takeHitFrom(Body other);
 	void setMaximumVelocity(Velocity maximumVelocity);
 	Velocity getMaximumVelocity();
-	void setMaximumSpeed(fix10_6 maximumSpeed);
-	fix10_6 getMaximumSpeed();
+	void setMaximumSpeed(fixed_t maximumSpeed);
+	fixed_t getMaximumSpeed();
 	void print(int32 x, int32 y);
 	MovementResult updateMovement();
 	bool changedDirection();

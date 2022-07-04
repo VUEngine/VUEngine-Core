@@ -209,7 +209,7 @@ Scale Sprite::getScale()
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
+void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute__ ((unused)))
 {
 	this->halfWidth = Texture::getCols(this->texture) << 2;
 	this->halfHeight = Texture::getRows(this->texture) << 2;
@@ -332,7 +332,7 @@ void Sprite::setPosition(const PixelVector* position)
  *
  * @param z				Z coordinate to base on the calculation
  */
-void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
+void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
 	int16 parallax = Optics::calculateParallax(z);
 	this->renderFlag |= this->position.parallax != parallax;

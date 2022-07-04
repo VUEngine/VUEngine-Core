@@ -1541,7 +1541,7 @@ bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
  *
  * @return		Entity's width
  */
-fix10_6 Entity::getWidth()
+fixed_t Entity::getWidth()
 {
 	if(!this->size.x)
 	{
@@ -1557,7 +1557,7 @@ fix10_6 Entity::getWidth()
  *
  * @return		Entity's height
  */
-fix10_6 Entity::getHeight()
+fixed_t Entity::getHeight()
 {
 	if(!this->size.y)
 	{
@@ -1572,7 +1572,7 @@ fix10_6 Entity::getHeight()
  *
  * @return		Entity's depth
  */
-fix10_6 Entity::getDepth()
+fixed_t Entity::getDepth()
 {
 	if(!this->size.z)
 	{
@@ -1863,7 +1863,7 @@ uint32 Entity::getInGameType()
  *
  * @return		Bounciness
  */
-fix10_6 Entity::getBounciness()
+fixed_t Entity::getBounciness()
 {
 	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->bounciness : 0;
 }
@@ -1873,7 +1873,7 @@ fix10_6 Entity::getBounciness()
  *
  * @return		Friction
  */
-fix10_6 Entity::getFrictionCoefficient()
+fixed_t Entity::getFrictionCoefficient()
 {
 	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->frictionCoefficient : 0;
 }

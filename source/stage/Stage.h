@@ -119,7 +119,7 @@ typedef struct StageSpec
 		Acceleration gravity;
 
 		// physical world's friction coefficient
-		fix10_6 frictionCoefficient;
+		fixed_t frictionCoefficient;
 
 	} physics;
 

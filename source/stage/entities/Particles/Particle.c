@@ -212,7 +212,7 @@ void Particle::setLifeSpan(int16 lifeSpan)
  *
  * @param mass
  */
-void Particle::setMass(fix10_6 mass __attribute__ ((unused)))
+void Particle::setMass(fixed_t mass __attribute__ ((unused)))
 {
 }
 

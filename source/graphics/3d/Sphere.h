@@ -29,7 +29,7 @@ typedef struct SphereSpec
 	WireframeSpec wireframeSpec;
 
 	// radius
-	fix10_6 radius;
+	fixed_t radius;
 
 } SphereSpec;
 
@@ -42,15 +42,15 @@ class Sphere : Wireframe
 	// Vertices
 	PixelVector center;
 	// Radious
-	fix10_6 radius;
+	fixed_t radius;
 	uint16 scaledRadius;
 
 	/// @publicsection
 	void constructor(SphereSpec* sphereSpec);
 	PixelVector getCenter();
-	fix10_6 getRadius();
+	fixed_t getRadius();
 	void setCenter(PixelVector center);
-	void setRadius(fix10_6 radius);
+	void setRadius(fixed_t radius);
 	override void render();
 	override void draw();
 }

@@ -27,10 +27,10 @@ typedef struct PhysicalParticleSpec
 	ParticleSpec particleSpec;
 
 	/// particle's minimum mass
-	fix10_6 minimumMass;
+	fixed_t minimumMass;
 
 	/// particle's mass delta
-	fix10_6 massDelta;
+	fixed_t massDelta;
 
 	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
 	uint16 axisSubjectToGravity;
@@ -64,7 +64,7 @@ class PhysicalParticle : Particle
 	override void applySustainedForce(const Force* force, uint32 movementType);
 	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
-	override void setMass(fix10_6 mass);
+	override void setMass(fixed_t mass);
 	override void hide();
 	override void reset();
 	override void changeMass();

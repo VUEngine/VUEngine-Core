@@ -34,9 +34,9 @@ typedef struct Brightness
 // spatial size
 typedef struct Size
 {
-	fix10_6 x;
-	fix10_6 y;
-	fix10_6 z;
+	fixed_t x;
+	fixed_t y;
+	fixed_t z;
 
 } Size;
 
@@ -53,9 +53,9 @@ typedef struct PixelSize
 // spatial position
 typedef struct Vector3D
 {
-	fix10_6 x;
-	fix10_6 y;
-	fix10_6 z;
+	fixed_t x;
+	fixed_t y;
+	fixed_t z;
 
 } Vector3D;
 
@@ -113,13 +113,13 @@ typedef struct MovementType
 typedef struct Rotation
 {
 	// rotation around x axis
-	fix10_6 x;
+	fixed_t x;
 
 	// rotation around y axis
-	fix10_6 y;
+	fixed_t y;
 
 	// rotation around z axis
-	fix10_6 z;
+	fixed_t z;
 
 } Rotation;
 
@@ -150,20 +150,20 @@ typedef struct Optical
 {
 	uint16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
 	uint16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
-	fix10_6 cameraNearPlane;				// logical distance between the eyes and the screen
-	fix10_6 baseDistance;					// distance from left to right eye (depth perception)
-	fix10_6 horizontalViewPointCenter;		// horizontal View point center
-	fix10_6 verticalViewPointCenter;		// vertical View point center
-	fix10_6 scalingFactor;					// vertical View point center
-	fix10_6 halfWidth;						// screen width
-	fix10_6 halfHeight;						// screen height
-	fix10_6 aspectRatio;					// screen's width / screen's height
-	fix10_6 fov;							// 1 / tan (angle / 2)
-	fix10_6 aspectRatioXfov;				// aspectRatio * fov
-	fix10_6 farRatio1Near;	 				// (far + near) / (far - near)
-	fix10_6 farRatio2Near;	 				// (2 * far * near) / (near - far)
-	fix10_6_ext projectionMultiplierHelper;	// helper to speed up projection operations 
-	fix10_6_ext scalingMultiplier;			// scaling multiplier
+	fixed_t cameraNearPlane;				// logical distance between the eyes and the screen
+	fixed_t baseDistance;					// distance from left to right eye (depth perception)
+	fixed_t horizontalViewPointCenter;		// horizontal View point center
+	fixed_t verticalViewPointCenter;		// vertical View point center
+	fixed_t scalingFactor;					// vertical View point center
+	fixed_t halfWidth;						// screen width
+	fixed_t halfHeight;						// screen height
+	fixed_t aspectRatio;					// screen's width / screen's height
+	fixed_t fov;							// 1 / tan (angle / 2)
+	fixed_t aspectRatioXfov;				// aspectRatio * fov
+	fixed_t farRatio1Near;	 				// (far + near) / (far - near)
+	fixed_t farRatio2Near;	 				// (2 * far * near) / (near - far)
+	fixed_ext_t projectionMultiplierHelper;	// helper to speed up projection operations 
+	fixed_ext_t scalingMultiplier;			// scaling multiplier
 } Optical;
 
 // engine's optical values structure
@@ -262,14 +262,14 @@ typedef struct Transformation
 typedef struct RightBox
 {
 	/* left upper corner */
-	fix10_6 x0;
-	fix10_6 y0;
-	fix10_6 z0;
+	fixed_t x0;
+	fixed_t y0;
+	fixed_t z0;
 
 	/* right down corner */
-	fix10_6 x1;
-	fix10_6 y1;
-	fix10_6 z1;
+	fixed_t x1;
+	fixed_t y1;
+	fixed_t z1;
 
 } RightBox;
 

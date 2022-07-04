@@ -809,8 +809,8 @@ void StageEditor::showSelectedUserObject()
 		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
 		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userObjectSprite);
-		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
-		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -937,9 +937,9 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
-		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->x), 								x + 10, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->y), 								x + 17, y, 		2, NULL);
-		Printing::float(Printing::getInstance(), 		__FIX10_6_TO_F(globalRotation->z), 								x + 24, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->x), 								x + 10, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->y), 								x + 17, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->z), 								x + 24, y, 		2, NULL);
 		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		2, NULL);

@@ -142,14 +142,14 @@ static int32 Math::intInfinity()
 	return 0x3FFFFFFF;
 }
 
-static fix10_6 Math::fix10_6Infinity()
+static fixed_t Math::fixedInfinity()
 {
-	return 0x3FFF;
+	return __FIXED_INFINITY;
 }
 
-static fix10_6_ext Math::fix10_6_extInfinity()
+static fixed_ext_t Math::fixed_extInfinity()
 {
-	return 0x3FFFFFFF;
+	return __FIXED_EXT_INFINITY;
 }
 
 static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)

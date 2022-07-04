@@ -90,7 +90,7 @@ void Actor::createBody(PhysicalSpecification* physicalSpecification, uint16 axis
 	}
 	else
 	{
-		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, Vector3D::zero(), 0};
+		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
 		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
 	}
 }
@@ -419,7 +419,7 @@ bool Actor::isSubjectToGravity(Acceleration gravity)
 // check if gravity must apply to this actor
 bool Actor::canMoveTowards(Vector3D direction)
 {
-	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
 	Vector3D displacement =
 	{
@@ -444,14 +444,14 @@ bool Actor::canMoveTowards(Vector3D direction)
 	return canMove;
 }
 
-fix10_6 Actor::getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fixed_t Actor::getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	return  SpatialObject::getBounciness(collidingObject);
 }
 
-fix10_6 Actor::getSurroundingFrictionCoefficient()
+fixed_t Actor::getSurroundingFrictionCoefficient()
 {
-	fix10_6 totalFrictionCoefficient = 0;
+	fixed_t totalFrictionCoefficient = 0;
 
 	if(this->shapes)
 	{
@@ -468,7 +468,7 @@ fix10_6 Actor::getSurroundingFrictionCoefficient()
 	return totalFrictionCoefficient;
 }
 
-fix10_6 Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fixed_t Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
@@ -497,8 +497,8 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 
 			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
 
-			fix10_6 bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix10_6 frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fixed_t bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fixed_t frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
 			if(Actor::mustBounce(this))
 			{
@@ -679,7 +679,7 @@ const Vector3D* Actor::getPosition()
 }
 
 // get bounciness
-fix10_6 Actor::getBounciness()
+fixed_t Actor::getBounciness()
 {
 	PhysicalSpecification* physicalSpecification = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalSpecification;
 
@@ -692,12 +692,12 @@ Velocity Actor::getVelocity()
 	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }
 
-fix10_6 Actor::getSpeed()
+fixed_t Actor::getSpeed()
 {
 	return this->body ? Body::getSpeed(this->body) : Base::getSpeed(this);
 }
 
-fix10_6 Actor::getMaximumSpeed()
+fixed_t Actor::getMaximumSpeed()
 {
 	return this->body ? Body::getMaximumSpeed(this->body) : 0;
 }

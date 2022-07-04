@@ -26,7 +26,7 @@ extern const Optical* _optical;
 static class Optics : ListenerObject
 {
 	/// @publicsection
-	static inline int16 calculateParallax(fix10_6 z);
+	static inline int16 calculateParallax(fixed_t z);
 }
 
 
@@ -37,7 +37,7 @@ static class Optics : ListenerObject
  * @param z	Z parameter for the calculation of the parallax displacement
  * @return 	Parallax (in pixels)
  */
-static inline int16 Optics::calculateParallax(fix10_6 z)
+static inline int16 Optics::calculateParallax(fixed_t z)
 {
 	if(0 == (_optical->halfWidth << 1) + z)
 	{
@@ -46,7 +46,7 @@ static inline int16 Optics::calculateParallax(fix10_6 z)
 	
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
-	return __METERS_TO_PIXELS(__FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT(((unsigned)_optical->baseDistance) << 1, z), (_optical->halfWidth << 1) + z) >> 1);
+	return __METERS_TO_PIXELS(__FIXED_EXT_DIV(__FIXED_EXT_MULT(((unsigned)_optical->baseDistance) << 1, z), (_optical->halfWidth << 1) + z) >> 1);
 }
 
 #endif

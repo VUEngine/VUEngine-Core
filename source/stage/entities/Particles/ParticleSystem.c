@@ -403,8 +403,8 @@ Force ParticleSystem::getParticleSpawnForce()
 	if(this->particleSystemSpec->useMovementVector)
 	{
 		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
-//		fix10_6 strength = (Vector3D::length(this->particleSystemSpec->minimumForce) + Vector3D::length(this->particleSystemSpec->maximumForce)) >> 1;
-		fix10_6 strength = Vector3D::length(this->particleSystemSpec->minimumForce);
+//		fixed_t strength = (Vector3D::length(this->particleSystemSpec->minimumForce) + Vector3D::length(this->particleSystemSpec->maximumForce)) >> 1;
+		fixed_t strength = Vector3D::length(this->particleSystemSpec->minimumForce);
 		return Vector3D::scalarProduct(direction, strength);
 	}
 
