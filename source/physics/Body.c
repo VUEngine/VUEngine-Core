@@ -513,6 +513,11 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration g
 	return movementResult;
 }
 
+Force Body::getFriction()
+{
+	return this->friction;
+}
+
 Acceleration Body::getGravity()
 {
 	return (Acceleration)
@@ -521,6 +526,15 @@ Acceleration Body::getGravity()
 		__Y_AXIS & this->axisSubjectToGravity ? _currentGravity->y : 0,
 		__Z_AXIS & this->axisSubjectToGravity ? _currentGravity->z : 0,
 	};
+}
+
+fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t friction)
+{
+	fixed_ext_t acceleration = gravity + __FIXED_EXT_DIV(forceMagnitude + friction, this->mass);
+
+	fixed_ext_t initialSpeed = __FIXED_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
+
+	return 0 != this->maximumSpeed && this->maximumSpeed < initialSpeed ? this->maximumSpeed : initialSpeed;
 }
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
@@ -656,6 +670,7 @@ MovementResult Body::updateMovement()
 
 		this->acceleration.z = __FIXED_EXT_TO_FIXED(acceleration);
 		this->velocity.z += __FIXED_EXT_TO_FIXED(velocityDelta);
+
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{

@@ -279,6 +279,7 @@ static class Math : ListenerObject
 	static fixed_t fixedInfinity();
 	static fixed_ext_t fixed_extInfinity();
 	static int32 getAngle(fix7_9 x, fix7_9 y);
+	static int32 aSin(fix7_9 sin);
 }
 
 // retrieve the square root

@@ -148,6 +148,9 @@ class Body : ListenerObject
 	uint16 getaxisSubjectToGravity();
 	fixed_t getBounciness();
 	Vector3D getLastDisplacement();
+	Acceleration getGravity();
+	Force getFriction();
+	fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t friction);
 	fixed_t getMass();
 	MovementType getMovementType();
 	SpatialObject getOwner();

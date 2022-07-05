@@ -216,8 +216,31 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 		lastEntry = __TOTAL_ENTRIES - __ENTRIES_PER_QUADRANT;
 	}
 
-	fix7_9 difference = 1024;
+	int32 difference = 1024;
 	int32 angle = 0;
+
+	for(; entry < lastEntry; entry++)
+	{
+		if(__ABS(sin - _sinLut[entry]) <= difference)
+		{
+			difference = __ABS(sin - _sinLut[entry]);
+			angle = entry;
+		}
+		else if(__ABS(sin - _sinLut[entry]) > difference)
+		{
+			break;
+		}
+	}
+
+	return angle;
+}
+
+static int32 Math::aSin(fix7_9 sin)
+{
+	int32 angle = 0;
+	int32 entry = 0;
+	int32 lastEntry = __ENTRIES_PER_QUADRANT;
+	int32 difference = 1024;
 
 	for(; entry < lastEntry; entry++)
 	{
