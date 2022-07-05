@@ -195,7 +195,7 @@ void Entity::destroyShapes()
  */
 void Entity::streamOut()
 {
-	this->dontStreamOut = true;
+	this->dontStreamOut = false;
 }
 
 /**
