@@ -994,15 +994,26 @@ void Body::computeFrictionForceMagnitude()
 	}
 	else
 	{
-		this->frictionForceMagnitude = __ABS(__FIXED_MULT(Vector3D::length(this->weight), _currentWorldFriction));
+		Acceleration gravity = Body::getGravity(this);
+		this->weight = Vector3D::scalarProduct(gravity, this->mass);
+		fixed_t weight = Vector3D::length(this->weight);
 
-		if(0 > this->frictionForceMagnitude)
+		if(weight)
 		{
-			this->frictionForceMagnitude = 0;
+			this->frictionForceMagnitude = __ABS(__FIXED_MULT(weight, _currentWorldFriction));
 		}
-		else if(__MAXIMUM_FRICTION_COEFFICIENT < this->frictionForceMagnitude)
+		else
 		{
-			this->frictionForceMagnitude = __MAXIMUM_FRICTION_COEFFICIENT;
+			this->frictionForceMagnitude = __ABS(_currentWorldFriction + this->frictionCoefficient);
+
+			if(0 > this->frictionForceMagnitude)
+			{
+				this->frictionForceMagnitude = 0;
+			}
+			else if(__MAXIMUM_FRICTION_COEFFICIENT < this->frictionForceMagnitude)
+			{
+				this->frictionForceMagnitude = __MAXIMUM_FRICTION_COEFFICIENT;
+			}
 		}
 	}
 }
