@@ -357,7 +357,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 
 
 // define method only when compiling with debugging tools
-#ifdef __DEBUG_TOOLS
+#ifndef __RELEASE
 #define __GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
 		int32 ClassName ## _getObjectSize()																\
