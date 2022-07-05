@@ -48,6 +48,9 @@ void ListenerObject::constructor()
  */
 void ListenerObject::destructor()
 {
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
 
 	if(this->events)
