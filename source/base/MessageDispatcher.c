@@ -214,8 +214,30 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 				void* sender = Telegram::getSender(telegram);
 				void* receiver = Telegram::getReceiver(telegram);
 
-				NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
+#ifndef __RELEASE
+				if(isDeleted(sender) || isDeleted(receiver))
+				{
+					Printing::setDebugMode(Printing::getInstance());
+					Printing::clear(Printing::getInstance());
+					PRINT_TEXT("Message: ", 1, 16);
+					PRINT_INT(Telegram::getMessage(telegram), 10, 16);
+
+					if(!isDeleted(sender))
+					{
+						PRINT_TEXT("Sender: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(sender), 10, 15);
+					}
+
+					if(!isDeleted(receiver))
+					{
+						PRINT_TEXT("Receiver: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(receiver), 10, 15);
+					}
+				}
+#endif
+
 				NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
+				NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
 
 				// check if sender and receiver are still alive
 				if(!isDeleted(sender) && !isDeleted(receiver))
