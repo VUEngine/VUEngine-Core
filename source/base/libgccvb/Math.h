@@ -316,7 +316,15 @@ static inline fixed_t Math::squareRootFixed(fixed_ext_t base)
 	y = *(float*)&i;
 	y = y * (1.5F - ( x * y * y ));
 
+#if __FIXED_POINT_TYPE == 13
+	return (fixed_t)(90.6f * radicand * y );
+#else 
+#if __FIXED_POINT_TYPE == 6
 	return (fixed_t)(8 * radicand * y);
+#else
+	return (fixed_t)__F_TO_FIXED(radicand * y);
+#endif
+#endif
 }
 
 
