@@ -71,7 +71,7 @@ void Actor::destructor()
 	}
 
 	// destroy state machine
-	if(this->stateMachine)
+	if(!isDeleted(this->stateMachine))
 	{
 		delete this->stateMachine;
 		this->stateMachine = NULL;
@@ -112,7 +112,7 @@ void Actor::iAmDeletingMyself()
 	Base::iAmDeletingMyself(this);
 
 	// destroy body to prevent any more physical interactions
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setActive(this->body, false);
 	}
@@ -322,7 +322,7 @@ void Actor::update(uint32 elapsedTime)
 	// call base
 	Base::update(this, elapsedTime);
 
-	if(this->stateMachine)
+	if(!isDeleted(this->stateMachine))
 	{
 		StateMachine::update(this->stateMachine);
 	}
