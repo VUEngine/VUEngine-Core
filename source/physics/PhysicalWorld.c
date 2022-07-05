@@ -196,7 +196,7 @@ void PhysicalWorld::checkForGravity()
 		// load the current shape
 		Body body = Body::safeCast(node->data);
 
-		if(body->active)
+		if(body->active && !body->destroy)
 		{
 			// check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
