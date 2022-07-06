@@ -1155,7 +1155,7 @@ void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPre
 	}
 
 	// go through n sprites in entity's spec
-	for(; wireframeSpecs[i]->allocator; i++)
+	for(; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
 	{
 		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
 		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
