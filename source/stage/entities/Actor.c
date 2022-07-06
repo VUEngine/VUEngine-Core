@@ -63,7 +63,7 @@ void Actor::destructor()
 	// inform the camera I'm being removed
 	Camera::onFocusEntityDeleted(Camera::getInstance(), Entity::safeCast(this));
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		// remove a body
 		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
