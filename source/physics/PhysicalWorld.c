@@ -100,13 +100,6 @@ void PhysicalWorld::destructor()
 Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	// if the entity is already registered
-	Body body = PhysicalWorld::getBody(this, owner);
-
-	if(body)
-	{
-		return body;
-	}
-
 	if(bodyAllocator)
 	{
 		Body body = bodyAllocator(owner, physicalSpecification, axisSubjectToGravity);
