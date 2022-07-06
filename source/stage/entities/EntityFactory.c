@@ -169,14 +169,14 @@ uint32 EntityFactory::instantiateEntities()
 /*
 				if(0 == positionedEntityDescription->shapeSpecIndex)
 				{
-					Entity::addSprites(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->spriteSpecs);
+					Entity::addSprites(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->spriteSpecs);
 					positionedEntityDescription->shapeSpecIndex++;
 					return __ENTITY_PENDING_PROCESSING;
 				}
 
 				if(0 == positionedEntityDescription->shapeSpecIndex)
 				{
-					Entity::addShapes(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->shapeSpecs);
+					Entity::addShapes(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->shapeSpecs);
 					positionedEntityDescription->shapeSpecIndex++;
 					return __ENTITY_PENDING_PROCESSING;
 				}

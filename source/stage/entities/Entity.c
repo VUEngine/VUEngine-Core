@@ -1480,7 +1480,7 @@ void Entity::synchronizeGraphics()
  *
  * @return		EntitySpec
  */
-EntitySpec* Entity::getEntitySpec()
+EntitySpec* Entity::getSpec()
 {
 	return this->entitySpec;
 }

@@ -71,7 +71,7 @@ class Entity : Container
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();
 	Entity getChildById(int16 id);
-	EntitySpec* getEntitySpec();
+	EntitySpec* getSpec();
 	int32 getMapParallax();
 	int16 getId();
 	int16 getInternalId();

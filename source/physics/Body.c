@@ -530,11 +530,11 @@ Acceleration Body::getGravity()
 
 fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t friction)
 {
-	fixed_ext_t acceleration = gravity + __FIXED_EXT_DIV(forceMagnitude + friction, this->mass);
+	fixed_ext_t acceleration = gravity + __FIXED_EXT_DIV(forceMagnitude + friction, 0 < this->mass ? this->mass : __1I_FIXED);
 
 	fixed_ext_t initialSpeed = __FIXED_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
 
-	return 0 != this->maximumSpeed && this->maximumSpeed < initialSpeed ? this->maximumSpeed : initialSpeed;
+	return 0 != this->maximumSpeed && this->maximumSpeed < __ABS(initialSpeed) ? this->maximumSpeed : initialSpeed;
 }
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
