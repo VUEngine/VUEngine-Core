@@ -450,30 +450,48 @@ static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D lineSt
 
 static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 {
+	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
+	fix7_9_ext sin = __FIX7_9_TO_FIX7_9_EXT(__SIN(degrees));
+
+	fix7_9_ext y = __FIXED_TO_FIX7_9_EXT(vector.y);
+	fix7_9_ext z = __FIXED_TO_FIX7_9_EXT(vector.z);
+
 	return (Vector3D) 
 		{
 			vector.x,
-			__FIXED_MULT(vector.y, __FIX7_9_TO_FIXED(__COS(degrees))) - __FIXED_MULT(vector.z, __FIX7_9_TO_FIXED(__SIN(degrees))),
-			__FIXED_MULT(vector.y, __FIX7_9_TO_FIXED(__SIN(degrees))) + __FIXED_MULT(vector.z, __FIX7_9_TO_FIXED(__COS(degrees)))
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(y , cos) - __FIX7_9_EXT_MULT_ROUND(z , sin)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(y , sin) + __FIX7_9_EXT_MULT_ROUND(z , cos))
 		};
 }
 
 static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
+	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
+	fix7_9_ext sin = __FIX7_9_TO_FIX7_9_EXT(__SIN(degrees));
+
+	fix7_9_ext x = __FIXED_TO_FIX7_9_EXT(vector.x);
+	fix7_9_ext z = __FIXED_TO_FIX7_9_EXT(vector.z);
+
 	return (Vector3D) 
 		{
-			__FIXED_MULT(vector.x, __FIX7_9_TO_FIXED(__COS(degrees))) + __FIXED_MULT(vector.z, __FIX7_9_TO_FIXED(__SIN(degrees))),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , cos) + __FIX7_9_EXT_MULT_ROUND(z , sin)),
 			vector.y,
-			-__FIXED_MULT(vector.x, __FIX7_9_TO_FIXED(__SIN(degrees))) + __FIXED_MULT(vector.z, __FIX7_9_TO_FIXED(__COS(degrees)))
+			__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT_ROUND(x , sin) + __FIX7_9_EXT_MULT_ROUND(z , cos))
 		};
 }
 
 static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 {
+	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
+	fix7_9_ext sin = __FIX7_9_TO_FIX7_9_EXT(__SIN(degrees));
+
+	fix7_9_ext x = __FIXED_TO_FIX7_9_EXT(vector.x);
+	fix7_9_ext y = __FIXED_TO_FIX7_9_EXT(vector.y);
+
 	return (Vector3D) 
 		{
-			__FIXED_MULT(vector.x, __FIX7_9_TO_FIXED(__COS(degrees))) - __FIXED_MULT(vector.y, __FIX7_9_TO_FIXED(__SIN(degrees))),
-			__FIXED_MULT(vector.x, __FIX7_9_TO_FIXED(__SIN(degrees))) + __FIXED_MULT(vector.y, __FIX7_9_TO_FIXED(__COS(degrees))),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , cos) - __FIX7_9_EXT_MULT_ROUND(y , sin)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , sin) + __FIX7_9_EXT_MULT_ROUND(y , cos)),
 			vector.z
 		};
 }

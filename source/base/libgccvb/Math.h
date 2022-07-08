@@ -119,6 +119,7 @@ inline int32 customAbs(int32 number)
 
 
 #define __FIX10_6_TO_FIX7_9(n)							(fix7_9)		((n) << 3)
+#define __FIX10_6_TO_FIX7_9_EXT(n)						(fix7_9_ext)		((n) << 3)
 #define __FIX10_6_TO_FIX10_6(n)							(fix10_6)		((n))
 #define __FIX10_6_TO_FIX13_3(n)							(fix13_3)		((n) >> 3)
 #define __FIX10_6_TO_FIX17_15(n)						(fix17_15)		(((uint32)n) << 9)
@@ -126,9 +127,13 @@ inline int32 customAbs(int32 number)
 #define __FIX10_6_TO_FIX10_6_EXT(n)						(fix10_6_ext)	((n))
 #define __FIX10_6_EXT_TO_FIX10_6(n)						(fix10_6)		((n))
 
+#define __FIX7_9_TO_FIX7_9(n)							(fix7_9)		((n))
 #define __FIX7_9_TO_FIX10_6(n)							(fix10_6)		((n) >> 3)
+#define __FIX7_9_EXT_TO_FIX10_6(n)						(fix10_6)		((n) >> 3)
 #define __FIX7_9_TO_FIX13_3(n)							(fix13_3)		((n) >> 6)
 #define __FIX7_9_TO_FIX19_13(n)							(fix19_13)		((n) << 4)
+#define __FIX7_9_TO_FIX7_9_EXT(n)						(fix7_9_ext)	((n))
+#define __FIX7_9_EXT_TO_FIX7_9(n)						(fix7_9)		((n))
 
 #define __FIX13_3_TO_FIX7_9(n)							(fix7_9)		((n) << 6)
 #define __FIX13_3_TO_FIX10_6(n)							(fix10_6)		((n) << 3)
@@ -156,11 +161,13 @@ inline int32 customAbs(int32 number)
 // TODO: how do we return an int32 from int16*int16 without forcing a promotion to int32?
 #define __FIX7_9_MULT(a,b)								(fix7_9)		((((int32)(a)) * ((int32)(b))) >> 9)
 #define __FIX7_9_EXT_MULT(a,b)							(fix7_9_ext)	((((int32)(a)) * ((int32)(b))) >> 9)
+#define __FIX7_9_EXT_MULT_ROUND(a,b)					(fix7_9_ext)	((((int32)(a)) * ((int32)(b))) / (1 << 9))
 #define __FIX13_3_MULT(a,b)								(fix13_3)		((((int32)(a)) * ((int32)(b))) >> 3)
 #define __FIX10_6_MULT(a,b)								(fix10_6)		((((int32)(a)) * ((int32)(b))) >> 6)
 #define __FIX10_6_EXT_MULT(a,b)							(fix10_6_ext)	((((int32)(a)) * ((int32)(b))) >> 6)
 #define __FIX10_6_EXT_MULT_ROUND(a,b)					(fix10_6_ext)	((((int32)(a)) * ((int32)(b))) / (1 << 6))
 #define __FIX19_13_MULT(a,b)							(fix19_13)		((((int64)(a)) * ((int64)(b))) >> 13)
+#define __FIX19_13_MULT_ROUND(a,b)						(fix19_13)		((((int64)(a)) * ((int64)(b))) / (1 << 13))
 #define __FIX17_15_MULT(a,b)							(fix17_15)		((((int64)(a)) * ((int64)(b))) >> 15)
 
 
@@ -225,7 +232,9 @@ extern const int16 _sinLut[];
 #define __FIXED_DIV(a,b)								__FIX19_13_DIV(a,b)	
 #define __FIXED_EXT_DIV(a,b)							__FIX19_13_DIV(a,b)	
 
-#else 
+#endif
+
+#if __FIXED_POINT_TYPE == 6
 
 #define fixed_t											fix10_6
 #define fixed_ext_t										fix10_6_ext
@@ -245,6 +254,7 @@ extern const int16 _sinLut[];
 #define __FIXED_TO_F(n)									__FIX10_6_TO_F(n)
 #define __FIXED_EXT_TO_F(n)								__FIX10_6_EXT_TO_F(n)
 #define __FIXED_TO_FIX7_9(n)							__FIX10_6_TO_FIX7_9(n)
+#define __FIXED_TO_FIX7_9_EXT(n)						__FIX10_6_TO_FIX7_9_EXT(n)
 #define __FIXED_TO_FIX13_3(n)							__FIX10_6_TO_FIX13_3(n)
 #define __FIXED_TO_FIX10_6(n)							__FIX10_6_TO_FIX10_6(n)
 #define __FIXED_TO_FIX10_6_EXT(n)						__FIX10_6_TO_FIX10_6_EXT(n)
@@ -252,6 +262,7 @@ extern const int16 _sinLut[];
 #define __FIXED_TO_FIXED_EXT(n)							__FIX10_6_TO_FIX10_6_EXT(n)
 #define __FIXED_EXT_TO_FIXED(n)							__FIX10_6_EXT_TO_FIX10_6(n)
 #define __FIX7_9_TO_FIXED(n)							__FIX7_9_TO_FIX10_6(n)
+#define __FIX7_9_EXT_TO_FIXED(n)						__FIX7_9_EXT_TO_FIX10_6(n)
 #define __FIX13_3_TO_FIXED(n)							__FIX13_3_TO_FIX10_6(n)
 #define __FIX10_6_TO_FIXED(n)							__FIXED_EXT_TO_FIX10_6(n)
 #define __FIX10_6_EXT_TO_FIXED(n)						__FIX10_6_EXT_TO_FIX10_6(n)
@@ -261,6 +272,45 @@ extern const int16 _sinLut[];
 #define __FIXED_EXT_MULT_ROUND(a,b)						__FIX10_6_EXT_MULT_ROUND(a,b)
 #define __FIXED_DIV(a,b)								__FIX10_6_DIV(a,b)	
 #define __FIXED_EXT_DIV(a,b)							__FIX10_6_EXT_DIV(a,b)	
+
+#endif
+
+#if __FIXED_POINT_TYPE == 9
+
+#define fixed_t											fix7_9
+#define fixed_ext_t										fix7_9_ext
+
+#define __FIXED_INFINITY								0x3FFF
+#define __FIXED_EXT_INFINITY							0x3FFFFFFF
+
+#define __FIXED_INT_PART(n)								__FIX7_9_INT_PART(n)
+#define __FIXED_FRAC(n)									__FIX7_9_FRAC(n)
+#define __1I_FIXED										__1I_FIX7_9
+#define __05F_FIXED										__05F_FIX7_9
+#define __I_TO_FIXED(n)									__I_TO_FIX7_9(n)
+#define __I_TO_FIXED_EXT(n)								__I_TO_FIX7_9_EXT(n)
+#define __F_TO_FIXED(n)									__F_TO_FIX7_9(n)
+#define __F_TO_FIXED_EXT(n)								__F_TO_FIX7_9_EXT(n)
+#define __FIXED_TO_I(n)									__FIX7_9_TO_I(n)
+#define __FIXED_TO_F(n)									__FIX7_9_TO_F(n)
+#define __FIXED_EXT_TO_F(n)								__FIX7_9_EXT_TO_F(n)
+#define __FIXED_TO_FIX7_9(n)							__FIX7_9_TO_FIX7_9(n)
+#define __FIXED_TO_FIX13_3(n)							__FIX7_9_TO_FIX13_3(n)
+#define __FIXED_TO_FIX10_6(n)							__FIX7_9_TO_FIX10_6(n)
+#define __FIXED_TO_FIX10_6_EXT(n)						__FIX7_9_TO_FIX10_6_EXT(n)
+#define __FIXED_TO_FIX19_13(n)							__FIX7_9_TO_FIX19_13(n)
+#define __FIXED_TO_FIXED_EXT(n)							__FIX7_9_TO_FIX7_9_EXT(n)
+#define __FIXED_EXT_TO_FIXED(n)							__FIX7_9_EXT_TO_FIX7_9(n)
+#define __FIX7_9_TO_FIXED(n)							__FIX7_9_TO_FIX7_9(n)
+#define __FIX13_3_TO_FIXED(n)							__FIX13_3_TO_FIX7_9(n)
+#define __FIX10_6_TO_FIXED(n)							__FIXED_EXT_TO_FIX7_9(n)
+#define __FIX10_6_EXT_TO_FIXED(n)						__FIX10_6_EXT_TO_FIX7_9(n)
+#define __FIX19_13_TO_FIXED(n)							__FIX19_13_TO_FIX7_9(n)
+#define __FIXED_MULT(a,b)								__FIX7_9_MULT(a,b)	
+#define __FIXED_EXT_MULT(a,b)							__FIX7_9_EXT_MULT(a,b)	
+#define __FIXED_EXT_MULT_ROUND(a,b)						__FIX7_9_EXT_MULT_ROUND(a,b)
+#define __FIXED_DIV(a,b)								__FIX7_9_DIV(a,b)	
+#define __FIXED_EXT_DIV(a,b)							__FIX7_9_EXT_DIV(a,b)	
 
 #endif
 
