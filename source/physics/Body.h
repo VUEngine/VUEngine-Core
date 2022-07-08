@@ -72,6 +72,15 @@ typedef const PhysicalSpecification PhysicalSpecificationROMSpec;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct Vector3DPlus
+{
+	fix7_9_ext x;
+	fix7_9_ext y;
+	fix7_9_ext z;
+
+} Vector3DPlus;
+
+
 /// @ingroup physics
 class Body : ListenerObject
 {
@@ -89,8 +98,10 @@ class Body : ListenerObject
 	VirtualList normals;
 	// spatial position
 	Vector3D position;
+	Vector3DPlus internalPosition;
 	// velocity on each instance
 	Velocity velocity;
+	Vector3DPlus internalVelocity;
 	// direction
 	Direction3D direction;
 	// speed
@@ -100,7 +111,7 @@ class Body : ListenerObject
 	// maximum speed
 	fixed_t maximumSpeed;
 	// acceleration structure
-	Acceleration acceleration;
+	Vector3DFlag accelerating;
 	// bounciness
 	fixed_t bounciness;
 	// friction coefficient
@@ -133,9 +144,11 @@ class Body : ListenerObject
 	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
-	static void setCurrentElapsedTime(fixed_t currentElapsedTime);
+	static void setCurrentElapsedTime(fix7_9_ext currentElapsedTime);
 	static void setCurrentWorldFrictionCoefficient(fixed_t _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
+	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
+
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void applySustainedForce(const Force* force);
 	uint8 applyForce(const Force* force);
@@ -143,14 +156,13 @@ class Body : ListenerObject
 	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
 	void clearAcceleration(uint16 axis);
 	void clearExternalForce();
-	Acceleration getAcceleration();
+	Vector3DFlag getAccelerationState();
 	Force getAppliedForce();
 	uint16 getaxisSubjectToGravity();
 	fixed_t getBounciness();
 	Vector3D getLastDisplacement();
 	Acceleration getGravity();
 	Force getFriction();
-	fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t friction);
 	fixed_t getMass();
 	MovementType getMovementType();
 	SpatialObject getOwner();

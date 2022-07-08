@@ -32,8 +32,7 @@ typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, uint1
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PHYSICS_TIME_ELAPSED			__FIXED_DIV(__1I_FIXED, __I_TO_FIXED(__TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR))
-#define __TOTAL_USABLE_BODIES			128
+#define __PHYSICS_TIME_ELAPSED			__FIX7_9_EXT_DIV(__1I_FIX7_9_EXT, __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__TARGET_FPS), __I_TO_FIX7_9_EXT(__PHYSICS_TIME_ELAPSED_DIVISOR)))
 
 
 //---------------------------------------------------------------------------------------------------------

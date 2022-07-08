@@ -63,7 +63,7 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 
 fixed_t _currentWorldFriction = 0;
-fixed_t _currentPhysicsElapsedTime = 0;
+fix7_9_ext _currentPhysicsElapsedTime = 0;
 const Acceleration* _currentGravity = 0;
 
 static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
@@ -71,7 +71,7 @@ static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFrictio
 	_currentWorldFriction = currentWorldFriction;
 }
 
-static void Body::setCurrentElapsedTime(fixed_t currentElapsedTime)
+static void Body::setCurrentElapsedTime(fix7_9_ext currentElapsedTime)
 {
 	_currentPhysicsElapsedTime = currentElapsedTime;
 }
@@ -133,7 +133,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->position 				= Vector3D::zero();
 	this->velocity 				= Vector3D::zero();
 	this->direction 			= Vector3D::zero();
-	this->acceleration 			= Vector3D::zero();
+	this->accelerating 			= (Vector3DFlag){false, false, false};
 	this->externalForce	 		= Vector3D::zero();
 	this->friction 				= Vector3D::zero();
 	this->totalNormal			= Vector3D::zero();
@@ -142,6 +142,13 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
+
+	this->internalPosition.x 	= 0;
+	this->internalPosition.y 	= 0;
+	this->internalPosition.z 	= 0;
+	this->internalVelocity.x 	= 0;
+	this->internalVelocity.y 	= 0;
+	this->internalVelocity.z 	= 0;
 	
 	this->movesIndependentlyOnEachAxis = 0 != this->maximumVelocity.x || 0 != this->maximumVelocity.y || 0 != this->maximumVelocity.z;
 
@@ -223,9 +230,9 @@ void Body::modifyVelocity(const Velocity* modifier)
 }
 
 // retrieve acceleration
-Acceleration Body::getAcceleration()
+Vector3DFlag Body::getAccelerationState()
 {
-	return this->acceleration;
+	return this->accelerating;
 }
 
 // retrieve applied force
@@ -263,19 +270,19 @@ void Body::clearAcceleration(uint16 axis)
 {
 	if(__X_AXIS & axis)
 	{
-		this->acceleration.x = 0;
+		this->accelerating.x = false;
 		this->externalForce.x = 0;
 	}
 
 	if(__Y_AXIS & axis)
 	{
-		this->acceleration.y = 0;
+		this->accelerating.y = false;
 		this->externalForce.y = 0;
 	}
 
 	if(__Z_AXIS & axis)
 	{
-		this->acceleration.z = 0;
+		this->accelerating.z = false;
 		this->externalForce.z = 0;
 	}
 }
@@ -485,7 +492,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration g
 	// and if the velocity minimum threshold is not reached
 	if(previousVelocity.x && !this->externalForce.x && !gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->acceleration.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && !this->accelerating.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
@@ -493,7 +500,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration g
 
 	if(previousVelocity.y && !this->externalForce.y && !gravity.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->acceleration.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && !this->accelerating.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
@@ -501,7 +508,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration g
 
 	if(previousVelocity.z && !this->externalForce.z && !gravity.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->acceleration.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && !this->accelerating.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
 		}
@@ -528,13 +535,19 @@ Acceleration Body::getGravity()
 	};
 }
 
-fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t friction)
+
+static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	fixed_ext_t acceleration = gravity + __FIXED_EXT_DIV(forceMagnitude + friction, 0 < this->mass ? this->mass : __1I_FIXED);
+	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
-	fixed_ext_t initialSpeed = __FIXED_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
+	fix7_9_ext initialSpeed = __FIX7_9_EXT_MULT_ROUND(acceleration, _currentPhysicsElapsedTime);
 
-	return 0 != this->maximumSpeed && this->maximumSpeed < __ABS(initialSpeed) ? this->maximumSpeed : initialSpeed;
+	return 0 != maximumSpeed && __FIXED_TO_FIX7_9_EXT(maximumSpeed) < __ABS(initialSpeed) ? __FIXED_TO_FIX7_9_EXT(maximumSpeed) : initialSpeed;
+}
+
+static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
+{
+	return __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, maximumSpeed));
 }
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
@@ -570,6 +583,10 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 		this->speed = this->maximumSpeed;
 
 		this->velocity = Vector3D::scalarProduct(this->direction, this->maximumSpeed);
+
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 	}
 
 	// Then clamp speed based on each axis configuration
@@ -580,6 +597,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 			int32 sign = 0 <= this->velocity.x ? 1 : -1;
 
 			this->velocity.x = (this->maximumVelocity.x * sign);
+			this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
 		}
 	}
 
@@ -590,6 +608,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 			int32 sign = 0 <= this->velocity.y ? 1 : -1;
 
 			this->velocity.y = (this->maximumVelocity.y * sign);
+			this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
 		}
 	}
 
@@ -600,6 +619,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 			int32 sign = 0 <= this->velocity.z ? 1 : -1;
 
 			this->velocity.z = (this->maximumVelocity.z * sign);
+			this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 		}
 	}
 }
@@ -612,18 +632,18 @@ MovementResult Body::updateMovement()
 
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
-	
-	fixed_t elapsedTime = _currentPhysicsElapsedTime;
+
+	fix7_9_ext elapsedTime = _currentPhysicsElapsedTime;
+
 	Velocity previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		// need to use extended types to prevent overflows
-		fixed_ext_t acceleration = gravity.x + __FIXED_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
-		fixed_ext_t velocityDelta = __FIXED_EXT_MULT_ROUND(acceleration, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x, 0);
 
-		this->acceleration.x = __FIXED_EXT_TO_FIXED(acceleration);
-		this->velocity.x += __FIXED_EXT_TO_FIXED(velocityDelta);
+		this->accelerating.x = 0 != instantaneousSpeed;
+		this->internalVelocity.x += instantaneousSpeed;
+		this->velocity.x = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.x);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
@@ -642,11 +662,11 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fixed_ext_t acceleration = gravity.y + __FIXED_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
-		fixed_ext_t velocityDelta = __FIXED_EXT_MULT_ROUND(acceleration, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y, 0);
 
-		this->acceleration.y = __FIXED_EXT_TO_FIXED(acceleration);
-		this->velocity.y += __FIXED_EXT_TO_FIXED(velocityDelta);
+		this->accelerating.y = 0 != instantaneousSpeed;
+		this->internalVelocity.y += instantaneousSpeed;
+		this->velocity.y = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.y);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.y)
 	{
@@ -665,12 +685,11 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fixed_ext_t acceleration = gravity.z + __FIXED_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
-		fixed_ext_t velocityDelta = __FIXED_EXT_MULT_ROUND(acceleration, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z, 0);
 
-		this->acceleration.z = __FIXED_EXT_TO_FIXED(acceleration);
-		this->velocity.z += __FIXED_EXT_TO_FIXED(velocityDelta);
-
+		this->accelerating.z = 0 != instantaneousSpeed;
+		this->internalVelocity.z += instantaneousSpeed;
+		this->velocity.z = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.z);
 	}
 	else if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{
@@ -691,17 +710,20 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		this->position.x += __FIXED_EXT_MULT_ROUND(this->velocity.x, elapsedTime);
+		this->internalPosition.x += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.x, elapsedTime);
+		this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		this->position.y += __FIXED_EXT_MULT_ROUND(this->velocity.y, elapsedTime);
+		this->internalPosition.y += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.y, elapsedTime);
+		this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		this->position.z += __FIXED_EXT_MULT_ROUND(this->velocity.z, elapsedTime);
+		this->internalPosition.z += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.z, elapsedTime);
+		this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 	}
 
 	return Body::getMovementResult(this, previousVelocity, gravity);
@@ -722,7 +744,8 @@ uint16 Body::stopMovement(uint16 axis)
 	{
 		// not moving anymore
 		this->velocity.x = 0;
-		this->acceleration.x = 0;
+		this->internalVelocity.x = 0;
+		this->accelerating.x = false;
 		this->externalForce.x = 0;
 		axisOfStopping |= axisOfMovement & __X_AXIS;
 	}
@@ -731,7 +754,8 @@ uint16 Body::stopMovement(uint16 axis)
 	{
 		// not moving anymore
 		this->velocity.y = 0;
-		this->acceleration.y = 0;
+		this->internalVelocity.y = 0;
+		this->accelerating.y = false;
 		this->externalForce.y = 0;
 		axisOfStopping |= axisOfMovement & __Y_AXIS;
 	}
@@ -740,7 +764,8 @@ uint16 Body::stopMovement(uint16 axis)
 	{
 		// not moving anymore
 		this->velocity.z = 0;
-		this->acceleration.z = 0;
+		this->internalVelocity.z = 0;
+		this->accelerating.z = false;
 		this->externalForce.z = 0;
 		axisOfStopping |= axisOfMovement & __Z_AXIS;
 	}
@@ -792,6 +817,10 @@ void Body::setPosition(const Vector3D* position, SpatialObject caller)
 	if(this->owner == caller)
 	{
 		this->position = *position;
+
+		this->internalPosition.x = __FIXED_TO_FIX7_9_EXT(this->position.x);
+		this->internalPosition.y = __FIXED_TO_FIX7_9_EXT(this->position.y);
+		this->internalPosition.z = __FIXED_TO_FIX7_9_EXT(this->position.z);
 	}
 }
 
@@ -918,7 +947,7 @@ void Body::reset()
 	Body::setSurroundingFrictionCoefficient(this, 0);
 
 	this->velocity 				= Vector3D::zero();
-	this->acceleration 			= Vector3D::zero();
+	this->accelerating 			= (Vector3DFlag){false, false, false};
 	this->externalForce	 		= Vector3D::zero();
 	this->friction 				= Vector3D::zero();
 	this->totalNormal			= Vector3D::zero();
@@ -1003,6 +1032,12 @@ void Body::computeTotalFrictionCoefficient()
 
 void Body::computeFrictionForceMagnitude()
 {
+	if(0 == this->frictionCoefficient)
+	{
+		this->frictionForceMagnitude = 0;
+		return;
+	}
+
 	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
 	{
 		this->frictionForceMagnitude = __ABS(__FIXED_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
@@ -1123,9 +1158,9 @@ uint16 Body::getMovementOnAllAxis()
 {
 	uint16 result = 0;
 
-	result |= (this->velocity.x | __FIXED_INT_PART(this->acceleration.x)) ? __X_AXIS : 0;
-	result |= (this->velocity.y | __FIXED_INT_PART(this->acceleration.y)) ? __Y_AXIS : 0;
-	result |= (this->velocity.z | __FIXED_INT_PART(this->acceleration.z)) ? __Z_AXIS : 0;
+	result |= (this->velocity.x || this->accelerating.x) ? __X_AXIS : 0;
+	result |= (this->velocity.y || this->accelerating.y) ? __Y_AXIS : 0;
+	result |= (this->velocity.z || this->accelerating.z) ? __Z_AXIS : 0;
 
 	return this->awake && this->active ? result : 0;
 }
@@ -1360,9 +1395,9 @@ void Body::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "Acceleration", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->acceleration.x), xDisplacement + x, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->acceleration.y), xDisplacement + x + 8, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->acceleration.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
+	Printing::int32(Printing::getInstance(), this->accelerating.x, xDisplacement + x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->accelerating.y, xDisplacement + x + 8, y, NULL);
+	Printing::int32(Printing::getInstance(), this->accelerating.z, xDisplacement + x + 8 * 2, y++, NULL);
 
 	Acceleration gravity = Body::getGravity(this);
 

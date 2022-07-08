@@ -93,7 +93,7 @@ inline int32 customAbs(int32 number)
 #define __F_TO_FIX17_15(n)								(fix17_15)		((n) 	* 32768.0f + 0.5f)
 
 #define __FIX7_9_TO_F(n)								(float)((n) / 512.0f)
-#define __FIX7_9_EXT_TO_F(n)							(int32)((n) / 512.0f)
+#define __FIX7_9_EXT_TO_F(n)							(float)((n) / 512.0f)
 #define __FIX13_3_TO_F(n)								(float)((n) / 8.0f)
 #define __FIX10_6_TO_F(n)								(float)((n) / 64.0f)
 #define __FIX10_6_EXT_TO_F(n)							(float)((n) / 64.0f)
