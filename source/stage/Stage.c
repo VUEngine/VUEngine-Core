@@ -785,21 +785,19 @@ void Stage::loadInitialEntities()
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
-				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+				if(!isDeleted(entity))
 				{
-					this->streamingHeadNode = node;
-				}
+					if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+					{
+						this->streamingHeadNode = node;
+					}
 
-				stageEntityDescription->internalId = Entity::getInternalId(entity);
+					stageEntityDescription->internalId = Entity::getInternalId(entity);
+
+					Stage::makeChildReady(this, entity);
+				}
 			}
 		}
-	}
-
-	node = this->children->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Stage::makeChildReady(this, Entity::safeCast(node->data));
 	}
 }
 
