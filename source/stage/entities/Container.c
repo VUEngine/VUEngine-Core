@@ -892,17 +892,9 @@ void Container::setLocalScale(const Scale* scale)
  */
 void Container::translate(const Vector3D* translation)
 {
-	if(0 != translation->z)
-	{
-		Container::invalidateGlobalPosition(this);
-		Container::invalidateGlobalScale(this);
-	}
-	else if(0 != translation->x || 0 != translation->y)
-	{
-		Container::invalidateGlobalPosition(this);
-	}
 
-	this->transformation.localPosition = Vector3D::sum(this->transformation.localPosition, *translation);	
+	Vector3D localPosition = Vector3D::sum(this->transformation.localPosition, *translation);
+	Container::setLocalPosition(this, &localPosition);	
 }
 
 /**
