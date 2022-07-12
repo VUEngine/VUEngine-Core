@@ -720,6 +720,11 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 
 	if(interlaced)
 	{
+		if(2 >= radius)
+		{
+			return;
+		}
+
 		if(0 != bufferIndex)
 		{
 			center.parallax = -center.parallax;
