@@ -42,6 +42,9 @@ static class Vector3D : ListenerObject
 	static inline Vector3D sub(Vector3D a, Vector3D b);
 	static inline Vector3D scale(Vector3D vector, Scale scale);
 	static inline Vector3D perpedicular(Vector3D a, bool left);
+	static inline Vector3D perpedicularXPlane(Vector3D a, bool left);
+	static inline Vector3D perpedicularYPlane(Vector3D a, bool left);
+	static inline Vector3D perpedicularZPlane(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fixed_ext_t dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline fix19_13 dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB);
@@ -113,6 +116,60 @@ static inline Vector3D Vector3D::scale(Vector3D vector, Scale scale)
 }
 
 static inline Vector3D Vector3D::perpedicular(Vector3D a, bool left)
+{
+	if(left)
+	{
+		fixed_t aux = a.x;
+		a.x = -a.y;
+		a.y = aux;
+	}
+	else
+	{
+		fixed_t aux = a.x;
+		a.x = a.y;
+		a.y = -aux;
+	}
+
+	return a;
+}
+
+static inline Vector3D Vector3D::perpedicularXPlane(Vector3D a, bool left)
+{
+	if(left)
+	{
+		fixed_t aux = a.y;
+		a.y = -a.z;
+		a.z = aux;
+	}
+	else
+	{
+		fixed_t aux = a.y;
+		a.y = a.z;
+		a.z = -aux;
+	}
+
+	return a;
+}
+
+static inline Vector3D Vector3D::perpedicularYPlane(Vector3D a, bool left)
+{
+	if(left)
+	{
+		fixed_t aux = a.x;
+		a.x = -a.z;
+		a.z = aux;
+	}
+	else
+	{
+		fixed_t aux = a.x;
+		a.x = a.z;
+		a.z = -aux;
+	}
+
+	return a;
+}
+
+static inline Vector3D Vector3D::perpedicularZPlane(Vector3D a, bool left)
 {
 	if(left)
 	{
