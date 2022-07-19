@@ -627,7 +627,7 @@ void Actor::moveUniformly(Velocity* velocity)
 // is it moving?
 bool Actor::isMoving()
 {
-	return this->body ? Body::getMovementOnAllAxis(this->body) : 0;
+	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
 }
 
 uint16 Actor::getMovementState()
@@ -639,7 +639,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 {
 	Base::changeEnvironment(this, environmentTransform);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -659,7 +659,7 @@ void Actor::initialTransform(const Transformation* environmentTransform, uint32 
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -670,7 +670,7 @@ void Actor::setPosition(const Vector3D* position)
 {
 	Base::setPosition(this, position);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -681,7 +681,7 @@ void Actor::setPosition(const Vector3D* position)
 // retrieve global position
 const Vector3D* Actor::getPosition()
 {
-	return this->body ? Body::getPosition(this->body) : Base::getPosition(this);
+	return !isDeleted(this->body) ? Body::getPosition(this->body) : Base::getPosition(this);
 }
 
 // get bounciness
@@ -689,28 +689,28 @@ fixed_t Actor::getBounciness()
 {
 	PhysicalSpecification* physicalSpecification = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalSpecification;
 
-	return this->body ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
+	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }
 
 // get velocity
 Velocity Actor::getVelocity()
 {
-	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
+	return !isDeleted(this->body) ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }
 
 fixed_t Actor::getSpeed()
 {
-	return this->body ? Body::getSpeed(this->body) : Base::getSpeed(this);
+	return !isDeleted(this->body) ? Body::getSpeed(this->body) : Base::getSpeed(this);
 }
 
 fixed_t Actor::getMaximumSpeed()
 {
-	return this->body ? Body::getMaximumSpeed(this->body) : 0;
+	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
 void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return;
 	}
@@ -725,7 +725,7 @@ void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotC
 
 void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return;
 	}

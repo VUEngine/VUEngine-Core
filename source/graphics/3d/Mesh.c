@@ -203,6 +203,11 @@ void Mesh::render()
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 	Mesh::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
 
+	if(__COLOR_BLACK == this->color)
+	{
+		return;
+	}
+
 	if(NULL == this->rotation && NULL == this->scale)
 	{
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
@@ -227,7 +232,7 @@ void Mesh::render()
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
-	else if(NULL == this->scale)
+	else if(NULL == this->scale || (__1I_FIX7_9 == this->scale->x && __1I_FIX7_9 == this->scale->y && __1I_FIX7_9 == this->scale->z))
 	{
 		Rotation rotation = *this->rotation;
 
@@ -262,6 +267,11 @@ void Mesh::render()
 void Mesh::draw()
 {
 	if(NULL == this->position)
+	{
+		return;
+	}
+
+	if(__COLOR_BLACK == this->color)
 	{
 		return;
 	}

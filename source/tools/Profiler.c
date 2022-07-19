@@ -234,7 +234,7 @@ void Profiler::registerLap(const char* processName, float elapsedTime, uint32 la
 {
 	Lap* lap = new Lap;
 
-	lap->processName = NULL == processName ? "NO NAMe" : processName;
+	lap->processName = NULL == processName ? "NO NAME" : processName;
 	lap->elapsedTime = elapsedTime;
 	lap->lapType = lapType;
 	lap->column = column;
