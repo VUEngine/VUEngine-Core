@@ -770,3 +770,11 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 		}
 	}
 }
+
+static void DirectDraw::drawColorPoint(int16 x, int16 y, int16 parallax, int32 color)
+{
+	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+	DirectDraw::drawColorPixel(leftBuffer, rightBuffer, x, y, parallax, color);
+}
