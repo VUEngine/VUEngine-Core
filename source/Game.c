@@ -87,6 +87,9 @@ static char* _processNameDuringFRAMESTART = NULL;
 static char* _processNameDuringXPEND = NULL;
 #endif
 
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+uint32 _dispatchCycle = 0;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -580,9 +583,7 @@ void Game::dispatchDelayedMessages()
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-	static uint32 dispatchCycle = 0;
-
-	if(dispatchCycle++ & 1)
+	if(_dispatchCycle++ & 1)
 	{
 #endif
 
