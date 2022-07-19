@@ -455,7 +455,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// apply transformations
 			Entity::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
-			entity->dontStreamOut = permanent;
+			entity->dontStreamOut = entity->dontStreamOut || permanent;
 			
 			if(makeReady)
 			{

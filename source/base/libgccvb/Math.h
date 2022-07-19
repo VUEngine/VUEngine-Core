@@ -75,8 +75,13 @@ inline int32 customAbs(int32 number)
 #define fix17_15										int32
 
 // maximum values
+
+#define __FIX7_9_MAXIMUM_VALUE_TO_I						((1 << (7 - 1)) - 1)
+#define __FIX7_9_MAXIMUM_VALUE							(__I_TO_FIX7_9(__FIX7_9_MAXIMUM_VALUE_TO_I))
 #define __FIX10_6_MAXIMUM_VALUE_TO_I					((1 << (10 - 1)) - 1)
 #define __FIX10_6_MAXIMUM_VALUE							(__I_TO_FIX10_6(__FIX10_6_MAXIMUM_VALUE_TO_I))
+#define __FIX19_13_MAXIMUM_VALUE_TO_I					((1 << (19 - 1)) - 1)
+#define __FIX19_13_MAXIMUM_VALUE						(__I_TO_FIX19_13(__FIX19_13_MAXIMUM_VALUE_TO_I))
 
 // round functions
 #define __F_ROUND(n)									(int32)((n) + 0.5f)
@@ -119,7 +124,7 @@ inline int32 customAbs(int32 number)
 
 
 #define __FIX10_6_TO_FIX7_9(n)							(fix7_9)		((n) << 3)
-#define __FIX10_6_TO_FIX7_9_EXT(n)						(fix7_9_ext)		((n) << 3)
+#define __FIX10_6_TO_FIX7_9_EXT(n)						(fix7_9_ext)	((n) << 3)
 #define __FIX10_6_TO_FIX10_6(n)							(fix10_6)		((n))
 #define __FIX10_6_TO_FIX13_3(n)							(fix13_3)		((n) >> 3)
 #define __FIX10_6_TO_FIX17_15(n)						(fix17_15)		(((uint32)n) << 9)
@@ -131,6 +136,7 @@ inline int32 customAbs(int32 number)
 #define __FIX7_9_TO_FIX10_6(n)							(fix10_6)		((n) >> 3)
 #define __FIX7_9_EXT_TO_FIX10_6(n)						(fix10_6)		((n) >> 3)
 #define __FIX7_9_TO_FIX13_3(n)							(fix13_3)		((n) >> 6)
+#define __FIX7_9_TO_FIX17_15(n)							(fix17_15)		((n) << 6)
 #define __FIX7_9_TO_FIX19_13(n)							(fix19_13)		((n) << 4)
 #define __FIX7_9_TO_FIX7_9_EXT(n)						(fix7_9_ext)	((n))
 #define __FIX7_9_EXT_TO_FIX7_9(n)						(fix7_9)		((n))
@@ -143,6 +149,7 @@ inline int32 customAbs(int32 number)
 #define __FIX19_13_TO_FIX10_6(n)						(fix10_6)		((n) >> 7)
 #define __FIX19_13_TO_FIX10_6_EXT(n)					(fix10_6_ext)	((n) >> 7)
 #define __FIX19_13_TO_FIX13_3(n)						(fix13_3)		((n) >> 10)
+#define __FIX19_13_TO_FIX17_15(n)						(fix17_15)		((n) << 2)
 #define __FIX19_13_TO_FIX19_13(n)						(fix19_13)		((n))
 
 // return the integral part
@@ -202,6 +209,7 @@ extern const int16 _sinLut[];
 
 #define __FIXED_INFINITY								0x3FFFFFFF
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_MAXIMUM_VALUE							__FIX19_13_MAXIMUM_VALUE
 
 #define __FIXED_INT_PART(n)								__FIX19_13_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX19_13_FRAC(n)
@@ -213,11 +221,13 @@ extern const int16 _sinLut[];
 #define __F_TO_FIXED_EXT(n)								__F_TO_FIX19_13(n)
 #define __FIXED_TO_I(n)									__FIX19_13_TO_I(n)
 #define __FIXED_TO_F(n)									__FIX19_13_TO_F(n)
+#define __FIXED_EXT_TO_I(n)								__FIX19_13_TO_I(n)
 #define __FIXED_EXT_TO_F(n)								__FIX19_13_TO_F(n)
 #define __FIXED_TO_FIX7_9(n)							__FIX19_13_TO_FIX7_9(n)
 #define __FIXED_TO_FIX13_3(n)							__FIX19_13_TO_FIX13_3(n)
 #define __FIXED_TO_FIX10_6(n)							__FIX19_13_TO_FIX10_6(n)
 #define __FIXED_TO_FIX10_6_EXT(n)						__FIX19_13_TO_FIX10_6_EXT(n)
+#define __FIXED_TO_FIX17_15(n)							__FIX19_13_TO_FIX17_15(n)
 #define __FIXED_TO_FIX19_13(n)							__FIX19_13_TO_FIX19_13(n)
 #define __FIXED_TO_FIXED_EXT(n)							__FIX19_13_TO_FIX19_13(n)
 #define __FIXED_EXT_TO_FIXED(n)							__FIX19_13_TO_FIX19_13(n)
@@ -241,6 +251,7 @@ extern const int16 _sinLut[];
 
 #define __FIXED_INFINITY								0x3FFF
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_MAXIMUM_VALUE							__FIX10_6_MAXIMUM_VALUE
 
 #define __FIXED_INT_PART(n)								__FIX10_6_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX10_6_FRAC(n)
@@ -252,12 +263,14 @@ extern const int16 _sinLut[];
 #define __F_TO_FIXED_EXT(n)								__F_TO_FIX10_6_EXT(n)
 #define __FIXED_TO_I(n)									__FIX10_6_TO_I(n)
 #define __FIXED_TO_F(n)									__FIX10_6_TO_F(n)
+#define __FIXED_EXT_TO_I(n)								__FIX10_6_TO_I(n)
 #define __FIXED_EXT_TO_F(n)								__FIX10_6_EXT_TO_F(n)
 #define __FIXED_TO_FIX7_9(n)							__FIX10_6_TO_FIX7_9(n)
 #define __FIXED_TO_FIX7_9_EXT(n)						__FIX10_6_TO_FIX7_9_EXT(n)
 #define __FIXED_TO_FIX13_3(n)							__FIX10_6_TO_FIX13_3(n)
 #define __FIXED_TO_FIX10_6(n)							__FIX10_6_TO_FIX10_6(n)
 #define __FIXED_TO_FIX10_6_EXT(n)						__FIX10_6_TO_FIX10_6_EXT(n)
+#define __FIXED_TO_FIX17_15(n)							__FIX10_6_TO_FIX17_15(n)
 #define __FIXED_TO_FIX19_13(n)							__FIX10_6_TO_FIX19_13(n)
 #define __FIXED_TO_FIXED_EXT(n)							__FIX10_6_TO_FIX10_6_EXT(n)
 #define __FIXED_EXT_TO_FIXED(n)							__FIX10_6_EXT_TO_FIX10_6(n)
@@ -282,6 +295,7 @@ extern const int16 _sinLut[];
 
 #define __FIXED_INFINITY								0x3FFF
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_MAXIMUM_VALUE							__FIX7_9_MAXIMUM_VALUE
 
 #define __FIXED_INT_PART(n)								__FIX7_9_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX7_9_FRAC(n)
@@ -293,11 +307,13 @@ extern const int16 _sinLut[];
 #define __F_TO_FIXED_EXT(n)								__F_TO_FIX7_9_EXT(n)
 #define __FIXED_TO_I(n)									__FIX7_9_TO_I(n)
 #define __FIXED_TO_F(n)									__FIX7_9_TO_F(n)
+#define __FIXED_EXT_TO_I(n)								__FIX7_9_TO_I(n)
 #define __FIXED_EXT_TO_F(n)								__FIX7_9_EXT_TO_F(n)
 #define __FIXED_TO_FIX7_9(n)							__FIX7_9_TO_FIX7_9(n)
 #define __FIXED_TO_FIX13_3(n)							__FIX7_9_TO_FIX13_3(n)
 #define __FIXED_TO_FIX10_6(n)							__FIX7_9_TO_FIX10_6(n)
 #define __FIXED_TO_FIX10_6_EXT(n)						__FIX7_9_TO_FIX10_6_EXT(n)
+#define __FIXED_TO_FIX17_15(n)							__FIX7_9_TO_FIX17_15(n)
 #define __FIXED_TO_FIX19_13(n)							__FIX7_9_TO_FIX19_13(n)
 #define __FIXED_TO_FIXED_EXT(n)							__FIX7_9_TO_FIX7_9_EXT(n)
 #define __FIXED_EXT_TO_FIXED(n)							__FIX7_9_EXT_TO_FIX7_9(n)

@@ -66,6 +66,7 @@ void Container::constructor(const char* const name)
 	this->deleteMe = false;
 	this->hidden = false;
 	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
+	this->dontStreamOut = false;
 
 	this->name = NULL;
 	Container::setName(this, name);
