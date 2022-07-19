@@ -84,6 +84,12 @@ void Actor::destructor()
 
 void Actor::createBody(PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
+	if(!isDeleted(this->body))
+	{
+		NM_ASSERT(false, "Actor::createBody: body already created");
+		return;
+	}
+
 	if(NULL != physicalSpecification)
 	{
 		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
