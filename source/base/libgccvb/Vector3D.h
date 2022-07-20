@@ -516,8 +516,8 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 	return (Vector3D) 
 		{
 			vector.x,
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(y , cos) - __FIX7_9_EXT_MULT_ROUND(z , sin)),
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(y , sin) + __FIX7_9_EXT_MULT_ROUND(z , cos))
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , cos) - __FIX7_9_EXT_MULT(z , sin)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(y , sin) + __FIX7_9_EXT_MULT(z , cos))
 		};
 }
 
@@ -531,9 +531,9 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 
 	return (Vector3D) 
 		{
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , cos) + __FIX7_9_EXT_MULT_ROUND(z , sin)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) + __FIX7_9_EXT_MULT(z , sin)),
 			vector.y,
-			__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT_ROUND(x , sin) + __FIX7_9_EXT_MULT_ROUND(z , cos))
+			__FIX7_9_EXT_TO_FIXED(-__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(z , cos))
 		};
 }
 
@@ -547,8 +547,8 @@ static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 
 	return (Vector3D) 
 		{
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , cos) - __FIX7_9_EXT_MULT_ROUND(y , sin)),
-			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT_ROUND(x , sin) + __FIX7_9_EXT_MULT_ROUND(y , cos)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , cos) - __FIX7_9_EXT_MULT(y , sin)),
+			__FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_MULT(x , sin) + __FIX7_9_EXT_MULT(y , cos)),
 			vector.z
 		};
 }

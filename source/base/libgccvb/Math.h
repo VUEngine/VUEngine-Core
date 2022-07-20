@@ -211,6 +211,8 @@ extern const int16 _sinLut[];
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX19_13_MAXIMUM_VALUE
 
+#define __FIXED_TO_I_BITS								(13)
+
 #define __FIXED_INT_PART(n)								__FIX19_13_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX19_13_FRAC(n)
 #define __1I_FIXED										__1I_FIX19_13
@@ -252,6 +254,8 @@ extern const int16 _sinLut[];
 #define __FIXED_INFINITY								0x3FFF
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX10_6_MAXIMUM_VALUE
+
+#define __FIXED_TO_I_BITS								(6)
 
 #define __FIXED_INT_PART(n)								__FIX10_6_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX10_6_FRAC(n)
@@ -296,6 +300,8 @@ extern const int16 _sinLut[];
 #define __FIXED_INFINITY								0x3FFF
 #define __FIXED_EXT_INFINITY							0x3FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX7_9_MAXIMUM_VALUE
+
+#define __FIXED_TO_I_BITS								(9)
 
 #define __FIXED_INT_PART(n)								__FIX7_9_INT_PART(n)
 #define __FIXED_FRAC(n)									__FIX7_9_FRAC(n)
