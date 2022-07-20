@@ -125,10 +125,12 @@ void Wireframe::setupRenderingMode(fixed_ext_t distanceToCamera)
 	}
 	else
 	{
-		this->interlaced = true;
-		this->color = __COLOR_BLACK;
-
-		if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
+		if(__FIXED_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		{
+			this->interlaced = true;
+			this->color = __COLOR_BLACK;
+		}
+		else if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
 		{
 			this->interlaced = true;
 			this->color = __COLOR_DARK_RED;
