@@ -209,7 +209,7 @@ void Mesh::render()
 	}
 
 	bool scale = __1I_FIX7_9 != this->scale->x || __1I_FIX7_9 != this->scale->y || __1I_FIX7_9 != this->scale->z;
-	bool rotate = 0 != this->rotation->x || 0 != this->rotation->y && 0 != this->rotation->z;
+	bool rotate = 0 != this->rotation->x || 0 != this->rotation->y || 0 != this->rotation->z;
 
 	if(scale && rotate)
 	{
@@ -241,7 +241,6 @@ void Mesh::render()
 	else if(rotate)
 	{
 		Rotation rotation = *this->rotation;
-		Scale scale = *this->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
