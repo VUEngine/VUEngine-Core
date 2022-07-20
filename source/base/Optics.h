@@ -39,14 +39,16 @@ static class Optics : ListenerObject
  */
 static inline int16 Optics::calculateParallax(fixed_t z)
 {
-	if(0 == (_optical->halfWidth << 1) + z)
+	fixed_t divisor = (_optical->halfWidth << 1) + z;
+
+	if(0 == divisor)
 	{
 		return 0;
 	}
 	
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
-	return __METERS_TO_PIXELS(__FIXED_EXT_DIV(__FIXED_EXT_MULT(((unsigned)_optical->baseDistance) << 1, z), (_optical->halfWidth << 1) + z) >> 1);
+	return __METERS_TO_PIXELS(__FIXED_EXT_DIV(__FIXED_EXT_MULT(((unsigned)_optical->baseDistance), z), divisor));
 }
 
 #endif
