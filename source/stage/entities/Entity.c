@@ -746,7 +746,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 	// go through n sprites in entity's spec
 	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + Entity::getChildCount(this));
+		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + i + 1);
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
