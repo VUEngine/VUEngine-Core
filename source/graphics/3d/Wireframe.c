@@ -44,6 +44,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->interlaced = true;
 	this->bufferIndex = 0;
 	this->show = __SHOW_NEXT_FRAME;
+	this->transparent = wireframeSpec->transparent;
 
 	WireframeManager::register(WireframeManager::getInstance(), this);
 }

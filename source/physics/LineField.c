@@ -262,7 +262,11 @@ void LineField::configureWireframe()
 		{
 			__TYPE(Line),
 
-			__COLOR_BRIGHT_RED
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// transparent
+			__TRANSPARENCY_NONE
 		},
 
 		this->a,

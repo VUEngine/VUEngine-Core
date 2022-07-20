@@ -30,6 +30,9 @@ typedef struct WireframeSpec
 	/// color
 	uint8 color;
 
+	/// transparent
+	uint8 transparent;
+
 } WireframeSpec;
 
 typedef const WireframeSpec WireframeROMSpec;
@@ -46,6 +49,7 @@ abstract class Wireframe : ListenerObject
 	uint8 color;
 	uint8 bufferIndex;
 	uint8 show;
+	uint8 transparent;
 
 	/// @publicsection
 	void constructor(WireframeSpec* wireframeSpec);

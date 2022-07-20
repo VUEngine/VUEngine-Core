@@ -63,6 +63,7 @@ void WireframeManager::constructor()
 	this->wireframes = new VirtualList();
 	this->stopRendering = false;
 	this->stopDrawing = false;
+	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
@@ -204,12 +205,19 @@ void WireframeManager::render()
 
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __PIXELS_TO_METERS(512)}, *_cameraRotation);
 
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
+
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		if(__HIDE == wireframe->show)
+		{
+			continue;
+		}
+
+		if(wireframe->transparent & this->evenFrame)
 		{
 			continue;
 		}
@@ -253,6 +261,11 @@ void WireframeManager::draw()
 		if(__SHOW_NEXT_FRAME == wireframe->show)
 		{
 			wireframe->show = __SHOW;
+			continue;
+		}
+
+		if(wireframe->transparent & this->evenFrame)
+		{
 			continue;
 		}
 

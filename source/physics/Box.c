@@ -485,7 +485,11 @@ void Box::configureWireframe()
 		{
 			__TYPE(Polyhedron),
 
-			__COLOR_BRIGHT_RED
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// transparent
+			__TRANSPARENCY_NONE
 		},
 	};
 

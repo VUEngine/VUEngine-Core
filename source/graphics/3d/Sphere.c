@@ -103,7 +103,6 @@ void Sphere::render()
 	extern Rotation _previousCameraInvertedRotation;
 
 	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	Sphere::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
@@ -111,6 +110,7 @@ void Sphere::render()
 		return;
 	}
 
+	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
 }
