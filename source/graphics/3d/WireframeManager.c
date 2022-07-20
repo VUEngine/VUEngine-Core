@@ -31,6 +31,7 @@ friend class Wireframe;
 
 static DirectDraw _directDraw = NULL;
 
+Vector3D _cameraDirection = {0, 0, 0};
 Vector3D _previousCameraPosition = {0, 0, 0};
 Vector3D _previousCameraPositionBuffer = {0, 0, 0};
 Rotation _previousCameraInvertedRotation = {0, 0, 0};
@@ -200,6 +201,8 @@ void WireframeManager::render()
 	}
 
 	this->stopRendering = false;
+
+	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __PIXELS_TO_METERS(512)}, *_cameraRotation);
 
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)

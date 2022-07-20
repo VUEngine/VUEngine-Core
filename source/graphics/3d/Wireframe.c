@@ -103,7 +103,7 @@ VirtualList Wireframe::getVertices()
 	return NULL;
 }
 
-void Wireframe::setupRenderingMode(fixed_ext_t distanceToCamera)
+void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
 	if(NULL == this->wireframeSpec)
 	{
@@ -113,6 +113,16 @@ void Wireframe::setupRenderingMode(fixed_ext_t distanceToCamera)
 	{
 		this->color = this->wireframeSpec->color;
 	}
+
+	extern Vector3D _cameraDirection;
+
+	if(0 > Vector3D::dotProduct(*relativePosition, _cameraDirection))
+	{
+		this->color = __COLOR_BLACK;
+		return;
+	}
+
+	fixed_ext_t distanceToCamera = Vector3D::squareLength(*relativePosition);
 
 	if(__COLOR_BLACK != this->color)
 	{

@@ -191,7 +191,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
-	if(NULL == this->position)
+	if(NULL == this->position || NULL == this->rotation || NULL == this->scale)
 	{
 		return;
 	}
@@ -201,25 +201,31 @@ void Mesh::render()
 	Vector3D position = *this->position;
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
-	Mesh::setupRenderingMode(this, Vector3D::squareLength(relativePosition));
+	Mesh::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
 	{
 		return;
 	}
 
-	if(NULL == this->rotation && NULL == this->scale)
+	bool scale = __1I_FIX7_9 != this->scale->x || __1I_FIX7_9 != this->scale->y || __1I_FIX7_9 != this->scale->z;
+	bool rotate = 0 != this->rotation->x || 0 != this->rotation->y && 0 != this->rotation->z;
+
+	if(scale && rotate)
 	{
+		Rotation rotation = *this->rotation;
+		Scale scale = *this->scale;
+
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
 
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
-	else if(NULL == this->rotation)
+	else if(scale)
 	{
 		Scale scale = *this->scale;
 
@@ -232,9 +238,10 @@ void Mesh::render()
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
-	else if(NULL == this->scale || (__1I_FIX7_9 == this->scale->x && __1I_FIX7_9 == this->scale->y && __1I_FIX7_9 == this->scale->z))
+	else if(rotate)
 	{
 		Rotation rotation = *this->rotation;
+		Scale scale = *this->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -244,17 +251,14 @@ void Mesh::render()
 
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
-	}	
+	}
 	else
 	{
-		Rotation rotation = *this->rotation;
-		Scale scale = *this->scale;
-
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
 
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}

@@ -187,7 +187,6 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 		__I_TO_FIX7_9_EXT(_frustum.x0), __I_TO_FIX7_9_EXT(_frustum.y0), __I_TO_FIX7_9_EXT(_frustum.z0),
 		__I_TO_FIX7_9_EXT(_frustum.x1), __I_TO_FIX7_9_EXT(_frustum.y1), __I_TO_FIX7_9_EXT(_frustum.z1),
 	};
-
 }
 
 /**

@@ -51,7 +51,7 @@ abstract class Wireframe : ListenerObject
 	void constructor(WireframeSpec* wireframeSpec);
 	void hide();
 	void show();
-	void setupRenderingMode(fixed_ext_t distanceToCamera);
+	void setupRenderingMode(const Vector3D* relativePosition);
 
 	virtual void draw() = 0;
 	virtual void render();
