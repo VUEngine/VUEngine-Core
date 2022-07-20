@@ -53,6 +53,7 @@ abstract class Wireframe : ListenerObject
 
 	/// @publicsection
 	void constructor(WireframeSpec* wireframeSpec);
+	void setTransparent(bool transparent);
 	void hide();
 	void show();
 	void setupRenderingMode(const Vector3D* relativePosition);

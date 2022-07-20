@@ -64,6 +64,14 @@ void Wireframe::destructor()
 }
 
 /**
+ * Set transparent flag
+ */
+void Wireframe::setTransparent(bool transparent)
+{
+	this->transparent = transparent;
+}
+
+/**
  * Start being rendered
  */
 void Wireframe::show()
