@@ -278,8 +278,6 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 
 	if(this->body)
 	{
-		Actor::syncWithBody(this);
-
 		// Prevent transformation of shapes again when calling Base::transform
 		this->transformShapes = false;
 
@@ -287,6 +285,8 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 
 		if(bodyMovement)
 		{
+			Actor::syncWithBody(this);
+
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
 			if(__Z_AXIS & bodyMovement)
