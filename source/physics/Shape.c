@@ -396,7 +396,7 @@ CollisionData Shape::collides(Shape shape)
  */
 bool Shape::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __attribute__ ((unused)))
 {
-	if(!this->collidingShapes)
+	if(!this->collidingShapes || NULL == this->collidingShapes->head)
 	{
 		return true;
 	}
@@ -405,9 +405,7 @@ bool Shape::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __attrib
 
 	Vector3D normalizedDisplacement = Vector3D::normalize(displacement);
 
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; canMove && node; node = node->next)
+	for(VirtualNode node = this->collidingShapes->head; canMove && node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
