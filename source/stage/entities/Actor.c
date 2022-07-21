@@ -155,8 +155,15 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 void Actor::syncWithBody()
 {
-	Actor::syncPositionWithBody(this);
-	Actor::syncRotationWithBody(this);
+	if(!isDeleted(this->body))
+	{
+		Actor::syncPositionWithBody(this);
+
+		if(Body::getMovementOnAllAxis(this->body))
+		{
+			Actor::syncRotationWithBody(this);
+		}
+	}
 }
 
 bool Actor::overrideParentingPositioningWhenBodyIsNotMoving()
