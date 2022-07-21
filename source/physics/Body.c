@@ -540,7 +540,7 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 {
 	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
-	fix7_9_ext initialSpeed = __FIX7_9_EXT_MULT_ROUND(acceleration, _currentPhysicsElapsedTime);
+	fix7_9_ext initialSpeed = __FIX7_9_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
 
 	return 0 != maximumSpeed && __FIXED_TO_FIX7_9_EXT(maximumSpeed) < __ABS(initialSpeed) ? __FIXED_TO_FIX7_9_EXT(maximumSpeed) : initialSpeed;
 }
@@ -710,19 +710,19 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		this->internalPosition.x += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.x, elapsedTime);
+		this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, elapsedTime);
 		this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		this->internalPosition.y += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.y, elapsedTime);
+		this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, elapsedTime);
 		this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		this->internalPosition.z += __FIX7_9_EXT_MULT_ROUND(this->internalVelocity.z, elapsedTime);
+		this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, elapsedTime);
 		this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 	}
 
@@ -1235,7 +1235,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 	// compute bouncing vector
 	fixed_t cosAngle = __I_TO_FIXED(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIXED_EXT_DIV(Vector3D::dotProduct(gravity, bouncingPlaneNormal), Vector3D::lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIXED;
-	fixed_t normalMagnitude = __FIXED_EXT_MULT_ROUND(Vector3D::length(this->weight), cosAngle);
+	fixed_t normalMagnitude = __FIXED_EXT_MULT(Vector3D::length(this->weight), cosAngle);
 
 	// register normal affecting the body
 	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
