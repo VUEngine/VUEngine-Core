@@ -82,7 +82,7 @@ void Actor::destructor()
 	Base::destructor();
 }
 
-void Actor::createBody(PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	if(!isDeleted(this->body))
 	{
