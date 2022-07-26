@@ -99,6 +99,8 @@ void Actor::createBody(PhysicalSpecification* physicalSpecification, uint16 axis
 		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
 		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
 	}
+
+	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 }
 
 void Actor::initializeStateMachine(State state)
