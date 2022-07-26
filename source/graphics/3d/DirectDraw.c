@@ -225,23 +225,22 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  */
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
-	uint16 yHelper = y >> 2;
 	uint8 pixel = color << ((y & 3) << 1);
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	int32 displacement = (x - parallax) << 6;
+	int32 displacement = ((x - parallax) << 6) + (y >> 2);
 
 	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
 	{
-		leftBuffer[displacement + yHelper] |= pixel;
+		leftBuffer[displacement] |= pixel;
 	}
 
 	displacement += (parallax << 7);
 
 	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
 	{
-		rightBuffer[displacement + yHelper] |= pixel;
+		rightBuffer[displacement] |= pixel;
 	}
 }
 
