@@ -247,7 +247,6 @@ void Entity::setupWireframes()
 	}
 }
 
-
 /**
  * Delete all of the Entity's sprites
  *
@@ -1160,6 +1159,22 @@ void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPre
 		VirtualList::pushBack(this->wireframes, wireframe);
 		Wireframe::show(wireframe);
 	}
+}
+
+void Entity::addWireframe(Wireframe wireframe)
+{
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	if(NULL == this->wireframes)
+	{
+		this->wireframes = new VirtualList();
+	}
+
+	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+	VirtualList::pushBack(this->wireframes, wireframe);
 }
 
 /**

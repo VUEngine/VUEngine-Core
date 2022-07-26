@@ -100,6 +100,7 @@ class Entity : Container
 	bool updateSpritePosition();
 	bool updateSpriteRotation();
 	bool updateSpriteScale();
+	void addWireframe(Wireframe wireframe);
 	void releaseSprites();
 	void setSpec(void* entitySpec);
 	virtual void setDirection(Direction direction);
