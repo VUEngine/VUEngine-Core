@@ -177,6 +177,11 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 		frustum.z0 = frustum.z1 - 1;
 	}
 
+	if(0 > frustum.z0)
+	{
+		frustum.z0 = 0;
+	}
+
 	_frustum = frustum;
 	_frustumWidth = _frustum.x1 - _frustum.x0;
 	_frustumHeight = _frustum.y1 - _frustum.y0;
