@@ -541,18 +541,18 @@ Acceleration Body::getGravity()
 }
 
 
-static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
+static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction)
 {
 	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
-	fix7_9_ext initialSpeed = __FIX7_9_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
-
-	return 0 != maximumSpeed && __FIXED_TO_FIX7_9_EXT(maximumSpeed) < __ABS(initialSpeed) ? __FIXED_TO_FIX7_9_EXT(maximumSpeed) : initialSpeed;
+	return __FIX7_9_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
 }
 
 static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	return __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, maximumSpeed));
+	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction));
+
+	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
@@ -644,7 +644,7 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x, 0);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -667,7 +667,7 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y, 0);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -690,7 +690,7 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z, 0);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
