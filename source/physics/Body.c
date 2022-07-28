@@ -86,6 +86,11 @@ static void Body::setCurrentGravity(const Acceleration* currentGravity)
 	_currentGravity = currentGravity;
 }
 
+static const Acceleration* Body::getCurrentGravity()
+{
+	return _currentGravity;
+}
+
 enum CollidingObjectIndexes
 {
 	eXAxis = 0,

@@ -146,6 +146,7 @@ class Body : ListenerObject
 	static fix7_9_ext getCurrentElapsedTime();
 	static void setCurrentWorldFrictionCoefficient(fixed_t _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
+	static const Acceleration* getCurrentGravity();
 	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
 
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
