@@ -217,19 +217,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
 	// check x visibility
-	if(position2D.x + pixelRightBox->x1 <  _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+	if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(position2D.y + pixelRightBox->y1 <  _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
+	if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(position2D.z + pixelRightBox->z1 <  _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
+	if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
 	{
 		return false;
 	}
@@ -889,7 +889,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 	return unloadedEntities;
 }
 
-bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
+bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
@@ -1004,6 +1004,59 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 	}
 
 	this->cameraPreviousDistance = cameraDistance;
+
+#ifdef __PROFILE_STREAMING
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
+#endif
+
+	return loadedEntities;
+}
+
+bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
+{
+#ifdef __PROFILE_STREAMING
+	_renderingProcessTimeHelper = 0;
+	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
+#endif
+
+	bool loadedEntities = false;
+
+	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
+
+	uint16 amplitude = this->streaming.streamingAmplitude;
+
+	if(NULL == this->streamingHeadNode)
+	{
+		this->streamingHeadNode = this->stageEntities->head;
+	}
+
+	for(uint16 counter = 0; NULL != this->streamingHeadNode && counter < amplitude; this->streamingHeadNode = this->streamingHeadNode->next)
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+
+		if(0 > stageEntityDescription->internalId)
+		{
+			counter++;
+
+			// if entity in load range
+			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, this->forceNoPopIn))
+			{
+				loadedEntities = true;
+
+				stageEntityDescription->internalId = this->nextEntityId++;
+
+				if(defer)
+				{
+					EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
+				}
+				else
+				{
+					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+				}
+			}
+		}
+	}
 
 #ifdef __PROFILE_STREAMING
 	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
