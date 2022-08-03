@@ -421,7 +421,7 @@ void Container::updateChildren(uint32 elapsedTime)
 				continue;
 			}
 
-			if(!child->update && NULL == child->children && NULL == this->behaviors)
+			if(!child->update)
 			{
 				continue;
 			}
