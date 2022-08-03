@@ -239,6 +239,7 @@ void Container::addChild(Container child)
 
 		this->synchronizeGraphics = this->synchronizeGraphics || Container::overrides(child, synchronizeGraphics);
 		this->update = this->update || Container::overrides(child, update);
+		this->transform = this->transform || Container::overrides(child, transform);
 	}
 }
 
