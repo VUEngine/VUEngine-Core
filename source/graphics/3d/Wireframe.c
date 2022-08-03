@@ -137,39 +137,39 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	{
 		this->interlaced = false;
 
-		if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
 		{
 			this->interlaced = true;
 		}
 	}
 	else
 	{
-		if(__FIXED_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
 			this->interlaced = true;
 			this->color = __COLOR_BLACK;
 		}
-		else if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD << 1, __DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera)
+		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
 		{
 			this->interlaced = true;
 			this->color = __COLOR_DARK_RED;
 		}
-		else if(__FIXED_EXT_MULT((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), (__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
 		{
 			this->interlaced = false;
 			this->color = __COLOR_DARK_RED;
 		}
-		else if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
+		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 3)) < distanceToCamera)
 		{
 			this->interlaced = true;
 			this->color = __COLOR_MEDIUM_RED;
 		}
-		else if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2), __DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
+		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
 		{
 			this->interlaced = true;
 			this->color = __COLOR_BRIGHT_RED;
 		}
-		else if(__FIXED_EXT_MULT(__DIRECT_DRAW_INTERLACED_THRESHOLD, __DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
+		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
 		{
 			this->interlaced = false;
 			this->color = __COLOR_MEDIUM_RED;

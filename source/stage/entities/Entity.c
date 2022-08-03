@@ -1158,7 +1158,6 @@ void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPre
 		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
 		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
 		VirtualList::pushBack(this->wireframes, wireframe);
-		Wireframe::show(wireframe);
 	}
 }
 
