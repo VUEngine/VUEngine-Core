@@ -85,10 +85,12 @@ class Container : SpatialObject
 	bool deleteMe;
 	// Flag to hide the entity
 	bool hidden;
-	// flag to enable calls to update method
+	// flag to enable calls to the update method
 	bool update;
-	// flag to enable calls to update method
+	// flag to enable calls to the transform method
 	bool transform;
+	// flag to enable calls to the synchronizeGraphics method
+	bool synchronizeGraphics;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
 	// Raise flag when transformed to allow graphics sync

@@ -42,6 +42,7 @@ void Container::constructor(const char* const name)
 	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
+	this->synchronizeGraphics = Container::overrides(this, synchronizeGraphics);
 
 	this->transformed = false;
 
@@ -235,6 +236,8 @@ void Container::addChild(Container child)
 		VirtualList::pushBack(this->children, (void*)child);
 
 		Container::invalidateGlobalTransformation(child);
+
+		this->synchronizeGraphics = true;
 	}
 }
 
@@ -416,12 +419,9 @@ void Container::updateChildren(uint32 elapsedTime)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
+			bool skip = (!child->update) + child->deleteMe;
 
-			if(!child->update)
+			if(skip)
 			{
 				continue;
 			}
@@ -691,22 +691,9 @@ void Container::synchronizeChildrenGraphics()
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
+			bool skip = (!child->synchronizeGraphics) + child->deleteMe + child->hidden + (!child->transformed) + (!child->invalidateGraphics && NULL == child->children);
 
-			if(child->hidden)
-			{
-				continue;
-			}
-
-			if(!child->transformed)
-			{
-				return;
-			}
-
-			if(!child->invalidateGraphics && NULL == child->children)
+			if(skip)
 			{
 				continue;
 			}
