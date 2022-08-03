@@ -237,7 +237,8 @@ void Container::addChild(Container child)
 
 		Container::invalidateGlobalTransformation(child);
 
-		this->synchronizeGraphics = true;
+		this->synchronizeGraphics = this->synchronizeGraphics || Container::overrides(child, synchronizeGraphics);
+		this->update = this->update || Container::overrides(child, update);
 	}
 }
 
