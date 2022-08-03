@@ -216,22 +216,45 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
 	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
-	// check x visibility
-	if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+	if(NULL != pixelRightBox)
 	{
-		return false;
-	}
+		// check x visibility
+		if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+		{
+			return false;
+		}
 
-	// check y visibility
-	if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
-	{
-		return false;
-	}
+		// check y visibility
+		if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
+		{
+			return false;
+		}
 
-	// check z visibility
-	if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
+		// check z visibility
+		if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
+		{
+			return false;
+		}
+	}
+	else
 	{
-		return false;
+		// check x visibility
+		if(position2D.x < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+		{
+			return false;
+		}
+
+		// check y visibility
+		if(position2D.y < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y > _cameraFrustum->y1 + this->streaming.loadPadding)
+		{
+			return false;
+		}
+
+		// check z visibility
+		if(position2D.z < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z > _cameraFrustum->z1 + this->streaming.loadPadding)
+		{
+			return false;
+		}		
 	}
 
 	if(forceNoPopIn)
@@ -701,6 +724,8 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
 	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
 
+	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
+
 	stageEntityDescription->distance = x * x + y * y + z * z;
 
 	return stageEntityDescription;
@@ -1040,7 +1065,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 			counter++;
 
 			// if entity in load range
-			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, this->forceNoPopIn))
+			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
 			{
 				loadedEntities = true;
 
