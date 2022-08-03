@@ -60,6 +60,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->maximumNumberOfAliveParticles = 0;
 	this->animationChanged = true;
 	this->previousGlobalPosition = (Vector3D){0, 0, 0};
+	this->selfDestroyWhenDone = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -139,7 +140,7 @@ void ParticleSystem::configure()
 	this->spawnForceDelta.y = this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y;
 	this->spawnForceDelta.z = this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z;
 
-	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
+	this->nextSpawnTime = 0;
 	this->maximumNumberOfAliveParticles = this->particleSystemSpec->maximumNumberOfAliveParticles;
 
 	// calculate the number of sprite specs
@@ -297,6 +298,11 @@ void ParticleSystem::update(uint32 elapsedTime)
 		}
 
 		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
+	}
+
+	if(this->selfDestroyWhenDone && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles && 0 == this->particleCount && !this->loop)
+	{
+		ParticleSystem::deleteMyself(this);
 	}
 
 	if(!this->transformed || this->paused || this->hidden)
@@ -685,6 +691,16 @@ void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAlive
 {
 	this->maximumNumberOfAliveParticles = maximumNumberOfAliveParticles;
 }
+
+/**
+ * @public
+ * @param selfDestroyWhenDone		Set to true to destroy the particle system when all the particles have expired
+ */
+void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
+{
+	this->selfDestroyWhenDone = selfDestroyWhenDone;
+}
+
 
 void ParticleSystem::start()
 {

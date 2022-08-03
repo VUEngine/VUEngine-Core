@@ -119,6 +119,8 @@ class ParticleSystem : Entity
 	uint8 maximumNumberOfAliveParticles;
 	// Flag to trigger animations in the particles
 	bool animationChanged;
+	// Flag to auto destroy when done
+	bool selfDestroyWhenDone;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
@@ -134,6 +136,7 @@ class ParticleSystem : Entity
 	void deleteAllParticles();
 	void expireAllParticles();
 	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
+	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
