@@ -52,6 +52,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	Base::constructor(name);
 
 	this->transform = Entity::overrides(this, transform);
+	this->synchronizeGraphics = Entity::overrides(this, synchronizeGraphics);
 
 	// set the ids
 	this->internalId = internalId;
@@ -1234,6 +1235,8 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	{
 		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
+
+		this->synchronizeGraphics = true;
 	}
 
 	// make sure that the new sprites are properly initialized
