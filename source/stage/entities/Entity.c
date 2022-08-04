@@ -1270,6 +1270,8 @@ bool Entity::addSpriteFromSpecAtIndex(int32 spriteSpecIndex)
 	// call the appropriate allocator to support inheritance
 	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
 
+	this->synchronizeGraphics = true;
+
 	return true;
 }
 
