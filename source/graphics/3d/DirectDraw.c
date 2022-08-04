@@ -775,5 +775,6 @@ static void DirectDraw::drawColorPoint(int16 x, int16 y, int16 parallax, int32 c
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, parallax, color);
+	DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, parallax, color);
+	DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, 0, color);
 }
