@@ -194,7 +194,11 @@ void Container::removeBehavior(Behavior behavior)
 }
 
 void Container::iAmDeletingMyself()
-{}
+{
+	this->update = false;
+	this->transform = false;
+	this->synchronizeGraphics = false;
+}
 
 /**
  * Add a child Container
@@ -286,11 +290,6 @@ void Container::setupShapes()
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
 
 			Container::setupShapes(child);
 		}
@@ -401,7 +400,6 @@ void Container::updateBehaviors(uint32 elapsedTime)
 			}
 		}
 	}
-
 }
 
 /**
@@ -414,16 +412,33 @@ void Container::updateChildren(uint32 elapsedTime)
 	// if I have children
 	if(this->children)
 	{
-		Container::purgeChildren(this);
-
-		// update each child
-		for(VirtualNode node = this->children->head; node ; node = node->next)
+		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
 		{
+			nextNode = node->next;
+			
 			Container child = Container::safeCast(node->data);
 
-			bool skip = (!child->update) + child->deleteMe;
+#ifndef __RELEASE
+			if(isDeleted(child))
+			{
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
+				Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-			if(skip)
+				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+			}
+#endif
+			if(child->deleteMe)
+			{
+				VirtualList::removeNode(this->children, node);
+				child->parent = NULL;
+				delete child;
+				continue;
+			}
+
+			if(!child->update)
 			{
 				continue;
 			}
@@ -578,11 +593,6 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
 			Container::initialTransform(child, &this->transformation, true);
@@ -649,11 +659,6 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateGraphics |= invalidateGraphics;
 
@@ -693,7 +698,7 @@ void Container::synchronizeChildrenGraphics()
 		{
 			Container child = Container::safeCast(node->data);
 
-			bool skip = (!child->synchronizeGraphics) + child->deleteMe + child->hidden + (!child->transformed) + (!child->invalidateGraphics && NULL == child->children);
+			bool skip = (!child->synchronizeGraphics) + child->hidden + (!child->transformed) + (!child->invalidateGraphics && NULL == child->children);
 
 			if(skip)
 			{
@@ -1037,11 +1042,6 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
 			// pass message to each child
 			if( Container::passMessage(child, propagatedMessageHandler, args))
 			{
@@ -1265,11 +1265,6 @@ void Container::resume()
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
 			Container::resume(child);
 		}
 	}
@@ -1288,11 +1283,6 @@ void Container::show()
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-			
 			Container::show(child);
 		}
 	}
