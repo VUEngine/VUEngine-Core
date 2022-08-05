@@ -23,6 +23,7 @@
 #include <SpriteManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
+#include <Mesh.h>
 #include <debugConfig.h>
 
 
@@ -296,7 +297,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 	int16 halfHeight = 0;
 	int16 halfDepth = 10;
 
-	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
+	if((!this->size.x || !this->size.y || !this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
 	{
 		VirtualNode spriteNode = this->sprites->head;
 
@@ -340,6 +341,46 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 			if(back < halfDepth + spriteDisplacement.z)
 			{
 				back = halfDepth + spriteDisplacement.z;
+			}
+		}
+
+		VirtualNode wireframeNode = this->wireframes->head;
+
+		for(; wireframeNode; wireframeNode = wireframeNode->next)
+		{
+			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
+			ASSERT(wireframe, "Entity::calculateSizeFromChildren: null wireframe");
+
+			PixelRightBox pixelRightBox = Wireframe::getPixelRightBox(wireframe);
+
+			if(left > pixelRightBox.x0)
+			{
+				left = pixelRightBox.x0;
+			}
+
+			if(right < pixelRightBox.x1)
+			{
+				right = pixelRightBox.x1;
+			}
+
+			if(top > pixelRightBox.y0)
+			{
+				top = pixelRightBox.y0;
+			}
+
+			if(right < pixelRightBox.y1)
+			{
+				top = pixelRightBox.y1;
+			}
+
+			if(front > pixelRightBox.z0)
+			{
+				front = pixelRightBox.z0;
+			}
+
+			if(back < pixelRightBox.z1)
+			{
+				back = pixelRightBox.z1;
 			}
 		}
 	}
@@ -556,7 +597,52 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 			}
 		}
 	}
-	else if(!positionedEntity->childrenSpecs && !positionedEntity->entitySpec->childrenSpecs)
+
+	if(positionedEntity->entitySpec->wireframeSpecs && positionedEntity->entitySpec->wireframeSpecs[0])
+	{
+		int32 i = 0;
+
+		for(; positionedEntity->entitySpec->wireframeSpecs[i]; i++)
+		{
+			if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
+			{
+				MeshSpec* meshSpec = (MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i];
+				PixelRightBox pixelRightBox = Mesh::getPixelRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
+
+				if(left > pixelRightBox.x0)
+				{
+					left = pixelRightBox.x0;
+				}
+
+				if(right < pixelRightBox.x1)
+				{
+					right = pixelRightBox.x1;
+				}
+
+				if(top > pixelRightBox.y0)
+				{
+					top = pixelRightBox.y0;
+				}
+
+				if(right < pixelRightBox.y1)
+				{
+					top = pixelRightBox.y1;
+				}
+
+				if(front > pixelRightBox.z0)
+				{
+					front = pixelRightBox.z0;
+				}
+
+				if(back < pixelRightBox.z1)
+				{
+					back = pixelRightBox.z1;
+				}
+			}
+		}
+	}	
+
+	if(!positionedEntity->childrenSpecs && !positionedEntity->entitySpec->childrenSpecs)
 	{
 		// TODO: there should be a class which handles special cases
 		halfWidth = positionedEntity->entitySpec->pixelSize.x >> 1;
@@ -1560,7 +1646,7 @@ bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
  */
 fixed_t Entity::getWidth()
 {
-	if(!this->size.x)
+	if(0 == this->size.x)
 	{
 		Entity::calculateSize(this);
 	}
@@ -1576,7 +1662,7 @@ fixed_t Entity::getWidth()
  */
 fixed_t Entity::getHeight()
 {
-	if(!this->size.y)
+	if(0 == this->size.y)
 	{
 		Entity::calculateSize(this);
 	}
@@ -1591,7 +1677,7 @@ fixed_t Entity::getHeight()
  */
 fixed_t Entity::getDepth()
 {
-	if(!this->size.z)
+	if(0 == this->size.z)
 	{
 		Entity::calculateSize(this);
 	}
@@ -1644,22 +1730,16 @@ bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
  */
 bool Entity::isVisible(int32 pad, bool recursive)
 {
+	bool isVisible = false;
+
 	if(this->sprites && this->sprites->head)
 	{
 		VirtualNode spriteNode = this->sprites->head;
 
-		for(; spriteNode; spriteNode = spriteNode->next)
+		for(; !isVisible && spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
-			ASSERT(sprite, "Entity:isVisible: null sprite");
-
-			if(!Entity::isSpriteVisible(this, sprite, pad))
-			{
-				continue;
-			}
-
-
-			return true;
+			isVisible = Entity::isSpriteVisible(this, sprite, pad);
 		}
 	}
 	else
@@ -1668,39 +1748,36 @@ bool Entity::isVisible(int32 pad, bool recursive)
 
 		if(this->centerDisplacement)
 		{
-			position3D.x += this->centerDisplacement->x;
-			position3D.y += this->centerDisplacement->y;
-			position3D.z += this->centerDisplacement->z;
+			position3D = Vector3D::sum(position3D, *this->centerDisplacement);
 		}
 
-		PixelVector position2D = Vector3D::projectToPixelVector(Vector3D::rotate(position3D, *_cameraInvertedRotation), 0);
+		position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
+		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
 		int16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
 		int16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
+		isVisible = true;
+
 		// check x visibility
 		if((position2D.x + halfWidth < _cameraFrustum->x0 - pad) || (position2D.x - halfWidth > _cameraFrustum->x1 + pad))
 		{
-			return false;
+			isVisible = false;
 		}
-
 		// check y visibility
-		if((position2D.y + halfHeight < _cameraFrustum->y0 - pad) || (position2D.y - halfHeight > _cameraFrustum->y1 + pad))
+		else if((position2D.y + halfHeight < _cameraFrustum->y0 - pad) || (position2D.y - halfHeight > _cameraFrustum->y1 + pad))
 		{
-			return false;
+			isVisible = false;
 		}
-
 		// check z visibility
-		if((position2D.z + halfDepth < _cameraFrustum->z0 - pad) || (position2D.z - halfDepth > _cameraFrustum->z1 + pad))
+		else if((position2D.z + halfDepth < _cameraFrustum->z0 - pad) || (position2D.z - halfDepth > _cameraFrustum->z1 + pad))
 		{
-			return false;
+			isVisible = false;
 		}
-
-		return true;
 	}
 
-	if(recursive && this->children)
+	if(!isVisible && recursive && NULL != this->children)
 	{
 		VirtualNode childNode = this->children->head;
 
@@ -1715,7 +1792,7 @@ bool Entity::isVisible(int32 pad, bool recursive)
 		}
 	}
 
-	return false;
+	return isVisible;
 }
 
 /**
