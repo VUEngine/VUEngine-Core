@@ -299,88 +299,89 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 
 	if((!this->size.x || !this->size.y || !this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
 	{
-		VirtualNode spriteNode = this->sprites->head;
-
-		for(; spriteNode; spriteNode = spriteNode->next)
+		if(NULL != this->sprites)
 		{
-			Sprite sprite = Sprite::safeCast(spriteNode->data);
-			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
-
-			halfWidth = Sprite::getHalfWidth(sprite);
-			halfHeight = Sprite::getHalfHeight(sprite);
-			halfDepth = 16;
-
-			PixelVector spriteDisplacement = *Sprite::getDisplacement(sprite);
-
-			if(left > -halfWidth + spriteDisplacement.x)
+			for(VirtualNode spriteNode = this->sprites->head; spriteNode; spriteNode = spriteNode->next)
 			{
-				left = -halfWidth + spriteDisplacement.x;
-			}
+				Sprite sprite = Sprite::safeCast(spriteNode->data);
+				ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
 
-			if(right < halfWidth + spriteDisplacement.x)
-			{
-				right = halfWidth + spriteDisplacement.x;
-			}
+				halfWidth = Sprite::getHalfWidth(sprite);
+				halfHeight = Sprite::getHalfHeight(sprite);
+				halfDepth = 16;
 
-			if(top > -halfHeight + spriteDisplacement.y)
-			{
-				top = -halfHeight + spriteDisplacement.y;
-			}
+				PixelVector spriteDisplacement = *Sprite::getDisplacement(sprite);
 
-			if(bottom < halfHeight + spriteDisplacement.y)
-			{
-				bottom = halfHeight + spriteDisplacement.y;
-			}
+				if(left > -halfWidth + spriteDisplacement.x)
+				{
+					left = -halfWidth + spriteDisplacement.x;
+				}
 
-			if(front > -halfDepth + spriteDisplacement.z)
-			{
-				front = -halfDepth + spriteDisplacement.z;
-			}
+				if(right < halfWidth + spriteDisplacement.x)
+				{
+					right = halfWidth + spriteDisplacement.x;
+				}
 
-			if(back < halfDepth + spriteDisplacement.z)
-			{
-				back = halfDepth + spriteDisplacement.z;
+				if(top > -halfHeight + spriteDisplacement.y)
+				{
+					top = -halfHeight + spriteDisplacement.y;
+				}
+
+				if(bottom < halfHeight + spriteDisplacement.y)
+				{
+					bottom = halfHeight + spriteDisplacement.y;
+				}
+
+				if(front > -halfDepth + spriteDisplacement.z)
+				{
+					front = -halfDepth + spriteDisplacement.z;
+				}
+
+				if(back < halfDepth + spriteDisplacement.z)
+				{
+					back = halfDepth + spriteDisplacement.z;
+				}
 			}
 		}
 
-		VirtualNode wireframeNode = this->wireframes->head;
-
-		for(; wireframeNode; wireframeNode = wireframeNode->next)
+		if(NULL != this->wireframes)
 		{
-			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
-			ASSERT(wireframe, "Entity::calculateSizeFromChildren: null wireframe");
-
-			PixelRightBox pixelRightBox = Wireframe::getPixelRightBox(wireframe);
-
-			if(left > pixelRightBox.x0)
+			for(VirtualNode wireframeNode = this->wireframes->head; wireframeNode; wireframeNode = wireframeNode->next)
 			{
-				left = pixelRightBox.x0;
-			}
+				Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
+				ASSERT(wireframe, "Entity::calculateSizeFromChildren: null wireframe");
 
-			if(right < pixelRightBox.x1)
-			{
-				right = pixelRightBox.x1;
-			}
+				PixelRightBox pixelRightBox = Wireframe::getPixelRightBox(wireframe);
 
-			if(top > pixelRightBox.y0)
-			{
-				top = pixelRightBox.y0;
-			}
+				if(left > pixelRightBox.x0)
+				{
+					left = pixelRightBox.x0;
+				}
 
-			if(right < pixelRightBox.y1)
-			{
-				top = pixelRightBox.y1;
-			}
+				if(right < pixelRightBox.x1)
+				{
+					right = pixelRightBox.x1;
+				}
 
-			if(front > pixelRightBox.z0)
-			{
-				front = pixelRightBox.z0;
-			}
+				if(top > pixelRightBox.y0)
+				{
+					top = pixelRightBox.y0;
+				}
 
-			if(back < pixelRightBox.z1)
-			{
-				back = pixelRightBox.z1;
+				if(right < pixelRightBox.y1)
+				{
+					top = pixelRightBox.y1;
+				}
+
+				if(front > pixelRightBox.z0)
+				{
+					front = pixelRightBox.z0;
+				}
+
+				if(back < pixelRightBox.z1)
+				{
+					back = pixelRightBox.z1;
+				}
 			}
 		}
 	}
