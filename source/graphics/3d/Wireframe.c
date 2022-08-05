@@ -112,6 +112,14 @@ VirtualList Wireframe::getVertices()
 	return NULL;
 }
 
+/**
+ * Get pixel right box
+ */
+PixelRightBox Wireframe::getPixelRightBox()
+{
+	return (PixelRightBox){0, 0, 0, 0, 0, 0};
+}
+
 void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
 	if(NULL == this->wireframeSpec)

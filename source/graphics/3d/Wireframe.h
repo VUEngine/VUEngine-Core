@@ -62,6 +62,7 @@ abstract class Wireframe : ListenerObject
 	virtual void render();
 	virtual VirtualList getVertices();
 	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
+	virtual PixelRightBox getPixelRightBox();
 }
 
 

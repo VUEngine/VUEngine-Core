@@ -101,6 +101,170 @@ void Mesh::deleteLists()
 	this->vertices = NULL;
 }
 
+/**
+ * Get pixel right box
+ */
+PixelRightBox Mesh::getPixelRightBox()
+{
+	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+	{
+		Vertex* vertex = (Vertex*)node->data;
+
+		PixelVector pixelVector = PixelVector::getFromVector3D(vertex->vector, 0);
+
+		if(pixelVector.x < pixelRightBox.x0)
+		{
+			pixelRightBox.x0 = pixelVector.x;
+		}
+
+		if(pixelVector.x > pixelRightBox.x1)
+		{
+			pixelRightBox.x1 = pixelVector.x;
+		}
+
+		if(pixelVector.y < pixelRightBox.y0)
+		{
+			pixelRightBox.y0 = pixelVector.y;
+		}
+
+		if(pixelVector.y > pixelRightBox.y1)
+		{
+			pixelRightBox.y1 = pixelVector.y;
+		}
+
+		if(pixelVector.z < pixelRightBox.z0)
+		{
+			pixelRightBox.z0 = pixelVector.z;
+		}
+
+		if(pixelVector.z > pixelRightBox.z1)
+		{
+			pixelRightBox.z1 = pixelVector.z;
+		}
+	}
+
+	return pixelRightBox;
+}
+
+static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
+{
+	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
+
+	bool isEndSegment = false;
+	uint16 i = 0;
+
+	do
+	{
+		Vector3D startVector = Vector3D::getFromPixelVector(meshSpec->segments[i][0]);
+		Vector3D endVector = Vector3D::getFromPixelVector(meshSpec->segments[i][1]);
+
+		isEndSegment = Vector3D::areEqual(Vector3D::zero(), startVector) && Vector3D::areEqual(Vector3D::zero(), endVector);
+
+		if(!isEndSegment)
+		{
+			PixelVector startPixelVector = PixelVector::getFromVector3D(startVector, 0);
+			PixelVector endPixelVector = PixelVector::getFromVector3D(endVector, 0);
+
+			if(startPixelVector.x < endPixelVector.x)
+			{
+				if(startPixelVector.x < pixelRightBox.x0)
+				{
+					pixelRightBox.x0 = startPixelVector.x;
+				}
+			}
+			else
+			{
+				if(endPixelVector.x < pixelRightBox.x0)
+				{
+					pixelRightBox.x0 = endPixelVector.x;
+				}
+			}
+
+			if(startPixelVector.x > endPixelVector.x)
+			{
+				if(startPixelVector.x > pixelRightBox.x1)
+				{
+					pixelRightBox.x1 = startPixelVector.x;
+				}
+			}
+			else
+			{
+				if(endPixelVector.x > pixelRightBox.x1)
+				{
+					pixelRightBox.x1 = endPixelVector.x;
+				}
+			}
+
+			if(startPixelVector.y < endPixelVector.y)
+			{
+				if(startPixelVector.y < pixelRightBox.y0)
+				{
+					pixelRightBox.y0 = startPixelVector.y;
+				}
+			}
+			else
+			{
+				if(endPixelVector.y < pixelRightBox.y0)
+				{
+					pixelRightBox.y0 = endPixelVector.y;
+				}
+			}
+
+			if(startPixelVector.y > endPixelVector.y)
+			{
+				if(startPixelVector.y > pixelRightBox.y1)
+				{
+					pixelRightBox.y1 = startPixelVector.y;
+				}
+			}
+			else
+			{
+				if(endPixelVector.y > pixelRightBox.y1)
+				{
+					pixelRightBox.y1 = endPixelVector.y;
+				}
+			}
+						
+			if(startPixelVector.z < endPixelVector.z)
+			{
+				if(startPixelVector.z < pixelRightBox.z0)
+				{
+					pixelRightBox.z0 = startPixelVector.z;
+				}
+			}
+			else
+			{
+				if(endPixelVector.z < pixelRightBox.z0)
+				{
+					pixelRightBox.z0 = endPixelVector.z;
+				}
+			}
+
+			if(startPixelVector.z > endPixelVector.z)
+			{
+				if(startPixelVector.z > pixelRightBox.z1)
+				{
+					pixelRightBox.z1 = startPixelVector.z;
+				}
+			}
+			else
+			{
+				if(endPixelVector.z > pixelRightBox.z1)
+				{
+					pixelRightBox.z1 = endPixelVector.z;
+				}
+			}
+		}
+
+		i++;
+	}
+	while(!isEndSegment);
+
+	return pixelRightBox;
+}
+
 void Mesh::addSegments(PixelVector (*segments)[2])
 {
 	if(NULL == segments)

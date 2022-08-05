@@ -57,9 +57,12 @@ class Mesh : Wireframe
 	VirtualList segments;
 	VirtualList vertices;
 
+	static PixelRightBox getPixelRightBoxFromSpec(MeshSpec* meshSpec);
+
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
 	
+	override PixelRightBox getPixelRightBox();
 	override VirtualList getVertices();
 	override void draw();
 	void drawInterlaced();
