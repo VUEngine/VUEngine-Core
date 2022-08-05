@@ -498,8 +498,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(toPoint.y - _frustum.y0);
 	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
-	bool xOutside = (xFromOutside && xToOutside) && (0 <= (fromPoint.x ^ toPoint.x));
-	bool yOutside = (yFromOutside && yToOutside) && (0 <= (fromPoint.y ^ toPoint.y));
+	bool xOutside = (xFromOutside && xToOutside) && (0 <= ((unsigned)fromPoint.x ^ (unsigned)toPoint.x));
+	bool yOutside = (yFromOutside && yToOutside) && (0 <= ((unsigned)fromPoint.y ^ (unsigned)toPoint.y));
 	bool zOutside = (zFromOutside || zToOutside);
 
 	if(xOutside + yOutside + zOutside)
@@ -551,7 +551,11 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 */
+
 /*
+	PixelVector::print(fromPoint, 21, 6);
+	PixelVector::print(toPoint, 31, 6);
+
 	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointX), 1, 10);
 	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointY), 1, 11);
 	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointParallax), 1, 12);
