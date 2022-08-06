@@ -607,7 +607,6 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		{
 			if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
 			{
-				MeshSpec* meshSpec = (MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i];
 				PixelRightBox pixelRightBox = Mesh::getPixelRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
 
 				if(left > pixelRightBox.x0)
@@ -1755,24 +1754,22 @@ bool Entity::isVisible(int32 pad, bool recursive)
 		position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
 		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
-		int16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
-		int16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
-		int16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
+		PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
 
 		isVisible = true;
 
 		// check x visibility
-		if((position2D.x + halfWidth < _cameraFrustum->x0 - pad) || (position2D.x - halfWidth > _cameraFrustum->x1 + pad))
+		if((position2D.x + size.x < _cameraFrustum->x0 - pad) || (position2D.x - size.x > _cameraFrustum->x1 + pad))
 		{
 			isVisible = false;
 		}
 		// check y visibility
-		else if((position2D.y + halfHeight < _cameraFrustum->y0 - pad) || (position2D.y - halfHeight > _cameraFrustum->y1 + pad))
+		else if((position2D.y + size.y < _cameraFrustum->y0 - pad) || (position2D.y - size.y > _cameraFrustum->y1 + pad))
 		{
 			isVisible = false;
 		}
 		// check z visibility
-		else if((position2D.z + halfDepth < _cameraFrustum->z0 - pad) || (position2D.z - halfDepth > _cameraFrustum->z1 + pad))
+		else if((position2D.z + size.z < _cameraFrustum->z0 - pad) || (position2D.z - size.z > _cameraFrustum->z1 + pad))
 		{
 			isVisible = false;
 		}
