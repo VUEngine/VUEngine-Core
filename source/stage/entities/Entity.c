@@ -1756,6 +1756,10 @@ bool Entity::isVisible(int32 pad, bool recursive)
 
 		PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
 
+		size.x = __ABS(size.x);
+		size.y = __ABS(size.y);
+		size.z = __ABS(size.z);
+
 		isVisible = true;
 
 		// check x visibility
