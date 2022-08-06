@@ -230,7 +230,10 @@ Texture Sprite::getTexture()
  */
 void Sprite::show()
 {
-	this->show = __SHOW_NEXT_FRAME;
+	if(__HIDE == this->show)
+	{
+		this->show = __SHOW_NEXT_FRAME;
+	}
 }
 
 /**
