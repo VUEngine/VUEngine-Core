@@ -562,17 +562,27 @@ static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fi
 
 void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 {
-	this->speed = Vector3D::length(this->velocity);
-
 	if(useExternalForceForDirection)
 	{
+		this->speed = Vector3D::length(this->velocity);
 		this->direction = Vector3D::normalize(this->externalForce);
 		this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
 		this->changedDirection = true;
 	}
 	else
 	{
-		Vector3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+		fix7_9_ext speed = __F_TO_FIX7_9_EXT(Math::squareRoot(__FIXED_EXT_TO_F(Vector3D::squareLength(this->velocity))));
+
+		this->speed = __FIX7_9_EXT_TO_FIXED(speed);
+
+		Vector3D newDirection = this->direction;
+
+		if(0 < speed)
+		{
+			newDirection.x = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.x, speed));
+			newDirection.y = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.y, speed));
+			newDirection.z = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.z, speed));
+		}
 	
 		this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
 
