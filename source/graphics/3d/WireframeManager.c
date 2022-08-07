@@ -225,7 +225,9 @@ void WireframeManager::render()
 		Wireframe::render(wireframe);
 	}
 
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	WireframeManager::sortProgressively(this);
+#endif
 
 	_previousCameraPosition = _previousCameraPositionBuffer;
 	_previousCameraPositionBuffer = *_cameraPosition;

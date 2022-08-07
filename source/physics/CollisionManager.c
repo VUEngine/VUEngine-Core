@@ -170,6 +170,8 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
+		Vector3D shapeToCheckPosition = Shape::getPosition(shapeToCheck);
+
 #ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
 		{
@@ -195,18 +197,22 @@ uint32 CollisionManager::update(Clock clock)
 				continue;
 			}
 
-			// load the current shape
-			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || shape == shapeToCheck || (shape->layersToIgnore & shapeToCheck->layers))
+			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || (shape->layersToIgnore & shapeToCheck->layers))
+			{
+				continue;
+			}
+
+			fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheckPosition, Shape::getPosition(shape)));
+
+			if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) < distanceVectorSquareLength)
 			{
 				continue;
 			}
 
 			this->lastCycleCollisionChecks++;
 
-			CollisionData collisionData = Shape::collides(shape, shapeToCheck);
-
 			// check if shapes overlap
-			if(kNoCollision != collisionData.result)
+			if(kNoCollision != Shape::collides(shape, shapeToCheck))
 			{
 				this->lastCycleCollisions++;
 			}

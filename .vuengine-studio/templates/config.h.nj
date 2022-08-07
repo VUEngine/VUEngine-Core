@@ -124,6 +124,11 @@
 #endif
 
 
+{{ macros.sectionHeader('Wireframes') }}
+
+{% if engine.wireframe.sort %}#define{% else %}#undef{% endif %} __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+
+
 {{ macros.sectionHeader('Direct drawing') }}
 
 {% if engine.directDraw.interlacedThreshold %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								__PIXELS_TO_METERS({{engine.directDraw.interlacedThreshold}}) {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								0{% endif %} 
@@ -325,6 +330,10 @@
 
 // smaller values allow movement to start when colliding against a shape and trying to move towards it
 #define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if engine.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIXED(__COS({{ engine.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
+
+// maximum size of shapes allows to avoid checks against far away shapes
+#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}512{% endif %})
+
 
 
 {{ macros.sectionHeader('Brightness') }}

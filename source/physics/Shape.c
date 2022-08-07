@@ -273,9 +273,21 @@ void Shape::exitCollision(CollisionData* collisionData)
   * @return						CollisionData
  */
 // check if two rectangles overlap
-CollisionData Shape::collides(Shape shape)
+CollisionResult Shape::collides(Shape shape)
 {
-	CollisionData collisionData =
+	if(isDeleted(this->owner))
+	{
+		return kNoCollision;
+	}
+
+	CollisionData collisionData;
+	collisionData.result = kNoCollision;
+	collisionData.collisionInformation.shape = NULL;
+	collisionData.collisionInformation.collidingShape = NULL;
+	collisionData.shapeNotCollidingAnymore = NULL;
+	collisionData.isImpenetrableCollidingShape = false;
+	
+	/*
 	{
 		// result
 		kNoCollision,
@@ -300,17 +312,12 @@ CollisionData Shape::collides(Shape shape)
 
 		// is impenetrable colliding shape
 		false,
-	};
-
-	if(isDeleted(this->owner))
-	{
-		return collisionData;
-	}
+	};*/
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, shape);
 
 	// test if new collision
-	if(!collidingShapeRegistry)
+	if(NULL == collidingShapeRegistry)
 	{
 		// check for new overlap
 		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
@@ -325,8 +332,6 @@ CollisionData Shape::collides(Shape shape)
 				collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
 			}
 		}
-
-		//return collisionData;
 	}
 	// impenetrable registered colliding shapes require a another test
 	// to determine if I'm not colliding against them anymore
@@ -386,7 +391,7 @@ CollisionData Shape::collides(Shape shape)
 			break;
 	}
 
-	return collisionData;
+	return collisionData.result;
 }
 
 /**
@@ -751,7 +756,7 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 {
 	ASSERT(shape, "Shape::findCollidingShapeRegistry: null shape");
 
-	if(!this->collidingShapes || !shape)
+	if(NULL == this->collidingShapes || isDeleted(shape))
 	{
 		return NULL;
 	}

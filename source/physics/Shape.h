@@ -210,7 +210,7 @@ abstract class Shape : ListenerObject
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);
 	void exitCollision(CollisionData* collisionData);
-	CollisionData collides(Shape shape);
+	CollisionResult collides(Shape shape);
 	bool checkForCollisions();
 	SpatialObject getOwner();
 	void reset();
