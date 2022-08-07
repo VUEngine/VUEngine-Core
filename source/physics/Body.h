@@ -28,6 +28,9 @@
 #define	__UNIFORM_MOVEMENT			0x01
 #define	__ACCELERATED_MOVEMENT		0x20
 
+#define __BODY_MIN_MASS_MASS								__F_TO_FIXED(0.1f)
+#define __BODY_MAX_MASS_MASS								__I_TO_FIXED(1)
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS

@@ -50,9 +50,6 @@ friend class VirtualNode;
 #define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(48)
 #endif
 
-#define __MIN_MASS								__F_TO_FIXED(0.1f)
-#define __MAX_MASS								__I_TO_FIXED(1)
-
 #ifndef __FRICTION_FORCE_FACTOR_POWER
 #define __FRICTION_FORCE_FACTOR_POWER					2
 #endif
@@ -122,7 +119,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->destroy = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __MIN_MASS < physicalSpecification->mass ? __MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MASS : __MIN_MASS;
+	this->mass = __BODY_MIN_MASS_MASS < physicalSpecification->mass ? __BODY_MAX_MASS_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MA__BODY_MIN_MASSY_MIN_MASS;
 	this->bounciness = physicalSpecification->bounciness;
 	this->frictionCoefficient = 0;
 	this->surroundingFrictionCoefficient = 0;
@@ -1131,7 +1128,7 @@ fixed_t Body::getMass()
 
 void Body::setMass(fixed_t mass)
 {
-	this->mass = __MIN_MASS < mass ? __MAX_MASS > mass ? mass : __MAX_MASS : __MIN_MASS;
+	this->mass = __BODY_MIN_MASS_MASS < mass ? __BODY_MAX_MASS_MASS > mass ? mass : __MAX_MA__BODY_MIN_MASSY_MIN_MASS;
 }
 
 // retrieve state
