@@ -559,6 +559,10 @@ void VirtualList::add(VirtualList sourceList)
 #ifdef __DEBUG
 	int32 counter = 0;
 #endif
+	if(isDeleted(sourceList))
+	{
+		return;
+	}
 
 	VirtualNode node = sourceList->head;
 
