@@ -309,6 +309,9 @@
 // divisor to speed up physics simulations, bigger numbers equal faster computations
 #define __PHYSICS_TIME_ELAPSED_DIVISOR								{{ engine.physics.timeElapsedDivisor }}
 
+// define to use fix7.9 computation on Body's direction
+{% if engine.physics.highPrecision %}#define{% else %}#undef{% endif %} 		__PHYSICS_HIGH_PRECISION
+
 // thresholds to stop bodies
 #define __STOP_VELOCITY_THRESHOLD									__PIXELS_TO_METERS({{ engine.physics.stopVelocityThreshold }})
 #define __STOP_BOUNCING_VELOCITY_THRESHOLD 							__PIXELS_TO_METERS({{ engine.physics.stopBouncingVelocityThreshold }})
@@ -334,6 +337,7 @@
 // maximum size of shapes allows to avoid checks against far away shapes
 #define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}512{% endif %})
 
+#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}512{% endif %})
 
 
 {{ macros.sectionHeader('Brightness') }}

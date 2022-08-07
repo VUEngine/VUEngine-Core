@@ -217,12 +217,12 @@ static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fixed_t scalar)
 
 static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fixed_t scalar)
 {
-	if(0 != scalar)
+	if(0 == scalar)
 	{
-		return (Vector3D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar), __FIXED_DIV(vector.z, scalar)};
+		return Vector3D::zero();
 	}
 
-	return Vector3D::zero();
+	return (Vector3D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar), __FIXED_DIV(vector.z, scalar)};
 }
 
 static inline Vector3D Vector3D::normalize(Vector3D vector)

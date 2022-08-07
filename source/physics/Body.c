@@ -571,6 +571,11 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 	}
 	else
 	{
+#ifndef __PHYSICS_HIGH_PRECISION
+		this->speed = Vector3D::length(this->velocity);
+
+		Vector3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+#else
 		fix7_9_ext speed = __F_TO_FIX7_9_EXT(Math::squareRoot(__FIXED_EXT_TO_F(Vector3D::squareLength(this->velocity))));
 
 		this->speed = __FIX7_9_EXT_TO_FIXED(speed);
@@ -583,7 +588,7 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 			newDirection.y = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.y, speed));
 			newDirection.z = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.z, speed));
 		}
-	
+#endif	
 		this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
 
 		if(this->changedDirection)
