@@ -119,7 +119,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->destroy = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __BODY_MIN_MASS_MASS < physicalSpecification->mass ? __BODY_MAX_MASS_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MA__BODY_MIN_MASSY_MIN_MASS;
+	this->mass = __BODY_MIN_MASS < physicalSpecification->mass ? __BODY_MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
+
 	this->bounciness = physicalSpecification->bounciness;
 	this->frictionCoefficient = 0;
 	this->surroundingFrictionCoefficient = 0;
@@ -1128,7 +1129,7 @@ fixed_t Body::getMass()
 
 void Body::setMass(fixed_t mass)
 {
-	this->mass = __BODY_MIN_MASS_MASS < mass ? __BODY_MAX_MASS_MASS > mass ? mass : __MAX_MA__BODY_MIN_MASSY_MIN_MASS;
+	this->mass = __BODY_MIN_MASS < mass ? __BODY_MAX_MASS > mass ? mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 }
 
 // retrieve state
