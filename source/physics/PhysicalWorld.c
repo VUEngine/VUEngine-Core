@@ -437,4 +437,12 @@ void PhysicalWorld::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
+
+	for(VirtualNode node = this->bodies->head; y < 28 && NULL != node; y++, node = node->next)
+	{
+		Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
+	}
+
+	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 }
