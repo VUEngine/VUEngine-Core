@@ -124,7 +124,6 @@ void DirectDraw::reset()
  */
 void DirectDraw::startDrawing()
 {
-#define __PROFILE_DIRECT_DRAWING
 #ifdef __PROFILE_DIRECT_DRAWING
 	static int counter = 0;
 
