@@ -124,14 +124,15 @@ void DirectDraw::reset()
  */
 void DirectDraw::startDrawing()
 {
+#define __PROFILE_DIRECT_DRAWING
 #ifdef __PROFILE_DIRECT_DRAWING
 	static int counter = 0;
 
 	if(__TARGET_FPS <= counter++)
 	{
-		PRINT_TEXT("Total pixels:    /      ", 1, 27);
-		PRINT_INT(this->totalDrawPixels, 14, 27);
-		PRINT_INT(this->maximuDrawPixels, 19, 27);
+		PRINT_TEXT("Total pixels:    /      ", 1, 1);
+		PRINT_INT(this->totalDrawPixels, 14, 1);
+		PRINT_INT(this->maximuDrawPixels, 19, 1);
 		counter = 0;
 	}
 #endif
@@ -139,6 +140,11 @@ void DirectDraw::startDrawing()
 	if(this->totalDrawPixels < _directDraw->maximuDrawPixels)
 	{
 		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < _directDraw->maximuDrawPixels)
+		{
+			_directDraw->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+		}
 	}
 
 	this->totalDrawPixels = 0;
