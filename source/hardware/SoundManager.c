@@ -753,7 +753,7 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 	{
 		SoundWrapper::play(soundWrapper, position, playbackType);
 	}
-	else
+	else if(kPlayAsSoonAsPossible == playbackType)
 	{
 		QueuedSound* queuedSound = new QueuedSound;
 		queuedSound->sound = sound;

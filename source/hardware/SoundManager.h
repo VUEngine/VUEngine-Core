@@ -59,6 +59,7 @@ typedef struct SoundRegistry
 enum SoundRequestMessages
 {
 	kPlayAll = 0, 					// Sound is not allocated if there are not enough free channels to play all the sound's tracks
+	kPlayAsSoonAsPossible,			// Plays all tracks deallocating previous sound if necessary
 	kPlayAny,						// Plays as many sound's tracks as there are free channels
 	kPlayForceAny,					// Plays the priority tracks deallocating previous sound if necessary
 	kPlayForceAll,					// Plays all tracks deallocating previous sound if necessary
