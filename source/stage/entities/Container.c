@@ -257,13 +257,16 @@ void Container::removeChild(Container child, bool deleteChild)
 {
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
 
-	// check if child is valid and if I'm its parent
 	if(isDeleted(child) || this != child->parent || isDeleted((this->children)))
 	{
 		return;
 	}
 
-	if(VirtualList::removeElement(this->children, child))
+	if(!deleteChild && VirtualList::removeElement(this->children, child))
+	{
+		child->parent = NULL;
+	}
+	else if(NULL != VirtualList::find(this->children, child))
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
