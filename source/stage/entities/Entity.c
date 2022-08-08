@@ -790,10 +790,10 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
  */
 static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity)
 {
-	ASSERT(entitySpec, "Entity::load: null spec");
-	ASSERT(entitySpec->allocator, "Entity::load: no allocator defined");
+	NM_ASSERT(NULL != entitySpec, "Entity::load: null spec");
+	NM_ASSERT(NULL != entitySpec->allocator, "Entity::load: no allocator defined");
 
-	if(!entitySpec || !entitySpec->allocator)
+	if(NULL == entitySpec || NULL == entitySpec->allocator)
 	{
 		return NULL;
 	}
@@ -917,7 +917,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
  */
 static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId)
 {
-	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
+	NM_ASSERT(NULL != positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
 	if(!positionedEntity)
 	{
@@ -925,12 +925,8 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	}
 
 	Entity entity = Entity::instantiate(positionedEntity->entitySpec, internalId, positionedEntity->name, positionedEntity);
-	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
-	if(positionedEntity->name)
-	{
-		Entity::setName(entity, positionedEntity->name);
-	}
+	NM_ASSERT(!isDeleted(entity), "Entity::loadEntityDeferred: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 

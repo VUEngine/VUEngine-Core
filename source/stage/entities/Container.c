@@ -258,12 +258,12 @@ void Container::removeChild(Container child, bool deleteChild)
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
 
 	// check if child is valid and if I'm its parent
-	if(!(child && this == child->parent && this->children))
+	if(isDeleted(child) || this != child->parent || isDeleted((this->children)))
 	{
 		return;
 	}
 
-	if(VirtualList::find(this->children, child))
+	if(VirtualList::removeElement(this->children, child))
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
@@ -320,7 +320,7 @@ void Container::purgeChildren()
 				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+				NM_ASSERT(false, "Container::purgeChildren: deleted children");
 			}
 #endif
 
@@ -427,7 +427,7 @@ void Container::updateChildren(uint32 elapsedTime)
 				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+				NM_ASSERT(false, "Container::updateChildren: deleted children");
 			}
 #endif
 			if(child->deleteMe)
