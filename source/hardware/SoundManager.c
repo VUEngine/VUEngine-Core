@@ -845,6 +845,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	switch(command)
 	{
 		case kPlayAll:
+		case kPlayAsSoonAsPossible:
 
 			if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
 			{
