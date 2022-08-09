@@ -827,7 +827,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	uint8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
 	uint8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
 
-	if(kPlayAll != command)
+	if(kPlayAll != command && kPlayAsSoonAsPossible != command)
 	{
 		NM_ASSERT(0 == normalChannelsCount || normalChannelsCount <= usableNormalChannelsCount, "SoundManager::getSound: not enough normal channels");
 		NM_ASSERT(0 == modulationChannelsCount || 0 < usableModulationChannelsCount, "SoundManager::getSound: not enough modulation channels");
