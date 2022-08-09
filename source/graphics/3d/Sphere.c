@@ -37,6 +37,7 @@ void Sphere::constructor(SphereSpec* sphereSpec)
 	this->center = PixelVector::zero();
 	this->radius = __ABS(sphereSpec->radius);
 	this->scaledRadius = this->radius;
+	this->drawCenter = sphereSpec->drawCenter;
 }
 
 /**
@@ -126,6 +127,11 @@ void Sphere::draw()
 	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
 
 	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+
+	if(this->drawCenter)
+	{
+		DirectDraw::drawColorPoint(this->center.x, this->center.y, this->center.parallax, this->color);
+	}
 
 	this->bufferIndex = !this->bufferIndex;
 }

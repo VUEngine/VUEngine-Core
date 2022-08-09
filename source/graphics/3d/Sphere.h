@@ -31,6 +31,9 @@ typedef struct SphereSpec
 	// radius
 	fixed_t radius;
 
+	// draw center
+	bool drawCenter;
+
 } SphereSpec;
 
 typedef const SphereSpec SphereROMSpec;
@@ -44,6 +47,7 @@ class Sphere : Wireframe
 	// Radious
 	fixed_t radius;
 	uint16 scaledRadius;
+	bool drawCenter;
 
 	/// @publicsection
 	void constructor(SphereSpec* sphereSpec);
