@@ -122,14 +122,7 @@ PixelRightBox Wireframe::getPixelRightBox()
 
 void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
-	if(NULL == this->wireframeSpec)
-	{
-		this->color = __COLOR_BLACK;
-	}
-	else
-	{
-		this->color = this->wireframeSpec->color;
-	}
+	NM_ASSERT(NULL != this->wireframeSpec, "Wireframe::setupRenderingMode: NULL wireframeSpec");
 
 	extern Vector3D _cameraDirection;
 
@@ -138,6 +131,8 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		this->color = __COLOR_BLACK;
 		return;
 	}
+
+	this->color = this->wireframeSpec->color;
 
 	fixed_ext_t distanceToCamera = Vector3D::squareLength(*relativePosition);
 
@@ -152,6 +147,14 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	}
 	else
 	{
+		extern Vector3D _cameraNormalizedDirection;
+
+		if(__COS(__CAMERA_VIEWING_ANGLE + 4) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraNormalizedDirection)))
+		{
+			this->color = __COLOR_BLACK;
+			return;
+		}
+
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
 			this->interlaced = true;

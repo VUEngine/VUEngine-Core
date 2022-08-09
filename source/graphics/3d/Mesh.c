@@ -355,10 +355,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
-	if(NULL == this->position || NULL == this->rotation || NULL == this->scale)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Mesh::render: NULL position");
+	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL position");
+	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL position");
 
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
@@ -433,15 +432,9 @@ void Mesh::render()
  */
 void Mesh::draw()
 {
-	if(NULL == this->position)
-	{
-		return;
-	}
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Mesh::draw: NULL position");
+	NM_ASSERT(NULL != this->rotation, "Mesh::draw: NULL position");
+	NM_ASSERT(NULL != this->scale, "Mesh::draw: NULL position");
 
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{

@@ -55,10 +55,7 @@ void Cross::destructor()
  */
 void Cross::render()
 {
-	if(NULL == this->position)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Cross::render: NULL position");
 
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
@@ -87,15 +84,7 @@ void Cross::render()
  */
 void Cross::draw()
 {
-	if(NULL == this->position)
-	{
-		return;
-	}
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Cross::draw: NULL position");
 
 	PixelVector fromPixelVector = this->center;
 	PixelVector toPixelVector = this->center;

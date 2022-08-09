@@ -94,10 +94,7 @@ void Sphere::setRadius(fixed_t radius)
  */
 void Sphere::render()
 {
-	if(NULL == this->position)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
 
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
@@ -126,15 +123,7 @@ void Sphere::render()
  */
 void Sphere::draw()
 {
-	if(NULL == this->position)
-	{
-		return;
-	}
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return;
-	}
+	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
 
 	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
