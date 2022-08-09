@@ -86,7 +86,7 @@ void Container::destructor()
 			Container child = Container::safeCast(node->data);
 
 #ifndef __RELEASE
-			if(child->parent != this)
+			if(NULL != child->parent && child->parent != this)
 			{
 				Printing::setDebugMode(Printing::getInstance());
 				Printing::clear(Printing::getInstance());
@@ -97,9 +97,10 @@ void Container::destructor()
 				Printing::hex(Printing::getInstance(), (uint32)child, 29, 14, 8, NULL);
 				Printing::text(Printing::getInstance(), "Parent: ", 20, 15, NULL);
 				Printing::hex(Printing::getInstance(), (uint32)child->parent, 29, 15, 8, NULL);
+
+				NM_ASSERT(false, "Container::destructor: deleting a child of not mine");
 			}
 #endif
-			NM_ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 
 			child->parent = NULL;
 			delete child;

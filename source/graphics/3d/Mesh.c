@@ -356,8 +356,8 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 void Mesh::render()
 {
 	NM_ASSERT(NULL != this->position, "Mesh::render: NULL position");
-	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL position");
-	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL position");
+	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL rotation");
+	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL scale");
 
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
