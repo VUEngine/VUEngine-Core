@@ -37,6 +37,7 @@ void Cross::constructor(CrossSpec* sphereSpec)
 	this->center = PixelVector::zero();
 	this->length = __ABS(sphereSpec->length);
 	this->scaledLength = this->length;
+	this->renderCycle = false;
 }
 
 /**
@@ -99,11 +100,9 @@ void Cross::draw()
 	PixelVector fromPixelVector = this->center;
 	PixelVector toPixelVector = this->center;
 
-	static bool flag = false;
+	this->renderCycle = !this->renderCycle;
 
-	flag = !flag;
-
-	if(flag)
+	if(this->renderCycle)
 	{
 		fromPixelVector.x -= this->scaledLength;
 		fromPixelVector.y -= this->scaledLength;

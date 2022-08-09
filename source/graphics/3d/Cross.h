@@ -41,9 +41,9 @@ class Cross : Wireframe
 {
 	// Vertices
 	PixelVector center;
-	// Radious
 	fixed_t length;
 	uint16 scaledLength;
+	bool renderCycle;
 
 	/// @publicsection
 	void constructor(CrossSpec* sphereSpec);
