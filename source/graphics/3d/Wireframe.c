@@ -41,7 +41,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->color = NULL == wireframeSpec ? __COLOR_BRIGHT_RED : wireframeSpec->color;
 	this->position = NULL;
 	this->rotation = NULL;
-	this->interlaced = true;
+	this->interlaced = false;
 	this->bufferIndex = 0;
 	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = wireframeSpec->transparent;
@@ -128,6 +128,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 	if(0 > Vector3D::dotProduct(*relativePosition, _cameraDirection))
 	{
+		this->interlaced = this->wireframeSpec->interlaced;
 		this->color = __COLOR_BLACK;
 		return;
 	}
@@ -191,4 +192,6 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 			this->color = __COLOR_BRIGHT_RED;
 		}
 	}
+
+	this->interlaced += this->wireframeSpec->interlaced;
 }

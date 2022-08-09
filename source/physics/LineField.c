@@ -266,7 +266,10 @@ void LineField::configureWireframe()
 			__COLOR_BRIGHT_RED,
 
 			/// transparent
-			__TRANSPARENCY_NONE
+			__TRANSPARENCY_NONE,
+		
+			/// interlaced
+			false
 		},
 
 		this->a,

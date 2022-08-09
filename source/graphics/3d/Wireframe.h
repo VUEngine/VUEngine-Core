@@ -33,6 +33,9 @@ typedef struct WireframeSpec
 	/// transparent
 	uint8 transparent;
 
+	/// interlaced
+	bool interlaced;
+
 } WireframeSpec;
 
 typedef const WireframeSpec WireframeROMSpec;
