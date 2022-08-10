@@ -897,6 +897,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 			{
 				Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
 				PixelVector projectedPosition = Vector3D::projectToPixelVector(relativeGlobalPosition, 0);
+				projectedPosition.z = __ABS(projectedPosition.z);
 
 				int16 verticalDistance = (__ABS(projectedPosition.y - __HALF_SCREEN_HEIGHT) * projectedPosition.z) / __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR;
 				int16 leftDistance = (__ABS(projectedPosition.x - __LEFT_EAR_CENTER) * projectedPosition.z) / __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR;
