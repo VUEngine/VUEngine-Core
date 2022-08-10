@@ -280,25 +280,31 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		return;
 	}
 
-	bool wasPaused = this->paused;
+	bool wasPaused = this->paused && this->turnedOn;
 	this->paused = false;
 	this->turnedOn = true;
 
 	this->position = position;
 
-	if(wasPaused)
-	{
-		VirtualNode node = this->channels->head;
+	VirtualNode node = this->channels->head;
 
-		// Prepare channels
-		for(; NULL != node; node = node->next)
+	// Prepare channels
+	for(; NULL != node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		channel->finished = false;
+
+		if(!wasPaused)
 		{
-			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxFQH = 0;
-			_soundRegistries[channel->number].SxFQL = 0;
-			_soundRegistries[channel->number].SxLRV = 0;
-			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+			channel->ticks = 0;
+			channel->cursor = 0;
 		}
+
+		_soundRegistries[channel->number].SxFQH = 0;
+		_soundRegistries[channel->number].SxFQL = 0;
+		_soundRegistries[channel->number].SxLRV = 0;
+		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
 	}
 
 	if(!wasPaused)
