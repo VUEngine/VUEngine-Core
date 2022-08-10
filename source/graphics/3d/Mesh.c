@@ -371,10 +371,21 @@ void Mesh::render()
 		return;
 	}
 
-	bool scale = __1I_FIX7_9 != this->scale->x || __1I_FIX7_9 != this->scale->y || __1I_FIX7_9 != this->scale->z;
-	bool rotate = 0 != this->rotation->x || 0 != this->rotation->y || 0 != this->rotation->z;
+	bool scale = (__1I_FIX7_9 != this->scale->x) + (__1I_FIX7_9 != this->scale->y) + (__1I_FIX7_9 != this->scale->z);
+	bool rotate = (0 != this->rotation->x) + (0 != this->rotation->y) + (0 != this->rotation->z);
 
-	if(scale && rotate)
+	if(!scale && !rotate)
+	{
+		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+		{
+			Vertex* vertex = (Vertex*)node->data;
+
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
+
+			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+		}
+	}
+	else if(scale && rotate)
 	{
 		Rotation rotation = *this->rotation;
 		Scale scale = *this->scale;
@@ -384,19 +395,6 @@ void Mesh::render()
 			Vertex* vertex = (Vertex*)node->data;
 
 			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
-
-			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
-		}
-	}
-	else if(scale)
-	{
-		Scale scale = *this->scale;
-
-		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
-		{
-			Vertex* vertex = (Vertex*)node->data;
-
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
 
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
@@ -414,13 +412,15 @@ void Mesh::render()
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
-	else
+	else if(scale)
 	{
+		Scale scale = *this->scale;
+
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
 			Vertex* vertex = (Vertex*)node->data;
 
-			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
+			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
 
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
