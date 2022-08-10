@@ -175,13 +175,6 @@ void PhysicalWorld::checkForGravity()
 
 	int32 counter = 0;
 
-	Vector3D gravityDirection =
-	{
-		this->gravity.x,
-		this->gravity.y,
-		this->gravity.z,
-	};
-
 	// prepare bodies which move
 	// this will place the shape in the owner's position
 	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->previous, counter++)
@@ -196,7 +189,7 @@ void PhysicalWorld::checkForGravity()
 
 			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
-			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, gravityDirection))
+			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, this->gravity))
 			{
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a shape below
