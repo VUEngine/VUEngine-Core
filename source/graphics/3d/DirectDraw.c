@@ -801,3 +801,17 @@ static void DirectDraw::drawColorPointInterlaced(int16 x, int16 y, int16 paralla
 	DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, parallax, color);
 	DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, 0, color);
 }
+
+static bool DirectDraw::isPointInsideFrustum(PixelVector point)
+{
+	bool xOutside = (unsigned)_frustumWidth < (unsigned)(point.x - _frustum.x0);
+	bool yOutside = (unsigned)_frustumHeight < (unsigned)(point.y - _frustum.y0);
+	bool zOutside = (unsigned)_frustumDepth < (unsigned)(point.z - _frustum.z0);
+
+	if(xOutside || yOutside || zOutside)
+	{
+		return false;
+	}
+
+	return true;
+}

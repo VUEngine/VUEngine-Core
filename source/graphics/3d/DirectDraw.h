@@ -38,6 +38,7 @@ singleton class DirectDraw : Object
 	static void drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 	static void drawColorPoint(int16 x, int16 y, int16 parallax, int32 color);
 	static void drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color);
+	static bool isPointInsideFrustum(PixelVector point);
 
 	void reset();
 	void startDrawing();
