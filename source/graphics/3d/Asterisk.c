@@ -95,5 +95,7 @@ void Asterisk::draw()
 		DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 
+	this->bufferIndex = !this->bufferIndex;
+
 	this->renderCycle = !this->renderCycle;
 }
