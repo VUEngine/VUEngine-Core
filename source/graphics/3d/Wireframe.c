@@ -45,8 +45,6 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->bufferIndex = 0;
 	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = wireframeSpec->transparent;
-
-	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
 /**
@@ -102,6 +100,8 @@ void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Ro
 	this->position = position;
 	this->rotation = rotation;
 	this->scale = scale;
+
+	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
 /**
