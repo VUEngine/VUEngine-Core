@@ -867,6 +867,96 @@ static void DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 	}
 }
 
+static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(!DirectDraw::isPointInsideFrustum(center))
+	{
+		return;
+	}
+
+	int16 lengthHelper = 0;
+	int16 x = center.x - length / 2;
+	int16 y = center.y - length / 2;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(; lengthHelper <= length; lengthHelper++, x++, y++)
+		{
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, (center.x + length / 2) - lengthHelper, y, center.parallax, color);
+
+			x++;
+			y++;
+			lengthHelper++;
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, (center.x + length / 2) - lengthHelper, y, -center.parallax, color);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(; lengthHelper <= length; lengthHelper++, x++, y++)
+		{
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+		}
+	}
+}
+
+static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(!DirectDraw::isPointInsideFrustum(center))
+	{
+		return;
+	}
+
+	int16 lengthHelper = 0;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		{
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + coordinate, center.y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x, center.y + coordinate, center.parallax, color);
+
+			coordinate++;
+			lengthHelper++;
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		{
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
+		}
+	}
+}
+
 static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 {
 	bool xOutside = (unsigned)_frustumWidth < (unsigned)(point.x - _frustum.x0);

@@ -12,7 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Cross.h>
+#include <Asterisk.h>
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VIPManager.h>
@@ -29,13 +29,13 @@
  *
  * @private
  */
-void Cross::constructor(CrossSpec* sphereSpec)
+void Asterisk::constructor(AsteriskSpec* asteriskSpec)
 {
 	// construct base object
-	Base::constructor(&sphereSpec->wireframeSpec);
+	Base::constructor(&asteriskSpec->wireframeSpec);
 
 	this->center = PixelVector::zero();
-	this->length = __ABS(sphereSpec->length);
+	this->length = __ABS(asteriskSpec->length);
 	this->scaledLength = this->length;
 	this->renderCycle = false;
 }
@@ -43,7 +43,7 @@ void Cross::constructor(CrossSpec* sphereSpec)
 /**
  * Class destructor
  */
-void Cross::destructor()
+void Asterisk::destructor()
 {
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -53,15 +53,15 @@ void Cross::destructor()
 /**
  * Render
  */
-void Cross::render()
+void Asterisk::render()
 {
-	NM_ASSERT(NULL != this->position, "Cross::render: NULL position");
+	NM_ASSERT(NULL != this->position, "Asterisk::render: NULL position");
 
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
 
 	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
-	Cross::setupRenderingMode(this, &relativePosition);
+	Asterisk::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
 	{
@@ -82,51 +82,18 @@ void Cross::render()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Cross::draw()
+void Asterisk::draw()
 {
-	NM_ASSERT(NULL != this->position, "Cross::draw: NULL position");
-
-	PixelVector fromPixelVector = this->center;
-	PixelVector toPixelVector = this->center;
-
-	this->renderCycle = !this->renderCycle;
+	NM_ASSERT(NULL != this->position, "Asterisk::draw: NULL position");
 
 	if(this->renderCycle)
 	{
-		fromPixelVector.x -= this->scaledLength;
-		fromPixelVector.y -= this->scaledLength;
-		toPixelVector.x += this->scaledLength;
-		toPixelVector.y += this->scaledLength;
-
-		DirectDraw::drawColorLine(fromPixelVector, toPixelVector, this->color, this->bufferIndex, this->interlaced);
-
-		fromPixelVector = this->center;
-		toPixelVector = this->center;
-		
-		fromPixelVector.x += this->scaledLength;
-		fromPixelVector.y -= this->scaledLength;
-		toPixelVector.x -= this->scaledLength;
-		toPixelVector.y += this->scaledLength;
-
-		DirectDraw::drawColorLine(fromPixelVector, toPixelVector, this->color, this->bufferIndex, this->interlaced);
+		DirectDraw::drawColorX(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 	else		
 	{
-		fromPixelVector = this->center;
-		toPixelVector = this->center;
-		
-		fromPixelVector.x -= this->scaledLength;
-		toPixelVector.x += this->scaledLength;
-
-		DirectDraw::drawColorLine(fromPixelVector, toPixelVector, this->color, this->bufferIndex, this->interlaced);
-
-		fromPixelVector = this->center;
-		toPixelVector = this->center;
-		
-		fromPixelVector.y -= this->scaledLength;
-		toPixelVector.y += this->scaledLength;
-
-		DirectDraw::drawColorLine(fromPixelVector, toPixelVector, this->color, this->bufferIndex, this->interlaced);
-		this->bufferIndex = !this->bufferIndex;
+		DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
+
+	this->renderCycle = !this->renderCycle;
 }

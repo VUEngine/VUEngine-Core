@@ -8,8 +8,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef CROSS_H_
-#define CROSS_H_
+#ifndef ASTERISK_H_
+#define ASTERISK_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct CrossSpec
+typedef struct AsteriskSpec
 {
 	// Wireframe
 	WireframeSpec wireframeSpec;
@@ -31,13 +31,13 @@ typedef struct CrossSpec
 	// length
 	fixed_t length;
 
-} CrossSpec;
+} AsteriskSpec;
 
-typedef const CrossSpec CrossROMSpec;
+typedef const AsteriskSpec CrossROMSpec;
 
 
 /// @ingroup graphics-3d
-class Cross : Wireframe
+class Asterisk : Wireframe
 {
 	// Vertices
 	PixelVector center;
@@ -46,7 +46,7 @@ class Cross : Wireframe
 	bool renderCycle;
 
 	/// @publicsection
-	void constructor(CrossSpec* sphereSpec);
+	void constructor(AsteriskSpec* asteriskSpec);
 	override void render();
 	override void draw();
 }
