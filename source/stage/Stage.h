@@ -186,7 +186,7 @@ class Stage : Container
 	// particle remover
 	ParticleRemover particleRemover;
 	// the stage entities
-	VirtualList stageEntities;
+	VirtualList stageEntityDescriptions;
 	// the pivot node for streaming
 	VirtualNode streamingHeadNode;
 	// The sounds
@@ -236,6 +236,7 @@ class Stage : Container
 	bool streamAll();
 	void streamAllOut();
 	void forceNoPopIn(bool forceNoPopIn);
+	VirtualList getStageEntityDescriptions();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();

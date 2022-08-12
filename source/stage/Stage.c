@@ -120,7 +120,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->entityLoadingListeners = NULL;
 
 	this->stageSpec = stageSpec;
-	this->stageEntities = NULL;
+	this->stageEntityDescriptions = NULL;
 	this->uiContainer = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
@@ -187,18 +187,18 @@ void Stage::destructor()
 		this->uiContainer = NULL;
 	}
 
-	if(this->stageEntities)
+	if(this->stageEntityDescriptions)
 	{
-		VirtualNode node = this->stageEntities->head;
+		VirtualNode node = this->stageEntityDescriptions->head;
 
 		for(; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
 
-		delete this->stageEntities;
+		delete this->stageEntityDescriptions;
 
-		this->stageEntities = NULL;
+		this->stageEntityDescriptions = NULL;
 	}
 
 	// destroy the super object
@@ -528,7 +528,7 @@ void Stage::addEntityLoadingListener(ListenerObject context, EventListener callb
 
 bool Stage::registerEntityId(int16 internalId, EntitySpec* entitySpec)
 {
-	VirtualNode node = this->stageEntities->head;
+	VirtualNode node = this->stageEntityDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -569,7 +569,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 	int16 internalId = Entity::getInternalId(child);
 
-	VirtualNode node = this->stageEntities->head;
+	VirtualNode node = this->stageEntityDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -589,7 +589,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 			this->streamingHeadNode = this->streamingHeadNode->previous;
 		}
 
-		VirtualList::removeElement(this->stageEntities, node->data);
+		VirtualList::removeElement(this->stageEntityDescriptions, node->data);
 		delete node->data;
 	}
 }
@@ -613,7 +613,7 @@ void Stage::unloadChild(Container child)
 
 	int16 internalId = Entity::getInternalId(child);
 
-	VirtualNode node = this->stageEntities->head;
+	VirtualNode node = this->stageEntityDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -627,7 +627,7 @@ void Stage::unloadChild(Container child)
 			// if the entity is not to be respawned
 			if(!Entity::respawn(child))
 			{
-				VirtualList::removeElement(this->stageEntities, node->data);
+				VirtualList::removeElement(this->stageEntityDescriptions, node->data);
 			}
 
 			break;
@@ -734,12 +734,12 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 // register the stage's spec entities in the streaming list
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
-	if(!isDeleted(this->stageEntities))
+	if(!isDeleted(this->stageEntityDescriptions))
 	{
 		return;
 	}
 
-	this->stageEntities = new VirtualList();
+	this->stageEntityDescriptions = new VirtualList();
 
 	// register entities ordering them according to their distances to the origin
 	int32 i = 0;
@@ -766,7 +766,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageSpec->entities.children[i]);
 
-		VirtualNode auxNode = this->stageEntities->head;
+		VirtualNode auxNode = this->stageEntityDescriptions->head;
 
 		for(; auxNode; auxNode = auxNode->next)
 		{
@@ -777,13 +777,13 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 				continue;
 			}
 
-			VirtualList::insertBefore(this->stageEntities, auxNode, stageEntityDescription);
+			VirtualList::insertBefore(this->stageEntityDescriptions, auxNode, stageEntityDescription);
 			break;
 		}
 
 		if(!auxNode)
 		{
-			VirtualList::pushBack(this->stageEntities, stageEntityDescription);
+			VirtualList::pushBack(this->stageEntityDescriptions, stageEntityDescription);
 		}
 	}
 }
@@ -795,7 +795,7 @@ void Stage::loadInitialEntities()
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
 	// need a temporary list to remove and delete entities
-	VirtualNode node = this->stageEntities->head;
+	VirtualNode node = this->stageEntityDescriptions->head;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -860,7 +860,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 		{
 			int16 internalId = Entity::getInternalId(entity);
 
-			VirtualNode auxNode = this->stageEntities->head;
+			VirtualNode auxNode = this->stageEntityDescriptions->head;
 			StageEntityDescription* stageEntityDescription = NULL;
 
 			for(; auxNode; auxNode = auxNode->next)
@@ -937,7 +937,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 		advancing = this->cameraPreviousDistance < cameraDistance;
 	}
 
-	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
+	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntityDescriptions->head : this->stageEntityDescriptions->tail;
 
 	int32 counter = 0;
 
@@ -947,7 +947,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 	{
 		for(; node && counter < amplitude >> 1; node = node->previous, counter++);
 
-		node = node ? node : this->stageEntities->head;
+		node = node ? node : this->stageEntityDescriptions->head;
 
 		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next)
 		{
@@ -989,7 +989,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 	{
 		for(; node && counter < amplitude >> 1; node = node->next, counter++);
 
-		node = node ? node : this->stageEntities->tail;
+		node = node ? node : this->stageEntityDescriptions->tail;
 
 		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->previous)
 		{
@@ -1053,7 +1053,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 	if(NULL == this->streamingHeadNode)
 	{
-		this->streamingHeadNode = this->stageEntities->head;
+		this->streamingHeadNode = this->stageEntityDescriptions->head;
 	}
 
 	for(uint16 counter = 0; NULL != this->streamingHeadNode && counter < amplitude; this->streamingHeadNode = this->streamingHeadNode->next)
@@ -1428,6 +1428,11 @@ void Stage::forceNoPopIn(bool forceNoPopIn)
 	this->forceNoPopIn = forceNoPopIn;
 }
 
+VirtualList Stage::getStageEntityDescriptions()
+{
+	return this->stageEntityDescriptions;
+}
+
 void Stage::showStreamingProfiling(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
@@ -1439,7 +1444,7 @@ void Stage::showStreamingProfiling(int32 x, int32 y)
 	y++;
 
 	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->stageEntities), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->stageEntityDescriptions), x + xDisplacement, y++, NULL);
 	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
 
