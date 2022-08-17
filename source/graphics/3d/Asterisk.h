@@ -33,7 +33,7 @@ typedef struct AsteriskSpec
 
 } AsteriskSpec;
 
-typedef const AsteriskSpec CrossROMSpec;
+typedef const AsteriskSpec AsteriskROMSpec;
 
 
 /// @ingroup graphics-3d
