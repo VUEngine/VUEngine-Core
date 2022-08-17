@@ -67,6 +67,7 @@ class Entity : Container
 	bool addShapeFromSpecAtIndex(int32 shapeSpecIndex);
 	bool transformShapeAtSpecIndex(int32 shapeSpecIndex);
 	void addSprites(SpriteSpec** spritesSpecs);
+	void addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPreviousWireframes);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();

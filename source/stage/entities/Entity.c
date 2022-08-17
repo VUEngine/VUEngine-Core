@@ -1234,7 +1234,6 @@ void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPre
 		this->wireframes = new VirtualList();
 	}
 
-	// go through n sprites in entity's spec
 	for(; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
 	{
 		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
