@@ -311,7 +311,7 @@ void SoundManager::tryToPlayQueuedSounds()
 
 		if(!isDeleted(queuedSound))
 		{
-			SoundWrapper queuedSoundWrapper = SoundManager::doGetSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope);
+			SoundWrapper queuedSoundWrapper = SoundManager::doGetSound(this, queuedSound->sound, queuedSound->command, queuedSound->soundReleaseListener, queuedSound->scope, false);
 
 			if(!isDeleted(queuedSoundWrapper))
 			{
@@ -708,7 +708,7 @@ static uint8 SoundManager::getSoundChannelsCount(const Sound* sound, uint32 chan
 	return __TOTAL_CHANNELS < channelsCount ? __TOTAL_CHANNELS : channelsCount;
 }
 
-uint8 SoundManager::getFreeChannels(const Sound* sound, VirtualList availableChannels, uint8 channelsCount, uint32 channelType)
+uint8 SoundManager::getFreeChannels(const Sound* sound, VirtualList availableChannels, uint8 channelsCount, uint32 channelType, bool force)
 {
 	if(NULL == sound || isDeleted(availableChannels))
 	{
@@ -724,6 +724,38 @@ uint8 SoundManager::getFreeChannels(const Sound* sound, VirtualList availableCha
 		{
 			usableChannelsCount++;
 			VirtualList::pushBack(availableChannels , &this->channels[i]);
+		}
+	}
+
+	if(usableChannelsCount < channelsCount && force)
+	{
+		VirtualList::clear(availableChannels);
+		
+		usableChannelsCount = 0;
+
+		for(i = 0; usableChannelsCount < channelsCount && i < __TOTAL_CHANNELS; i++)
+		{
+			if((this->channels[i].type & channelType))
+			{
+				if(NULL != this->channels[i].sound)
+				{
+					for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+					{
+						SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+						if(!isDeleted(soundWrapper))
+						{
+							if(!soundWrapper->referencedExternally && SoundWrapper::isUsingChannel(soundWrapper, &this->channels[i]))
+							{
+								SoundWrapper::release(soundWrapper);
+							}
+						}
+					}					
+				}
+
+				usableChannelsCount++;
+				VirtualList::pushBack(availableChannels , &this->channels[i]);
+			}
 		}
 	}
 
@@ -747,7 +779,7 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 		return;
 	}
 
-	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command, soundReleaseListener, scope);
+	SoundWrapper soundWrapper = SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope, false);
 
 	if(!isDeleted(soundWrapper))
 	{
@@ -803,10 +835,10 @@ SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventLis
 		return NULL;
 	}
 
-	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope);
+	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope, true);
 }
 
-SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope)
+SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope, bool externallyReferenced)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
@@ -823,9 +855,9 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	// Check for free channels
 	VirtualList availableChannels  = new VirtualList();
 
-	uint8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
-	uint8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
-	uint8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
+	uint8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (0 == modulationChannelsCount ? kChannelModulation : kChannelNormal), kPlayForceAll == command);
+	uint8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation, kPlayForceAll == command);
+	uint8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise, kPlayForceAll == command);
 
 	if(kPlayAll != command && kPlayAsSoonAsPossible != command)
 	{
@@ -846,8 +878,10 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	{
 		case kPlayAll:
 		case kPlayAsSoonAsPossible:
+		case kPlayForceAll:
 
 			if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
+
 			{
 				int8 waves[__TOTAL_WAVEFORMS] = {-1, -1, -1, -1, -1};
 
@@ -882,7 +916,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 
 				if(0 < VirtualList::getSize(availableChannels))
 				{
-					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope);
+					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope, externallyReferenced);
 
 					HardwareManager::suspendInterrupts();
 					VirtualList::pushBack(this->soundWrappers, soundWrapper);
@@ -908,7 +942,6 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 
 		case kPlayAny:
 		case kPlayForceAny:
-		case kPlayForceAll:
 
 			break;
 	}

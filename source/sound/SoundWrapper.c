@@ -46,7 +46,7 @@ friend class VirtualList;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope)
+void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally)
 {
 	// construct base Container
 	Base::constructor();
@@ -63,6 +63,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
 	this->released = false;
+	this->referencedExternally = referencedExternally;
 
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
@@ -106,6 +107,20 @@ void SoundWrapper::destructor()
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+bool SoundWrapper::isUsingChannel(Channel* channel)
+{
+	// Prepare channels
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+	{
+		if((Channel*)node->data == channel)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void SoundWrapper::computeTimerResolutionFactor()
