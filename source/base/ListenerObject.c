@@ -181,7 +181,6 @@ void ListenerObject::removeEventListeners(EventListener method, uint32 eventCode
 			}
 		}
 
-
 		if(!this->events->head)
 		{
 			delete this->events;

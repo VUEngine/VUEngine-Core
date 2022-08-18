@@ -52,6 +52,7 @@ void Shape::constructor(SpatialObject owner)
 	this->owner = owner;
 
 	// not setup yet
+	this->destroyMe = false;
 	this->ready = false;
 	this->enabled = true;
 

@@ -202,6 +202,8 @@ abstract class Shape : ListenerObject
 	uint8 isVisible;
 	// flag to allow registration of colliding shapes
 	bool registerCollisions;
+	// flag to destroy it
+	bool destroyMe;
 	// the rectangle
 	RightBox rightBox;
 
