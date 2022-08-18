@@ -815,6 +815,7 @@ SoundWrapper SoundManager::findSound(const Sound* sound)
 		{
 			if(sound == soundWrapper->sound)
 			{
+				soundWrapper->referencedExternally = true;
 				return soundWrapper;
 			}
 		}
@@ -838,7 +839,7 @@ SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventLis
 	return SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope, true);
 }
 
-SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope, bool externallyReferenced)
+SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
@@ -916,7 +917,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 
 				if(0 < VirtualList::getSize(availableChannels))
 				{
-					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope, externallyReferenced);
+					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope, referencedExternally);
 
 					HardwareManager::suspendInterrupts();
 					VirtualList::pushBack(this->soundWrappers, soundWrapper);

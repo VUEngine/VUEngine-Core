@@ -463,7 +463,7 @@ void SoundWrapper::rewind()
 
 			default:
 
-				NM_ASSERT(false, "SoundWrapper::setupChannels: unknown track type");
+				NM_ASSERT(false, "SoundWrapper::rewind: unknown track type");
 				break;
 		}
 	}
