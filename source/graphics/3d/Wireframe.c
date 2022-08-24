@@ -122,6 +122,11 @@ PixelRightBox Wireframe::getPixelRightBox()
 
 void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
+	if(NULL == this->wireframeSpec)
+	{
+		return;
+	}
+
 	NM_ASSERT(NULL != this->wireframeSpec, "Wireframe::setupRenderingMode: NULL wireframeSpec");
 
 	extern Vector3D _cameraDirection;

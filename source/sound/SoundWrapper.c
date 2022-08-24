@@ -865,7 +865,7 @@ void SoundWrapper::playMIDINote(Channel* channel, int16 leftVolumeFactor, int16 
 void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
-	if((!this->sound) | (this->paused) | (!this->turnedOn))
+	if((!this->sound) + this->paused + (!this->turnedOn) + this->released)
 	{
 		return;
 	}
@@ -943,7 +943,7 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	// Skip if sound is NULL since this should be purged
 //	if((!this->sound) + this->paused)
 	// Optimization, if no sound or paused, the sum will be different than 0
-	if((!this->sound) + this->paused)
+	if((!this->sound) + this->paused + this->released)
 	{
 		return;
 	}
