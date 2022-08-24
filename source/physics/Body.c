@@ -396,13 +396,13 @@ uint8 Body::applyGravity(uint16 axis)
 {
 	if(axis)
 	{
-		Acceleration gravityForce = Vector3D::scalarProduct(Body::getGravity(this), this->mass);
+		axis &= this->axisSubjectToGravity;
 
 		Force force =
 		{
-			__X_AXIS & axis ? gravityForce.x : 0,
-			__Y_AXIS & axis ? gravityForce.y : 0,
-			__Z_AXIS & axis ? gravityForce.z : 0,
+			__X_AXIS & axis ? __FIXED_MULT(_currentGravity->x, this->mass) : 0,
+			__Y_AXIS & axis ? __FIXED_MULT(_currentGravity->y, this->mass) : 0,
+			__Z_AXIS & axis ? __FIXED_MULT(_currentGravity->z, this->mass) : 0,
 		};
 
 		return Body::applyForce(this, &force);
@@ -1179,13 +1179,29 @@ void Body::sleep()
 // is it moving?
 uint16 Body::getMovementOnAllAxis()
 {
+	if(!this->awake || !this->active)
+	{
+		return __NO_AXIS;
+	}
+
 	uint16 result = 0;
 
-	result |= (this->velocity.x || this->accelerating.x) ? __X_AXIS : 0;
-	result |= (this->velocity.y || this->accelerating.y) ? __Y_AXIS : 0;
-	result |= (this->velocity.z || this->accelerating.z) ? __Z_AXIS : 0;
+	if(this->velocity.x || this->accelerating.x)
+	{
+		result |= __X_AXIS;
+	}
 
-	return this->awake && this->active ? result : 0;
+	if(this->velocity.y || this->accelerating.y)
+	{
+		result |= __Y_AXIS;
+	}
+
+	if(this->velocity.z || this->accelerating.z)
+	{
+		result |= __Z_AXIS;
+	}
+
+	return result;
 }
 
 MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bouncingPlaneNormal)

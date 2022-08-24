@@ -48,8 +48,6 @@ class PhysicalWorld : ListenerObject
 	Acceleration gravity;
 	// frictionCoefficient
 	fixed_t frictionCoefficient;
-	// body to check for gravity
-	VirtualNode bodyToCheckForGravityNode;
 	// time scale
 	fixed_t timeScale;
 	// Time scale is handled here, not in the Body class

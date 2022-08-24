@@ -396,17 +396,17 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				// still syncronizing the graphics
 				SpriteManager::writeDRAM(_spriteManager);
 
-				// Write to the frame buffers
-				VIPManager::applyPostProcessingEffects(this);
-
-				// Draw wireframes
-				WireframeManager::draw(_wireframeManager);
-
 				if(this->forceDrawingSync)
 				{
 					// allow VIP's drawing operations
 					VIPManager::enableDrawing(this);
 				}
+
+				// Draw wireframes
+				WireframeManager::draw(_wireframeManager);
+
+				// Write to the frame buffers
+				VIPManager::applyPostProcessingEffects(this);
 
 				// flag completions
 				this->drawingEnded = true;

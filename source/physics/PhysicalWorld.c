@@ -47,8 +47,6 @@ void PhysicalWorld::constructor()
 	// create the shape list
 	this->bodies = new VirtualList();
 
-	this->bodyToCheckForGravityNode = NULL;
-
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
@@ -106,8 +104,6 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 		VirtualList::pushFront(this->bodies, body);
 		ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
-		this->bodyToCheckForGravityNode = NULL;
-
 		// return created shape
 		return Body::safeCast(VirtualList::front(this->bodies));
 	}
@@ -162,47 +158,6 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 }
 
 /**
- * Pre-calculate movable shape's position before doing collision detection on them
- *
- * @private
- */
-void PhysicalWorld::checkForGravity()
-{
-	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
-
-	// give preference to the last body in the list
-	VirtualNode node = !this->bodyToCheckForGravityNode ? this->bodies->tail: this->bodyToCheckForGravityNode;
-
-	int32 counter = 0;
-
-	// prepare bodies which move
-	// this will place the shape in the owner's position
-	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->previous, counter++)
-	{
-		// load the current shape
-		Body body = Body::safeCast(node->data);
-
-		if(body->active && !body->destroy)
-		{
-			// check if necessary to apply gravity
-			uint16 movingState = Body::getMovementOnAllAxis(body);
-
-			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
-
-			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, this->gravity))
-			{
-				// must account for the fps to avoid situations is which a collision is not detected
-				// when a body starts to fall and doesn't have enough time to detect a shape below
-				// when moving from one shape over another
-				Body::applyGravity(body, gravitySensibleAxis);
-			}
-		}
-	}
-
-	this->bodyToCheckForGravityNode = node;
-}
-
-/**
  * Calculate collisions
  *
  * @param clock
@@ -235,8 +190,6 @@ void PhysicalWorld::update(Clock clock)
 		}
 	}
 
-	PhysicalWorld::checkForGravity(this);
-
 	// TODO: time scale
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
@@ -247,19 +200,36 @@ void PhysicalWorld::update(Clock clock)
 
 		Body body = Body::safeCast(node->data);
 
-		if(isDeleted(body) || body->destroy)
+		NM_ASSERT(!isDeleted(body), "PhysicalWorld::update: deleted body");
+
+		if(body->destroy)
 		{
 			// place in the removed bodies list
 			VirtualList::removeNode(this->bodies, node);
 
 			delete body;
-			this->bodyToCheckForGravityNode = NULL;
 			continue;
 		}
 
 		if(!body->active || !body->awake)
 		{
 			continue;
+		}
+
+		if(__NO_AXIS != body->axisSubjectToGravity && SpatialObject::isSubjectToGravity(body->owner, this->gravity))
+		{
+			// check if necessary to apply gravity
+			uint16 movingState = Body::getMovementOnAllAxis(body);
+
+			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+
+			if(__NO_AXIS != gravitySensibleAxis)
+			{
+				// must account for the fps to avoid situations is which a collision is not detected
+				// when a body starts to fall and doesn't have enough time to detect a shape below
+				// when moving from one shape over another
+				Body::applyGravity(body, gravitySensibleAxis);
+			}
 		}
 
 		Body::update(body);
@@ -287,8 +257,6 @@ void PhysicalWorld::reset()
 
 	// empty the lists
 	VirtualList::clear(this->bodies);
-
-	this->bodyToCheckForGravityNode = NULL;
 }
 
 /**
