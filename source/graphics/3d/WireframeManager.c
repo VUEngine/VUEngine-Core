@@ -217,7 +217,9 @@ void WireframeManager::render()
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
+#ifdef __PROFILE_WIREFRAMES
 		wireframes++;
+#endif
 
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
