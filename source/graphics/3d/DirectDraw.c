@@ -239,16 +239,16 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	int32 displacement = ((x - parallax) << 6) + (y >> 2);
+	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
 		leftBuffer[displacement] |= pixel;
 	}
 
 	displacement += (parallax << 7);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE > (unsigned)displacement)
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
 		rightBuffer[displacement] |= pixel;
 	}
@@ -258,9 +258,9 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 {
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	int32 displacement = ((x - parallax) << 6) + (y >> 2);
+	uint16 displacement = ((x - parallax) << 6) + (y >> 2);
 
-	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	if(__FRAME_BUFFERS_SIZE <= displacement)
 	{
 		return;
 	}
@@ -357,8 +357,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ex
 
 		return true;
 	}
-
-	if(0 == dy)
+	else if(0 == dy)
 	{
 		if((unsigned)(_frustumFixedPoint.y1 - _frustumFixedPoint.y0) < (unsigned)(y - _frustumFixedPoint.y0))
 		{
@@ -382,12 +381,13 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ex
 	NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
 
 	fix7_9_ext xySlope = __FIX7_9_EXT_DIV(dy, dx);
-	fix7_9_ext yParallaxSlope = __FIX7_9_EXT_DIV(dParallax, dy);
 
 	if(0 == xySlope)
 	{
 		return false;
 	}
+
+	fix7_9_ext yParallaxSlope = __FIX7_9_EXT_DIV(dParallax, dy);
 
 	//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
 	fix7_9_ext parallaxHelper0 = parallax;
@@ -464,7 +464,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ex
 
 		y = __FIX7_9_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
 		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
-		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+	//	x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
 	}
 
 	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
