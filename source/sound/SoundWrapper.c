@@ -56,7 +56,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->sound = sound;
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
-	this->speed = __I_TO_FIX17_15(1);
+	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackMilliseconds = 0;
@@ -130,14 +130,14 @@ void SoundWrapper::computeTimerResolutionFactor()
 	uint16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
 	uint16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK * (timerResolutionUS / 20);
 
-	this->targetTimerResolutionFactor = __FIX17_15_DIV(__I_TO_FIX17_15(soundTargetUsPerInterrupt), __I_TO_FIX17_15(timerUsPerInterrupt));
+	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt), __I_TO_FIX7_9_EXT(timerUsPerInterrupt));
 
 	// Compensate for the difference in speed between 20US and 100US timer resolution
-	fix17_15 timerResolutionRatioReduction = __I_TO_FIX17_15(1) - __FIX17_15_DIV(__I_TO_FIX17_15(timerResolutionUS), __I_TO_FIX17_15(100));
+	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerResolutionUS), __I_TO_FIX7_9_EXT(100));
 
 	if(0 != timerResolutionRatioReduction)
 	{
-		this->targetTimerResolutionFactor = __FIX17_15_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
+		this->targetTimerResolutionFactor = __FIX7_9_EXT_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
 	}
 }
 
@@ -155,21 +155,21 @@ uint16 SoundWrapper::getFrequencyModifier()
  * Set playback speed. Changing the speed during playback may cause
  * the tracks to go out of sync because of the channel's current ticks.
  *
- * @speed 	fix17_15 PCM playback max speed is 100%
+ * @speed 	fix7_9_ext PCM playback max speed is 100%
  */
-void SoundWrapper::setSpeed(fix17_15 speed)
+void SoundWrapper::setSpeed(fix7_9_ext speed)
 {
 	// Prevent timer interrupts to unsync tracks
 	if(!this->hasPCMTracks)
 	{
-		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
+		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed <= __F_TO_FIX7_9_EXT(2.0f) ? speed : __F_TO_FIX7_9_EXT(2.0f);
 	}
 }
 
 /**
  * Return playback speed.
  */
-fix17_15 SoundWrapper::getSpeed()
+fix7_9_ext SoundWrapper::getSpeed()
 {
 	return this->speed;
 }
@@ -682,30 +682,30 @@ static void SoundWrapper::computeMIDIDummyTicksPerNote(Channel* channel)
 {
 	channel->ticks = 0;
 	channel->ticksPerNote = 0;
-	channel->tickStep = __I_TO_FIX17_15(1);
+	channel->tickStep = __I_TO_FIX7_9_EXT(1);
 }
 
-static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15 residue, fix17_15 speed, fix17_15 targetTimerResolutionFactor)
+static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_ext residue, fix7_9_ext speed, fix7_9_ext targetTimerResolutionFactor)
 {
 	channel->ticks = residue;
-	channel->ticksPerNote = __I_TO_FIX17_15(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
-	channel->ticksPerNote = __FIX17_15_DIV(channel->ticksPerNote, speed);
+	channel->ticksPerNote = __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
+	channel->ticksPerNote = __FIX7_9_EXT_DIV(channel->ticksPerNote, speed);
 
 	if(0 < channel->ticksPerNote)
 	{
-		fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
-		channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+		fix7_9_ext effectiveTicksPerNote = __FIX7_9_EXT_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
+		channel->tickStep = __FIX7_9_EXT_DIV(effectiveTicksPerNote, channel->ticksPerNote);
 	}
 	else
 	{
-		channel->tickStep = __I_TO_FIX17_15(1);
+		channel->tickStep = __I_TO_FIX7_9_EXT(1);
 	}
 }
 
-static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 residue __attribute__((unused)), fix17_15 speed __attribute__((unused)), fix17_15 targetTimerResolutionFactor __attribute__((unused)))
+static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix7_9_ext residue __attribute__((unused)), fix7_9_ext speed __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)))
 {
 	channel->ticksPerNote = 0;
-	channel->tickStep = __I_TO_FIX17_15(1);
+	channel->tickStep = __I_TO_FIX7_9_EXT(1);
 	channel->ticks = 0;
 }
 
@@ -874,7 +874,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	VirtualNode node = this->channels->head;
 
-	this->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
+	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds)));
 
 	int16 leftVolumeFactor = -1;
 	int16 rightVolumeFactor = -1;
@@ -1199,7 +1199,7 @@ void SoundWrapper::printMetadata(int32 x, int32 y)
 
 	uint8 trackInfoXOffset = x + 22;
 	uint8 trackInfoValuesXOffset = 9;
-	uint16 speed = __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100)));
+	uint16 speed = __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(100)));
 
 	y++;
 

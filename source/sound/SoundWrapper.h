@@ -157,13 +157,13 @@ typedef struct Channel
 	uint32 cursor;
 
 	/// Ticks before moving the cursor
-	fix17_15 ticksPerNote;
+	fix7_9_ext ticksPerNote;
 
 	/// Ticks before moving the cursor
-	fix17_15 ticks;
+	fix7_9_ext ticks;
 
 	/// Tick step per timer interrupt
-	fix17_15 tickStep;
+	fix7_9_ext tickStep;
 
 	/// Sound track
 	union ChannelSoundTrack
@@ -214,8 +214,8 @@ class SoundWrapper : ListenerObject
 	const Vector3D* position;
 	VirtualList channels;
 	Channel* mainChannel;
-	fix17_15 speed;
-	fix17_15 targetTimerResolutionFactor;
+	fix7_9_ext speed;
+	fix7_9_ext targetTimerResolutionFactor;
 	uint32 elapsedMicroseconds;
 	uint32 totalPlaybackMilliseconds;
 	uint16 pcmTargetPlaybackFrameRate;
@@ -253,10 +253,10 @@ class SoundWrapper : ListenerObject
 	void autoReleaseOnFinish(bool value);
 	void updateMIDIPlayback(uint32 elapsedMicroseconds);
 	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
-	void setSpeed(fix17_15 speed);
+	void setSpeed(fix7_9_ext speed);
 	void setVolumeReduction(int8 volumeReduction);
 	int8 getVolumeReduction();
-	fix17_15 getSpeed();
+	fix7_9_ext getSpeed();
 	void computeTimerResolutionFactor();
 	void setFrequencyModifier(uint16 frequencyModifier);
 	uint16 getFrequencyModifier();
