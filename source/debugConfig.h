@@ -49,6 +49,7 @@
 //#define __SHOW_TIMER_MANAGER_STATUS
 //#define __PROFILE_DIRECT_DRAWING
 //#define __DIRECT_DRAW_INTERLACED
+//#define __PROFILE_WIREFRAMES
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object

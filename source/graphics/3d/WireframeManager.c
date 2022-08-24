@@ -209,9 +209,16 @@ void WireframeManager::render()
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
+#ifdef __PROFILE_WIREFRAMES
+	uint16 wireframes = 0;
+	uint16 renderedWireframes = 0;
+#endif
+
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
+		wireframes++;
+
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		if(__HIDE == wireframe->show)
@@ -225,7 +232,21 @@ void WireframeManager::render()
 		}
 
 		Wireframe::render(wireframe);
+
+#ifdef __PROFILE_WIREFRAMES
+		if(__COLOR_BLACK != wireframe->color)
+		{
+			renderedWireframes++;
+		}
+#endif
 	}
+
+#ifdef __PROFILE_WIREFRAMES
+	PRINT_TEXT("Wireframes: ", 1, 1);
+	PRINT_TEXT("Rendered: ", 1, 2);
+	PRINT_INT(wireframes, 15, 1);
+	PRINT_INT(renderedWireframes, 15, 2);
+#endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	WireframeManager::sortProgressively(this);
@@ -251,6 +272,10 @@ void WireframeManager::draw()
 	DirectDraw::startDrawing(_directDraw);
 
 	this->stopDrawing = false;
+
+#ifdef __PROFILE_WIREFRAMES
+	uint16 drawnWireframes = 0;
+#endif
 
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
@@ -279,7 +304,17 @@ void WireframeManager::draw()
 		}
 
 		Wireframe::draw(wireframe);
+
+#ifdef __PROFILE_WIREFRAMES
+		drawnWireframes++;
+#endif
+
 	}
+
+#ifdef __PROFILE_WIREFRAMES
+	PRINT_TEXT("Rendered: ", 1, 3);
+	PRINT_INT(drawnWireframes, 15, 3);
+#endif
 }
 
 /**
