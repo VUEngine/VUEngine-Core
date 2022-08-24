@@ -32,7 +32,6 @@ friend class Wireframe;
 static DirectDraw _directDraw = NULL;
 
 Vector3D _cameraDirection = {0, 0, 0};
-Vector3D _cameraNormalizedDirection = {0, 0, 0};
 Vector3D _previousCameraPosition = {0, 0, 0};
 Vector3D _previousCameraPositionBuffer = {0, 0, 0};
 Rotation _previousCameraInvertedRotation = {0, 0, 0};
@@ -204,8 +203,7 @@ void WireframeManager::render()
 
 	this->stopRendering = false;
 
-	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __PIXELS_TO_METERS(512)}, *_cameraRotation);
-	_cameraNormalizedDirection = Vector3D::normalize(_cameraDirection);
+	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 

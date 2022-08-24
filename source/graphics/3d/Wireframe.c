@@ -153,9 +153,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	}
 	else
 	{
-		extern Vector3D _cameraNormalizedDirection;
-
-		if(__COS(__CAMERA_VIEWING_ANGLE + 4) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraNormalizedDirection)))
+		if(__COS(__CAMERA_VIEWING_ANGLE) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
 		{
 			this->color = __COLOR_BLACK;
 			return;
