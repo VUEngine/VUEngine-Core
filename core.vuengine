@@ -2534,10 +2534,12 @@
                     },
                     "maxRowsPerCall": {
                         "type": "integer",
+						"description": "The maximum number of rows to write on each call to affine calculation functions.",
                         "default": 16
                     },
                     "maxScale": {
                         "type": "integer",
+						"description": "The maximum possible scale. Affects param table allocation space.",
                         "default": 2
                     }
                 },
@@ -2559,14 +2561,17 @@
                     },
                     "maxAnimationFunctionNameLength": {
                         "type": "integer",
+						"description": "The maximum length of an animation function name.",
                         "default": 16
                     },
                     "maxAnimationFunctions": {
                         "type": "integer",
+						"description": "The maximum number of animation functions per description.",
                         "default": 32
                     },
                     "maxFramesPerAnimationFunction": {
                         "type": "integer",
+						"description": "The maximum number of frames per animation function.",
                         "default": 16
                     }
                 },
@@ -2625,6 +2630,7 @@
                     },
                     "totalChars": {
                         "type": "integer",
+						"description": "The total number of available chars in char memory",
                         "default": 2048
                     }
                 },
@@ -2646,6 +2652,7 @@
                     },
                     "enabled": {
                         "type": "boolean",
+						"description": "Enable communications at the start of the game, e.g. for link play.",
                         "default": false
                     }
                 },
@@ -2752,6 +2759,7 @@
                     },
                     "position": {
                         "type": "object",
+						"description": "The camera coordinates for the output of exceptions.",
                         "properties": {
                             "x": {
                                 "type": "integer",
@@ -2771,6 +2779,27 @@
                 "required": [],
                 "additionalProperties": false
             },
+            "uiSchema": {
+				"type": "Group",
+				"label": "Position",
+				"elements": [
+					{
+						"type": "HorizontalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"label": false,
+								"scope": "#/properties/position/properties/x"
+							},
+							{
+								"type": "Control",
+								"label": false,
+								"scope": "#/properties/position/properties/y"
+							}
+						]
+					}
+				]
+            },
             "parent": {
                 "typeId": "EngineConfig",
                 "multiple": false
@@ -2786,15 +2815,25 @@
                     },
                     "forceVipSync": {
                         "type": "boolean",
+						"description": "When defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired before the current game frame is done.",
                         "default": false
                     },
                     "frameCycle": {
                         "type": "integer",
-                        "default": 0,
-                        "minimum": 0
+						"oneOf": [
+							{
+								"const": 0,
+								"title": "50 FPS"
+							},
+							{
+								"const": 1,
+								"title": "25 FPS"
+							}
+						]
                     },
                     "runDelayedMessagesAtHalfFrameRate": {
                         "type": "boolean",
+						"description": "Define to dispatch the delayed messages every other game frame cycle.",
                         "default": false
                     },
                     "timerResolution": {
@@ -2820,12 +2859,15 @@
                     },
                     "cleanUp": {
                         "type": "boolean",
+						"description": "Enabling clean-up will reset each byte of each free block to 0 on resetting the game. Use only for debugging! Proper object's initialization must make this macro unnecessary.",
                         "default": false
                     },
                     "warningThreshold": {
                         "type": "integer",
+						"description": "Percentage above which the memory pool's status shows the pool usage.",
                         "default": 85,
-                        "minimum": 25
+                        "minimum": 1,
+						"maximum": 100
                     },
                     "pools": {
                         "type": "array",
@@ -2988,22 +3030,22 @@
                     {
                         "type": "Control",
                         "scope": "#/properties/bgMapPalette0",
-                        "label": "BGmap Palette 0"
+                        "label": "BGMap Palette 0"
                     },
                     {
                         "type": "Control",
                         "scope": "#/properties/bgMapPalette1",
-                        "label": "BGmap Palette 1"
+                        "label": "BGMap Palette 1"
                     },
                     {
                         "type": "Control",
                         "scope": "#/properties/bgMapPalette2",
-                        "label": "BGmap Palette 2"
+                        "label": "BGMap Palette 2"
                     },
                     {
                         "type": "Control",
                         "scope": "#/properties/bgMapPalette3",
-                        "label": "BGmap Palette 3"
+                        "label": "BGMap Palette 3"
                     },
                     {
                         "type": "Control",
@@ -3047,6 +3089,7 @@
                     },
                     "bodiesToCheckForGravity": {
                         "type": "integer",
+						"description": "Number of bodies to check for gravity on each cycle.",
                         "default": 10,
                         "minimum": 0
                     },
@@ -3062,6 +3105,7 @@
                     },
                     "maximumBouncinessCoefficient": {
                         "type": "integer",
+						"description": "The maximum allowed bounciness coefficient.",
                         "default": 1,
                         "minimum": 0
                     },
@@ -3077,6 +3121,7 @@
                     },
                     "timeElapsedDivisor": {
                         "type": "integer",
+						"description": "Divisor to speed up physics simulations. Bigger number equals faster computations.",
                         "default": 2,
                         "minimum": 0
                     }
@@ -3186,6 +3231,7 @@
                     },
                     "totalSram": {
                         "type": "integer",
+						"description": "The amount of available SRAM space, in bytes. The Virtual Boy allows up to 16 MB, but most cartridges support only 8 kb of SRAM.",
                         "default": 8192,
                         "minimum": 0
                     }
@@ -3208,6 +3254,7 @@
                     },
                     "bgmapsPerSegments": {
                         "type": "integer",
+						"description": "Number of BGMap specs in each BGMap segment.",
                         "default": 14,
                         "minimum": 0
                     },
@@ -3223,11 +3270,6 @@
                                         "minimum": 0
                                     },
                                     "y": {
-                                        "type": "integer",
-                                        "default": 0,
-                                        "minimum": 0
-                                    },
-                                    "z": {
                                         "type": "integer",
                                         "default": 0,
                                         "minimum": 0
@@ -3248,12 +3290,56 @@
                     },
                     "paramTableSegments": {
                         "type": "integer",
+						"description": "Number of segments for param tables.",
                         "default": 1,
                         "minimum": 0
                     }
                 },
                 "required": [],
                 "additionalProperties": false
+            },
+            "uiSchema": {
+                "type": "VerticalLayout",
+                "elements": [
+                    {
+                        "type": "Control",
+                        "scope": "#/properties/bgmapsPerSegments"
+                    },
+                    {
+                        "type": "Control",
+                        "scope": "#/properties/paramTableSegments"
+                    },
+                    {
+                        "type": "Group",
+                        "label": "Printing Area Offset (x, y, parallax)",
+                        "elements": [
+                            {
+                                "type": "HorizontalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "label": false,
+                                        "scope": "#/properties/printing/properties/offset/properties/x"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "label": false,
+                                        "scope": "#/properties/printing/properties/offset/properties/y"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "label": false,
+                                        "scope": "#/properties/printing/properties/offset/properties/parallax"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Control",
+                        "scope": "#/properties/printing/properties/printableArea"
+                    }
+                ]
             },
             "parent": {
                 "typeId": "EngineConfig",
