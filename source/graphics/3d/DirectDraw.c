@@ -241,15 +241,28 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
-	if(__FRAME_BUFFERS_SIZE > displacement)
+	if(__FRAME_BUFFERS_SIZE <= displacement)
 	{
-		leftBuffer[displacement] |= pixel;
+		displacement += (parallax << 7);
+
+		if(__FRAME_BUFFERS_SIZE <= displacement)
+		{
+			return;
+		}
+
+		rightBuffer[displacement] |= pixel;
 	}
-
-	displacement += (parallax << 7);
-
-	if(__FRAME_BUFFERS_SIZE > displacement)
+	else
 	{
+		leftBuffer[displacement] |= pixel;		
+
+		displacement += (parallax << 7);
+
+		if(__FRAME_BUFFERS_SIZE <= displacement)
+		{
+			return;
+		}
+
 		rightBuffer[displacement] |= pixel;
 	}
 }
@@ -464,7 +477,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ex
 
 		y = __FIX7_9_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
 		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
-	//	x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
 	}
 
 	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
