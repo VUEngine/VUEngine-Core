@@ -57,9 +57,12 @@ typedef struct CustomCameraFrustum
 
 static CameraFrustum _frustum;
 CustomCameraFrustum _frustumFixedPoint;
-int16 _frustumWidth = __SCREEN_WIDTH;
-int16 _frustumHeight = __SCREEN_HEIGHT;
-int16 _frustumDepth = __SCREEN_DEPTH;
+uint16 _frustumWidth = __SCREEN_WIDTH;
+uint16 _frustumHeight = __SCREEN_HEIGHT;
+uint16 _frustumDepth = __SCREEN_DEPTH;
+
+uint16 _frustumWidthExtended = __SCREEN_WIDTH << 2;
+uint16 _frustumHeightExtended = __SCREEN_HEIGHT << 2;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -188,9 +191,12 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	}
 
 	_frustum = frustum;
-	_frustumWidth = _frustum.x1 - _frustum.x0;
-	_frustumHeight = _frustum.y1 - _frustum.y0;
-	_frustumDepth = _frustum.z1 - _frustum.z0;
+	_frustumWidth = _frustum.x1 > _frustum.x0 ? _frustum.x1 - _frustum.x0 : _frustum.x0 - _frustum.x1;
+	_frustumHeight = _frustum.y1 > _frustum.y0 ? _frustum.y1 - _frustum.y0 : _frustum.y0 - _frustum.y1;
+	_frustumDepth = _frustum.z1 > _frustum.z0 ? _frustum.z1 - _frustum.z0 : _frustum.z0 - _frustum.z1;
+
+	_frustumWidthExtended = _frustumWidth << 2;
+	_frustumHeightExtended = _frustumHeight << 2;
 
 	_frustumFixedPoint = (CustomCameraFrustum)
 	{
@@ -241,28 +247,15 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
-	if(__FRAME_BUFFERS_SIZE <= displacement)
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
-		displacement += (parallax << 7);
-
-		if(__FRAME_BUFFERS_SIZE <= displacement)
-		{
-			return;
-		}
-
-		rightBuffer[displacement] |= pixel;
+		leftBuffer[displacement] |= pixel;
 	}
-	else
+
+	displacement += (parallax << 7);
+
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
-		leftBuffer[displacement] |= pixel;		
-
-		displacement += (parallax << 7);
-
-		if(__FRAME_BUFFERS_SIZE <= displacement)
-		{
-			return;
-		}
-
 		rightBuffer[displacement] |= pixel;
 	}
 }
@@ -514,13 +507,13 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	uint16 xToDelta = (unsigned)(toPoint.x - _frustum.x0);
 	uint16 yToDelta = (unsigned)(toPoint.y - _frustum.y0);
 
-	bool xFromOutside = (unsigned)(_frustumWidth << 2) < xFromDelta;
-	bool yFromOutside = (unsigned)(_frustumHeight << 2) < yFromDelta;
-	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
+	bool xFromOutside = _frustumWidthExtended < xFromDelta;
+	bool yFromOutside = _frustumHeightExtended < yFromDelta;
+	bool zFromOutside = _frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
 
-	bool xToOutside = (unsigned)(_frustumWidth << 2) < xToDelta;
-	bool yToOutside = (unsigned)(_frustumHeight << 2) < yToDelta;
-	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
+	bool xToOutside = _frustumWidthExtended < xToDelta;
+	bool yToOutside = _frustumHeightExtended < yToDelta;
+	bool zToOutside = _frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
 	bool xOutside = (xFromOutside && xToOutside) && (0 <= ((unsigned)fromPoint.x ^ (unsigned)toPoint.x));
 	bool yOutside = (yFromOutside && yToOutside) && (0 <= ((unsigned)fromPoint.y ^ (unsigned)toPoint.y));
@@ -548,7 +541,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 
-	if(((unsigned)_frustumWidth < xFromDelta) + ((unsigned)_frustumHeight < yFromDelta))
+	if((_frustumWidth < xFromDelta) + (_frustumHeight < yFromDelta))
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 		{
@@ -556,7 +549,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		}
 	}
 
-	if(((unsigned)_frustumWidth < xToDelta) + ((unsigned)_frustumHeight < yToDelta))
+	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
 	{
 		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 		{
@@ -696,13 +689,13 @@ static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 
 		return;
 	}
 	
-	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yFromOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zFromOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
 
-	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+	bool xToOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yToOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zToOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
 
 	bool xOutside = (xFromOutside && xToOutside);
 	bool yOutside = (yFromOutside && yToOutside); 
@@ -730,13 +723,13 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 		return;
 	}
 
-	bool xFromOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yFromOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zFromOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yFromOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zFromOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
 
-	bool xToOutside = (unsigned)_frustumWidth < (unsigned)(center.x - _frustum.x0);
-	bool yToOutside = (unsigned)_frustumHeight < (unsigned)(center.y - _frustum.y0);
-	bool zToOutside = (unsigned)_frustumDepth < (unsigned)(center.z - _frustum.z0);
+	bool xToOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yToOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zToOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
 
 	bool xOutside = (xFromOutside && xToOutside);
 	bool yOutside = (yFromOutside && yToOutside); 
@@ -973,9 +966,9 @@ static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 c
 
 static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 {
-	bool xOutside = (unsigned)_frustumWidth < (unsigned)(point.x - _frustum.x0);
-	bool yOutside = (unsigned)_frustumHeight < (unsigned)(point.y - _frustum.y0);
-	bool zOutside = (unsigned)_frustumDepth < (unsigned)(point.z - _frustum.z0);
+	bool xOutside = _frustumWidth < (unsigned)(point.x - _frustum.x0);
+	bool yOutside = _frustumHeight < (unsigned)(point.y - _frustum.y0);
+	bool zOutside = _frustumDepth < (unsigned)(point.z - _frustum.z0);
 
 	if(xOutside || yOutside || zOutside)
 	{
