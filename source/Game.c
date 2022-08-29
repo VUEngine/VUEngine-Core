@@ -221,7 +221,12 @@ void Game::initialize()
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
 	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
+#else
+#ifdef __RELEASE
+	TimerManager::wait(TimerManager::getInstance(), 2000);
 #endif
+#endif
+
 }
 
 void Game::debug()
