@@ -206,6 +206,26 @@ void Stage::destructor()
 	Base::destructor();
 }
 
+void Stage::fadeOutSounds()
+{
+	if(!isDeleted(this->soundWrappers))
+	{
+		// Do not need to release sound wrappers here,
+		// they are taken care by the SoundManager when
+		// I called SoundManager::stopAllSounds
+		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(!isDeleted(soundWrapper))
+			{
+				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
+				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeOut);
+			}
+		}
+	}
+}
+
 // determine if a point is visible
 int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
 {
@@ -1357,6 +1377,8 @@ void Stage::setupSounds()
 void Stage::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	VirtualList::removeElement(this->soundWrappers, eventFirer);
+
+	Stage::fireEvent(this, kEventSoundReleased);
 }
 
 void Stage::setupTimer()
@@ -1370,6 +1392,17 @@ bool Stage::handlePropagatedMessage(int32 message)
 	{
 		// propagate message to ui
 		return Container::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
+	}
+
+	return false;
+}
+
+bool Stage::handlePropagatedString(const char* string)
+{
+	if(this->uiContainer)
+	{
+		// propagate message to ui
+		return Container::propagateMessage(this->uiContainer, Container::onPropagatedString, string);
 	}
 
 	return false;
