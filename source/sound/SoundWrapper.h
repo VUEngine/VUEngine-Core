@@ -217,9 +217,11 @@ class SoundWrapper : ListenerObject
 	fix7_9_ext speed;
 	fix7_9_ext targetTimerResolutionFactor;
 	uint32 elapsedMicroseconds;
+	uint32 previouslyElapsedMicroseconds;
 	uint32 totalPlaybackMilliseconds;
 	uint16 pcmTargetPlaybackFrameRate;
 	uint16 frequencyModifier;
+	uint16 volumeReductionMultiplier;
 	int8 volumeReduction;
 	uint8 playbackType;
 	bool turnedOn;
@@ -265,8 +267,6 @@ class SoundWrapper : ListenerObject
 	void printVolume(int32 x, int32 y, bool printHeader);
 	void printPlaybackTime(int32 x, int32 y);
 	void printPlaybackProgress(int32 x, int32 y);
-
-	override bool handleMessage(Telegram telegram);
 }
 
 

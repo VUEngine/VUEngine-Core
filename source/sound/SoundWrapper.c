@@ -59,6 +59,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
+	this->previouslyElapsedMicroseconds = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
@@ -79,6 +80,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 
 	this->mainChannel = NULL;
 	this->channels = channels;
+	this->volumeReductionMultiplier = 1;
 
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
@@ -182,48 +184,6 @@ void SoundWrapper::setVolumeReduction(int8 volumeReduction)
 	this->volumeReduction = volumeReduction;
 }
 
-bool SoundWrapper::handleMessage(Telegram telegram)
-{
-	if(this->released)
-	{
-		return false;
-	}
-
-	switch(Telegram::getMessage(telegram))
-	{
-		case kSoundWrapperFadeIn:
-
-			if(0 < SoundWrapper::getVolumeReduction(this))
-			{
-				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) - 1);
-				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeIn, NULL);
-			}
-			else
-			{
-				this->playbackType = kSoundWrapperPlaybackNormal;
-			}
-
-			break;
-
-		case kSoundWrapperFadeOut:
-
-			if(__MAXIMUM_VOLUME > SoundWrapper::getVolumeReduction(this))
-			{
-				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + 1);
-				MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeOut, NULL);
-			}
-			else
-			{
-				this->playbackType = kSoundWrapperPlaybackNormal;
-				SoundWrapper::release(this);
-			}
-
-			break;
-	}
-
-	return Base::handleMessage(this, telegram);
-}
-
 /**
  * Get volume reduction
  */
@@ -295,62 +255,61 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		return;
 	}
 
-	bool wasPaused = this->paused && this->turnedOn;
-	this->paused = false;
-	this->turnedOn = true;
-
-	this->position = position;
-
-	VirtualNode node = this->channels->head;
-
-	// Prepare channels
-	for(; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		channel->finished = false;
-
-		if(!wasPaused)
-		{
-			channel->ticks = 0;
-			channel->cursor = 0;
-		}
-
-		_soundRegistries[channel->number].SxFQH = 0;
-		_soundRegistries[channel->number].SxFQL = 0;
-		_soundRegistries[channel->number].SxLRV = 0;
-		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
-	}
-
-	if(!wasPaused)
-	{
-		this->elapsedMicroseconds = 0;
-
-		if(this->hasPCMTracks)
-		{
-			SoundManager::startPCMPlayback(SoundManager::getInstance());
-		}
-	}
-
 	this->playbackType = playbackType;
 
 	switch(playbackType)
 	{
 		case kSoundWrapperPlaybackFadeIn:
 
-			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME);
-			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
-			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeIn, NULL);
-			break;
+			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
 
+			// intentional fall through
+		case kSoundWrapperPlaybackNormal:
+			{
+				bool wasPaused = this->paused && this->turnedOn;
+				this->paused = false;
+				this->turnedOn = true;
+
+				this->position = position;
+
+				VirtualNode node = this->channels->head;
+
+				// Prepare channels
+				for(; NULL != node; node = node->next)
+				{
+					Channel* channel = (Channel*)node->data;
+
+					channel->finished = false;
+
+					if(!wasPaused)
+					{
+						channel->ticks = 0;
+						channel->cursor = 0;
+					}
+
+					_soundRegistries[channel->number].SxFQH = 0;
+					_soundRegistries[channel->number].SxFQL = 0;
+					_soundRegistries[channel->number].SxLRV = 0;
+					_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+				}
+
+				if(!wasPaused)
+				{
+					this->elapsedMicroseconds = 0;
+					this->previouslyElapsedMicroseconds = 0;
+					
+					if(this->hasPCMTracks)
+					{
+						SoundManager::startPCMPlayback(SoundManager::getInstance());
+					}
+				}	
+			}
+
+			break;
+			
 		case kSoundWrapperPlaybackFadeOut:
 
-			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
-			MessageDispatcher::dispatchMessage(__SOUND_WRAPPER_FADE_DELAY, ListenerObject::safeCast(this), ListenerObject::safeCast(this), kSoundWrapperFadeOut, NULL);
-			break;
-
-		case kSoundWrapperPlaybackNormal:
-		default:
+			SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + this->volumeReductionMultiplier);
 			break;
 	}
 }
@@ -444,6 +403,7 @@ void SoundWrapper::rewind()
 	VirtualNode node = this->channels->head;
 
 	this->elapsedMicroseconds = 0;
+	this->previouslyElapsedMicroseconds = 0;
 
 	for(; NULL != node; node = node->next)
 	{
@@ -609,6 +569,8 @@ void SoundWrapper::setupChannels(int8* waves)
 	}
 
 	this->totalPlaybackMilliseconds = SoundWrapper::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
+
+	this->volumeReductionMultiplier = this->hasPCMTracks ? VirtualList::getSize(this->channels) : 1;
 }
 
 void SoundWrapper::configureSoundRegistries()
@@ -862,6 +824,50 @@ void SoundWrapper::playMIDINote(Channel* channel, int16 leftVolumeFactor, int16 
 	}
 }
 
+void SoundWrapper::updateVolumeReduction()
+{
+	if(kSoundWrapperPlaybackNormal != this->playbackType)
+	{
+		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
+
+		if(__GAME_FRAME_DURATION * 5 < elapsedMilliseconds)
+		{
+			switch(this->playbackType)
+			{
+				case kSoundWrapperPlaybackFadeIn:
+
+					if(0 < this->volumeReduction)
+					{
+						this->volumeReduction -= this->volumeReductionMultiplier;
+					}
+					else
+					{
+						this->volumeReduction = 0;
+						this->playbackType = kSoundWrapperPlaybackNormal;
+					}
+
+					break;
+
+				case kSoundWrapperPlaybackFadeOut:
+
+					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier > this->volumeReduction)
+					{
+						this->volumeReduction += this->volumeReductionMultiplier;
+					}
+					else
+					{
+						this->playbackType = kSoundWrapperPlaybackNormal;
+						SoundWrapper::release(this);
+					}
+
+					break;
+			}
+
+			this->previouslyElapsedMicroseconds = this->elapsedMicroseconds;
+		}
+	}
+}
+
 void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
@@ -875,6 +881,8 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	VirtualNode node = this->channels->head;
 
 	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds)));
+
+	SoundWrapper::updateVolumeReduction(this);
 
 	int16 leftVolumeFactor = -1;
 	int16 rightVolumeFactor = -1;
@@ -953,7 +961,9 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-	uint8 volume = this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor];
+	SoundWrapper::updateVolumeReduction(this);
+
+	int8 volume = this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction;
 
 	if(!this->unmute)
 	{
