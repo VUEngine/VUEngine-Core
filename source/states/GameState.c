@@ -687,13 +687,3 @@ Clock GameState::getClock()
 {
 	return this->updateClock;
 }
-
-/**
- * Prepare state to exit
- *
- */
-void GameState::prepareToExit()
-{
-	Stage::fadeOutSounds(this->stage);
-}
-
