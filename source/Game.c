@@ -223,10 +223,9 @@ void Game::initialize()
 	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
 #else
 #ifdef __RELEASE
-	TimerManager::wait(TimerManager::getInstance(), 2000);
+	TimerManager::wait(TimerManager::getInstance(), 4000);
 #endif
 #endif
-
 }
 
 void Game::debug()
