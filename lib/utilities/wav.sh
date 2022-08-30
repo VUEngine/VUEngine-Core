@@ -11,6 +11,7 @@ fi
 levels=$(( amplitude / 15 ))
 
 mkdir -p Spec/
+mkdir -p Binary/
 
 channels=""
 
@@ -33,7 +34,6 @@ for file in $files; do
 #	echo $name
 	finalDestination=`echo $file | sed -e "s@\.wav@SoundTrack@g" | sed -e "s@sample@@g"`
 #	echo $finalDestination
-	mkdir -p Binary/
 	mv $output Binary/$finalDestination.c
 	sed -i -e 's@sample_@'$finalDestination'@g' Binary/$finalDestination.c
 	sed -i -e "s@static@@g" Binary/$finalDestination.c
