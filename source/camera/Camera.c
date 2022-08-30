@@ -383,7 +383,7 @@ void Camera::prepareForUI()
 
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
-	this->invertedRotation = Rotation::invert(this->rotation);
+	this->invertedRotation = Rotation::zero();
 
 #ifndef __LEGACY_COORDINATE_PROJECTION
 	this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
@@ -501,6 +501,10 @@ void Camera::reset()
 	Camera::setFocusGameEntity(this, NULL);
 
 	this->position = Vector3D::zero();
+	this->rotation = Rotation::zero();
+	this->invertedRotation = Rotation::zero();
+
+	this->transformationFlags = false;
 
 	Camera::resetCameraFrustum(this);
 }
