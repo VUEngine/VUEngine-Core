@@ -71,6 +71,7 @@ class GameState : State
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	int32 propagateMessage(int32 message);
+	int32 propagateString(const char* string);
 	void resumeClocks();
 	void startAnimations();
 	void startClocks();

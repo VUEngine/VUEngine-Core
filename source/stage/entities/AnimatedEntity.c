@@ -12,6 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <AnimatedEntity.h>
 #include <Clock.h>
 #include <MessageDispatcher.h>
@@ -156,11 +158,11 @@ void AnimatedEntity::pauseAnimation(bool pause)
 }
 
 // play an animation
-void AnimatedEntity::playAnimation(char* animationName)
+bool AnimatedEntity::playAnimation(const char* animationName)
 {
 	if(!this->sprites | !animationName)
 	{
-		return;
+		return false;
 	}
 
 	this->update = true;
@@ -171,14 +173,19 @@ void AnimatedEntity::playAnimation(char* animationName)
 
 	ListenerObject scope = ListenerObject::safeCast(this);
 
+	bool result = false;
+
 	// play animation on each sprite
 	for(; node && this->sprites; node = node->next)
 	{
 		if(Sprite::play(node->data, this->animationDescription, animationName, scope))
 		{
+			result = true;
 			scope = NULL;
 		}
 	}
+
+	return result;
 }
 
 // play an animation
@@ -292,6 +299,27 @@ void AnimatedEntity::resume()
 
 	AnimatedEntity::setupListeners(this);
 }
+
+/**
+ * Handle propagated string
+ *
+ * @param message	Message
+
+ * @return			Result
+ */
+bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
+{
+	/* TODO: play only if the string contains the correct command */
+	/*
+	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
+	{
+		return false;
+	}
+	*/
+
+	return 	AnimatedEntity::playAnimation(this, string);
+}
+
 
 int16 AnimatedEntity::getActualFrame()
 {

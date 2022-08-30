@@ -121,7 +121,9 @@ class Container : SpatialObject
 	void invalidateGlobalTransformation();
 	bool isHidden();
 	int32 onPropagatedMessage(va_list args);
+	int32 onPropagatedString(va_list args);
 	int32 propagateMessage(int32 (*propagatedMessageHandler)(void*, va_list), ...);
+	int32 propagateString(int32 (*propagatedMessageHandler)(void*, va_list), ...);
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
@@ -147,6 +149,7 @@ class Container : SpatialObject
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
 	virtual bool handlePropagatedMessage(int32 message);
+	virtual bool handlePropagatedString(const char* string);
 	virtual void addChild(Container child);
 	virtual void removeChild(Container child, bool deleteChild);
 	virtual void changeEnvironment(Transformation* environmentTransform);
@@ -154,7 +157,6 @@ class Container : SpatialObject
 	virtual void resume();
 	virtual void show();
 	virtual void hide();
-	virtual int32 passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args);
 	virtual bool isTransformed();
 
 	override void setPosition(const Vector3D* position);

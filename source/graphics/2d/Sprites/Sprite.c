@@ -719,7 +719,7 @@ void Sprite::pause(bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-bool Sprite::play(const AnimationDescription* animationDescription, char* functionName, ListenerObject scope)
+bool Sprite::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
 {
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");

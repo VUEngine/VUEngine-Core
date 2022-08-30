@@ -1017,24 +1017,45 @@ int32 Container::propagateMessage(int32 (*propagatedMessageHandler)(void*, va_li
 
 	va_list args;
 	va_start(args, propagatedMessageHandler);
-	int32 result =  Container::passMessage(this, propagatedMessageHandler, args);
+	int32 result = Container::propagateArguments(this, propagatedMessageHandler, args);
 	va_end(args);
 
 	return result;
 }
 
 /**
- * Pass message to children recursively
+ * Propagate a string to the child wrapper
  *
  * @param propagatedMessageHandler
+ * @param args						va_list of propagated string parameters
+
+ * @return							Result
+ */
+int32 Container::propagateString(int32 (*propagatedStringHandler)(void*, va_list), ...)
+{
+	ASSERT(propagatedStringHandler, "Container::propagateMessage: null propagatedStringHandler");
+
+	va_list args;
+	va_start(args, propagatedStringHandler);
+	int32 result = Container::propagateArguments(this, propagatedStringHandler, args);
+	va_end(args);
+
+	return result;
+}
+
+
+/**
+ * Pass message to children recursively
+ *
+ * @param propagationHandler		Method used to actually propagate the arguments
  * @param args						va_list of propagated message parameters
 
  * @return							Result
  */
-int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args)
+int32 Container::propagateArguments(int32 (*propagationHandler)(void*, va_list), va_list args)
 {
 	// if message is valid
-	if(!propagatedMessageHandler)
+	if(NULL == propagationHandler)
 	{
 		return false;
 	}
@@ -1047,7 +1068,7 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 			Container child = Container::safeCast(node->data);
 
 			// pass message to each child
-			if( Container::passMessage(child, propagatedMessageHandler, args))
+			if(Container::propagateArguments(child, propagationHandler, args))
 			{
 				return true;
 			}
@@ -1055,11 +1076,11 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 	}
 
 	// if no child processed the message, I process it
-	return propagatedMessageHandler(this, args);
+	return propagationHandler(this, args);
 }
 
 /**
- * Process user input
+ * Process message
  *
  * @param args	va_list of propagated message parameters
 
@@ -1072,13 +1093,38 @@ int32 Container::onPropagatedMessage(va_list args)
 }
 
 /**
- * Process message
+ * Process string
+ *
+ * @param args	va_list of propagated string parameters
+
+ * @return		Result
+ */
+int32 Container::onPropagatedString(va_list args)
+{
+	const char* string = va_arg(args, char*);
+	return  Container::handlePropagatedString(this, string);
+}
+
+/**
+ * Handle propagated message
  *
  * @param message	Message
 
  * @return			Result
  */
 bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
+{
+	return false;
+}
+
+/**
+ * Handle propagated string
+ *
+ * @param message	Message
+
+ * @return			Result
+ */
+bool Container::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	return false;
 }

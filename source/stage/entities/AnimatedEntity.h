@@ -21,6 +21,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __ANIMATION_COMMAND_PLAY								"play:"
+
+
+//---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
@@ -50,7 +57,7 @@ class AnimatedEntity : Entity
 	// Pointer to the animation description
 	AnimationDescription* animationDescription;
 	// need to save for pausing
-	char* currentAnimationName;
+	const char* currentAnimationName;
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
@@ -61,7 +68,7 @@ class AnimatedEntity : Entity
 	bool isPlayingAnimation();
 	void nextFrame();
 	void pauseAnimation(bool pause);
-	void playAnimation(char* animationName);
+	bool playAnimation(const char* animationName);
 	void previousFrame();
 	void setActualFrame(int16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
@@ -70,6 +77,7 @@ class AnimatedEntity : Entity
 	override void ready(bool recursive);
 	override void update(uint32 elapsedTime);
 	override void resume();
+	override bool handlePropagatedString(const char* string);
 }
 
 

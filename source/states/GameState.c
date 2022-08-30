@@ -290,6 +290,17 @@ int32 GameState::propagateMessage(int32 message)
 }
 
 /**
+ * Start pass a message to the Stage for it to forward to its children
+ *
+ * @param string	String
+ * @return			The result of the propagation of the string
+ */
+int32 GameState::propagateString(const char* string)
+{
+	return Container::propagateString(this->stage, Container::onPropagatedString, string);
+}
+
+/**
  * Start a streaming cycle on the Stage
  */
 bool GameState::stream()

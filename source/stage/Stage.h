@@ -247,6 +247,7 @@ class Stage : Container
 	override void resume();
 	override void removeChild(Container child, bool deleteChild);
 	override bool handlePropagatedMessage(int32 message);
+	override bool handlePropagatedString(const char* string);
 }
 
 

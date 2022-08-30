@@ -200,7 +200,7 @@ abstract class Sprite : ListenerObject
 	bool isPlayingFunction(char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, char* functionName, ListenerObject scope);
+	bool play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope);
 	void stop();
 	bool replay(const AnimationDescription* animationDescription);
 	void previousFrame();
