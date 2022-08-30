@@ -860,6 +860,19 @@ void SoundWrapper::updateVolumeReduction()
 					{
 						this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
 						this->playbackType = kSoundWrapperPlaybackNormal;
+						SoundWrapper::pause(this);
+					}
+
+					break;
+
+				case kSoundWrapperPlaybackFadeOutAndRelease:
+
+					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+
+					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+					{
+						this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+						this->playbackType = kSoundWrapperPlaybackNormal;
 						SoundWrapper::release(this);
 					}
 

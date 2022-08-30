@@ -196,6 +196,7 @@ enum SoundWrapperPlaybackTypes
 	kSoundWrapperPlaybackNormal = 0,
 	kSoundWrapperPlaybackFadeIn,
 	kSoundWrapperPlaybackFadeOut,
+	kSoundWrapperPlaybackFadeOutAndRelease
 };
 
 enum SoundWrapperMessages

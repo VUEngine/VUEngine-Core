@@ -206,7 +206,7 @@ void Stage::destructor()
 	Base::destructor();
 }
 
-void Stage::fadeOutSounds()
+void Stage::fadeSounds(uint32 playbackType)
 {
 	if(!isDeleted(this->soundWrappers))
 	{
@@ -220,7 +220,7 @@ void Stage::fadeOutSounds()
 			if(!isDeleted(soundWrapper))
 			{
 				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
-				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeOut);
+				SoundWrapper::play(soundWrapper, NULL, playbackType);
 			}
 		}
 	}
