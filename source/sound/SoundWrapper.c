@@ -262,10 +262,21 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		case kSoundWrapperPlaybackFadeIn:
 
 			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
+			break;
 
 			// intentional fall through
 		case kSoundWrapperPlaybackNormal:
+			
+			SoundWrapper::setVolumeReduction(this, 0);
+			break;
+	}
+
+	switch(playbackType)
+	{
+		case kSoundWrapperPlaybackFadeIn:
+		case kSoundWrapperPlaybackNormal:
 			{
+
 				bool wasPaused = this->paused && this->turnedOn;
 				this->paused = false;
 				this->turnedOn = true;
@@ -305,11 +316,6 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 				}	
 			}
 
-			break;
-			
-		case kSoundWrapperPlaybackFadeOut:
-
-			SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + this->volumeReductionMultiplier);
 			break;
 	}
 }
@@ -830,17 +836,15 @@ void SoundWrapper::updateVolumeReduction()
 	{
 		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
 
-		if(__GAME_FRAME_DURATION * 5 < elapsedMilliseconds)
+		if((__GAME_FRAME_DURATION << 1) <= elapsedMilliseconds)
 		{
 			switch(this->playbackType)
 			{
 				case kSoundWrapperPlaybackFadeIn:
 
-					if(0 < this->volumeReduction)
-					{
-						this->volumeReduction -= this->volumeReductionMultiplier;
-					}
-					else
+					this->volumeReduction -= this->volumeReductionMultiplier;
+
+					if(0 >= this->volumeReduction)
 					{
 						this->volumeReduction = 0;
 						this->playbackType = kSoundWrapperPlaybackNormal;
@@ -850,12 +854,11 @@ void SoundWrapper::updateVolumeReduction()
 
 				case kSoundWrapperPlaybackFadeOut:
 
-					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier > this->volumeReduction)
+					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+
+					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
 					{
-						this->volumeReduction += this->volumeReductionMultiplier;
-					}
-					else
-					{
+						this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
 						this->playbackType = kSoundWrapperPlaybackNormal;
 						SoundWrapper::release(this);
 					}
