@@ -265,6 +265,10 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 			{
 				SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
 			}
+			else if(!this->paused)
+			{
+				return;
+			}
 
 			break;
 
