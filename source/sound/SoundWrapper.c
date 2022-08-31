@@ -261,7 +261,11 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 	{
 		case kSoundWrapperPlaybackFadeIn:
 
-			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
+			if(this->paused || !this->turnedOn)
+			{
+				SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME * this->volumeReductionMultiplier);
+			}
+
 			break;
 
 			// intentional fall through
@@ -276,8 +280,8 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		case kSoundWrapperPlaybackFadeIn:
 		case kSoundWrapperPlaybackNormal:
 			{
-
 				bool wasPaused = this->paused && this->turnedOn;
+
 				this->paused = false;
 				this->turnedOn = true;
 
@@ -990,19 +994,19 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	{
 		Channel* channel = (Channel*)node->data;
 
-		if(__MAXIMUM_VOLUME <= volume)
+		if(0 >= volume)
+		{
+			_soundRegistries[channel->number].SxLRV = 0;	
+		}
+		else if(__MAXIMUM_VOLUME <= volume)
 		{
 			_soundRegistries[channel->number].SxLRV = 0xFF & channel->soundChannelConfiguration.volume;
 			volume -= __MAXIMUM_VOLUME;
 		}
-		else if(0 < volume)
+		else
 		{
 			_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
 			volume = 0;
-		}
-		else
-		{
-			_soundRegistries[channel->number].SxLRV = 0;	
 		}
 	}
 
