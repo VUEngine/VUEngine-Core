@@ -64,6 +64,7 @@ void WireframeManager::constructor()
 	this->stopRendering = false;
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->disabled = false;
 
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
@@ -140,6 +141,7 @@ void WireframeManager::remove(Wireframe wireframe)
 void WireframeManager::reset()
 {
 	VirtualList::clear(this->wireframes);
+	this->disabled = false;
 }
 
 /**
@@ -264,7 +266,7 @@ void WireframeManager::render()
  */
 void WireframeManager::draw()
 {
-	if(NULL == this->wireframes->head)
+	if(this->disabled || NULL == this->wireframes->head)
 	{
 		return;
 	}
@@ -315,6 +317,16 @@ void WireframeManager::draw()
 	PRINT_TEXT("Rendered: ", 1, 3);
 	PRINT_INT(drawnWireframes, 15, 3);
 #endif
+}
+
+void WireframeManager::enable()
+{
+	this->disabled = false;
+}
+
+void WireframeManager::disable()
+{
+	this->disabled = true;
 }
 
 /**
