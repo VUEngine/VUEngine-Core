@@ -381,60 +381,68 @@ void CameraEffectManager::fxFadeAsync()
 {
 	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
 
-	bool lightRedDone = false;
-	bool mediumRedDone = false;
-	bool darkRedDone = false;
+	bool lightRedDone = _vipRegisters[__BRTC] == this->fxFadeTargetBrightness.mediumRed;
+	bool mediumRedDone = _vipRegisters[__BRTB] == this->fxFadeTargetBrightness.mediumRed;
+	bool darkRedDone = _vipRegisters[__BRTA] == this->fxFadeTargetBrightness.mediumRed;
 
 	// note: need to cast brightness registers to uint8 because only their lower 8 bits are valid
-
+	
 	// fade light red
-	if((uint8)_vipRegisters[__BRTC] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.brightRed)
+	if(!lightRedDone)
 	{
-		_vipRegisters[__BRTC] += __CAMERA_EFFECT_FADE_INCREMENT;
-	}
-	else if((uint8)_vipRegisters[__BRTC] - __CAMERA_EFFECT_FADE_INCREMENT > this->fxFadeTargetBrightness.brightRed)
-	{
-		_vipRegisters[__BRTC] -= __CAMERA_EFFECT_FADE_INCREMENT;
-	}
-	else
-	{
-		_vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
-		lightRedDone = true;
-	}
-
-	// fade medium red
-	uint8 i;
-
-	for(i = 0; i < 2; i++)
-	{
-		if((uint8)_vipRegisters[__BRTB] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.mediumRed)
+		if((int16)_vipRegisters[__BRTC] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.brightRed)
 		{
-			_vipRegisters[__BRTB] += __CAMERA_EFFECT_FADE_INCREMENT;
+			_vipRegisters[__BRTC] += __CAMERA_EFFECT_FADE_INCREMENT;
 		}
-		else if((uint8)_vipRegisters[__BRTB] - __CAMERA_EFFECT_FADE_INCREMENT> this->fxFadeTargetBrightness.mediumRed)
+		else if((int16)_vipRegisters[__BRTC] - __CAMERA_EFFECT_FADE_INCREMENT > (int16)this->fxFadeTargetBrightness.brightRed)
 		{
-			_vipRegisters[__BRTB] -= __CAMERA_EFFECT_FADE_INCREMENT;
+			_vipRegisters[__BRTC] -= __CAMERA_EFFECT_FADE_INCREMENT;
 		}
 		else
 		{
-			_vipRegisters[__BRTB] = this->fxFadeTargetBrightness.mediumRed;
-			mediumRedDone = true;
+			_vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
+			lightRedDone = true;
 		}
 	}
 
-	// fade dark red
-	if((uint8)_vipRegisters[__BRTA] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.darkRed)
+	if(!mediumRedDone)
 	{
-		_vipRegisters[__BRTA] += __CAMERA_EFFECT_FADE_INCREMENT;
+		// fade medium red
+		for(uint16 i = 0; i < 2; i++)
+		{
+			if((int16)_vipRegisters[__BRTB] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.mediumRed)
+			{
+				_vipRegisters[__BRTB] += __CAMERA_EFFECT_FADE_INCREMENT;
+			}
+			else if((int16)_vipRegisters[__BRTB] - __CAMERA_EFFECT_FADE_INCREMENT > (int16)this->fxFadeTargetBrightness.mediumRed)
+			{
+				_vipRegisters[__BRTB] -= __CAMERA_EFFECT_FADE_INCREMENT;
+			}
+			else
+			{
+				_vipRegisters[__BRTB] = this->fxFadeTargetBrightness.mediumRed;
+				mediumRedDone = true;
+				break;
+			}
+		}
 	}
-	else if((uint8)_vipRegisters[__BRTA] - __CAMERA_EFFECT_FADE_INCREMENT > this->fxFadeTargetBrightness.darkRed)
+
+	if(!darkRedDone)
 	{
-		_vipRegisters[__BRTA] -= __CAMERA_EFFECT_FADE_INCREMENT;
-	}
-	else
-	{
-		_vipRegisters[__BRTA] = this->fxFadeTargetBrightness.darkRed;
-		darkRedDone = true;
+		// fade dark red
+		if((int16)_vipRegisters[__BRTA] + __CAMERA_EFFECT_FADE_INCREMENT < this->fxFadeTargetBrightness.darkRed)
+		{
+			_vipRegisters[__BRTA] += __CAMERA_EFFECT_FADE_INCREMENT;
+		}
+		else if((int16)_vipRegisters[__BRTA] - __CAMERA_EFFECT_FADE_INCREMENT > (int16)this->fxFadeTargetBrightness.darkRed)
+		{
+			_vipRegisters[__BRTA] -= __CAMERA_EFFECT_FADE_INCREMENT;
+		}
+		else
+		{
+			_vipRegisters[__BRTA] = this->fxFadeTargetBrightness.darkRed;
+			darkRedDone = true;
+		}
 	}
 
 	// finish effect or call next round
