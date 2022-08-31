@@ -205,6 +205,11 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	};
 }
 
+CameraFrustum DirectDraw::getFrustum()
+{
+	return _frustum;
+}
+
 /**
  * Draws a pixel on the screen.
  * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel

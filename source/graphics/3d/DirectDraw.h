@@ -48,6 +48,7 @@ singleton class DirectDraw : Object
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
 	void drawPoint(PixelVector point, int32 color);
 	void setFrustum(CameraFrustum frustum);
+	CameraFrustum getFrustum();
 }
 
 
