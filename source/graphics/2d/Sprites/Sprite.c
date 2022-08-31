@@ -248,7 +248,7 @@ void Sprite::hide()
 /**
  * Show
  */
-void Sprite::showForDebug()
+void Sprite::forceShow()
 {
 	this->show = __SHOW_NEXT_FRAME;
 

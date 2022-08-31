@@ -225,7 +225,7 @@ abstract class Sprite : ListenerObject
 	virtual void setPosition(const PixelVector* position);
 	virtual void rewrite();
 	virtual void hideForDebug();
-	virtual void showForDebug();
+	virtual void forceShow();
 	virtual Scale getScale();
 	virtual void processEffects();
 	virtual int16 doRender(int16 index, bool evenFrame) = 0;

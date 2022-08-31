@@ -217,8 +217,8 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 
 		if(objectSprite == spareSprite)
 		{
-			ObjectSprite::showForDebug(objectSprite);
-			ObjectSpriteContainer::showForDebug(this);
+			ObjectSprite::forceShow(objectSprite);
+			ObjectSpriteContainer::forceShow(this);
 			continue;
 		}
 
@@ -231,7 +231,7 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
  */
 void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 {
-	ObjectSpriteContainer::showForDebug(this);
+	ObjectSpriteContainer::forceShow(this);
 
 	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
@@ -243,14 +243,14 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 			continue;
 		}
 
-		ObjectSprite::showForDebug(objectSprite);
+		ObjectSprite::forceShow(objectSprite);
 	}
 }
 #endif
 
-void ObjectSpriteContainer::showForDebug()
+void ObjectSpriteContainer::forceShow()
 {
-	Base::showForDebug(this);
+	Base::forceShow(this);
 	this->show = __HIDE;
 	this->positioned = true;
 	this->hideSprites = false;

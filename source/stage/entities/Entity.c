@@ -1870,7 +1870,6 @@ void Entity::hide()
 	// hide all sprites
 	if(!isDeleted(this->sprites))
 	{
-		
 		for(VirtualNode node = this->sprites->head; node ; node = node->next)
 		{
 			Sprite::hide(node->data);

@@ -702,7 +702,7 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 
 		if(sprite == spareSprite)
 		{
-			Sprite::showForDebug(spareSprite);
+			Sprite::forceShow(spareSprite);
 			continue;
 		}
 
@@ -748,7 +748,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 			continue;
 		}
 
-		Sprite::showForDebug(sprite);
+		Sprite::forceShow(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
 
