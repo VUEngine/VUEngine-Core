@@ -240,6 +240,7 @@ class SoundWrapper : ListenerObject
 	const Channel* getChannel(uint8 index);
 	bool isUsingChannel(Channel* channel);
 	bool isPaused();
+	bool isTurnedOn();
 	bool hasPCMTracks();
 	bool isFadingIn();
 	bool isFadingOut();

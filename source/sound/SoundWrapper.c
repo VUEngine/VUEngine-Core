@@ -215,6 +215,16 @@ bool SoundWrapper::isPaused()
 }
 
 /**
+ * Is turned on?
+ *
+ * @return bool
+ */
+bool SoundWrapper::isTurnedOn()
+{
+	return this->turnedOn;
+}
+
+/**
  *  Has PCM tracks?
  *
  * @return bool
@@ -334,7 +344,7 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
  */
 void SoundWrapper::pause()
 {
-	if(this->turnedOn)
+	if(!this->paused && this->turnedOn)
 	{
 		this->paused = true;
 
@@ -355,7 +365,7 @@ void SoundWrapper::pause()
  */
 void SoundWrapper::unpause()
 {
-	if(this->turnedOn)
+	if(this->paused && this->turnedOn)
 	{
 		VirtualNode node = this->channels->head;
 
@@ -862,7 +872,7 @@ void SoundWrapper::updateVolumeReduction()
 
 				case kSoundWrapperPlaybackFadeOut:
 
-					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+					this->volumeReduction += this->volumeReductionMultiplier;
 
 					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
 					{
