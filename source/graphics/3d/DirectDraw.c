@@ -552,6 +552,9 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		{
 			return;
 		}
+
+		xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
+		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
 	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
@@ -560,19 +563,15 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		{
 			return;
 		}
-	}
-/*
-	xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
-	yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 
-	xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
-	yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
+		xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
+		yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
+	}
 
 	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
 	{
 		return;
 	}
-*/
 
 /*
 	PixelVector::print(fromPoint, 21, 6);
