@@ -45,14 +45,18 @@ singleton class CameraEffectManager : ListenerObject
 {
 	// Target brightness for current fade effect
 	Brightness fxFadeTargetBrightness;
-	// Delay for current fade effect
-	uint8 fxFadeDelay;
 	// Callback scope for current fade effect
 	ListenerObject fxFadeCallbackScope;
+	// Delay for current fade effect
+	uint8 fxFadeDelay;
+	// fade increment
+	uint8 fadeEffectIncrement;
 
 	/// @publicsection
 	static CameraEffectManager getInstance();
 	void constructor();
+	void reset();
+	void setFadeIncrement(uint8 fadeEffectIncrement);
 	Brightness getDefaultBrightness();
 	virtual void startEffect(int32 effect, va_list args);
 	virtual void stopEffect(int32 effect);

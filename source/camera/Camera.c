@@ -507,6 +507,8 @@ void Camera::reset()
 	this->transformationFlags = false;
 
 	Camera::resetCameraFrustum(this);
+
+	CameraEffectManager::reset(this->cameraEffectManager);
 }
 
 /**
