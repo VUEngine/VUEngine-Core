@@ -1405,7 +1405,11 @@ void Stage::setupSounds()
 			}
 
 			VirtualList::pushBack(this->soundWrappers, soundWrapper);
-			SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+
+			if(!SoundWrapper::isTurnedOn(soundWrapper))
+			{
+				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+			}
 		}
 	}
 }
