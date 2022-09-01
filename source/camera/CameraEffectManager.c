@@ -310,7 +310,7 @@ void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness*
 void CameraEffectManager::fxFadeAsyncStop()
 {
 	// remove event listener
-	if(this->fxFadeCallbackScope)
+	if(!isDeleted(this->fxFadeCallbackScope))
 	{
 		CameraEffectManager::removeEventListenerScopes(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
 	}
@@ -414,7 +414,7 @@ void CameraEffectManager::fxFadeAsync()
 	bool lightRedDone 	= brtc == this->fxFadeTargetBrightness.brightRed;
 	bool mediumRedDone 	= brtb == this->fxFadeTargetBrightness.mediumRed;
 	bool darkRedDone 	= brta == this->fxFadeTargetBrightness.darkRed;
-	
+
 	// fade light red
 	if(!lightRedDone)
 	{
