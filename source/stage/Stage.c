@@ -226,6 +226,46 @@ void Stage::fadeSounds(uint32 playbackType)
 	}
 }
 
+void Stage::pauseSounds()
+{
+	if(!isDeleted(this->soundWrappers))
+	{
+		// Do not need to release sound wrappers here,
+		// they are taken care by the SoundManager when
+		// I called SoundManager::stopAllSounds
+		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(!isDeleted(soundWrapper))
+			{
+				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
+				SoundWrapper::pause(soundWrapper);
+			}
+		}
+	}
+}
+
+void Stage::unpauseSounds()
+{
+	if(!isDeleted(this->soundWrappers))
+	{
+		// Do not need to release sound wrappers here,
+		// they are taken care by the SoundManager when
+		// I called SoundManager::stopAllSounds
+		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(!isDeleted(soundWrapper))
+			{
+				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
+				SoundWrapper::unpause(soundWrapper);
+			}
+		}
+	}
+}
+
 // determine if a point is visible
 int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
 {

@@ -238,6 +238,8 @@ class Stage : Container
 	void forceNoPopIn(bool forceNoPopIn);
 	VirtualList getStageEntityDescriptions();
 	void fadeSounds(uint32 playbackType);
+	void pauseSounds();
+	void unpauseSounds();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
