@@ -318,13 +318,13 @@ void ParticleSystem::update(uint32 elapsedTime)
 		uint16 spawnedParticles = 0;
 		do 
 		{
-			++this->totalSpawnedParticles;
-
 			if(!this->loop && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem::pause(this);
 				return;
 			}
+
+			++this->totalSpawnedParticles;
 
 			if(this->particleSystemSpec->recycleParticles)
 			{
@@ -700,7 +700,6 @@ void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
 {
 	this->selfDestroyWhenDone = selfDestroyWhenDone;
 }
-
 
 void ParticleSystem::start()
 {
