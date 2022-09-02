@@ -51,6 +51,8 @@ singleton class CameraEffectManager : ListenerObject
 	uint8 fxFadeDelay;
 	// fade increment
 	uint8 fadeEffectIncrement;
+	// flag to know if remove the event listener on completion
+	bool startingANewEffect;
 
 	/// @publicsection
 	static CameraEffectManager getInstance();
