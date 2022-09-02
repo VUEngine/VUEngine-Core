@@ -860,7 +860,7 @@ void SoundWrapper::updateVolumeReduction()
 			{
 				case kSoundWrapperPlaybackFadeIn:
 
-					this->volumeReduction -= this->volumeReductionMultiplier;
+					this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
 
 					if(0 >= this->volumeReduction)
 					{
@@ -872,7 +872,7 @@ void SoundWrapper::updateVolumeReduction()
 
 				case kSoundWrapperPlaybackFadeOut:
 
-					this->volumeReduction += this->volumeReductionMultiplier;
+					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
 
 					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
 					{
