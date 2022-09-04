@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundWrapper.h>
+#include <Game.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
 #include <HardwareManager.h>
@@ -854,7 +855,7 @@ void SoundWrapper::updateVolumeReduction()
 	{
 		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
 
-		if((__GAME_FRAME_DURATION << 1) <= elapsedMilliseconds)
+		if(Game::getGameFrameDuration(Game::getInstance()) <= (elapsedMilliseconds >> 1))
 		{
 			switch(this->playbackType)
 			{

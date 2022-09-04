@@ -111,6 +111,8 @@ void VIPManager::constructor()
 	this->timeErrorCounter = 0;
 	this->scanErrorCounter = 0;
 
+	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
+
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
 #else
@@ -148,6 +150,8 @@ void VIPManager::reset()
 #else
 	this->forceDrawingSync = false;
 #endif
+
+	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 }
 
 void VIPManager::setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing)
@@ -197,6 +201,14 @@ bool VIPManager::hasFrameStartedDuringXPEND()
 }
 
 /**
+ * Return game frame duration
+ */
+uint16 VIPManager::getGameFrameDuration()
+{
+	return this->gameFrameDuration;
+}
+
+/**
  * Enable VIP's interrupts
  *
  * @param interruptCode			Interrupts to enable
@@ -207,7 +219,12 @@ void VIPManager::enableInterrupts(uint16 interruptCode)
 
 	interruptCode |= this->customInterrupts;
 
-	_vipRegisters[__INTENB]= interruptCode | __TIMEERR | __SCANERR;
+	_vipRegisters[__INTENB] = interruptCode | __TIMEERR | __SCANERR;
+
+	if(0 != this->frameCycle)
+	{
+		_vipRegisters[__INTENB] |= __FRAMESTART;
+	}
 }
 
 /**
@@ -285,6 +302,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
+				Game::nextFrameStarted(Game::getInstance(), __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
 
 			case __GAMESTART:
@@ -326,11 +344,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				Game::saveProcessNameDuringFRAMESTART(Game::getInstance());
 #endif
 
-				ClockManager::update(ClockManager::getInstance(), __GAME_FRAME_DURATION);
+				ClockManager::update(ClockManager::getInstance(), this->gameFrameDuration);
 
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
-				Game::nextFrameStarted(Game::getInstance());
+				Game::nextGameCycleStarted(Game::getInstance());
 
 				this->frameStarted = this->processingXPEND;
 
@@ -481,13 +499,27 @@ void VIPManager::applyPostProcessingEffects()
 	}
 }
 
+void VIPManager::setFrameCycle(uint8 frameCycle)
+{
+	this->frameCycle = frameCycle;
+
+	if(3 < this->frameCycle)
+	{
+		this->frameCycle = 3;
+	}
+
+	this->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << this->frameCycle;
+
+	VIPManager::displayOn(this);
+}
+
 /**
  * Turn on the displays
  */
 void VIPManager::displayOn()
 {
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__FRMCYC] = __FRAME_CYCLE;
+	_vipRegisters[__FRMCYC] = this->frameCycle;
 	_vipRegisters[__DPCTRL] = (_vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP)) & ~__LOCK;
 }
 
@@ -499,7 +531,7 @@ void VIPManager::displayOff()
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__XPCTRL] = 0;
 	_vipRegisters[__DPCTRL] = 0;
-	_vipRegisters[__FRMCYC] = 1;
+	_vipRegisters[__FRMCYC] = 3;
 
 	VIPManager::disableInterrupts(this);
 }

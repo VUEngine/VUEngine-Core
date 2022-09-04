@@ -91,8 +91,8 @@ singleton class Game : ListenerObject
 	// last process' name
 	char* lastProcessName;
 	// frame flags
-	volatile bool currentFrameEnded;
-	volatile bool nextFrameStarted;
+	volatile bool currentGameCycleEnded;
+	volatile bool nextGameCycleStarted;
 	// random seed
 	uint32 randomSeed;
 	// game paused flag
@@ -120,6 +120,8 @@ singleton class Game : ListenerObject
 	Stage getStage();
 	GameState getCurrentState();
 	Clock getUpdateClock();
+	uint16 getGameFrameDuration();
+	void setGameFrameRate(uint16 gameFrameRate);
 	bool isEnteringSpecialMode();
 	bool isExitingSpecialMode();
 	bool isPaused();
@@ -139,7 +141,8 @@ singleton class Game : ListenerObject
 	bool isInAnimationInspector();
 	bool isInSoundTest();
 	void openTool(ToolState toolState);
-	void nextFrameStarted();
+	void nextFrameStarted(uint16 gameFrameDuration);
+	void nextGameCycleStarted();
 	bool hasCurrentFrameEnded();
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();

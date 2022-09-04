@@ -132,8 +132,8 @@ void Game::constructor()
 	this->currentState = NULL;
 	this->saveDataManager = NULL;
 	this->nextState = NULL;
-	this->nextFrameStarted = false;
-	this->currentFrameEnded = false;
+	this->nextGameCycleStarted = false;
+	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 
 	// make sure all managers are initialized now
@@ -266,12 +266,12 @@ void Game::start(GameState state)
 
 			Game::debug(this);
 
-			Game::currentFrameEnded(this);
+			Game::currentGameCycleEnded(this);
 
-			while(!this->nextFrameStarted)
+			while(!this->nextGameCycleStarted)
 			{
 				// This breaks PCM playback but reports torn frames more accurately
-				if(!this->nextFrameStarted)
+				if(!this->nextGameCycleStarted)
 				{
 					// Halting the CPU seems to only affect the profiling in Mednafen
 					// But still haven't tested it on hardware
@@ -398,8 +398,8 @@ void Game::setNextState(GameState state)
 	this->nextState = NULL;
 
 	// Reset flags
-	this->currentFrameEnded = true;
-	this->nextFrameStarted = false;
+	this->currentGameCycleEnded = true;
+	this->nextGameCycleStarted = false;
 
 	// Save current state
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -779,17 +779,25 @@ void Game::updateFrameRate()
 	FrameRate::update(this->frameRate);
 }
 
-void Game::nextFrameStarted()
+void Game::nextGameCycleStarted()
 {
-	FrameRate::gameFrameStarted(this->frameRate, this->currentFrameEnded);
+	static int i = 0;
+	PRINT_INT(++i, 1, 10);
+	this->nextGameCycleStarted = true;
+}
 
-	this->nextFrameStarted = true;
+void Game::nextFrameStarted(uint16 gameFrameDuration)
+{
+
+	static int i = 0;
+	PRINT_INT(++i, 1, 11);
+	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
 
 	static uint16 totalTime = 0;
 
-	totalTime += __GAME_FRAME_DURATION;
+	totalTime += gameFrameDuration;
 
-	TimerManager::nextFrameStarted(this->timerManager, __GAME_FRAME_DURATION * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::nextFrameStarted(this->timerManager, gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
@@ -847,7 +855,7 @@ void Game::nextFrameStarted()
 	}
 
 #ifdef __ENABLE_PROFILER
-	if(this->currentFrameEnded)
+	if(this->currentGameCycleEnded)
 	{
 		Profiler::end(Profiler::getInstance());
 		Profiler::start(Profiler::getInstance());
@@ -861,21 +869,21 @@ void Game::nextFrameStarted()
 
 void Game::currentFrameStarted()
 {
-	this->nextFrameStarted = false;
-	this->currentFrameEnded = false;
+	this->nextGameCycleStarted = false;
+	this->currentGameCycleEnded = false;
 
 	Game::updateFrameRate(this);
 }
 
-void Game::currentFrameEnded()
+void Game::currentGameCycleEnded()
 {
-	this->currentFrameEnded = true;
+	this->currentGameCycleEnded = true;
 }
 
 bool Game::hasCurrentFrameEnded()
 {
 	// raise flag to allow the next frame to start
-	return this->currentFrameEnded;
+	return this->currentGameCycleEnded;
 }
 
 void Game::run()
@@ -962,10 +970,26 @@ Clock Game::getPhysicsClock()
 	return isDeleted(state) ? NULL : GameState::getPhysicsClock(GameState::safeCast(state));
 }
 
+uint16 Game::getGameFrameDuration()
+{
+	return VIPManager::getGameFrameDuration(this->vipManager);
+}
+
 // retrieve last process' name
 char* Game::getLastProcessName()
 {
 	return this->lastProcessName;
+}
+
+void Game::setGameFrameRate(uint16 gameFrameRate)
+{
+	if(__MAXIMUM_FPS < gameFrameRate)
+	{
+		gameFrameRate = __MAXIMUM_FPS;
+	}
+
+//	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
+	VIPManager::setFrameCycle(this->vipManager, 1);
 }
 
 #ifdef __TOOLS

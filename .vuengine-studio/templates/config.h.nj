@@ -190,7 +190,7 @@
 #define	__FRAME_CYCLE												{{ engine.frameRate.frameCycle }}
 
 // target frames per second
-#define __TARGET_FPS 												(50 >> __FRAME_CYCLE)
+#define __TARGET_FPS 												(__MAXIMUM_FPS >> __FRAME_CYCLE)
 
 // milliseconds that must take to complete a game cycle
 #define __GAME_FRAME_DURATION										(__MILLISECONDS_PER_SECOND / __TARGET_FPS)

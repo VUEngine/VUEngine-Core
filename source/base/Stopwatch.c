@@ -16,6 +16,7 @@
 #include <StopwatchManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <Game.h>
 #include <VirtualList.h>
 
 
@@ -76,7 +77,7 @@ float Stopwatch::lap()
 	{
 		if(currentTimerCounter > this->previousTimerCounter)
 		{
-			timerCounter = __GAME_FRAME_DURATION / this->timeProportion;
+			timerCounter = Game::getGameFrameDuration(Game::getInstance()) / this->timeProportion;
 		}
 		else
 		{

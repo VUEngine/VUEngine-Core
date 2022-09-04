@@ -263,6 +263,8 @@ singleton class VIPManager : ListenerObject
 	uint16 scanErrorCounter;
 	uint16 customInterrupts;
 	uint16 currrentInterrupt;
+	uint16 gameFrameDuration;
+	uint8 frameCycle;
 	bool processingGAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
@@ -288,6 +290,7 @@ singleton class VIPManager : ListenerObject
 	void displayHide();
 	void clearScreen();
 	void clearBgmapSegment(int32 segment, int32 size);
+	void setFrameCycle(uint8 frameCycle);
 	void setForceDrawingSync(bool forceDrawingSync);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
@@ -302,6 +305,7 @@ singleton class VIPManager : ListenerObject
 	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStartedDuringXPEND();
+	uint16 getGameFrameDuration();
 }
 
 
