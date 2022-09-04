@@ -211,7 +211,7 @@ const Channel* SoundWrapper::getChannel(uint8 index)
  */
 bool SoundWrapper::isPaused()
 {
-	return this->paused;
+	return SoundWrapper::isTurnedOn(this) && this->paused;
 }
 
 /**

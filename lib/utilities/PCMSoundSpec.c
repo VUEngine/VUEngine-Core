@@ -106,7 +106,7 @@ SoundROM PCMSound =
 	"PCM Sound Name",
 
 	/// Play in loop
-	true,
+	false,
 
 	/// Target timer resolution in us
 	0,
