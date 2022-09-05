@@ -1177,12 +1177,12 @@ void VUEngine::enableKeypad()
 	KeypadManager::enable(this->keypadManager);
 }
 
-void VUEngine::pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void VUEngine::pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }

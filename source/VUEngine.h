@@ -101,8 +101,9 @@ singleton class VUEngine : ListenerObject
 	/// @publicsection
 	static VUEngine getInstance();
 	static bool isConstructed();
-	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void addState(GameState state);
 	void changeState(GameState state);
 	void cleanAndChangeState(GameState state);
@@ -128,7 +129,6 @@ singleton class VUEngine : ListenerObject
 	bool isInSpecialMode();
 	void pause(GameState pauseState);
 	void printClassSizes(int32 x, int32 y);
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void reset(bool resetSounds);
 	void resetProfiling();
 	void setOptical(Optical optical);

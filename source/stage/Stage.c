@@ -414,7 +414,7 @@ void Stage::loadPostProcessingEffects()
 		int32 i = 0;
 		for(; this->stageSpec->postProcessingEffects[i]; i++)
 		{
-			VUEngine::pushFrontProcessingEffect(VUEngine::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
+			VUEngine::pushFrontPostProcessingEffect(VUEngine::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
 }
