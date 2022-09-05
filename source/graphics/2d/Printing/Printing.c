@@ -142,6 +142,13 @@ void Printing::setupSprite()
 	};
 
 	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&PRINTING_SP, NULL));
+
+	PixelVector position = 
+	{
+		0, 0, 0, 0
+	};
+
+	PrintingSprite::setPosition(this->printingSprite, &position);	
 }
 
 void Printing::setOrientation(uint8 value)
@@ -180,7 +187,7 @@ void Printing::setDirection(uint8 value)
 	}
 }
 
-void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
+void Printing::onFontCharSetRewritten(ListenerObject eventFirer __attribute__((unused)))
 {
 	Printing::fireEvent(this, kEventFontRewritten);
 	NM_ASSERT(!isDeleted(this), "Printing::onFontCharSetRewritten: deleted this during kEventFontRewritten");
@@ -221,7 +228,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				}
 			}
 		}
@@ -248,10 +255,10 @@ void Printing::setFontPage(const char* font, uint16 page)
 
 void Printing::loadDebugFont()
 {
-	Mem::copyBYTE(
-		(uint8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_CHARSET_OFFSET << 4)),
-		(uint8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles),
-		VUENGINE_DEBUG_FONT_SIZE << 4
+	Mem::copyWORD(
+		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
+		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
+		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)
 	);
 }
 
@@ -279,17 +286,17 @@ void Printing::clear()
 
 void Printing::releaseFonts()
 {
-	Printing::removeAllEventListeners(this, kEventFontRewritten);
+	Printing::removeEventListeners(this, NULL, kEventFontRewritten);
 
 	VirtualNode node = VirtualList::begin(this->fonts);
 
-	for(; node; node = VirtualNode::getNext(node))
+	for(; NULL != node; node = VirtualNode::getNext(node))
 	{
 		FontData* fontData = VirtualNode::getData(node);
 
 		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
 		{
-			CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+			CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 
 			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 		}
@@ -329,7 +336,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				// iterate over registered fonts to find spec of font to use
 				VirtualNode node = VirtualList::begin(this->fonts);
-				for(; node; node = VirtualNode::getNext(node))
+				for(; NULL != node; node = VirtualNode::getNext(node))
 				{
 					FontData* fontData = VirtualNode::getData(node);
 					if(!strcmp(fontData->fontSpec->name, font))
@@ -345,7 +352,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 			}
 		}
 	}
@@ -359,7 +366,7 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 {
 	if(value < 0)
 	{
-		value *= -1;
+		value = -value;
 
 		Printing::out(this, x++, y, "-", font);
 		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
@@ -582,6 +589,11 @@ int16 Printing::getWorldCoordinatesY()
 int16 Printing::getWorldCoordinatesP()
 {
 	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
+}
+
+PixelVector Printing::getSpritePosition()
+{
+	return !isDeleted(this->printingSprite) ? PrintingSprite::getDisplacedPosition(this->printingSprite) : (PixelVector){0, 0, 0, 0};
 }
 
 void Printing::resetCoordinates()

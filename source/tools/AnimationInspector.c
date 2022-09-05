@@ -15,7 +15,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationInspector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <GameState.h>
@@ -740,15 +739,15 @@ void AnimationInspector::createSprite()
 
 	Vector3D position = *_cameraPosition;
 
-	position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
-	position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
+	position.x += __I_TO_FIXED(__HALF_SCREEN_WIDTH);
+	position.y += __I_TO_FIXED(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
 	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
@@ -923,7 +922,7 @@ void AnimationInspector::createFrameEditionSelector()
  * @private
  * @param eventFirer		AnimationController
  */
-void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((unused)))
+void AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{

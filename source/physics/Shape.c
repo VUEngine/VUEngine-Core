@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <CollisionManager.h>
 #include <CollisionHelper.h>
 #include <debugConfig.h>
@@ -52,6 +52,7 @@ void Shape::constructor(SpatialObject owner)
 	this->owner = owner;
 
 	// not setup yet
+	this->destroyMe = false;
 	this->ready = false;
 	this->enabled = true;
 
@@ -95,7 +96,7 @@ void Shape::destructor()
 	{
 		VirtualNode node = this->collidingShapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -103,8 +104,8 @@ void Shape::destructor()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+				Shape::removeEventListener(collidingShapeRegistry->shape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Shape::removeEventListener(collidingShapeRegistry->shape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -128,7 +129,7 @@ void Shape::reset()
 	{
 		VirtualNode node = this->collidingShapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -136,8 +137,8 @@ void Shape::reset()
 
 			if(!isDeleted(collidingShapeRegistry->shape))
 			{
-				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-				Shape::removeEventListener(collidingShapeRegistry->shape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+				Shape::removeEventListener(collidingShapeRegistry->shape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+				Shape::removeEventListener(collidingShapeRegistry->shape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			delete collidingShapeRegistry;
@@ -222,7 +223,7 @@ void Shape::setPosition(const Vector3D* position __attribute__((unused)))
  */
 void Shape::enterCollision(CollisionData* collisionData)
 {
-	if( SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
+	if(SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, collisionData->collisionInformation.collidingShape);
 
@@ -244,6 +245,7 @@ void Shape::updateCollision(CollisionData* collisionData)
 	{
 		if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT + __PIXELS_TO_METERS(1))
 		{
+			collisionData->collisionInformation.solutionVector.magnitude -= __STILL_COLLIDING_CHECK_SIZE_INCREMENT;
 			Shape::resolveCollision(this, &collisionData->collisionInformation, false);
 		}
 	}
@@ -272,9 +274,21 @@ void Shape::exitCollision(CollisionData* collisionData)
   * @return						CollisionData
  */
 // check if two rectangles overlap
-CollisionData Shape::collides(Shape shape)
+CollisionResult Shape::collides(Shape shape)
 {
-	CollisionData collisionData =
+	if(isDeleted(this->owner))
+	{
+		return kNoCollision;
+	}
+
+	CollisionData collisionData;
+	collisionData.result = kNoCollision;
+	collisionData.collisionInformation.shape = NULL;
+	collisionData.collisionInformation.collidingShape = NULL;
+	collisionData.shapeNotCollidingAnymore = NULL;
+	collisionData.isImpenetrableCollidingShape = false;
+	
+	/*
 	{
 		// result
 		kNoCollision,
@@ -299,17 +313,12 @@ CollisionData Shape::collides(Shape shape)
 
 		// is impenetrable colliding shape
 		false,
-	};
-
-	if(isDeleted(this->owner))
-	{
-		return collisionData;
-	}
+	};*/
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, shape);
 
 	// test if new collision
-	if(!collidingShapeRegistry)
+	if(NULL == collidingShapeRegistry)
 	{
 		// check for new overlap
 		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
@@ -324,14 +333,12 @@ CollisionData Shape::collides(Shape shape)
 				collidingShapeRegistry = Shape::registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
 			}
 		}
-
-		//return collisionData;
 	}
 	// impenetrable registered colliding shapes require a another test
 	// to determine if I'm not colliding against them anymore
 	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionData.collisionInformation =  Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		collisionData.collisionInformation = Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -385,7 +392,7 @@ CollisionData Shape::collides(Shape shape)
 			break;
 	}
 
-	return collisionData;
+	return collisionData.result;
 }
 
 /**
@@ -393,9 +400,9 @@ CollisionData Shape::collides(Shape shape)
  *
  * @param displacement		shape displacement
  */
-bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
+bool Shape::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __attribute__ ((unused)))
 {
-	if(!this->collidingShapes)
+	if(!this->collidingShapes || NULL == this->collidingShapes->head)
 	{
 		return true;
 	}
@@ -404,9 +411,7 @@ bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attrib
 
 	Vector3D normalizedDisplacement = Vector3D::normalize(displacement);
 
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; canMove && node; node = node->next)
+	for(VirtualNode node = this->collidingShapes->head; canMove && node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -417,8 +422,8 @@ bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attrib
 			// check if solution is valid
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
-				fix10_6 cosAngle = Vector3D::dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-				canMove &= -__F_TO_FIX10_6(1 - 0.01f) < cosAngle;
+				fixed_t cosAngle = Vector3D::dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
+				canMove &= -(__1I_FIXED - __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT) < cosAngle;
 			}
 		}
 	}
@@ -437,7 +442,7 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
@@ -548,7 +553,7 @@ bool Shape::isEnabled()
 void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
-	CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, activate);
+	CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, activate);
 }
 
 /**
@@ -570,7 +575,7 @@ void Shape::enable(bool enable)
 
 	if(!this->enabled)
 	{
-		CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, false);
+		CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, false);
 	}	
 }
 
@@ -645,8 +650,8 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 	{
 		VirtualList::pushBack(this->collidingShapes, collidingShapeRegistry);
 
-		Shape::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-		Shape::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+		Shape::addEventListener(collidingShape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Shape::addEventListener(collidingShape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return collidingShapeRegistry;
@@ -675,8 +680,8 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
 
 	if(!isDeleted(collidingShape))
 	{
-		Shape::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
-		Shape::removeEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
+		Shape::removeEventListener(collidingShape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Shape::removeEventListener(collidingShape, ListenerObject::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return true;
@@ -688,7 +693,7 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
  * @private
  * @param eventFirer		Destroyed shape
  */
-void Shape::onCollidingShapeDestroyed(Object eventFirer)
+void Shape::onCollidingShapeDestroyed(ListenerObject eventFirer)
 {
 	if(isDeleted(this->owner))
 	{
@@ -719,7 +724,7 @@ void Shape::onCollidingShapeDestroyed(Object eventFirer)
  * @private
  * @param eventFirer		Changed shape
  */
-void Shape::onCollidingShapeChanged(Object eventFirer)
+void Shape::onCollidingShapeChanged(ListenerObject eventFirer)
 {
 	if(isDeleted(this->owner))
 	{
@@ -752,14 +757,14 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 {
 	ASSERT(shape, "Shape::findCollidingShapeRegistry: null shape");
 
-	if(!this->collidingShapes || !shape)
+	if(NULL == this->collidingShapes || isDeleted(shape))
 	{
 		return NULL;
 	}
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		ASSERT(!isDeleted(node->data), "Shape::findCollidingShapeRegistry: deleted registry");
 
@@ -777,18 +782,18 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
  *
  * @return				The sum of friction coefficients
  */
-fix10_6 Shape::getCollidingFrictionCoefficient()
+fixed_t Shape::getCollidingFrictionCoefficient()
 {
 	if(!this->collidingShapes)
 	{
 		return 0;
 	}
 
-	fix10_6 totalFrictionCoefficient = 0;
+	fixed_t totalFrictionCoefficient = 0;
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::getCollidingFriction: dead collidingShapeRegistry");
@@ -815,7 +820,7 @@ int32 Shape::getNumberOfImpenetrableCollidingShapes()
 
 	VirtualNode node = this->collidingShapes->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		count += ((CollidingShapeRegistry*)node->data)->isImpenetrable ? 1 : 0;
 	}

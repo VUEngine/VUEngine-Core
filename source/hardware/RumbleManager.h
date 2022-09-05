@@ -76,9 +76,9 @@ typedef struct RumbleEffectSpec
 	uint8 effect;
 	/// Frequency
 	uint8 frequency;
-	/// Sustain+
+	/// Positive Sustain
 	uint8 sustainPositive;
-	/// Sustain-
+	/// Negative Sustain
 	uint8 sustainNegative;
 	/// Overdrive
 	uint8 overdrive;
@@ -97,7 +97,7 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class RumblePakManager : Object
+singleton class RumbleManager : Object
 {
 	CommunicationManager communicationManager;
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];
@@ -112,7 +112,7 @@ singleton class RumblePakManager : Object
 	uint8 breaking;
 
 	/// @publicsection
-	static RumblePakManager getInstance();
+	static RumbleManager getInstance();
 
 	void reset();
 	void setAsync(bool async);

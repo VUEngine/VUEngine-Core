@@ -95,27 +95,27 @@ void Ball::setPosition(const Vector3D* position)
 	Ball::updateRightBox(this);
 }
 
-static void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
+static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
 {
 	// project this onto the current normal
-	fix10_6 dotProduct = Vector3D::dotProduct(vector, center);
+	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
 
 	*min = dotProduct - radius;
 	*max = dotProduct + radius;
 
 	if(*min > *max)
 	{
-		fix10_6 aux = *min;
+		fixed_t aux = *min;
 		*min = *max;
 		*max = aux;
 	}
 }
 
-CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement)
 {
 	// save state
 	Vector3D center = this->center;
-	fix10_6 radius = this->radius;
+	fixed_t radius = this->radius;
 	this->radius += sizeIncrement;
 
 	// add displacement
@@ -141,14 +141,15 @@ Vector3D Ball::getPosition()
 // configure Polyhedron
 void Ball::configureWireframe()
 {
-	if(this->wireframe)
+	if(!isDeleted(this->wireframe))
 	{
-		Sphere::setCenter(this->wireframe, this->center);
 		return;
 	}
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Sphere(this->center, this->radius, __COLOR_BRIGHT_RED));
+	this->wireframe = Wireframe::safeCast(new Sphere(NULL));
+	Wireframe::setup(this->wireframe, &this->center, NULL, NULL);
+	Sphere::setRadius(this->wireframe, this->radius);
 }
 
 // print debug data

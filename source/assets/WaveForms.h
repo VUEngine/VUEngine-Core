@@ -23,6 +23,7 @@ extern const int8 SquareDuty75WaveForm[];
 extern const int8 TriangleWaveForm[];
 extern const int8 TrumpetWaveForm[];
 extern const int8 ViolinWaveForm[];
+extern const int8 PCMWaveForm[];
 
 
 #endif

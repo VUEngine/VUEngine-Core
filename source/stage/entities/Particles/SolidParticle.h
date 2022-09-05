@@ -34,13 +34,13 @@ typedef struct SolidParticleSpec
 	PhysicalParticleSpec physicalParticleSpec;
 
 	/// ball's radius
-	fix10_6 radius;
+	fixed_t radius;
 
 	/// friction for physics
-	fix10_6 frictionCoefficient;
+	fixed_t frictionCoefficient;
 
 	/// bounciness for physics
-	fix10_6 bounciness;
+	fixed_t bounciness;
 
 	/// object's in-game type
 	uint32 inGameType;
@@ -77,12 +77,12 @@ class SolidParticle : PhysicalParticle
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
+	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
 	Shape getShape();
 	VirtualList getShapes();
-	override fix10_6 getWidth();
-	override fix10_6 getHeight();
-	override fix10_6 getDepth();
+	override fixed_t getWidth();
+	override fixed_t getHeight();
+	override fixed_t getDepth();
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override bool handleMessage(Telegram telegram);

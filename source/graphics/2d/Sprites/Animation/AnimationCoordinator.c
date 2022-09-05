@@ -33,7 +33,7 @@ friend class VirtualList;
  *
  * @param charSetSpec		CharSetSpec
  */
-void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, Object scope)
+void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec, ListenerObject scope)
 {
 	Base::constructor();
 

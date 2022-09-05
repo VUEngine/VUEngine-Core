@@ -61,8 +61,10 @@ enum Events
 	kEventVIPManagerInterrupt,
 	kEventVIPManagerTimeError,
 	kEventVIPManagerScanError,
-	kEventVIPManagerFRAMESTARTDuringFRAMESTART,
+	kEventVIPManagerGAMESTARTDuringGAMESTART,
 	kEventVIPManagerXPENDDuringXPEND,
+	kEventVIPManagerGAMESTARTDuringXPEND,
+	kEventVIPManagerXPENDDuringGAMESTART,
 	kEventVIPManagerFrameBuffersProcessingSuspended,
 
 	// do not remove me

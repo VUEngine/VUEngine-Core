@@ -73,7 +73,7 @@ class ObjectSprite : Sprite
 	int16 totalObjects;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner);
+	void constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner);
 	int16 getTotalObjects();
 	void invalidateObjectSpriteContainer();
 	void resetTotalObjects();

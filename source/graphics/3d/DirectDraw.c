@@ -18,6 +18,7 @@
 #include <VirtualList.h>
 #include <VIPManager.h>
 #include <Camera.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -25,6 +26,43 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern uint32* _currentDrawingFrameBufferSet;
+DirectDraw _directDraw = NULL;
+
+#define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
+#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
+#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		1
+#define __FRAME_BUFFER_SIDE_BIT_INDEX						16
+#define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
+#define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
+#define __FRAME_BUFFERS_SIZE								0x6000
+
+enum DirectDrawLineShrinkingResult
+{
+	kDirectDrawLineShrinkingInvalid = 0,
+	kDirectDrawLineShrinkingNone,
+	kDirectDrawLineShrinkingSafe,
+	kDirectDrawLineShrinkingUnsafe
+};
+
+
+typedef struct CustomCameraFrustum
+{
+	fix7_9_ext x0;
+	fix7_9_ext y0;
+	fix7_9_ext z0;
+	fix7_9_ext x1;
+	fix7_9_ext y1;
+	fix7_9_ext z1;
+} CustomCameraFrustum;
+
+static CameraFrustum _frustum;
+CustomCameraFrustum _frustumFixedPoint;
+uint16 _frustumWidth = __SCREEN_WIDTH;
+uint16 _frustumHeight = __SCREEN_HEIGHT;
+uint16 _frustumDepth = __SCREEN_DEPTH;
+
+uint16 _frustumWidthExtended = __SCREEN_WIDTH << 2;
+uint16 _frustumHeightExtended = __SCREEN_HEIGHT << 2;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,6 +86,18 @@ extern uint32* _currentDrawingFrameBufferSet;
 void DirectDraw::constructor()
 {
 	Base::constructor();
+
+	DirectDraw::setFrustum(this, (CameraFrustum)
+	{
+		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
+	});
+
+	this->totalDrawPixels = 0;
+	this->maximuDrawPixels = 0;
+
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
+	_directDraw = this;
 }
 
 /**
@@ -59,12 +109,105 @@ void DirectDraw::destructor()
 	Base::destructor();
 }
 
+void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	this->maximuDrawPixels = this->totalDrawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+}
+
 /**
  * Reset
  */
 void DirectDraw::reset()
 {
-	// dummy, don't remove
+	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+}
+
+/**
+ * Reset
+ */
+void DirectDraw::startDrawing()
+{
+#ifdef __PROFILE_DIRECT_DRAWING
+	static int counter = 0;
+
+	if(__TARGET_FPS <= counter++)
+	{
+		PRINT_TEXT("Total pixels:    /      ", 1, 1);
+		PRINT_INT(this->totalDrawPixels, 14, 1);
+		PRINT_INT(this->maximuDrawPixels, 19, 1);
+		counter = 0;
+	}
+#endif
+
+	if(this->totalDrawPixels < _directDraw->maximuDrawPixels)
+	{
+		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < _directDraw->maximuDrawPixels)
+		{
+			_directDraw->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+		}
+	}
+
+	this->totalDrawPixels = 0;
+}
+
+void DirectDraw::setFrustum(CameraFrustum frustum)
+{
+	if(frustum.x1 > __SCREEN_WIDTH)
+	{
+		frustum.x1 = __SCREEN_WIDTH - 1;
+	}
+
+	if(frustum.y1 > __SCREEN_HEIGHT)
+	{
+		frustum.y1 = __SCREEN_HEIGHT - 1;
+	}
+
+	// 9: 2's power equal to the math type fixed_t
+	if(frustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
+	{
+		frustum.z1 = 1;
+	}
+
+	if(frustum.x0 > frustum.x1)
+	{
+		frustum.x0 = frustum.x1 - 1;
+	}
+
+	if(frustum.y0 > frustum.y1)
+	{
+		frustum.y0 = frustum.y1 - 1;
+	}
+
+	if(frustum.z0 > frustum.z1)
+	{
+		frustum.z0 = frustum.z1 - 1;
+	}
+
+	if(0 > frustum.z0)
+	{
+		frustum.z0 = 0;
+	}
+
+	_frustum = frustum;
+	_frustumWidth = _frustum.x1 > _frustum.x0 ? _frustum.x1 - _frustum.x0 : _frustum.x0 - _frustum.x1;
+	_frustumHeight = _frustum.y1 > _frustum.y0 ? _frustum.y1 - _frustum.y0 : _frustum.y0 - _frustum.y1;
+	_frustumDepth = _frustum.z1 > _frustum.z0 ? _frustum.z1 - _frustum.z0 : _frustum.z0 - _frustum.z1;
+
+	_frustumWidthExtended = _frustumWidth << 2;
+	_frustumHeightExtended = _frustumHeight << 2;
+
+	_frustumFixedPoint = (CustomCameraFrustum)
+	{
+		__I_TO_FIX7_9_EXT(_frustum.x0), __I_TO_FIX7_9_EXT(_frustum.y0), __I_TO_FIX7_9_EXT(_frustum.z0),
+		__I_TO_FIX7_9_EXT(_frustum.x1), __I_TO_FIX7_9_EXT(_frustum.y1), __I_TO_FIX7_9_EXT(_frustum.z1),
+	};
+}
+
+CameraFrustum DirectDraw::getFrustum()
+{
+	return _frustum;
 }
 
 /**
@@ -92,6 +235,53 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
 }
 
 /**
+ * Draws a non black pixel on the screen.
+ * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
+ * instead.
+ *
+ * @param buffer	Buffer base address
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
+ * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
+ */
+static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
+{
+	uint8 pixel = color << ((y & 3) << 1);
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
+
+	if(__FRAME_BUFFERS_SIZE > displacement)
+	{
+		leftBuffer[displacement] |= pixel;
+	}
+
+	displacement += (parallax << 7);
+
+	if(__FRAME_BUFFERS_SIZE > displacement)
+	{
+		rightBuffer[displacement] |= pixel;
+	}
+}
+
+static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
+{
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	uint16 displacement = ((x - parallax) << 6) + (y >> 2);
+
+	if(__FRAME_BUFFERS_SIZE <= displacement)
+	{
+		return;
+	}
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	buffer[displacement] |= color << ((y & 3) << 1);
+}
+
+/**
  * Draws a black pixel on the screen.
  * We have a separate function for black pixes since nulling bits requires a slightly different way than
  * simply writing 1's. Adding an if clause instead to the putPixel method instead would be too heavy on
@@ -101,31 +291,36 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw::drawBlackPixel(uint32 buffer, uint16 x, uint16 y)
+static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax)
 {
-	// a pointer to the buffer
-	//int32* pointer = (int32*)buffer;
-	BYTE* pointer = (BYTE*)buffer;
+	uint16 yHelper = y >> 2;
+	uint8 pixel = ~(0b11 << ((y & 3) << 1));
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	pointer += ((x << 6) + (y >> 2));
+	int32 displacement = (((x - parallax) << 6) + yHelper);
 
-	// draw the pixel
-	*pointer &= ~(0b11 << ((y & 3) << 1));
-}
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		leftBuffer = 0;
+	}
+	else
+	{
+		leftBuffer[displacement] &= pixel;
+	}
 
-/**
- * Draws a black pixel on the screen.
- *
- * @private
- * @param buffer	Buffer base address
- * @param x			Camera x coordinate
- * @param y			Camera y coordinate
- */
-static void DirectDraw::drawBlackPixelWrapper(uint32 buffer, uint16 x, uint16 y, int32 color __attribute__ ((unused)))
-{
-	DirectDraw::drawBlackPixel(buffer, x, y);
+	displacement = (((x + parallax) << 6) + yHelper);
+
+	if((unsigned)__FRAME_BUFFERS_SIZE <= (unsigned)displacement)
+	{
+		rightBuffer = 0;
+	}
+	else
+	{
+		rightBuffer[displacement] &= pixel;
+	}
+
+	_directDraw->totalDrawPixels++;
 }
 
 /**
@@ -139,154 +334,650 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	if((unsigned)(point.x - point.parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
-		&&
-		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
-	)
+	if(color == __COLOR_BLACK)
 	{
-		if(color == __COLOR_BLACK)
-		{
-			DirectDraw::drawBlackPixel(leftBuffer, (uint16)(point.x - point.parallax), (uint16)point.y);
-		}
-		else
-		{
-			DirectDraw::drawPixel(leftBuffer, (uint16)(point.x - point.parallax), (uint16)point.y, color);
-		}
+		DirectDraw::drawBlackPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax);
 	}
-	if((unsigned)(point.x + point.parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
-		&&
-		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
-	)
+	else
 	{
-		if(color == __COLOR_BLACK)
-		{
-			DirectDraw::drawBlackPixel(rightBuffer, (uint16)(point.x + point.parallax), (uint16)point.y);
-		}
-		else
-		{
-			DirectDraw::drawPixel(rightBuffer, (uint16)(point.x + point.parallax), (uint16)point.y, color);
-		}
+		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, point.x, point.y, point.parallax, color);
 	}
 }
 
-/**
- * Draws a line between two given 2D points
- *
- * @param fromPoint Point 1
- * @param toPoint	Point 2
- * @param color		The color to draw (0-3)
- */
-void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color)
+static inline bool DirectDraw::shrinkLineToScreenSpace(fix7_9_ext* x0, fix7_9_ext* y0, fix7_9_ext* parallax0, fix7_9_ext dx, fix7_9_ext dy, fix7_9_ext dParallax, fix7_9_ext x1, fix7_9_ext y1, fix7_9_ext parallax1)
 {
-	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
-	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+	fix7_9_ext x = *x0;
+	fix7_9_ext y = *y0;
+	fix7_9_ext parallax = *parallax0;
 
-	fix19_13 fromPointX = __I_TO_FIX19_13(fromPoint.x);
-	fix19_13 fromPointY = __I_TO_FIX19_13(fromPoint.y);
+	if(0 == dx)
+	{
+		if(((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x - parallax)) && ((unsigned)(_frustumFixedPoint.x1 - _frustumFixedPoint.x0) < (unsigned)(x + parallax)))
+		{
+			return false;
+		}
 
-	fix19_13 toPointX = __I_TO_FIX19_13(toPoint.x);
-	fix19_13 toPointY = __I_TO_FIX19_13(toPoint.y);
+		if(_frustumFixedPoint.y0 > y)
+		{
+			*y0 = _frustumFixedPoint.y0;
+		}
+		else if(_frustumFixedPoint.y1 < y)
+		{
+			*y0 = _frustumFixedPoint.y1;
+		}
 
-	fix19_13 dx = __ABS(toPointX - fromPointX);
-	fix19_13 dy = __ABS(toPointY - fromPointY);
+		return true;
+	}
+	else if(0 == dy)
+	{
+		if((unsigned)(_frustumFixedPoint.y1 - _frustumFixedPoint.y0) < (unsigned)(y - _frustumFixedPoint.y0))
+		{
+			return false;
+		}
+
+		parallax = __ABS(parallax);
+
+		if(_frustumFixedPoint.x0 > x + parallax)
+		{
+			*x0 = _frustumFixedPoint.x0 - parallax;
+		}
+		else if(_frustumFixedPoint.x1 < x - parallax)
+		{
+			*x0 = _frustumFixedPoint.x1 + parallax;
+		}
+
+		return true;
+	}
+
+	NM_ASSERT(0 != dx, "DirectDraw::shrinkLineToScreenSpace: dx = 0");
+
+	fix7_9_ext xySlope = __FIX7_9_EXT_DIV(dy, dx);
+
+	if(0 == xySlope)
+	{
+		return false;
+	}
+
+	fix7_9_ext yParallaxSlope = __FIX7_9_EXT_DIV(dParallax, dy);
+
+	//(x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
+	fix7_9_ext parallaxHelper0 = parallax;
+	fix7_9_ext parallaxHelper1 = parallax1;
+
+	fix7_9_ext xHelper = x;
+
+	bool shrinkOnXAxis = false;
+
+	if(_frustumFixedPoint.x0 > x)
+	{
+		// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
+		if(_frustumFixedPoint.x0 > x - __ABS(parallax) && _frustumFixedPoint.x0 > x + __ABS(parallax))
+		{
+			x = _frustumFixedPoint.x0;
+
+			if(0 > parallax)
+			{
+				parallaxHelper0 = -parallaxHelper0;
+				parallaxHelper1 = -parallaxHelper1;
+			}
+
+			shrinkOnXAxis = true;
+		}
+	}
+	else if(_frustumFixedPoint.x1 < x)
+	{
+		// Do not shrking the line if one of the x coordinates (left of right eye) is inside the screen space
+		if(_frustumFixedPoint.x1 < x - __ABS(parallax) && _frustumFixedPoint.x1 < x + __ABS(parallax))
+		{
+			x = _frustumFixedPoint.x1;
+
+			if(0 < parallax)
+			{
+				parallaxHelper0 = -parallaxHelper0;
+				parallaxHelper1 = -parallaxHelper1;
+			}
+
+			shrinkOnXAxis = true;
+		}
+	}
+
+	if(shrinkOnXAxis)
+	{
+		// This will compute the y coordinate at which the line for the relevant display (left or right)
+		// intersects the screen's left or right border and uses the result to compute the x coordinate 
+		// of the actual line
+		xHelper += parallaxHelper0;
+
+		fix7_9_ext dxHelper = (x1 + parallaxHelper1) - xHelper;
+
+		if(0 == dxHelper)
+		{
+			y = __FIX7_9_EXT_MULT(x - x1, xySlope) + y1;
+			parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+
+			*y0 = y;
+			*parallax0 = parallax;
+
+			return true;
+		}
+
+		fix7_9_ext xySlopeHelper = __FIX7_9_EXT_DIV(dy, dxHelper);
+		
+		if(0 == xySlopeHelper)
+		{
+			return false;
+		}
+		
+		if(0 > xySlope * xySlopeHelper)
+		{
+			xySlopeHelper = -xySlopeHelper;
+		}
+
+		y = __FIX7_9_EXT_MULT(xySlopeHelper, x - (x1 + parallaxHelper1)) + y1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+	}
+
+	// (x0 - x1) / dx = (y0 - y1) / dy = (parallax0 - parallax1) / dParallax
+	// (x0 - x1) / dx = (y0 - y1) / dy
+	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
+	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
+	// x0 = (y0 - y1) / (dy / dx) + x1
+	// x0 = (y0 - y1) / xySlope + x1
+	if(_frustumFixedPoint.y0 > y)
+	{
+		y = _frustumFixedPoint.y0;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+	}
+	else if(_frustumFixedPoint.y1 < y)
+	{
+		y = _frustumFixedPoint.y1;
+		x = __FIX7_9_EXT_DIV(y - y1, xySlope) + x1;
+		parallax = __FIX7_9_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+	}
+
+	*x0 = x;
+	*y0 = y;
+	*parallax0 = parallax;
+
+	return true;
+}
+
+static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	uint16 xFromDelta = (unsigned)(fromPoint.x - _frustum.x0);
+	uint16 yFromDelta = (unsigned)(fromPoint.y - _frustum.y0);
+
+	uint16 xToDelta = (unsigned)(toPoint.x - _frustum.x0);
+	uint16 yToDelta = (unsigned)(toPoint.y - _frustum.y0);
+
+	bool xFromOutside = _frustumWidthExtended < xFromDelta;
+	bool yFromOutside = _frustumHeightExtended < yFromDelta;
+	bool zFromOutside = _frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
+
+	bool xToOutside = _frustumWidthExtended < xToDelta;
+	bool yToOutside = _frustumHeightExtended < yToDelta;
+	bool zToOutside = _frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
+
+	bool xOutside = (xFromOutside && xToOutside) && (0 <= ((unsigned)fromPoint.x ^ (unsigned)toPoint.x));
+	bool yOutside = (yFromOutside && yToOutside) && (0 <= ((unsigned)fromPoint.y ^ (unsigned)toPoint.y));
+	bool zOutside = (zFromOutside + zToOutside);
+
+	if(xOutside + yOutside + zOutside)
+	{
+		return;
+	}
+
+	fix7_9_ext fromPointX = __I_TO_FIX7_9_EXT(fromPoint.x);
+	fix7_9_ext fromPointY = __I_TO_FIX7_9_EXT(fromPoint.y);
+	fix7_9_ext fromPointParallax = __I_TO_FIX7_9_EXT(fromPoint.parallax);
+
+	fix7_9_ext toPointX = __I_TO_FIX7_9_EXT(toPoint.x);
+	fix7_9_ext toPointY = __I_TO_FIX7_9_EXT(toPoint.y);
+	fix7_9_ext toPointParallax = __I_TO_FIX7_9_EXT(toPoint.parallax);
+
+	fix7_9_ext dx = toPointX - fromPointX;
+	fix7_9_ext dy = toPointY - fromPointY;
+	fix7_9_ext dParallax = toPointParallax - fromPointParallax;
 
 	if(0 == dx && 0 == dy)
 	{
 		return;
 	}
 
-	fix19_13 stepX = dx ? __I_TO_FIX19_13(1) : 0;
-	fix19_13 stepY = dy ? __I_TO_FIX19_13(1) : 0;
-	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
-	fix19_13 parallaxDelta = __I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax);
-
-	void (*drawPixelMethod)(uint32 buffer, uint16 x, uint16 y, int32 color) = DirectDraw::drawPixel;
-	// duplicating code here since it is much lighter on the cpu
-
-	if(color == __COLOR_BLACK)
+	if((_frustumWidth < xFromDelta) + (_frustumHeight < yFromDelta))
 	{
-		drawPixelMethod = DirectDraw::drawBlackPixelWrapper;
+		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
+		{
+			return;
+		}
+
+		xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
+		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	fix19_13* fromCoordinate = NULL;
-	fix19_13* toCoordinate = NULL;
-	fix19_13 parallaxStep = 0;
-
-	if(dy == dx || dy < dx || 0 == dy)
+	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
 	{
-		fromCoordinate = &fromPointX;
-		toCoordinate = &toPointX;
+		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
+		{
+			return;
+		}
 
-		stepX = __I_TO_FIX19_13(1);
-		stepY = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(dy), __FIX19_13_TO_FIX10_6(dx)));
+		xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
+		yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
+	}
 
+	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
+	{
+		return;
+	}
+
+/*
+	PixelVector::print(fromPoint, 21, 6);
+	PixelVector::print(toPoint, 31, 6);
+
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointX), 1, 10);
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointY), 1, 11);
+	PRINT_INT(__FIX7_9_EXT_TO_I(fromPointParallax), 1, 12);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointX), 11, 10);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointY), 11, 11);
+	PRINT_INT(__FIX7_9_EXT_TO_I(toPointParallax), 11, 12);
+*/
+	fix7_9_ext dxABS = __ABS(dx);
+	fix7_9_ext dyABS = __ABS(dy);
+
+	fix7_9_ext parallaxStart = fromPointParallax;
+
+	fix7_9_ext xStep = __1I_FIX7_9_EXT;
+	fix7_9_ext yStep = __1I_FIX7_9_EXT;
+	fix7_9_ext parallaxStep = 0;
+	
+	int16 totalPixels = 0;
+
+	if(dyABS == dxABS || dyABS < dxABS || 0 == dy)
+	{
 		if(toPointX < fromPointX)
 		{
-			fix19_13 aux = toPointX;
-			toPointX = fromPointX;
-			fromPointX = aux;
+			fix7_9_ext auxPoint = fromPointX;
+			fromPointX = toPointX;
+			toPointX = auxPoint;
 
-			aux = toPointY;
-			toPointY = fromPointY;
-			fromPointY = aux;
+			fromPointY = toPointY;
+			parallaxStart = toPointParallax; 
+
+			dxABS = -dxABS;
 		}
 
+		yStep = __FIX7_9_EXT_DIV(dy, dxABS);
+		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dxABS);
+
+		totalPixels = __FIX7_9_EXT_TO_I(toPointX - fromPointX);
+	}
+	else if(dxABS < dyABS || 0 == dx)
+	{
 		if(toPointY < fromPointY)
 		{
-			stepY = -stepY;
+			fix7_9_ext auxPoint = fromPointY;
+			fromPointY = toPointY;
+			toPointY = auxPoint;
+
+			fromPointX = toPointX;
+			parallaxStart = toPointParallax; 
+
+			dyABS = -dyABS;
 		}
 
-		parallaxStep = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(parallaxDelta), __FIX19_13_TO_FIX10_6(dx)));
+		xStep = __FIX7_9_EXT_DIV(dx, dyABS);
+		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dyABS);
+
+		totalPixels = __FIX7_9_EXT_TO_I(toPointY - fromPointY);
 	}
-	else if(dx < dy || 0 == dx)
+
+	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
-		fromCoordinate = &fromPointY;
-		toCoordinate = &toPointY;
-
-		// make sure that no software based divisions is introduced
-		stepX = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(dx), __FIX19_13_TO_FIX10_6(dy)));
-		stepY = __I_TO_FIX19_13(1);
-
-		if(toPointY < fromPointY)
-		{
-			fix19_13 aux = toPointX;
-			toPointX = fromPointX;
-			fromPointX = aux;
-
-			aux = toPointY;
-			toPointY = fromPointY;
-			fromPointY = aux;
-		}
-
-		if(toPointX < fromPointX)
-		{
-			stepX = -stepX;
-		}
-
-		parallaxStep = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(parallaxDelta), __FIX19_13_TO_FIX10_6(dy)));
+		return;
 	}
 
-	fix19_13 auxParallax = parallax;
+	_directDraw->totalDrawPixels += totalPixels;
 
-	while(*fromCoordinate <= *toCoordinate)
+	if(interlaced)
 	{
-		parallax = auxParallax;
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
-		if((unsigned)(fromPointY - __I_TO_FIX19_13(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->y1) - __I_TO_FIX19_13(_cameraFrustum->y0)))
+		if(0 != bufferIndex)
 		{
-			if((unsigned)(fromPointX - parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
-			{
-				drawPixelMethod(leftBuffer, (uint16)__FIX19_13_TO_I(fromPointX - parallax), (uint16)__FIX19_13_TO_I(fromPointY), color);
-			}
+			parallaxStart = -parallaxStart;
+			parallaxStep = -parallaxStep;
+		}
 
-			if((unsigned)(fromPointX + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
+		for(; 1 < totalPixels; totalPixels -=2)
+		{
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
+
+			fromPointX += xStep;
+			fromPointY += yStep;
+			parallaxStart += parallaxStep;
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), -__FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
+
+			fromPointX += xStep;
+			fromPointY += yStep;
+			parallaxStart += parallaxStep;
+		}
+
+		return;
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(; 0 < totalPixels; totalPixels -=1)
+		{
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
+
+			fromPointX += xStep;
+			fromPointY += yStep;
+			parallaxStart += parallaxStep;
+		}
+	}
+
+}
+
+static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(0 >= radius)
+	{
+		return;
+	}
+	
+	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yFromOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zFromOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xToOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yToOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zToOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xOutside = (xFromOutside && xToOutside);
+	bool yOutside = (yFromOutside && yToOutside); 
+	bool zOutside = (zFromOutside || zToOutside);
+
+	if(xOutside || yOutside || zOutside)
+	{
+		return;
+	}
+
+	uint32 radiusSquare = radius * radius;
+
+	for(int16 x = -radius; x <= radius; x++)
+	{
+		int16 y = Math::squareRoot(radiusSquare - x * x);
+
+		DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
+	}
+}
+
+static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(0 >= radius)
+	{
+		return;
+	}
+
+	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yFromOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zFromOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xToOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
+	bool yToOutside = _frustumHeight < (unsigned)(center.y - _frustum.y0);
+	bool zToOutside = _frustumDepth < (unsigned)(center.z - _frustum.z0);
+
+	bool xOutside = (xFromOutside && xToOutside);
+	bool yOutside = (yFromOutside && yToOutside); 
+	bool zOutside = (zFromOutside || zToOutside);
+
+	if(xOutside || yOutside || zOutside)
+	{
+		return;
+	}
+
+	uint32 radiusSquare = radius * radius;
+
+	if(interlaced && 3 < radius)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(int16 x = -radius; x < radius; x++)
+		{
+			int16 y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y + y, center.parallax, color);
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y + y, center.parallax, color);
+
+			x++;
+
+			y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(int16 x = 0; x <= radius; x++)
+		{
+			int16 y = Math::squareRoot(radiusSquare - x * x);
+
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
+
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y - y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
+		}
+	}
+}
+
+static void DirectDraw::drawColorPoint(int16 x, int16 y, int16 parallax, int32 color)
+{
+	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+	DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, parallax, color);
+}
+
+static void DirectDraw::drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex)
+{
+	uint32 buffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+
+	DirectDraw::drawColorPixelInterlaced((BYTE*)buffer, x, y, 0!= bufferIndex ? -parallax : parallax, color);
+}
+
+static void DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(!DirectDraw::isPointInsideFrustum(center))
+	{
+		return;
+	}
+
+	int16 radiusHelper = 0;
+	int16 y = center.y - radius;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(; radiusHelper <= radius; radiusHelper++, y++)
+		{
+			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
 			{
-				drawPixelMethod(rightBuffer, (uint16)__FIX19_13_TO_I(fromPointX + parallax), (uint16)__FIX19_13_TO_I(fromPointY), color);
+				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+
+				x++;
+
+				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
 			}
 		}
 
-		fromPointX += stepX;
-		fromPointY += stepY;
-		auxParallax += parallaxStep;
+		for(; 0 <= radiusHelper; --radiusHelper, y++)
+		{
+			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
+			{
+				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+
+				x++;
+
+				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
+			}
+		}
 	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(; radiusHelper <= radius; radiusHelper++, y++)
+		{
+			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
+			{
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+			}
+		}
+
+		for(; 0 <= radiusHelper; --radiusHelper, y++)
+		{
+			for(int16 x = center.x - radiusHelper; x <= center.x + radiusHelper; x++)
+			{
+				DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+			}
+		}
+	}
+}
+
+static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(!DirectDraw::isPointInsideFrustum(center))
+	{
+		return;
+	}
+
+	int16 lengthHelper = 0;
+	int16 x = center.x - length / 2;
+	int16 y = center.y - length / 2;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(; lengthHelper <= length; lengthHelper++, x++, y++)
+		{
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, (center.x + length / 2) - lengthHelper, y, center.parallax, color);
+
+			x++;
+			y++;
+			lengthHelper++;
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, (center.x + length / 2) - lengthHelper, y, -center.parallax, color);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(; lengthHelper <= length; lengthHelper++, x++, y++)
+		{
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + length / 2) - lengthHelper, y, center.parallax, color);
+		}
+	}
+}
+
+static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+{
+	if(!DirectDraw::isPointInsideFrustum(center))
+	{
+		return;
+	}
+
+	int16 lengthHelper = 0;
+
+	if(interlaced)
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
+		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+		if(0 != bufferIndex)
+		{
+			center.parallax = -center.parallax;
+		}
+
+		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		{
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + coordinate, center.y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x, center.y + coordinate, center.parallax, color);
+
+			coordinate++;
+			lengthHelper++;
+
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + coordinate, center.y, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x, center.y + coordinate, -center.parallax, color);
+		}
+	}
+	else
+	{
+		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		{
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
+		}
+	}
+}
+
+static bool DirectDraw::isPointInsideFrustum(PixelVector point)
+{
+	bool xOutside = _frustumWidth < (unsigned)(point.x - _frustum.x0);
+	bool yOutside = _frustumHeight < (unsigned)(point.y - _frustum.y0);
+	bool zOutside = _frustumDepth < (unsigned)(point.z - _frustum.z0);
+
+	if(xOutside || yOutside || zOutside)
+	{
+		return false;
+	}
+
+	return true;
 }

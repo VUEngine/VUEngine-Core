@@ -54,6 +54,7 @@
 #define	K_RPAD			0xC0C0	// Right d-pad only
 
 
+#define __KEY_NONE		0x0000
 #define __KEY_PRESSED	0x0001
 #define __KEY_RELEASED	0x0010
 #define __KEY_HOLD		0x0100

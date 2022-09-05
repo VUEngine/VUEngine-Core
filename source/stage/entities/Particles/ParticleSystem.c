@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ParticleSystem.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <ParticleRemover.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -59,6 +59,8 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->spawnForceDelta = (Vector3DFlag){false, false, false};
 	this->maximumNumberOfAliveParticles = 0;
 	this->animationChanged = true;
+	this->previousGlobalPosition = (Vector3D){0, 0, 0};
+	this->selfDestroyWhenDone = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -138,13 +140,13 @@ void ParticleSystem::configure()
 	this->spawnForceDelta.y = this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y;
 	this->spawnForceDelta.z = this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z;
 
-	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
+	this->nextSpawnTime = 0;
 	this->maximumNumberOfAliveParticles = this->particleSystemSpec->maximumNumberOfAliveParticles;
 
 	// calculate the number of sprite specs
-	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
-
-	ASSERT(0 < this->numberOfSpriteSpecs, "ParticleSystem::constructor: 0 sprite specs");
+	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && NULL != this->particleSystemSpec->spriteSpecs && NULL != this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
+	// calculate the number of wireframe specs
+	for(this->numberOfWireframeSpecs = 0; 0 <= this->numberOfWireframeSpecs && NULL != this->particleSystemSpec->wireframeSpecs && NULL != this->particleSystemSpec->wireframeSpecs[this->numberOfWireframeSpecs]; this->numberOfWireframeSpecs++);
 }
 
 /**
@@ -154,7 +156,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(Game::getStage(Game::getInstance()));
+	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(VUEngine::getStage(VUEngine::getInstance()));
 
 	if(!isDeleted(this->particles))
 	{
@@ -167,7 +169,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 		{
 			VirtualNode node = this->particles->head;
 
-			for(; node; node = node->next)
+			for(; NULL != node; node = node->next)
 			{
 				delete node->data;
 			}
@@ -188,7 +190,7 @@ void ParticleSystem::deleteAllParticles()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -207,7 +209,7 @@ void ParticleSystem::expireAllParticles()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -237,7 +239,7 @@ void ParticleSystem::processExpiredParticles()
 {
 	if(!isDeleted(this->particles) && !this->particleSystemSpec->recycleParticles)
 	{
-		for(VirtualNode node = this->particles->head, nextNode; node; node = nextNode)
+		for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -261,7 +263,7 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(uint32 elapsedTime)
 {
-	if(ParticleSystem::isPaused(this))
+	if(ParticleSystem::isPaused(this) || this->invalidateGlobalTransformation)
 	{
 		return;
 	}
@@ -280,7 +282,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 	void (* behavior)(Particle particle) = this->particleSystemSpec->particleSpec->behavior;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -298,12 +300,12 @@ void ParticleSystem::update(uint32 elapsedTime)
 		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 	}
 
-	if(!this->transformed)
+	if(this->selfDestroyWhenDone && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles && 0 == this->particleCount && !this->loop)
 	{
-		return;
+		ParticleSystem::deleteMyself(this);
 	}
 
-	if(this->paused)
+	if(!this->transformed || this->paused || this->hidden)
 	{
 		return;
 	}
@@ -316,13 +318,13 @@ void ParticleSystem::update(uint32 elapsedTime)
 		uint16 spawnedParticles = 0;
 		do 
 		{
-			++this->totalSpawnedParticles;
-
 			if(!this->loop && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem::pause(this);
 				return;
 			}
+
+			++this->totalSpawnedParticles;
 
 			if(this->particleSystemSpec->recycleParticles)
 			{
@@ -351,7 +353,7 @@ bool ParticleSystem::recycleParticle()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -404,6 +406,14 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
  */
 Force ParticleSystem::getParticleSpawnForce()
 {
+	if(this->particleSystemSpec->useMovementVector)
+	{
+		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
+//		fixed_t strength = (Vector3D::length(this->particleSystemSpec->minimumForce) + Vector3D::length(this->particleSystemSpec->maximumForce)) >> 1;
+		fixed_t strength = Vector3D::length(this->particleSystemSpec->minimumForce);
+		return Vector3D::scalarProduct(direction, strength);
+	}
+
 	Force force = this->particleSystemSpec->minimumForce;
 
 	if(this->spawnForceDelta.x)
@@ -440,19 +450,36 @@ void ParticleSystem::spawnAllParticles()
 
 const SpriteSpec* ParticleSystem::getSpriteSpec()
 {
-	if(NULL == this->particleSystemSpec || NULL == this->particleSystemSpec->spriteSpecs[0])
+	if(0 == this->numberOfSpriteSpecs)
 	{
 		return NULL;
 	}
 
-	int32 spriteSpecIndex = 0;
+	int32 specIndex = 0;
 
 	if(1 < this->numberOfSpriteSpecs)
 	{
-		spriteSpecIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
+		specIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
 	}
 
-	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex];
+	return (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[specIndex];
+}
+
+const WireframeSpec* ParticleSystem::getWireframeSpec()
+{
+	if(0 == this->numberOfWireframeSpecs)
+	{
+		return NULL;
+	}
+
+	int32 specIndex = 0;
+
+	if(1 < this->numberOfWireframeSpecs)
+	{
+		specIndex = Utilities::random(_gameRandomSeed, this->numberOfWireframeSpecs);
+	}
+
+	return (const WireframeSpec*)this->particleSystemSpec->wireframeSpecs[specIndex];
 }
 
 void ParticleSystem::particleSpawned(Particle particle __attribute__ ((unused)))
@@ -473,11 +500,11 @@ Particle ParticleSystem::spawnParticle()
 	int16 lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int32)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
-	Particle::addForce(particle, &force, this->particleSystemSpec->movementType);
+	Particle::applySustainedForce(particle, &force, this->particleSystemSpec->movementType);
 
 	ParticleSystem::particleSpawned(this, particle);
 
@@ -489,6 +516,8 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
+	this->previousGlobalPosition = this->transformation.globalPosition;
+
 	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
 	bool transformed = this->transformed;
@@ -507,7 +536,7 @@ void ParticleSystem::resetParticlesPositions()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -525,7 +554,7 @@ void ParticleSystem::transformParticles()
 {
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -547,7 +576,7 @@ void ParticleSystem::synchronizeGraphics()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -582,7 +611,7 @@ void ParticleSystem::show()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -606,7 +635,7 @@ void ParticleSystem::hide()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle::hide(Particle::safeCast(node->data));
 	}
@@ -617,11 +646,11 @@ void ParticleSystem::resume()
 	// Must recover the particles first so their sprites are recreated
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
+		Particle::resume(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), this->particleSystemSpec->particleSpec->animationDescription, this->particleSystemSpec->particleSpec->initialAnimation);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -638,7 +667,7 @@ void ParticleSystem::suspend()
 
 	VirtualNode node = this->particles->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		Particle::suspend(node->data);
 	}
@@ -663,10 +692,19 @@ void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAlive
 	this->maximumNumberOfAliveParticles = maximumNumberOfAliveParticles;
 }
 
+/**
+ * @public
+ * @param selfDestroyWhenDone		Set to true to destroy the particle system when all the particles have expired
+ */
+void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
+{
+	this->selfDestroyWhenDone = selfDestroyWhenDone;
+}
+
 void ParticleSystem::start()
 {
 	this->update = true;
-	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+	this->nextSpawnTime = 0;
 	this->totalSpawnedParticles = 0;
 	this->paused = false;
 	this->transformed = false;
@@ -686,8 +724,10 @@ void ParticleSystem::unpause()
 	{
 		this->paused = false;
 		this->transformed = false;
-		this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+		this->nextSpawnTime = 0;
 	}
+
+	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 }
 
 bool ParticleSystem::isPaused()

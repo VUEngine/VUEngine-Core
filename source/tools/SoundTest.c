@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundTest.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
 #include <VIPManager.h>
@@ -398,7 +398,7 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	Game::disableKeypad(Game::getInstance());
+	VUEngine::disableKeypad(VUEngine::getInstance());
 
 #ifdef __SOUND_TEST
 	Printing::clear(Printing::getInstance());
@@ -407,13 +407,13 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, Object::safeCast(this));
+	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
+		SoundWrapper::addEventListener(this->soundWrapper, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
 
 		TimerManager::reset(TimerManager::getInstance());
 		TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
@@ -429,12 +429,12 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	Game::enableKeypad(Game::getInstance());
+	VUEngine::enableKeypad(VUEngine::getInstance());
 
 	SoundTest::printGUI(this, false);
 }
 
-void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
+void SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->soundWrapper))
 	{
@@ -443,9 +443,12 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 	}
 }
 
-void SoundTest::onSoundWrapperReleased(Object eventFirer __attribute__((unused)))
+void SoundTest::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
 {
-	this->soundWrapper = NULL;
+	if(SoundWrapper::safeCast(eventFirer) == this->soundWrapper)
+	{
+		this->soundWrapper = NULL;
+	}
 }
 
 void SoundTest::printTimer()

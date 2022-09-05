@@ -34,9 +34,9 @@ typedef struct Brightness
 // spatial size
 typedef struct Size
 {
-	fix10_6 x;
-	fix10_6 y;
-	fix10_6 z;
+	fixed_t x;
+	fixed_t y;
+	fixed_t z;
 
 } Size;
 
@@ -53,9 +53,9 @@ typedef struct PixelSize
 // spatial position
 typedef struct Vector3D
 {
-	fix10_6 x;
-	fix10_6 y;
-	fix10_6 z;
+	fixed_t x;
+	fixed_t y;
+	fixed_t z;
 
 } Vector3D;
 
@@ -113,6 +113,19 @@ typedef struct MovementType
 typedef struct Rotation
 {
 	// rotation around x axis
+	fixed_t x;
+
+	// rotation around y axis
+	fixed_t y;
+
+	// rotation around z axis
+	fixed_t z;
+
+} Rotation;
+
+typedef struct PixelRotation
+{
+	// rotation around x axis
 	int16 x;
 
 	// rotation around y axis
@@ -121,7 +134,7 @@ typedef struct Rotation
 	// rotation around z axis
 	int16 z;
 
-} Rotation;
+} PixelRotation;
 
 // spatial direction vector
 typedef struct Direction
@@ -137,12 +150,20 @@ typedef struct Optical
 {
 	uint16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
 	uint16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
-	fix10_6 distanceEyeScreen;
-	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
-	fix10_6 horizontalViewPointCenter;	// horizontal View point center
-	fix10_6 verticalViewPointCenter;	// vertical View point center
-	fix10_6 scalingFactor;	// vertical View point center
-
+	fixed_t cameraNearPlane;				// logical distance between the eyes and the screen
+	fixed_t baseDistance;					// distance from left to right eye (depth perception)
+	fixed_t horizontalViewPointCenter;		// horizontal View point center
+	fixed_t verticalViewPointCenter;		// vertical View point center
+	fixed_t scalingFactor;					// vertical View point center
+	fixed_t halfWidth;						// screen width
+	fixed_t halfHeight;						// screen height
+	fixed_t aspectRatio;					// screen's width / screen's height
+	fixed_t fov;							// 1 / tan (angle / 2)
+	fixed_t aspectRatioXfov;				// aspectRatio * fov
+	fixed_t farRatio1Near;	 				// (far + near) / (far - near)
+	fixed_t farRatio2Near;	 				// (2 * far * near) / (near - far)
+	fixed_ext_t projectionMultiplierHelper;	// helper to speed up projection operations 
+	fixed_ext_t scalingMultiplier;			// scaling multiplier
 } Optical;
 
 // engine's optical values structure
@@ -150,9 +171,9 @@ typedef struct PixelOptical
 {
 	uint16 maximumXViewDistance;		// maximum distance from the screen to the infinite
 	uint16 maximumYViewDistance;		// maximum distance from the screen to the infinite
-	uint16 distanceEyeScreen;
-	uint16 baseDistance;					// distance from left to right eye (depth perception)
-	int16 horizontalViewPointCenter;		// horizontal View point center
+	uint16 cameraNearPlane;			// logical distance between the eyes and the screen
+	uint16 baseDistance;				// distance from left to right eye (depth perception)
+	int16 horizontalViewPointCenter;	// horizontal View point center
 	int16 verticalViewPointCenter;		// vertical View point center
 	float scalingFactor;				// scaling factor for sprite resizing
 
@@ -241,14 +262,14 @@ typedef struct Transformation
 typedef struct RightBox
 {
 	/* left upper corner */
-	fix10_6 x0;
-	fix10_6 y0;
-	fix10_6 z0;
+	fixed_t x0;
+	fixed_t y0;
+	fixed_t z0;
 
 	/* right down corner */
-	fix10_6 x1;
-	fix10_6 y1;
-	fix10_6 z1;
+	fixed_t x1;
+	fixed_t y1;
+	fixed_t z1;
 
 } RightBox;
 

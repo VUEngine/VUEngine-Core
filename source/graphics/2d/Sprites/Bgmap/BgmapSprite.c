@@ -14,7 +14,6 @@
 
 #include <BgmapSprite.h>
 #include <Affine.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
@@ -45,20 +44,20 @@ friend class BgmapTexture;
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner)
+void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner)
 {
 	Base::constructor((SpriteSpec*)&bgmapSpriteSpec->spriteSpec, owner);
 
 	// create the texture
 	if(bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
+		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false, __WORLD_1x1));
 		NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::constructor: null texture");
 	}
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::addEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
 		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
@@ -75,12 +74,8 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object own
 		this->drawSpec.textureSource.mp = 0;
 	}
 
-	this->drawSpec.scale.x = __1I_FIX7_9;
-	this->drawSpec.scale.y = __1I_FIX7_9;
-
-	this->drawSpec.rotation.x = 0;
-	this->drawSpec.rotation.y = 0;
-	this->drawSpec.rotation.z = 0;
+	this->drawSpec.rotation = Rotation::zero();
+	this->drawSpec.scale = Scale::unit();
 
 	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
@@ -116,7 +111,7 @@ void BgmapSprite::destructor()
 
 bool BgmapSprite::hasSpecialEffects()
 {
-	return 0 != ((__WORLD_HBIAS | __WORLD_AFFINE) & this->head);
+	return 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
 
 /**
@@ -124,7 +119,7 @@ bool BgmapSprite::hasSpecialEffects()
  *
  * @param eventFirer
  */
-void BgmapSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
+void BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
 }
@@ -141,7 +136,7 @@ void BgmapSprite::releaseTexture()
 			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 
-		Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
@@ -170,19 +165,19 @@ Scale BgmapSprite::getScale()
  */
 void BgmapSprite::computeDimensions()
 {
-	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
-		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int32)this->texture->textureSpec->cols << 2),
-			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
+	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.y))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+			__FIX7_9_TO_FIXED(this->drawSpec.scale.x)
 		)
 	))) + 1;
 
-	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
-		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int32)this->texture->textureSpec->rows << 2),
-			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
+	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.x))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+			__FIX7_9_TO_FIXED(this->drawSpec.scale.y)
 		)
 	))) + 1;
 }
@@ -197,6 +192,8 @@ void BgmapSprite::computeDimensions()
  */
 void BgmapSprite::rotate(const Rotation* rotation)
 {
+	Base::rotate(this, rotation);
+	
 	if(this->param)
 	{
 		this->drawSpec.rotation = *rotation;
@@ -215,8 +212,8 @@ void BgmapSprite::rotate(const Rotation* rotation)
 	{
 		Direction direction =
 		{
-			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-			(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
 			__FAR,
 		};
 
@@ -249,18 +246,16 @@ void BgmapSprite::rotate(const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite::resize(Scale scale, fix10_6 z)
+void BgmapSprite::resize(Scale scale, fixed_t z)
 {
 	if(__WORLD_AFFINE & this->head)
 	{
 		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
 		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
 
-		z -= _cameraPosition->z;
+		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(z, true));
 
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, _optical->scalingFactor));
-
-		ratio = 0 > ratio? 0 : ratio;
+		ratio = 0 > ratio? __1I_FIXED : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
 		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
@@ -328,14 +323,21 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
 	{
-		mx += (_cameraFrustum->x0 - auxGp - gx);
-		w -= (_cameraFrustum->x0 - auxGp - gx);
-		gx = _cameraFrustum->x0 - auxGp;
+		if(0 == this->param)
+		{
+			mx += (_cameraFrustum->x0 - auxGp - gx);
+			w -= (_cameraFrustum->x0 - auxGp - gx);
+			gx = _cameraFrustum->x0 - auxGp;
+		}
 	}
+
+	int16 myDisplacement = 0;
 
 	if(_cameraFrustum->y0 > gy)
 	{
-		my += (_cameraFrustum->y0 - gy);
+		myDisplacement = (_cameraFrustum->y0 - gy);
+
+		my += myDisplacement;
 		h -= (_cameraFrustum->y0 - gy);
 		gy = _cameraFrustum->y0;
 	}
@@ -394,7 +396,7 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-	worldPointer->param = (uint16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
+	worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 	return index;
 }
@@ -413,33 +415,11 @@ void BgmapSprite::processAffineEffects()
 {
 	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-//		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->index];
-
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
 		// camera moves vertically
 		// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
-
-		// un-cap x coordinate in affine mode
-		if(_cameraFrustum->x0 > worldPointer->gx)
-		{
-			worldPointer->gx = this->position.x + this->displacement.x - this->halfWidth;
-			worldPointer->w = this->halfWidth << 1;
-		}
-
-		int16 myDisplacement = 0;
-		int16 gy = this->position.y + this->displacement.y - this->halfHeight;
-
-		if(_cameraFrustum->y0 > gy)
-		{
-			myDisplacement = (_cameraFrustum->y0 - gy);
-		}
-
-		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
-
-		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{
@@ -470,113 +450,6 @@ void BgmapSprite::processHbiasEffects()
 		}
 	}
 }
-
-// handles affine transformations accurately by translating using translations
-// to clip the image to the camera space, but kill the CPU
-/*
-// render a world layer with the map's information
-void BgmapSprite::displacement()
-{
-	ASSERT(this->texture, "BgmapSprite::render: null texture");
-
-	if(!this->positioned)
-	{
-		return;
-	}
-
-	// if render flag is set
-	if(this->initialized)
-	{
-		if(this->hidden)
-		{
-			WORLD_HEAD(index, 0x0000);
-			return;
-		}
-
-		WorldAttributes* worldPointer = &_worldAttributesBaseAddress[index];
-
-		// set the world camera position
-		int32 gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
-		int32 gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
-
-		int32 w = Texture::getCols(this->texture)<< 3;
-		int32 h = Texture::getRows(this->texture)<< 3;
-
-		int32 mxDisplacement = 0 > gx ? -gx : 0;
-		int32 myDisplacement = 0 > gy ? -gy : 0;
-
-		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
-		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
-		worldPointer->gp = this->position.parallax + __FIX10_6_TO_I(this->displacement.z & 0xFFFFE000);
-
-		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
-		worldPointer->mp = this->drawSpec.textureSource.mp;
-
-		// -1 because 0 means 1 pixel for width
-		w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
-		h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
-
-		worldPointer->w = 0;
-		worldPointer->h = 0;
-
-		if(w + worldPointer->gx >= _cameraFrustum->x1)
-		{
-			worldPointer->w = _cameraFrustum->x1 - worldPointer->gx;
-		}
-		else if (0 <= w)
-		{
-			worldPointer->w = w;
-		}
-
-		if(h + worldPointer->gy >= _cameraFrustum->y1)
-		{
-			worldPointer->h = _cameraFrustum->y1 - worldPointer->gy;
-		}
-		else if (0 <= h)
-		{
-			worldPointer->h = h;
-		}
-
-		// set the world size according to the zoom
-		if(__WORLD_AFFINE & this->head)
-		{
-			if(__UPDATE_G)
-			{
-				if(0 > this->paramTableRow && (0 > gx || 0 > gy))
-				{
-					this->paramTableRow = 0;
-				}
-			}
-
-			if(_cameraDisplacement->y && 0 > this->paramTableRow)
-			{
-				this->paramTableRow = 0;
-			}
-
-			worldPointer->w *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.x));
-			worldPointer->h *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.y));
-
-			if(0 <= this->paramTableRow)
-			{
-				h = Texture::getRows(this->texture)<< 3;
-				int32 lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
-
-				BgmapSprite::doApplyAffineTransformations(this, lastRow);
-
-				if(0 >= this->paramTableRow)
-				{
-					this->paramTableRow = -1;
-				}
-			}
-
-			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-		}
-
-		worldPointer->head = this->head | BgmapTexture::getSegment(this->texture);
-	}
-}
-*/
 
 /**
  * Set Sprite's render mode
@@ -737,12 +610,12 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
 			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
 			// don't do translations
-			__I_TO_FIX10_6(bgmapSprite->halfWidth),
-			__I_TO_FIX10_6(bgmapSprite->halfHeight),
+			__I_TO_FIXED(bgmapSprite->halfWidth),
+			__I_TO_FIXED(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.mx),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.my),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->cols << 2),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->rows << 2),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
 			&bgmapSprite->drawSpec.scale,
 			&bgmapSprite->drawSpec.rotation
 		);

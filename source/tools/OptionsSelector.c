@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <OptionsSelector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
@@ -115,7 +114,7 @@ void OptionsSelector::flushPages()
 	{
 		VirtualNode node = this->pages->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			ASSERT(node->data, "flushPages: null node data");
 
@@ -405,7 +404,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 
 		int32 counter = 0;
 
-		for(; node; node = node->next, counter++)
+		for(; NULL != node; node = node->next, counter++)
 		{
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");

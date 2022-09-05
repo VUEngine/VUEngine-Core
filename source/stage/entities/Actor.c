@@ -22,7 +22,7 @@
 #include <PhysicalWorld.h>
 #include <Body.h>
 #include <Box.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <debugUtilities.h>
 
 
@@ -44,9 +44,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// construct base object
 	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, internalId, name);
 
-	// save spec
-	this->actorSpec = actorSpec;
-
 	// construct the game state machine
 	this->stateMachine = NULL;
 
@@ -56,15 +53,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// create body
 	if(actorSpec->createBody)
 	{
-		if(actorSpec->animatedEntitySpec.entitySpec.physicalSpecification)
-		{
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
-		}
-		else
-		{
-			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, Vector3D::zero(), 0};
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axisSubjectToGravity);
-		}
+		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
 	}
 }
 
@@ -74,15 +63,15 @@ void Actor::destructor()
 	// inform the camera I'm being removed
 	Camera::onFocusEntityDeleted(Camera::getInstance(), Entity::safeCast(this));
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		// remove a body
-		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
+		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->body);
 		this->body = NULL;
 	}
 
 	// destroy state machine
-	if(this->stateMachine)
+	if(!isDeleted(this->stateMachine))
 	{
 		delete this->stateMachine;
 		this->stateMachine = NULL;
@@ -91,6 +80,27 @@ void Actor::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+{
+	if(!isDeleted(this->body))
+	{
+		NM_ASSERT(false, "Actor::createBody: body already created");
+		return;
+	}
+
+	if(NULL != physicalSpecification)
+	{
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
+	}
+	else
+	{
+		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
+	}
+
+	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 }
 
 void Actor::initializeStateMachine(State state)
@@ -110,25 +120,10 @@ void Actor::iAmDeletingMyself()
 	Base::iAmDeletingMyself(this);
 
 	// destroy body to prevent any more physical interactions
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setActive(this->body, false);
-
-		// remove a body
-//		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
-//		this->body = NULL;
 	}
-}
-
-// set spec
-void Actor::setSpec(void* actorSpec)
-{
-	ASSERT(actorSpec, "Actor::setSpec: null spec");
-
-	// save spec
-	this->actorSpec = actorSpec;
-
-	Base::setSpec(this, &((ActorSpec*)actorSpec)->animatedEntitySpec);
 }
 
 //set class's local position
@@ -162,8 +157,15 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 void Actor::syncWithBody()
 {
-	Actor::syncPositionWithBody(this);
-	Actor::syncRotationWithBody(this);
+	if(!isDeleted(this->body))
+	{
+		Actor::syncPositionWithBody(this);
+
+		if(Body::getMovementOnAllAxis(this->body))
+		{
+			Actor::syncRotationWithBody(this);
+		}
+	}
 }
 
 bool Actor::overrideParentingPositioningWhenBodyIsNotMoving()
@@ -183,7 +185,7 @@ void Actor::syncPositionWithBody()
 	Vector3D bodyPosition = this->transformation.globalPosition;
 
 	if(
-		!Clock::isPaused(Game::getPhysicsClock(Game::getInstance()))
+		!Clock::isPaused(VUEngine::getPhysicsClock(VUEngine::getInstance()))
 		&&
 		(
 			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||
@@ -217,42 +219,42 @@ void Actor::syncPositionWithBody()
 
 void Actor::doSyncRotationWithBody()
 {
-	if(this->body && Body::getMovementOnAllAxis(this->body))
+	if(!isDeleted(this->body) && Body::getMovementOnAllAxis(this->body))
 	{
-		const Direction3D* direction3D = Body::getDirection3D(this->body);
+		Direction3D direction3D = *Body::getDirection3D(this->body);
 
-		if((uint16)__LOCK_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		if((uint16)__LOCK_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			return;
 		}
 
-		if(__NO_AXIS == this->actorSpec->axisForSynchronizationWithBody)
+		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			Direction direction = Actor::getDirection(this);
 
-			if(0 > direction3D->x)
+			if(0 > direction3D.x)
 			{
 				direction.x = __LEFT;
 			}
-			else if(0 < direction3D->x)
+			else if(0 < direction3D.x)
 			{
 				direction.x = __RIGHT;
 			}
 
-			if(0 > direction3D->y)
+			if(0 > direction3D.y)
 			{
 				direction.y = __UP;
 			}
-			else if(0 < direction3D->y)
+			else if(0 < direction3D.y)
 			{
 				direction.y = __DOWN;
 			}
 
-			if(0 > direction3D->z)
+			if(0 > direction3D.z)
 			{
 				direction.z = __NEAR;
 			}
-			else if(0 < direction3D->z)
+			else if(0 < direction3D.z)
 			{
 				direction.z = __FAR;
 			}
@@ -261,35 +263,7 @@ void Actor::doSyncRotationWithBody()
 		}
 		else
 		{
-			Rotation localRotation = this->transformation.localRotation;
-
-			switch(this->actorSpec->axisForSynchronizationWithBody)
-			{
-				case __X_AXIS:
-
-					if(direction3D->y)
-					{
-						localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->y), __FIX10_6_TO_FIX7_9(direction3D->z));
-					}
-					break;
-
-				case __Y_AXIS:
-
-					if(direction3D->x)
-					{
-						localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->z));
-					}
-					break;
-
-				case __Z_AXIS:
-
-					if(direction3D->x)
-					{
-						localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D->x), __FIX10_6_TO_FIX7_9(direction3D->y));
-					}
-					break;
-			}
-
+			Rotation localRotation = Actor::getRotationFromDirection(this, &direction3D, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
 			Base::setLocalRotation(this, &localRotation);
 		}
 	}
@@ -332,9 +306,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 
 		Transformation surrogateEnvironmentTransformation = *environmentTransform;
 
-		surrogateEnvironmentTransformation.globalRotation.x = 0;
-		surrogateEnvironmentTransformation.globalRotation.y = 0;
-		surrogateEnvironmentTransformation.globalRotation.z = 0;
+		surrogateEnvironmentTransformation.globalRotation = Rotation::zero();
 
 		environmentTransform = &surrogateEnvironmentTransformation;
 
@@ -365,7 +337,7 @@ void Actor::update(uint32 elapsedTime)
 	// call base
 	Base::update(this, elapsedTime);
 
-	if(this->stateMachine)
+	if(!isDeleted(this->stateMachine))
 	{
 		StateMachine::update(this->stateMachine);
 	}
@@ -462,7 +434,7 @@ bool Actor::isSubjectToGravity(Acceleration gravity)
 // check if gravity must apply to this actor
 bool Actor::canMoveTowards(Vector3D direction)
 {
-	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
 	Vector3D displacement =
 	{
@@ -477,7 +449,7 @@ bool Actor::canMoveTowards(Vector3D direction)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 			canMove &= Shape::canMoveTowards(shape, displacement, 0);
@@ -487,20 +459,20 @@ bool Actor::canMoveTowards(Vector3D direction)
 	return canMove;
 }
 
-fix10_6 Actor::getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fixed_t Actor::getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	return  SpatialObject::getBounciness(collidingObject);
 }
 
-fix10_6 Actor::getSurroundingFrictionCoefficient()
+fixed_t Actor::getSurroundingFrictionCoefficient()
 {
-	fix10_6 totalFrictionCoefficient = 0;
+	fixed_t totalFrictionCoefficient = 0;
 
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -511,7 +483,7 @@ fix10_6 Actor::getSurroundingFrictionCoefficient()
 	return totalFrictionCoefficient;
 }
 
-fix10_6 Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fixed_t Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
@@ -540,12 +512,12 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 
 			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
 
-			fix10_6 bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix10_6 frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fixed_t bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fixed_t frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
 			if(Actor::mustBounce(this))
 			{
-				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
 
@@ -605,6 +577,7 @@ bool Actor::handleMessage(Telegram telegram)
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -617,7 +590,7 @@ StateMachine Actor::getStateMachine()
 // stop movement completely
 void Actor::stopAllMovement()
 {
-	Actor::stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
+	Actor::stopMovement(this, __ALL_AXIS);
 }
 
 // stop movement completely
@@ -629,9 +602,9 @@ void Actor::stopMovement(uint16 axis)
 	}
 }
 
-void Actor::addForce(const Force* force, bool checkIfCanMove)
+void Actor::applyForce(const Force* force, bool checkIfCanMove)
 {
-	ASSERT(this->body, "Actor::addForce: null body");
+	ASSERT(this->body, "Actor::applyForce: null body");
 
 	if(!this->body)
 	{
@@ -646,7 +619,7 @@ void Actor::addForce(const Force* force, bool checkIfCanMove)
 		}
 	}
 
-	Body::addForce(this->body, force);
+	Body::applyForce(this->body, force);
 }
 
 void Actor::moveUniformly(Velocity* velocity)
@@ -663,7 +636,7 @@ void Actor::moveUniformly(Velocity* velocity)
 // is it moving?
 bool Actor::isMoving()
 {
-	return this->body ? Body::getMovementOnAllAxis(this->body) : 0;
+	return isDeleted(this->body) ? false : Body::getMovementOnAllAxis(this->body);
 }
 
 uint16 Actor::getMovementState()
@@ -675,7 +648,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 {
 	Base::changeEnvironment(this, environmentTransform);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -695,7 +668,7 @@ void Actor::initialTransform(const Transformation* environmentTransform, uint32 
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -706,7 +679,7 @@ void Actor::setPosition(const Vector3D* position)
 {
 	Base::setPosition(this, position);
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
@@ -717,36 +690,36 @@ void Actor::setPosition(const Vector3D* position)
 // retrieve global position
 const Vector3D* Actor::getPosition()
 {
-	return this->body ? Body::getPosition(this->body) : Base::getPosition(this);
+	return !isDeleted(this->body) ? Body::getPosition(this->body) : Base::getPosition(this);
 }
 
 // get bounciness
-fix10_6 Actor::getBounciness()
+fixed_t Actor::getBounciness()
 {
-	PhysicalSpecification* physicalSpecification = this->actorSpec->animatedEntitySpec.entitySpec.physicalSpecification;
+	PhysicalSpecification* physicalSpecification = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalSpecification;
 
-	return this->body ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
+	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }
 
 // get velocity
 Velocity Actor::getVelocity()
 {
-	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
+	return !isDeleted(this->body) ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }
 
-fix10_6 Actor::getSpeed()
+fixed_t Actor::getSpeed()
 {
-	return this->body ? Body::getSpeed(this->body) : Base::getSpeed(this);
+	return !isDeleted(this->body) ? Body::getSpeed(this->body) : Base::getSpeed(this);
 }
 
-fix10_6 Actor::getMaximumSpeed()
+fixed_t Actor::getMaximumSpeed()
 {
-	return this->body ? Body::getMaximumSpeed(this->body) : 0;
+	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
 void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return;
 	}
@@ -755,13 +728,13 @@ void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotC
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 }
 
 void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return;
 	}
@@ -770,7 +743,7 @@ void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), S
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 }
 

@@ -19,7 +19,7 @@
 #include <SoundManager.h>
 #include <StopwatchManager.h>
 #include <SoundTest.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Profiler.h>
 
 
@@ -30,6 +30,7 @@
 // use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
 static SoundManager _soundManager;
+static StopwatchManager _stopwatchManager;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,13 +67,18 @@ void TimerManager::constructor()
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
+	this->interruptsPerGameFrame = 0;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
+
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
+	_stopwatchManager = StopwatchManager::getInstance();
 }
 
 /**
- * Class destructor
+ *
+  Class destructor
  */
 void TimerManager::destructor()
 {
@@ -98,12 +104,15 @@ void TimerManager::reset()
 	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
 	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
 	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
+	this->interruptsPerGameFrame = 0;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 }
 
 /**
  * Get resolution in US
  *
  * @return resolution in us	uint16
+ 
  */
 uint16 TimerManager::getResolutionInUS()
 {
@@ -189,7 +198,7 @@ void TimerManager::setResolution(uint16 resolution)
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::setResolution: wrong timer resolution scale");
 			break;
 	}
 
@@ -232,7 +241,7 @@ float TimerManager::getTimePerInterruptInMS()
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::getTimePerInterruptInMS: wrong timer resolution scale");
 			break;
 	}
 
@@ -255,7 +264,7 @@ uint32 TimerManager::getTimePerInterruptInUS()
 
 		default:
 
-			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			ASSERT(false, "SoundTest::getTimePerInterruptInUS: wrong timer resolution scale");
 			break;
 	}
 
@@ -300,6 +309,7 @@ void TimerManager::setTimePerInterrupt(uint16 timePerInterrupt)
 	}
 
 	this->timePerInterrupt = timePerInterrupt;
+	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 }
 
 /**
@@ -355,13 +365,13 @@ uint16 TimerManager::getMinimumTimePerInterruptStep()
 
 uint16 TimerManager::computeTimerCounter()
 {
-	uint16 timerCounter = 0;
+	int16 timerCounter = 0;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			timerCounter = __TIME_US(this->timePerInterrupt);
+			timerCounter = __TIME_US(this->timePerInterrupt) - (__TIMER_20US == this->resolution ? 1 : 0);
 			break;
 
 		case kMS:
@@ -373,7 +383,7 @@ uint16 TimerManager::computeTimerCounter()
 			break;
 	}
 
-	return timerCounter;
+	return (uint16)(0 >= timerCounter ? 1 : timerCounter);
 }
 
 
@@ -429,6 +439,46 @@ void TimerManager::enable(bool flag)
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
+void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
+{
+	// reset timer
+	TimerManager::resetMilliseconds(this);
+
+	if(0 >= this->interruptsPerGameFrame)
+	{
+		this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
+	}
+	else
+	{
+		this->microsecondsPerInterrupt = elapsedMicroseconds / this->interruptsPerGameFrame;
+	}
+
+	this->interruptsPerGameFrame = 0;
+}
+
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+void TimerManager::nextSecondStarted()
+{
+	TimerManager::printStatus(this, 1, 0);
+
+	this->interruptsPerSecond = 0;
+}
+#endif
+
+void TimerManager::printStatus(int32 x, int32 y)
+{
+	PRINT_TEXT("TIMER MANAGER", x, y++);
+
+	PRINT_TEXT("Interrupts/second:          ", x, ++y);
+	PRINT_INT(this->interruptsPerSecond, x + 22, y);
+	PRINT_TEXT("Interrupts/frame:          ", x, ++y);
+	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 22, y);
+	PRINT_TEXT("Average us/interrupt:          ", x, ++y);
+	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 22, y);
+	PRINT_TEXT("Real us/interrupt:          ", x, ++y);
+	PRINT_INT(this->microsecondsPerInterrupt, x + 22, y);
+}
+
 /**
  * Interrupt handler
  */
@@ -442,49 +492,37 @@ static void TimerManager::interruptHandler()
 	TimerManager::enableInterrupt(_timerManager, false);
 #endif
 
-	uint32 elapsedMilliseconds = 0;
-
-	// update clocks
-	switch(_timerManager->timePerInterruptUnits)
-	{
-		case kUS:
-
-			_timerManager->microseconds += _timerManager->timePerInterrupt;
-
-			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
-
-			if(_timerManager->microseconds > __MICROSECONDS_PER_MILLISECOND)
-			{
-				_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_PER_MILLISECOND;
-			}
-			break;
-
-		case kMS:
-
-			elapsedMilliseconds = _timerManager->timePerInterrupt;
-			break;
-
-		default:
-
-			ASSERT(false, "TimerManager::setResolution: wrong resolution scale");
-			break;
-	}
-
-	_timerManager->milliseconds += elapsedMilliseconds;
-	_timerManager->totalMilliseconds += elapsedMilliseconds;
-
-	// update MIDI sounds
-	SoundManager::playMIDISounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
-
-	// update Stopwatchs
-	StopwatchManager::update(StopwatchManager::getInstance());
-	
-#ifdef __SOUND_TEST
-	if(Game::isInSoundTest(Game::getInstance()))
-	{
-		SoundManager::printPlaybackTime(SoundManager::getInstance());
-	}
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+	_timerManager->interruptsPerSecond++;
 #endif
+
+	_timerManager->interruptsPerGameFrame++;
+
+	_timerManager->microseconds += _timerManager->microsecondsPerInterrupt;
+
+	if(_timerManager->microseconds > __MICROSECONDS_PER_MILLISECOND)
+	{
+		uint32 elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
+
+		_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_PER_MILLISECOND;
+
+		_timerManager->milliseconds += elapsedMilliseconds;
+
+		_timerManager->totalMilliseconds += elapsedMilliseconds;
+
+#ifdef __SOUND_TEST
+		if(VUEngine::isInSoundTest(VUEngine::getInstance()))
+		{
+			SoundManager::printPlaybackTime(SoundManager::getInstance());
+		}
+#endif
+	}
+
+	// update sounds
+	SoundManager::playSounds(_timerManager->microsecondsPerInterrupt);
+
+	// update Stopwatchs: no use is being done of them so this is commented out for now since it affects PCM playback
+	//StopwatchManager::update(_stopwatchManager);
 
 // enable
 #ifndef __ENABLE_PROFILER
@@ -580,9 +618,9 @@ void TimerManager::wait(uint32 milliSeconds)
 {
 	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid
-	volatile uint32 currentMilliseconds = this->milliseconds;
-	uint32 waitStartTime = this->milliseconds;
-	volatile uint32 *milliseconds = (uint32*)&this->milliseconds;
+	volatile uint32 currentMilliseconds = this->totalMilliseconds;
+	uint32 waitStartTime = this->totalMilliseconds;
+	volatile uint32 *milliseconds = (uint32*)&this->totalMilliseconds;
 
 	while ((*milliseconds - waitStartTime) < milliSeconds)
 	{
@@ -600,7 +638,7 @@ void TimerManager::wait(uint32 milliSeconds)
  * @param object			Called method's scope
  * @param method			Method to call
  */
-void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32))
+void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
 {
 	if(!isDeleted(object) && method)
 	{

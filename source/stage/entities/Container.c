@@ -42,6 +42,7 @@ void Container::constructor(const char* const name)
 	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
+	this->synchronizeGraphics = Container::overrides(this, synchronizeGraphics);
 
 	this->transformed = false;
 
@@ -50,12 +51,12 @@ void Container::constructor(const char* const name)
 	this->transformation.globalPosition = Vector3D::zero();
 
 	// set rotation
-	this->transformation.localRotation = (Rotation){0, 0, 0};
-	this->transformation.globalRotation = (Rotation){0, 0, 0};
+	this->transformation.localRotation = Rotation::zero();
+	this->transformation.globalRotation = Rotation::zero();
 
 	// set scale
-	this->transformation.localScale = (Scale){__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-	this->transformation.globalScale = (Scale){__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+	this->transformation.localScale = Scale::unit();
+	this->transformation.globalScale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -66,6 +67,7 @@ void Container::constructor(const char* const name)
 	this->deleteMe = false;
 	this->hidden = false;
 	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
+	this->dontStreamOut = false;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -84,7 +86,7 @@ void Container::destructor()
 			Container child = Container::safeCast(node->data);
 
 #ifndef __RELEASE
-			if(child->parent != this)
+			if(NULL != child->parent && child->parent != this)
 			{
 				Printing::setDebugMode(Printing::getInstance());
 				Printing::clear(Printing::getInstance());
@@ -95,9 +97,10 @@ void Container::destructor()
 				Printing::hex(Printing::getInstance(), (uint32)child, 29, 14, 8, NULL);
 				Printing::text(Printing::getInstance(), "Parent: ", 20, 15, NULL);
 				Printing::hex(Printing::getInstance(), (uint32)child->parent, 29, 15, 8, NULL);
+
+				NM_ASSERT(false, "Container::destructor: deleting a child of not mine");
 			}
 #endif
-			NM_ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 
 			child->parent = NULL;
 			delete child;
@@ -161,7 +164,7 @@ void Container::deleteMyself()
 		Container::removeChild(this->parent, this, true);
 		Container::iAmDeletingMyself(this);
 	}
-	else
+	else if(!this->deleteMe)
 	{
 		delete this;
 	}
@@ -192,7 +195,11 @@ void Container::removeBehavior(Behavior behavior)
 }
 
 void Container::iAmDeletingMyself()
-{}
+{
+	this->update = false;
+	this->transform = false;
+	this->synchronizeGraphics = false;
+}
 
 /**
  * Add a child Container
@@ -234,6 +241,10 @@ void Container::addChild(Container child)
 		VirtualList::pushBack(this->children, (void*)child);
 
 		Container::invalidateGlobalTransformation(child);
+
+		this->synchronizeGraphics = this->synchronizeGraphics || Container::overrides(child, synchronizeGraphics);
+		this->update = this->update || Container::overrides(child, update);
+		this->transform = this->transform || Container::overrides(child, transform);
 	}
 }
 
@@ -247,13 +258,16 @@ void Container::removeChild(Container child, bool deleteChild)
 {
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
 
-	// check if child is valid and if I'm its parent
-	if(!(child && this == child->parent && this->children))
+	if(isDeleted(child) || this != child->parent || isDeleted((this->children)))
 	{
 		return;
 	}
 
-	if(VirtualList::find(this->children, child))
+	if(!deleteChild && VirtualList::removeElement(this->children, child))
+	{
+		child->parent = NULL;
+	}
+	else if(NULL != VirtualList::find(this->children, child))
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
@@ -262,9 +276,9 @@ void Container::removeChild(Container child, bool deleteChild)
 	else
 	{
 		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-		Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
+		Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
 		NM_ASSERT(false, "Container::removeChild: not my child");
@@ -277,14 +291,9 @@ void Container::setupShapes()
 	// if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
 
 			Container::setupShapes(child);
 		}
@@ -310,12 +319,12 @@ void Container::purgeChildren()
 			if(isDeleted(child))
 			{
 				Printing::setDebugMode(Printing::getInstance());
-				Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
 				Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-				Printing::text(Printing::getInstance(), "Object's type: ", 1, 16, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
 				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
-				NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+				NM_ASSERT(false, "Container::purgeChildren: deleted children");
 			}
 #endif
 
@@ -395,7 +404,6 @@ void Container::updateBehaviors(uint32 elapsedTime)
 			}
 		}
 	}
-
 }
 
 /**
@@ -408,19 +416,33 @@ void Container::updateChildren(uint32 elapsedTime)
 	// if I have children
 	if(this->children)
 	{
-		Container::purgeChildren(this);
-
-		// update each child
-		for(VirtualNode node = this->children->head; node ; node = node->next)
-		{			
+		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
+		{
+			nextNode = node->next;
+			
 			Container child = Container::safeCast(node->data);
 
+#ifndef __RELEASE
+			if(isDeleted(child))
+			{
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
+				Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
+				Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
+
+				NM_ASSERT(false, "Container::updateChildren: deleted children");
+			}
+#endif
 			if(child->deleteMe)
 			{
+				VirtualList::removeNode(this->children, node);
+				child->parent = NULL;
+				delete child;
 				continue;
 			}
 
-			if(!child->update && NULL == child->children && NULL == this->behaviors)
+			if(!child->update)
 			{
 				continue;
 			}
@@ -474,19 +496,13 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
 
 	// tranlate position
-	concatenatedTransformation->globalPosition.x += transformation->localPosition.x;
-	concatenatedTransformation->globalPosition.y += transformation->localPosition.y;
-	concatenatedTransformation->globalPosition.z += transformation->localPosition.z;
+	concatenatedTransformation->globalPosition = Vector3D::sum(concatenatedTransformation->globalPosition, transformation->localPosition);
 
 	// propagate rotation
-	concatenatedTransformation->globalRotation.x += transformation->localRotation.x;
-	concatenatedTransformation->globalRotation.y += transformation->localRotation.y;
-	concatenatedTransformation->globalRotation.z += transformation->localRotation.z;
+	concatenatedTransformation->globalRotation = Rotation::sum(concatenatedTransformation->globalRotation, transformation->localRotation);
 
 	// propagate scale
-	concatenatedTransformation->globalScale.x = __FIX7_9_MULT(concatenatedTransformation->globalScale.x, transformation->localScale.x);
-	concatenatedTransformation->globalScale.y = __FIX7_9_MULT(concatenatedTransformation->globalScale.y, transformation->localScale.y);
-	concatenatedTransformation->globalScale.z = __FIX7_9_MULT(concatenatedTransformation->globalScale.z, transformation->localScale.z);
+	concatenatedTransformation->globalScale = Scale::product(concatenatedTransformation->globalScale, transformation->localScale);
 }
 
 /**
@@ -496,26 +512,9 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
  */
 void Container::changeEnvironment(Transformation* environmentTransform)
 {
-	Vector3D localPosition =
-	{
-		this->transformation.globalPosition.x - environmentTransform->globalPosition.x,
-		this->transformation.globalPosition.y - environmentTransform->globalPosition.y,
-		this->transformation.globalPosition.z - environmentTransform->globalPosition.z,
-	};
-
-	Rotation localRotation =
-	{
-		this->transformation.globalRotation.x - environmentTransform->globalRotation.x,
-		this->transformation.globalRotation.y - environmentTransform->globalRotation.y,
-		this->transformation.globalRotation.z - environmentTransform->globalRotation.z,
-	};
-
-	Scale localScale =
-	{
-		__FIX7_9_DIV(this->transformation.globalScale.x, environmentTransform->globalScale.x),
-		__FIX7_9_DIV(this->transformation.globalScale.y, environmentTransform->globalScale.y),
-		__FIX7_9_DIV(this->transformation.globalScale.z, environmentTransform->globalScale.z),
-	};
+	Vector3D localPosition = Vector3D::sub(this->transformation.globalPosition, environmentTransform->globalPosition);
+	Rotation localRotation = Rotation::sub(this->transformation.globalRotation, environmentTransform->globalRotation);
+	Scale localScale = Scale::division(this->transformation.globalScale, environmentTransform->globalScale);
 
 	Container::setLocalPosition(this, &localPosition);
 	Container::setLocalRotation(this, &localRotation);
@@ -523,6 +522,46 @@ void Container::changeEnvironment(Transformation* environmentTransform)
 
 	// force global position calculation on the next transformation cycle
 	Container::invalidateGlobalTransformation(this);
+}
+
+/**
+ *
+ *
+ * @private
+ * @param environmentTransform
+ */
+inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
+{
+	if(environmentTransform->globalRotation.x || environmentTransform->globalRotation.y || environmentTransform->globalRotation.z)
+	{
+		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, Vector3D::rotate(this->transformation.localPosition, environmentTransform->globalRotation));
+	}
+	else
+	{
+		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, this->transformation.localPosition);
+	}
+}
+
+/**
+ *
+ *
+ * @private
+ * @param environmentTransform
+ */
+inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
+{
+	this->transformation.globalRotation = Rotation::sum(environmentTransform->globalRotation, this->transformation.localRotation);
+}
+
+/**
+ *
+ *
+ * @private
+ * @param environmentTransform
+ */
+inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
+{
+	this->transformation.globalScale = Scale::product(environmentTransform->globalScale, this->transformation.localScale);
 }
 
 /**
@@ -534,23 +573,29 @@ void Container::changeEnvironment(Transformation* environmentTransform)
 void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
 {
 	// concatenate transformation
-	Container::applyEnvironmentToRotation(this, environmentTransform);
-	Container::applyEnvironmentToScale(this, environmentTransform);
-	Container::applyEnvironmentToPosition(this, environmentTransform);
+	if(__INHERIT_SCALE & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToScale(this, environmentTransform);
+	}
+
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToRotation(this, environmentTransform);
+	}
+
+	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->inheritEnvironment)
+	{
+		Container::applyEnvironmentToPosition(this, environmentTransform);
+	}
 
 	Container::invalidateGlobalTransformation(this);
 
 	// if I have children
 	if(recursive && this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -559,60 +604,6 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 	}
 
 	this->transformed = !this->hidden;
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransform
- */
-inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
-{
-	this->transformation.globalPosition.x = environmentTransform->globalPosition.x + this->transformation.localPosition.x;
-	this->transformation.globalPosition.y = environmentTransform->globalPosition.y + this->transformation.localPosition.y;
-	this->transformation.globalPosition.z = environmentTransform->globalPosition.z + this->transformation.localPosition.z;
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransform
- */
-inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
-{
-	this->transformation.globalRotation.x = __MODULO(environmentTransform->globalRotation.x + this->transformation.localRotation.x, 512);
-	this->transformation.globalRotation.y = __MODULO(environmentTransform->globalRotation.y + this->transformation.localRotation.y, 512);
-	this->transformation.globalRotation.z = __MODULO(environmentTransform->globalRotation.z + this->transformation.localRotation.z, 512);
-
-	if(0 > this->transformation.globalRotation.x)
-	{
-		this->transformation.globalRotation.x += 512;
-	}
-
-	if(0 > this->transformation.globalRotation.y)
-	{
-		this->transformation.globalRotation.y += 512;
-	}
-
-	if(0 > this->transformation.globalRotation.z)
-	{
-		this->transformation.globalRotation.z += 512;
-	}
-}
-
-/**
- *
- *
- * @private
- * @param environmentTransform
- */
-inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
-{
-	this->transformation.globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, this->transformation.localScale.x);
-	this->transformation.globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, this->transformation.localScale.y);
-	this->transformation.globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, this->transformation.localScale.z);
 }
 
 /**
@@ -625,14 +616,6 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
-	{
-		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
-		{
-			Container::applyEnvironmentToRotation(this, environmentTransform);
-		}
-	}
-
 	if(__INHERIT_SCALE & this->inheritEnvironment)
 	{
 		if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
@@ -641,10 +624,18 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 		}
 	}
 
+	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	{
+		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+		{
+			Container::applyEnvironmentToRotation(this, environmentTransform);
+		}
+	}
+
 	if(__INHERIT_POSITION & this->inheritEnvironment)
 	{
 		// apply environment transformation
-		if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+		if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation)
 		{
 			Container::applyEnvironmentToPosition(this, environmentTransform);
 		}
@@ -668,14 +659,9 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	{
 		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 			child->invalidateGraphics |= invalidateGraphics;
@@ -712,26 +698,13 @@ void Container::synchronizeChildrenGraphics()
 	// if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
+			bool skip = (!child->synchronizeGraphics) + child->hidden + (!child->transformed) + (!child->invalidateGraphics && NULL == child->children);
 
-			if(child->hidden)
-			{
-				continue;
-			}
-
-			if(!child->transformed)
-			{
-				return;
-			}
-
-			if(!child->invalidateGraphics && NULL == child->children)
+			if(skip)
 			{
 				continue;
 			}
@@ -853,27 +826,7 @@ const Rotation* Container::getLocalRotation()
  */
 void Container::setLocalRotation(const Rotation* rotation)
 {
-	Rotation auxRotation = 
-	{
-		__MODULO(rotation->x, 512),
-		__MODULO(rotation->y, 512),
-		__MODULO(rotation->z, 512)
-	};
-
-	if(0 > auxRotation.x)
-	{
-		auxRotation.x += 512;
-	}
-
-	if(0 > auxRotation.y)
-	{
-		auxRotation.y += 512;
-	}
-
-	if(0 > auxRotation.z)
-	{
-		auxRotation.z += 512;
-	}
+	Rotation auxRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
 
 	if(this->transformation.localRotation.z != auxRotation.z)
 	{
@@ -932,6 +885,45 @@ void Container::setLocalScale(const Scale* scale)
 }
 
 /**
+ * Translate 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::translate(const Vector3D* translation)
+{
+
+	Vector3D localPosition = Vector3D::sum(this->transformation.localPosition, *translation);
+	Container::setLocalPosition(this, &localPosition);	
+}
+
+/**
+ * Rotate 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::rotate(const Rotation* rotation)
+{
+	if(0 != rotation->x || 0 != rotation->y || 0 != rotation->z)
+	{
+		Container::invalidateGlobalRotation(this);
+	}
+
+	this->transformation.localRotation = Rotation::sum(this->transformation.localRotation, *rotation);	
+}
+
+/**
+ * Scale 
+ *
+ * @param translation 	Pointer to a Vector3D
+ */
+void Container::scale(const Scale* scale)
+{
+	Container::invalidateGlobalScale(this);
+
+	this->transformation.localScale = Scale::product(this->transformation.localScale, *scale);	
+}
+
+/**
  * Invalidate global transformation
  */
 void Container::invalidateGlobalTransformation()
@@ -943,7 +935,7 @@ void Container::invalidateGlobalTransformation()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalTransformation(node->data);
@@ -963,7 +955,7 @@ void Container::invalidateGlobalPosition()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalPosition(node->data);
@@ -983,7 +975,7 @@ void Container::invalidateGlobalRotation()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalRotation(node->data);
@@ -1003,7 +995,7 @@ void Container::invalidateGlobalScale()
 		VirtualNode node = this->children->head;
 
 		// update each child
-		for(; node; node = node->next)
+		for(; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalScale(node->data);
@@ -1025,24 +1017,45 @@ int32 Container::propagateMessage(int32 (*propagatedMessageHandler)(void*, va_li
 
 	va_list args;
 	va_start(args, propagatedMessageHandler);
-	int32 result =  Container::passMessage(this, propagatedMessageHandler, args);
+	int32 result = Container::propagateArguments(this, propagatedMessageHandler, args);
 	va_end(args);
 
 	return result;
 }
 
 /**
- * Pass message to children recursively
+ * Propagate a string to the child wrapper
  *
  * @param propagatedMessageHandler
+ * @param args						va_list of propagated string parameters
+
+ * @return							Result
+ */
+int32 Container::propagateString(int32 (*propagatedStringHandler)(void*, va_list), ...)
+{
+	ASSERT(propagatedStringHandler, "Container::propagateMessage: null propagatedStringHandler");
+
+	va_list args;
+	va_start(args, propagatedStringHandler);
+	int32 result = Container::propagateArguments(this, propagatedStringHandler, args);
+	va_end(args);
+
+	return result;
+}
+
+
+/**
+ * Pass message to children recursively
+ *
+ * @param propagationHandler		Method used to actually propagate the arguments
  * @param args						va_list of propagated message parameters
 
  * @return							Result
  */
-int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args)
+int32 Container::propagateArguments(int32 (*propagationHandler)(void*, va_list), va_list args)
 {
 	// if message is valid
-	if(!propagatedMessageHandler)
+	if(NULL == propagationHandler)
 	{
 		return false;
 	}
@@ -1050,17 +1063,12 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 	// propagate if I have children
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-
 			// pass message to each child
-			if( Container::passMessage(child, propagatedMessageHandler, args))
+			if(Container::propagateArguments(child, propagationHandler, args))
 			{
 				return true;
 			}
@@ -1068,11 +1076,11 @@ int32 Container::passMessage(int32 (*propagatedMessageHandler)(void*, va_list), 
 	}
 
 	// if no child processed the message, I process it
-	return propagatedMessageHandler(this, args);
+	return propagationHandler(this, args);
 }
 
 /**
- * Process user input
+ * Process message
  *
  * @param args	va_list of propagated message parameters
 
@@ -1085,13 +1093,38 @@ int32 Container::onPropagatedMessage(va_list args)
 }
 
 /**
- * Process message
+ * Process string
+ *
+ * @param args	va_list of propagated string parameters
+
+ * @return		Result
+ */
+int32 Container::onPropagatedString(va_list args)
+{
+	const char* string = va_arg(args, char*);
+	return  Container::handlePropagatedString(this, string);
+}
+
+/**
+ * Handle propagated message
  *
  * @param message	Message
 
  * @return			Result
  */
 bool Container::handlePropagatedMessage(int32 message __attribute__ ((unused)))
+{
+	return false;
+}
+
+/**
+ * Handle propagated string
+ *
+ * @param message	Message
+
+ * @return			Result
+ */
+bool Container::handlePropagatedString(const char* string __attribute__ ((unused)))
 {
 	return false;
 }
@@ -1247,7 +1280,7 @@ void Container::suspend()
 	{
 		Container::purgeChildren(this);
 
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1278,14 +1311,9 @@ void Container::resume()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-
-			if(child->deleteMe)
-			{
-				continue;
-			}
 
 			Container::resume(child);
 		}
@@ -1301,15 +1329,10 @@ void Container::show()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(child->deleteMe)
-			{
-				continue;
-			}
-			
 			Container::show(child);
 		}
 	}
@@ -1324,7 +1347,7 @@ void Container::hide()
 
 	if(this->children)
 	{
-		for(VirtualNode node = this->children->head; node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container::hide(node->data);
 		}
@@ -1351,7 +1374,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(!classPointer || Object::getCast((Object)child, classPointer, NULL))
+			if(NULL == classPointer || Object::getCast((ListenerObject)child, classPointer, NULL))
 			{
 				VirtualList::pushBack(children, child);
 			}
@@ -1376,7 +1399,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
-			if(!classPointer || Object::getCast((Object)behavior, classPointer, NULL))
+			if(!classPointer || Object::getCast((ListenerObject)behavior, classPointer, NULL))
 			{
 				VirtualList::pushBack(behaviors, behavior);
 			}
@@ -1394,4 +1417,77 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 bool Container::isTransformed()
 {
 	return !this->invalidateGlobalTransformation;
+}
+
+Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)
+{
+	Rotation rotation = this->transformation.localRotation;
+
+	if(__X_AXIS & axis)
+	{
+		fixed_ext_t z = direction->z;
+
+		if(direction->x)
+		{
+			z = Math::squareRootFixed(__FIXED_EXT_MULT(direction->x, direction->x) + __FIXED_EXT_MULT(direction->z, direction->z));
+
+			z = 0 > direction->z ? -z : z;
+		}
+
+		rotation.x = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9(direction->y), __FIXED_TO_FIX7_9(z))) - __QUARTER_ROTATION_DEGREES;
+	}
+	
+	if(__Y_AXIS & axis)
+	{
+		fixed_ext_t x = direction->x;
+
+		if(direction->y)
+		{
+			x = Math::squareRootFixed(__FIXED_EXT_MULT(direction->y, direction->y) + __FIXED_EXT_MULT(direction->x, direction->x));
+
+			x = 0 > direction->x ? -x : x;
+		}
+
+		rotation.y = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->z)), __FIXED_TO_FIX7_9(x)));
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		fixed_ext_t y = direction->y;
+
+		if(direction->z)
+		{
+			y = Math::squareRootFixed(__FIXED_EXT_MULT(direction->z, direction->z) + __FIXED_EXT_MULT(direction->y, direction->y));
+
+			y = 0 > direction->y ? -y : y;
+		}
+
+		rotation.z = __I_TO_FIXED(Math::getAngle(__FIXED_TO_FIX7_9((direction->x)), __FIXED_TO_FIX7_9(y)));
+	}
+
+	if(__X_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.z)
+		{
+			rotation.x = rotation.x - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Y_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.x)
+		{
+			rotation.y = rotation.y - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	if(__Z_AXIS & axis)
+	{
+		if(__QUARTER_ROTATION_DEGREES < rotation.y)
+		{
+			rotation.z = rotation.z - __HALF_ROTATION_DEGREES;
+		}
+	}
+
+	return Rotation::clamp(rotation.x, rotation.y, rotation.z);	
 }

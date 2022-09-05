@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,6 +63,9 @@ singleton class TimerManager : Object
 	uint32 microseconds;
 	uint32 totalMilliseconds;
 	uint16 resolution;
+	uint16 interruptsPerSecond;
+	uint16 interruptsPerGameFrame;
+	uint32 microsecondsPerInterrupt;
 	uint16 timePerInterrupt;
 	uint16 timePerInterruptUnits;
 	uint16 minimumTimePerInterruptUS;
@@ -86,6 +90,8 @@ singleton class TimerManager : Object
 	void setTimePerInterrupt(uint16 timePerInterrupt);
 	void setTimePerInterruptUnits(uint16 timePerInterruptUnits);
 	void enable(bool flag);
+	void nextFrameStarted(uint32 elapsedMicroseconds);
+	void nextSecondStarted();
 	uint32 getMillisecondsElapsed();
 	uint32 getTotalMillisecondsElapsed();
 	uint32 resetMilliseconds();
@@ -94,7 +100,7 @@ singleton class TimerManager : Object
 	void clearStat();
 	void initialize();
 	void wait(uint32 milliSeconds);
-	void repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32));
+	void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
 	void print(int32 x, int32 y);
 }
 

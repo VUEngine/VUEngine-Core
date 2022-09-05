@@ -14,7 +14,6 @@
 
 #include <Camera.h>
 #include <Optics.h>
-#include <Game.h>
 #include <CameraMovementManager.h>
 #include <CameraEffectManager.h>
 #include <debugConfig.h>
@@ -26,8 +25,8 @@
 
 const Optical* _optical = NULL;
 const Vector3D* _cameraPosition = NULL;
-const Vector3D* _cameraPreviousPosition = NULL;
-const Vector3D* _cameraDisplacement = NULL;
+const Rotation* _cameraRotation = NULL;
+const Rotation* _cameraInvertedRotation = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
 
@@ -62,43 +61,46 @@ void Camera::constructor()
 	// set the default camera effect manager
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
-	this->focusEntityPositionDisplacement.x = 0;
-	this->focusEntityPositionDisplacement.y = 0;
-	this->focusEntityPositionDisplacement.z = 0;
+	this->focusEntityPositionDisplacement = Vector3D::zero();
 
 	// clear focus actor pointer
 	this->focusEntity = NULL;
 	this->focusEntityPosition = NULL;
+	this->focusEntityRotation = NULL;
 
 	this->position = Vector3D::zero();
-	this->previousPosition = Vector3D::zero();
 	this->positionBackup = Vector3D::zero();
-	this->lastDisplacement = Vector3D::zero();
+
+	this->rotation = Rotation::zero();
+	this->rotationBackup = Rotation::zero();
+	this->invertedRotation = Rotation::invert(this->rotation);
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
 	this->cameraFrustum.x1 = __SCREEN_WIDTH;
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
 	PixelOptical pixelOptical =
     {
     	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
     	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
-    	__DISTANCE_EYE_SCREEN,
+		__CAMERA_NEAR_PLANE,					// distance from player's eyes to the virtual screen
     	__BASE_FACTOR,							// distance from left to right eye (depth perception)
     	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
     	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
     	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
     };
 
-	Camera::setOptical(this, Optical::getFromPixelOptical(pixelOptical));
+	Camera::setup(this, pixelOptical, this->cameraFrustum);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
 	_cameraPosition = &this->position;
-	_cameraPreviousPosition = &this->previousPosition;
-	_cameraDisplacement = &this->lastDisplacement;
 	_cameraFrustum = &this->cameraFrustum;
+	_cameraRotation = &this->rotation;
+	_cameraInvertedRotation = &this->invertedRotation;
 }
 
 /**
@@ -153,12 +155,14 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
  */
 void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 {
+	this->transformationFlags = false;
+
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
 	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
 #ifdef __SHOW_CAMERA_STATUS
-	Camera::print(this, 1, 1);
+	Camera::print(this, 1, 1, true);
 #endif
 }
 
@@ -171,10 +175,12 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 {
 	this->focusEntity = focusEntity;
 	this->focusEntityPosition = NULL;
+	this->focusEntityRotation = NULL;
 
 	if(focusEntity)
 	{
-		this->focusEntityPosition =  SpatialObject::getPosition(this->focusEntity);
+		this->focusEntityPosition = SpatialObject::getPosition(this->focusEntity);
+		this->focusEntityRotation = SpatialObject::getRotation(this->focusEntity);
 
 		// focus now
 		Camera::focus(this, false);
@@ -187,10 +193,6 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 void Camera::unsetFocusEntity()
 {
 	this->focusEntity = NULL;
-
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
 }
 
 /**
@@ -216,19 +218,31 @@ void Camera::onFocusEntityDeleted(Entity actor)
 	}
 }
 
+static uint8 Camera::computeTranslationFlags(Vector3D translation)
+{
+	if(translation.z)
+	{
+		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
+	}
+	else if(translation.x || translation.y)
+	{
+		return __INVALIDATE_PROJECTION;
+	}
+
+	return false;
+}
+
 /**
  * Translate camera
  *
  * @param translation
  * @param cap
  */
-void Camera::move(Vector3D translation, int32 cap)
+void Camera::translate(Vector3D translation, int32 cap)
 {
-	this->lastDisplacement = translation;
+	this->transformationFlags |= Camera::computeTranslationFlags(translation);
 
-	this->position.x += translation.x;
-	this->position.y += translation.y;
-	this->position.z += translation.z;
+	this->position = Vector3D::sum(this->position, translation);
 
 	if(cap)
 	{
@@ -295,20 +309,66 @@ Vector3D Camera::getPosition()
 }
 
 /**
+ * Get camera's rotation
+ *
+ * @return		Camera rotation
+ */
+Rotation Camera::getRotation()
+{
+	return this->rotation;
+}
+
+/**
  * Set camera's position
  *
  * @param position	Camera position
  */
-void Camera::setPosition(Vector3D position)
+void Camera::setPosition(Vector3D position, bool cap)
 {
-	position = Camera::getCappedPosition(this, position);
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(position, this->position));
 
-	this->lastDisplacement.x = position.x - this->position.x;
-	this->lastDisplacement.y = position.y - this->position.y;
-	this->lastDisplacement.z = position.z - this->position.z;
-
-	this->previousPosition = this->position;
 	this->position = position;
+
+	if(cap)
+	{
+		Camera::capPosition(this);
+	}
+}
+
+static uint8 Camera::computeRotationFlags(Rotation rotation)
+{
+	if(rotation.x || rotation.y || rotation.z)
+	{
+		return __INVALIDATE_ROTATION;
+	}
+
+	return false;
+}
+
+/**
+ * Set camera's rotation
+ *
+ * @param rotation	Camera rotation
+ */
+void Camera::setRotation(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
+
+	this->rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
+	this->invertedRotation = Rotation::invert(this->rotation);
+}
+
+/**
+ * Set camera's position
+ *
+ * @param position	Camera position
+ */
+void Camera::rotate(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(rotation);
+
+	this->rotation = Rotation::sum(this->rotation, rotation);
+	this->invertedRotation = Rotation::invert(this->rotation);
 }
 
 /**
@@ -317,18 +377,27 @@ void Camera::setPosition(Vector3D position)
 void Camera::prepareForUI()
 {
 	this->positionBackup = this->position;
+	this->rotationBackup = this->rotation;
+	this->opticalBackup = this->optical;
 
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.z = 0;
+	this->position = Vector3D::zero();
+	this->rotation = Rotation::zero();
+	this->invertedRotation = Rotation::zero();
+
+#ifndef __LEGACY_COORDINATE_PROJECTION
+	this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+#endif
 }
 
 /**
  * Set camera's position after UI transformation
  */
-void Camera::doneUITransform()
+void Camera::doneUI()
 {
 	this->position = this->positionBackup;
+	this->rotation = this->rotationBackup;
+	this->invertedRotation = Rotation::invert(this->rotation);
+	this->optical = this->opticalBackup;
 }
 
 /**
@@ -349,6 +418,24 @@ Optical Camera::getOptical()
 void Camera::setOptical(Optical optical)
 {
 	this->optical = optical;
+
+	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+}
+
+/**
+ * Set optical config structure from PixelOptical
+ *
+ * @param optical
+ * @param cameraFrustum
+ */
+void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
+{
+	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
+
+	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
+	this->opticalBackup = this->optical;
+
+	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
 }
 
 /**
@@ -359,22 +446,6 @@ void Camera::setOptical(Optical optical)
 void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
 {
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
-
-	// focus now
-//	Camera::focus(this, false);
-
-	// make sure that any other entity knows about the change
-//	Camera::forceDisplacement(this, true);
-}
-
-/**
- * Retrieve last displacement
- *
- * @return		Last displacement vector
- */
-Vector3D Camera::getLastDisplacement()
-{
-	return this->lastDisplacement;
 }
 
 /**
@@ -395,18 +466,6 @@ Size Camera::getStageSize()
 void Camera::setStageSize(Size size)
 {
 	this->stageSize = size;
-}
-
-/**
- * Force values as if camera is moving
- *
- * @param flag
- */
-void Camera::forceDisplacement(int32 flag)
-{
-	this->lastDisplacement.x = flag ? __1I_FIX10_6 : 0;
-	this->lastDisplacement.y = flag ? __1I_FIX10_6 : 0;
-	this->lastDisplacement.z = flag ? __1I_FIX10_6 : 0;
 }
 
 /**
@@ -441,10 +500,14 @@ void Camera::reset()
 	Camera::setFocusGameEntity(this, NULL);
 
 	this->position = Vector3D::zero();
-	this->previousPosition = this->position;
-	this->lastDisplacement = Vector3D::zero();
+	this->rotation = Rotation::zero();
+	this->invertedRotation = Rotation::zero();
+
+	this->transformationFlags = false;
 
 	Camera::resetCameraFrustum(this);
+
+	CameraEffectManager::reset(this->cameraEffectManager);
 }
 
 /**
@@ -465,40 +528,40 @@ void Camera::resetCameraFrustum()
  *
  * @param cameraFrustum	Camera frustum
  */
-void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
+CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 {
-	this->cameraFrustum = cameraFrustum;
-
-	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
+	if(cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
-		this->cameraFrustum.x1 = __SCREEN_WIDTH;
+		cameraFrustum.x1 = __SCREEN_WIDTH;
 	}
 
-	if(this->cameraFrustum.y1 > __SCREEN_HEIGHT)
+	if(cameraFrustum.y1 > __SCREEN_HEIGHT)
 	{
-		this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+		cameraFrustum.y1 = __SCREEN_HEIGHT;
 	}
 
-	// 9: 2's power equal to the math type fix10_6
-	if(this->cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
+	// 9: 2's power equal to the math type fixed_t
+	if(cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
 	{
-		this->cameraFrustum.z1 = 1;
+		cameraFrustum.z1 = 1;
 	}
 
-	if(this->cameraFrustum.x0 > this->cameraFrustum.x1)
+	if(cameraFrustum.x0 > cameraFrustum.x1)
 	{
-		this->cameraFrustum.x0 = this->cameraFrustum.x1 - 1;
+		cameraFrustum.x0 = cameraFrustum.x1 - 1;
 	}
 
-	if(this->cameraFrustum.y0 > this->cameraFrustum.y1)
+	if(cameraFrustum.y0 > cameraFrustum.y1)
 	{
-		this->cameraFrustum.y0 = this->cameraFrustum.y1 - 1;
+		cameraFrustum.y0 = cameraFrustum.y1 - 1;
 	}
 
-	if(this->cameraFrustum.z0 > this->cameraFrustum.z1)
+	if(cameraFrustum.z0 > cameraFrustum.z1)
 	{
-		this->cameraFrustum.z0 = this->cameraFrustum.z1 - 1;
+		cameraFrustum.z0 = cameraFrustum.z1 - 1;
 	}
+
+	return cameraFrustum;
 }
 
 /**
@@ -518,7 +581,7 @@ CameraFrustum Camera::getCameraFrustum()
  */
 Vector3D Camera::getFocusEntityPosition()
 {
-	return this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
+	return NULL != this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
 }
 
 /**
@@ -529,6 +592,26 @@ Vector3D Camera::getFocusEntityPosition()
 Vector3D Camera::getFocusEntityPositionDisplacement()
 {
 	return this->focusEntityPositionDisplacement;
+}
+
+/**
+ * Retrieve focus entity rotation
+ *
+ * @return		Focus entity rotation
+ */
+Rotation Camera::getFocusEntityRotation()
+{
+	return NULL != this->focusEntityRotation ? *this->focusEntityRotation : Rotation::zero();
+}
+
+/**
+ * Retrieve the status of the camera's transformation
+ *
+ * @return		Transformation's status flag
+ */
+uint8 Camera::getTransformationFlags()
+{
+	return this->transformationFlags;
 }
 
 /**
@@ -550,11 +633,15 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::text(Printing::getInstance(), "MOVE CAMERA", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "              X    Y    Z    ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Stage's size:                   ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIX10_6_TO_I(this->stageSize.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIX10_6_TO_I(this->stageSize.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIXED_TO_I(this->stageSize.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIXED_TO_I(this->stageSize.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIXED_TO_I(this->stageSize.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIXED_TO_I(this->position.x), x + 14, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIXED_TO_I(this->position.y), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIXED_TO_I(this->position.z), x + 24, y, NULL);
+	Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.x), x + 14, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.y), x + 19, y, 2, NULL);
+	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.z), x + 24, y, 2, NULL);
 }

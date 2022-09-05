@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <ListenerObject.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 
@@ -32,7 +33,7 @@ singleton class AnimationCoordinatorFactory : Object
 
 	/// @publicsection
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationController animationController, Object scope, const CharSetSpec* charSetSpec);
+	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
 	void reset();
 }
 

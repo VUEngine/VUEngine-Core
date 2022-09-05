@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <Entity.h>
 #include <CameraMovementManager.h>
@@ -26,10 +26,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// state of movement
-#define __ACTIVE 		(int32)0x1
-#define __PASSIVE		(int32)0x0
-
+#define __CAMERA_VIEWING_ANGLE									(56)
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
@@ -60,8 +57,9 @@ typedef struct CameraFrustum
 
 extern const Vector3D* _cameraPosition;
 extern const Vector3D* _cameraPreviousPosition;
-extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
+extern const Rotation* _cameraRotation;
+extern const Rotation* _cameraInvertedRotation;
 extern const Optical* _optical;
 
 
@@ -70,16 +68,20 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup camera
-singleton class Camera : Object
+singleton class Camera : ListenerObject
 {
 	// Optical values used in projection values
 	Optical optical;
+	Optical opticalBackup;
 	// Camera position
 	Vector3D position;
 	// Backup of Camera position
-	Vector3D previousPosition;
-	// Backup of Camera position
 	Vector3D positionBackup;
+	// Rotation
+	Rotation rotation;
+	// Backup of Camera rotation
+	Rotation rotationBackup;
+	Rotation invertedRotation;
 	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
 	// Camera effect manager
@@ -90,43 +92,48 @@ singleton class Camera : Object
 	Entity focusEntity;
 	// Position of actor to center the camera around
 	const Vector3D* focusEntityPosition;
-	// World's camera's last displacement
-	Vector3D lastDisplacement;
+	const Rotation* focusEntityRotation;
 	// Stage's size in pixels
 	Size stageSize;
 	// Camera frustum
 	CameraFrustum cameraFrustum;
+	// Transformation flags
+	uint8 transformationFlags;
 
 	/// @publicsection
 	static Camera getInstance();
 	void capPosition();
-	void doneUITransform();
+	void doneUI();
 	void focus(uint32 checkIfFocusEntityIsMoving);
-	void forceDisplacement(int32 flag);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
 	Vector3D getLastDisplacement();
 	Optical getOptical();
 	Vector3D getPosition();
+	Rotation getRotation();
 	Size getStageSize();
-	void move(Vector3D translation, int32 cap);
+	void translate(Vector3D, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
 	void prepareForUI();
 	void reset();
 	void resetCameraFrustum();
 	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
-	void setCameraFrustum(CameraFrustum cameraFrustum);
 	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
 	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
 	void setFocusGameEntity(Entity focusEntity);
 	void setOptical(Optical optical);
-	void setPosition(Vector3D position);
+	void setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
+	void setPosition(Vector3D position, bool cap);
+	void setRotation(Rotation rotation);
+	void rotate(Rotation rotation);
 	void setStageSize(Size size);
 	void startEffect(int32 effect, ...);
 	void stopEffect(int32 effect);
 	void unsetFocusEntity();
 	Vector3D getFocusEntityPosition();
 	Vector3D getFocusEntityPositionDisplacement();
+	Rotation getFocusEntityRotation();
+	uint8 getTransformationFlags();
 	void print(int32 x, int32 y, bool inPixels);
 }
 

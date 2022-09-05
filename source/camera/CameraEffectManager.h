@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <Entity.h>
 
@@ -41,18 +41,24 @@ enum CameraFX
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup camera
-singleton class CameraEffectManager : Object
+singleton class CameraEffectManager : ListenerObject
 {
 	// Target brightness for current fade effect
 	Brightness fxFadeTargetBrightness;
+	// Callback scope for current fade effect
+	ListenerObject fxFadeCallbackScope;
 	// Delay for current fade effect
 	uint8 fxFadeDelay;
-	// Callback scope for current fade effect
-	Object fxFadeCallbackScope;
+	// fade increment
+	uint8 fadeEffectIncrement;
+	// flag to know if remove the event listener on completion
+	bool startingANewEffect;
 
 	/// @publicsection
 	static CameraEffectManager getInstance();
 	void constructor();
+	void reset();
+	void setFadeIncrement(uint8 fadeEffectIncrement);
 	Brightness getDefaultBrightness();
 	virtual void startEffect(int32 effect, va_list args);
 	virtual void stopEffect(int32 effect);

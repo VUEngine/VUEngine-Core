@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <PhysicalWorld.h>
-#include <Game.h>
 #include <Clock.h>
 #include <debugConfig.h>
 
@@ -46,9 +45,6 @@ void PhysicalWorld::constructor()
 
 	// create the shape list
 	this->bodies = new VirtualList();
-	this->activeBodies = new VirtualList();
-
-	this->bodyToCheckForGravityNode = NULL;
 
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -58,10 +54,10 @@ void PhysicalWorld::constructor()
 	this->skipCycles = 0;
 
 	this->frictionCoefficient = 0;
-	this->timeScale = __1I_FIX10_6;
+	this->timeScale = __1I_FIXED;
 
 	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
-	PhysicalWorld::setTimeScale(this, __1I_FIX10_6);
+	PhysicalWorld::setTimeScale(this, __1I_FIXED);
 }
 
 /**
@@ -82,10 +78,8 @@ void PhysicalWorld::destructor()
 
 	// delete lists
 	delete this->bodies;
-	delete this->activeBodies;
 
 	this->bodies = NULL;
-	this->activeBodies = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -103,20 +97,11 @@ void PhysicalWorld::destructor()
 Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	// if the entity is already registered
-	Body body = PhysicalWorld::getBody(this, owner);
-
-	if(body)
-	{
-		return body;
-	}
-
 	if(bodyAllocator)
 	{
 		Body body = bodyAllocator(owner, physicalSpecification, axisSubjectToGravity);
 		VirtualList::pushFront(this->bodies, body);
 		ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
-
-		this->bodyToCheckForGravityNode = NULL;
 
 		// return created shape
 		return Body::safeCast(VirtualList::front(this->bodies));
@@ -137,14 +122,9 @@ void PhysicalWorld::destroyBody(Body body)
 	ASSERT(!isDeleted(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 
-	if(!isDeleted(body) && VirtualList::find(this->bodies, body))
+	if(!isDeleted(body))
 	{
-		// place in the removed bodies list
-		VirtualList::removeElement(this->bodies, body);
-		VirtualList::removeElement(this->activeBodies, body);
-
-		delete body;
-		this->bodyToCheckForGravityNode = NULL;
+		body->destroy = true;
 	}
 }
 
@@ -160,7 +140,7 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// current body
 		Body body = Body::safeCast(node->data);
@@ -177,54 +157,6 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 }
 
 /**
- * Pre-calculate movable shape's position before doing collision detection on them
- *
- * @private
- */
-void PhysicalWorld::checkForGravity()
-{
-	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
-
-	// give preference to the last body in the list
-	VirtualNode node = !this->bodyToCheckForGravityNode ? this->bodies->tail: this->bodyToCheckForGravityNode;
-
-	int32 counter = 0;
-
-	Vector3D gravityDirection =
-	{
-		this->gravity.x,
-		this->gravity.y,
-		this->gravity.z,
-	};
-
-	// prepare bodies which move
-	// this will place the shape in the owner's position
-	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->previous, counter++)
-	{
-		// load the current shape
-		Body body = Body::safeCast(node->data);
-
-		if(body->active)
-		{
-			// check if necessary to apply gravity
-			uint16 movingState = Body::getMovementOnAllAxis(body);
-
-			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
-
-			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, gravityDirection))
-			{
-				// must account for the fps to avoid situations is which a collision is not detected
-				// when a body starts to fall and doesn't have enough time to detect a shape below
-				// when moving from one shape over another
-				Body::applyGravity(body, gravitySensibleAxis);
-			}
-		}
-	}
-
-	this->bodyToCheckForGravityNode = node;
-}
-
-/**
  * Calculate collisions
  *
  * @param clock
@@ -236,9 +168,9 @@ void PhysicalWorld::update(Clock clock)
 		return;
 	}
 
-	if(__1I_FIX10_6 > this->timeScale)
+	if(__1I_FIXED > this->timeScale)
 	{
-		if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+		if(__F_TO_FIXED(0.5f) < this->timeScale)
 		{
 			if(++this->remainingSkipCycles > this->skipCycles)
 			{
@@ -257,15 +189,47 @@ void PhysicalWorld::update(Clock clock)
 		}
 	}
 
-	PhysicalWorld::checkForGravity(this);
-
 	// TODO: time scale
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
 
-	for(VirtualNode node = this->activeBodies->head; node; node = node->next)
+	for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
+		nextNode = node->next;
+
 		Body body = Body::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(body), "PhysicalWorld::update: deleted body");
+
+		if(body->destroy)
+		{
+			// place in the removed bodies list
+			VirtualList::removeNode(this->bodies, node);
+
+			delete body;
+			continue;
+		}
+
+		if(!body->active || !body->awake)
+		{
+			continue;
+		}
+
+		if(__NO_AXIS != body->axisSubjectToGravity && SpatialObject::isSubjectToGravity(body->owner, this->gravity))
+		{
+			// check if necessary to apply gravity
+			uint16 movingState = Body::getMovementOnAllAxis(body);
+
+			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+
+			if(__NO_AXIS != gravitySensibleAxis)
+			{
+				// must account for the fps to avoid situations is which a collision is not detected
+				// when a body starts to fall and doesn't have enough time to detect a shape below
+				// when moving from one shape over another
+				Body::applyGravity(body, gravitySensibleAxis);
+			}
+		}
 
 		Body::update(body);
 	}
@@ -284,7 +248,7 @@ void PhysicalWorld::reset()
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// delete it
 		delete node->data;
@@ -292,9 +256,6 @@ void PhysicalWorld::reset()
 
 	// empty the lists
 	VirtualList::clear(this->bodies);
-	VirtualList::clear(this->activeBodies);
-
-	this->bodyToCheckForGravityNode = NULL;
 }
 
 /**
@@ -309,7 +270,7 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 
 	VirtualNode node = this->bodies->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		// current body
 		Body body = Body::safeCast(node->data);
@@ -332,7 +293,7 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
  *
  * @return		PhysicalWorld's frictionCoefficient
  */
-fix10_6 PhysicalWorld::getFrictionCoefficient()
+fixed_t PhysicalWorld::getFrictionCoefficient()
 {
 	return this->frictionCoefficient;
 }
@@ -342,7 +303,7 @@ fix10_6 PhysicalWorld::getFrictionCoefficient()
  *
  * @param frictionCoefficient
  */
-void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
+void PhysicalWorld::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
 	this->frictionCoefficient = frictionCoefficient;
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
@@ -353,36 +314,36 @@ void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
  *
  * @param 			timeScale
  */
-void PhysicalWorld::setTimeScale(fix10_6 timeScale)
+void PhysicalWorld::setTimeScale(fixed_t timeScale)
 {
 	this->timeScale = timeScale;
 
-	if(this->timeScale > __1I_FIX10_6)
+	if(this->timeScale > __1I_FIXED)
 	{
-		this->timeScale = __1I_FIX10_6;
+		this->timeScale = __1I_FIXED;
 	}
 	else if(0 >= timeScale)
 	{
-		this->timeScale = __F_TO_FIX10_6(0.1f);
+		this->timeScale = __F_TO_FIXED(0.1f);
 	}
 
 	this->remainingSkipCycles = 0;
 	this->skipCycles = 0;
 
-	if(__F_TO_FIX10_6(0.5f) < this->timeScale)
+	if(__F_TO_FIXED(0.5f) < this->timeScale)
 	{
 		uint32 gameFramesPerSecond = __TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR;
-		fix10_6 targetUpdatesPerSecond = __FIX10_6_MULT(__I_TO_FIX10_6(gameFramesPerSecond), this->timeScale);
-		fix10_6 targetSkipsPerSecond = __I_TO_FIX10_6(gameFramesPerSecond) - targetUpdatesPerSecond;
+		fixed_t targetUpdatesPerSecond = __FIXED_MULT(__I_TO_FIXED(gameFramesPerSecond), this->timeScale);
+		fixed_t targetSkipsPerSecond = __I_TO_FIXED(gameFramesPerSecond) - targetUpdatesPerSecond;
 
 		if(targetSkipsPerSecond)
 		{
-			this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(targetUpdatesPerSecond, targetSkipsPerSecond) + __05F_FIX10_6);
+			this->skipCycles = __FIXED_TO_I(__FIXED_DIV(targetUpdatesPerSecond, targetSkipsPerSecond) + __05F_FIXED);
 		}
 	}
 	else
 	{
-		this->skipCycles = __FIX10_6_TO_I(__FIX10_6_DIV(__1I_FIX10_6, this->timeScale) - __1I_FIX10_6 + __05F_FIX10_6);
+		this->skipCycles = __FIXED_TO_I(__FIXED_DIV(__1I_FIXED, this->timeScale) - __1I_FIXED + __05F_FIXED);
 	}
 }
 
@@ -394,50 +355,6 @@ void PhysicalWorld::setTimeScale(fix10_6 timeScale)
 uint32 PhysicalWorld::getTimeScale()
 {
 	return this->timeScale;
-}
-
-/**
- * A body has awoken
- *
- * @param body
- */
-void PhysicalWorld::bodyAwake(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodyAwake: non body");
-	ASSERT(SpatialObject::safeCast(body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
-	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
-
-	if(!VirtualList::find(this->activeBodies, body))
-	{
-		VirtualList::pushBack(this->activeBodies, body);
-	}
-}
-
-/**
- * Inform of a change in the body
- *
- * @param body
- */
-void PhysicalWorld::bodySleep(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodySleep: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
-
-	VirtualList::removeElement(this->activeBodies, body);
-}
-
-/**
- * Inform that body has been inactivated
- *
- * @param body
- */
-void PhysicalWorld::bodySetInactive(Body body)
-{
-	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
-	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
-
-	VirtualList::removeElement(this->activeBodies, body);
 }
 
 // set gravity
@@ -462,7 +379,7 @@ const Vector3D* PhysicalWorld::getGravity()
  *
  * @return		Elapsed time
  */
-fix10_6 PhysicalWorld::getElapsedTime()
+fixed_t PhysicalWorld::getElapsedTime()
 {
 	return __PHYSICS_TIME_ELAPSED;
 }
@@ -480,9 +397,12 @@ void PhysicalWorld::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
-	Printing::text(Printing::getInstance(), "Active bodies:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->activeBodies), x + 19, y, NULL);
 
-//	Printing::text(Printing::getInstance(), "Error:                 ", x, ++y, NULL);
-//	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bodies) - (VirtualList::getSize(this->activeBodies)), x + 19, y, NULL);
+	for(VirtualNode node = this->bodies->head; y < 28 && NULL != node; y++, node = node->next)
+	{
+		Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME((Body::safeCast(node->data))->owner), x, y, NULL);
+	}
+
+	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 }

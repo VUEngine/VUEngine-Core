@@ -1,6 +1,9 @@
 {
 	"events": {
 		"fileChanged": {
+			"config/DebugMacros.json": [
+				"debugConfig.h"
+			],
 			"config/Engine.json": [
 				"config.h"
 			],
@@ -33,6 +36,10 @@
 				"FontSpec.c",
 				"Fonts.c",
 				"Fonts.h"
+			],
+			".rumbleEffect.json": [
+				"RumbleEffectSpec.c",
+				"RumbleEffects.h"
 			],
 			".waveform.json": [
 				"WaveFormSpec.c",
@@ -109,6 +116,20 @@
 			"root": "workspace",
 			"target": "config.make",
 			"template": "config.make.nj"
+		},
+		"debugConfig.h": {
+			"mode": "single",
+			"data": [
+				{
+					"key": "debugMacros",
+					"type": "file",
+					"root": "workspace",
+					"value": "config/DebugMacros.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/debugConfig.h",
+			"template": "debugConfig.h.nj"
 		},
 		"Fonts.c": {
 			"mode": "single",
@@ -271,6 +292,32 @@
 			"root": "workspace",
 			"target": "source/assets/WaveForms.h",
 			"template": "WaveForms.h.nj"
+		},
+		"RumbleEffectSpec.c": {
+			"mode": "single",
+			"data": [
+				{
+					"key": "rumbleEffect",
+					"type": "changedFile"
+				}
+			],
+			"root": "relative",
+			"target": "Spec/${rumbleEffect.name}RumbleEffectSpec.c",
+			"template": "RumbleEffect.c.nj"
+		},
+		"RumbleEffects.h": {
+			"mode": "single",
+			"data": [
+				{
+					"key": "rumbleEffects",
+					"type": "filesWithEnding",
+					"root": "workspace",
+					"value": ".rumbleEffect.json"
+				}
+			],
+			"root": "workspace",
+			"target": "source/assets/RumbleEffects.h",
+			"template": "RumbleEffects.h.nj"
 		},
 		"WaveFormSpec.c": {
 			"mode": "single",

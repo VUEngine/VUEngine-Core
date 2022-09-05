@@ -72,7 +72,7 @@ void ObjectTextureManager::destructor()
  */
 void ObjectTextureManager::reset()
 {
-	for(VirtualNode node = this->objectTextures->head; node; node = node->next)
+	for(VirtualNode node = this->objectTextures->head; NULL != node; node = node->next)
 	{
 		if(!isDeleted(node->data))
 		{
@@ -130,7 +130,7 @@ void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
  */
 void ObjectTextureManager::updateTextures()
 {
-	for(VirtualNode node = this->objectTextures->head; node; node = node->next)
+	for(VirtualNode node = this->objectTextures->head; NULL != node; node = node->next)
 	{
 		Texture texture = Texture::safeCast(node->data);
 

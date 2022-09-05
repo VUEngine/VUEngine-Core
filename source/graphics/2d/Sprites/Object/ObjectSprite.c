@@ -47,7 +47,7 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner)
+void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner)
 {
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
@@ -65,6 +65,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 	{
 		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
+
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
@@ -94,6 +96,7 @@ void ObjectSprite::destructor()
 		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
 	}
 
+	Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));
 	this->texture = NULL;
 
@@ -102,9 +105,20 @@ void ObjectSprite::destructor()
 	Base::destructor();
 }
 
+
+/**
+ * Process event
+ *
+ * @param eventFirer
+ */
+void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	ObjectSprite::rewrite(this);
+}
+
 void ObjectSprite::rewrite()
-{	
-	if(this->hidden || !this->positioned)
+{
+	if(__HIDE == this->show || !this->positioned)
 	{
 		return;
 	}
@@ -213,11 +227,6 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
-
 	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
 	int16 xDisplacementIncrement = 8;
@@ -256,7 +265,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 jDisplacement = 0;
 
 	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
-	uint16 result = 0;
+	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
 

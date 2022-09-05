@@ -29,14 +29,14 @@
  *
  * @private
  */
-void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color)
+void Line::constructor(LineSpec* lineSpec)
 {
 	// construct base object
-	Base::constructor(color);
+	Base::constructor(&lineSpec->wireframeSpec);
 
-	this->a = a;
-	this->b = b;
-	this->normal = normal;
+	this->a = lineSpec->a;
+	this->b = lineSpec->b;
+	this->normal = lineSpec->normal;
 }
 
 /**
@@ -44,8 +44,6 @@ void Line::constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color)
  */
 void Line::destructor()
 {
-	Wireframe::hide(this);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -56,19 +54,21 @@ void Line::destructor()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Line::draw(bool calculateParallax __attribute__((unused)))
+void Line::draw()
 {
-	DirectDraw::drawLine(
-		DirectDraw::getInstance(),
+	DirectDraw::drawColorLine(
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->a), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(this->b), 0),
-		this->color
+		this->color,
+		0,
+		false
 	);
 
-	DirectDraw::drawLine(
-		DirectDraw::getInstance(),
+	DirectDraw::drawColorLine(
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(this->a, this->b)), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)), 0),
-		__COLOR_BRIGHT_RED
+		__COLOR_BRIGHT_RED,
+		0,
+		false
 	);
 }

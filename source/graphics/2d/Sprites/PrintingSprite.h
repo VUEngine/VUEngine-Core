@@ -63,7 +63,7 @@ class PrintingSprite : BgmapSprite
 	uint16 h;
 	
 	/// @publicsection
-	void constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner);
+	void constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner);
 	void reset();
 
 	void setGValues(int16 gx, int16 gy, int16 gp);

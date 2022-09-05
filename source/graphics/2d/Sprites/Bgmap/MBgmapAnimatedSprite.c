@@ -26,7 +26,7 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, Object owner)
+void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec, owner);
 

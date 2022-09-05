@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Mem : Object
+static class Mem : ListenerObject
 {
 	/// @publicsection
 	static void clear(BYTE* destination, uint32 numberOfBYTES);

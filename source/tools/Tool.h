@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <GameState.h>
 
 
@@ -48,6 +48,5 @@ abstract class Tool : Object
 	virtual void dimmGame();
 	virtual void lightUpGame();
 }
-
 
 #endif

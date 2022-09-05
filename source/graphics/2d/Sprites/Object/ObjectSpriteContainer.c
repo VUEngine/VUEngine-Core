@@ -57,7 +57,7 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
@@ -79,7 +79,7 @@ void ObjectSpriteContainer::destructor()
 	VirtualList objectSprites = new VirtualList();
 	VirtualList::copy(objectSprites, this->objectSprites);
 
-	for(VirtualNode node = objectSprites->head; node; node = node->next)
+	for(VirtualNode node = objectSprites->head; NULL != node; node = node->next)
 	{
 		delete node->data;
 	}
@@ -155,7 +155,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 {
 	if(this->objectSprites)
 	{
-		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -187,21 +187,21 @@ void ObjectSpriteContainer::sortProgressively()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(!sprite->positioned)
-		{
-			continue;
-		}
-
 		NM_ASSERT(!isDeleted(previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data");
 		NM_ASSERT(__GET_CAST(Sprite, previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data cast");
 
-		Sprite nextSprite = Sprite::safeCast(previousNode->data);
+		Sprite previousSprite = Sprite::safeCast(previousNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+		if(previousSprite->position.z + previousSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
-			VirtualNode::swapData(node, previousNode);
+			node->data = previousSprite;
+			previousNode->data = sprite;
+
+			sprite->renderFlag = previousSprite->renderFlag = true;
+
+			node = previousNode;
 		}
 	}
 }
@@ -211,14 +211,14 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 {
 	ObjectSpriteContainer::hideForDebug(this);
 
-	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
 		if(objectSprite == spareSprite)
 		{
-			ObjectSprite::showForDebug(objectSprite);
-			ObjectSpriteContainer::showForDebug(this);
+			ObjectSprite::forceShow(objectSprite);
+			ObjectSpriteContainer::forceShow(this);
 			continue;
 		}
 
@@ -231,9 +231,9 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
  */
 void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 {
-	ObjectSpriteContainer::showForDebug(this);
+	ObjectSpriteContainer::forceShow(this);
 
-	for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
 		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
@@ -243,22 +243,22 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 			continue;
 		}
 
-		ObjectSprite::showForDebug(objectSprite);
+		ObjectSprite::forceShow(objectSprite);
 	}
 }
 #endif
 
-void ObjectSpriteContainer::showForDebug()
+void ObjectSpriteContainer::forceShow()
 {
-	Base::showForDebug(this);
-	this->hidden = false;
+	Base::forceShow(this);
+	this->show = __HIDE;
 	this->positioned = true;
 	this->hideSprites = false;
 }
 
 void ObjectSpriteContainer::hideForDebug()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->positioned = true;
 	this->hideSprites = true;
 }
@@ -283,22 +283,32 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
+			objectSprite->index = __NO_RENDER_INDEX;
+
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(objectSprite->hidden || !objectSprite->positioned)
+			if(__SHOW != objectSprite->show)
+			{
+				if(__SHOW_NEXT_FRAME == objectSprite->show)
+				{
+					objectSprite->show = __SHOW;
+				}
+				
+				continue;
+			}
+
+			if(!objectSprite->positioned)
 			{
 				continue;
 			}
 
 			if(objectSprite->transparent & evenFrame)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				continue;
 			}
 
 			if(0 > _objectIndex - objectSprite->totalObjects)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				break;
 			}
 
@@ -332,6 +342,8 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	}
 
 	this->lastObjectIndex = _objectIndex;
+
+	this->renderFlag = true;
 
 	return !renderedObjectSprites ? __NO_RENDER_INDEX : index;
 }
@@ -385,16 +397,16 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Segment:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->spt, x + 18, y++, NULL);
-	Printing::text(Printing::getInstance(), "STP value:                ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "SPT value:                ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "HEAD:                   ", x, ++y, NULL);
 	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->index].head, x + 18, y, 4, NULL);
 	Printing::text(Printing::getInstance(), "Total OBJs:            ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->firstObjectIndex - this->lastObjectIndex, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)), y, NULL);
-	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing::int32(Printing::getInstance(), this->lastObjectIndex, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::intLength(this->firstObjectIndex), y, NULL);
+	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
@@ -430,7 +442,7 @@ bool ObjectSpriteContainer::writeTextures()
 {
 	if(!isDeleted(this->objectSprites))
 	{
-		for(VirtualNode node = this->objectSprites->head; node; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 		{
 			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data));
 		}

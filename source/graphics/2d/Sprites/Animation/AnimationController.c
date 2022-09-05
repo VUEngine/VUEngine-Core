@@ -16,7 +16,6 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Game.h>
 #include <Utilities.h>
 #include <debugConfig.h>
 
@@ -299,7 +298,7 @@ void AnimationController::resetFrameDuration()
  * @private
  * @param animationFunction		Animation function to play
  */
-void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, Object scope)
+void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
 {
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
@@ -347,7 +346,7 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
  * @param functionName				Name of the animation function's to play
  * @return							True if the animation started playing
  */
-bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName, Object scope)
+bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
 {
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
 	ASSERT(functionName, "AnimationController::play: null functionName");

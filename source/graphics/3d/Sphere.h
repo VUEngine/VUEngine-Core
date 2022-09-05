@@ -23,21 +23,40 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct SphereSpec
+{
+	// Wireframe
+	WireframeSpec wireframeSpec;
+
+	// radius
+	fixed_t radius;
+
+	// draw center
+	bool drawCenter;
+
+} SphereSpec;
+
+typedef const SphereSpec SphereROMSpec;
+
+
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
 	// Vertices
-	Vector3D center;
+	PixelVector center;
 	// Radious
-	fix10_6 radius;
+	fixed_t radius;
+	uint16 scaledRadius;
+	bool drawCenter;
 
 	/// @publicsection
-	void constructor(Vector3D center, fix10_6 radius, uint8 color);
-	Vector3D getCenter();
-	fix10_6 getRadius();
-	void setCenter(Vector3D center);
-	void setRadius(fix10_6 radius);
-	override void draw(bool calculateParallax);
+	void constructor(SphereSpec* sphereSpec);
+	PixelVector getCenter();
+	fixed_t getRadius();
+	void setCenter(PixelVector center);
+	void setRadius(fixed_t radius);
+	override void render();
+	override void draw();
 }
 
 

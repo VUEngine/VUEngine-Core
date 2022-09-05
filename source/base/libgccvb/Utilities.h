@@ -37,7 +37,7 @@ extern uint32 _seed;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Utilities : Object
+static class Utilities : ListenerObject
 {
 	/// @publicsection
 	static void setClock(Clock clock);
@@ -59,15 +59,33 @@ static class Utilities : Object
 static inline int32 Utilities::random(uint32 seed, int32 randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
+	extern Clock _gameClock;
+	extern KeypadManager _keypadManager;
+
+	if(NULL != _gameClock && NULL != _keypadManager)
+	{
+		seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
+	}
 #endif
 
 	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
 }
 
 /*
+ * Taken from https://www.youtube.com/watch?v=RzEjqJHW-NU
+ */
+static inline uint32 Utilities::randomSeed()
+{
+	_seed >>= 1;
+	_seed |= ((0x00000001 & (_seed ^ (_seed >> 1))) << ((sizeof(_seed) << 3) - 1));
+
+	return _seed;
+}
+
+/*
  * Taken from Shokwav's N64 demo
  */
+/*
 static inline uint32 Utilities::randomSeed()
 {
 	if(!_seed)
@@ -81,5 +99,6 @@ static inline uint32 Utilities::randomSeed()
 
 	return _seed;
 }
+*/
 
 #endif

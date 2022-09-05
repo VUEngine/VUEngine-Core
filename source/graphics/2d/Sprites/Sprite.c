@@ -40,7 +40,7 @@ friend class Texture;
  * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), Object owner)
+void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), ListenerObject owner)
 {
 	Base::constructor();
 
@@ -54,7 +54,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->texture = NULL;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->visible = true;
 	this->writeAnimationFrame = false;
@@ -86,24 +86,40 @@ void Sprite::processEffects()
 {
 }
 
+/**
+ * Prepare textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @return			true it all textures are written
+ */
+bool Sprite::prepareTexture()
+{
+	if(isDeleted(this->texture))
+	{
+		return false;
+	}
+
+	if(kTextureWritten != this->texture->status)
+	{
+		return Texture::prepare(this->texture);
+	}
+
+	return true;
+}
+
+
 int16 Sprite::render(int16 index, bool evenFrame)
 {
 	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
 
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
-
-	this->visible = false;
-
-
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
 /*
-	if(this->hidden || !this->positioned)
+	if(__HIDE == this->show || !this->positioned)
 	{
 		return this->index;
 	}
@@ -124,7 +140,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(kTextureWritten != this->texture->status)
 	{
-		if(!Texture::prepare(this->texture))
+		if(!Sprite::prepareTexture(this))
 		{
 			return __NO_RENDER_INDEX;
 		}
@@ -149,7 +165,12 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	if((previousIndex == index) & !this->renderFlag)
+	if(this->visible && this->writeAnimationFrame)
+	{
+		Sprite::update(this);
+	}
+
+	if((previousIndex == index) && !this->renderFlag)
 	{
 		this->index = previousIndex;
 	}
@@ -160,11 +181,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	}
 
 	this->visible = __NO_RENDER_INDEX != this->index;
-
-	if(this->visible && this->writeAnimationFrame)
-	{
-		Sprite::update(this);
-	}
 
 	return this->index;
 }
@@ -193,7 +209,7 @@ Scale Sprite::getScale()
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
+void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute__ ((unused)))
 {
 	this->halfWidth = Texture::getCols(this->texture) << 2;
 	this->halfHeight = Texture::getRows(this->texture) << 2;
@@ -214,7 +230,10 @@ Texture Sprite::getTexture()
  */
 void Sprite::show()
 {
-	this->hidden = false;
+	if(__HIDE == this->show)
+	{
+		this->show = __SHOW_NEXT_FRAME;
+	}
 }
 
 /**
@@ -222,16 +241,16 @@ void Sprite::show()
  */
 void Sprite::hide()
 {
-	this->hidden = true;
+	this->show = __HIDE;
 	this->positioned = false;
 }
 
 /**
  * Show
  */
-void Sprite::showForDebug()
+void Sprite::forceShow()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 
 	Sprite::setPosition(this, &this->position);
 }
@@ -241,20 +260,20 @@ void Sprite::showForDebug()
  */
 void Sprite::hideForDebug()
 {
-	this->hidden = true;
+	this->show = __HIDE;
 	this->positioned = false;
 
 	Sprite::setPosition(this, &this->position);
 }
 
 /**
- * Is the Sprite hidden?
+ * Is the Sprite show?
  *
- * @return		Boolean telling whether the sprite is hidden
+ * @return		Boolean telling whether the sprite is show
  */
 bool Sprite::isHidden()
 {
-	return this->hidden;
+	return __HIDE == this->show;
 }
 
 /**
@@ -271,7 +290,7 @@ void Sprite::position(const Vector3D* position)
 
 	this->positioned = true;
 
-	PixelVector position2D = Vector3D::projectRelativeToPixelVector(*position, this->position.parallax);
+	PixelVector position2D = Vector3D::projectToPixelVector(*position, this->position.parallax);
 
 	if(!((this->position.x - position2D.x) | 
 		(this->position.y - position2D.y) | 
@@ -316,9 +335,9 @@ void Sprite::setPosition(const PixelVector* position)
  *
  * @param z				Z coordinate to base on the calculation
  */
-void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
+void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
-	int16 parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+	int16 parallax = Optics::calculateParallax(z);
 	this->renderFlag |= this->position.parallax != parallax;
 	this->position.parallax = parallax;
 }
@@ -367,7 +386,7 @@ AnimationController Sprite::getAnimationController()
  *
  * @return 		World layer
  */
-uint8 Sprite::getIndex()
+int16 Sprite::getIndex()
 {
 	return this->index;
 }
@@ -558,7 +577,9 @@ void Sprite::setDisplacement(const PixelVector* displacement)
  * @param rotation	Rotation struct
  */
 void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
-{}
+{
+	this->renderFlag = true;
+}
 
 /**
  * Get half width
@@ -608,7 +629,7 @@ void Sprite::update()
  */
 bool Sprite::isVisible()
 {
-	return this->visible && !this->hidden;
+	return this->visible && __HIDE != this->show;
 }
 
 /**
@@ -698,7 +719,7 @@ void Sprite::pause(bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-bool Sprite::play(const AnimationDescription* animationDescription, char* functionName, Object scope)
+bool Sprite::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
 {
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
@@ -949,8 +970,8 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
-	Printing::text(Printing::getInstance(), "Hidden:                         ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), (this->hidden > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "show:                         ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);

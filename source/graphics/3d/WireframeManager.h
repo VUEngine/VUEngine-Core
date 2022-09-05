@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Wireframe.h>
 #include <VirtualList.h>
 
@@ -26,17 +26,27 @@
 
 /// @ingroup graphics-3d
 
-singleton class WireframeManager : Object
+singleton class WireframeManager : ListenerObject
 {
+	volatile bool stopRendering;
+	volatile bool stopDrawing;
+	bool evenFrame;
+	bool disabled;
+	
 	// Wireframes
 	VirtualList wireframes;
 
 	/// @publicsection
 	static WireframeManager getInstance();
+
+	void draw();
+	void render();
 	void print(int32 x, int32 y);
 	void register(Wireframe wireframe);
 	void remove(Wireframe wireframe);
 	void reset();
+	void enable();
+	void disable();
 }
 
 

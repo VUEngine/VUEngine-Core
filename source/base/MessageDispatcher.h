@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <ListenerObject.h>
 #include <StateMachine.h>
 #include <Telegram.h>
 #include <Clock.h>
@@ -60,16 +61,17 @@ singleton class MessageDispatcher : Object
 
 	/// @publicsection
 	static MessageDispatcher getInstance();
-	static bool dispatchMessage(uint32 delay, Object sender, Object receiver, int32 message, void* extraInfo);
-	void dispatchDelayedMessage(Clock clock, uint32 delay, Object sender,
-		Object receiver, int32 message, void* extraInfo);
+	static bool dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo);
+	void dispatchDelayedMessage(Clock clock, uint32 delay, ListenerObject sender,
+		ListenerObject receiver, int32 message, void* extraInfo);
  	uint32 dispatchDelayedMessages();
 	bool discardDelayedMessagesWithClock(Clock clock);
-	bool discardDelayedMessagesFromSender(Object sender, int32 message);
-	bool discardDelayedMessagesForReceiver(Object receiver, int32 message);
-	bool discardAllDelayedMessagesFromSender(Object sender);
-	bool discardAllDelayedMessagesForReceiver(Object receiver);
+	bool discardDelayedMessagesFromSender(ListenerObject sender, int32 message);
+	bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
+	bool discardAllDelayedMessagesFromSender(ListenerObject sender);
+	bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
 	void processDiscardedMessages();
+	void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
 	void print(int32 x, int32 y);
 }
 

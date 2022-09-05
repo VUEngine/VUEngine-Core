@@ -46,7 +46,7 @@ class ObjectAnimatedSprite : ObjectSprite
 	TextureSource originalTextureSource;
 
 	/// @publicsection
-	void constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, Object owner);
+	void constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, ListenerObject owner);
 	override void writeAnimation();
 }
 

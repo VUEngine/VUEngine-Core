@@ -38,10 +38,10 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(uint8 color)
+void Polyhedron::constructor(PolyhedronSpec* polyhedronSpec)
 {
 	// construct base object
-	Base::constructor(color);
+	Base::constructor(&polyhedronSpec->wireframeSpec);
 
 	// don't create the list yet
 	this->vertices = NULL;
@@ -52,8 +52,6 @@ void Polyhedron::constructor(uint8 color)
  */
 void Polyhedron::destructor()
 {
-	Wireframe::hide(this);
-
 	// delete the vertices list
 	if(this->vertices)
 	{
@@ -81,7 +79,7 @@ void Polyhedron::destructor()
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
  */
-void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
+void Polyhedron::addVertex(fixed_t x, fixed_t y, fixed_t z)
 {
 	// create the vertex
 	Vector3D* vertex = new Vector3D;
@@ -105,7 +103,7 @@ void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Polyhedron::draw(bool calculateParallax)
+void Polyhedron::draw()
 {
 	// if I have some vertex, draw them
 	if(this->vertices && 2 < VirtualList::getSize(this->vertices))
@@ -130,18 +128,11 @@ void Polyhedron::draw(bool calculateParallax)
 			toVertex3D = Vector3D::getRelativeToCamera(*((Vector3D*)toNode->data));
 
 			// project to 2d coordinates
-			fromVertex2D = Vector3D::projectToPixelVector(fromVertex3D, 0);
-			toVertex2D = Vector3D::projectToPixelVector(toVertex3D, 0);
-
-			// calculate parallax
-			if(calculateParallax)
-			{
-				fromVertex2D.parallax = Optics::calculateParallax(fromVertex3D.x, fromVertex3D.z);
-				toVertex2D.parallax = Optics::calculateParallax(toVertex3D.x, toVertex3D.z);
-			}
+			fromVertex2D = PixelVector::project(fromVertex3D, 0);
+			toVertex2D = PixelVector::project(toVertex3D, 0);
 
 			// draw the line in both buffers
-			DirectDraw::drawLine(DirectDraw::getInstance(), fromVertex2D, toVertex2D, this->color);
+			DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0, false);
 		}
 	}
 }

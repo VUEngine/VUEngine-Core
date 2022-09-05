@@ -119,7 +119,7 @@ typedef struct StageSpec
 		Acceleration gravity;
 
 		// physical world's friction coefficient
-		fix10_6 frictionCoefficient;
+		fixed_t frictionCoefficient;
 
 	} physics;
 
@@ -167,6 +167,7 @@ typedef struct StageEntityDescription
 	PositionedEntity* positionedEntity;
 	uint32 distance;
 	int16 internalId;
+	bool validRightBox;
 
 } StageEntityDescription;
 
@@ -185,19 +186,17 @@ class Stage : Container
 	// particle remover
 	ParticleRemover particleRemover;
 	// the stage entities
-	VirtualList stageEntities;
+	VirtualList stageEntityDescriptions;
 	// the pivot node for streaming
 	VirtualNode streamingHeadNode;
 	// The sounds
 	VirtualList soundWrappers;
+	// List of listeners for entity loading
+	VirtualList entityLoadingListeners;
 	// Streaming settings
 	Streaming streaming;
-	// counter to control the streaming phases
-	int32 streamingCycleCounter;
 	// index for method to execute
 	int32 streamingPhase;
-	// flag to control streaming
-	uint32 hasRemovedChildren;
 	// the ui container
 	UIContainer uiContainer;
 	// focus entity: needed for streaming
@@ -216,7 +215,9 @@ class Stage : Container
 	void setupTimer();
 	Size getSize();
 	PixelSize getPixelSize();
+	PixelOptical getPixelOptical();
 	CameraFrustum getCameraFrustum();
+	void addEntityLoadingListener(ListenerObject context, EventListener callback);
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
@@ -230,10 +231,15 @@ class Stage : Container
     bool loadInRangeEntities(int32 defer);
 	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
+	EntityFactory getEntityFactory();
 	VirtualList getSoundWrappers();
 	bool streamAll();
 	void streamAllOut();
 	void forceNoPopIn(bool forceNoPopIn);
+	VirtualList getStageEntityDescriptions();
+	void fadeSounds(uint32 playbackType);
+	void pauseSounds();
+	void unpauseSounds();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
@@ -244,6 +250,7 @@ class Stage : Container
 	override void resume();
 	override void removeChild(Container child, bool deleteChild);
 	override bool handlePropagatedMessage(int32 message);
+	override bool handlePropagatedString(const char* string);
 }
 
 

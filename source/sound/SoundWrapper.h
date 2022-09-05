@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <MIDI.h>
 #include <VirtualList.h>
 
@@ -46,8 +46,7 @@ enum SoundChannelTypes
 {
 	kChannelNormal 			= (1 << 0),
 	kChannelModulation		= (1 << 1),
-	kChannelNoise			= (1 << 2),
-	kChannelNormalExtended	= (1 << 3)
+	kChannelNoise			= (1 << 2)
 };
 
 typedef struct SoundChannelConfiguration
@@ -158,13 +157,13 @@ typedef struct Channel
 	uint32 cursor;
 
 	/// Ticks before moving the cursor
-	fix17_15 ticksPerNote;
+	fix7_9_ext ticksPerNote;
 
 	/// Ticks before moving the cursor
-	fix17_15 ticks;
+	fix7_9_ext ticks;
 
 	/// Tick step per timer interrupt
-	fix17_15 tickStep;
+	fix7_9_ext tickStep;
 
 	/// Sound track
 	union ChannelSoundTrack
@@ -181,7 +180,6 @@ typedef struct Channel
 
 	uint8 number;
 	uint8 soundChannel;
-	uint8 volumeReduction;
 	bool finished;
 
 } Channel;
@@ -198,11 +196,12 @@ enum SoundWrapperPlaybackTypes
 	kSoundWrapperPlaybackNormal = 0,
 	kSoundWrapperPlaybackFadeIn,
 	kSoundWrapperPlaybackFadeOut,
+	kSoundWrapperPlaybackFadeOutAndRelease
 };
 
 enum SoundWrapperMessages
 {
-	kSoundWrapperFadeIn = 0,
+	kSoundWrapperFadeIn = 23,
 	kSoundWrapperFadeOut,
 };
 //---------------------------------------------------------------------------------------------------------
@@ -210,17 +209,20 @@ enum SoundWrapperMessages
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities-particles
-class SoundWrapper : Object
+class SoundWrapper : ListenerObject
 {
 	const Sound* sound;
 	const Vector3D* position;
 	VirtualList channels;
-	fix17_15 speed;
-	fix17_15 targetTimerResolutionFactor;
+	Channel* mainChannel;
+	fix7_9_ext speed;
+	fix7_9_ext targetTimerResolutionFactor;
 	uint32 elapsedMicroseconds;
+	uint32 previouslyElapsedMicroseconds;
 	uint32 totalPlaybackMilliseconds;
 	uint16 pcmTargetPlaybackFrameRate;
 	uint16 frequencyModifier;
+	uint16 volumeReductionMultiplier;
 	int8 volumeReduction;
 	uint8 playbackType;
 	bool turnedOn;
@@ -230,12 +232,15 @@ class SoundWrapper : Object
 	bool unmute;
 	bool autoReleaseOnFinish;
 	bool released;
+	bool referencedExternally;
 
 	/// @publicsection
-	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, Object scope);
+	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally);
 
 	const Channel* getChannel(uint8 index);
+	bool isUsingChannel(Channel* channel);
 	bool isPaused();
+	bool isTurnedOn();
 	bool hasPCMTracks();
 	bool isFadingIn();
 	bool isFadingOut();
@@ -251,11 +256,11 @@ class SoundWrapper : Object
 	void unmute();
 	void autoReleaseOnFinish(bool value);
 	void updateMIDIPlayback(uint32 elapsedMicroseconds);
-	void updatePCMPlayback(uint32 elapsedMicroseconds);
-	void setSpeed(fix17_15 speed);
+	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
+	void setSpeed(fix7_9_ext speed);
 	void setVolumeReduction(int8 volumeReduction);
 	int8 getVolumeReduction();
-	fix17_15 getSpeed();
+	fix7_9_ext getSpeed();
 	void computeTimerResolutionFactor();
 	void setFrequencyModifier(uint16 frequencyModifier);
 	uint16 getFrequencyModifier();
@@ -264,8 +269,6 @@ class SoundWrapper : Object
 	void printVolume(int32 x, int32 y, bool printHeader);
 	void printPlaybackTime(int32 x, int32 y);
 	void printPlaybackProgress(int32 x, int32 y);
-
-	override bool handleMessage(Telegram telegram);
 }
 
 

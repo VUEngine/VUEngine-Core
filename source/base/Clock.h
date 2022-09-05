@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VirtualList.h>
 
 
@@ -32,7 +32,7 @@ enum ClockPrintPrecision
 };
 
 /// @ingroup base
-class Clock : Object
+class Clock : ListenerObject
 {
 	// time elapsed
 	uint32 milliSeconds;

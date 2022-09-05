@@ -21,6 +21,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __ANIMATION_COMMAND_PLAY								"play:"
+
+
+//---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
@@ -47,12 +54,10 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 /// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
-	// Pointer to the ROM spec
-	AnimatedEntitySpec* animatedEntitySpec;
 	// Pointer to the animation description
 	AnimationDescription* animationDescription;
 	// need to save for pausing
-	char* currentAnimationName;
+	const char* currentAnimationName;
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
@@ -63,16 +68,16 @@ class AnimatedEntity : Entity
 	bool isPlayingAnimation();
 	void nextFrame();
 	void pauseAnimation(bool pause);
-	void playAnimation(char* animationName);
+	bool playAnimation(const char* animationName);
 	void previousFrame();
 	void setActualFrame(int16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
-	void onAnimationCompleteHide(Object eventFirer);
-	virtual void animate();
+	void onAnimationCompleteHide(ListenerObject eventFirer);
+	void animate();
 	override void ready(bool recursive);
 	override void update(uint32 elapsedTime);
 	override void resume();
-	override void setSpec(void* animatedEntitySpec);
+	override bool handlePropagatedString(const char* string);
 }
 
 

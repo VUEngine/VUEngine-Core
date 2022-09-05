@@ -46,7 +46,10 @@
 //#define __MUTE_ALL_SOUND
 //#define __DRAW_COMPLETE_BOXES
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-
+//#define __SHOW_TIMER_MANAGER_STATUS
+//#define __PROFILE_DIRECT_DRAWING
+//#define __DIRECT_DRAW_INTERLACED
+//#define __PROFILE_WIREFRAMES
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object

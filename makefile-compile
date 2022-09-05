@@ -118,6 +118,7 @@ PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@")
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 							\
+						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 				\
 						-include $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/source/libvuengine.h 									\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then \
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))									\

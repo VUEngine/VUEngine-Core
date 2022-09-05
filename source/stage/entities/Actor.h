@@ -52,7 +52,6 @@ typedef const ActorSpec ActorROMSpec;
 class Actor : AnimatedEntity
 {
 	// spec
-	const ActorSpec* actorSpec;
 	// a state machine to handle entity's logic
 	StateMachine stateMachine;
 	// a physical body
@@ -62,6 +61,7 @@ class Actor : AnimatedEntity
 
 	/// @publicsection
 	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
+	void createBody(const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void initializeStateMachine(State state);
 	bool hasChangedDirection(uint16 axis);
 	void changeDirectionOnAxis(uint16 axis);
@@ -74,19 +74,19 @@ class Actor : AnimatedEntity
 	void takeHitFrom(Actor other);
 	bool isMoving();
 	uint16 getMovementState();
-	virtual void addForce(const Force* force, bool checkIfCanMove);
+	virtual void applyForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(uint16 axis);
 	virtual void syncPositionWithBody();
 	virtual void syncRotationWithBody();
 	virtual void syncRotationWithBodyAfterBouncing(SpatialObject collidingObject);
-	virtual fix10_6 getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-	virtual fix10_6 getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-	virtual fix10_6 getSurroundingFrictionCoefficient();
+	virtual fixed_t getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+	virtual fixed_t getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+	virtual fixed_t getSurroundingFrictionCoefficient();
 	virtual bool mustBounce();
 	virtual bool overrideParentingPositioningWhenBodyIsNotMoving();
 	virtual bool registerCollidingShapes();
-	virtual fix10_6 getMaximumSpeed();
+	virtual fixed_t getMaximumSpeed();
 	override void iAmDeletingMyself();
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
@@ -94,16 +94,15 @@ class Actor : AnimatedEntity
 	override void resume();
 	override bool handleMessage(Telegram telegram);
 	override void setLocalPosition(const Vector3D* position);
-	override fix10_6 getBounciness();
+	override fixed_t getBounciness();
 	override const Vector3D* getPosition();
 	override void setPosition(const Vector3D* position);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override Velocity getVelocity();
-	override fix10_6 getSpeed();
+	override fixed_t getSpeed();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);
-	override void setSpec(void* actorSpec);
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 }
 

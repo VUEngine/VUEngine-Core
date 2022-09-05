@@ -15,11 +15,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Sprite.h>
 #include <Container.h>
 #include <Shape.h>
 #include <Body.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,6 +58,9 @@ typedef struct EntitySpec
 
 	/// use z displacement in projection
 	bool useZDisplacementInProjection;
+
+	/// wireframees
+	WireframeSpec** wireframeSpecs;
 
 	/// collision shapes
 	ShapeSpec* shapeSpecs;
@@ -128,7 +132,7 @@ typedef struct PositionedEntityDescription
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities
-class EntityFactory : Object
+class EntityFactory : ListenerObject
 {
 	// the EntityFactory entities to test for streaming
 	VirtualList entitiesToInstantiate;

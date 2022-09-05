@@ -36,21 +36,21 @@ FILE *fptr;
 unsigned int length;
 
 //Handy functions for reading from the file
-unsigned int read_u32(void)
+unsigned int read_uint32(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr) | (fgetc(fptr)<<8) | (fgetc(fptr)<<16) | (fgetc(fptr)<<24);
 	return ret;
 }
 
-unsigned short read_u16(void)
+unsigned short read_uint16(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr) | (fgetc(fptr)<<8);
 	return ret;
 }
 
-unsigned short read_u8(void)
+unsigned short read_uint8(void)
 {
 	unsigned int ret;
 	ret = fgetc(fptr);
@@ -67,7 +67,7 @@ void show_requirements(void)
 
 void show_syntax(void)
 {
-	printf("Correct syntax is vbwav <file.wav>\n");
+	printf("Correct syntax is vbwav <file.wav> [8/15/32/45]\n");
 	printf("Output file will be file.h\n");
 }
 
@@ -75,24 +75,24 @@ void show_syntax(void)
 //Make sure it is a WAV file in the correct format
 int check_file(void)
 {
-	if(read_u8() != 'R')
+	if(read_uint8() != 'R')
 	{
 		printf("Fatal Error: File does not appear to be a WAV file!\n");
 		show_requirements();
 		return 1;
 	}
 	fseek(fptr, 3, SEEK_CUR);
-	length = read_u32();
+	length = read_uint32();
 
 	fseek(fptr, 22, SEEK_SET);
-	if(read_u16() != 0x01)
+	if(read_uint16() != 0x01)
 	{
 		show_requirements();
 		return 1;
 	}
-	printf("Sampling rate: %d Hz\n", read_u32());
+	printf("Sampling rate: %d Hz\n", read_uint32());
 	fseek(fptr, 6, SEEK_CUR);
-	if(read_u16() != 8)
+	if(read_uint16() != 8)
 	{
 		show_requirements();
 		return 1;
@@ -113,13 +113,22 @@ int main(int argc, char *argv[])
 	printf("version 1.00 (30-July-2003)\n");
 	printf("(c) 2003 frostgiant\n\n");
 	
-	if(argc!=2)
+	if(argc!=2 && argc!=3)
 	{
 		show_syntax();
 		return 1;
 	}
 	
 	fptr = fopen(argv[1], "rb");
+
+	int levelAmplitude = 45;
+
+	if(argv[2])
+	{
+		levelAmplitude = atoi(argv[2]);
+	}
+
+	printf("Amplitude: %d\n", levelAmplitude);
 
 	if(!fptr)
 	{
@@ -141,33 +150,104 @@ int main(int argc, char *argv[])
 		printf("Fatal Error: Could not allocate memory!\n");
 		return 1;
 	}
-	
+
+
 	//copy file to memory, also track how big the biggest byte is
-	for(i=0;i<length;i++)
+	for(i = 0; i < length; i++)
 	{
-		wave[i] = read_u8();
+		wave[i] = read_uint8();
+		
 		if(wave[i] > max_size)
+		{
 			max_size = wave[i];
+		}
 	}
 	fclose(fptr);
 
+	
+	float scale = (float)levelAmplitude / 0x3F;
+
+	printf("Scale: %f\n", scale);
+
+/*
 	//is the sample already 6 bit?
 	if(max_size>0x3F)
 	{
 		//if 8 bit, shift away lowest 2
-		if(max_size>0x7F)
+		if(max_size>0x1F)
 		{
 			for(i=0;i<length;i++)
-				wave[i] = wave[i]>>2;
+				wave[i] = (wave[i]>>4); 
 		}
 		
 		//if 7 bit, shift away lowest 1
 		else
 		{
 			for(i=0;i<length;i++)
-				wave[i] = wave[i]>>1;
+				wave[i] = (wave[i]>>2);
 		}
 	}
+*/
+	for(i=0;i<length;i++) {
+
+		wave[i] = (float)(wave[i] >> 2) * scale;
+	}
+/*
+	for(i=0;i<length;i++) {
+
+		wave[i] >>= 4; 
+		wave[i] = (wave[i] << 4) | wave[i];
+	}
+*/
+//		wave[i] = (float)wave[i] * scale + 0.5f;
+	/*
+
+
+
+
+
+	int temp, min=65536, max=0;
+
+	for (int i=0; i<length; i++) //find min and max in data
+	{
+			temp=wave[i];
+			if (temp>max)
+				max=temp;
+			if (temp<min)
+				min=temp;
+	}
+
+	double scale_factor = 1.0;
+
+	//don't do anything if max = min
+	if (min!=max)
+	{
+		if ((128-min)>=(max-127)) //mag of min larger than max
+			scale_factor=(128.0/((double)(128-min)));
+		else
+			scale_factor=(128.0/((double)(max-127)));
+	}
+	
+	//cout << scale_factor << " " << max << " " << min << endl; //debugging
+	
+	for (int i=0; i<length; i++) //scale data by scale factor
+		wave[i]=(unsigned char)(((double)(wave[i]-128))*scale_factor)+128;
+
+
+int which_half = 0;
+unsigned char outdata = 0;
+
+	for(i=0;i<length;i++){
+		outdata |= (wave[i]>>4) << ((which_half^1)*4);
+
+		if (which_half==1)
+		{
+			wave[i] = outdata;
+			outdata=0;
+		}
+		which_half^=1;
+	}
+*/
 
 	//find the '.' in the file argument and make the string end there
 	i=0;

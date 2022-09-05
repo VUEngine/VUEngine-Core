@@ -35,15 +35,15 @@ class LineField : Shape
 	Vector3D normal;
 	Vector3D a;
 	Vector3D b;
-	fix10_6 normalLength;
+	fixed_t normalLength;
 
 	/// @publicsection
-	static void project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
+	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 	void constructor(SpatialObject owner);
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
-	void addDisplacement(fix10_6 displacement);
+	void addDisplacement(fixed_t displacement);
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
+	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
 	override Vector3D getPosition();
 	override Vector3D getNormal();
 	override void configureWireframe();

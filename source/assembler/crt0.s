@@ -27,6 +27,9 @@ _zeroDivisionVector = 0x0500FFD4
 .global _invalidOpcodeVector
 _invalidOpcodeVector = 0x0500FFD8
 
+.global _floatingPointVector
+_floatingPointVector = 0x0500FFDC
+
 
 /*************************************************
   startup code
@@ -62,7 +65,6 @@ _start:
 	jmp	    [r1]
 
 _continue:
-
 
 /* read WRAM's sample */
 	mov		0, r10
@@ -219,8 +221,8 @@ __init_engine:
 	movhi	hi(__call_main),r0,lp
 	movea	lo(__call_main),lp,lp
 
-	movhi	hi(_Game_init), r0, r1
-	movea	lo(_Game_init), r1, r1
+	movhi	hi(_VUEngine_init), r0, r1
+	movea	lo(_VUEngine_init), r1, r1
 	jmp	    [r1]
 
 __call_main:
@@ -283,10 +285,7 @@ __interrupt_handler_prolog:
 	andi	0x003C,r6,r6
 	add	    r6,r1
 	ld.w	-4[r1],r1
-	cmp	    r0,r1
-	be	    __interrupt_handler_epilogue
-	jal	    __interrupt_handler
-
+	jal     __interrupt_handler
 
 __interrupt_handler_epilogue:
 	ld.w	0x0000[sp],lp
@@ -326,6 +325,12 @@ __invalid_opcode_exception:
 	ld.w	0[r1],r1
 	jmp	    [r1]
 
+__floating_point_exception:
+	movhi	hi(_floatingPointVector), r0, r1
+	movea	lo(_floatingPointVector), r1, r1
+	ld.w	0[r1],r1
+	jmp	    [r1]
+
 	.section ".vbvectors","ax"
 	.align	1
 
@@ -356,8 +361,8 @@ _interrupt_table:
 	.fill	0x0110
 
     /* (7FFFF60h) - Float exception */
-	reti
-	.fill	0x0E
+	jr __floating_point_exception
+	.fill	0x0c
 
     /* Unused vector */
 	.fill	0x10

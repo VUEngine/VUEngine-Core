@@ -14,7 +14,7 @@
 
 #include <FrameRate.h>
 #include <VirtualList.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 
 
@@ -91,11 +91,11 @@ void FrameRate::gameFrameStarted(bool gameFrameEnded)
 		FrameRate::fireEvent(this, kEventTornFrame);
 	}
 
-
-#ifdef __PRINT_FRAMERATE
 	if(__TARGET_FPS <= this->gameFrameStarts)
 	{
-		if(!Game::isInSpecialMode(Game::getInstance()))
+
+#ifdef __PRINT_FRAMERATE
+		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 		{
 			FrameRate::print(this, 21, 26);
 		}
@@ -103,8 +103,8 @@ void FrameRate::gameFrameStarted(bool gameFrameEnded)
 		this->fps = 0;
 		this->unevenFps = 0;
 		this->gameFrameStarts = 0;
-	}
 #endif
+	}
 }
 
 /**

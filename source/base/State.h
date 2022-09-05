@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-abstract class State : Object
+abstract class State : ListenerObject
 {
 	/// @publicsection
 	void constructor();

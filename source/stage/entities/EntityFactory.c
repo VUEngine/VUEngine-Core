@@ -61,7 +61,7 @@ void EntityFactory::destructor()
 {
 	VirtualNode node = this->entitiesToInstantiate->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -78,7 +78,7 @@ void EntityFactory::destructor()
 
 	node = this->entitiesToTransform->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -95,7 +95,7 @@ void EntityFactory::destructor()
 
 	node = this->entitiesToMakeReady->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -112,7 +112,7 @@ void EntityFactory::destructor()
 
 	node = this->spawnedEntities->head;
 
-	for(; node; node = node->next)
+	for(; NULL != node; node = node->next)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
@@ -169,14 +169,14 @@ uint32 EntityFactory::instantiateEntities()
 /*
 				if(0 == positionedEntityDescription->shapeSpecIndex)
 				{
-					Entity::addSprites(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->spriteSpecs);
+					Entity::addSprites(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->spriteSpecs);
 					positionedEntityDescription->shapeSpecIndex++;
 					return __ENTITY_PENDING_PROCESSING;
 				}
 
 				if(0 == positionedEntityDescription->shapeSpecIndex)
 				{
-					Entity::addShapes(positionedEntityDescription->entity, Entity::getEntitySpec(positionedEntityDescription->entity)->shapeSpecs);
+					Entity::addShapes(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->shapeSpecs);
 					positionedEntityDescription->shapeSpecIndex++;
 					return __ENTITY_PENDING_PROCESSING;
 				}
@@ -214,7 +214,7 @@ uint32 EntityFactory::instantiateEntities()
 
 			if(positionedEntityDescription->callback)
 			{
-				Entity::addEventListener(positionedEntityDescription->entity, Object::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
+				Entity::addEventListener(positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
 			}
 		}
 	}
@@ -343,8 +343,7 @@ uint32 EntityFactory::cleanUp()
 		{
 			Entity::fireEvent(positionedEntityDescription->entity, kEventEntityLoaded);
 			NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::cleanUp: deleted entity during kEventEntityLoaded");
-
-			Entity::removeAllEventListeners(positionedEntityDescription->entity, kEventEntityLoaded);
+			Entity::removeEventListeners(positionedEntityDescription->entity, NULL, kEventEntityLoaded);
 		}
 
 		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);

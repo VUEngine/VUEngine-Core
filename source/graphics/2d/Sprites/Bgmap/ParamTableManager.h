@@ -69,8 +69,8 @@ typedef struct FixedAffineMatrix
  */
 typedef struct AffineInfo
 {
-	fix10_6 	x;
-	fix10_6 	y;
+	fixed_t 	x;
+	fixed_t 	y;
 	fix13_3 	mx;
 	fix13_3 	my;
 	fix13_3 	halfWidth;
@@ -106,8 +106,6 @@ singleton class ParamTableManager : Object
 	uint32 used;
 	// allocated bgmapSprites
 	VirtualList bgmapSprites;
-	// removed bgmapSprites' sizes
-	VirtualList removedBgmapSpritesSizes;
 	// used for defragmentation
 	ParamTableFreeData paramTableFreeData;
 	// used for defragmentation

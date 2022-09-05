@@ -48,7 +48,7 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void TextObjectSprite::constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner)
+void TextObjectSprite::constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&textObjectSpriteSpec->objectSpriteSpec, owner);
 
@@ -87,11 +87,6 @@ void TextObjectSprite::destructor()
 int16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
 {
 	NM_ASSERT(!isDeleted(this->texture), "TextObjectSprite::doRender: null texture");
-
-	if(0 > index)
-	{
-		return __NO_RENDER_INDEX;
-	}
 
 	if(!this->printed)
 	{

@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <StageEditor.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Camera.h>
 #include <Optics.h>
 #include <Entity.h>
@@ -174,7 +174,7 @@ void StageEditor::show()
  */
 void StageEditor::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseShape(this);
@@ -582,14 +582,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 	{
 		optical.verticalViewPointCenter += __PIXELS_TO_METERS(this->translationStepSize);
 	}
-	else if(pressedKey & K_RU)
-	{
-		optical.distanceEyeScreen -= __PIXELS_TO_METERS(this->translationStepSize);
-	}
-	else if(pressedKey & K_RD)
-	{
-		optical.distanceEyeScreen += __PIXELS_TO_METERS(this->translationStepSize);
-	}
 	else if(pressedKey & K_A)
 	{
 		optical.maximumXViewDistancePower += __MAXIMUM_VIEW_DISTANCE_STEP;
@@ -638,11 +630,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 	}
 
 	Camera::setOptical(Camera::getInstance(), optical);
-
-	// this hack forces the Entity to recalculate its sprites' value.
-	// must hack this global, otherwise will need another variable which most likely will only
-	// take up the previous RAM, or another branching computation in the Entity's render method.
-	Camera::forceDisplacement(Camera::getInstance(), true);
 
 	StageEditor::printProjectionValues(this);
 	GameState::transform(this->gameState);
@@ -773,11 +760,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		Container::setLocalPosition(container, &localPosition);
 		Container::invalidateGlobalPosition(container);
 
-		// this hack forces the Entity to recalculate its sprites' value.
-		// must hack this global, otherwise will need another variable which most likely will only
-		// take up the previous RAM, or another branching computation in the Entity's render method.
-		Camera::forceDisplacement(Camera::getInstance(), true);
-
 		GameState::transform(this->gameState);
 		GameState::synchronizeGraphics(this->gameState);
 
@@ -822,13 +804,13 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteSpec*, Object)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, Object::safeCast(this));
+		this->userObjectSprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
 		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userObjectSprite);
-		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
-		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -955,9 +937,9 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->x, 								x + 10, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->y, 								x + 17, y, 		NULL);
-		Printing::int32(Printing::getInstance(), 		globalRotation->z, 								x + 24, y, 		NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->x), 								x + 10, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->y), 								x + 17, y, 		2, NULL);
+		Printing::float(Printing::getInstance(), 		__FIXED_TO_F(globalRotation->z), 								x + 24, y, 		2, NULL);
 		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		2, NULL);
 		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		2, NULL);
@@ -984,7 +966,7 @@ void StageEditor::printEntityPosition()
  */
 void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
-	Camera::move(Camera::getInstance(), translation, true);
+	Camera::translate(Camera::getInstance(), translation, true);
 	GameState::transform(this->gameState);
 	GameState::synchronizeGraphics(this->gameState);
 	StageEditor::printCameraPosition(this);
@@ -1028,8 +1010,6 @@ void StageEditor::printProjectionValues()
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Distance Eye to Camera:         ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum X View Distance:        ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum Y View Distance:        ", x, ++y, NULL);

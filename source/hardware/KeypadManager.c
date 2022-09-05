@@ -65,7 +65,7 @@ void KeypadManager::enableInterrupt()
 
 	_hardwareRegisters[__SCR] = 0;
 	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
-//	_hardwareRegisters[__SCR] |= __S_HW;
+	_hardwareRegisters[__SCR] |= __S_HW;
 }
 
 /**
@@ -73,7 +73,7 @@ void KeypadManager::enableInterrupt()
  */
 void KeypadManager::disableInterrupt()
 {
-	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
+	_hardwareRegisters[__SCR] |= __S_INTDIS;
 }
 
 /**
@@ -254,8 +254,10 @@ long KeypadManager::getAccumulatedUserInput()
  */
 static void KeypadManager::interruptHandler()
 {
+	KeypadManager::disableInterrupt(KeypadManager::getInstance());
 	Printing::resetCoordinates(Printing::getInstance());
-	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
+	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 26, NULL);
+	Printing::hex(Printing::getInstance(), (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
 }
 
 static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, int32 y)

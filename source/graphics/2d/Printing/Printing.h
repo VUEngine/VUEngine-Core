@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <CharSet.h>
 #include <PrintingSprite.h>
 
@@ -187,7 +187,7 @@ typedef const FontData FontROMData;
  *
  * @ingroup graphics-2d
  */
-singleton class Printing : Object
+singleton class Printing : ListenerObject
 {
 	/// @protectedsection
 
@@ -388,6 +388,13 @@ singleton class Printing : Object
 	 * @return			WORLD's gp
 	 */
 	int16 getWorldCoordinatesP();
+
+	/**
+	 * Retrieve sprite's position
+	 *
+	 * @return			Sprite's position
+	 */
+	PixelVector getSpritePosition();
 
 	/**
 	 * Print a string
