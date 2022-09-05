@@ -16,7 +16,7 @@
 
 #include <Stage.h>
 #include <Optics.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <EntityFactory.h>
 #include <PhysicalWorld.h>
 #include <TimerManager.h>
@@ -387,8 +387,8 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
+	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->stageSpec->physics.gravity);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -414,7 +414,7 @@ void Stage::loadPostProcessingEffects()
 		int32 i = 0;
 		for(; this->stageSpec->postProcessingEffects[i]; i++)
 		{
-			Game::pushFrontProcessingEffect(Game::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
+			VUEngine::pushFrontProcessingEffect(VUEngine::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
 }
@@ -1197,7 +1197,7 @@ VirtualList Stage::getSoundWrappers()
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
-	if(!Game::isInSpecialMode(Game::getInstance()))
+	if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 	{
 		EntityFactory::showStatus(this->entityFactory, 25, 3);
 	}
@@ -1327,8 +1327,8 @@ void Stage::resume()
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
+	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->stageSpec->physics.gravity);
 
 	Stage::prepareGraphics(this);
 

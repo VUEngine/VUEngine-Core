@@ -14,7 +14,6 @@
 
 #include <WireframeManager.h>
 #include <VirtualList.h>
-#include <Game.h>
 #include <Camera.h>
 #include <DirectDraw.h>
 #include <debugConfig.h>

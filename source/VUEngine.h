@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef VUENGINE_H_
+#define VUENGINE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class Game : ListenerObject
+singleton class VUEngine : ListenerObject
 {
 	// game's state machine
 	StateMachine stateMachine;
@@ -99,7 +99,7 @@ singleton class Game : ListenerObject
 	bool isPaused;
 
 	/// @publicsection
-	static Game getInstance();
+	static VUEngine getInstance();
 	static bool isConstructed();
 	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);

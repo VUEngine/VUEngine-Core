@@ -171,8 +171,8 @@ __init_engine:
 	movhi	hi(__call_main),r0,lp
 	movea	lo(__call_main),lp,lp
 
-	movhi	hi(_Game_init), r0, r1
-	movea	lo(_Game_init), r1, r1
+	movhi	hi(_VUEngine_init), r0, r1
+	movea	lo(_VUEngine_init), r1, r1
 	jmp	    [r1]
 
 __call_main:

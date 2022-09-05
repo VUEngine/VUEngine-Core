@@ -17,7 +17,7 @@
 #include <VIPManager.h>
 #include <BgmapTextureManager.h>
 #include <Globals.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <VIPManager.h>
@@ -139,7 +139,7 @@ static int32 Error::triggerException(char* message, char* detail)
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
 	Printing::text(Printing::getInstance(), "                                                " , x, y++, NULL);
 	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
-	Printing::text(Printing::getInstance(), Game::isConstructed() ? Game::getLastProcessName(Game::getInstance()) : "constructor", x + 15, y++, NULL);
+	Printing::text(Printing::getInstance(), VUEngine::isConstructed() ? VUEngine::getLastProcessName(VUEngine::getInstance()) : "constructor", x + 15, y++, NULL);
 	Printing::text(Printing::getInstance(), " LP:                                  " , x, y, NULL);
 	Printing::hex(Printing::getInstance(), lp, x + 8, y, 8, NULL);
 	Printing::text(Printing::getInstance(), " SP: 		                         " , x, ++y, NULL);

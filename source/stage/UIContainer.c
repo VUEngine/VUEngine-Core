@@ -14,7 +14,6 @@
 
 #include <UIContainer.h>
 #include <Optics.h>
-#include <Game.h>
 #include <Camera.h>
 
 

@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Camera.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
@@ -172,15 +172,15 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __DEBUG_TOOLS
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 
@@ -215,7 +215,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
-	if(!Game::isExitingSpecialMode(Game::getInstance()))
+	if(!VUEngine::isExitingSpecialMode(VUEngine::getInstance()))
 	{
 		// Set camera to its previous position
 		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
@@ -223,7 +223,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
 
 		// Reset the engine state
-		Game::reset(Game::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);
+		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);
 
 		// Update the stage
 		Container::resume(this->stage);
@@ -479,7 +479,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	}
 
 	// Reset the engine state
-	Game::reset(Game::getInstance(), NULL == stageSpec->assets.sounds);
+	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
 
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);

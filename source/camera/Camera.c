@@ -14,7 +14,6 @@
 
 #include <Camera.h>
 #include <Optics.h>
-#include <Game.h>
 #include <CameraMovementManager.h>
 #include <CameraEffectManager.h>
 #include <debugConfig.h>

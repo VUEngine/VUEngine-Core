@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Profiler.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
@@ -112,7 +112,7 @@ void Profiler::reset()
 	this->currentProfilingProcess = 0;
 	this->printedProcessesNames = false;
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
-	this->timePerGameFrameInMS = Game::getGameFrameDuration(Game::getInstance());
+	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->totalTime = 0;

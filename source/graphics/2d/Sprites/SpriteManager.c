@@ -15,7 +15,7 @@
 #include <string.h>
 #include <SpriteManager.h>
 #include <Mem.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <VIPManager.h>
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
@@ -591,7 +591,7 @@ void SpriteManager::writeDRAM()
 
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!Game::isInSpecialMode(Game::getInstance()))
+	if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 	{
 		static int32 counter = __TARGET_FPS / 5;
 
@@ -668,7 +668,7 @@ void SpriteManager::render()
 	SpriteManager::stopRendering(this);
 
 #ifdef __SHOW_SPRITES_PROFILING
-	if(!Game::isInSpecialMode(Game::getInstance()))
+	if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 	{
 		SpriteManager::computeTotalPixelsDrawn(this);
 	}

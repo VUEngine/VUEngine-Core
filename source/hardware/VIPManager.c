@@ -16,7 +16,7 @@
 #include <HardwareManager.h>
 #include <TimerManager.h>
 #include <ClockManager.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <FrameRate.h>
 #include <SpriteManager.h>
 #include <WireframeManager.h>
@@ -302,7 +302,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
-				Game::nextFrameStarted(Game::getInstance(), __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+				VUEngine::nextFrameStarted(VUEngine::getInstance(), __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
 
 			case __GAMESTART:
@@ -341,14 +341,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VIPManager::enableInterrupts(this, __XPEND);
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-				Game::saveProcessNameDuringFRAMESTART(Game::getInstance());
+				VUEngine::saveProcessNameDuringFRAMESTART(VUEngine::getInstance());
 #endif
 
 				ClockManager::update(ClockManager::getInstance(), this->gameFrameDuration);
 
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
-				Game::nextGameCycleStarted(Game::getInstance());
+				VUEngine::nextGameCycleStarted(VUEngine::getInstance());
 
 				this->frameStarted = this->processingXPEND;
 
@@ -392,11 +392,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->processingXPEND = true;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-				Game::saveProcessNameDuringXPEND(Game::getInstance());
+				VUEngine::saveProcessNameDuringXPEND(VUEngine::getInstance());
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-				//Game::setLastProcessName(Game::getInstance(), "VIP interrupt");
+				//VUEngine::setLastProcessName(VUEngine::getInstance(), "VIP interrupt");
 #endif
 
 				// Prevent VIP's drawing operations
@@ -430,7 +430,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->drawingEnded = true;
 
 #ifdef __DEBUG_TOOLS
-				if(Game::isInDebugMode(Game::getInstance()))
+				if(VUEngine::isInDebugMode(VUEngine::getInstance()))
 				{
 					Debug::render(Debug::getInstance());
 				}

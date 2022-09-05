@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef VUENGINE_H_
-#define VUENGINE_H_
+#ifndef LIBVUENGINE_H_
+#define LIBVUENGINE_H_
 
 
 //---------------------------------------------------------------------------------------------------------

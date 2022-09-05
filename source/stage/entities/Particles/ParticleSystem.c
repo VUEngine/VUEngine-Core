@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ParticleSystem.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <ParticleRemover.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -156,7 +156,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(Game::getStage(Game::getInstance()));
+	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(VUEngine::getStage(VUEngine::getInstance()));
 
 	if(!isDeleted(this->particles))
 	{

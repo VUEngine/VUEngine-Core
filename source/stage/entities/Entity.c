@@ -15,7 +15,7 @@
 #include <string.h>
 #include <Entity.h>
 #include <Camera.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Entity.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -180,7 +180,7 @@ void Entity::destroyShapes()
 
 		for(; NULL != node; node = node->next)
 		{
-			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), Shape::safeCast(node->data));
+			CollisionManager::destroyShape(VUEngine::getCollisionManager(VUEngine::getInstance()), Shape::safeCast(node->data));
 		}
 
 		delete this->shapes;
@@ -1202,7 +1202,7 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 	// go through n sprites in entity's spec
 	for(; shapeSpecs[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
+		Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
@@ -1380,7 +1380,7 @@ bool Entity::addShapeFromSpecAtIndex(int32 shapeSpecIndex)
 	}
 
 	// call the appropriate allocator to support inheritance
-	Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &this->entitySpec->shapeSpecs[shapeSpecIndex]);
+	Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &this->entitySpec->shapeSpecs[shapeSpecIndex]);
 	NM_ASSERT(shape, "Entity::addShape: shape not created");
 	VirtualList::pushBack(this->shapes, shape);
 

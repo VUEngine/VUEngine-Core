@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MessageDispatcher.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Clock.h>
 #include <VirtualList.h>
 #include <debugUtilities.h>
@@ -121,7 +121,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 	}
 	else
 	{
-		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), Game::getMessagingClock(Game::getInstance()), delay, sender, receiver, message, extraInfo);
+		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), VUEngine::getMessagingClock(VUEngine::getInstance()), delay, sender, receiver, message, extraInfo);
 	}
 
 	return false;
@@ -143,7 +143,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 	DelayedMessage* delayedMessage = new DelayedMessage;
 
 	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
-	delayedMessage->clock = clock ? clock : Game::getMessagingClock(Game::getInstance());
+	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock(VUEngine::getInstance());
 	delayedMessage->timeOfArrival = Clock::getTime(delayedMessage->clock) + delay;
 	delayedMessage->discarded = false;
 

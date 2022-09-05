@@ -14,7 +14,7 @@
 
 #include <FrameRate.h>
 #include <VirtualList.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 
 
@@ -95,7 +95,7 @@ void FrameRate::gameFrameStarted(bool gameFrameEnded)
 	{
 
 #ifdef __PRINT_FRAMERATE
-		if(!Game::isInSpecialMode(Game::getInstance()))
+		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 		{
 			FrameRate::print(this, 21, 26);
 		}

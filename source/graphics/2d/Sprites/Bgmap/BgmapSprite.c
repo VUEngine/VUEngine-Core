@@ -14,7 +14,6 @@
 
 #include <BgmapSprite.h>
 #include <Affine.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>

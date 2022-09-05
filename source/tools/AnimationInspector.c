@@ -15,7 +15,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationInspector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <GameState.h>

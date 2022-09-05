@@ -14,7 +14,7 @@
 
 #include <CameraEffectManager.h>
 #include <Camera.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Clock.h>
 #include <TimerManager.h>
 #include <MessageDispatcher.h>
@@ -105,10 +105,10 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		__BRIGHTNESS_BRIGHT_RED,
 	};
 
-	if(!isDeleted(Game::getCurrentState(Game::getInstance())))
+	if(!isDeleted(VUEngine::getCurrentState(VUEngine::getInstance())))
 	{
 		// if exists, get brightness settings from stage spec
-		Stage stage = GameState::getStage(Game::getCurrentState(Game::getInstance()));
+		Stage stage = GameState::getStage(VUEngine::getCurrentState(VUEngine::getInstance()));
 		if(stage != NULL)
 		{
 			StageSpec* stageSpec = Stage::getStageSpec(stage);

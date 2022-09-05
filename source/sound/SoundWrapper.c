@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundWrapper.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
 #include <HardwareManager.h>
@@ -855,7 +855,7 @@ void SoundWrapper::updateVolumeReduction()
 	{
 		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
 
-		if(Game::getGameFrameDuration(Game::getInstance()) <= (elapsedMilliseconds >> 1))
+		if(VUEngine::getGameFrameDuration(VUEngine::getInstance()) <= (elapsedMilliseconds >> 1))
 		{
 			switch(this->playbackType)
 			{

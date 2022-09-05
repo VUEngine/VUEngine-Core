@@ -16,7 +16,6 @@
 #include <Optics.h>
 #include <VirtualList.h>
 #include <TimerManager.h>
-#include <Game.h>
 #include <Profiler.h>
 
 

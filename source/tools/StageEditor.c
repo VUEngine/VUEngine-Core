@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <StageEditor.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Camera.h>
 #include <Optics.h>
 #include <Entity.h>
@@ -174,7 +174,7 @@ void StageEditor::show()
  */
 void StageEditor::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseShape(this);

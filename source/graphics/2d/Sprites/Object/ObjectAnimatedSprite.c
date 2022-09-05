@@ -19,7 +19,6 @@
 #include <AnimationController.h>
 #include <ObjectTexture.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Game.h>
 
 
 //---------------------------------------------------------------------------------------------------------

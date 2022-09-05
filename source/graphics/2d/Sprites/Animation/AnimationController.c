@@ -16,7 +16,6 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Game.h>
 #include <Utilities.h>
 #include <debugConfig.h>
 

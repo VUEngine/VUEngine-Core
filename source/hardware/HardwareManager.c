@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <HardwareManager.h>
-#include <Game.h>
 #include <KeypadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>

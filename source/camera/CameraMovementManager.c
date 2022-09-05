@@ -14,7 +14,6 @@
 
 #include <CameraMovementManager.h>
 #include <Camera.h>
-#include <Game.h>
 #include <ClockManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>

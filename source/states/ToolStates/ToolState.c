@@ -14,7 +14,7 @@
 
 #include <ToolState.h>
 #include <AnimationInspector.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
 #include <KeypadManager.h>
@@ -67,11 +67,11 @@ void ToolState::destructor()
 void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
-	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
 
 	if(!isDeleted(this->tool))
 	{
-		Tool::setGameState(this->tool, GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+		Tool::setGameState(this->tool, GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
 		Tool::show(this->tool);
 	}
 }
@@ -106,7 +106,7 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
 		Tool::hide(this->tool);
 	}
 
-	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
 	Base::exit(this, owner);
 }
 

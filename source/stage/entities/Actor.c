@@ -22,7 +22,7 @@
 #include <PhysicalWorld.h>
 #include <Body.h>
 #include <Box.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <debugUtilities.h>
 
 
@@ -66,7 +66,7 @@ void Actor::destructor()
 	if(!isDeleted(this->body))
 	{
 		// remove a body
-		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
+		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), this->body);
 		this->body = NULL;
 	}
 
@@ -92,12 +92,12 @@ void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint1
 
 	if(NULL != physicalSpecification)
 	{
-		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
 	}
 	else
 	{
 		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
-		this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(VUEngine::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
 	}
 
 	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
@@ -185,7 +185,7 @@ void Actor::syncPositionWithBody()
 	Vector3D bodyPosition = this->transformation.globalPosition;
 
 	if(
-		!Clock::isPaused(Game::getPhysicsClock(Game::getInstance()))
+		!Clock::isPaused(VUEngine::getPhysicsClock(VUEngine::getInstance()))
 		&&
 		(
 			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||

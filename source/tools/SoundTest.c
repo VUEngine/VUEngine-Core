@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundTest.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
 #include <VIPManager.h>
@@ -398,7 +398,7 @@ void SoundTest::loadSound()
 		return;
 	}
 
-	Game::disableKeypad(Game::getInstance());
+	VUEngine::disableKeypad(VUEngine::getInstance());
 
 #ifdef __SOUND_TEST
 	Printing::clear(Printing::getInstance());
@@ -429,7 +429,7 @@ void SoundTest::loadSound()
 #endif
 	}
 
-	Game::enableKeypad(Game::getInstance());
+	VUEngine::enableKeypad(VUEngine::getInstance());
 
 	SoundTest::printGUI(this, false);
 }

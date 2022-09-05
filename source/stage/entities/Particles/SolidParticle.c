@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Ball.h>
 #include <CollisionManager.h>
 #include <MessageDispatcher.h>
@@ -75,7 +75,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 	};
 
 	// register a shape for collision detection
-	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
+	this->shape = CollisionManager::createShape(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
 	Shape::activeCollisionChecks(this->shape, true);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -89,7 +89,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 void SolidParticle::destructor()
 {
 	// unregister the shape for collision detection
-	CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), this->shape);
+	CollisionManager::destroyShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this->shape);
 
 	this->shape = NULL;
 

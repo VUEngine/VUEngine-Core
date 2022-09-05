@@ -15,7 +15,6 @@
 #include <CommunicationManager.h>
 #include <TimerManager.h>
 #include <Mem.h>
-#include <Game.h>
 #include <Utilities.h>
 #include <VIPManager.h>
 #include <MessageDispatcher.h>

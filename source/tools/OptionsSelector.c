@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <OptionsSelector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>

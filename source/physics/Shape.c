@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <CollisionManager.h>
 #include <CollisionHelper.h>
 #include <debugConfig.h>
@@ -553,7 +553,7 @@ bool Shape::isEnabled()
 void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
-	CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, activate);
+	CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, activate);
 }
 
 /**
@@ -575,7 +575,7 @@ void Shape::enable(bool enable)
 
 	if(!this->enabled)
 	{
-		CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, false);
+		CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, false);
 	}	
 }
 

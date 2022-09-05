@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Clock.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
@@ -165,7 +165,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 
 	if(!_physhicsClock)
 	{
-		_physhicsClock = Game::getPhysicsClock(Game::getInstance());
+		_physhicsClock = VUEngine::getPhysicsClock(VUEngine::getInstance());
 	}
 }
 
@@ -456,7 +456,7 @@ Vector3D Body::getLastDisplacement()
 {
 	Vector3D displacement = {0, 0, 0};
 
-	fixed_t elapsedTime = PhysicalWorld::getElapsedTime(Game::getPhysicalWorld(Game::getInstance()));
+	fixed_t elapsedTime = PhysicalWorld::getElapsedTime(VUEngine::getPhysicalWorld(VUEngine::getInstance()));
 
 	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIXED_MULT(this->velocity.x, elapsedTime) : 0;
 	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIXED_MULT(this->velocity.y, elapsedTime) : 0;

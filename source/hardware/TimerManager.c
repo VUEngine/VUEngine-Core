@@ -19,7 +19,7 @@
 #include <SoundManager.h>
 #include <StopwatchManager.h>
 #include <SoundTest.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Profiler.h>
 
 
@@ -511,7 +511,7 @@ static void TimerManager::interruptHandler()
 		_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 #ifdef __SOUND_TEST
-		if(Game::isInSoundTest(Game::getInstance()))
+		if(VUEngine::isInSoundTest(VUEngine::getInstance()))
 		{
 			SoundManager::printPlaybackTime(SoundManager::getInstance());
 		}

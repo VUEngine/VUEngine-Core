@@ -16,7 +16,7 @@
 #include <StopwatchManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <VirtualList.h>
 
 
@@ -77,7 +77,7 @@ float Stopwatch::lap()
 	{
 		if(currentTimerCounter > this->previousTimerCounter)
 		{
-			timerCounter = Game::getGameFrameDuration(Game::getInstance()) / this->timeProportion;
+			timerCounter = VUEngine::getGameFrameDuration(VUEngine::getInstance()) / this->timeProportion;
 		}
 		else
 		{

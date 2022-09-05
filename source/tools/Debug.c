@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Debug.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Optics.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
@@ -228,7 +228,7 @@ void Debug::show()
  */
 void Debug::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 }
@@ -396,7 +396,7 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+		CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -502,9 +502,9 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 20, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
-	if(Game::getSaveDataManager(Game::getInstance()))
+	if(VUEngine::getSaveDataManager(VUEngine::getInstance()))
 	{
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(Game::getSaveDataManager(Game::getInstance())), 20, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(VUEngine::getSaveDataManager(VUEngine::getInstance())), 20, y, NULL);
 	}
 	else
 	{
@@ -518,13 +518,13 @@ void Debug::generalStatusPage(int32 increment __attribute__ ((unused)), int32 x 
 
 	Printing::text(Printing::getInstance(), "CLOCKS STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "General clock time: ", 1, ++y, NULL);
-	Clock::print(Game::getClock(Game::getInstance()), 26, y, NULL);
+	Clock::print(VUEngine::getClock(VUEngine::getInstance()), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getMessagingClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getUpdateClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getUpdateClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getPhysicsClock(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), 26, y, NULL);
 	y+=3;
 }
 
@@ -881,7 +881,7 @@ void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __at
  */
 void Debug::streamingShowStatus(int32 increment __attribute__ ((unused)), int32 x __attribute__ ((unused)), int32 y __attribute__ ((unused)))
 {
-	Stage::showStreamingProfiling(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
+	Stage::showStreamingProfiling(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
 }
 
 /**
@@ -1413,9 +1413,9 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
  */
 void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
-	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
-	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y + 6);
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
+	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y + 6);
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 
 	Debug::setBlackBackground(this);
 }
@@ -1444,7 +1444,7 @@ void Debug::physicStatusShowShapes(int32 increment __attribute__ ((unused)), int
  */
 void Debug::showCollisionShapes()
 {
-	CollisionManager::showShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::showShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 }
 
 /**
