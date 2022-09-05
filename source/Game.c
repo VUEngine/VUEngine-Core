@@ -988,8 +988,7 @@ void Game::setGameFrameRate(uint16 gameFrameRate)
 		gameFrameRate = __MAXIMUM_FPS;
 	}
 
-//	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
-	VIPManager::setFrameCycle(this->vipManager, 1);
+	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
 }
 
 #ifdef __TOOLS
