@@ -209,8 +209,8 @@ extern const int16 _sinLut[];
 #define fixed_t											fix19_13
 #define fixed_ext_t										fix19_13
 
-#define __FIXED_INFINITY								0x3FFFFFFF
-#define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_INFINITY								0x7FFFFFFF
+#define __FIXED_EXT_INFINITY							0x7FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX19_13_MAXIMUM_VALUE
 
 #define __FIXED_TO_I_BITS								(13)
@@ -254,8 +254,8 @@ extern const int16 _sinLut[];
 #define fixed_t											fix10_6
 #define fixed_ext_t										fix10_6_ext
 
-#define __FIXED_INFINITY								0x3FFF
-#define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_INFINITY								0x7FFF
+#define __FIXED_EXT_INFINITY							0x7FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX10_6_MAXIMUM_VALUE
 
 #define __FIXED_TO_I_BITS								(6)
@@ -301,8 +301,8 @@ extern const int16 _sinLut[];
 #define fixed_t											fix7_9
 #define fixed_ext_t										fix7_9_ext
 
-#define __FIXED_INFINITY								0x3FFF
-#define __FIXED_EXT_INFINITY							0x3FFFFFFF
+#define __FIXED_INFINITY								0x7FFF
+#define __FIXED_EXT_INFINITY							0x7FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX7_9_MAXIMUM_VALUE
 
 #define __FIXED_TO_I_BITS								(9)
