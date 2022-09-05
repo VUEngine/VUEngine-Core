@@ -126,7 +126,15 @@
 
 {{ macros.sectionHeader('Wireframes') }}
 
-{% if engine.wireframe.sort %}#define{% else %}#undef{% endif %} __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+{% if engine.wireframe.sort %}
+	{%- if engine.wireframe.sort === false -%}
+#undef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+	{%- else -%}
+#define __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+	{%- endif -%}
+{%- else -%}
+#define __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+{% endif -%}
 
 
 {{ macros.sectionHeader('Direct drawing') }}
