@@ -19,6 +19,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA							__FIXED_EXT_INFINITY
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -48,6 +55,7 @@ abstract class Wireframe : ListenerObject
 	const Vector3D* position;
 	const Rotation* rotation;
 	const Scale* scale;
+	fixed_ext_t squaredDistanceToCamera;
 	bool interlaced;
 	uint8 color;
 	uint8 bufferIndex;

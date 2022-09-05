@@ -45,6 +45,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->bufferIndex = 0;
 	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = wireframeSpec->transparent;
+	this->squaredDistanceToCamera = 0;
 }
 
 /**
@@ -124,6 +125,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
 	if(NULL == this->wireframeSpec)
 	{
+		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 		return;
 	}
 
@@ -135,6 +137,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	{
 		this->interlaced = this->wireframeSpec->interlaced;
 		this->color = __COLOR_BLACK;
+		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 		return;
 	}
 
@@ -156,6 +159,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		if(__COS(__CAMERA_VIEWING_ANGLE) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
 		{
 			this->color = __COLOR_BLACK;
+			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 			return;
 		}
 
@@ -197,4 +201,6 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	}
 
 	this->interlaced += this->wireframeSpec->interlaced;
+
+	this->squaredDistanceToCamera = distanceToCamera;
 }
