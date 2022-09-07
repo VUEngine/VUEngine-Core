@@ -115,8 +115,12 @@ void MBgmapSprite::releaseTextures()
 		for(; NULL != node; node = node->next)
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-			BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+
+			if(!isDeleted(bgmapTexture))
+			{
+				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+			}
 		}
 
 		delete this->textures;
