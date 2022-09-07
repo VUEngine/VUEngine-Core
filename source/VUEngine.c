@@ -1267,3 +1267,9 @@ void VUEngine::startProfiling()
 	Profiler::initialize(Profiler::getInstance());
 }
 #endif
+
+int32 __GAME_ENTRY_POINT(void);
+int32 main(void)
+{
+	return __GAME_ENTRY_POINT();
+}

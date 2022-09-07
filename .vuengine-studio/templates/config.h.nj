@@ -30,6 +30,12 @@
 
 {% endif -%}
 
+{{ macros.sectionHeader('Game Entry Point') }}
+
+#ifndef __GAME_ENTRY_POINT
+#define __GAME_ENTRY_POINT											game
+#endif
+
 
 {{ macros.sectionHeader('Fixed point data type') }}
 
