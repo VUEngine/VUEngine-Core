@@ -79,13 +79,13 @@ uint16 FrameRate::getFps()
 /**
  * Acknowledge that the game frame started
  *
- * @param gameFrameEnded	Boolean
+ * @param gameCycleEnded	Boolean
  */
-void FrameRate::gameFrameStarted(bool gameFrameEnded)
+void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
 	this->gameFrameStarts++;
 
-	if(!gameFrameEnded)
+	if(!gameCycleEnded)
 	{
 		this->unevenFps++;
 		FrameRate::fireEvent(this, kEventTornFrame);
