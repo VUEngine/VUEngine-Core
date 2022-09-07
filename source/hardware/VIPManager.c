@@ -105,7 +105,7 @@ void VIPManager::constructor()
 	this->processingGAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->skipFrameBuffersProcessing = true;
+	this->skipFrameBuffersProcessing = false;
 	this->multiplexedFRAMESTARTCounter = 0;
 	this->multiplexedXPENDCounter = 0;
 	this->timeErrorCounter = 0;
@@ -143,7 +143,7 @@ void VIPManager::reset()
 {
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->skipFrameBuffersProcessing = true;
+	this->skipFrameBuffersProcessing = false;
 
 #ifdef __FORCE_VIP_SYNC
 	this->forceDrawingSync = true;
@@ -302,7 +302,22 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
+				this->frameStarted = this->processingXPEND;
+
+				if(this->processingXPEND)
+				{
+					this->multiplexedFRAMESTARTCounter++;
+
+					this->drawingEnded = false;
+
+					if(this->events)
+					{
+						VIPManager::fireEvent(this, kEventVIPManagerFRAMESTARTDuringXPEND);
+					}
+				}
+
 				VUEngine::nextFrameStarted(VUEngine::getInstance(), __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
 				break;
 
 			case __GAMESTART:
@@ -323,18 +338,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					break;
 				}
 
-				if(this->processingXPEND)
-				{
-					this->multiplexedFRAMESTARTCounter++;
-
-					this->drawingEnded = false;
-
-					if(this->events)
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
-					}
-				}
-
 				this->processingGAMESTART = true;
 
 				// Allow frame start interrupt
@@ -349,8 +352,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
 				VUEngine::nextGameCycleStarted(VUEngine::getInstance());
-
-				this->frameStarted = this->processingXPEND;
 
 				SpriteManager::render(_spriteManager);
 				WireframeManager::render(_wireframeManager);
@@ -465,8 +466,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::applyPostProcessingEffects()
 {
-	volatile bool hasFrameStartedDuringXPEND = false;
-
 	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
@@ -482,19 +481,14 @@ void VIPManager::applyPostProcessingEffects()
 				delete postProcessingEffectRegistry;
 			}
 		}
-		else if(!this->skipFrameBuffersProcessing || !hasFrameStartedDuringXPEND)
+		else if(!this->skipFrameBuffersProcessing)
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
-
-			hasFrameStartedDuringXPEND = VIPManager::hasFrameStartedDuringXPEND(this);
 		}
-	}
 
-	if(hasFrameStartedDuringXPEND)
-	{
-		if(this->events)
+		if(VIPManager::hasFrameStartedDuringXPEND(this))
 		{
-			VIPManager::fireEvent(this, kEventVIPManagerFrameBuffersProcessingSuspended);
+			break;
 		}
 	}
 }

@@ -93,7 +93,7 @@ void SpriteManager::constructor()
 	this->bgmapTextureManager = NULL;
 	this->objectTextureManager = NULL;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerFRAMESTARTDuringXPEND, kEventVIPManagerFRAMESTARTDuringXPEND);
 
 	SpriteManager::reset(this);
 }
@@ -103,7 +103,7 @@ void SpriteManager::constructor()
  */
 void SpriteManager::destructor()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerFRAMESTARTDuringXPEND, kEventVIPManagerFRAMESTARTDuringXPEND);
 
 	SpriteManager::cleanUp(this);
 
@@ -111,7 +111,7 @@ void SpriteManager::destructor()
 	Base::destructor();
 }
 
-void SpriteManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+void SpriteManager::onVIPManagerFRAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->stopRendering = true;
 }

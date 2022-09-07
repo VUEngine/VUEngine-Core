@@ -95,7 +95,7 @@ void DirectDraw::constructor()
 	this->totalDrawPixels = 0;
 	this->maximuDrawPixels = 0;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerFRAMESTARTDuringXPEND, kEventVIPManagerFRAMESTARTDuringXPEND);
 
 	_directDraw = this;
 }
@@ -109,7 +109,7 @@ void DirectDraw::destructor()
 	Base::destructor();
 }
 
-void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+void DirectDraw::onVIPManagerFRAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->maximuDrawPixels = this->totalDrawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
 }

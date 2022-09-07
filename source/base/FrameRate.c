@@ -83,27 +83,23 @@ uint16 FrameRate::getFps()
  */
 void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
-	this->gameFrameStarts++;
-
 	if(!gameCycleEnded)
 	{
 		this->unevenFps++;
-		FrameRate::fireEvent(this, kEventTornFrame);
 	}
+
+	this->gameFrameStarts++;
 
 	if(__TARGET_FPS <= this->gameFrameStarts)
 	{
-
-#ifdef __PRINT_FRAMERATE
 		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 		{
-			FrameRate::print(this, 21, 26);
+			FrameRate::print(this, 21, 14);
 		}
 
 		this->fps = 0;
 		this->unevenFps = 0;
 		this->gameFrameStarts = 0;
-#endif
 	}
 }
 

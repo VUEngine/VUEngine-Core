@@ -786,7 +786,10 @@ void VUEngine::nextGameCycleStarted()
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 {
+#ifdef __PRINT_FRAMERATE
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
+#endif
+
 
 	static uint16 totalTime = 0;
 
