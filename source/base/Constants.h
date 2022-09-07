@@ -247,4 +247,7 @@ void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 #define __SHOW									2
 
 
+#define __STRINGIFY(a)							__MAKE_STRING(a)
+
+
 #endif
