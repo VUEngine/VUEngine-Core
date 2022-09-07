@@ -44,6 +44,7 @@ void FrameRate::constructor()
 	this->fps = 0;
 	this->unevenFps = 0;
 	this->gameFrameStarts = 0;
+	this->targetFPS = __TARGET_FPS;
 }
 
 /**
@@ -65,7 +66,7 @@ void FrameRate::reset()
 	this->fps = 0;
 	this->unevenFps = 0;
 	this->gameFrameStarts = 0;
-	// Prevents reporting 51 FPS when swapping states
+	this->targetFPS = __TARGET_FPS;
 }
 
 /**
@@ -74,6 +75,12 @@ void FrameRate::reset()
 uint16 FrameRate::getFps()
 {
 	return this->fps;
+}
+
+void FrameRate::setTarget(uint8 targetFPS)
+{
+	FrameRate::reset(this);
+	this->targetFPS = targetFPS;
 }
 
 /**
@@ -90,13 +97,19 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 
 	this->gameFrameStarts++;
 
-	if(__TARGET_FPS <= this->gameFrameStarts)
+	if(this->targetFPS <= this->gameFrameStarts)
 	{
+		if(this->targetFPS > this->fps && !isDeleted(this->events))
+		{
+			FrameRate::fireEvent(this, kEventFrameRateDipped);
+		}
+
+#ifdef __PRINT_FRAMERATE
 		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 		{
 			FrameRate::print(this, 21, 14);
 		}
-
+#endif
 		this->fps = 0;
 		this->unevenFps = 0;
 		this->gameFrameStarts = 0;

@@ -31,6 +31,7 @@ singleton class FrameRate : ListenerObject
 	uint16 fps;
 	uint16 gameFrameStarts;
 	uint16 unevenFps;
+	uint8 targetFPS;
 
 	/// @publicsection
 	static FrameRate getInstance();

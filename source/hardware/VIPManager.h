@@ -257,7 +257,7 @@ singleton class VIPManager : ListenerObject
 {
 	VirtualList postProcessingEffects;
 	uint32 currentDrawingFrameBufferSet;
-	uint16 multiplexedFRAMESTARTCounter;
+	uint16 multiplexedGAMESTARTCounter;
 	uint16 multiplexedXPENDCounter;
 	uint16 timeErrorCounter;
 	uint16 scanErrorCounter;

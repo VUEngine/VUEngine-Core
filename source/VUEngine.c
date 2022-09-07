@@ -782,15 +782,12 @@ void VUEngine::updateFrameRate()
 void VUEngine::nextGameCycleStarted()
 {
 	this->nextGameCycleStarted = true;
+
+	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
 }
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 {
-#ifdef __PRINT_FRAMERATE
-	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
-#endif
-
-
 	static uint16 totalTime = 0;
 
 	totalTime += gameFrameDuration;
@@ -986,6 +983,7 @@ void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 		gameFrameRate = __MAXIMUM_FPS;
 	}
 
+	FrameRate::setTarget(this->frameRate, gameFrameRate);
 	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
 }
 

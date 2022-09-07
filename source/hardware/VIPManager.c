@@ -106,7 +106,7 @@ void VIPManager::constructor()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = false;
-	this->multiplexedFRAMESTARTCounter = 0;
+	this->multiplexedGAMESTARTCounter = 0;
 	this->multiplexedXPENDCounter = 0;
 	this->timeErrorCounter = 0;
 	this->scanErrorCounter = 0;
@@ -266,7 +266,7 @@ static void VIPManager::interruptHandler()
 
 	if(_vipManager->events)
 	{
-		VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
+	//	VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
 	}
 
 	// handle the interrupt
@@ -304,38 +304,22 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				this->frameStarted = this->processingXPEND;
 
-				if(this->processingXPEND)
-				{
-					this->multiplexedFRAMESTARTCounter++;
-
-					this->drawingEnded = false;
-
-					if(this->events)
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerFRAMESTARTDuringXPEND);
-					}
-				}
-
 				VUEngine::nextFrameStarted(VUEngine::getInstance(), __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 				break;
 
 			case __GAMESTART:
 
-				if(this->processingGAMESTART)
+				if(this->processingXPEND)
 				{
-					this->multiplexedFRAMESTARTCounter++;
+					this->multiplexedGAMESTARTCounter++;
 
-					if(!this->processingXPEND)
-					{
-						this->drawingEnded = false;
-					}
+					this->drawingEnded = false;
 
 					if(this->events)
 					{
-						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringGAMESTART);
+						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 					}
-					break;
 				}
 
 				this->processingGAMESTART = true;
@@ -368,17 +352,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				break;
 
 			case __XPEND:
-
-				if(this->processingXPEND)
-				{
-					this->multiplexedXPENDCounter++;
-
-					if(this->events)
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringXPEND);
-					}
-					break;
-				}
 
 				if(this->processingGAMESTART)
 				{
@@ -918,7 +891,7 @@ void VIPManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "SCANERR counter:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->scanErrorCounter, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Multi FRAMESTARTS:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->multiplexedFRAMESTARTCounter, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->multiplexedGAMESTARTCounter, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Multi XPENDs:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->multiplexedXPENDCounter, x + 18, y, NULL);
 }
