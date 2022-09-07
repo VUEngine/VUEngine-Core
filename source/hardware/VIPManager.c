@@ -264,10 +264,12 @@ static void VIPManager::interruptHandler()
 
 	HardwareManager::enableMultiplexedInterrupts();
 
+#ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
 	if(_vipManager->events)
 	{
-	//	VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
+		VIPManager::fireEvent(_vipManager, kEventVIPManagerInterrupt);
 	}
+#endif
 
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
