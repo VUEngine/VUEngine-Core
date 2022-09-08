@@ -1267,10 +1267,7 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 void Stage::synchronizeGraphics()
 {
 	Base::synchronizeGraphics(this);
-}
 
-void Stage::synchronizeUIGraphics()
-{
 	if(this->uiContainer)
 	{
 		Container::synchronizeGraphics(this->uiContainer);
