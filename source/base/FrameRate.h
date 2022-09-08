@@ -36,6 +36,7 @@ singleton class FrameRate : ListenerObject
 	/// @publicsection
 	static FrameRate getInstance();
 	uint16 getFps();
+	void setTarget(uint8 targetFPS);
 	void gameFrameStarted(bool gameCycleEnded);
 	void update();
 	void print(int32 col, int32 row);
