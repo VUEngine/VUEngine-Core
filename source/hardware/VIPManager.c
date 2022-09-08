@@ -333,9 +333,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::saveProcessNameDuringFRAMESTART(VUEngine::getInstance());
 #endif
 
-				ClockManager::update(ClockManager::getInstance(), this->gameFrameDuration);
-
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
+
+				ClockManager::update(ClockManager::getInstance(), this->gameFrameDuration);
 
 				VUEngine::nextGameCycleStarted(VUEngine::getInstance());
 
@@ -846,6 +846,17 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
 	else if(0x0008 == currentDrawingFrameBufferSet)
 	{
 		this->currentDrawingFrameBufferSet = 0x8000;
+	}
+	else
+	{
+		if(0x0004 == currentDrawingFrameBufferSet)
+		{
+			this->currentDrawingFrameBufferSet = 0x8000;
+		}
+		else if(0x0008 == currentDrawingFrameBufferSet)
+		{
+			this->currentDrawingFrameBufferSet = 0;
+		}	
 	}
 }
 
