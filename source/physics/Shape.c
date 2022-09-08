@@ -553,7 +553,7 @@ bool Shape::isEnabled()
 void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
-	CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, activate);
+	CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(_vuEngine), this, activate);
 }
 
 /**
@@ -575,7 +575,7 @@ void Shape::enable(bool enable)
 
 	if(!this->enabled)
 	{
-		CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this, false);
+		CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(_vuEngine), this, false);
 	}	
 }
 

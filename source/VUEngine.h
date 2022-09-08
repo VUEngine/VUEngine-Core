@@ -24,6 +24,8 @@
 #include <PhysicalWorld.h>
 #include <VIPManager.h>
 #include <CommunicationManager.h>
+#include <SpriteManager.h>
+#include <WireframeManager.h>
 #include <SoundManager.h>
 
 
@@ -57,6 +59,9 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class VUEngine;
+extern VUEngine _vuEngine;
+
 /// @ingroup base
 singleton class VUEngine : ListenerObject
 {
@@ -68,22 +73,17 @@ singleton class VUEngine : ListenerObject
 	Clock clock;
 	// managers
 	ClockManager clockManager;
-	//
 	KeypadManager keypadManager;
-	//
 	VIPManager vipManager;
-	//
+	WireframeManager wireframeManager;
+	SpriteManager spriteManager;
 	TimerManager timerManager;
-	//
 	CommunicationManager communicationManager;
-	//
 	SoundManager soundManager;
+	FrameRate frameRate;
+	Camera camera;
 	// current save data manager
 	ListenerObject saveDataManager;
-	//
-	FrameRate frameRate;
-	//
-	Camera camera;
 	// game's next state
 	GameState nextState;
 	// game's next state operation

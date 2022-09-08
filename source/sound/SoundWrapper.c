@@ -855,7 +855,7 @@ void SoundWrapper::updateVolumeReduction()
 	{
 		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
 
-		if(VUEngine::getGameFrameDuration(VUEngine::getInstance()) <= (elapsedMilliseconds >> 1))
+		if(VUEngine::getGameFrameDuration(_vuEngine) <= (elapsedMilliseconds >> 1))
 		{
 			switch(this->playbackType)
 			{

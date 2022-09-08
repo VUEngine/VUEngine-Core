@@ -77,6 +77,8 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+VUEngine _vuEngine = NULL;
+
 uint32 _gameRandomSeed = 0;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
@@ -97,7 +99,7 @@ uint32 _dispatchCycle = 0;
 
 static void VUEngine::init()
 {
-	VUEngine::getInstance();
+	_vuEngine = VUEngine::getInstance();
 }
 
 // class's constructor
@@ -192,8 +194,10 @@ void VUEngine::initialize()
 	this->communicationManager = CommunicationManager::getInstance();
 	this->frameRate = FrameRate::getInstance();
 	this->soundManager = SoundManager::getInstance();
+	this->wireframeManager = WireframeManager::getInstance();
+	this->spriteManager = SpriteManager::getInstance();
 
-	SpriteManager::reset(SpriteManager::getInstance());
+	SpriteManager::reset(this->spriteManager);
 	DirectDraw::reset(DirectDraw::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 
@@ -231,7 +235,7 @@ void VUEngine::initialize()
 void VUEngine::debug()
 {
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
-	WireframeManager::print(WireframeManager::getInstance(), 1, 1);
+	WireframeManager::print(this->wireframeManager, 1, 1);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -410,7 +414,7 @@ void VUEngine::setNextState(GameState state)
 	}
 
 	// Make sure everything is properly rendered
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	SpriteManager::prepareAll(this->spriteManager);
 
 	HardwareManager::enableRendering(HardwareManager::getInstance());
 	HardwareManager::displayOn(HardwareManager::getInstance());
@@ -444,7 +448,7 @@ void VUEngine::reset(bool resetSounds)
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers
-	WireframeManager::reset(WireframeManager::getInstance());
+	WireframeManager::reset(this->wireframeManager);
 
 	if(resetSounds)
 	{
@@ -459,7 +463,7 @@ void VUEngine::reset(bool resetSounds)
 
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
-	SpriteManager::reset(SpriteManager::getInstance());
+	SpriteManager::reset(this->spriteManager);
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 
 	HardwareManager::enableInterrupts();
@@ -784,6 +788,13 @@ void VUEngine::nextGameCycleStarted()
 	this->nextGameCycleStarted = true;
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
+
+	// Graphics synchronization involves moving the camera for the UI
+	// which can mess rendering if the VIP's XPED interrupt happens when the camera is
+	// modified
+	VUEngine::synchronizeGraphics(this);
+	SpriteManager::render(this->spriteManager);
+	WireframeManager::render(this->wireframeManager);
 }
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
@@ -883,9 +894,6 @@ bool VUEngine::hasCurrentFrameEnded()
 
 void VUEngine::run()
 {
-	// sync entities with their sprites
-	VUEngine::synchronizeGraphics(this);
-
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 

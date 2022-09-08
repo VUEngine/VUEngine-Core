@@ -102,7 +102,7 @@ void WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFire
 }
 
 void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
+{					
 	this->stopDrawing = true;
 }
 
