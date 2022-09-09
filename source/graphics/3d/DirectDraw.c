@@ -972,7 +972,7 @@ static bool DirectDraw::isPointInsideFrustum(PixelVector point)
 {
 	bool xOutside = _frustumWidth < (unsigned)(point.x - _frustum.x0);
 	bool yOutside = _frustumHeight < (unsigned)(point.y - _frustum.y0);
-	bool zOutside = _frustumDepth < (unsigned)(point.z - _frustum.z0);
+	bool zOutside = _frustumDepth < point.z || 0 > point.z + _optical->cameraNearPlane;
 
 	if(xOutside || yOutside || zOutside)
 	{
