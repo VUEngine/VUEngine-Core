@@ -255,13 +255,11 @@ void Entity::setupWireframes()
  */
 void Entity::releaseSprites()
 {
-	if(this->sprites)
+	if(!isDeleted(this->sprites))
 	{
-		VirtualNode node = this->sprites->head;
-
 		SpriteManager spriteManager = SpriteManager::getInstance();
 
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
 			SpriteManager::disposeSprite(spriteManager, Sprite::safeCast(node->data));
 		}

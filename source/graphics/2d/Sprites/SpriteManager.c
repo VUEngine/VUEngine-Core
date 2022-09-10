@@ -317,9 +317,9 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 seg
 }
 
 /**
- * Dispose sprite
+ * Create sprite
  *
- * @param sprite	Sprite to dispose
+ * @param sprite	Sprite to create
  */
 Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
 {
