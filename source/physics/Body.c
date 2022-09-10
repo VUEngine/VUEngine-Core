@@ -150,7 +150,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
-	this->elapsedTimeModifier 	= 0;
+	this->skipCycles 	= 0;
+	this->skipedCycles 	= 0;
 
 	this->internalPosition.x 	= 0;
 	this->internalPosition.y 	= 0;
@@ -427,6 +428,16 @@ void Body::update()
 	{
 		if(this->awake)
 		{
+			if(0 < this->skipCycles)
+			{
+				if(this->skipCycles > ++this->skipedCycles)
+				{
+					return;
+				}
+
+				this->skipedCycles = 0;
+			}
+
 			MovementResult movementResult = Body::updateMovement(this);
 
 			// if stopped on any axis
@@ -659,18 +670,6 @@ MovementResult Body::updateMovement()
 
 	fix7_9_ext elapsedTime = _currentPhysicsElapsedTime;
 
-	if(0 != this->elapsedTimeModifier)
-	{
-		if(0 < this->elapsedTimeModifier)
-		{
-			elapsedTime <<= this->elapsedTimeModifier;
-		}
-		else
-		{
-			elapsedTime >>= -this->elapsedTimeModifier;
-		}
-	}
-
 	Velocity previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
@@ -881,9 +880,10 @@ void Body::setBounciness(fixed_t bounciness)
 	this->bounciness = bounciness;
 }
 
-void Body::setElapsedTimeModifier(int8 elapsedTimeModifier)
+void Body::setSkipCycles(uint8 skipCycles)
 {
-	this->elapsedTimeModifier = elapsedTimeModifier;
+	this->skipCycles = skipCycles;
+	this->skipedCycles = 0;
 }
 
 void Body::computeTotalNormal()

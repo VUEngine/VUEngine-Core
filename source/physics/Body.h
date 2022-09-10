@@ -130,7 +130,8 @@ class Body : ListenerObject
 	// axis that are subject to gravity
 	uint16 axisSubjectToGravity;
 	// shift elapsed time
-	int8 elapsedTimeModifier;
+	uint8 skipCycles;
+	uint8 skipedCycles;
 	// raise flag to make the body active
 	bool active;
 	// raise flag to update body's physics
@@ -187,7 +188,7 @@ class Body : ListenerObject
 	void setActive(bool active);
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
 	void setBounciness(fixed_t bounciness);
-	void setElapsedTimeModifier(int8 elapsedTimeModifier);
+	void setSkipCycles(uint8 skipCycles);
 	Force getNormal();
 	Force getLastNormalDirection();
 	void reset();
