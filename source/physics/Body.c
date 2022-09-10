@@ -150,6 +150,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
+	this->elapsedTimeModifier 	= 0;
 
 	this->internalPosition.x 	= 0;
 	this->internalPosition.y 	= 0;
@@ -544,16 +545,16 @@ Acceleration Body::getGravity()
 }
 
 
-static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction)
+static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fix7_9_ext elapsedTime)
 {
 	fix7_9_ext acceleration = __FIXED_TO_FIX7_9_EXT(gravity) + __FIX7_9_EXT_DIV(__FIXED_TO_FIX7_9_EXT(forceMagnitude + friction), __FIXED_TO_FIX7_9_EXT(mass));
 
-	return __FIX7_9_EXT_MULT(acceleration, _currentPhysicsElapsedTime);
+	return __FIX7_9_EXT_MULT(acceleration, elapsedTime);
 }
 
 static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction));
+	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, _currentPhysicsElapsedTime));
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
@@ -658,11 +659,23 @@ MovementResult Body::updateMovement()
 
 	fix7_9_ext elapsedTime = _currentPhysicsElapsedTime;
 
+	if(0 != this->elapsedTimeModifier)
+	{
+		if(0 < this->elapsedTimeModifier)
+		{
+			elapsedTime <<= this->elapsedTimeModifier;
+		}
+		else
+		{
+			elapsedTime >>= -this->elapsedTimeModifier;
+		}
+	}
+
 	Velocity previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x, elapsedTime);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -685,7 +698,7 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y, elapsedTime);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -708,7 +721,7 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z, elapsedTime);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
@@ -866,6 +879,11 @@ void Body::setBounciness(fixed_t bounciness)
 	}
 
 	this->bounciness = bounciness;
+}
+
+void Body::setElapsedTimeModifier(int8 elapsedTimeModifier)
+{
+	this->elapsedTimeModifier = elapsedTimeModifier;
 }
 
 void Body::computeTotalNormal()
