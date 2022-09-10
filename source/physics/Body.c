@@ -430,7 +430,7 @@ void Body::update()
 		{
 			if(0 < this->skipCycles)
 			{
-				if(this->skipCycles > ++this->skipedCycles)
+				if(this->skipCycles > this->skipedCycles++)
 				{
 					return;
 				}
