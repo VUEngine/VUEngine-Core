@@ -86,7 +86,7 @@ void Error::destructor()
  * @param message
  * @param detail
  */
-static int32 Error::triggerException(char* message, char* detail)
+static int32 Error::triggerException(char* message __attribute__((unused)), char* detail __attribute__((unused)))
 {
 #ifndef __SHIPPING
 	static bool processingException = false;
