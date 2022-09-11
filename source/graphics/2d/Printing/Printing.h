@@ -397,6 +397,13 @@ singleton class Printing : ListenerObject
 	PixelVector getSpritePosition();
 
 	/**
+	 * Set sprite's transparent
+	 *
+	 */
+	void setTransparent(uint8 value);
+
+
+	/**
 	 * Print a string
 	 *
 	 * @param string	String to print

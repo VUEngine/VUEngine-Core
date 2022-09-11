@@ -596,6 +596,14 @@ PixelVector Printing::getSpritePosition()
 	return !isDeleted(this->printingSprite) ? PrintingSprite::getDisplacedPosition(this->printingSprite) : (PixelVector){0, 0, 0, 0};
 }
 
+void Printing::setTransparent(uint8 value)
+{
+	if(!isDeleted(this->printingSprite))
+	{
+		Sprite::setTransparent(this->printingSprite, value);
+	}
+}
+
 void Printing::resetCoordinates()
 {
 	if(!isDeleted(this->printingSprite))
