@@ -113,12 +113,6 @@ void VIPManager::constructor()
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 
-#ifdef __FORCE_VIP_SYNC
-	this->forceDrawingSync = true;
-#else
-	this->forceDrawingSync = false;
-#endif
-
 	_vipManager = this;
 	_spriteManager = SpriteManager::getInstance();
 	_wireframeManager = WireframeManager::getInstance();
@@ -144,12 +138,6 @@ void VIPManager::reset()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = false;
-
-#ifdef __FORCE_VIP_SYNC
-	this->forceDrawingSync = true;
-#else
-	this->forceDrawingSync = false;
-#endif
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 }
@@ -604,16 +592,6 @@ void VIPManager::clearScreen()
 void VIPManager::clearBgmapSegment(int32 segment, int32 size)
 {
 	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
-}
-
-/**
- * Set setForceDrawingSync
- *
- * @param forceDrawingSync	Bool
- */
-void VIPManager::setForceDrawingSync(bool forceDrawingSync)
-{
-	this->forceDrawingSync = forceDrawingSync;
 }
 
 /**
