@@ -402,7 +402,6 @@ singleton class Printing : ListenerObject
 	 */
 	void setTransparent(uint8 value);
 
-
 	/**
 	 * Print a string
 	 *

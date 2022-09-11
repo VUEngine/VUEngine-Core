@@ -86,9 +86,9 @@ void Error::destructor()
  * @param message
  * @param detail
  */
-#ifndef __SHIPPING
 static int32 Error::triggerException(char* message, char* detail)
 {
+#ifndef __SHIPPING
 	static bool processingException = false;
 
 	if(processingException)
@@ -219,10 +219,10 @@ static int32 Error::triggerException(char* message, char* detail)
 
 	// trap the game here
 	while(true);
+#endif
 
 	return false;
 }
-#endif
 
 static void Error::zeroDivisionException()
 {
