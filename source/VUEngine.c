@@ -268,8 +268,9 @@ void VUEngine::start(GameState state)
 
 			VUEngine::run(this);
 
+#ifndef __RELEASE
 			VUEngine::debug(this);
-
+#endif
 			VUEngine::currentGameCycleEnded(this);
 
 			while(!this->nextGameCycleStarted)
