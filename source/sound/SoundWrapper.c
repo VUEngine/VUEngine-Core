@@ -637,34 +637,6 @@ static uint16 SoundWrapper::computeMIDITrackLength(uint16* soundTrackData)
 	return i;
 }
 
-static uint16 SoundWrapper::computePCMVolumeReduction(uint8* soundTrackData, uint32 length)
-{
-	uint32 i = 0;
-	NM_ASSERT(soundTrackData, "SoundWrapper::computePCMVolumeReduction: null soundTrack");
-
-	uint8 maximumVolume = 0;
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
-	for(; i < length; i++)
-	{
-		if(soundTrackData[i] > maximumVolume)
-		{
-			maximumVolume = soundTrackData[i];
-		}
-	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
-	uint8 multiple = maximumVolume / __MAXIMUM_VOLUME;
-
-	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
-}
-
 static void SoundWrapper::computeMIDIDummyTicksPerNote(Channel* channel)
 {
 	channel->ticks = 0;
