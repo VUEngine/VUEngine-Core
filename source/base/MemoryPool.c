@@ -379,8 +379,10 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
+#ifndef __SHIPPING
 #ifndef __RELEASE
 	int32 lp = HardwareManager::getLinkPointer();
+#endif
 #endif
 
 	uint32 pool = __MEMORY_POOLS;
