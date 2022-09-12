@@ -1150,6 +1150,11 @@ void Body::setMass(fixed_t mass)
 	this->mass = __BODY_MIN_MASS < mass ? __BODY_MAX_MASS > mass ? mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 }
 
+bool Body::reachedMaximumSpeedpeed()
+{
+	return this->speed == this->maximumSpeed;
+}
+
 // retrieve state
 bool Body::isAwake()
 {

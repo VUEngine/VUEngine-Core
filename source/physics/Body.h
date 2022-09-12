@@ -181,6 +181,7 @@ class Body : ListenerObject
 	void modifyVelocity(const Velocity* multiplier);
 	bool isActive();
 	bool isAwake();
+	bool reachedMaximumSpeed();
 	uint16 getMovementOnAllAxis();
 	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
