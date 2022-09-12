@@ -142,7 +142,7 @@ singleton class VUEngine : ListenerObject
 	bool isInSoundTest();
 	void openTool(ToolState toolState);
 	void nextFrameStarted(uint16 gameFrameDuration);
-	void nextGameCycleStarted();
+	void nextGameCycleStarted(uint16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();

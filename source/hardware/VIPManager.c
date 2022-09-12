@@ -15,7 +15,6 @@
 #include <VIPManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
-#include <ClockManager.h>
 #include <VUEngine.h>
 #include <FrameRate.h>
 #include <SpriteManager.h>
@@ -157,7 +156,6 @@ void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
  */
 void VIPManager::enableDrawing()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] |= __XPEN;
 }
 
@@ -320,9 +318,8 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::saveProcessNameDuringFRAMESTART(_vuEngine);
 #endif
 
-				ClockManager::update(ClockManager::getInstance(), this->gameFrameDuration);
+				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
 
-				VUEngine::nextGameCycleStarted(_vuEngine);
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
@@ -351,10 +348,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
-#endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-				//VUEngine::setLastProcessName(_vuEngine, "VIP interrupt");
 #endif
 
 				// Prevent VIP's drawing operations
@@ -422,7 +415,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::applyPostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; NULL != node; node = previousNode)
+	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !VIPManager::hasFrameStartedDuringXPEND(this) && NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
 
@@ -440,11 +433,6 @@ void VIPManager::applyPostProcessingEffects()
 		else if(!this->skipFrameBuffersProcessing)
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
-		}
-
-		if(VIPManager::hasFrameStartedDuringXPEND(this))
-		{
-			break;
 		}
 	}
 }

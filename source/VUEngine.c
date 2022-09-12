@@ -784,9 +784,11 @@ void VUEngine::updateFrameRate()
 	FrameRate::update(this->frameRate);
 }
 
-void VUEngine::nextGameCycleStarted()
+void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 {
 	this->nextGameCycleStarted = true;
+
+	ClockManager::update(this->clockManager, gameFrameDuration);
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
 
