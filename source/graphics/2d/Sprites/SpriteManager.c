@@ -673,7 +673,6 @@ void SpriteManager::render()
 		SpriteManager::computeTotalPixelsDrawn(this);
 	}
 #endif
-
 }
 
 /**
