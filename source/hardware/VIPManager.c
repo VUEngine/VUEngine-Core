@@ -207,7 +207,11 @@ void VIPManager::enableInterrupts(uint16 interruptCode)
 
 	interruptCode |= this->customInterrupts;
 
+#ifndef __SHIPPING
 	_vipRegisters[__INTENB] = interruptCode | __FRAMESTART | __TIMEERR | __SCANERR;
+#else
+	_vipRegisters[__INTENB] = interruptCode | __FRAMESTART;
+#endif
 }
 
 /**
@@ -285,15 +289,21 @@ static void VIPManager::updateVRAM(bool disableDrawing)
  */
 void VIPManager::processInterrupt(uint16 interrupt)
 {
+#ifdef __SHIPPING
+#define INTERRUPTS	3
+#else
 #define INTERRUPTS	5
+#endif
 
 	static uint16 interruptTable[] =
 	{
 		__FRAMESTART,
 		__GAMESTART,
 		__XPEND,
+#ifndef __SHIPPING
 		__TIMEERR,
 		__SCANERR
+#endif
 	};
 
 	int32 i = 0;
@@ -397,6 +407,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 				break;
 
+#ifndef __SHIPPING
 			case __TIMEERR:
 
 				this->timeErrorCounter++;
@@ -408,6 +419,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->scanErrorCounter++;
 				VIPManager::fireEvent(this, kEventVIPManagerScanError);
 				break;
+#endif
 		}
 	}
 }
