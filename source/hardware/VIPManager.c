@@ -137,6 +137,9 @@ void VIPManager::reset()
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
 	this->skipFrameBuffersProcessing = false;
+	this->processingGAMESTART = false;
+	this->processingXPEND = false;
+	this->drawingEnded = false;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 }
@@ -300,7 +303,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 			case __GAMESTART:
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-				VUEngine::saveProcessNameDuringFRAMESTART(_vuEngine);
+				VUEngine::saveProcessNameDuringGAMESTART(_vuEngine);
 #endif
 
 				this->processingGAMESTART = true;

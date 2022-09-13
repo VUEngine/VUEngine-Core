@@ -144,7 +144,7 @@ singleton class VUEngine : ListenerObject
 	void nextFrameStarted(uint16 gameFrameDuration);
 	void nextGameCycleStarted(uint16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
-	void saveProcessNameDuringFRAMESTART();
+	void saveProcessNameDuringGAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);
 	void registerSaveDataManager(ListenerObject saveDataManager);
