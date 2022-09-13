@@ -263,11 +263,21 @@ static void VIPManager::interruptHandler()
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
 }
 
-static void VIPManager::updateVRAM()
+static void VIPManager::updateVRAM(bool disableDrawing)
 {
+	if(disableDrawing)
+	{
+		VIPManager::disableDrawing(_vipManager);
+	}
+
 	SpriteManager::writeDRAM(_spriteManager);
 	WireframeManager::draw(_wireframeManager);
 	VIPManager::applyPostProcessingEffects(_vipManager);
+
+	if(disableDrawing)
+	{
+		VIPManager::enableDrawing(_vipManager);
+	}
 }
 
 /**
@@ -306,11 +316,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::saveProcessNameDuringGAMESTART(_vuEngine);
 #endif
 
-				this->processingGAMESTART = true;
-
-				// Process game's logic
-				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
-
 				if(this->processingXPEND)
 				{
 					this->multiplexedGAMESTARTCounter++;
@@ -320,25 +325,24 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 					}
 				}
-				else
+
+				this->drawingEnded = false;
+				this->processingGAMESTART = true;
+
+				VIPManager::registerCurrentDrawingFrameBufferSet(_vipManager);
+
+				// Listen for the end of drawing operations
+				VIPManager::enableInterrupts(this, __XPEND);
+
+				// Process game's logic
+				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+
+				// The VIP finished drawing the current frame when the game was being rendered
+				// so it didn't touch VRAM during the last XPEND
+				if(this->drawingEnded)
 				{
-					this->drawingEnded = false;
-
-					VIPManager::registerCurrentDrawingFrameBufferSet(this);
-
-					// Allow frame start interrupt
-					VIPManager::enableInterrupts(this, __XPEND);
-
-					SpriteManager::render(_spriteManager);
-					WireframeManager::render(_wireframeManager);
-
-					// The VIP finished drawing the current frame when the game was being rendered
-					// so it didn't touch VRAM during the last XPEND
-					if(this->drawingEnded)
-					{
-						VIPManager::updateVRAM();
-					}
-				}
+					VIPManager::updateVRAM(false);
+				}	
 
 				this->processingGAMESTART = false;
 
@@ -364,8 +368,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
 #endif
 
-				this->processingXPEND = true;
-
 				if(this->processingGAMESTART)
 				{
 					this->multiplexedXPENDCounter++;
@@ -377,25 +379,17 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 				else
 				{
-					// Prevent VIP's drawing operations
-					VIPManager::disableDrawing(this);
-	
+					this->processingXPEND = true;
+
 					// Allow game start interrupt
 					VIPManager::enableInterrupts(this, __GAMESTART);
 
 					// Write to VRAM
-					VIPManager::updateVRAM();
-	
-					if(this->frameStartedDuringXPEND)
-					{
-						VIPManager::swapCurrentDrawingFrameBufferSet(this);
-					}
+					VIPManager::updateVRAM(true);
 
-					// Allow VIP's drawing operations
-					VIPManager::enableDrawing(this);
+					this->processingXPEND = false;
 				}
 
-				this->processingXPEND = false;
 				this->drawingEnded = true;
 
 #ifdef __ENABLE_PROFILER
@@ -800,26 +794,16 @@ void VIPManager::removePostProcessingEffects()
 }
 
 /**
- * Swap the frame buffer in use by the VIP's drawing process
- */
-void VIPManager::swapCurrentDrawingFrameBufferSet()
-{
-	if(0x0004 == this->currentDrawingFrameBufferSet)
-	{
-		this->currentDrawingFrameBufferSet = 0x8000;
-	}
-	else if(0x0008 == this->currentDrawingFrameBufferSet)
-	{
-		this->currentDrawingFrameBufferSet = 0;
-	}
-}
-
-/**
  * Register the frame buffer in use by the VIP's drawing process
  */
 void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
-	uint32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
+	volatile uint32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
+
+	while(0b00 == currentDrawingFrameBufferSet || 0b11 == currentDrawingFrameBufferSet)
+	{
+		currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
+	}
 
 	if(0x0004 == currentDrawingFrameBufferSet)
 	{
@@ -828,23 +812,6 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
 	else if(0x0008 == currentDrawingFrameBufferSet)
 	{
 		this->currentDrawingFrameBufferSet = 0x8000;
-	}
-	else
-	{			
-		uint32 currentDisplayingFrameBufferSet = _vipRegisters[__DPSTTS] & 0x003C;
-		
-		if(0x0002 >= currentDisplayingFrameBufferSet)
-		{
-			this->currentDrawingFrameBufferSet = 0x8000;
-		}
-		else if(0x0004 <= currentDisplayingFrameBufferSet)
-		{
-			this->currentDrawingFrameBufferSet = 0;
-		}
-		else
-		{
-			VIPManager::swapCurrentDrawingFrameBufferSet(this);
-		}
 	}
 }
 
