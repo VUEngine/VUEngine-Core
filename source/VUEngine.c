@@ -268,10 +268,11 @@ void VUEngine::start(GameState state)
 
 			VUEngine::run(this);
 
+			VUEngine::currentGameCycleEnded(this);
+
 #ifndef __RELEASE
 			VUEngine::debug(this);
 #endif
-			VUEngine::currentGameCycleEnded(this);
 
 			while(!this->nextGameCycleStarted)
 			{
@@ -796,8 +797,6 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	// which can mess rendering if the VIP's XPED interrupt happens when the camera is
 	// modified
 	VUEngine::synchronizeGraphics(this);
-	SpriteManager::render(this->spriteManager);
-	WireframeManager::render(this->wireframeManager);
 }
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)

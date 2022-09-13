@@ -166,7 +166,6 @@ void VIPManager::disableDrawing()
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
-	this->drawingEnded = true;
 }
 
 /**
@@ -261,6 +260,13 @@ static void VIPManager::interruptHandler()
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
 }
 
+static void VIPManager::updateVRAM()
+{
+	SpriteManager::writeDRAM(_spriteManager);
+	WireframeManager::draw(_wireframeManager);
+	VIPManager::applyPostProcessingEffects(_vipManager);
+}
+
 /**
  * Process interrupt method
  */
@@ -293,11 +299,18 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 			case __GAMESTART:
 
+#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
+				VUEngine::saveProcessNameDuringFRAMESTART(_vuEngine);
+#endif
+
+				this->processingGAMESTART = true;
+
+				// Process game's logic
+				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+
 				if(this->processingXPEND)
 				{
 					this->multiplexedGAMESTARTCounter++;
-
-					this->drawingEnded = false;
 
 					if(this->events)
 					{
@@ -306,33 +319,49 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 				else
 				{
+					this->drawingEnded = false;
+
 					VIPManager::registerCurrentDrawingFrameBufferSet(this);
+
+					// Allow frame start interrupt
+					VIPManager::enableInterrupts(this, __XPEND);
+
+					SpriteManager::render(_spriteManager);
+					WireframeManager::render(_wireframeManager);
+
+					// The VIP finished drawing the current frame when the game was being rendered
+					// so it didn't touch VRAM during the last XPEND
+					if(this->drawingEnded)
+					{
+						VIPManager::updateVRAM();
+					}
 				}
 
-				this->processingGAMESTART = true;
-
-				// Allow frame start interrupt
-				VIPManager::enableInterrupts(this, __XPEND);
-
-#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-				VUEngine::saveProcessNameDuringFRAMESTART(_vuEngine);
-#endif
-
-				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
-
+				this->processingGAMESTART = false;
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
 #endif
 
-				this->processingGAMESTART = false;
-
 #ifdef __SHOW_VIP_STATUS
 				VIPManager::print(this, 1, 2);
+#endif
+
+#ifdef __DEBUG_TOOLS
+				if(VUEngine::isInDebugMode(_vuEngine))
+				{
+					Debug::render(Debug::getInstance());
+				}
 #endif
 				break;
 
 			case __XPEND:
+
+#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
+				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
+#endif
+
+				this->processingXPEND = true;
 
 				if(this->processingGAMESTART)
 				{
@@ -343,54 +372,32 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 					}
 				}
-
-				this->processingXPEND = true;
-
-#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
-#endif
-
-				// Prevent VIP's drawing operations
-				VIPManager::disableDrawing(this);
-
-				// Allow game start interrupt
-				VIPManager::enableInterrupts(this, __GAMESTART);
-
-				// Do not remove this, it prevents
-				// graphical glitches when the VIP
-				// finishes drawing while the CPU is
-				// still syncronizing the graphics
-				SpriteManager::writeDRAM(_spriteManager);
-
-				// Draw wireframes
-				WireframeManager::draw(_wireframeManager);
-
-				// Write to the frame buffers
-				VIPManager::applyPostProcessingEffects(this);
-
-				if(this->frameStartedDuringXPEND)
+				else
 				{
-					VIPManager::swapCurrentDrawingFrameBufferSet(this);
-				}
-				
-				// Allow VIP's drawing operations
-				VIPManager::enableDrawing(this);
+					// Prevent VIP's drawing operations
+					VIPManager::disableDrawing(this);
+	
+					// Allow game start interrupt
+					VIPManager::enableInterrupts(this, __GAMESTART);
 
-				// flag completions
+					// Write to VRAM
+					VIPManager::updateVRAM();
+	
+					if(this->frameStartedDuringXPEND)
+					{
+						VIPManager::swapCurrentDrawingFrameBufferSet(this);
+					}
+
+					// Allow VIP's drawing operations
+					VIPManager::enableDrawing(this);
+				}
+
+				this->processingXPEND = false;
 				this->drawingEnded = true;
-
-#ifdef __DEBUG_TOOLS
-				if(VUEngine::isInDebugMode(_vuEngine))
-				{
-					Debug::render(Debug::getInstance());
-				}
-#endif
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
-
-				this->processingXPEND = false;
 				break;
 
 			case __TIMEERR:

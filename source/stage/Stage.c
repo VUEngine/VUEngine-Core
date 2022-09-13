@@ -1009,7 +1009,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 
 		node = node ? node : this->stageEntityDescriptions->head;
 
-		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next)
+		for(counter = 0; NULL != node && (NULL == this->streamingHeadNode || counter < amplitude); node = node->next)
 		{
 			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -1051,7 +1051,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 
 		node = node ? node : this->stageEntityDescriptions->tail;
 
-		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->previous)
+		for(counter = 0; NULL != node && (NULL != this->streamingHeadNode || counter < amplitude); node = node->previous)
 		{
 			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
