@@ -118,25 +118,28 @@ uint32 CollisionManager::update(Clock clock)
 		auxNextNode = auxNode->next;
 
 		// load the current shape to check against
-		Shape shapeToCheck = Shape::safeCast(auxNode->data);
+		Shape shape = Shape::safeCast(auxNode->data);
 
-		if(shapeToCheck->destroyMe)
+		if(isDeleted(shape) || shape->destroyMe)
 		{
 			VirtualList::removeNode(this->shapes, auxNode);
-			VirtualList::removeElement(this->activeForCollisionCheckingShapes, shapeToCheck);
+			VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
 
-			delete shapeToCheck;
+			delete shape;
 			continue;
 		}
+
+		shape->moved = false;
 
 		// compare only different shapes against each other if
 		// the layers of the shapeToCheck are not excluded by the current shape
-		if(isDeleted(shapeToCheck) || !shapeToCheck->enabled || !shapeToCheck->ready)
+		if(!shape->enabled || !shape->ready)
 		{
+			shape->isVisible = false;
 			continue;
 		}
 
-		shapeToCheck->isVisible = true;
+		shape->isVisible = true;
 
 		extern const Vector3D* _cameraPosition;
 
@@ -144,24 +147,20 @@ uint32 CollisionManager::update(Clock clock)
 		if(!this->checkShapesOutOfCameraRange)
 		{
 			if(
-				shapeToCheck->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
-				shapeToCheck->rightBox.x1 - _cameraPosition->x < 0 ||
-				shapeToCheck->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
-				shapeToCheck->rightBox.y1 - _cameraPosition->y < 0
+				shape->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
+				shape->rightBox.x1 - _cameraPosition->x < 0 ||
+				shape->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
+				shape->rightBox.y1 - _cameraPosition->y < 0
 			)
 			{
-				shapeToCheck->isVisible = false;
+				shape->isVisible = false;
 			}
 		}
+	}
 
-		shapeToCheck->moved = false;
-
-		if(!shapeToCheck->isVisible)
-		{
-			continue;
-		}
-
-		Vector3D shapeToCheckPosition = Shape::getPosition(shapeToCheck);
+	for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+	{
+		Shape shapeToCheck = Shape::safeCast(node->data);
 
 #ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
@@ -173,6 +172,13 @@ uint32 CollisionManager::update(Clock clock)
 			Shape::hide(shapeToCheck);
 		}
 #endif
+
+		if(!shapeToCheck->isVisible)
+		{
+			continue;
+		}
+
+		Vector3D shapeToCheckPosition = Shape::getPosition(shapeToCheck);
 
 		// check the shapes
 		for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
@@ -187,9 +193,14 @@ uint32 CollisionManager::update(Clock clock)
 				continue;
 			}
 
+			if(!shape->isVisible)
+			{
+				continue;
+			}
+
 			if(0 == (shape->layersToIgnore & shapeToCheck->layers))
 			{
-				if((!shape->enabled + !shape->ready + !shape->isVisible) + (shape->owner == shapeToCheck->owner))
+				if(shape->owner == shapeToCheck->owner)
 				{
 					continue;
 				}
