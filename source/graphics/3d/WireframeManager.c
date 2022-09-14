@@ -221,12 +221,21 @@ void WireframeManager::render()
 		if(__HIDE == wireframe->show)
 		{
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+			wireframe->color = __COLOR_BLACK;
 			continue;
 		}
 
 		if(wireframe->transparent & this->evenFrame)
 		{
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+			wireframe->color = __COLOR_BLACK;
+			continue;
+		}
+
+		if(__SHOW_NEXT_FRAME == wireframe->show)
+		{
+			wireframe->show = __SHOW;
+			wireframe->color = __COLOR_BLACK;
 			continue;
 		}
 
@@ -279,27 +288,11 @@ void WireframeManager::draw()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if(__HIDE == wireframe->show)
-		{
-			continue;
-		}
-
-		if(__SHOW_NEXT_FRAME == wireframe->show)
-		{
-			wireframe->show = __SHOW;
-			continue;
-		}
-
 		if(__COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}
 		
-		if(wireframe->transparent & this->evenFrame)
-		{
-			continue;
-		}
-
 		Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
@@ -309,7 +302,7 @@ void WireframeManager::draw()
 	}
 
 #ifdef __PROFILE_WIREFRAMES
-	PRINT_TEXT("Rendered: ", 1, 3);
+	PRINT_TEXT("Drawn: ", 1, 3);
 	PRINT_INT(drawnWireframes, 15, 3);
 #endif
 }
