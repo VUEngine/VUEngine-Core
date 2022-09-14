@@ -797,9 +797,9 @@ void VIPManager::removePostProcessingEffects()
  */
 void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
-	volatile uint32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
+	volatile uint16 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
 
-	while(0b00 == currentDrawingFrameBufferSet || 0b11 == currentDrawingFrameBufferSet)
+	while(0b0000000000000000 == currentDrawingFrameBufferSet || 0b0000000000000011 == currentDrawingFrameBufferSet)
 	{
 		currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
 	}
