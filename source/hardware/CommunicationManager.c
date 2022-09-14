@@ -18,6 +18,7 @@
 #include <Utilities.h>
 #include <VIPManager.h>
 #include <MessageDispatcher.h>
+#include <VUEngine.h>
 #include <Profiler.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
