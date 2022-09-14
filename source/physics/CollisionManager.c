@@ -129,7 +129,7 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		// compare only different ready, different shapes against each other if
+		// compare only different shapes against each other if
 		// the layers of the shapeToCheck are not excluded by the current shape
 		if(isDeleted(shapeToCheck) || !shapeToCheck->enabled || !shapeToCheck->ready)
 		{
@@ -173,6 +173,7 @@ uint32 CollisionManager::update(Clock clock)
 			Shape::hide(shapeToCheck);
 		}
 #endif
+
 		// check the shapes
 		for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
@@ -180,48 +181,46 @@ uint32 CollisionManager::update(Clock clock)
 
 			Shape shape = Shape::safeCast(node->data);
 
-			if(!shape->checkForCollisions)
+			if(isDeleted(shape) || !shape->checkForCollisions)
 			{
 				VirtualList::removeNode(this->activeForCollisionCheckingShapes, node);
 				continue;
 			}
+
+			if(0 == (shape->layersToIgnore & shapeToCheck->layers))
+			{
+				if((!shape->enabled + !shape->ready + !shape->isVisible) + (shape->owner == shapeToCheck->owner))
+				{
+					continue;
+				}
+
+				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheckPosition, Shape::getPosition(shape)));
+
+				if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) >= distanceVectorSquareLength)
+				{
+#ifdef __SHOW_PHYSICS_PROFILING
+					this->lastCycleCollisionChecks++;
+#endif
+
+#ifdef __SHOW_PHYSICS_PROFILING
+					// check if shapes overlap
+					if(kNoCollision != Shape::collides(shape, shapeToCheck))
+					{
+						this->lastCycleCollisions++;
+					}
+#else
+					Shape::collides(shape, shapeToCheck);
+#endif
+				}
+			}
 			
-			if(isDeleted(shape) || !shape->enabled || (__COLLISION_ALL_LAYERS == shape->layersToIgnore))
-			{
-				continue;
-			}
-
-			if(shape->owner == shapeToCheck->owner)
-			{
-				continue;
-			}
-
-			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || (shape->layersToIgnore & shapeToCheck->layers))
-			{
-				continue;
-			}
-
-			fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheckPosition, Shape::getPosition(shape)));
-
-			if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) < distanceVectorSquareLength)
-			{
-				continue;
-			}
-
-			this->lastCycleCollisionChecks++;
-
-			// check if shapes overlap
-			if(kNoCollision != Shape::collides(shape, shapeToCheck))
-			{
-				this->lastCycleCollisions++;
-			}
 		}
 	}
 
+#ifdef __SHOW_PHYSICS_PROFILING
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;
 
-#ifdef __SHOW_PHYSICS_PROFILING
 	CollisionManager::print(this, 25, 1);
 #endif
 
