@@ -313,10 +313,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				{
 					this->multiplexedGAMESTARTCounter++;
 
-					if(!isDeleted(this->events))
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
-					}
+					VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 				}
 				else
 				{
@@ -365,10 +362,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				{
 					this->multiplexedXPENDCounter++;
 
-					if(!isDeleted(this->events))
-					{
-						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
-					}
+					VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 				}
 				else
 				{
@@ -378,9 +372,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					VIPManager::enableInterrupts(this, __GAMESTART);
 
 					// Write to VRAM
-					VIPManager::disableDrawing(this);
 					VIPManager::updateVRAM();
-					VIPManager::enableDrawing(this);
 
 					this->processingXPEND = false;
 				}

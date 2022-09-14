@@ -65,7 +65,6 @@ void WireframeManager::constructor()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, kEventVIPManagerXPENDDuringGAMESTART);
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	_directDraw = DirectDraw::getInstance();
@@ -89,16 +88,10 @@ void WireframeManager::destructor()
 
 	this->wireframes = NULL;
 
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerXPENDDuringGAMESTART, kEventVIPManagerXPENDDuringGAMESTART);
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// allow a new construct
 	Base::destructor();
-}
-
-void WireframeManager::onVIPManagerXPENDDuringGAMESTART(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopRendering = true;
 }
 
 void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))

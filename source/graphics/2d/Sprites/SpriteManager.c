@@ -85,15 +85,12 @@ void SpriteManager::constructor()
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->stopRendering = false;
 
 	this->printing = NULL;
 	this->paramTableManager = NULL;
 	this->charSetManager = NULL;
 	this->bgmapTextureManager = NULL;
 	this->objectTextureManager = NULL;
-
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	SpriteManager::reset(this);
 }
@@ -103,17 +100,10 @@ void SpriteManager::constructor()
  */
 void SpriteManager::destructor()
 {
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)SpriteManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
 	SpriteManager::cleanUp(this);
 
 	// allow a new construct
 	Base::destructor();
-}
-
-void SpriteManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopRendering = true;
 }
 
 /**
@@ -579,14 +569,18 @@ void SpriteManager::writeDRAM()
 	// Update BGMAP memory
 	BgmapTextureManager::updateTextures(this->bgmapTextureManager);
 
-	// Update OBJECT Memory
-	ObjectTextureManager::updateTextures(this->objectTextureManager);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
 
 	// Finally, write OBJ and WORLD attributes to DRAM
-	ObjectSpriteContainer::writeDRAM();
+	if(NULL != this->objectSpriteContainers->head)
+	{
+		ObjectTextureManager::updateTextures(this->objectTextureManager);
+		ObjectSpriteContainer::writeDRAM();
+	}
+
+	// Finally, write OBJ and WORLD attributes to DRAM
 	SpriteManager::writeWORLDAttributesToDRAM(this);
 
 
@@ -623,9 +617,7 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	this->stopRendering = false;
-
-	for(VirtualNode node = this->sprites->tail; !this->stopRendering && node && 0 < this->freeLayer; node = node->previous)
+	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
 
