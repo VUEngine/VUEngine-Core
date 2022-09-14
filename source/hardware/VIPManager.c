@@ -290,7 +290,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 	};
 
-	for(int32 i = 0; i < sizeof(interruptTable) / sizeof(uint16); i++)
+	for(uint32 i = 0; i < sizeof(interruptTable) / sizeof(uint16); i++)
 	{
 		switch(interrupt & interruptTable[i])
 		{
@@ -317,11 +317,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 					}
 				}
+				else
+				{
+					VIPManager::registerCurrentDrawingFrameBufferSet(this);
+				}
 
 				this->drawingEnded = false;
 				this->processingGAMESTART = true;
 
-				VIPManager::registerCurrentDrawingFrameBufferSet(_vipManager);
 
 				// Listen for the end of drawing operations
 				VIPManager::enableInterrupts(this, __XPEND);
