@@ -270,7 +270,9 @@ void ListenerObject::fireEvent(uint32 eventCode)
 		// temporary lists to being able to modify the event lists while firing them
 		VirtualList eventsToFire = new VirtualList();
 
-		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode)
+		int16 eventsCounter = 0;
+
+		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode, eventsCounter++)
 		{
 			nextNode = node->next;
 
@@ -291,6 +293,12 @@ void ListenerObject::fireEvent(uint32 eventCode)
 			{
 				VirtualList::pushBack(eventsToFire, event);
 			}
+		}
+		
+		if(0 == eventsCounter)
+		{
+			delete this->events;
+			this->events = NULL;
 		}
 
 		for(VirtualNode node = eventsToFire->head; NULL != node; node = node->next)
