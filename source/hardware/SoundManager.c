@@ -840,8 +840,6 @@ SoundWrapper SoundManager::getSound(const Sound* sound, uint32 command, EventLis
 
 SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally)
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	if(NULL == sound)
 	{
 		return NULL;
