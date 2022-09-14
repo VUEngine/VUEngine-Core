@@ -156,13 +156,8 @@ uint32 CollisionManager::update(Clock clock)
 				shape->isVisible = false;
 			}
 		}
-	}
 
-	for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
-	{
-		Shape shapeToCheck = Shape::safeCast(node->data);
-
-#ifdef __DRAW_SHAPES
+	#ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
 		{
 			Shape::show(shapeToCheck);
@@ -171,29 +166,34 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			Shape::hide(shapeToCheck);
 		}
-#endif
+	#endif
+	}
 
-		if(!shapeToCheck->isVisible)
+	// check the shapes
+	for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Shape shape = Shape::safeCast(node->data);
+
+		if(isDeleted(shape) || !shape->checkForCollisions)
+		{
+			VirtualList::removeNode(this->activeForCollisionCheckingShapes, node);
+			continue;
+		}
+
+		if(!shape->isVisible)
 		{
 			continue;
 		}
 
-		Vector3D shapeToCheckPosition = Shape::getPosition(shapeToCheck);
+		Vector3D shapePosition = Shape::getPosition(shape);
 
-		// check the shapes
-		for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			nextNode = node->next;
+			Shape shapeToCheck = Shape::safeCast(node->data);
 
-			Shape shape = Shape::safeCast(node->data);
-
-			if(isDeleted(shape) || !shape->checkForCollisions)
-			{
-				VirtualList::removeNode(this->activeForCollisionCheckingShapes, node);
-				continue;
-			}
-
-			if(!shape->isVisible)
+			if(!shapeToCheck->isVisible)
 			{
 				continue;
 			}
@@ -205,7 +205,7 @@ uint32 CollisionManager::update(Clock clock)
 					continue;
 				}
 
-				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheckPosition, Shape::getPosition(shape)));
+				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(Shape::getPosition(shapeToCheck), shapePosition));
 
 				if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) >= distanceVectorSquareLength)
 				{
