@@ -297,9 +297,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 			case __FRAMESTART:
 
 				this->frameStartedDuringXPEND = this->processingXPEND;
-
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
-
 				break;
 
 			case __GAMESTART:
@@ -308,26 +306,26 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::saveProcessNameDuringGAMESTART(_vuEngine);
 #endif
 
+				this->drawingEnded = false;
+				this->processingGAMESTART = true;
+
 				if(this->processingXPEND)
 				{
 					this->multiplexedGAMESTARTCounter++;
 
-					if(this->events)
+					if(!isDeleted(this->events))
 					{
 						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
 					}
 				}
 				else
 				{
-					VIPManager::registerCurrentDrawingFrameBufferSet(this);
+					// Listen for the end of drawing operations
+					VIPManager::enableInterrupts(this, __XPEND);
 				}
 
-				this->drawingEnded = false;
-				this->processingGAMESTART = true;
-
-
-				// Listen for the end of drawing operations
-				VIPManager::enableInterrupts(this, __XPEND);
+				// Configure the drawing frame buffers
+				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
 				// Process game's logic
 				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
@@ -367,7 +365,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				{
 					this->multiplexedXPENDCounter++;
 
-					if(this->events)
+					if(!isDeleted(this->events))
 					{
 						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 					}
