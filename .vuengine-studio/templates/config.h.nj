@@ -349,9 +349,7 @@
 #define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if engine.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIXED(__COS({{ engine.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
 
 // maximum size of shapes allows to avoid checks against far away shapes
-#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}512{% endif %})
-
-#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}512{% endif %})
+#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if engine.physics.shapesMaximumSize %}{{ engine.physics.shapesMaximumSize }}{% else %}256{% endif %})
 
 
 {{ macros.sectionHeader('Brightness') }}
