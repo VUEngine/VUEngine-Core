@@ -267,21 +267,11 @@ static void VIPManager::interruptHandler()
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
 }
 
-static void VIPManager::updateVRAM(bool disableDrawing)
+static void VIPManager::updateVRAM()
 {
-	if(disableDrawing)
-	{
-		VIPManager::disableDrawing(_vipManager);
-	}
-
 	SpriteManager::writeDRAM(_spriteManager);
 	WireframeManager::draw(_wireframeManager);
 	VIPManager::applyPostProcessingEffects(_vipManager);
-
-	if(disableDrawing)
-	{
-		VIPManager::enableDrawing(_vipManager);
-	}
 }
 
 /**
@@ -289,12 +279,6 @@ static void VIPManager::updateVRAM(bool disableDrawing)
  */
 void VIPManager::processInterrupt(uint16 interrupt)
 {
-#ifdef __SHIPPING
-#define INTERRUPTS	3
-#else
-#define INTERRUPTS	5
-#endif
-
 	static uint16 interruptTable[] =
 	{
 		__FRAMESTART,
@@ -306,9 +290,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 	};
 
-	int32 i = 0;
-
-	for(; i < INTERRUPTS; i++)
+	for(int32 i = 0; i < sizeof(interruptTable) / sizeof(uint16); i++)
 	{
 		switch(interrupt & interruptTable[i])
 		{
@@ -351,7 +333,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				// so it didn't touch VRAM during the last XPEND
 				if(this->drawingEnded)
 				{
-					VIPManager::updateVRAM(false);
+					VIPManager::updateVRAM();
 				}	
 
 				this->processingGAMESTART = false;
@@ -395,7 +377,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					VIPManager::enableInterrupts(this, __GAMESTART);
 
 					// Write to VRAM
-					VIPManager::updateVRAM(true);
+					VIPManager::disableDrawing(this);
+					VIPManager::updateVRAM();
+					VIPManager::enableDrawing(this);
 
 					this->processingXPEND = false;
 				}
