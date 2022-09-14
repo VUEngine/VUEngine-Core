@@ -176,7 +176,7 @@ uint32 CollisionManager::update(Clock clock)
 
 		Shape shape = Shape::safeCast(node->data);
 
-		if(isDeleted(shape) || !shape->checkForCollisions)
+		if(!shape->checkForCollisions)
 		{
 			VirtualList::removeNode(this->activeForCollisionCheckingShapes, node);
 			continue;
