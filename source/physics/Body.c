@@ -428,17 +428,35 @@ void Body::update()
 	{
 		if(this->awake)
 		{
-			if(0 < this->skipCycles)
+			MovementResult movementResult;
+
+			if(0 != this->skipCycles)
 			{
-				if(this->skipCycles > this->skipedCycles++)
+				if(0 < this->skipCycles)
 				{
-					return;
+					if(this->skipCycles > this->skipedCycles++)
+					{
+						return;
+					}
+
+					this->skipedCycles = 0;
+
+					movementResult = Body::updateMovement(this);
 				}
+				else if(0 > this->skipCycles)
+				{
+					this->skipedCycles = 0;
 
-				this->skipedCycles = 0;
+					while(this->skipCycles < this->skipedCycles--)
+					{
+						movementResult = Body::updateMovement(this);
+					}
+				}
 			}
-
-			MovementResult movementResult = Body::updateMovement(this);
+			else
+			{
+				movementResult = Body::updateMovement(this);
+			}
 
 			// if stopped on any axis
 			if(movementResult.axisStoppedMovement)
@@ -880,7 +898,7 @@ void Body::setBounciness(fixed_t bounciness)
 	this->bounciness = bounciness;
 }
 
-void Body::setSkipCycles(uint8 skipCycles)
+void Body::setSkipCycles(int8 skipCycles)
 {
 	this->skipCycles = skipCycles;
 	this->skipedCycles = 0;
