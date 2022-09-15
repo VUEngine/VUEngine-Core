@@ -99,9 +99,15 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 
 	if(this->targetFPS <= this->gameFrameStarts)
 	{
-		if(this->targetFPS > this->fps && !isDeleted(this->events))
+		if(this->targetFPS > this->fps)
 		{
-			FrameRate::fireEvent(this, kEventFrameRateDipped);
+#ifdef __PRINT_FRAMERATE_DIP
+			FrameRate::print(this, 21, 14);
+#endif
+			if(!isDeleted(this->events))
+			{
+				FrameRate::fireEvent(this, kEventFrameRateDipped);
+			}
 		}
 
 #ifdef __PRINT_FRAMERATE
