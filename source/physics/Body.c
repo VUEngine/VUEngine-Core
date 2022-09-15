@@ -447,7 +447,7 @@ void Body::update()
 				{
 					this->skipedCycles = 0;
 
-					while(this->skipCycles < this->skipedCycles--)
+					while(this->skipCycles <= this->skipedCycles--)
 					{
 						movementResult = Body::updateMovement(this);
 					}
