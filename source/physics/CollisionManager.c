@@ -146,15 +146,28 @@ uint32 CollisionManager::update(Clock clock)
 		// not ready for collision checks if out of the camera
 		if(!this->checkShapesOutOfCameraRange)
 		{
-			if(
-				shape->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
-				shape->rightBox.x1 - _cameraPosition->x < 0 ||
-				shape->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
-				shape->rightBox.y1 - _cameraPosition->y < 0
-			)
+			extern const Rotation* _cameraInvertedRotation;
+			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
+			PixelVector position2D = Vector3D::projectToPixelVector(relativePosition, 0);
+
+			// check x visibility
+			if((position2D.x < _cameraFrustum->x0) || (position2D.x > _cameraFrustum->x1))
 			{
 				shape->isVisible = false;
+				continue;
 			}
+
+			if((position2D.y < _cameraFrustum->y0) || (position2D.y > _cameraFrustum->y1))
+			{
+				shape->isVisible = false;
+				continue;
+			}
+
+			if((position2D.z < _cameraFrustum->z0) || (position2D.z > _cameraFrustum->z1))
+			{
+				shape->isVisible = false;
+				continue;
+			}			
 		}
 
 	#ifdef __DRAW_SHAPES
