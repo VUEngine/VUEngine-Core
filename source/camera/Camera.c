@@ -82,6 +82,8 @@ void Camera::constructor()
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
+	this->transformationFlags = false;
+
 	PixelOptical pixelOptical =
     {
     	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
@@ -155,7 +157,18 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
  */
 void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 {
-	this->transformationFlags = false;
+	static bool takeTransformationFlagsDown = false;
+
+	if(takeTransformationFlagsDown)
+	{
+		this->transformationFlags = false;
+		takeTransformationFlagsDown = false;
+	}
+
+	if(this->transformationFlags)
+	{
+		takeTransformationFlagsDown = true;
+	}
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
@@ -419,7 +432,7 @@ void Camera::setOptical(Optical optical)
 {
 	this->optical = optical;
 
-	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 }
 
 /**
@@ -435,7 +448,7 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->opticalBackup = this->optical;
 
-	this->transformationFlags |= __INVALIDATE_PROJECTION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 }
 
 /**

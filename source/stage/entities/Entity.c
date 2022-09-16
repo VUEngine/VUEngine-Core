@@ -1511,11 +1511,13 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
  */
 void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	if(this->sprites)
-	{
-		this->invalidateGraphics |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
-	}
+	uint8 invalidateGraphics = 0;
 
+	if(!isDeleted(this->sprites))
+	{
+		invalidateGraphics = invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+	}
+	
 	if(this->invalidateGlobalTransformation)
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
@@ -1526,6 +1528,8 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	{
 		Entity::transformChildren(this, invalidateTransformationFlag);
 	}
+	
+	this->invalidateGraphics |= invalidateGraphics;
 }
 
 /**
