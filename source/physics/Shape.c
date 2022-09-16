@@ -23,7 +23,7 @@
 //												CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(1)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -241,20 +241,9 @@ void Shape::enterCollision(CollisionData* collisionData)
  */
 void Shape::updateCollision(CollisionData* collisionData)
 {
-	if(collisionData->isImpenetrableCollidingShape)
-	{
-		if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT + __PIXELS_TO_METERS(1))
-		{
-			collisionData->collisionInformation.solutionVector.magnitude -= __STILL_COLLIDING_CHECK_SIZE_INCREMENT;
-			Shape::resolveCollision(this, &collisionData->collisionInformation, false);
-		}
-	}
-	else
-	{
-		SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
-	}
-}
 
+	SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
+}
 /**
  * Process exit collision event
  *
