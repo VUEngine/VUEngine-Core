@@ -81,13 +81,23 @@ fixed_t Sphere::getRadius()
 }
 
 /**
- * Set this->radius
+ * Set radius
  *
  * @param this->radius New value
  */
 void Sphere::setRadius(fixed_t radius)
 {
 	this->radius = __ABS(radius);
+}
+
+/**
+ * Set radius scale
+ *
+ * @param radiusScale Scale
+ */
+void Sphere::setRadiusScale(fixed_t radiusScale)
+{
+	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, radiusScale));
 }
 
 /**

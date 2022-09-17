@@ -55,6 +55,8 @@ class Sphere : Wireframe
 	fixed_t getRadius();
 	void setCenter(PixelVector center);
 	void setRadius(fixed_t radius);
+	void setRadiusScale(fixed_t radiusScale);
+
 	override void render();
 	override void draw();
 }
