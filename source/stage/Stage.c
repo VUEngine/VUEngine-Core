@@ -1138,6 +1138,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 				else
 				{
 					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+					break;
 				}
 			}
 		}
