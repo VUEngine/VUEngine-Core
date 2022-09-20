@@ -148,6 +148,7 @@ class Container : SpatialObject
 	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
+	virtual void setTransparent(uint8 transparent);
 	virtual bool handlePropagatedMessage(int32 message);
 	virtual bool handlePropagatedString(const char* string);
 	virtual void addChild(Container child);

@@ -79,7 +79,7 @@ void Container::constructor(const char* const name)
 void Container::destructor()
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; node ; node = node->next)
 		{
@@ -289,7 +289,7 @@ void Container::removeChild(Container child, bool deleteChild)
 void Container::setupShapes()
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -306,7 +306,7 @@ void Container::setupShapes()
 void Container::purgeChildren()
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		// update each child
 		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
@@ -414,7 +414,7 @@ void Container::updateBehaviors(uint32 elapsedTime)
 void Container::updateChildren(uint32 elapsedTime)
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
 		{
@@ -642,7 +642,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 	}
 
 	// Check since the call is virtual
-	if(this->children)
+	if(NULL != this->children)
 	{
 		Container::transformChildren(this, invalidateTransformationFlag);
 	}
@@ -655,7 +655,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 void Container::transformChildren(uint8 invalidateTransformationFlag)
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
 
@@ -696,7 +696,7 @@ void Container::synchronizeGraphics()
 void Container::synchronizeChildrenGraphics()
 {
 	// if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -930,7 +930,7 @@ void Container::invalidateGlobalTransformation()
 {
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -950,7 +950,7 @@ void Container::invalidateGlobalPosition()
 {
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -970,7 +970,7 @@ void Container::invalidateGlobalRotation()
 {
 	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -990,7 +990,7 @@ void Container::invalidateGlobalScale()
 {
 	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -1001,6 +1001,24 @@ void Container::invalidateGlobalScale()
 			Container::invalidateGlobalScale(node->data);
 		}
 	}
+}
+
+/**
+ * Set transparency 
+ *
+ * @param transparent 	Transparency flag
+ */
+void Container::setTransparent(uint8 transparent)
+{
+	if(NULL != this->children)
+	{
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			Container::setTransparent(child, transparent);
+		}
+	}	
 }
 
 /**
@@ -1061,7 +1079,7 @@ int32 Container::propagateArguments(int32 (*propagationHandler)(void*, va_list),
 	}
 
 	// propagate if I have children
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -1205,13 +1223,10 @@ Container Container::findChildByName(VirtualList children, const char* childName
 		return NULL;
 	}
 
-	Container child, grandChild;
-	VirtualNode node = children->head;
-
 	// look through all children
-	for(; node ; node = node->next)
+	for(VirtualNode node = children->head; node ; node = node->next)
 	{
-		child = Container::safeCast(node->data);
+		Container child = Container::safeCast(node->data);
 
 		if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
 		{
@@ -1219,8 +1234,9 @@ Container Container::findChildByName(VirtualList children, const char* childName
 		}
 		else if(recursive && child->children)
 		{
-			grandChild = Container::findChildByName(this, child->children, childName, recursive);
-			if(grandChild)
+			Container grandChild = Container::findChildByName(this, child->children, childName, recursive);
+			
+			if(!isDeleted(grandChild))
 			{
 				return grandChild;
 			}
@@ -1276,7 +1292,7 @@ void Container::suspend()
 		}
 	}
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		Container::purgeChildren(this);
 
@@ -1309,7 +1325,7 @@ void Container::resume()
 		}
 	}
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -1327,7 +1343,7 @@ void Container::show()
 {
 	this->hidden = false;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -1345,7 +1361,7 @@ void Container::hide()
 {
 	this->hidden = true;
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{

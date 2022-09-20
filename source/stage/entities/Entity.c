@@ -137,10 +137,8 @@ Entity Entity::getChildById(int16 id)
 {
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-
 		// look through all children
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node ; node = node->next)
 		{
 			Entity child = Entity::safeCast(node->data);
 
@@ -172,13 +170,11 @@ void Entity::setSpec(void* entitySpec)
  */
 void Entity::destroyShapes()
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
 		ASSERT(!isDeleted(this->shapes), "Entity::setSpec: dead shapes");
 
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			CollisionManager::destroyShape(VUEngine::getCollisionManager(_vuEngine), Shape::safeCast(node->data));
 		}
@@ -205,13 +201,11 @@ void Entity::streamOut()
  */
 void Entity::destroyWireframes()
 {
-	if(this->wireframes)
+	if(!isDeleted(this->wireframes))
 	{
 		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
 
-		VirtualNode node = this->wireframes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
 		{
 			delete node->data;
 		}
@@ -228,7 +222,7 @@ void Entity::setupShapes()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
-	if(!this->shapes)
+	if(NULL == this->shapes)
 	{
 		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
 	}
@@ -425,9 +419,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 
 	if(this->children)
 	{
-		VirtualNode childNode = this->children->head;
-
-		for(; childNode; childNode = childNode->next)
+		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
 			Entity::calculateSizeFromChildren(childNode->data, pixelRightBox, Vector3D::getFromPixelVector(pixelGlobalPosition));
 		}
@@ -1410,7 +1402,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
 
-	for(VirtualNode node = this->sprites->head; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -1450,7 +1442,7 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
 	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 
-	for(VirtualNode node = this->sprites->head; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -1731,9 +1723,7 @@ bool Entity::isVisible(int32 pad, bool recursive)
 
 	if(this->sprites && this->sprites->head)
 	{
-		VirtualNode spriteNode = this->sprites->head;
-
-		for(; !isVisible && spriteNode; spriteNode = spriteNode->next)
+		for(VirtualNode spriteNode = this->sprites->head; !isVisible && spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 			isVisible = Entity::isSpriteVisible(this, sprite, pad);
@@ -1780,9 +1770,7 @@ bool Entity::isVisible(int32 pad, bool recursive)
 
 	if(!isVisible && recursive && NULL != this->children)
 	{
-		VirtualNode childNode = this->children->head;
-
-		for(; childNode; childNode = childNode->next)
+		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
 			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
 
@@ -1846,7 +1834,7 @@ void Entity::show()
 	// show all sprites
 	if(this->sprites)
 	{
-		for(VirtualNode node = this->sprites->head; node ; node = node->next)
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
 			Sprite::show(node->data);
 		}
@@ -1855,7 +1843,7 @@ void Entity::show()
 	// show all wireframes
 	if(!isDeleted(this->wireframes))
 	{
-		for(VirtualNode node = this->wireframes->head; node ; node = node->next)
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
 		{
 			Wireframe::show(node->data);
 		}
@@ -1874,7 +1862,7 @@ void Entity::hide()
 	// hide all sprites
 	if(!isDeleted(this->sprites))
 	{
-		for(VirtualNode node = this->sprites->head; node ; node = node->next)
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
 			Sprite::hide(node->data);
 		}
@@ -1883,7 +1871,7 @@ void Entity::hide()
 	// hide all wireframes
 	if(!isDeleted(this->wireframes))
 	{
-		for(VirtualNode node = this->wireframes->head; node ; node = node->next)
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
 		{
 			Wireframe::hide(node->data);
 		}
@@ -1981,11 +1969,9 @@ void Entity::activeCollisionChecks(bool active)
 {
 	this->allowCollisions |= active;
 
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2000,11 +1986,9 @@ void Entity::activeCollisionChecks(bool active)
  */
 void Entity::registerCollisions(bool value)
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2020,11 +2004,9 @@ void Entity::allowCollisions(bool value)
 {
 	this->allowCollisions = value;
 
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape::enable(node->data, value);
 		}
@@ -2050,11 +2032,9 @@ bool Entity::hasShapes()
 
 void Entity::showShapes()
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape::show(node->data);
 		}
@@ -2063,11 +2043,9 @@ void Entity::showShapes()
 
 void Entity::hideShapes()
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape::hide(node->data);
 		}
@@ -2146,11 +2124,9 @@ uint32 Entity::getShapesLayers()
 {
 	uint32 shapesLayers = 0;
 
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2168,11 +2144,9 @@ uint32 Entity::getShapesLayers()
  */
 void Entity::setShapesLayers(uint32 layers)
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2190,11 +2164,9 @@ uint32 Entity::getShapesLayersToIgnore()
 {
 	uint32 shapesLayersToIgnore = 0;
 
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2212,11 +2184,9 @@ uint32 Entity::getShapesLayersToIgnore()
  */
 void Entity::setShapesLayersToIgnore(uint32 layersToIgnore)
 {
-	if(this->shapes)
+	if(NULL != this->shapes)
 	{
-		VirtualNode node = this->shapes->head;
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape shape = Shape::safeCast(node->data);
 
@@ -2232,13 +2202,21 @@ void Entity::setShapesLayersToIgnore(uint32 layersToIgnore)
  */
 void Entity::setTransparent(uint8 transparent)
 {
-	if(this->sprites)
-	{
-		VirtualNode node = this->sprites->head;
+	Base::setTransparent(this, transparent);
 
-		for(; node ; node = node->next)
+	if(!isDeleted(this->sprites))
+	{
+		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
 			Sprite::setTransparent(node->data, transparent);
+		}
+	}
+
+	if(!isDeleted(this->wireframes))
+	{
+		for(VirtualNode node = this->wireframes->head; NULL != node ; node = node->next)
+		{
+			Wireframe::setTransparent(node->data, transparent);
 		}
 	}
 }
