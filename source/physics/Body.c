@@ -104,7 +104,6 @@ typedef struct NormalRegistry
 
 } NormalRegistry;
 
-Clock _physhicsClock = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -164,11 +163,6 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 
 	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
-
-	if(!_physhicsClock)
-	{
-		_physhicsClock = VUEngine::getPhysicsClock(_vuEngine);
-	}
 }
 
 // class's destructor
