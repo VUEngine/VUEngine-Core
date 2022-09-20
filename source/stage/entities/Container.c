@@ -209,14 +209,14 @@ void Container::iAmDeletingMyself()
 void Container::addChild(Container child)
 {
 	// check if child is valid
-	if(!child)
+	if(isDeleted(child))
 	{
 		ASSERT(false, "Container::addChild: adding null child");
 		return;
 	}
 
 	// if don't have any child yet
-	if(!this->children)
+	if(NULL == this->children)
 	{
 		// create children list
 		this->children = new VirtualList();

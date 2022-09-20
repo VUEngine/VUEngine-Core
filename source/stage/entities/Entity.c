@@ -1299,7 +1299,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 		return;
 	}
 
-	if(!this->sprites)
+	if(NULL == this->sprites)
 	{
 		this->sprites = new VirtualList();
 	}
@@ -1341,7 +1341,7 @@ bool Entity::addSpriteFromSpecAtIndex(int32 spriteSpecIndex)
 		return false;
 	}
 
-	if(!this->sprites)
+	if(NULL == this->sprites)
 	{
 		this->sprites = new VirtualList();
 	}

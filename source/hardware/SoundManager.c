@@ -851,7 +851,7 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 	uint8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
 
 	// Check for free channels
-	VirtualList availableChannels  = new VirtualList();
+	VirtualList availableChannels = new VirtualList();
 
 	uint8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (0 == modulationChannelsCount ? kChannelModulation : kChannelNormal), kPlayForceAll == command);
 	uint8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation, kPlayForceAll == command);

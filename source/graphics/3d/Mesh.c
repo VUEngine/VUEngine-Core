@@ -77,28 +77,31 @@ void Mesh::destructor()
 
 void Mesh::deleteLists()
 {
-	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
+	if(!isDeleted(this->segments))
 	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
-
-		if(!isDeleted(meshSegment->fromVertex))
+		for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 		{
-			delete meshSegment->fromVertex;
+			MeshSegment* meshSegment = (MeshSegment*)node->data;
+
+			if(!isDeleted(meshSegment->fromVertex))
+			{
+				delete meshSegment->fromVertex;
+			}
+
+			if(!isDeleted(meshSegment->toVertex))
+			{
+				delete meshSegment->toVertex;
+			}
+
+			delete meshSegment;
 		}
 
-		if(!isDeleted(meshSegment->toVertex))
-		{
-			delete meshSegment->toVertex;
-		}
+		delete this->segments;
+		this->segments = NULL;
 
-		delete meshSegment;
+		delete this->vertices;
+		this->vertices = NULL;
 	}
-
-	delete this->segments;
-	this->segments = NULL;
-
-	delete this->vertices;
-	this->vertices = NULL;
 }
 
 /**
