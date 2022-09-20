@@ -81,6 +81,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		return NULL;
 	}
 
+#ifndef __SHIPPING
+#ifndef __RELEASE
 	if(isDeleted(object))
 	{
 		Printing::setDebugMode(Printing::getInstance());
@@ -92,7 +94,6 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
 	}
 
-#ifndef __RELEASE
 	if(NULL == __VIRTUAL_CALL_ADDRESS(Object, getClassName, object))
 	{
 		Printing::setDebugMode(Printing::getInstance());
@@ -115,8 +116,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		NM_CAST_ASSERT(false, "Object::getCast: null getBaseClass");
 	}
 #endif
+#endif
 
-	if(!baseClassGetClassMethod)
+	if(NULL == baseClassGetClassMethod)
 	{
 		if(targetClassGetClassMethod == (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 		{
@@ -130,7 +132,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		baseClassGetClassMethod = (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
 
-	if(!baseClassGetClassMethod || ((ClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
+	if(NULL == baseClassGetClassMethod || ((ClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
 	{
 		lp = -1;
 		sp = -1;
