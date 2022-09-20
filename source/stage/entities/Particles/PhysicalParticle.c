@@ -185,7 +185,7 @@ void PhysicalParticle::hide()
  */
 bool PhysicalParticle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 {
-	return (bool)Body::getaxisSubjectToGravity(this->body);
+	return (bool)Body::getAxisSubjectToGravity(this->body);
 }
 
 /**

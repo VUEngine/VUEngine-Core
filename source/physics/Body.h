@@ -164,7 +164,7 @@ class Body : ListenerObject
 	void clearExternalForce();
 	Vector3DFlag getAccelerationState();
 	Force getAppliedForce();
-	uint16 getaxisSubjectToGravity();
+	uint16 getAxisSubjectToGravity();
 	fixed_t getBounciness();
 	Vector3D getLastDisplacement();
 	Acceleration getGravity();

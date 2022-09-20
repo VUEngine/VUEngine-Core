@@ -829,7 +829,7 @@ uint16 Body::stopMovement(uint16 axis)
 }
 
 // get axis subject to gravity
-uint16 Body::getaxisSubjectToGravity()
+uint16 Body::getAxisSubjectToGravity()
 {
 	return this->axisSubjectToGravity;
 }
