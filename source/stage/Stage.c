@@ -43,8 +43,6 @@
 
 #define __STREAMING_CYCLES		5
 
-#define __MAXIMUM_PARALLAX		10
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -274,18 +272,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	onScreenPosition.z -= cameraPosition->z;
 
 	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
-	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
+	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
+	int32 pad = this->streaming.loadPadding + __ABS(position2D.z);
 
 	if(NULL != pixelRightBox)
 	{
 		// check x visibility
-		if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+		if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - pad || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 + pad)
 		{
 			return false;
 		}
 
 		// check y visibility
-		if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + this->streaming.loadPadding)
+		if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - pad || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + pad)
 		{
 			return false;
 		}
@@ -299,13 +298,13 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	else
 	{
 		// check x visibility
-		if(position2D.x < _cameraFrustum->x0 - __MAXIMUM_PARALLAX - this->streaming.loadPadding || position2D.x > _cameraFrustum->x1 - __MAXIMUM_PARALLAX + this->streaming.loadPadding)
+		if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
 		{
 			return false;
 		}
 
 		// check y visibility
-		if(position2D.y < _cameraFrustum->y0 - this->streaming.loadPadding || position2D.y > _cameraFrustum->y1 + this->streaming.loadPadding)
+		if(position2D.y < _cameraFrustum->y0 - pad || position2D.y > _cameraFrustum->y1 + pad)
 		{
 			return false;
 		}
@@ -916,7 +915,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding), true))
 		{
 			int16 internalId = Entity::getInternalId(entity);
 

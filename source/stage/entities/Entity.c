@@ -1749,7 +1749,7 @@ bool Entity::isVisible(int32 pad, bool recursive)
 		}
 
 		position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
-		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
+		PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
 
 		PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
 
@@ -1759,18 +1759,20 @@ bool Entity::isVisible(int32 pad, bool recursive)
 
 		isVisible = true;
 
+		int32 helperPad = pad + __ABS(position2D.z);
+
 		// check x visibility
-		if((position2D.x + size.x < _cameraFrustum->x0 - pad) || (position2D.x - size.x > _cameraFrustum->x1 + pad))
+		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
 		{
 			isVisible = false;
 		}
 		// check y visibility
-		else if((position2D.y + size.y < _cameraFrustum->y0 - pad) || (position2D.y - size.y > _cameraFrustum->y1 + pad))
+		else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
 		{
 			isVisible = false;
 		}
 		// check z visibility
-		else if((position2D.z + size.z < _cameraFrustum->z0 - pad) || (position2D.z - size.z > _cameraFrustum->z1 + pad))
+		else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
 		{
 			isVisible = false;
 		}
