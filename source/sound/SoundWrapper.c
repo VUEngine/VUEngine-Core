@@ -302,10 +302,8 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 
 				this->position = position;
 
-				VirtualNode node = this->channels->head;
-
 				// Prepare channels
-				for(; NULL != node; node = node->next)
+				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 				{
 					Channel* channel = (Channel*)node->data;
 
@@ -349,10 +347,8 @@ void SoundWrapper::pause()
 	{
 		this->paused = true;
 
-		VirtualNode node = this->channels->head;
-
 		// Silence all channels first
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 			_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
@@ -368,10 +364,8 @@ void SoundWrapper::unpause()
 {
 	if(this->paused && this->turnedOn)
 	{
-		VirtualNode node = this->channels->head;
-
 		// Silence all channels first
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
 			_soundRegistries[channel->number].SxLRV = 0x00;
@@ -390,10 +384,8 @@ void SoundWrapper::turnOff()
 {
 	this->turnedOn = false;
 
-	VirtualNode node = this->channels->head;
-
 	// Silence all channels first
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
@@ -406,10 +398,8 @@ void SoundWrapper::turnOff()
  */
 void SoundWrapper::turnOn()
 {
-	VirtualNode node = this->channels->head;
-
 	// Silence all channels first
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxLRV = 0x00;
@@ -425,12 +415,10 @@ void SoundWrapper::turnOn()
  */
 void SoundWrapper::rewind()
 {
-	VirtualNode node = this->channels->head;
-
 	this->elapsedMicroseconds = 0;
 	this->previouslyElapsedMicroseconds = 0;
 
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->finished = false;
@@ -468,10 +456,8 @@ void SoundWrapper::stop()
 	this->turnedOn = false;
 	this->paused = true;
 
-	VirtualNode node = this->channels->head;
-
 	// Silence all channels first
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -605,9 +591,7 @@ void SoundWrapper::configureSoundRegistries()
 		return;
 	}
 
-	VirtualNode node = this->channels->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
@@ -885,8 +869,6 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	bool finished = elapsedMicroseconds ? true : false;
 
-	VirtualNode node = this->channels->head;
-
 	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds)));
 
 	SoundWrapper::updateVolumeReduction(this);
@@ -894,7 +876,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	int16 leftVolumeFactor = -1;
 	int16 rightVolumeFactor = -1;
 
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 /*
@@ -1014,10 +996,8 @@ void SoundWrapper::print(int32 x, int32 y)
 
 	int32 xDisplacement = 9;
 
-	VirtualNode node = this->channels->head;
-
 	// Prepare channels
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
