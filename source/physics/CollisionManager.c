@@ -148,22 +148,24 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			extern const Rotation* _cameraInvertedRotation;
 			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
-			PixelVector position2D = Vector3D::projectToPixelVector(relativePosition, 0);
+			PixelVector position2D = PixelVector::getFromVector3D(relativePosition, 0);
+
+			int16 pad = __ABS(position2D.z);
 
 			// check x visibility
-			if((position2D.x < _cameraFrustum->x0) || (position2D.x > _cameraFrustum->x1))
+			if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
 			{
 				shape->isVisible = false;
 				continue;
 			}
 
-			if((position2D.y < _cameraFrustum->y0) || (position2D.y > _cameraFrustum->y1))
+			if(position2D.y < _cameraFrustum->y0 - pad || position2D.y > _cameraFrustum->y1 + pad)
 			{
 				shape->isVisible = false;
 				continue;
 			}
 
-			if((position2D.z < _cameraFrustum->z0) || (position2D.z > _cameraFrustum->z1))
+			if(position2D.z < _cameraFrustum->z0 || position2D.z > _cameraFrustum->z1)
 			{
 				shape->isVisible = false;
 				continue;
