@@ -114,10 +114,8 @@ void Container::destructor()
 
 	if(this->behaviors)
 	{
-		VirtualNode node = this->behaviors->head;
-
 		// destroy each child
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			delete node->data;
 		}
@@ -347,9 +345,7 @@ void Container::ready(bool recursive)
 {
 	if(this->behaviors)
 	{
-		VirtualNode node = this->behaviors->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -362,10 +358,7 @@ void Container::ready(bool recursive)
 
 	if(recursive && this->children)
 	{
-		// call ready method on children
-		VirtualNode childNode = this->children->head;
-
-		for(; childNode; childNode = childNode->next)
+		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
 			Container::ready(childNode->data, recursive);
 		}
@@ -392,9 +385,7 @@ void Container::updateBehaviors(uint32 elapsedTime)
 {
 	if(this->behaviors)
 	{
-		VirtualNode node = this->behaviors->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -932,10 +923,8 @@ void Container::invalidateGlobalTransformation()
 
 	if(NULL != this->children)
 	{
-		VirtualNode node = this->children->head;
-
 		// update each child
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalTransformation(node->data);
@@ -952,10 +941,8 @@ void Container::invalidateGlobalPosition()
 
 	if(NULL != this->children)
 	{
-		VirtualNode node = this->children->head;
-
 		// update each child
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalPosition(node->data);
@@ -972,10 +959,8 @@ void Container::invalidateGlobalRotation()
 
 	if(NULL != this->children)
 	{
-		VirtualNode node = this->children->head;
-
 		// update each child
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalRotation(node->data);
@@ -992,10 +977,8 @@ void Container::invalidateGlobalScale()
 
 	if(NULL != this->children)
 	{
-		VirtualNode node = this->children->head;
-
 		// update each child
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
 			Container::invalidateGlobalScale(node->data);
@@ -1279,9 +1262,7 @@ void Container::suspend()
 {
 	if(this->behaviors)
 	{
-		VirtualNode node = this->behaviors->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -1312,9 +1293,7 @@ void Container::resume()
 {
 	if(this->behaviors)
 	{
-		VirtualNode node = this->behaviors->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -1384,9 +1363,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 {
 	if(this->children && !isDeleted(children))
 	{
-		VirtualNode node = this->children->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->children->head; node ; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1409,9 +1386,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 {
 	if(this->behaviors && !isDeleted(behaviors))
 	{
-		VirtualNode node = this->behaviors->head;
-
-		for(; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
