@@ -474,6 +474,11 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
+	if(this->released)
+	{
+		return;
+	}
+
 	this->released = true;
 
 	SoundWrapper::stop(this);
