@@ -563,7 +563,7 @@ void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my _
 {
 	if(!isDeleted(this->printingSprite))
 	{
-		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, my + __PRINTING_BGMAP_Y_OFFSET <= 64 * 8 ? my + __PRINTING_BGMAP_Y_OFFSET : __PRINTING_BGMAP_Y_OFFSET, mp);
+		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, my <= 64 * 8 ? my : __PRINTING_BGMAP_Y_OFFSET, mp);
 	}
 }
 

@@ -36,6 +36,19 @@ static void Utilities::setKeypadManager(KeypadManager keypadManager)
 	_keypadManager = keypadManager;
 }
 
+static int32 Utilities::getDigitCount(int32 value)
+{
+	int32 size = 0;
+
+	do
+	{
+		value /= 10;
+		size++;
+	}
+	while(value);
+
+	return size;
+}
 
 static int32 Utilities::intLength(int32 value)
 {
@@ -47,7 +60,8 @@ static int32 Utilities::intLength(int32 value)
 
 		length++;
 	}
-	(!length) ? length++ : length;
+
+	(0 == length) ? length++ : length;
 
 	return length;
 }
@@ -130,20 +144,6 @@ static void Utilities::resetRandomSeed()
 static int32 Utilities::equalSign(int32 a, int32 b)
 {
 	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
-}
-
-static int32 Utilities::getDigitCount(int32 value)
-{
-	int32 size = 0;
-
-	do
-	{
-		value /= 10;
-		size++;
-	}
-	while(value);
-
-	return size;
 }
 
 static uint32 Utilities::reverse(uint32 x, int32 bits)

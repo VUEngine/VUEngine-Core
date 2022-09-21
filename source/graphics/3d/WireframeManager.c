@@ -15,7 +15,6 @@
 #include <WireframeManager.h>
 #include <VirtualList.h>
 #include <Camera.h>
-#include <DirectDraw.h>
 #include <debugConfig.h>
 #include <debugUtilities.h>
 
@@ -28,7 +27,6 @@ friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
 
-static DirectDraw _directDraw = NULL;
 
 Vector3D _cameraDirection = {0, 0, 0};
 Vector3D _previousCameraPosition = {0, 0, 0};
@@ -66,8 +64,6 @@ void WireframeManager::constructor()
 	this->disabled = false;
 
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
-	_directDraw = DirectDraw::getInstance();
 }
 
 /**
@@ -267,8 +263,6 @@ void WireframeManager::draw()
 	{
 		return;
 	}
-
-	DirectDraw::startDrawing(_directDraw);
 
 	this->stopDrawing = false;
 

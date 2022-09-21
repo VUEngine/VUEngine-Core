@@ -1832,7 +1832,7 @@ void Entity::show()
 	Base::show(this);
 
 	// show all sprites
-	if(this->sprites)
+	if(!isDeleted(this->sprites))
 	{
 		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{

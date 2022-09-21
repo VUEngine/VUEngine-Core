@@ -18,6 +18,7 @@
 #include <VUEngine.h>
 #include <FrameRate.h>
 #include <SpriteManager.h>
+#include <DirectDraw.h>
 #include <WireframeManager.h>
 #include <Profiler.h>
 #include <Mem.h>
@@ -37,9 +38,10 @@ ObjectAttributes _objectAttributesCache[1024] __attribute__((section(".dram_bss"
 volatile uint16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
 uint32* _currentDrawingFrameBufferSet = NULL;
 
-static VIPManager _vipManager;
-static WireframeManager _wireframeManager;
-static SpriteManager _spriteManager;
+static VIPManager _vipManager = NULL;
+static WireframeManager _wireframeManager = NULL;
+static SpriteManager _spriteManager = NULL;
+static DirectDraw _directDraw = NULL;
 
 extern ColumnTableROMSpec DefaultColumnTable;
 extern BrightnessRepeatROMSpec DefaultBrightnessRepeat;
@@ -115,6 +117,7 @@ void VIPManager::constructor()
 	_vipManager = this;
 	_spriteManager = SpriteManager::getInstance();
 	_wireframeManager = WireframeManager::getInstance();
+	_directDraw = DirectDraw::getInstance();
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
@@ -270,6 +273,8 @@ static void VIPManager::interruptHandler()
 static void VIPManager::updateVRAM()
 {
 	SpriteManager::writeDRAM(_spriteManager);
+
+	DirectDraw::startDrawing(_directDraw);
 	WireframeManager::draw(_wireframeManager);
 	VIPManager::applyPostProcessingEffects(_vipManager);
 }
