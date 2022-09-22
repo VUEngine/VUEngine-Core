@@ -249,19 +249,42 @@ void Entity::setupWireframes()
  */
 void Entity::releaseSprites()
 {
+#ifndef __SHIPPING
+#ifndef __RELEASE
+	int32 lp = HardwareManager::getLinkPointer();
+#endif
+#endif
+
 	if(!isDeleted(this->sprites))
 	{
 		SpriteManager spriteManager = SpriteManager::getInstance();
 
 		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
 		{
+
+#ifndef __SHIPPING
+			if(isDeleted(Sprite::safeCast(node->data)))
+			{
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::clear(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "Onwer type: ", 1, 26, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 12, 26, NULL);
+#ifndef __RELEASE
+				Printing::text(Printing::getInstance(), "Caller address: ", 1, 27, NULL);
+				Printing::hex(Printing::getInstance(), lp, 1, 12, 8, NULL);
+#endif
+				Error::triggerException("Entity::releaseSprites: trying to dispose dead sprite", NULL);		
+			}
+#endif
+			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::releaseSprites: trying to dispose dead sprite");
 			SpriteManager::disposeSprite(spriteManager, Sprite::safeCast(node->data));
 		}
 
 		// delete the sprites
 		delete this->sprites;
-		this->sprites = NULL;
 	}
+
+	this->sprites = NULL;
 }
 
 /**

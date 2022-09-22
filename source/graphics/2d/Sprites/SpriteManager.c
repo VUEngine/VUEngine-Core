@@ -329,7 +329,7 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
  */
 void SpriteManager::disposeSprite(Sprite sprite)
 {
-	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
+	NM_ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::disposeSprite: trying to dispose a non sprite");
 
 	if(isDeleted(sprite))
