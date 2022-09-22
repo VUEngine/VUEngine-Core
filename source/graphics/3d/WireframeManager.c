@@ -127,8 +127,16 @@ void WireframeManager::remove(Wireframe wireframe)
  */
 void WireframeManager::reset()
 {
+	WireframeManager::enable(this);
+	
 	VirtualList::clear(this->wireframes);
 	this->disabled = false;
+
+	_previousCameraPosition = *_cameraPosition;
+	_previousCameraPositionBuffer = _previousCameraPosition;
+
+	_previousCameraInvertedRotation = *_cameraInvertedRotation;
+	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
 }
 
 /**
