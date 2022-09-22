@@ -120,6 +120,11 @@ void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __at
 void DirectDraw::reset()
 {
 	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+
+	DirectDraw::setFrustum(this, (CameraFrustum)
+	{
+		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
+	});
 }
 
 /**

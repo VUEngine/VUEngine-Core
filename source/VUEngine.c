@@ -466,6 +466,7 @@ void VUEngine::reset(bool resetSounds)
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
 	SpriteManager::reset(this->spriteManager);
+	DirectDraw::reset(DirectDraw::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
 
 	HardwareManager::enableInterrupts();
