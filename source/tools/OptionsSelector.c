@@ -239,7 +239,7 @@ void OptionsSelector::selectNext()
 	{
 		// remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", this->xDelta);
-		OptionsSelector::printSelectorMark(this, " ", -this->xDelta);
+		OptionsSelector::printSelectorMark(this, " ", -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
 
 		// get next option
 		this->currentOption = this->currentOption->next;
@@ -280,7 +280,7 @@ void OptionsSelector::selectNext()
 
 		// print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta);
+		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
 	}
 }
 
@@ -293,7 +293,7 @@ void OptionsSelector::selectPrevious()
 	{
 		// remove previous selection mark
 		OptionsSelector::printSelectorMark(this, " ", this->xDelta);
-		OptionsSelector::printSelectorMark(this, " ", -this->xDelta);
+		OptionsSelector::printSelectorMark(this, " ", -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
 
 		// get previous option
 		this->currentOption = VirtualNode::getPrevious(this->currentOption);
@@ -334,7 +334,7 @@ void OptionsSelector::selectPrevious()
 
 		// print new selection mark
 		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta);
+		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
 	}
 }
 
@@ -544,7 +544,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 		}
 
 		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta);
+		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
 	}
 }
 
