@@ -97,7 +97,7 @@ class OptionsSelector : ListenerObject
 	VirtualNode currentOption;
 	// Printing column
 	int8 x;
-	int8 xDelta;
+	int8 optionsLength;
 	// Printing row
 	int8 y;
 	uint32 alignment;

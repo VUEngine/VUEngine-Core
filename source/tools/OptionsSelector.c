@@ -88,7 +88,7 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* le
 	this->currentOptionIndex = 0;
 	this->x = 0;
 	this->y = 0;
-	this->xDelta = 0;
+	this->optionsLength = 0;
 	this->alignment = kOptionsAlignLeft;
 	this->spacing = 0;
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
@@ -238,8 +238,8 @@ void OptionsSelector::selectNext()
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector::printSelectorMark(this, " ", this->xDelta);
-		OptionsSelector::printSelectorMark(this, " ", -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
+		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
 		// get next option
 		this->currentOption = this->currentOption->next;
@@ -279,8 +279,8 @@ void OptionsSelector::selectNext()
 		}
 
 		// print new selection mark
-		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -292,8 +292,8 @@ void OptionsSelector::selectPrevious()
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector::printSelectorMark(this, " ", this->xDelta);
-		OptionsSelector::printSelectorMark(this, " ", -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
+		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
 		// get previous option
 		this->currentOption = VirtualNode::getPrevious(this->currentOption);
@@ -333,8 +333,8 @@ void OptionsSelector::selectPrevious()
 		}
 
 		// print new selection mark
-		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -423,8 +423,17 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");
 
-			int8 xDelta = 0;
+			int8 optionsLength = 0;
+			int8 optionsLengthDivisor = 1;
 			Option* option = VirtualNode::getData(node);
+
+			switch(alignment)
+			{
+				case kOptionsAlignCenter:
+
+					optionsLengthDivisor = 2;
+					break;
+			}
 
 			if(NULL == option->value)
 			{
@@ -436,102 +445,39 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 				{
 					case kString:
 
-						switch(alignment)
-						{
-							case kOptionsAlignCenter:
-
-								xDelta = -strnlen((char*)option->value, this->columnWidth) / 2;
-								break;
-
-							case kOptionsAlignRight:
-
-								xDelta = -strnlen((char*)option->value, this->columnWidth);
-								break;
-						}
-
-						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x + xDelta, y, this->font);
+						optionsLength = strnlen((char*)option->value, this->columnWidth);
+						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kFloat:
 
-						switch(alignment)
-						{
-							case kOptionsAlignCenter:
-
-								// TODO
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value)) / 2 - 3;
-								break;
-
-							case kOptionsAlignRight:
-
-								// TODO
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value)) - 3;
-								break;
-						}
-
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x + xDelta, y, 2, this->font);
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value)) - 3;
+						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, 2, this->font);
 						break;
-
 
 					case kInt:
 
-						switch(alignment)
-						{
-							case kOptionsAlignCenter:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value)) / 2;
-								break;
-
-							case kOptionsAlignRight:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value));
-								break;
-						}
-
-						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x + xDelta, y, this->font);
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kShortInt:
 
-						switch(alignment)
-						{
-							case kOptionsAlignCenter:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value)) / 2;
-								break;
-
-							case kOptionsAlignRight:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value));
-								break;
-						}
-
-						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x + xDelta, y, this->font);
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kChar:
 
-						switch(alignment)
-						{
-							case kOptionsAlignCenter:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value)) / 2;
-								break;
-
-							case kOptionsAlignRight:
-
-								xDelta = -Utilities::getDigitCount(*((int32*)option->value));
-								break;
-						}
-
-						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x + xDelta, y, this->font);
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;				
 				}
 			}
 
-			if(__ABS(xDelta) > __ABS(this->xDelta))
+			if(__ABS(optionsLength) > __ABS(this->optionsLength))
 			{
-				this->xDelta = xDelta;
+				this->optionsLength = optionsLength;
 			}
 
 			y += fontData->fontSpec->fontSize.y * spacing;
@@ -543,8 +489,8 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 			}
 		}
 
-		OptionsSelector::printSelectorMark(this, this->leftMark, this->xDelta);
-		OptionsSelector::printSelectorMark(this, this->rightMark, -this->xDelta + (0 == __MODULO(this->xDelta, 2) ? 1 : 0));
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -554,7 +500,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
  * @private
  * @param mark	The character to use
  */
-void OptionsSelector::printSelectorMark(char* mark, int8 xDelta)
+void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 {
 	if(this->currentPage && NULL != mark)
 	{
@@ -568,10 +514,27 @@ void OptionsSelector::printSelectorMark(char* mark, int8 xDelta)
 		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;
 
+		switch(this->alignment)
+		{
+			case kOptionsAlignCenter:
+
+				if(0 < optionsLength)
+				{
+					int8 optionsLengthHelper = optionsLength;
+					optionsLength = optionsLength / 2 + (0 == __MODULO(__ABS(optionsLengthHelper), 2) ? 1 : 2);
+				}
+				else
+				{
+					optionsLength /= 2;
+				}
+
+				break;
+		}
+
 		Printing::text(
 			Printing::getInstance(),
 			mark,
-			this->x + optionColumn + xDelta,
+			this->x + optionColumn + optionsLength,
 			this->y + (optionRow * this->spacing * fontData->fontSpec->fontSize.y),
 			this->font
 		);
