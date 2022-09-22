@@ -256,6 +256,7 @@ typedef void (*PostProcessingEffect) (uint32, SpatialObject);
 singleton class VIPManager : ListenerObject
 {
 	VirtualList postProcessingEffects;
+	uint32 totalMilliseconds;
 	uint32 currentDrawingFrameBufferSet;
 	uint16 multiplexedGAMESTARTCounter;
 	uint16 multiplexedXPENDCounter;
@@ -304,6 +305,7 @@ singleton class VIPManager : ListenerObject
 	bool isDrawingAllowed();
 	bool hasFrameStartedDuringXPEND();
 	uint16 getGameFrameDuration();
+	void wait(uint32 milliSeconds);
 }
 
 

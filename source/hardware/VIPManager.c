@@ -111,6 +111,7 @@ void VIPManager::constructor()
 	this->multiplexedXPENDCounter = 0;
 	this->timeErrorCounter = 0;
 	this->scanErrorCounter = 0;
+	this->totalMilliseconds = 0;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 
@@ -143,6 +144,7 @@ void VIPManager::reset()
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
 	this->drawingEnded = false;
+	this->totalMilliseconds = 0;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 }
@@ -301,6 +303,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
+				this->totalMilliseconds += __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 				this->frameStartedDuringXPEND = this->processingXPEND;
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
@@ -856,4 +859,18 @@ void VIPManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->multiplexedGAMESTARTCounter, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Multi XPENDs:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->multiplexedXPENDCounter, x + 18, y, NULL);
+}
+
+void VIPManager::wait(uint32 milliSeconds)
+{
+	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
+	// making the last assignment invalid
+	volatile uint32 currentMilliseconds = this->totalMilliseconds;
+	uint32 waitStartTime = this->totalMilliseconds;
+	volatile uint32 *milliseconds = (uint32*)&this->totalMilliseconds;
+
+	while ((*milliseconds - waitStartTime) < milliSeconds)
+	{
+		HardwareManager::halt();
+	}
 }
