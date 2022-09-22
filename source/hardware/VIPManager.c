@@ -863,9 +863,6 @@ void VIPManager::print(int32 x, int32 y)
 
 void VIPManager::wait(uint32 milliSeconds)
 {
-	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
-	// making the last assignment invalid
-	volatile uint32 currentMilliseconds = this->totalMilliseconds;
 	uint32 waitStartTime = this->totalMilliseconds;
 	volatile uint32 *milliseconds = (uint32*)&this->totalMilliseconds;
 
