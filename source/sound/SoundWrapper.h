@@ -24,19 +24,23 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __SOUND_WRAPPER_STOP_SOUND 			0xA1
+#define __SOUND_WRAPPER_STOP_SOUND 											0xA1
 
-#define __MAXIMUM_VOLUME					0xF
-#define __MIDI_CONVERTER_FREQUENCY_US		20
-#define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US
+#define __MAXIMUM_VOLUME													0xF
+#define __MIDI_CONVERTER_FREQUENCY_US										20
+#define __SOUND_TARGET_US_PER_TICK											__MIDI_CONVERTER_FREQUENCY_US
 
-#define __SOUND_LR							0xFF
-#define __SOUND_L							0xF0
-#define __SOUND_R							0x0F
+#define __SOUND_LR															0xFF
+#define __SOUND_L															0xF0
+#define __SOUND_R															0x0F
 
-#define __MAXIMUM_MIDI_FREQUENCY			D_8
+#define __MAXIMUM_MIDI_FREQUENCY											D_8
 
-#define __SOUND_WRAPPER_FADE_DELAY			100
+#define __SOUND_WRAPPER_FADE_DELAY											100
+
+#define __SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz)				(1000000 / TargetHz - 66)
+#define __SOUND_TARGET_TIMER_US_PER_INTERRUPT(TargetHz)						(__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) + 20 * (int)((__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20) / 20.0f + 0.5f) - (__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20))
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
