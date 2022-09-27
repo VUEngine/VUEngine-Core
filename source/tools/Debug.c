@@ -575,11 +575,11 @@ void Debug::memoryStatusShowZeroPage(int32 increment __attribute__ ((unused)), i
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Game_getObjectSize, 					"Game"},
+		{&VUEngine_getObjectSize, 				"VUEngine"},
 		{&DirectDraw_getObjectSize, 			"DirectDraw"},
 		{&Error_getObjectSize, 					"Error"},
 		{&FrameRate_getObjectSize, 				"FrameRate"},
-		//{&I18n_getObjectSize, 					"I18n"},
+		//{&I18n_getObjectSize, 				"I18n"},
 		{&MemoryPool_getObjectSize, 			"MemoryPool"},
 		{&MessageDispatcher_getObjectSize, 		"MessageDispatcher"},
 		{&Printing_getObjectSize, 				"Printing"},

@@ -94,7 +94,7 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* le
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
 	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
-	this->leftMark = leftMark;
+	this->leftMark = NULL == leftMark ? __CHAR_SELECTOR_LEFT : leftMark;
 	this->rightMark = rightMark;
 	this->font = font;
 	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;

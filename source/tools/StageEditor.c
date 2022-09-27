@@ -110,7 +110,7 @@ void StageEditor::constructor()
 	this->userObjectSprite = NULL;
 	this->mode = kFirstMode + 1;
 	this->shape = NULL;
-	this->userObjectsSelector = new OptionsSelector(2, 12, NULL);
+	this->userObjectsSelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
 
 	VirtualList userObjects = new VirtualList();
 
@@ -1036,7 +1036,7 @@ void StageEditor::printUserObjects()
 	controlsYPos++;
 	Printing::text(Printing::getInstance(), "Accept  \x13", controlsXPos, controlsYPos++, NULL);
 
-	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4);
+	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
 /**
