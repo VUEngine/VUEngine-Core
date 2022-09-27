@@ -55,6 +55,7 @@ void PhysicalWorld::constructor()
 
 	this->frictionCoefficient = 0;
 	this->timeScale = __1I_FIXED;
+	this->dirty = false;
 
 	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
 	PhysicalWorld::setTimeScale(this, __1I_FIXED);
@@ -96,6 +97,24 @@ void PhysicalWorld::destructor()
  */
 Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
+	if(this->dirty)
+	{
+		for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
+		{
+			nextNode = node->next;
+
+			Body body = Body::safeCast(node->data);
+
+			if(body->destroy)
+			{
+				// place in the removed bodies list
+				VirtualList::removeNode(this->bodies, node);
+
+				delete body;
+			}
+		}
+	}
+
 	// if the entity is already registered
 	if(bodyAllocator)
 	{
@@ -125,6 +144,7 @@ void PhysicalWorld::destroyBody(Body body)
 	if(!isDeleted(body))
 	{
 		body->destroy = true;
+		this->dirty = true;
 	}
 }
 
@@ -192,6 +212,8 @@ void PhysicalWorld::update(Clock clock)
 	// TODO: time scale
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body::setCurrentGravity(&this->gravity);
+
+	this->dirty = false;
 
 	for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
 	{

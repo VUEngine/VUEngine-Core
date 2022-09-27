@@ -46,6 +46,7 @@ class CollisionManager : ListenerObject
 	uint32 collisions;
 	uint32 checkCycles;
 	bool checkShapesOutOfCameraRange;
+	bool dirty;
 
 	/// @publicsection
 	void constructor();

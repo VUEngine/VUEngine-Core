@@ -53,6 +53,7 @@ class PhysicalWorld : ListenerObject
 	// Time scale is handled here, not in the Body class
 	uint8 remainingSkipCycles;
 	uint8 skipCycles;
+	bool dirty;
 
 	/// @publicsection
 	void constructor();
