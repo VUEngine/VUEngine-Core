@@ -180,6 +180,8 @@ enum ShapeTypes
 /// @ingroup physics
 abstract class Shape : ListenerObject
 {
+	// the rectangle
+	RightBox rightBox;
 	// the entity to which the shape belongs
 	SpatialObject owner;
 	// colliding shapes list
@@ -204,8 +206,6 @@ abstract class Shape : ListenerObject
 	bool registerCollisions;
 	// flag to destroy it
 	bool destroyMe;
-	// the rectangle
-	RightBox rightBox;
 
 	/// @publicsection
 	void constructor(SpatialObject owner);
