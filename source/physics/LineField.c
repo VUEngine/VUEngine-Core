@@ -36,6 +36,7 @@ void LineField::constructor(SpatialObject owner)
 {
 	Base::constructor(owner);
 
+	this->lineSpec = NULL;
 	this->a = Vector3D::zero();
 	this->b = Vector3D::zero();
 	this->normal = Vector3D::zero();
@@ -45,6 +46,13 @@ void LineField::constructor(SpatialObject owner)
 // class's destructor
 void LineField::destructor()
 {
+	if(NULL != this->lineSpec)
+	{
+		delete this->lineSpec;
+	}
+
+	this->lineSpec = NULL;
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -252,12 +260,13 @@ Vector3D LineField::getPosition()
 // configure Polyhedron
 void LineField::configureWireframe()
 {
-	if(this->wireframe)
+	if(!isDeleted(this->wireframe))
 	{
 		return;
 	}
 
-	LineSpec lineSpec =
+	this->lineSpec = new LineSpec;
+	*this->lineSpec = (LineSpec)
 	{
 		{
 			__TYPE(Line),
@@ -274,11 +283,12 @@ void LineField::configureWireframe()
 
 		this->a,
 		this->b,
-		Vector3D::scalarProduct(this->normal, this->normalLength)
 	};
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Line(&lineSpec));
+	this->wireframe = Wireframe::safeCast(new Line(this->lineSpec));
+
+	Wireframe::setup(this->wireframe, SpatialObject::getPosition(this->owner), NULL, NULL);
 }
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])

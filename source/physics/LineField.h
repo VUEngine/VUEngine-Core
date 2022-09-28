@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
-#include <Polyhedron.h>
+#include <Line.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,6 +32,7 @@
 /// @ingroup physics
 class LineField : Shape
 {
+	LineSpec* lineSpec;
 	Vector3D normal;
 	Vector3D a;
 	Vector3D b;

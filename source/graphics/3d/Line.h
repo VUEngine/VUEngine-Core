@@ -30,7 +30,6 @@ typedef struct LineSpec
 
 	Vector3D a;
 	Vector3D b;
-	Vector3D normal;
 
 } LineSpec;
 
@@ -38,12 +37,12 @@ typedef struct LineSpec
 class Line : Wireframe
 {
 	// Vertices
-	Vector3D normal;
-	Vector3D a;
-	Vector3D b;
+	PixelVector a;
+	PixelVector b;
 
 	/// @publicsection
 	void constructor(LineSpec* lineSpec);
+	override void render();
 	override void draw();
 }
 
