@@ -178,16 +178,14 @@ int32 VirtualList::pushFront(const void* const data)
 void* VirtualList::popFront()
 {
 	// if head isn't null
-	if(this->head)
+	if(NULL != this->head)
 	{
 		VirtualNode node = this->head;
 		void* data = node->data;
 
-		if(node->next)
+		if(NULL != node->next)
 		{
 			this->head = node->next;
-
-			// move head's previous pointer
 			this->head->previous = NULL;
 		}
 		else
@@ -214,16 +212,14 @@ void* VirtualList::popFront()
 void* VirtualList::popBack()
 {
 	// if tail isn't null
-	if(this->tail)
+	if(NULL != this->tail)
 	{
 		VirtualNode node = this->tail;
 		void* data = node->data;
 
-		if(node->previous)
+		if(NULL != node->previous)
 		{
 			this->tail = node->previous;
-
-			// move head's previous pointer
 			this->tail->next = NULL;
 		}
 		else
