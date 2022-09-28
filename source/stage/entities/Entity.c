@@ -1012,9 +1012,6 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
 	Entity::initialTransform(childEntity, &environmentTransform, true);
 
-	// Make sure sprites are ready before calling ready
-	Entity::synchronizeGraphics(childEntity);
-
 	// make ready
 	Entity::ready(childEntity, true);
 

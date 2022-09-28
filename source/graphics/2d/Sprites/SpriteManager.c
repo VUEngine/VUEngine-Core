@@ -942,7 +942,6 @@ void SpriteManager::prepareAll()
 	{
 		// Restore drawing
 		HardwareManager::enableRendering(HardwareManager::getInstance());
-		while(VIPManager::isRenderingPending(VIPManager::getInstance()));
 	}
 }
 

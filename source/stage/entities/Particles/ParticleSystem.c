@@ -48,9 +48,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
 	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
-
 	this->particles = NULL;
-
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
@@ -574,11 +572,11 @@ void ParticleSystem::synchronizeGraphics()
 		return;
 	}
 
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
+
+		NM_ASSERT(!isDeleted(particle), "ParticleSystem::synchronizeGraphics: deleted particle");
 
 		if(particle->expired)
 		{

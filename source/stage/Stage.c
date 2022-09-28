@@ -561,7 +561,6 @@ void Stage::makeChildReady(Entity entity)
 
 	if(entity->parent == Container::safeCast(this))
 	{
-		Entity::synchronizeGraphics(entity);
 		Entity::ready(entity, true);
 	}
 }
@@ -1270,7 +1269,7 @@ void Stage::synchronizeGraphics()
 
 	if(this->uiContainer)
 	{
-		Container::synchronizeGraphics(this->uiContainer);
+		UIContainer::synchronizeGraphics(this->uiContainer);
 	}
 }
 

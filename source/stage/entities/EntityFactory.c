@@ -299,9 +299,6 @@ uint32 EntityFactory::makeReadyEntities()
 	{
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
-			// Maybe it is needed another list and phase for this
-			Entity::synchronizeGraphics(positionedEntityDescription->entity);
-
 			// Must add the child to its parent before making it ready
 			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
