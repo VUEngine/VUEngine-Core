@@ -393,12 +393,12 @@ bool SpriteManager::sortProgressively()
 		VirtualNode nextNode = node->next;
 
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL node's data cast");
+	//	NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL node's data cast");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+	//	NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
 
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
@@ -441,8 +441,17 @@ bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	NM_ASSERT(!VirtualList::find(this->sprites, sprite), "SpriteManager::registerSprite: sprite already registered");
 	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
+
+#ifndef __RELEASE
+	if(VirtualList::find(this->sprites, sprite))
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::clear(Printing::getInstance());
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(sprite), 1, 20, NULL);
+		NM_ASSERT(false, "SpriteManager::registerSprite: sprite already registered");
+	}
+#endif
 
 	if(!isDeleted(sprite))
 	{
