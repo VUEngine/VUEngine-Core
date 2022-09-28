@@ -1712,6 +1712,8 @@ bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
 	int32 y = spritePosition.y;
 	int32 z = spritePosition.z;
 
+	pad += __ABS(z);
+
 	// check x visibility
 	if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
 	{
