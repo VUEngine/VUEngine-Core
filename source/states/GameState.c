@@ -320,6 +320,8 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
+	HardwareManager::disableInterrupts();
+
 	do
 	{
 		// Make sure that the focus entity is transformed before focusing the camera
@@ -347,6 +349,8 @@ void GameState::streamAll()
 		}
 	}
 	while(true);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -354,6 +358,8 @@ void GameState::streamAll()
  */
 void GameState::streamOutAll()
 {
+	HardwareManager::disableInterrupts();
+
 	// Make sure that the focus entity is transformed before focusing the camera
 	GameState::transform(this);
 
@@ -369,6 +375,8 @@ void GameState::streamOutAll()
 	
 	// Remove out of range entities
 	Stage::streamAllOut(this->stage);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -465,6 +473,8 @@ uint32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
+	HardwareManager::disableInterrupts();
+
 	if(NULL == stageSpec)
 	{
 		extern StageROMSpec EmptyStageSpec;
@@ -510,6 +520,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
