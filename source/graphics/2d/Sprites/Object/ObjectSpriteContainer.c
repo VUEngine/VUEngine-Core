@@ -99,7 +99,10 @@ void ObjectSpriteContainer::destructor()
  */
 void ObjectSpriteContainer::registerWithManager()
 {
-	this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	if(!this->registered)
+	{
+		this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	}
 }
 
 /**
