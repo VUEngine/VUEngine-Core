@@ -145,22 +145,26 @@ int32 VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
-	// assign the node to the head of the list
-	newNode->next = this->head;
-
-	// set previous if list isn't empty
-	if(this->head)
-	{
-		this->head->previous = newNode;
-	}
-
-	// move the head
-	this->head = newNode;
+	ASSERT(data, "VirtualList::pushBack: null data");
 
 	// set the tail
-	if(!this->tail)
+	if(NULL == this->tail)
 	{
-		this->tail = this->head;
+		this->tail = this->head = newNode;
+	}
+	else
+	{
+		// link new node to the head
+		newNode->next = this->head;
+
+		// move the head
+		this->head = newNode;
+
+		// set previous if list isn't empty
+		if(NULL != this->head->next)
+		{
+			this->head->next->previous = newNode;
+		}
 	}
 
 	return true;
@@ -250,23 +254,23 @@ int32 VirtualList::pushBack(const void* const data)
 	ASSERT(data, "VirtualList::pushBack: null data");
 
 	// set the tail
-	if(!this->head)
+	if(NULL == this->head)
 	{
 		this->head = this->tail = newNode;
 	}
 	else
 	{
-		// set previous if list isn't empty
-		if(this->tail)
-		{
-			this->tail->next = newNode;
-		}
-
 		// link new node to the tail
 		newNode->previous = this->tail;
 
 		// move the tail
 		this->tail = newNode;
+
+		// set previous if list isn't empty
+		if(NULL != this->tail->previous)
+		{
+			this->tail->previous->next = newNode;
+		}
 	}
 
 	return true;
@@ -421,13 +425,13 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 	}
 	else
 	{
-		// if node isn't the last in the list
+		// if node is the last in the list
 		if(node == this->tail)
 		{
+			this->tail->previous->next = NULL;
+
 			// set the tail
 			this->tail = this->tail->previous;
-
-			this->tail->next = NULL;
 		}
 		else
 		{
