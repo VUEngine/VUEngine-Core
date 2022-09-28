@@ -29,7 +29,7 @@ typedef struct ParticleSystemSpec
 	/// it has an Entity at the beginning
 	EntitySpec entitySpec;
 
-	/// whether to delete or reuse expired particles
+	/// reuse expired particles?
 	uint8 recycleParticles;
 
 	/// minimum generation delay in milliseconds

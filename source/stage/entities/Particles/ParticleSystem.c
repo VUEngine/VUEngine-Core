@@ -165,9 +165,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 		}
 		else
 		{
-			VirtualNode node = this->particles->head;
-
-			for(; NULL != node; node = node->next)
+			for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 			{
 				delete node->data;
 			}
@@ -186,9 +184,7 @@ void ParticleSystem::setLoop(bool value)
 
 void ParticleSystem::deleteAllParticles()
 {
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -205,9 +201,7 @@ void ParticleSystem::expireAllParticles()
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -349,9 +343,7 @@ void ParticleSystem::update(uint32 elapsedTime)
  */
 bool ParticleSystem::recycleParticle()
 {
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -532,9 +524,7 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 
 void ParticleSystem::resetParticlesPositions()
 {
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -550,9 +540,7 @@ void ParticleSystem::resetParticlesPositions()
 
 void ParticleSystem::transformParticles()
 {
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -567,6 +555,8 @@ void ParticleSystem::transformParticles()
 
 void ParticleSystem::synchronizeGraphics()
 {
+	NM_ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
+
 	if(ParticleSystem::isPaused(this))
 	{
 		return;
@@ -607,9 +597,7 @@ void ParticleSystem::show()
 
 	Base::show(this);
 
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -631,9 +619,7 @@ void ParticleSystem::hide()
 
 	Base::hide(this);
 
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle::hide(Particle::safeCast(node->data));
 	}
@@ -641,10 +627,7 @@ void ParticleSystem::hide()
 
 void ParticleSystem::resume()
 {
-	// Must recover the particles first so their sprites are recreated
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
 
@@ -663,9 +646,7 @@ void ParticleSystem::suspend()
 
 	ParticleSystem::processExpiredParticles(this);
 
-	VirtualNode node = this->particles->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle::suspend(node->data);
 	}
