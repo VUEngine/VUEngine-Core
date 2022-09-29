@@ -67,13 +67,13 @@ void Shape::constructor(SpatialObject owner)
 	this->moved = false;
 	this->registerCollisions = true;
 
-	this->rightBox.x1 = __I_TO_FIX7_9(1);
-	this->rightBox.y1 = __I_TO_FIX7_9(1);
-	this->rightBox.z1 = __I_TO_FIX7_9(1);
+	this->rightBox.x0 = __I_TO_FIXED(-1);
+	this->rightBox.y0 = __I_TO_FIXED(-1);
+	this->rightBox.z0 = __I_TO_FIXED(-1);
 
-	this->rightBox.x0 = __I_TO_FIX7_9(-1);
-	this->rightBox.y0 = __I_TO_FIX7_9(-1);
-	this->rightBox.z0 = __I_TO_FIX7_9(-1);
+	this->rightBox.x1 = __I_TO_FIXED(1);
+	this->rightBox.y1 = __I_TO_FIXED(1);
+	this->rightBox.z1 = __I_TO_FIXED(1);
 }
 
 /**

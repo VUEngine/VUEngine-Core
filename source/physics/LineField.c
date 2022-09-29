@@ -60,7 +60,30 @@ void LineField::destructor()
 
 void LineField::position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
 {
-	if(size->x)
+	if(NULL == position || NULL == rotation || NULL == size || NULL == scale)
+	{
+		return;
+	}
+
+	fix7_9 normalScale = __I_TO_FIX7_9(1);
+	if(scale->x > normalScale)
+	{
+		normalScale = scale->x;
+	}
+
+	if(scale->y > normalScale)
+	{
+		normalScale = scale->y;
+	}
+
+	if(scale->z > normalScale)
+	{
+		normalScale = scale->z;
+	}
+
+	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
+	
+	if(0 != size->x)
 	{
 		this->a.x = size->x >> 1;
 		this->a.y = 0;
@@ -78,38 +101,8 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 			this->a.y = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
-
-		this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
-
-		this->a = Vector3D::sum(this->a, *position);
-		this->b = Vector3D::sum(this->b, *position);
-
-		fixed_t dx = this->b.x - this->a.x;
-		fixed_t dy = this->b.y - this->a.y;
-		fixed_t dz = this->b.z - this->a.z;
-
-		fix7_9 normalScale = __I_TO_FIX7_9(1);
-
-		if(scale->x > normalScale)
-		{
-			normalScale = scale->x;
-		}
-
-		if(scale->y > normalScale)
-		{
-			normalScale = scale->y;
-		}
-
-		if(scale->z > normalScale)
-		{
-			normalScale = scale->z;
-		}
-
-		this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));
-
-		this->normal = Vector3D::normalize((Vector3D){dy, -dx, dz});
 	}
-	else if(size->y)
+	else if(0 != size->y)
 	{
 		this->a.x = 0;
 		this->a.y = size->y >> 1;
@@ -127,10 +120,8 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 			this->a.y = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
 			this->a.z = 0;
 		}
-
-		this->normal = (Vector3D){__I_TO_FIXED(1), 0, 0};
 	}
-	else if(size->z)
+	else if(0 != size->z)
 	{
 		this->a.x = 0;
 		this->a.y = 0;
@@ -138,20 +129,36 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 
 		if(rotation->x)
 		{
-			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
-			this->a.y = 0;
-			this->a.z = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
-		}
-		else if(rotation->y)
-		{
 			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
 			this->a.y = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
 			this->a.z = 0;
 		}
-
-		this->normal = (Vector3D){0, __I_TO_FIXED(1), 0};
+		else if(rotation->y)
+		{
+			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
+			this->a.y = 0;
+			this->a.z = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
+		}
 	}
 
+	this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
+
+	this->a = Vector3D::sum(this->a, *position);
+	this->b = Vector3D::sum(this->b, *position);
+
+	fixed_t dx = this->b.x - this->a.x;
+	fixed_t dy = this->b.y - this->a.y;
+	fixed_t dz = this->b.z - this->a.z;
+
+	this->normal = Vector3D::normalize((Vector3D){dy, -dx, dz});
+
+	LineField::updateRightBox(this);
+
+	Base::position(this, position, rotation, scale, size);
+}
+
+void LineField::updateRightBox()
+{
 	if(this->a.x < this->b.x)
 	{
 		this->rightBox.x0 = this->a.x;
@@ -184,8 +191,6 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 		this->rightBox.z0 = this->b.z;
 		this->rightBox.z1 = this->a.z;
 	}
-
-	Base::position(this, position, rotation, scale, size);
 }
 
 void LineField::addDisplacement(fixed_t displacement)
@@ -193,39 +198,7 @@ void LineField::addDisplacement(fixed_t displacement)
 	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
 	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
 
-	if(this->a.x < this->b.x)
-	{
-		this->rightBox.x0 = this->a.x;
-		this->rightBox.x1 = this->b.x;
-	}
-	else
-	{
-		this->rightBox.x0 = this->b.x;
-		this->rightBox.x1 = this->a.x;
-	}
-
-	if(this->a.y < this->b.y)
-	{
-		this->rightBox.y0 = this->a.y;
-		this->rightBox.y1 = this->b.y;
-	}
-	else
-	{
-		this->rightBox.y0 = this->b.y;
-		this->rightBox.y1 = this->a.y;
-	}
-
-	if(this->a.z < this->b.z)
-	{
-		this->rightBox.z0 = this->a.z;
-		this->rightBox.z1 = this->b.z;
-	}
-	else
-	{
-		this->rightBox.z0 = this->b.z;
-		this->rightBox.z1 = this->a.z;
-	}
-
+	LineField::updateRightBox(this);
 }
 
 static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
