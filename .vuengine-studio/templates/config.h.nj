@@ -171,7 +171,6 @@
 // distance from player's eyes to the virtual screen
 #define __CAMERA_NEAR_PLANE											{% if engine.optics.cameraNearPlane %}{{ engine.optics.cameraNearPlane }}{% else %}0{% endif %}
 
-
 // distance between eyes
 #define __BASE_FACTOR												{{ engine.optics.baseFactor }}
 
