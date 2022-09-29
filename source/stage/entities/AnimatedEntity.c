@@ -316,7 +316,9 @@ bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((u
 	}
 	*/
 
-	return 	AnimatedEntity::playAnimation(this, string);
+	AnimatedEntity::playAnimation(this, string);
+	
+	return false;
 }
 
 

@@ -215,6 +215,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
+	HardwareManager::disableInterrupts();
+
 	if(!VUEngine::isExitingSpecialMode(VUEngine::getInstance()))
 	{
 		// Set camera to its previous position
@@ -246,6 +248,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	// unpause clock
 	Clock::pause(this->messagingClock, false);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -285,7 +289,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
  * @return			The result of the propagation of the message
  */
 int32 GameState::propagateMessage(int32 message)
-{
+{	
 	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, message);
 }
 

@@ -179,7 +179,7 @@ void Stage::destructor()
 		this->entityFactory = NULL;
 	}
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		delete this->uiContainer;
 		this->uiContainer = NULL;
@@ -400,7 +400,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// apply transformations
 	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
@@ -456,7 +456,7 @@ void Stage::setupUI()
 {
 	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		delete this->uiContainer;
 		this->uiContainer = NULL;
@@ -469,7 +469,7 @@ void Stage::setupUI()
 		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
-		if(this->uiContainer)
+		if(!isDeleted(this->uiContainer))
 		{
 			// apply transformations
 			Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
@@ -541,7 +541,10 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			
 			if(makeReady)
 			{
-				Stage::makeChildReady(this, entity);
+				if(entity->parent == Container::safeCast(this))
+				{
+					Entity::ready(entity, true);
+				}
 			}
 
 			Stage::alertOfLoadedEntity(this, entity);
@@ -551,18 +554,6 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 	}
 
 	return NULL;
-}
-
-// initialize child
-void Stage::makeChildReady(Entity entity)
-{
-	ASSERT(entity, "Stage::setChildReady: null entity");
-	ASSERT(entity->parent == Container::safeCast(this), "Stage::setChildReady: I'm not its parent");
-
-	if(entity->parent == Container::safeCast(this))
-	{
-		Entity::ready(entity, true);
-	}
 }
 
 void Stage::addEntityLoadingListener(ListenerObject context, EventListener callback)
@@ -877,7 +868,10 @@ void Stage::loadInitialEntities()
 
 					stageEntityDescription->internalId = Entity::getInternalId(entity);
 
-					Stage::makeChildReady(this, entity);
+					if(entity->parent == Container::safeCast(this))
+					{
+						Entity::ready(entity, true);
+					}
 				}
 			}
 		}
@@ -1244,7 +1238,7 @@ void Stage::update(uint32 elapsedTime)
 {
 	Base::update(this, elapsedTime);
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		Container::update(this->uiContainer, elapsedTime);
 	}
@@ -1257,7 +1251,7 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 {
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
 	}
@@ -1267,7 +1261,7 @@ void Stage::synchronizeGraphics()
 {
 	Base::synchronizeGraphics(this);
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		UIContainer::synchronizeGraphics(this->uiContainer);
 	}
@@ -1289,7 +1283,7 @@ void Stage::suspend()
 
 	Base::suspend(this);
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		Container::suspend(this->uiContainer);
 	}
@@ -1346,7 +1340,7 @@ void Stage::resume()
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
 
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		Container::resume(this->uiContainer);
 		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
@@ -1427,7 +1421,7 @@ void Stage::setupTimer()
 
 bool Stage::handlePropagatedMessage(int32 message)
 {
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		// propagate message to ui
 		return Container::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
@@ -1438,7 +1432,7 @@ bool Stage::handlePropagatedMessage(int32 message)
 
 bool Stage::handlePropagatedString(const char* string)
 {
-	if(this->uiContainer)
+	if(!isDeleted(this->uiContainer))
 	{
 		// propagate message to ui
 		return Container::propagateMessage(this->uiContainer, Container::onPropagatedString, string);
