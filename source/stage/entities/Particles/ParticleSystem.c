@@ -163,7 +163,7 @@ void ParticleSystem::reset(bool deleteParticlesImmeditely)
 		{
 			ParticleRemover::deleteParticles(particleRemover, this->particles);
 		}
-		else
+		else if(!isDeleted(this->particles))
 		{
 			for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 			{
@@ -184,16 +184,20 @@ void ParticleSystem::setLoop(bool value)
 
 void ParticleSystem::deleteAllParticles()
 {
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	if(!isDeleted(this->particles))
 	{
-		Particle particle = Particle::safeCast(node->data);
+		for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+		{
+			Particle particle = Particle::safeCast(node->data);
 
-		NM_ASSERT(!isDeleted(particle), "ParticleSystem::expireAllParticles: deleted particle");
+			NM_ASSERT(!isDeleted(particle), "ParticleSystem::expireAllParticles: deleted particle");
 
-		delete particle;
+			delete particle;
+		}
+
+		VirtualList::clear(this->particles);
 	}
 
-	VirtualList::clear(this->particles);
 	this->particleCount = 0;
 }
 
@@ -201,19 +205,22 @@ void ParticleSystem::expireAllParticles()
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	if(!isDeleted(this->particles))
 	{
-		Particle particle = Particle::safeCast(node->data);
-
-		if(particle->expired)
+		for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 		{
-			continue;
+			Particle particle = Particle::safeCast(node->data);
+
+			if(particle->expired)
+			{
+				continue;
+			}
+
+			Particle::expire(particle);
+			this->particleCount--;
+
+			NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 		}
-
-		Particle::expire(particle);
-		this->particleCount--;
-
-		NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 	}
 
 	ParticleSystem::processExpiredParticles(this);
@@ -261,6 +268,11 @@ void ParticleSystem::update(uint32 elapsedTime)
 	}
 
 	Base::update(this, elapsedTime);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
 
 	ParticleSystem::processExpiredParticles(this);
 
@@ -343,6 +355,11 @@ void ParticleSystem::update(uint32 elapsedTime)
  */
 bool ParticleSystem::recycleParticle()
 {
+	if(isDeleted(this->particles))
+	{
+		return false;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -524,6 +541,11 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 
 void ParticleSystem::resetParticlesPositions()
 {
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -540,6 +562,11 @@ void ParticleSystem::resetParticlesPositions()
 
 void ParticleSystem::transformParticles()
 {
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -557,7 +584,7 @@ void ParticleSystem::synchronizeGraphics()
 {
 	NM_ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
 
-	if(ParticleSystem::isPaused(this))
+	if(ParticleSystem::isPaused(this) || isDeleted(this->particles))
 	{
 		return;
 	}
@@ -597,6 +624,11 @@ void ParticleSystem::show()
 
 	Base::show(this);
 
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -619,6 +651,11 @@ void ParticleSystem::hide()
 
 	Base::hide(this);
 
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle::hide(Particle::safeCast(node->data));
@@ -627,6 +664,11 @@ void ParticleSystem::hide()
 
 void ParticleSystem::resume()
 {
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -645,6 +687,11 @@ void ParticleSystem::suspend()
 	Base::suspend(this);
 
 	ParticleSystem::processExpiredParticles(this);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
 
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
