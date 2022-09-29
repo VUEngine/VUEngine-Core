@@ -78,9 +78,7 @@ void AnimatedEntity::setupListeners()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 		AnimationController animationController = Sprite::getAnimationController(sprite);
@@ -116,17 +114,15 @@ void AnimatedEntity::update(uint32 elapsedTime)
 // update animations
 void AnimatedEntity::animate()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	bool stillPlaying = false;
 
 	// move each child to a temporary list
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		// first animate the frame
 		stillPlaying |= Sprite::updateAnimation(node->data);
@@ -140,15 +136,13 @@ void AnimatedEntity::pauseAnimation(bool pause)
 {
 	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::pause(node->data, pause);
 	}
@@ -159,29 +153,29 @@ void AnimatedEntity::pauseAnimation(bool pause)
 // play an animation
 bool AnimatedEntity::playAnimation(const char* animationName)
 {
-	if(!this->sprites | !animationName)
+	if(NULL == this->sprites || NULL == animationName)
 	{
 		return false;
 	}
-
-	this->update = true;
-
-	this->currentAnimationName = animationName;
-
-	VirtualNode node = this->sprites->head;
 
 	ListenerObject scope = ListenerObject::safeCast(this);
 
 	bool result = false;
 
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		if(Sprite::play(node->data, this->animationDescription, animationName, scope))
 		{
 			result = true;
 			scope = NULL;
 		}
+	}
+
+	if(result)
+	{
+		this->update = true;
+		this->currentAnimationName = animationName;
 	}
 
 	return result;
@@ -197,10 +191,8 @@ void AnimatedEntity::stopAnimation()
 
 	this->currentAnimationName = NULL;
 
-	VirtualNode node = this->sprites->head;
-
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::stop(node->data);
 	}
@@ -214,10 +206,8 @@ void AnimatedEntity::nextFrame()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// do on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::nextFrame(node->data);
 	}
@@ -231,10 +221,8 @@ void AnimatedEntity::previousFrame()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// do on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::previousFrame(node->data);
 	}
@@ -274,8 +262,7 @@ void AnimatedEntity::setActualFrame(int16 frame)
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		Sprite::setActualFrame(node->data, frame);
 	}
@@ -329,8 +316,7 @@ int16 AnimatedEntity::getActualFrame()
 		return -1;
 	}
 
-	VirtualNode node = this->sprites->head;
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		return Sprite::getActualFrame(node->data);
 	}
@@ -345,9 +331,7 @@ int32 AnimatedEntity::getNumberOfFrames()
 		return -1;
 	}
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		AnimationController animationController = Sprite::getAnimationController(node->data);
 		return AnimationController::getNumberOfFrames(animationController);

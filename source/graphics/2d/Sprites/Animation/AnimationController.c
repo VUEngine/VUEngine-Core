@@ -348,8 +348,8 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
  */
 bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
 {
-	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
-	ASSERT(functionName, "AnimationController::play: null functionName");
+	ASSERT(NULL != animationDescription, "AnimationController::play: null animationDescription");
+	ASSERT(NULL != functionName, "AnimationController::play: null functionName");
 
 	if(this->animationCoordinator)
 	{
@@ -359,7 +359,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		}
 	}
 
-	if(NULL == this->animationFunction || strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		int32 i = 0;
 
@@ -367,7 +367,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		for(; animationDescription->animationFunctions[i]; i++ )
 		{
 			// compare function's names
-			if(!strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+			if(0 == strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
 				// remove previous listeners
 				if(this->animationFunction && this->animationFunction->onAnimationComplete)
@@ -382,7 +382,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 		}
 	}
 
-	if(NULL == this->animationFunction)
+	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		return false;
 	}

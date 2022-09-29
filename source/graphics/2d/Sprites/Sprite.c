@@ -721,8 +721,8 @@ void Sprite::pause(bool pause)
  */
 bool Sprite::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
 {
-	ASSERT(animationDescription, "Sprite::play: null animationDescription");
-	ASSERT(functionName, "Sprite::play: null functionName");
+	ASSERT(NULL != animationDescription, "Sprite::play: null animationDescription");
+	ASSERT(NULL != functionName, "Sprite::play: null functionName");
 
 	bool playBackStarted = false;
 
