@@ -53,14 +53,12 @@ AnimationFunctionROMSpec {{ entityName }}{{ animation.name | toUpperSnakeCase }}
 
 {% endfor -%}
 
-AnimationDescriptionROMSpec {{ entityName }}Animations =
+AnimationFunctionROMSpec* const {{ entityName }}Animations =
 {
-	{
-		{% for animation in entity.animations.definitions -%}
-			(AnimationFunction*)&{{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation,
-		{% endfor -%}
-		NULL
-	}
+	{% for animation in entity.animations.definitions -%}
+		(AnimationFunction*){{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation,
+	{% endfor -%}
+	NULL
 };
 {% endif %}
 
@@ -235,7 +233,7 @@ BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
 		},
 
 		// pointer to the animation spec for the item
-		(AnimationDescription*)&{{ entityName }}Animations,
+		{{ entityName }}Animations,
 
 		// initial animation
 		"{{ entity.animations.default }}",

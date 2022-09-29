@@ -49,8 +49,8 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->previousZ = 0;
 	this->expired = false;
 
-	Particle::addSprite(this, spriteSpec, particleSpec->animationDescription, particleSpec->initialAnimation);
-	Particle::addWireframe(this, wireframeSpec, particleSpec->animationDescription, particleSpec->initialAnimation);
+	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
+	Particle::addWireframe(this, wireframeSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
 }
 
 /**
@@ -80,16 +80,16 @@ void Particle::destructor()
  *
  * @private
  */
-void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName)
+void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(NULL != spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
 		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
 
-		if(animationName && animationDescription)
+		if(animationName && animationFunctions)
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName, ListenerObject::safeCast(this));
+			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
 		}
 		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
@@ -102,7 +102,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationDescriptio
  *
  * @private
  */
-void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription __attribute__((unused)), const char* animationName __attribute__((unused)))
+void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions __attribute__((unused)), const char* animationName __attribute__((unused)))
 {
 	if(NULL != wireframeSpec)
 	{
@@ -119,13 +119,13 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationD
  *
  * @param animationName		Char*
  */
-void Particle::changeAnimation(const AnimationDescription* animationDescription, const char* animationName, bool force)
+void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName, bool force)
 {
 	if(!isDeleted(this->sprite) && animationName)
 	{
-		if(force || !Sprite::replay(this->sprite, animationDescription))
+		if(force || !Sprite::replay(this->sprite, animationFunctions))
 		{
-			Sprite::play(this->sprite, animationDescription, (char*)animationName, ListenerObject::safeCast(this));
+			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
 		}
 	}
 }
@@ -305,10 +305,10 @@ void Particle::transform()
 /**
  * Resume
  */
-void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationDescription* animationDescription, const char* animationName)
+void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	Particle::addSprite(this, spriteSpec, animationDescription, animationName);
-	Particle::addWireframe(this, wireframeSpec, animationDescription, animationName);
+	Particle::addSprite(this, spriteSpec, animationFunctions, animationName);
+	Particle::addWireframe(this, wireframeSpec, animationFunctions, animationName);
 
 	// Force parallax computation
 	this->previousZ = 0;
@@ -344,10 +344,10 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation)
+void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
 	Particle::reset(this);
-	Particle::changeAnimation(this, animationDescription, animationName, forceAnimation);
+	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
 	Particle::changeMass(this);
 	Particle::setPosition(this, position);

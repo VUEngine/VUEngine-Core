@@ -159,9 +159,6 @@
 // Maximum number of frames per animation function
 #define __MAX_FRAMES_PER_ANIMATION_FUNCTION		16
 
-// Maximum number of animation functions per description
-#define __MAX_ANIMATION_FUNCTIONS				32
-
 
 //---------------------------------------------------------------------------------------------------------
 //												MEMORY POOL

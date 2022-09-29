@@ -38,7 +38,7 @@ class AnimationCoordinator : ListenerObject
 	/// @publicsection
 	void constructor(const CharSetSpec* charSetSpec, ListenerObject scope);
 	const CharSetSpec* getCharSetSpec();
-	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
+	bool playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* functionName);
 	void addAnimationController(AnimationController animationController);
 	void removeAnimationController(AnimationController animationController);
 }

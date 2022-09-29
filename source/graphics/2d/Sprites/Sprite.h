@@ -107,25 +107,6 @@ typedef struct AnimationFunction
  */
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
-/**
- * An animation spec
- *
- * @memberof	Sprite
- */
-typedef struct AnimationDescription
-{
-	/// animation functions
-	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
-
-} AnimationDescription;
-
-/**
- * An AnimationDescription that is stored in ROM
- *
- * @memberof	Sprite
- */
-typedef const AnimationDescription AnimationDescriptionROMSpec;
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -200,9 +181,9 @@ abstract class Sprite : ListenerObject
 	bool isPlayingFunction(char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope);
+	bool play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope);
 	void stop();
-	bool replay(const AnimationDescription* animationDescription);
+	bool replay(const AnimationFunction** animationFunctions);
 	void previousFrame();
 	void setActualFrame(int16 actualFrame);
 	void setFrameCycleDecrement(uint8 frameDelayDelta);

@@ -46,7 +46,7 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
 	// save ROM spec
-	this->animationDescription = animatedEntitySpec->animationDescription;
+	this->animationFunctions = animatedEntitySpec->animationFunctions;
 
 	this->currentAnimationName = NULL;
 }
@@ -165,7 +165,7 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 	// play animation on each sprite
 	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
-		if(Sprite::play(node->data, this->animationDescription, animationName, scope))
+		if(Sprite::play(node->data, this->animationFunctions, animationName, scope))
 		{
 			result = true;
 			scope = NULL;
@@ -250,9 +250,9 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 }
 
 // get animation spec
-AnimationDescription* AnimatedEntity::getAnimationDescription()
+const AnimationFunction** AnimatedEntity::getAnimationFunctions()
 {
-	return this->animationDescription;
+	return this->animationFunctions;
 }
 
 void AnimatedEntity::setActualFrame(int16 frame)
@@ -269,9 +269,9 @@ void AnimatedEntity::setActualFrame(int16 frame)
 }
 
 // set animation description
-void AnimatedEntity::setAnimationDescription(AnimationDescription* animationDescription)
+void AnimatedEntity::setAnimationFunction(const AnimationFunction** animationFunctions)
 {
-	this->animationDescription = animationDescription;
+	this->animationFunctions = animationFunctions;
 
 	AnimatedEntity::stopAnimation(this);
 }

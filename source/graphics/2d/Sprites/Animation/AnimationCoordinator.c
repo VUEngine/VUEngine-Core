@@ -63,7 +63,7 @@ const CharSetSpec* AnimationCoordinator::getCharSetSpec()
 }
 
 
-bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* functionName)
 {
 	if(this->animationControllers->head)
 	{
@@ -78,7 +78,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(functionName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
-			AnimationController::play(firstAnimationController, animationDescription, functionName, this->scope);
+			AnimationController::play(firstAnimationController, animationFunctions, functionName, this->scope);
 		}
 
 		return false;

@@ -716,19 +716,19 @@ void Sprite::pause(bool pause)
 /**
  * Play a given animation
  *
- * @param animationDescription	AnimationDescription
+ * @param animationFunctions	AnimationFunction*
  * @param functionName			Name of animation function to play
  */
-bool Sprite::play(const AnimationDescription* animationDescription, const char* functionName, ListenerObject scope)
+bool Sprite::play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope)
 {
-	ASSERT(NULL != animationDescription, "Sprite::play: null animationDescription");
+	ASSERT(NULL != animationFunctions, "Sprite::play: null animationFunctions");
 	ASSERT(NULL != functionName, "Sprite::play: null functionName");
 
 	bool playBackStarted = false;
 
 	if(!isDeleted(this->animationController))
 	{
-		playBackStarted = AnimationController::play(this->animationController, animationDescription, functionName, scope);
+		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
 		this->writeAnimationFrame |= playBackStarted;
 	}
 
@@ -750,13 +750,13 @@ void Sprite::stop()
 /**
  * Replay the last animation
  *
- * @param animationDescription	AnimationDescription
+ * @param animationFunctions	AnimationFunction
  */
-bool Sprite::replay(const AnimationDescription* animationDescription)
+bool Sprite::replay(const AnimationFunction** animationFunctions)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationDescription);
+		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationFunctions);
 
 		return this->writeAnimationFrame;
 	}

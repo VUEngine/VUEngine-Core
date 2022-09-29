@@ -225,9 +225,6 @@
 // maximum number of frames per animation function
 #define __MAX_FRAMES_PER_ANIMATION_FUNCTION							{{ engine.animation.maxFramesPerAnimationFunction }}
 
-// maximum number of animation functions per description
-#define __MAX_ANIMATION_FUNCTIONS									{{ engine.animation.maxAnimationFunctions }}
-
 
 {{ macros.sectionHeader('Memory pool') }}
 

@@ -36,8 +36,8 @@ typedef struct AnimatedEntitySpec
 	// it has an Entity at the beginning
 	EntitySpec entitySpec;
 
-	// the animation
-	AnimationDescription* animationDescription;
+	// the animations
+	const AnimationFunction** animationFunctions;
 
 	// animation to play automatically
 	char* initialAnimation;
@@ -55,13 +55,13 @@ typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 class AnimatedEntity : Entity
 {
 	// Pointer to the animation description
-	AnimationDescription* animationDescription;
+	const AnimationFunction** animationFunctions;
 	// need to save for pausing
 	const char* currentAnimationName;
 
 	/// @publicsection
 	void constructor(AnimatedEntitySpec* animatedEntitySpec, int16 internalId, const char* const name);
-	AnimationDescription* getAnimationDescription();
+	const AnimationFunction** getAnimationFunctions();
 	int16 getActualFrame();
 	int32 getNumberOfFrames();
 	bool isAnimationLoaded(char* functionName);
@@ -71,7 +71,7 @@ class AnimatedEntity : Entity
 	bool playAnimation(const char* animationName);
 	void previousFrame();
 	void setActualFrame(int16 frame);
-	void setAnimationDescription(AnimationDescription* animationDescription);
+	void setAnimationFunction(const AnimationFunction** animationFunctions);
 	void onAnimationCompleteHide(ListenerObject eventFirer);
 	void animate();
 	override void ready(bool recursive);

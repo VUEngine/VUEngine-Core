@@ -428,10 +428,10 @@ void AnimationInspector::removePreviousSprite()
  */
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
 	int32 animationsCount = 0;
-	for(; this->animationDescription->animationFunctions[animationsCount]; animationsCount++);
+	for(; this->animationFunctions[animationsCount]; animationsCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -711,9 +711,9 @@ void AnimationInspector::printAnimationConfig()
  */
 void AnimationInspector::loadAnimationFunction()
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
-	AnimationFunction* animationFunction = this->animationDescription->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
+	AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
 
 	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
@@ -812,9 +812,9 @@ void AnimationInspector::createSpriteSelector()
  */
 void AnimationInspector::createAnimationsSelector()
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
-	if(this->animationDescription)
+	if(this->animationFunctions)
 	{
 		if(this->animationsSelector)
 		{
@@ -826,10 +826,10 @@ void AnimationInspector::createAnimationsSelector()
 		VirtualList animationsNames = new VirtualList();
 
 		int32 i = 0;
-		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
+		for(i = 0; this->animationFunctions[i]; i++)
 		{
 			Option* option = new Option;
-			option->value = this->animationDescription->animationFunctions[i]->name;
+			option->value = this->animationFunctions[i]->name;
 			option->type = kString;
 			VirtualList::pushBack(animationsNames, option);
 		}
