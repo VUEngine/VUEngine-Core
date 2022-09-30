@@ -641,8 +641,12 @@ static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_e
 
 	if(0 < channel->ticksPerNote)
 	{
-		fix7_9_ext effectiveTicksPerNote = __FIX7_9_EXT_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
-		channel->tickStep = __FIX7_9_EXT_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+		channel->tickStep = __FIX7_9_EXT_DIV(channel->ticksPerNote, __FIX7_9_EXT_MULT(targetTimerResolutionFactor, channel->ticksPerNote));
+
+		if(0 > channel->tickStep)
+		{
+			channel->tickStep = __I_TO_FIX7_9_EXT(1);
+		}
 	}
 	else
 	{
