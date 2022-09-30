@@ -387,8 +387,6 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 	uint32 pool = __MEMORY_POOLS;
 
-	HardwareManager::suspendInterrupts();
-
 	while(pool--)
 	{
 		uint32 blockSize = this->poolSizes[pool][eBlockSize];
@@ -412,11 +410,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
 				{
+					HardwareManager::suspendInterrupts();
 					poolLocation = poolLocationRight;
 					break;
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
 				{
+					HardwareManager::suspendInterrupts();
 					poolLocation = poolLocationEnd;
 					break;
 				}
@@ -429,11 +429,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
 				{
+					HardwareManager::suspendInterrupts();
 					poolLocation = poolLocationLeft;
 					break;
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
 				{
+					HardwareManager::suspendInterrupts();
 					poolLocation = poolLocationStart;
 					break;
 				}
