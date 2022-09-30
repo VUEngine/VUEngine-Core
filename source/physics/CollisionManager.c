@@ -174,22 +174,27 @@ uint32 CollisionManager::update(Clock clock)
 			extern const Rotation* _cameraInvertedRotation;
 			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
 			RightBox rightBox = Shape::getSurroundingRightBox(shape);
-			int16 pad = __ABS(PixelVector::getFromVector3D(relativePosition, 0).z);
+			PixelVector position = PixelVector::getFromVector3D(relativePosition, 0);
+			int16 pad = __ABS(position.z);
+
+			int16 sizeX = __METERS_TO_PIXELS(__ABS(rightBox.x1 - rightBox.x0)) >> 1;
+			int16 sizeY = __METERS_TO_PIXELS(__ABS(rightBox.y1 - rightBox.y0)) >> 1;
+			int16 sizeZ = __METERS_TO_PIXELS(__ABS(rightBox.z1 - rightBox.z0)) >> 1;
 
 			// check x visibility
-			if(__FIXED_TO_I(rightBox.x1) < _cameraFrustum->x0 - pad || __FIXED_TO_I(rightBox.x0) > _cameraFrustum->x1 + pad)
+			if(position.x + sizeX < _cameraFrustum->x0 - pad || position.x - sizeX > _cameraFrustum->x1 + pad)
 			{
 				shape->isVisible = false;
 				continue;
 			}
 
-			if(__FIXED_TO_I(rightBox.y1) < _cameraFrustum->y0 - pad || __FIXED_TO_I(rightBox.y0) > _cameraFrustum->y1 + pad)
+			if(position.y + sizeY < _cameraFrustum->y0 - pad || position.y - sizeY > _cameraFrustum->y1 + pad)
 			{
 				shape->isVisible = false;
 				continue;
 			}
 
-			if(__FIXED_TO_I(rightBox.z1) < _cameraFrustum->z0 || __FIXED_TO_I(rightBox.z0) > _cameraFrustum->z1)
+			if(position.z + sizeZ < _cameraFrustum->z0 || position.z - sizeZ > _cameraFrustum->z1)
 			{
 				shape->isVisible = false;
 				continue;
