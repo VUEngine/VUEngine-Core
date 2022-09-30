@@ -8,7 +8,42 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern uint32 {{ item.tiles }}[];
+const uint32 {{ item.name }}FontTiles[{{ 1 + item.characterCount * 4 }}] __attribute__((aligned(4)))
+{%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
+{
+	0x00000000,
+	{% set block = '' -%}
+	{%- set blocksThisLine = 0 -%}
+	{%- set currentByte = '' -%}
+
+	{%- for character in item.characters -%}
+		{%- if loop.index0 >= item.offset and loop.index0 < (item.offset + item.characterCount) -%}
+			{%- for line in character -%}
+				{%- for pixel in line -%}
+
+					{%- set currentByte = [pixel | intToBin(2), currentByte] | join -%}
+
+					{%- if currentByte | length === 4 -%}
+						{%- set block = [currentByte | binToHex, block] | join -%}
+						{%- set currentByte = '' -%}
+					{%- endif -%}
+
+					{%- if block | length === 8 -%}
+						0x{{ block }},
+						{%- set block = '' -%}
+						{%- set blocksThisLine = blocksThisLine + 1 -%}
+					{%- endif -%}
+
+					{%- if blocksThisLine ===  8 and not loop.last -%}
+						{{- "\n    " -}}
+						{%- set blocksThisLine = 0 -%}
+					{%- endif -%}
+
+				{%- endfor -%}
+			{%- endfor -%}
+		{%- endif -%}
+	{%- endfor %}
+}
 
 
 {{ macros.sectionHeader('Definitions') }}
@@ -22,7 +57,7 @@ CharSetROMSpec {{ item.name }}FontCharSet =
 	__NOT_ANIMATED,
 
 	// char spec
-	{{ item.tiles }},
+	{{ item.name }}FontTiles,
 
 	// pointer to the frames offsets
 	NULL,
@@ -40,7 +75,7 @@ FontROMSpec {{ item.name }}Font =
 	{{ item.characterCount }},
 
 	// number of characters per line in charset
-	{{ item.charactersPerLine }},
+	16,
 
 	// size of a single character (in chars) ({width, height})
 	{{ "{" }}{{ item.size.x }}, {{ item.size.y }}{{ "}" }},

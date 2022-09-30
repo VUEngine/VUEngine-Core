@@ -1833,12 +1833,12 @@
     },
     "templates": {
         "BrightnessRepeatSpec.c": {
-            "target": "assets/BrightnessRepeat/${name}BrightnessRepeatSpec.c",
+            "target": "assets/BrightnessRepeat/${_id}.c",
             "template": "templates/BrightnessRepeatSpec.c.nj",
             "itemSpecific": "BrightnessRepeat"
         },
         "ColumnTableSpec.c": {
-            "target": "assets/ColumnTable/${name}ColumnTableSpec.c",
+            "target": "assets/ColumnTable/${_id}.c",
             "template": "templates/ColumnTableSpec.c.nj",
             "itemSpecific": "ColumnTable"
         },
@@ -1886,7 +1886,7 @@
             ]
         },
         "FontSpec.c": {
-            "target": "assets/Font/${name}FontSpec.c",
+            "target": "assets/Font/${_id}.c",
             "template": "templates/FontSpec.c.nj",
             "itemSpecific": "Font"
         },
@@ -1899,7 +1899,7 @@
             "template": "templates/romHeader.h.nj"
         },
         "RumbleEffectSpec.c": {
-            "target": "assets/RumbleEffect/${name}RumbleEffectSpec.c",
+            "target": "assets/RumbleEffect/${_id}.c",
             "template": "templates/RumbleEffectSpec.c.nj",
             "itemSpecific": "RumbleEffect"
         },
@@ -1933,7 +1933,7 @@
             ]
         },
         "WaveFormSpec.c": {
-            "target": "assets/WaveForm/${name}c.c",
+            "target": "assets/WaveForm/${_id}.c",
             "template": "templates/WaveForm.c.nj",
             "itemSpecific": "WaveForm"
         }
@@ -1948,7 +1948,9 @@
                     }
                 }
             },
-            "icon": "fa fa-hand-paper-o dark-purple"
+            "icon": "fa fa-hand-paper-o",
+			"category": "Logic"
+
         },
         "BrightnessRepeats": {
             "schema": {
@@ -1959,7 +1961,8 @@
                     }
                 }
             },
-            "icon": "fa fa-sun-o light-yellow"
+            "icon": "fa fa-sun-o",
+			"category": "Logic"
         },
         "BrightnessRepeat": {
             "schema": {
@@ -2006,7 +2009,8 @@
                     }
                 }
             },
-            "icon": "fa fa-table medium-cyan"
+            "icon": "fa fa-table",
+			"category": "Logic"
         },
         "ColumnTable": {
             "schema": {
@@ -2130,7 +2134,8 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-cogs medium-green",
+            "icon": "fa fa-cogs",
+			"category": "Configuration",
             "templates": [
                 "config.make",
                 "vb_release.ld",
@@ -2503,7 +2508,8 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-bug light-red",
+            "icon": "fa fa-bug",
+			"category": "Configuration",
             "templates": [
                 "debugConfig.h"
             ]
@@ -2520,7 +2526,8 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-sliders medium-purple",
+            "icon": "fa fa-sliders",
+			"category": "Configuration",
             "templates": [
                 "config.h"
             ]
@@ -3366,7 +3373,8 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-bullhorn light-green",
+            "icon": "fa fa-bullhorn",
+			"category": "Logic",
             "templates": [
                 "GameEvents.h"
             ]
@@ -3380,7 +3388,8 @@
                     }
                 }
             },
-            "icon": "fa fa-id-card-o dark-cyan"
+            "icon": "fa fa-id-card-o",
+			"category": "Assets"
         },
         "Entity": {
             "schema": {
@@ -4263,7 +4272,8 @@
                     }
                 }
             },
-            "icon": "fa fa-font medium-red"
+            "icon": "fa fa-font",
+			"category": "Assets"
         },
         "Font": {
             "schema": {
@@ -4275,56 +4285,101 @@
                     "name": {
                         "type": "string"
                     },
-                    "tiles": {
-                        "type": "string"
-                    },
-                    "type": {
+					"offset": {
+						"type": "integer",
+						"default": 0,
+						"minimum": 0,
+						"maximum": 255
+					},
+					"characterCount": {
+						"type": "integer",
+						"default": 256,
+						"minimum": 1,
+						"maximum": 256
+					},
+					"size": {
+						"type": "object",
+						"properties": {
+							"x": {
+								"type": "integer",
+								"default": 1,
+								"minimum": 1,
+								"maximum": 4
+							},
+							"y": {
+								"type": "integer",
+								"default": 1,
+								"minimum": 1,
+								"maximum": 4
+							}
+						}
+					},
+					"variableSize": {
+						"type": "object",
+						"properties": {
+							"enabled": {
+								"type": "boolean",
+								"default": false
+							},
+							"x": {
+								"type": "array",
+								"items": {
+									"type": "integer",
+									"default": 8,
+									"minimum": 1,
+									"maximum": 32
+								}
+							},
+							"y": {
+								"type": "integer",
+								"default": 8,
+								"minimum": 1,
+								"maximum": 32
+							}
+						}
+					},
+                    "section": {
                         "type": "string",
                         "oneOf": [
                             {
-                                "const": "bgmap",
-                                "title": "Bgmap"
+                                "const": "rom",
+                                "title": "ROM Space"
                             },
                             {
-                                "const": "object",
-                                "title": "Object"
+                                "const": "exp",
+                                "title": "Expansion Space"
                             }
                         ],
-                        "default": "bgmap"
+                        "default": "rom"
                     },
-                    "offset": {
-                        "type": "integer",
-                        "default": 0,
-                        "minimum": 0
-                    },
-                    "characterCount": {
-                        "type": "integer",
-                        "default": 256,
-                        "minimum": 0
-                    },
-                    "charactersPerLine": {
-                        "type": "integer",
-                        "default": 16,
-                        "minimum": 0
-                    },
-                    "size": {
-                        "type": "object",
-                        "properties": {
-                            "x": {
-                                "type": "integer",
-                                "default": 1,
-                                "minimum": 1
-                            },
-                            "y": {
-                                "type": "integer",
-                                "default": 1,
-                                "minimum": 1
-                            }
-                        }
-                    }
+					"characters": {
+						"type": "array",
+						"minItems": 256,
+						"maxItems": 256,
+						"items": {
+							"type": "array",
+							"minItems": 8,
+							"maxItems": 32,
+							"items": {
+								"type": "array",
+								"minItems": 8,
+								"maxItems": 32,
+								"items": {
+									"type": "integer",
+									"default": 0,
+									"minimum": 0,
+									"maximum": 3
+								}
+							}
+						}
+					}
                 },
                 "required": [],
                 "additionalProperties": false
+            },
+            "uiSchema": {
+				"type": "Control",
+				"scope": "FontEditor"
             },
             "parent": {
                 "typeId": "Fonts",
@@ -4346,7 +4401,8 @@
                     }
                 }
             },
-            "icon": "fa fa-image medium-yellow"
+            "icon": "fa fa-image",
+			"category": "Assets"
         },
         "Image": {
             "schema": {
@@ -4648,7 +4704,8 @@
                 "additionalProperties": false
             },
             "leaf": true,
-            "icon": "fa fa-commenting-o"
+            "icon": "fa fa-commenting-o",
+			"category": "Logic"
         },
         "Project": {
             "schema": {
@@ -4694,7 +4751,8 @@
                 ]
             },
             "leaf": true,
-            "icon": "fa fa-cog medium-pink"
+            "icon": "fa fa-cog",
+			"category": "Configuration"
         },
         "RomHeader": {
             "schema": {
@@ -4810,7 +4868,8 @@
                 ]
             },
             "leaf": true,
-            "icon": "fa fa-microchip medium-green",
+            "icon": "fa fa-microchip",
+			"category": "Configuration",
             "templates": [
                 "romHeader.h"
             ]
@@ -4824,7 +4883,8 @@
                     }
                 }
             },
-            "icon": "codicon codicon-screen-full codicon-rotate-90 light-maroon"
+            "icon": "codicon codicon-screen-full codicon-rotate-90",
+			"category": "Effects"
         },
         "RumbleEffect": {
             "schema": {
@@ -4894,16 +4954,208 @@
                 "RumbleEffects.h"
             ]
         },
-        "Sounds": {
+        "Sound": {
             "schema": {
-                "title": "Sound & Music",
+                "title": "Music",
                 "properties": {
                     "typeId": {
-                        "const": "Sounds"
+                        "const": "Sound"
                     }
                 }
             },
-            "icon": "fa fa-music dark-red"
+            "icon": "fa fa-music",
+			"category": "Assets"
+        },
+        "Song": {
+            "schema": {
+                "title": "Song",
+                "properties": {
+                    "typeId": {
+                        "const": "Song"
+                    },
+                    "name": {
+                        "type": "string",
+						"default": "New"
+                    },
+                    "channels": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+									"default": 0
+                                },
+                                "instrument": {
+                                    "type": "integer",
+									"default": 0
+                                },
+								"sequence": {
+									"type": "array",
+									"items": {
+										"type": "integer",
+										"default": 0
+									}
+								},
+								"patterns": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"size": {
+												"type": "integer",
+												"default": 32
+											},
+											"notes": {
+												"type": "array",
+												"items": {
+													"type": "integer"
+												}
+											},
+											"volumeL": {
+												"type": "array",
+												"items": {
+													"type": "integer"
+												}
+											},
+											"volumeR": {
+												"type": "array",
+												"items": {
+													"type": "integer"
+												}
+											},
+											"effects": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											}
+										}
+									}
+								},
+								"volume": {
+									"type": "integer",
+									"default": 100
+								},
+                                "muted": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "solo": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "collapsed": {
+                                    "type": "boolean",
+                                    "default": false
+                                }
+                            }
+                        },
+						"default": [{
+							"id": 0,
+							"instrument": 0,
+							"sequence": [0],
+							"patterns": [{
+								"size": 32,
+								"notes": [],
+								"volumeL": [],
+								"volumeR": [],
+								"effects": []
+							}],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}, {
+							"id": 1,
+							"instrument": 0,
+							"sequence": [],
+							"patterns": [],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}, {
+							"id": 2,
+							"instrument": 0,
+							"sequence": [],
+							"patterns": [],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}, {
+							"id": 3,
+							"instrument": 0,
+							"sequence": [],
+							"patterns": [],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}, {
+							"id": 4,
+							"instrument": 0,
+							"sequence": [],
+							"patterns": [],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}, {
+							"id": 5,
+							"instrument": 0,
+							"sequence": [],
+							"patterns": [],
+							"volume": 100,
+							"muted": false,
+							"solo": false,
+							"collapsed": false
+						}]
+                    },
+                    "instruments": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+						"default": [{
+							"name": "Synth"
+						}]
+                    },
+					"volume": {
+						"type": "integer",
+						"default": 100
+					},
+					"speed": {
+						"type": "integer",
+						"default": 300
+					},
+					"bar": {
+						"type": "integer",
+						"default": 4
+					},
+					"defaultPatternSize": {
+						"type": "integer",
+						"default": 32
+					}
+                },
+                "required": [],
+                "additionalProperties": false
+            },
+            "uiSchema": {
+				"type": "Control",
+				"scope": "MusicEditor"
+            },
+            "parent": {
+                "typeId": "Sound",
+                "multiple": true
+            },
+            "icon": "fa fa-music"
         },
         "Stages": {
             "schema": {
@@ -4914,7 +5166,8 @@
                     }
                 }
             },
-            "icon": "fa fa-cube light-purple"
+            "icon": "fa fa-cube",
+			"category": "Assets"
         },
         "WaveForms": {
             "schema": {
@@ -4925,7 +5178,8 @@
                     }
                 }
             },
-            "icon": "fa fa-bar-chart-o dark-red"
+            "icon": "fa fa-bar-chart-o",
+			"category": "Assets"
         },
         "WaveForm": {
             "schema": {
