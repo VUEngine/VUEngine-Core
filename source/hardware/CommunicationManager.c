@@ -776,7 +776,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes));
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(!isDeleted(this->receivedData))
@@ -833,12 +833,12 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	if(isDeleted(this->sentData))
 	{
-		this->sentData = new Struct(numberOfBytes + __MESSAGE_SIZE);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = new Struct(numberOfBytes + __MESSAGE_SIZE);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -898,12 +898,12 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	{
 
 		// Allocate memory to hold both the message and the data
-		this->sentData = new Struct(numberOfBytes + __MESSAGE_SIZE);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = new Struct(numberOfBytes + __MESSAGE_SIZE);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;

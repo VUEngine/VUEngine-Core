@@ -11,28 +11,19 @@
 #define OOP_H_
 
 
-#define __MAKE_STRING(a)															#a
+#define __MAKE_STRING(a) #a
 
 // concatenate two strings
-#define __MAKE_CONCAT(str_1,str_2) 													str_1 ## str_2
-#define __CUSTOM_CONCAT(str_1,str_2)												__MAKE_CONCAT(str_1,str_2)
+#define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
+#define __CUSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
 #define __BASE	((void*)this)
 
 #ifdef __RELEASE
-#define __OBFUSCATE_NAME(value)														("ClassName")
+#define __OBFUSCATE_NAME(value)			("ClassName")
 #else
-#define __OBFUSCATE_NAME(value)														(#value)
+#define __OBFUSCATE_NAME(value)			(#value)
 #endif
-
-#define STRUCT_VTABLE_POINTER_SIZE													(sizeof(uint32*))
-#define STRUCT_DYNAMIC_FLAG															0x1F2EA0B1
-#define STRUCT_DYNAMIC_FLAG_SIZE													STRUCT_VTABLE_POINTER_SIZE
-#define STRUCT_DYNAMIC_VTABLE_INDEX													(-(STRUCT_VTABLE_POINTER_SIZE + STRUCT_DYNAMIC_FLAG_SIZE))
-#define STRUCT_DYNAMIC_INDEX														(-STRUCT_DYNAMIC_FLAG_SIZE)
-
-void Struct_destructor();
-
 
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)																\
@@ -57,10 +48,13 @@ void Struct_destructor();
 																										\
 			/* allocate object */																		\
 			uint32* memoryBlock = (uint32*)MemoryPool_allocate(_memoryPool, 							\
-							sizeof(ClassName ## _str));													\
+							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
+																										\
+			/* mark memory block as used by an object */												\
+			*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;													\
 																										\
 			/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */											\
-			ClassName this = (ClassName)((uint32)memoryBlock);											\
+			ClassName this = (ClassName)((uint32)memoryBlock + __DYNAMIC_STRUCT_PAD);					\
 																										\
 			/* check if properly created */																\
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");								\
@@ -85,6 +79,8 @@ void Struct_destructor();
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
 		void ClassName ## dummyMethodClassNew()
 
+#define	__DYNAMIC_STRUCT_PAD	sizeof(uint32)
+
 // like new in C++
 #define __NEW(ClassName, ...)																			\
 																										\
@@ -92,34 +88,49 @@ void Struct_destructor();
 		ClassName ## _new(__VA_ARGS__)																	\
 
 // like new in C++
-#define __NEW_BASIC(StructName)																			\
+#define __NEW_BASIC(ClassName)																			\
 																										\
-		(StructName*)Struct_new(sizeof(StructName))														\
+		/* allocate data */																				\
+		(ClassName*)((uint32)MemoryPool_allocate(MemoryPool_getInstance(),								\
+			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
+#ifndef __RELEASE
 #define __DELETE(object)																				\
 																										\
-		extern uint32 _dramBssEnd;																		\
-		extern uint32 _dramBssStart;																	\
-																										\
-		if((uint32)&Struct_destructor == 																\
-			*((uint32*)&((BYTE*)object)[STRUCT_DYNAMIC_VTABLE_INDEX])									\
-			&&																							\
-			STRUCT_DYNAMIC_FLAG == 																		\
-			*((uint32*)&((BYTE*)object)[STRUCT_DYNAMIC_INDEX]))											\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
-			*((uint32*)&((BYTE*)object)[STRUCT_DYNAMIC_VTABLE_INDEX]) = __MEMORY_FREE_BLOCK_FLAG;		\
+			/* since the destructor is the first element in the virtual table */						\
+			ASSERT(object && *(uint32*)object, "Deleting null object");									\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(NULL != object && (((uint32)&_dramBssStart <= *((uint32*)object)) &&					\
-									(*((uint32*)object) <= (uint32)&_dramBssEnd)))						\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
 		{																								\
-			((((struct Object_vTable*)((*((void**)object))))->destructor))((Object)object);				\
+			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 						\
+				"Oop: deleting null basic object");														\
+			extern MemoryPool _memoryPool;																\
+			MemoryPool_free(_memoryPool, (BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));				\
 		}																								\
 		else 																							\
 		{																								\
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}
-
+#else
+#define __DELETE(object)																				\
+																										\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
+		{																								\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
+		}																								\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
+		{																								\
+			*(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;				\
+		}																								\
+		else 																							\
+		{																								\
+			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
+		}
+#endif
 
 
 // construct the base object
@@ -176,7 +187,7 @@ void Struct_destructor();
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(NULL != object)																				\
+		(object && (__MEMORY_FREE_BLOCK_FLAG != *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD)))		\
 
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))

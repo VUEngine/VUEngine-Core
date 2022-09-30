@@ -23,7 +23,6 @@
 #include <MemoryPool.h>
 #include <Printing.h>
 #include <HardwareManager.h>
-#include <Struct.h>
 #include <debugUtilities.h>
 
 
