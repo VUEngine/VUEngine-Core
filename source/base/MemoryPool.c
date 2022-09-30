@@ -411,14 +411,22 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
 				{
 					HardwareManager::suspendInterrupts();
-					poolLocation = poolLocationRight;
-					break;
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+					{
+						poolLocation = poolLocationRight;
+						break;
+					}
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
 				{
 					HardwareManager::suspendInterrupts();
-					poolLocation = poolLocationEnd;
-					break;
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+					{
+						poolLocation = poolLocationEnd;
+						break;
+					}
 				}
 
 				poolLocationRight += blockSize;
@@ -430,14 +438,22 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
 				{
 					HardwareManager::suspendInterrupts();
-					poolLocation = poolLocationLeft;
-					break;
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+					{
+						poolLocation = poolLocationLeft;
+						break;
+					}
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
 				{
 					HardwareManager::suspendInterrupts();
-					poolLocation = poolLocationStart;
-					break;
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+					{
+						poolLocation = poolLocationStart;
+						break;
+					}
 				}
 
 				poolLocationLeft -= blockSize;
