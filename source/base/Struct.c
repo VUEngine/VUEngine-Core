@@ -7,24 +7,20 @@
  * that was distributed with this source code.
  */
 
-#ifndef LIBVUENGINE_H_
-#define LIBVUENGINE_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Events.h>
-#include <Libgccvb.h>
-#include <MiscStructs.h>
-#include <Constants.h>
-#include <Error.h>
-#include <MemoryPool.h>
-#include <Printing.h>
-#include <HardwareManager.h>
 #include <Struct.h>
-#include <debugUtilities.h>
 
 
-#endif
+
+//---------------------------------------------------------------------------------------------------------
+//											DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+static void Struct::destructor()
+{
+}
+

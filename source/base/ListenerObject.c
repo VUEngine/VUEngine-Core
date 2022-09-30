@@ -66,14 +66,7 @@ void ListenerObject::destructor()
 		this->events = NULL;
 	}
 
-	// free the memory
-#ifdef __DEBUG
-	MemoryPool::free(_memoryPool, (void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
-#else
-	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
-#endif
-
-	this = NULL;
+	Base::destructor();
 }
 
 /**

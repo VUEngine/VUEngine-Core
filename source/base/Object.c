@@ -44,9 +44,9 @@ void Object::destructor()
 {
 	// free the memory
 #ifdef __DEBUG
-	MemoryPool::free(_memoryPool, (void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
+	MemoryPool::free(_memoryPool, (BYTE*)((uint32)this));
 #else
-	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
+	*((uint32*)this) = __MEMORY_FREE_BLOCK_FLAG;
 #endif
 
 	this = NULL;
