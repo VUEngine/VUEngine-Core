@@ -79,11 +79,7 @@ void ObjectSpriteContainer::destructor()
 	VirtualList objectSprites = new VirtualList();
 	VirtualList::copy(objectSprites, this->objectSprites);
 
-	for(VirtualNode node = objectSprites->head; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
+	VirtualList::deleteData(objectSprites);
 	delete objectSprites;
 	delete this->objectSprites;
 	this->objectSprites = NULL;

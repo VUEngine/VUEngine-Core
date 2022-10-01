@@ -112,14 +112,9 @@ void Container::destructor()
 
 	}
 
-	if(this->behaviors)
+	if(!isDeleted(this->behaviors))
 	{
-		// destroy each child
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->behaviors);
 		delete this->behaviors;
 		this->behaviors = NULL;
 	}

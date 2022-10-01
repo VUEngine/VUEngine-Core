@@ -782,11 +782,7 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
  */
 void VIPManager::removePostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->head; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
+	VirtualList::deleteData(this->postProcessingEffects);
 	VirtualList::clear(this->postProcessingEffects);
 }
 

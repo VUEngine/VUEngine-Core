@@ -205,11 +205,7 @@ void Entity::destroyWireframes()
 	{
 		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
 
-		for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->wireframes);
 		delete this->wireframes;
 		this->wireframes = NULL;
 	}
@@ -259,7 +255,11 @@ void Entity::releaseSprites()
 	{
 		SpriteManager spriteManager = SpriteManager::getInstance();
 
-		for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+		// Must use a temporal list to prevent any race condition
+		VirtualList sprites = this->sprites;
+		this->sprites = NULL;
+
+		for(VirtualNode node = sprites->head; NULL != node ; node = node->next)
 		{
 
 #ifndef __SHIPPING
@@ -281,7 +281,7 @@ void Entity::releaseSprites()
 		}
 
 		// delete the sprites
-		delete this->sprites;
+		delete sprites;
 	}
 
 	this->sprites = NULL;
@@ -1579,7 +1579,7 @@ void Entity::synchronizeGraphics()
 		Base::synchronizeGraphics(this);
 	}
 
-	if(!isDeleted(this->sprites->head) && !this->hidden)
+	if(!isDeleted(this->sprites) && !this->hidden)
 	{
 		Entity::updateSprites(this, this->invalidateGraphics & __INVALIDATE_POSITION, this->invalidateGraphics & __INVALIDATE_SCALE, this->invalidateGraphics & __INVALIDATE_ROTATION, this->invalidateGraphics & __INVALIDATE_PROJECTION);
 	}

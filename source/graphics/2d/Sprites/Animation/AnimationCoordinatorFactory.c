@@ -71,14 +71,7 @@ void AnimationCoordinatorFactory::destructor()
  */
 void AnimationCoordinatorFactory::reset()
 {
-	VirtualNode node = this->animationCoordinators->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	VirtualList::clear(this->animationCoordinators);
+	VirtualList::deleteData(this->animationCoordinators);
 }
 
 /**

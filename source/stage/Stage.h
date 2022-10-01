@@ -21,7 +21,6 @@
 #include <EntityFactory.h>
 #include <Texture.h>
 #include <UIContainer.h>
-#include <ParticleRemover.h>
 #include <VIPManager.h>
 #include <Camera.h>
 #include <SpriteManager.h>
@@ -183,8 +182,6 @@ class Stage : Container
 	StageSpec* stageSpec;
 	// entity factory
 	EntityFactory entityFactory;
-	// particle remover
-	ParticleRemover particleRemover;
 	// the stage entities
 	VirtualList stageEntityDescriptions;
 	// the pivot node for streaming
@@ -225,7 +222,6 @@ class Stage : Container
 	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId);
 	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
-	ParticleRemover getParticleRemover();
 	void showStreamingProfiling(int32 x, int32 y);
 	bool unloadOutOfRangeEntities(int32 defer);
     bool loadInRangeEntities(int32 defer);

@@ -68,7 +68,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
  */
 void ParticleSystem::destructor()
 {
-	ParticleSystem::reset(this, false);
+	ParticleSystem::reset(this);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -82,7 +82,7 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
 {
 	if(reset)
 	{
-		ParticleSystem::reset(this, true);
+		ParticleSystem::reset(this);
 		ParticleSystem::setup(this, particleSystemSpec);
 	}
 	else if(particleSystemSpec && particleSystemSpec != this->particleSystemSpec)
@@ -150,29 +150,14 @@ void ParticleSystem::configure()
 /**
  * Class reset
  */
-void ParticleSystem::reset(bool deleteParticlesImmeditely)
+void ParticleSystem::reset()
 {
 	ParticleSystem::processExpiredParticles(this);
 
-	ParticleRemover particleRemover = deleteParticlesImmeditely ? NULL : Stage::getParticleRemover(VUEngine::getStage(VUEngine::getInstance()));
-
 	if(!isDeleted(this->particles))
 	{
-		// the remover handles all the cleaning
-		if(!isDeleted(particleRemover))
-		{
-			ParticleRemover::deleteParticles(particleRemover, this->particles);
-		}
-		else if(!isDeleted(this->particles))
-		{
-			for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-			{
-				delete node->data;
-			}
-
-			delete this->particles;
-		}
-
+		VirtualList::deleteData(this->particles);
+		delete this->particles;
 		this->particles = NULL;
 	}
 }
@@ -238,7 +223,10 @@ void ParticleSystem::processExpiredParticles()
 {
 	if(!isDeleted(this->particles) && !this->particleSystemSpec->recycleParticles)
 	{
-		for(VirtualNode node = this->particles->head, nextNode; NULL != node; node = nextNode)
+		VirtualList particles = this->particles;
+		this->particles = NULL;
+
+		for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 
@@ -246,7 +234,7 @@ void ParticleSystem::processExpiredParticles()
 
 			if(particle->expired)
 			{
-				VirtualList::removeNode(this->particles, node);
+				VirtualList::removeNode(particles, node);
 
 				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
 
@@ -254,6 +242,8 @@ void ParticleSystem::processExpiredParticles()
 				this->particleCount--;
 			}
 		}
+
+		this->particles = particles;
 	}
 }
 
@@ -446,13 +436,18 @@ Force ParticleSystem::getParticleSpawnForce()
  */
 void ParticleSystem::spawnAllParticles()
 {
+	VirtualList particles = this->particles;
+	this->particles = NULL;
+
 	while(this->particleCount < this->maximumNumberOfAliveParticles)
 	{
 		Particle particle = ParticleSystem::spawnParticle(this);
 		Particle::hide(particle);
-		VirtualList::pushBack(this->particles, particle);
+		VirtualList::pushBack(particles, particle);
 		this->particleCount++;
 	}
+
+	this->particles = particles;
 }
 
 const SpriteSpec* ParticleSystem::getSpriteSpec()

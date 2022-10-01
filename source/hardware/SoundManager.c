@@ -104,28 +104,14 @@ void SoundManager::destructor()
 
 	if(!isDeleted(this->queuedSounds))
 	{
-		VirtualNode node = this->queuedSounds->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->queuedSounds);
 		delete this->queuedSounds;
 		this->queuedSounds = NULL;
 	}
 
 	if(!isDeleted(this->soundWrappers))
 	{
-		VirtualNode node = this->soundWrappers->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
-
-			delete soundWrapper;
-		}
-
+		VirtualList::deleteData(this->soundWrappers);
 		delete this->soundWrappers;
 		this->soundWrappers = NULL;
 	}
@@ -182,12 +168,7 @@ void SoundManager::purgeReleasedSoundWrappers()
 
 void SoundManager::reset()
 {
-	for(VirtualNode node = this->queuedSounds->head; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	VirtualList::clear(this->queuedSounds);
+	VirtualList::deleteData(this->queuedSounds);
 
 	for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
 	{
@@ -292,12 +273,7 @@ void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 
 void SoundManager::flushQueuedSounds()
 {
-	for(VirtualNode node = this->queuedSounds->head; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	VirtualList::clear(this->queuedSounds);
+	VirtualList::deleteData(this->queuedSounds);
 }
 
 void SoundManager::tryToPlayQueuedSounds()

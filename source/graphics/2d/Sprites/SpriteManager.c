@@ -113,31 +113,14 @@ void SpriteManager::cleanUp()
 {
 	if(!isDeleted(this->objectSpriteContainers))
 	{
-		VirtualNode node = this->objectSpriteContainers->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->objectSpriteContainers);
 		delete this->objectSpriteContainers;
 		this->objectSpriteContainers = NULL;
 	}
 
 	if(!isDeleted(this->sprites))
 	{
-		VirtualList sprites = new VirtualList();
-		VirtualList::copy(sprites, this->sprites);
-
-		VirtualNode node = sprites->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
-		delete sprites;
-
+		VirtualList::deleteData(this->sprites);
 		delete this->sprites;
 		this->sprites = NULL;
 	}

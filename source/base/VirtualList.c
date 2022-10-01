@@ -101,38 +101,21 @@ void VirtualList::clear()
  */
 void VirtualList::deleteData()
 {
-	if(this->head)
+	if(NULL != this->head)
 	{
-		// point to the head
-		VirtualNode node = this->head;
+		VirtualList virtualList = this;
+		this = NULL;
 
-		// move the head to next node
-		this->head = this->head->next;
-
-		// while there are nodes
-		while(node)
+		for(VirtualNode node = virtualList->head; NULL != node; node = node->next)
 		{
-			if(!isDeleted(node->data))
-			{
-				delete node->data;
-			}
-
-			// call destructor
-			delete node;
-
-			// move the node to the head
-			node = this->head;
-
-			// move the head
-			if(this->head)
-			{
-				this->head = this->head->next;
-			}
+			delete node->data;
 		}
 
-		ASSERT(!this->head, "VirtualList::deleteData: head is not NULL");
+		VirtualList::clear(virtualList);
 
-		this->tail = NULL;
+		virtualList->head = virtualList->tail = NULL;
+
+		this->head = virtualList;
 	}
 }
 
@@ -145,7 +128,7 @@ int32 VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
-	ASSERT(data, "VirtualList::pushBack: null data");
+	ASSERT(data, "VirtualList::pushFront: null data");
 
 	// set the tail
 	if(NULL == this->tail)

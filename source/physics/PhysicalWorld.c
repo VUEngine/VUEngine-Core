@@ -68,18 +68,8 @@ void PhysicalWorld::destructor()
 {
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
 
-	// delete the bodies
-	VirtualNode node = this->bodies->head;
-
-	// delete all bodies registered
-	for(;node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	// delete lists
+	VirtualList::deleteData(this->bodies);
 	delete this->bodies;
-
 	this->bodies = NULL;
 
 	// destroy the super object
@@ -268,16 +258,7 @@ void PhysicalWorld::reset()
 {
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
-	VirtualNode node = this->bodies->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		// delete it
-		delete node->data;
-	}
-
-	// empty the lists
-	VirtualList::clear(this->bodies);
+	VirtualList::deleteData(this->bodies);
 }
 
 /**

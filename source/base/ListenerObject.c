@@ -55,13 +55,7 @@ void ListenerObject::destructor()
 
 	if(this->events)
 	{
-		VirtualNode node = this->events->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->events);
 		delete this->events;
 		this->events = NULL;
 	}

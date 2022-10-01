@@ -170,13 +170,7 @@ void Body::destructor()
 {
 	if(this->normals)
 	{
-		VirtualNode node = this->normals->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->normals);
 		delete this->normals;
 		this->normals = NULL;
 	}
@@ -985,13 +979,7 @@ void Body::reset()
 {
 	if(this->normals)
 	{
-		VirtualNode node = this->normals->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->normals);
 		delete this->normals;
 		this->normals = NULL;
 	}

@@ -86,14 +86,7 @@ void CharSetManager::reset()
 
 	if(this->charSets)
 	{
-		VirtualNode node = this->charSets->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
-		VirtualList::clear(this->charSets);
+		VirtualList::deleteData(this->charSets);
 	}
 
 	VirtualList::clear(this->charSetsPendingWriting);

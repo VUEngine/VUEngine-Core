@@ -287,15 +287,7 @@ void CollisionManager::reset()
 {
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
-	VirtualNode node = this->shapes->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	// empty the lists
-	VirtualList::clear(this->shapes);
+	VirtualList::deleteData(this->shapes);
 	VirtualList::clear(this->activeForCollisionCheckingShapes);
 
 	this->lastCycleCollisionChecks = 0;

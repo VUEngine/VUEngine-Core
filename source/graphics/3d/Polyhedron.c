@@ -55,15 +55,7 @@ void Polyhedron::destructor()
 	// delete the vertices list
 	if(this->vertices)
 	{
-		VirtualNode node = this->vertices->head;
-
-		// delete each vertex
-		for(; node ; node = node->next)
-		{
-			delete node->data;
-		}
-
-		// delete the list
+		VirtualList::deleteData(this->vertices);
 		delete this->vertices;
 	}
 

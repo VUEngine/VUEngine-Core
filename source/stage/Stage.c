@@ -113,7 +113,6 @@ void Stage::constructor(StageSpec *stageSpec)
 	Base::constructor(NULL);
 
 	this->entityFactory = new EntityFactory();
-	this->particleRemover = new ParticleRemover();
 	this->children = new VirtualList();
 	this->entityLoadingListeners = NULL;
 
@@ -137,16 +136,7 @@ void Stage::destructor()
 
 	if(!isDeleted(this->entityLoadingListeners))
 	{
-		VirtualNode node = this->entityLoadingListeners->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			if(!isDeleted(node->data))
-			{
-				delete node->data;
-			}
-		}
-
+		VirtualList::deleteData(this->entityLoadingListeners);
 		delete this->entityLoadingListeners;
 		this->entityLoadingListeners = NULL;
 	}
@@ -170,10 +160,7 @@ void Stage::destructor()
 		this->soundWrappers = NULL;
 	}
 
-	delete this->particleRemover;
-	this->particleRemover = NULL;
-
-	if(this->entityFactory)
+	if(!isDeleted(this->entityFactory))
 	{
 		delete this->entityFactory;
 		this->entityFactory = NULL;
@@ -185,17 +172,10 @@ void Stage::destructor()
 		this->uiContainer = NULL;
 	}
 
-	if(this->stageEntityDescriptions)
+	if(!isDeleted(this->stageEntityDescriptions))
 	{
-		VirtualNode node = this->stageEntityDescriptions->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			delete node->data;
-		}
-
+		VirtualList::deleteData(this->stageEntityDescriptions);
 		delete this->stageEntityDescriptions;
-
 		this->stageEntityDescriptions = NULL;
 	}
 
@@ -393,9 +373,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	VIPManager::setupBrightness(VIPManager::getInstance(), &this->stageSpec->rendering.colorConfig.brightness);
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
-
-	// set particle removal delay
-	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
@@ -1242,8 +1219,6 @@ void Stage::update(uint32 elapsedTime)
 	{
 		Container::update(this->uiContainer, elapsedTime);
 	}
-
-	ParticleRemover::update(this->particleRemover);
 }
 
 // transformation state
@@ -1304,7 +1279,6 @@ void Stage::suspend()
 
 	delete this->entityFactory;
 	this->entityFactory = NULL;
-	ParticleRemover::reset(this->particleRemover);
 }
 
 // resume after pause
@@ -1482,11 +1456,6 @@ void Stage::setFocusEntity(Entity focusEntity)
 StageSpec* Stage::getStageSpec()
 {
 	return this->stageSpec;
-}
-
-ParticleRemover Stage::getParticleRemover()
-{
-	return this->particleRemover;
 }
 
 void Stage::forceNoPopIn(bool forceNoPopIn)
