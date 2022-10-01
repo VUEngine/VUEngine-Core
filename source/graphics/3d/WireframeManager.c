@@ -73,16 +73,12 @@ void WireframeManager::destructor()
 {
 	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
 
-	VirtualNode node = this->wireframes->head;
-
-	for(; NULL != node; node = node->next)
+	if(!isDeleted(this->wireframes))
 	{
-		delete node->next;
+		VirtualList::deleteData(this->wireframes);
+		delete this->wireframes;
+		this->wireframes = NULL;
 	}
-
-	delete this->wireframes;
-
-	this->wireframes = NULL;
 
 	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
