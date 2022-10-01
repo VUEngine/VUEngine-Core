@@ -65,13 +65,16 @@ void VirtualList::destructor()
  */
 void VirtualList::clear()
 {
-	if(this->head)
+	if(NULL != this->head)
 	{
+		VirtualList virtualList = this;
+		this = NULL;
+
 		// point to the head
-		VirtualNode node = this->head;
+		VirtualNode node = virtualList->head;
 
 		// move the head to next node
-		this->head = this->head->next;
+		virtualList->head = virtualList->head->next;
 
 		// while there are nodes
 		while(NULL != node)
@@ -80,18 +83,20 @@ void VirtualList::clear()
 			delete node;
 
 			// move the node to the head
-			node = this->head;
+			node = virtualList->head;
 
 			// move the head
-			if(NULL != this->head)
+			if(NULL != virtualList->head)
 			{
-				this->head = this->head->next;
+				virtualList->head = virtualList->head->next;
 			}
 		}
 
-		ASSERT(!this->head, "VirtualList::clear: head is not NULL");
+		ASSERT(NULL == virtualList->head, "VirtualList::clear: head is not NULL");
 
-		this->tail = NULL;
+		virtualList->tail = NULL;
+
+		this = virtualList;
 	}
 }
 
@@ -106,12 +111,21 @@ void VirtualList::deleteData()
 		VirtualList virtualList = this;
 		this = NULL;
 
-		for(VirtualNode node = virtualList->head; NULL != node; node = node->next)
+		for(VirtualNode node = virtualList->head; NULL != node;)
 		{
-			delete node->data;
+			if(!isDeleted(node->data))
+			{
+				delete node->data;
+			}
+
+			VirtualNode aux = node;
+
+			node = node->next;
+
+			delete aux;
 		}
 
-		VirtualList::clear(virtualList);
+		virtualList->head = virtualList->tail = NULL;
 
 		this = virtualList;
 	}
