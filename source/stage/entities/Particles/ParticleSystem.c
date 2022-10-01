@@ -14,7 +14,6 @@
 
 #include <ParticleSystem.h>
 #include <VUEngine.h>
-#include <ParticleRemover.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>

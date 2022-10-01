@@ -76,11 +76,7 @@ void ObjectSpriteContainer::destructor()
 
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-	VirtualList objectSprites = new VirtualList();
-	VirtualList::copy(objectSprites, this->objectSprites);
-
-	VirtualList::deleteData(objectSprites);
-	delete objectSprites;
+	VirtualList::deleteData(this->objectSprites);
 	delete this->objectSprites;
 	this->objectSprites = NULL;
 

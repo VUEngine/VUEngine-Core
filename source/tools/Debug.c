@@ -753,7 +753,6 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 	{
 		{&Particle_getObjectSize,						"Particle"},
 		{&ParticleBody_getObjectSize,					"ParticleBody"},
-		{&ParticleRemover_getObjectSize,				"ParticleRemover"},
 		{&ParticleSystem_getObjectSize,					"ParticleSystem"},
 		{&SolidParticle_getObjectSize,					"SolidParticle"},
 		{&SpatialObject_getObjectSize,					"SpatialObject"},
