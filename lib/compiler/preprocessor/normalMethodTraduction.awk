@@ -8,7 +8,7 @@ NR == FNR {
   {
     pattern="[ 	][ 	]*"key"[ 	]*[(]"
     className=substr(rep[key], 1, match(rep[key], "_")-1)
-    replacement=rep[key]"(("className")"
+    replacement=" "rep[key]"(("className")"
     gsub(pattern, replacement)
   }
   print
