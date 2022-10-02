@@ -30,6 +30,7 @@ singleton class Error : Object
 	static int32 triggerException(char* message, char* detail);
 	static void zeroDivisionException();
 	static void invalidOpcodeException();
+	static void floatingPointException();
 }
 
 

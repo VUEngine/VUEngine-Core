@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <CharSet.h>
 #include <Telegram.h>
 
@@ -88,7 +88,7 @@ typedef const TextureSpec TextureROMSpec;
 
 /// A texture which has the logic to be allocated in graphic memory
 /// @ingroup graphics-2d-textures
-abstract class Texture : Object
+abstract class Texture : ListenerObject
 {
 	// Char group to use int32 this texture
 	CharSet charSet;

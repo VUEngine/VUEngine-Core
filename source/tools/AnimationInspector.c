@@ -15,7 +15,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationInspector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <GameState.h>
@@ -173,7 +172,7 @@ void AnimationInspector::show()
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedEntitySelector = new OptionsSelector(2, 16, NULL);
+	this->animatedEntitySelector = new OptionsSelector(2, 16, NULL, NULL, NULL);
 
 	VirtualList animatedEntitiesNames = new VirtualList();
 
@@ -429,10 +428,10 @@ void AnimationInspector::removePreviousSprite()
  */
 void AnimationInspector::selectAnimation(uint32 pressedKey)
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
 	int32 animationsCount = 0;
-	for(; this->animationDescription->animationFunctions[animationsCount]; animationsCount++);
+	for(; this->animationFunctions[animationsCount]; animationsCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -625,7 +624,7 @@ void AnimationInspector::printUserAnimatedEntities()
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "OBJECTS", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->animatedEntitySelector, 1, 4);
+	OptionsSelector::printOptions(this->animatedEntitySelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
 /**
@@ -638,7 +637,7 @@ void AnimationInspector::printSprites()
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "SPRITES", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->spriteSelector, 1, 4);
+	OptionsSelector::printOptions(this->spriteSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
 /**
@@ -651,7 +650,7 @@ void AnimationInspector::printAnimatedEntityAnimations()
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing::text(printing, "                       ", 1, 3, NULL);
-	OptionsSelector::printOptions(this->animationsSelector, 1, 4);
+	OptionsSelector::printOptions(this->animationsSelector, 1, 4, kOptionsAlignLeft, 0);
 }
 
 /**
@@ -667,13 +666,13 @@ void AnimationInspector::printAnimationConfig()
 
 	Printing::text(printing, "Animation: ", x, y, NULL);
 	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
-	OptionsSelector::printOptions(this->animationEditionSelector, x, ++y);
+	OptionsSelector::printOptions(this->animationEditionSelector, x, ++y, kOptionsAlignLeft, 0);
 
 	Printing::int32(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
 	Printing::int32(printing, this->animationFunction.delay, x + 19, y++, NULL);
 	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
-	OptionsSelector::printOptions(this->frameEditionSelector, x, ++y + 1);
+	OptionsSelector::printOptions(this->frameEditionSelector, x, ++y + 1, kOptionsAlignLeft, 0);
 
 	Printing::text(printing, "Back     \x14 ", 37, 2, NULL);
 	if(!Sprite::isPlaying(this->animatedSprite))
@@ -712,9 +711,9 @@ void AnimationInspector::printAnimationConfig()
  */
 void AnimationInspector::loadAnimationFunction()
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
-	AnimationFunction* animationFunction = this->animationDescription->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
+	AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
 
 	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
@@ -740,15 +739,15 @@ void AnimationInspector::createSprite()
 
 	Vector3D position = *_cameraPosition;
 
-	position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
-	position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
+	position.x += __I_TO_FIXED(__HALF_SCREEN_WIDTH);
+	position.y += __I_TO_FIXED(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
 	SpriteSpec* spriteSpec = (SpriteSpec*)_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[OptionsSelector::getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
@@ -787,7 +786,7 @@ void AnimationInspector::createSpriteSelector()
 		delete this->spriteSelector;
 	}
 
-	this->spriteSelector = new OptionsSelector((__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
+	this->spriteSelector = new OptionsSelector((__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL, NULL, NULL);
 
 	VirtualList spriteIndexes = new VirtualList();
 
@@ -813,24 +812,24 @@ void AnimationInspector::createSpriteSelector()
  */
 void AnimationInspector::createAnimationsSelector()
 {
-	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationDescription;
+	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
-	if(this->animationDescription)
+	if(this->animationFunctions)
 	{
 		if(this->animationsSelector)
 		{
 			delete this->animationsSelector;
 		}
 
-		this->animationsSelector = new OptionsSelector(2, 16, NULL);
+		this->animationsSelector = new OptionsSelector(2, 16, NULL, NULL, NULL);
 
 		VirtualList animationsNames = new VirtualList();
 
 		int32 i = 0;
-		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
+		for(i = 0; this->animationFunctions[i]; i++)
 		{
 			Option* option = new Option;
-			option->value = this->animationDescription->animationFunctions[i]->name;
+			option->value = this->animationFunctions[i]->name;
 			option->type = kString;
 			VirtualList::pushBack(animationsNames, option);
 		}
@@ -856,7 +855,7 @@ void AnimationInspector::createAnimationEditionSelector()
 		delete this->animationEditionSelector;
 	}
 
-	this->animationEditionSelector = new OptionsSelector(1, 4, NULL);
+	this->animationEditionSelector = new OptionsSelector(1, 4, NULL, NULL, NULL);
 
 	VirtualList optionsNames = new VirtualList();
 	Option* option = NULL;
@@ -899,7 +898,7 @@ void AnimationInspector::createFrameEditionSelector()
 		delete this->frameEditionSelector;
 	}
 
-	this->frameEditionSelector = new OptionsSelector(4, 16, NULL);
+	this->frameEditionSelector = new OptionsSelector(4, 16, NULL, NULL, NULL);
 	OptionsSelector::setColumnWidth(this->frameEditionSelector, 2);
 
 	VirtualList framesIndexes = new VirtualList();
@@ -923,7 +922,7 @@ void AnimationInspector::createFrameEditionSelector()
  * @private
  * @param eventFirer		AnimationController
  */
-void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((unused)))
+void AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{

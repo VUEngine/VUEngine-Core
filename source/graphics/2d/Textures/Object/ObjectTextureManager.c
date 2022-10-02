@@ -72,15 +72,7 @@ void ObjectTextureManager::destructor()
  */
 void ObjectTextureManager::reset()
 {
-	for(VirtualNode node = this->objectTextures->head; NULL != node; node = node->next)
-	{
-		if(!isDeleted(node->data))
-		{
-			delete node->data;
-		}
-	}
-
-	VirtualList::clear(this->objectTextures);
+	VirtualList::deleteData(this->objectTextures);
 }
 
 /**

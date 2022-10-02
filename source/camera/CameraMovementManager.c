@@ -14,7 +14,6 @@
 
 #include <CameraMovementManager.h>
 #include <Camera.h>
-#include <Game.h>
 #include <ClockManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
@@ -78,7 +77,7 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 	// if focusEntity is defined
 	Entity focusEntity = Camera::getFocusEntity(camera);
 
-	if(isDeleted(focusEntity) || !Entity::isTransformed(focusEntity))
+	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
 	{
 		return;
 	}
@@ -91,10 +90,10 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 	// calculate the target position
 	Vector3D cameraNewPosition =
 	{
-		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__HALF_SCREEN_WIDTH),
-		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__HALF_SCREEN_HEIGHT),
-		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __PIXELS_TO_METERS(__HALF_SCREEN_DEPTH),
+		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,
+		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
+		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
-	Camera::setPosition(camera, cameraNewPosition);
+	Camera::setPosition(camera, cameraNewPosition, true);
 }

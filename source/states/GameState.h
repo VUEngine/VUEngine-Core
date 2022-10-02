@@ -71,6 +71,7 @@ class GameState : State
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	int32 propagateMessage(int32 message);
+	int32 propagateString(const char* string);
 	void resumeClocks();
 	void startAnimations();
 	void startClocks();
@@ -80,13 +81,13 @@ class GameState : State
 	void updatePhysics();
 	void streamAll();
 	void streamOutAll();
+	Clock getClock();
 
 	virtual void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();
 	virtual bool isVersusMode();
-	virtual Clock getClock();
 	virtual bool stream();
 
 	override void enter(void* owner);

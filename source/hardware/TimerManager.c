@@ -19,7 +19,7 @@
 #include <SoundManager.h>
 #include <StopwatchManager.h>
 #include <SoundTest.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Profiler.h>
 
 
@@ -511,7 +511,7 @@ static void TimerManager::interruptHandler()
 		_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 #ifdef __SOUND_TEST
-		if(Game::isInSoundTest(Game::getInstance()))
+		if(VUEngine::isInSoundTest(VUEngine::getInstance()))
 		{
 			SoundManager::printPlaybackTime(SoundManager::getInstance());
 		}
@@ -638,7 +638,7 @@ void TimerManager::wait(uint32 milliSeconds)
  * @param object			Called method's scope
  * @param method			Method to call
  */
-void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32))
+void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32))
 {
 	if(!isDeleted(object) && method)
 	{

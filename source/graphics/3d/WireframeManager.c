@@ -14,9 +14,7 @@
 
 #include <WireframeManager.h>
 #include <VirtualList.h>
-#include <Game.h>
 #include <Camera.h>
-#include <DirectDraw.h>
 #include <debugConfig.h>
 #include <debugUtilities.h>
 
@@ -29,11 +27,12 @@ friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
 
-Vector3D _cameraRealPosition = {0, 0, 0};
-Rotation _cameraRealRotation = {0, 0, 0};
 
-static DirectDraw _directDraw = NULL;
-
+Vector3D _cameraDirection = {0, 0, 0};
+Vector3D _previousCameraPosition = {0, 0, 0};
+Vector3D _previousCameraPositionBuffer = {0, 0, 0};
+Rotation _previousCameraInvertedRotation = {0, 0, 0};
+Rotation _previousCameraInvertedRotationBuffer = {0, 0, 0};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -61,11 +60,10 @@ void WireframeManager::constructor()
 	this->wireframes = new VirtualList();
 	this->stopRendering = false;
 	this->stopDrawing = false;
+	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->disabled = false;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
-	VIPManager::addEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
-	_directDraw = DirectDraw::getInstance();
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
 /**
@@ -75,32 +73,21 @@ void WireframeManager::destructor()
 {
 	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
 
-	VirtualNode node = this->wireframes->head;
-
-	for(; NULL != node; node = node->next)
+	if(!isDeleted(this->wireframes))
 	{
-		delete node->next;
+		VirtualList::deleteData(this->wireframes);
+		delete this->wireframes;
+		this->wireframes = NULL;
 	}
 
-	delete this->wireframes;
-
-	this->wireframes = NULL;
-
-	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART, kEventVIPManagerGAMESTARTDuringGAMESTART);
-	VIPManager::removeEventListener(VIPManager::getInstance(), Object::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 
 	// allow a new construct
 	Base::destructor();
 }
 
-void WireframeManager::onVIPManagerGAMESTARTDuringGAMESTART(Object eventFirer __attribute__ ((unused)))
-{
-	this->stopRendering = true;
-}
-
-void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(Object eventFirer __attribute__ ((unused)))
-{
+void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{					
 	this->stopDrawing = true;
 }
 
@@ -136,7 +123,16 @@ void WireframeManager::remove(Wireframe wireframe)
  */
 void WireframeManager::reset()
 {
+	WireframeManager::enable(this);
+	
 	VirtualList::clear(this->wireframes);
+	this->disabled = false;
+
+	_previousCameraPosition = *_cameraPosition;
+	_previousCameraPositionBuffer = _previousCameraPosition;
+
+	_previousCameraInvertedRotation = *_cameraInvertedRotation;
+	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
 }
 
 /**
@@ -168,13 +164,12 @@ bool WireframeManager::sortProgressively()
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 
-		fix10_6_ext squareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*wireframe->position, _cameraRealPosition));
-		fix10_6_ext nextSquareDistanceToCamera = Vector3D::squareLength(Vector3D::get(*nextWireframe->position, _cameraRealPosition));
-
 		// check if z positions are swapped
-		if(nextSquareDistanceToCamera < squareDistanceToCamera)
+		if(nextWireframe->squaredDistanceToCamera < wireframe->squaredDistanceToCamera)
 		{
-			VirtualNode::swapData(node, nextNode);
+			// swap nodes' data
+			node->data = nextWireframe;
+			nextNode->data = wireframe;
 
 			node = nextNode;
 
@@ -191,27 +186,76 @@ bool WireframeManager::sortProgressively()
  */
 void WireframeManager::render()
 {
+	if(NULL == this->wireframes->head)
+	{
+		return;
+	}
+
 	this->stopRendering = false;
 
-	_cameraRealPosition = Vector3D::sum(*_cameraPosition, (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0});
+	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
-	_cameraRealRotation = (Rotation)
-	{
-		512 -_cameraRotation->x,
-		512 - _cameraRotation->y,
-		512 - _cameraRotation->z
-	};
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
+#ifdef __PROFILE_WIREFRAMES
+	uint16 wireframes = 0;
+	uint16 renderedWireframes = 0;
+#endif
 
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
 	{
-		Wireframe::render(Wireframe::safeCast(node->data));
+#ifdef __PROFILE_WIREFRAMES
+		wireframes++;
+#endif
+
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(__HIDE == wireframe->show)
+		{
+			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+			wireframe->color = __COLOR_BLACK;
+			continue;
+		}
+
+		if(wireframe->transparent & this->evenFrame)
+		{
+			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+			wireframe->color = __COLOR_BLACK;
+			continue;
+		}
+
+		if(__SHOW_NEXT_FRAME == wireframe->show)
+		{
+			wireframe->show = __SHOW;
+			wireframe->color = __COLOR_BLACK;
+			continue;
+		}
+
+		Wireframe::render(wireframe);
+
+#ifdef __PROFILE_WIREFRAMES
+		if(__COLOR_BLACK != wireframe->color)
+		{
+			renderedWireframes++;
+		}
+#endif
 	}
 
+#ifdef __PROFILE_WIREFRAMES
+	PRINT_TEXT("Wireframes: ", 1, 1);
+	PRINT_TEXT("Rendered: ", 1, 2);
+	PRINT_INT(wireframes, 15, 1);
+	PRINT_INT(renderedWireframes, 15, 2);
+#endif
+
 	WireframeManager::sortProgressively(this);
+
+	_previousCameraPosition = _previousCameraPositionBuffer;
+	_previousCameraPositionBuffer = *_cameraPosition;
+
+	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
+	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
 }
 
 /**
@@ -219,20 +263,49 @@ void WireframeManager::render()
  */
 void WireframeManager::draw()
 {
-	DirectDraw::startDrawing(_directDraw);
+	if(this->disabled || NULL == this->wireframes->head)
+	{
+		return;
+	}
 
 	this->stopDrawing = false;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
+#ifdef __PROFILE_WIREFRAMES
+	uint16 drawnWireframes = 0;
+#endif
 
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
 	{
-		Wireframe::draw(node->data, true);
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		if(__COLOR_BLACK == wireframe->color)
+		{
+			continue;
+		}
+		
+		Wireframe::draw(wireframe);
+
+#ifdef __PROFILE_WIREFRAMES
+		drawnWireframes++;
+#endif
+
 	}
 
-	CACHE_ENABLE;
+#ifdef __PROFILE_WIREFRAMES
+	PRINT_TEXT("Drawn: ", 1, 3);
+	PRINT_INT(drawnWireframes, 15, 3);
+#endif
+}
+
+void WireframeManager::enable()
+{
+	this->disabled = false;
+}
+
+void WireframeManager::disable()
+{
+	this->disabled = true;
 }
 
 /**

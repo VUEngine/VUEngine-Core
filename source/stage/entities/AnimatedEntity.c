@@ -12,6 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <AnimatedEntity.h>
 #include <Clock.h>
 #include <MessageDispatcher.h>
@@ -21,7 +23,6 @@
 #include <PhysicalWorld.h>
 #include <Body.h>
 #include <Box.h>
-#include <Game.h>
 #include <debugUtilities.h>
 
 
@@ -45,8 +46,7 @@ void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, int16 i
 	Base::constructor(&animatedEntitySpec->entitySpec, internalId, name);
 
 	// save ROM spec
-	this->animatedEntitySpec = animatedEntitySpec;
-	this->animationDescription = animatedEntitySpec->animationDescription;
+	this->animationFunctions = animatedEntitySpec->animationFunctions;
 
 	this->currentAnimationName = NULL;
 }
@@ -59,25 +59,14 @@ void AnimatedEntity::destructor()
 	Base::destructor();
 }
 
-// set spec
-void AnimatedEntity::setSpec(void* animatedEntitySpec)
-{
-	ASSERT(animatedEntitySpec, "AnimatedEntity::setSpec: null spec");
-
-	// save spec
-	this->animatedEntitySpec = animatedEntitySpec;
-
-	Base::setSpec(this, &((AnimatedEntitySpec*)animatedEntitySpec)->entitySpec);
-}
-
 // ready method
 void AnimatedEntity::ready(bool recursive)
 {
-	ASSERT(this->animatedEntitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
+	ASSERT(this->entitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
 
 	Base::ready(this, recursive);
 
-	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
+	AnimatedEntity::playAnimation(this, ((AnimatedEntitySpec*)this->entitySpec)->initialAnimation);
 
 	AnimatedEntity::setupListeners(this);
 }
@@ -89,23 +78,21 @@ void AnimatedEntity::setupListeners()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 		AnimationController animationController = Sprite::getAnimationController(sprite);
 
 		if(!isDeleted(animationController) && !isDeleted(AnimationController::getAnimationCoordinator(animationController)))
 		{
-			AnimationController::addEventListener(animationController, Object::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
+			AnimationController::addEventListener(animationController, ListenerObject::safeCast(this), (EventListener)AnimatedEntity::onAnimationStarted, kEventAnimationStarted);
 		}
 	}
 
 	this->update = true;
 }
 
-void AnimatedEntity::onAnimationStarted(Object eventFirer __attribute__ ((unused)))
+void AnimatedEntity::onAnimationStarted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->update = true;
 }
@@ -127,17 +114,15 @@ void AnimatedEntity::update(uint32 elapsedTime)
 // update animations
 void AnimatedEntity::animate()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	bool stillPlaying = false;
 
 	// move each child to a temporary list
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		// first animate the frame
 		stillPlaying |= Sprite::updateAnimation(node->data);
@@ -151,15 +136,13 @@ void AnimatedEntity::pauseAnimation(bool pause)
 {
 	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::pause(node->data, pause);
 	}
@@ -168,29 +151,34 @@ void AnimatedEntity::pauseAnimation(bool pause)
 }
 
 // play an animation
-void AnimatedEntity::playAnimation(char* animationName)
+bool AnimatedEntity::playAnimation(const char* animationName)
 {
-	if(!this->sprites | !animationName)
+	if(NULL == this->sprites || NULL == animationName)
 	{
-		return;
+		return false;
 	}
 
-	this->update = true;
+	ListenerObject scope = ListenerObject::safeCast(this);
 
-	this->currentAnimationName = animationName;
-
-	VirtualNode node = this->sprites->head;
-
-	Object scope = Object::safeCast(this);
+	bool result = false;
 
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
-		if(Sprite::play(node->data, this->animationDescription, animationName, scope))
+		if(Sprite::play(node->data, this->animationFunctions, animationName, scope))
 		{
+			result = true;
 			scope = NULL;
 		}
 	}
+
+	if(result)
+	{
+		this->update = true;
+		this->currentAnimationName = animationName;
+	}
+
+	return result;
 }
 
 // play an animation
@@ -203,10 +191,8 @@ void AnimatedEntity::stopAnimation()
 
 	this->currentAnimationName = NULL;
 
-	VirtualNode node = this->sprites->head;
-
 	// play animation on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::stop(node->data);
 	}
@@ -220,10 +206,8 @@ void AnimatedEntity::nextFrame()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// do on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::nextFrame(node->data);
 	}
@@ -237,10 +221,8 @@ void AnimatedEntity::previousFrame()
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-
 	// do on each sprite
-	for(; node && this->sprites; node = node->next)
+	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
 	{
 		Sprite::previousFrame(node->data);
 	}
@@ -268,9 +250,9 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 }
 
 // get animation spec
-AnimationDescription* AnimatedEntity::getAnimationDescription()
+const AnimationFunction** AnimatedEntity::getAnimationFunctions()
 {
-	return this->animationDescription;
+	return this->animationFunctions;
 }
 
 void AnimatedEntity::setActualFrame(int16 frame)
@@ -280,17 +262,16 @@ void AnimatedEntity::setActualFrame(int16 frame)
 		return;
 	}
 
-	VirtualNode node = this->sprites->head;
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		Sprite::setActualFrame(node->data, frame);
 	}
 }
 
 // set animation description
-void AnimatedEntity::setAnimationDescription(AnimationDescription* animationDescription)
+void AnimatedEntity::setAnimationFunction(const AnimationFunction** animationFunctions)
 {
-	this->animationDescription = animationDescription;
+	this->animationFunctions = animationFunctions;
 
 	AnimatedEntity::stopAnimation(this);
 }
@@ -305,6 +286,29 @@ void AnimatedEntity::resume()
 	AnimatedEntity::setupListeners(this);
 }
 
+/**
+ * Handle propagated string
+ *
+ * @param message	Message
+
+ * @return			Result
+ */
+bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((unused)))
+{
+	/* TODO: play only if the string contains the correct command */
+	/*
+	if (NULL == strnstr(string, __MAX_ANIMATION_FUNCTION_NAME_LENGTH, __ANIMATION_COMMAND)) 
+	{
+		return false;
+	}
+	*/
+
+	AnimatedEntity::playAnimation(this, string);
+	
+	return false;
+}
+
+
 int16 AnimatedEntity::getActualFrame()
 {
 	if(!this->sprites)
@@ -312,8 +316,7 @@ int16 AnimatedEntity::getActualFrame()
 		return -1;
 	}
 
-	VirtualNode node = this->sprites->head;
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		return Sprite::getActualFrame(node->data);
 	}
@@ -328,9 +331,7 @@ int32 AnimatedEntity::getNumberOfFrames()
 		return -1;
 	}
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node ; node = node->next)
+	for(VirtualNode node = this->sprites->head; node ; node = node->next)
 	{
 		AnimationController animationController = Sprite::getAnimationController(node->data);
 		return AnimationController::getNumberOfFrames(animationController);
@@ -339,7 +340,7 @@ int32 AnimatedEntity::getNumberOfFrames()
 	return -1;
 }
 
-void AnimatedEntity::onAnimationCompleteHide(Object eventFirer __attribute__((unused)))
+void AnimatedEntity::onAnimationCompleteHide(ListenerObject eventFirer __attribute__((unused)))
 {
 	AnimatedEntity::hide(this);
 }

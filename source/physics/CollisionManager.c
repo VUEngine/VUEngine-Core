@@ -48,7 +48,6 @@ void CollisionManager::constructor()
 	// create the shape list
 	this->shapes = new VirtualList();
 	this->activeForCollisionCheckingShapes = new VirtualList();
-	this->clearActiveForCollisionCheckingShapes = true;
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -56,6 +55,7 @@ void CollisionManager::constructor()
 	this->collisionChecks = 0;
 	this->collisions = 0;
 	this->checkShapesOutOfCameraRange = false;
+	this->dirty = true;
 }
 
 // class's destructor
@@ -65,7 +65,6 @@ void CollisionManager::destructor()
 
 	CollisionManager::reset(this);
 
-	// delete lists
 	delete this->shapes;
 	delete this->activeForCollisionCheckingShapes;
 
@@ -77,10 +76,32 @@ void CollisionManager::destructor()
 // register a shape
 Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
+	if(this->dirty)
+	{
+		for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
+		{
+			auxNextNode = auxNode->next;
+
+			// load the current shape to check against
+			Shape shapeToCheck = Shape::safeCast(auxNode->data);
+
+			if(shapeToCheck->destroyMe)
+			{
+				VirtualList::removeNode(this->shapes, auxNode);
+				VirtualList::removeElement(this->activeForCollisionCheckingShapes, shapeToCheck);
+
+				delete shapeToCheck;
+			}
+		}
+
+		this->dirty = false;
+	}
+
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject)) shapeSpec->allocator)(owner);
 	Shape::setup(shape, shapeSpec->layers, shapeSpec->layersToIgnore);
 	Shape::setCheckForCollisions(shape, shapeSpec->checkForCollisions);
+	VirtualList::pushBack(this->activeForCollisionCheckingShapes, shape);
 
 	// register it
 	VirtualList::pushFront(this->shapes, shape);
@@ -92,14 +113,11 @@ Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeS
 // remove a shape
 void CollisionManager::destroyShape(Shape shape)
 {
-	if(shape && VirtualList::find(this->shapes, shape))
+	if(!isDeleted(shape))
 	{
-		VirtualList::removeElement(this->shapes, shape);
-		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
-		this->clearActiveForCollisionCheckingShapes = true;
-
-		// delete it
-		delete shape;
+		NM_ASSERT(NULL != VirtualList::find(this->shapes, shape), "CollisionManager::destroyShape: non registerd shape");
+		shape->destroyMe = true;
+		this->dirty = true;
 	}
 }
 
@@ -117,60 +135,73 @@ uint32 CollisionManager::update(Clock clock)
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
 
-	static VirtualList activeForCollisionCheckingShapes = NULL;
-
-	if(NULL == activeForCollisionCheckingShapes)
-	{
-		activeForCollisionCheckingShapes = new VirtualList();
-		VirtualList::copy(activeForCollisionCheckingShapes, this->activeForCollisionCheckingShapes);
-	}
-	else if(this->clearActiveForCollisionCheckingShapes)
-	{
-		VirtualList::clear(activeForCollisionCheckingShapes);
-		VirtualList::copy(activeForCollisionCheckingShapes, this->activeForCollisionCheckingShapes);
-	}
-
-	this->clearActiveForCollisionCheckingShapes = false;
+	this->dirty = false;
 
 	// check the shapes
-	for(VirtualNode auxNode = this->shapes->head; auxNode; auxNode = auxNode->next)
+	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
 	{
-		// load the current shape to check against
-		Shape shapeToCheck = Shape::safeCast(auxNode->data);
+		auxNextNode = auxNode->next;
 
-		// compare only different ready, different shapes against each other if
-		// the layers of the shapeToCheck are not excluded by the current shape
-		if(isDeleted(shapeToCheck) || !shapeToCheck->enabled || !shapeToCheck->ready)
+		// load the current shape to check against
+		Shape shape = Shape::safeCast(auxNode->data);
+
+		if(isDeleted(shape) || shape->destroyMe)
 		{
+			VirtualList::removeNode(this->shapes, auxNode);
+			VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
+
+			delete shape;
 			continue;
 		}
 
-		shapeToCheck->isVisible = true;
+		shape->moved = false;
+
+		// compare only different shapes against each other if
+		// the layers of the shapeToCheck are not excluded by the current shape
+		if(!shape->enabled || !shape->ready)
+		{
+			shape->isVisible = false;
+			continue;
+		}
+
+		shape->isVisible = true;
 
 		extern const Vector3D* _cameraPosition;
 
 		// not ready for collision checks if out of the camera
 		if(!this->checkShapesOutOfCameraRange)
 		{
-			if(
-				shapeToCheck->rightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
-				shapeToCheck->rightBox.x1 - _cameraPosition->x < 0 ||
-				shapeToCheck->rightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
-				shapeToCheck->rightBox.y1 - _cameraPosition->y < 0
-			)
+			extern const Rotation* _cameraInvertedRotation;
+			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
+			RightBox rightBox = Shape::getSurroundingRightBox(shape);
+			PixelVector position = PixelVector::getFromVector3D(relativePosition, 0);
+			int16 pad = __ABS(position.z);
+
+			int16 sizeX = __METERS_TO_PIXELS(__ABS(rightBox.x1 - rightBox.x0)) >> 1;
+			int16 sizeY = __METERS_TO_PIXELS(__ABS(rightBox.y1 - rightBox.y0)) >> 1;
+			int16 sizeZ = __METERS_TO_PIXELS(__ABS(rightBox.z1 - rightBox.z0)) >> 1;
+
+			// check x visibility
+			if(position.x + sizeX < _cameraFrustum->x0 - pad || position.x - sizeX > _cameraFrustum->x1 + pad)
 			{
-				shapeToCheck->isVisible = false;
+				shape->isVisible = false;
+				continue;
 			}
+
+			if(position.y + sizeY < _cameraFrustum->y0 - pad || position.y - sizeY > _cameraFrustum->y1 + pad)
+			{
+				shape->isVisible = false;
+				continue;
+			}
+
+			if(position.z + sizeZ < _cameraFrustum->z0 || position.z - sizeZ > _cameraFrustum->z1)
+			{
+				shape->isVisible = false;
+				continue;
+			}			
 		}
 
-		shapeToCheck->moved = false;
-
-		if(!shapeToCheck->isVisible)
-		{
-			continue;
-		}
-
-#ifdef __DRAW_SHAPES
+	#ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
 		{
 			Shape::show(shapeToCheck);
@@ -179,39 +210,72 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			Shape::hide(shapeToCheck);
 		}
-#endif
-		// check the shapes
-		for(VirtualNode node = activeForCollisionCheckingShapes->head; NULL != node; node = node->next)
+	#endif
+	}
+
+	// check the shapes
+	for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Shape shape = Shape::safeCast(node->data);
+
+		if(!shape->checkForCollisions)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			VirtualList::removeNode(this->activeForCollisionCheckingShapes, node);
+			continue;
+		}
 
-			if(isDeleted(shape) || !shape->enabled || (__COLLISION_ALL_LAYERS == shape->layersToIgnore))
+		if(!shape->isVisible)
+		{
+			continue;
+		}
+
+		Vector3D shapePosition = Shape::getPosition(shape);
+
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		{
+			Shape shapeToCheck = Shape::safeCast(node->data);
+
+			if(!shapeToCheck->isVisible)
 			{
 				continue;
 			}
 
-			// load the current shape
-			if(!shape->ready || !shape->checkForCollisions || !shape->isVisible || shape == shapeToCheck || (shape->layersToIgnore & shapeToCheck->layers))
+			if(0 == (shape->layersToIgnore & shapeToCheck->layers))
 			{
-				continue;
+				if(shape->owner == shapeToCheck->owner)
+				{
+					continue;
+				}
+
+				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(Shape::getPosition(shapeToCheck), shapePosition));
+
+				if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) >= distanceVectorSquareLength)
+				{
+#ifdef __SHOW_PHYSICS_PROFILING
+					this->lastCycleCollisionChecks++;
+#endif
+
+#ifdef __SHOW_PHYSICS_PROFILING
+					// check if shapes overlap
+					if(kNoCollision != Shape::collides(shape, shapeToCheck))
+					{
+						this->lastCycleCollisions++;
+					}
+#else
+					Shape::collides(shape, shapeToCheck);
+#endif
+				}
 			}
-
-			this->lastCycleCollisionChecks++;
-
-			CollisionData collisionData = Shape::collides(shape, shapeToCheck);
-
-			// check if shapes overlap
-			if(kNoCollision != collisionData.result)
-			{
-				this->lastCycleCollisions++;
-			}
+			
 		}
 	}
 
+#ifdef __SHOW_PHYSICS_PROFILING
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;
 
-#ifdef __SHOW_PHYSICS_PROFILING
 	CollisionManager::print(this, 25, 1);
 #endif
 
@@ -223,24 +287,15 @@ void CollisionManager::reset()
 {
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
-	VirtualNode node = this->shapes->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		// delete it
-		delete node->data;
-	}
-
-	// empty the lists
-	VirtualList::clear(this->shapes);
+	VirtualList::deleteData(this->shapes);
 	VirtualList::clear(this->activeForCollisionCheckingShapes);
-	this->clearActiveForCollisionCheckingShapes = true;
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
 	this->checkCycles = 0;
 	this->collisionChecks = 0;
 	this->collisions = 0;
+	this->dirty = false;
 }
 
 // inform of a change in the shape
@@ -255,13 +310,7 @@ void CollisionManager::activeCollisionCheckForShape(Shape shape, bool activate)
 		if(!VirtualList::find(this->activeForCollisionCheckingShapes, shape))
 		{
 			VirtualList::pushBack(this->activeForCollisionCheckingShapes, shape);
-			this->clearActiveForCollisionCheckingShapes = true;
 		}
-	}
-	else
-	{
-		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
-		this->clearActiveForCollisionCheckingShapes = true;
 	}
 }
 

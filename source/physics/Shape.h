@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Wireframe.h>
 
 
@@ -53,7 +53,7 @@ typedef struct SolutionVector
 	Vector3D direction;
 
 	// minimum vector to solve the collision
-	fix10_6 magnitude;
+	fixed_t magnitude;
 
 } SolutionVector;
 
@@ -87,7 +87,7 @@ typedef struct CollidingShapeRegistry
 
 	SolutionVector solutionVector;
 
-	fix10_6 frictionCoefficient;
+	fixed_t frictionCoefficient;
 
 	bool isImpenetrable;
 
@@ -119,8 +119,8 @@ typedef struct Normals
 
 typedef struct VertexProjection
 {
-	fix10_6 min;
-	fix10_6 max;
+	fixed_t min;
+	fixed_t max;
 } VertexProjection;
 
 // defines a shape
@@ -136,7 +136,7 @@ typedef struct ShapeSpec
 	PixelVector displacement;
 
 	/// rotation modifier
-	Rotation rotation;
+	PixelRotation pixelRotation;
 
 	/// scale modifier
 	Scale scale;
@@ -178,8 +178,10 @@ enum ShapeTypes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-abstract class Shape : Object
+abstract class Shape : ListenerObject
 {
+	// the rectangle
+	RightBox rightBox;
 	// the entity to which the shape belongs
 	SpatialObject owner;
 	// colliding shapes list
@@ -202,15 +204,15 @@ abstract class Shape : Object
 	uint8 isVisible;
 	// flag to allow registration of colliding shapes
 	bool registerCollisions;
-	// the rectangle
-	RightBox rightBox;
+	// flag to destroy it
+	bool destroyMe;
 
 	/// @publicsection
 	void constructor(SpatialObject owner);
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);
 	void exitCollision(CollisionData* collisionData);
-	CollisionData collides(Shape shape);
+	CollisionResult collides(Shape shape);
 	bool checkForCollisions();
 	SpatialObject getOwner();
 	void reset();
@@ -220,8 +222,8 @@ abstract class Shape : Object
 	void enable(bool enable);
 	void setCheckForCollisions(bool checkForCollisions);
 	void setReady(bool ready);
-	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);
-	fix10_6 getCollidingFrictionCoefficient();
+	bool canMoveTowards(Vector3D displacement, fixed_t sizeIncrement);
+	fixed_t getCollidingFrictionCoefficient();
 	void resolveCollision(const CollisionInformation* collisionInformation, bool registerCollidingShape);
 	uint32 getLayers();
 	void setLayers(uint32 layers);
@@ -235,7 +237,7 @@ abstract class Shape : Object
 	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	virtual void setPosition(const Vector3D* position);
 	virtual Vector3D getNormal();
-	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
+	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement) = 0;
 	virtual Vector3D getPosition() = 0;
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;

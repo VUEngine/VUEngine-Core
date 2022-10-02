@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-singleton class FrameRate : Object
+singleton class FrameRate : ListenerObject
 {
 	// elapsed time in current 50hz cycle
 	float gameFrameTotalTime;
@@ -31,11 +31,13 @@ singleton class FrameRate : Object
 	uint16 fps;
 	uint16 gameFrameStarts;
 	uint16 unevenFps;
+	uint8 targetFPS;
 
 	/// @publicsection
 	static FrameRate getInstance();
 	uint16 getFps();
-	void gameFrameStarted(bool gameFrameEnded);
+	void setTarget(uint8 targetFPS);
+	void gameFrameStarted(bool gameCycleEnded);
 	void update();
 	void print(int32 col, int32 row);
 	void reset();

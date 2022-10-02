@@ -14,7 +14,7 @@
 
 #include <FrameRate.h>
 #include <VirtualList.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 
 
@@ -44,6 +44,7 @@ void FrameRate::constructor()
 	this->fps = 0;
 	this->unevenFps = 0;
 	this->gameFrameStarts = 0;
+	this->targetFPS = __TARGET_FPS;
 }
 
 /**
@@ -65,7 +66,7 @@ void FrameRate::reset()
 	this->fps = 0;
 	this->unevenFps = 0;
 	this->gameFrameStarts = 0;
-	// Prevents reporting 51 FPS when swapping states
+	this->targetFPS = __TARGET_FPS;
 }
 
 /**
@@ -76,34 +77,48 @@ uint16 FrameRate::getFps()
 	return this->fps;
 }
 
+void FrameRate::setTarget(uint8 targetFPS)
+{
+	FrameRate::reset(this);
+	this->targetFPS = targetFPS;
+}
+
 /**
  * Acknowledge that the game frame started
  *
- * @param gameFrameEnded	Boolean
+ * @param gameCycleEnded	Boolean
  */
-void FrameRate::gameFrameStarted(bool gameFrameEnded)
+void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
-	this->gameFrameStarts++;
-
-	if(!gameFrameEnded)
+	if(!gameCycleEnded)
 	{
 		this->unevenFps++;
-		FrameRate::fireEvent(this, kEventTornFrame);
 	}
 
-	if(__TARGET_FPS <= this->gameFrameStarts)
-	{
+	this->gameFrameStarts++;
 
-#ifdef __PRINT_FRAMERATE
-		if(!Game::isInSpecialMode(Game::getInstance()))
+	if(this->targetFPS <= this->gameFrameStarts)
+	{
+		if(this->targetFPS > this->fps)
 		{
-			FrameRate::print(this, 21, 26);
+#ifdef __PRINT_FRAMERATE_DIP
+			FrameRate::print(this, 21, 14);
+#endif
+			if(!isDeleted(this->events))
+			{
+				FrameRate::fireEvent(this, kEventFrameRateDipped);
+			}
 		}
 
+#ifdef __PRINT_FRAMERATE
+		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
+		{
+			FrameRate::print(this, 21, 14);
+		}
+#endif
 		this->fps = 0;
 		this->unevenFps = 0;
 		this->gameFrameStarts = 0;
-#endif
 	}
 }
 

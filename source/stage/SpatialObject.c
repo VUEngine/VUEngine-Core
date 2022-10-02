@@ -49,11 +49,11 @@ bool SpatialObject::isSubjectToGravity(Acceleration gravity __attribute__ ((unus
 	return false;
 }
 
-fix10_6 SpatialObject::getRadius()
+fixed_t SpatialObject::getRadius()
 {
-	fix10_6 width = SpatialObject::getWidth(this);
-	fix10_6 height = SpatialObject::getHeight(this);
-	fix10_6 depth = SpatialObject::getDepth(this);
+	fixed_t width = SpatialObject::getWidth(this);
+	fixed_t height = SpatialObject::getHeight(this);
+	fixed_t depth = SpatialObject::getDepth(this);
 
 	if(width > height)
 	{
@@ -79,17 +79,17 @@ fix10_6 SpatialObject::getRadius()
 	return 0;
 }
 
-fix10_6 SpatialObject::getWidth()
+fixed_t SpatialObject::getWidth()
 {
 	return 0;
 }
 
-fix10_6 SpatialObject::getHeight()
+fixed_t SpatialObject::getHeight()
 {
 	return 0;
 }
 
-fix10_6 SpatialObject::getDepth()
+fixed_t SpatialObject::getDepth()
 {
 	return 0;
 }
@@ -133,13 +133,13 @@ void SpatialObject::setScale(const Scale* scale __attribute__ ((unused)))
 {}
 
 // get bounciness
-fix10_6 SpatialObject::getBounciness()
+fixed_t SpatialObject::getBounciness()
 {
 	return 0;
 }
 
 // get friction
-fix10_6 SpatialObject::getFrictionCoefficient()
+fixed_t SpatialObject::getFrictionCoefficient()
 {
 	return 0;
 }
@@ -150,12 +150,12 @@ Velocity SpatialObject::getVelocity()
 	return Vector3D::zero();
 }
 
-fix10_6 SpatialObject::getSpeed()
+fixed_t SpatialObject::getSpeed()
 {
 	return 0;
 }
 
-fix10_6 SpatialObject::getMaximumSpeed()
+fixed_t SpatialObject::getMaximumSpeed()
 {
 	return 0;
 }

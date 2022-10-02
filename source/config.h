@@ -94,9 +94,6 @@
 // Screen depth in pixels
 #define __SCREEN_DEPTH							2048
 
-// Distance from player's eyes to the virtual screen
-#define __DISTANCE_EYE_SCREEN					384
-
 // Maximum x view distance (depth) (power of two)
 #define __MAXIMUM_X_VIEW_DISTANCE				2048
 
@@ -161,9 +158,6 @@
 
 // Maximum number of frames per animation function
 #define __MAX_FRAMES_PER_ANIMATION_FUNCTION		16
-
-// Maximum number of animation functions per description
-#define __MAX_ANIMATION_FUNCTIONS				32
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -326,7 +320,7 @@
 // the distance between the x coordinate and
 // each ear's position defined by __LEFT_EAR_CENTER
 // and __RIGHT_EAR_CENTER
-#define __SOUND_STEREO_ATTENUATION_FACTOR		__F_TO_FIX10_6(0.75f)
+#define __SOUND_STEREO_ATTENUATION_FACTOR		__F_TO_FIXED(0.75f)
 
 
 //---------------------------------------------------------------------------------------------------------

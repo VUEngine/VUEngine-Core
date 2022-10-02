@@ -20,7 +20,7 @@
 #include <BgmapSprite.h>
 #include <ObjectSprite.h>
 #include <Telegram.h>
-#include <Mesh.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,8 +40,8 @@ class Entity : Container
 	VirtualList sprites;
 	// Shapes for collision detection
 	VirtualList shapes;
-	// meshes
-	VirtualList meshes;
+	// wireframes
+	VirtualList wireframes;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement
@@ -57,7 +57,9 @@ class Entity : Container
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
+
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
+	void streamOut();
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -65,15 +67,17 @@ class Entity : Container
 	bool addShapeFromSpecAtIndex(int32 shapeSpecIndex);
 	bool transformShapeAtSpecIndex(int32 shapeSpecIndex);
 	void addSprites(SpriteSpec** spritesSpecs);
+	void addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPreviousWireframes);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();
 	Entity getChildById(int16 id);
-	EntitySpec* getEntitySpec();
+	EntitySpec* getSpec();
 	int32 getMapParallax();
 	int16 getId();
 	int16 getInternalId();
 	VirtualList getSprites();
+	VirtualList getWireframes();
 	void transformShapes();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
@@ -88,7 +92,6 @@ class Entity : Container
 	void setShapesLayers(uint32 layers);
 	uint32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(uint32 layersToIgnore);
-	void setTransparent(uint8 transparent);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
 	void setupShapes();
 	bool isVisible(int32 pad, bool recursive);
@@ -97,31 +100,33 @@ class Entity : Container
 	bool updateSpritePosition();
 	bool updateSpriteRotation();
 	bool updateSpriteScale();
+	void addWireframe(Wireframe wireframe);
+	void releaseSprites();
+	void setSpec(void* entitySpec);
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
-	virtual void setSpec(void* entitySpec);
 	virtual uint16 getAxisForShapeSyncWithDirection();
-	virtual void releaseSprites();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
+	override void setTransparent(uint8 transparent);
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
 	override const Rotation* getRotation();
 	override const Scale* getScale();
-	override fix10_6 getWidth();
-	override fix10_6 getHeight();
-	override fix10_6 getDepth();
+	override fixed_t getWidth();
+	override fixed_t getHeight();
+	override fixed_t getDepth();
 	override void suspend();
 	override void resume();
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void show();
 	override void hide();
-	override fix10_6 getBounciness();
-	override fix10_6 getFrictionCoefficient();
+	override fixed_t getBounciness();
+	override fixed_t getFrictionCoefficient();
 	override uint32 getInGameType();
 }
 

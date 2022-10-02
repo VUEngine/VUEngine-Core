@@ -74,7 +74,7 @@ void VirtualList::clear()
 		this->head = this->head->next;
 
 		// while there are nodes
-		while(node)
+		while(NULL != node)
 		{
 			// call destructor
 			delete node;
@@ -83,7 +83,7 @@ void VirtualList::clear()
 			node = this->head;
 
 			// move the head
-			if(this->head)
+			if(NULL != this->head)
 			{
 				this->head = this->head->next;
 			}
@@ -101,38 +101,19 @@ void VirtualList::clear()
  */
 void VirtualList::deleteData()
 {
-	if(this->head)
+	if(NULL != this->head)
 	{
-		// point to the head
-		VirtualNode node = this->head;
+		VirtualList virtualList = this;
+		this = NULL;
 
-		// move the head to next node
-		this->head = this->head->next;
-
-		// while there are nodes
-		while(node)
+		for(VirtualNode node = virtualList->head; NULL != node; node = node->next)
 		{
-			if(!isDeleted(node->data))
-			{
-				delete node->data;
-			}
-
-			// call destructor
-			delete node;
-
-			// move the node to the head
-			node = this->head;
-
-			// move the head
-			if(this->head)
-			{
-				this->head = this->head->next;
-			}
+			delete node->data;
 		}
 
-		ASSERT(!this->head, "VirtualList::deleteData: head is not NULL");
+		VirtualList::clear(virtualList);
 
-		this->tail = NULL;
+		this = virtualList;
 	}
 }
 
@@ -145,22 +126,26 @@ int32 VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
-	// assign the node to the head of the list
-	newNode->next = this->head;
-
-	// set previous if list isn't empty
-	if(this->head)
-	{
-		this->head->previous = newNode;
-	}
-
-	// move the head
-	this->head = newNode;
+	ASSERT(data, "VirtualList::pushFront: null data");
 
 	// set the tail
-	if(!this->tail)
+	if(NULL == this->tail)
 	{
-		this->tail = this->head;
+		this->tail = this->head = newNode;
+	}
+	else
+	{
+		// link new node to the head
+		newNode->next = this->head;
+
+		// move the head
+		this->head = newNode;
+
+		// set previous if list isn't empty
+		if(NULL != this->head->next)
+		{
+			this->head->next->previous = newNode;
+		}
 	}
 
 	return true;
@@ -174,16 +159,14 @@ int32 VirtualList::pushFront(const void* const data)
 void* VirtualList::popFront()
 {
 	// if head isn't null
-	if(this->head)
+	if(NULL != this->head)
 	{
 		VirtualNode node = this->head;
 		void* data = node->data;
 
-		if(node->next)
+		if(NULL != node->next)
 		{
 			this->head = node->next;
-
-			// move head's previous pointer
 			this->head->previous = NULL;
 		}
 		else
@@ -210,16 +193,14 @@ void* VirtualList::popFront()
 void* VirtualList::popBack()
 {
 	// if tail isn't null
-	if(this->tail)
+	if(NULL != this->tail)
 	{
 		VirtualNode node = this->tail;
 		void* data = node->data;
 
-		if(node->previous)
+		if(NULL != node->previous)
 		{
 			this->tail = node->previous;
-
-			// move head's previous pointer
 			this->tail->next = NULL;
 		}
 		else
@@ -250,23 +231,23 @@ int32 VirtualList::pushBack(const void* const data)
 	ASSERT(data, "VirtualList::pushBack: null data");
 
 	// set the tail
-	if(!this->head)
+	if(NULL == this->head)
 	{
 		this->head = this->tail = newNode;
 	}
 	else
 	{
-		// set previous if list isn't empty
-		if(this->tail)
-		{
-			this->tail->next = newNode;
-		}
-
 		// link new node to the tail
 		newNode->previous = this->tail;
 
 		// move the tail
 		this->tail = newNode;
+
+		// set previous if list isn't empty
+		if(NULL != this->tail->previous)
+		{
+			this->tail->previous->next = newNode;
+		}
 	}
 
 	return true;
@@ -283,7 +264,7 @@ int32 VirtualList::getSize()
 
 	VirtualNode node = this->head;
 
-	while(node)
+	while(NULL != node)
 	{
 		// load next node
 		node = node->next;
@@ -328,14 +309,14 @@ VirtualNode VirtualList::getNode(int32 item)
 	VirtualNode node = this->head;
 
 	// if not null head
-	if(node)
+	if(NULL != node)
 	{
 		// if item hasn't reached list's size
 		if(item < listSize)
 		{
 			// increase counter while node hasn't reached list's end
 			// and counter hasn't reached the item requested
-			while(node && counter < item)
+			while(NULL != node && counter < item)
 			{
 				// increase counter
 				counter++;
@@ -382,7 +363,7 @@ void* VirtualList::getObject(void* const dataPointer)
 	VirtualNode node = this->head;
 
 	// locate node
-	while(node && node->data != dataPointer)
+	while(NULL != node && node->data != dataPointer)
 	{
 		node = node->next;
 	}
@@ -405,7 +386,7 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 	// if the node is the head of the list
 	if(node == this->head)
 	{
-		if(node->next)
+		if(NULL != node->next)
 		{
 			// move head to next element
 			this->head = node->next;
@@ -421,13 +402,13 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 	}
 	else
 	{
-		// if node isn't the last in the list
+		// if node is the last in the list
 		if(node == this->tail)
 		{
+			this->tail->previous->next = NULL;
+
 			// set the tail
 			this->tail = this->tail->previous;
-
-			this->tail->next = NULL;
 		}
 		else
 		{
@@ -474,8 +455,8 @@ bool VirtualList::removeNode(VirtualNode node)
 VirtualNode VirtualList::find(const void* const dataPointer)
 {
 	VirtualNode node = this->head;
-
-	for(; node && node->data != (void*)dataPointer; node = node->next);
+	
+	for(; NULL != node && node->data != (void*)dataPointer; node = node->next);
 
 	return node;
 }
@@ -489,9 +470,9 @@ VirtualNode VirtualList::find(const void* const dataPointer)
 int32 VirtualList::getDataPosition(const void* const dataPointer)
 {
 	VirtualNode node = this->head;
-		int32 position = 0;
+	int32 position = 0;
 
-	for(; node && node->data != (void*)dataPointer; node = node->next, position++);
+	for(; NULL != node && node->data != (void*)dataPointer; node = node->next, position++);
 
 	return !node ? -1 : position;
 }
@@ -505,9 +486,9 @@ int32 VirtualList::getDataPosition(const void* const dataPointer)
 int32 VirtualList::getNodePosition(VirtualNode node)
 {
 	VirtualNode currentNode = this->head;
-		int32 position = 0;
+	int32 position = 0;
 
-	for(; node && currentNode && currentNode != node; currentNode = currentNode->next, position++);
+	for(; NULL != node && currentNode && currentNode != node; currentNode = currentNode->next, position++);
 
 	return !node || !currentNode ? -1 : position;
 }
@@ -538,7 +519,7 @@ void VirtualList::copy(VirtualList sourceList)
 
 	VirtualList::clear(this);
 
-	while(node)
+	while(NULL != node)
 	{
 		// add next node
 		VirtualList::pushBack(this, node->data);
@@ -559,10 +540,14 @@ void VirtualList::add(VirtualList sourceList)
 #ifdef __DEBUG
 	int32 counter = 0;
 #endif
+	if(isDeleted(sourceList))
+	{
+		return;
+	}
 
 	VirtualNode node = sourceList->head;
 
-	while(node)
+	while(NULL != node)
 	{
 		// add next node
 		VirtualList::pushBack(this, node->data);
@@ -586,7 +571,7 @@ void VirtualList::substract(VirtualList sourceList)
 
 	VirtualNode node = sourceList->head;
 
-	while(node)
+	while(NULL != node)
 	{
 		// add next node
 		VirtualList::removeElement(this, node->data);
@@ -612,7 +597,7 @@ void VirtualList::reverse(VirtualList sourceList)
 
 	VirtualList::clear(this);
 
-	while(node)
+	while(NULL != node)
 	{
 		// add next node
 		VirtualList::pushFront(this, node->data);
@@ -677,9 +662,7 @@ bool VirtualList::checkThatNodeIsPresent(VirtualNode node)
 		return false;
 	}
 
-	VirtualNode auxNode = this->head;
-
-	for(; auxNode; auxNode = auxNode->next)
+	for(VirtualNode auxNode = this->head; NULL != auxNode; auxNode = auxNode->next)
 	{
 		if(auxNode == node)
 		{
@@ -707,7 +690,7 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 
 	VirtualNode newNode = NULL;
 
-	if(!node || node == this->tail)
+	if(NULL == node || node == this->tail)
 	{
 		VirtualList::pushBack(this, data);
 
@@ -717,7 +700,7 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 	{
 		newNode = new VirtualNode(data);
 
-		if(!newNode)
+		if(NULL == newNode)
 		{
 			return false;
 		}
@@ -753,7 +736,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 
 	VirtualNode newNode = NULL;
 
-	if(!node || node == this->head)
+	if(NULL == node || node == this->head)
 	{
 		VirtualList::pushFront(this, data);
 
@@ -763,7 +746,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 	{
 		newNode = new VirtualNode(data);
 
-		if(!newNode)
+		if(NULL == newNode)
 		{
 			return false;
 		}
@@ -771,7 +754,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 		newNode->previous = node->previous;
 		newNode->next = node;
 
-		if(node->previous)
+		if(NULL != node->previous)
 		{
 			node->previous->next = newNode;
 		}
@@ -822,9 +805,9 @@ void* VirtualList::getObjectAtPosition(int32 position)
 	}
 
 	// locate node
-	for(; node && counter < position; node = node->next, counter++);
+	for(; NULL != node && counter < position; node = node->next, counter++);
 
-	if(node)
+	if(NULL != node)
 	{
 		return node->data;
 	}

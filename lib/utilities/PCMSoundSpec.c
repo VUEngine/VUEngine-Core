@@ -55,7 +55,7 @@ SoundChannelConfigurationROM PCMSoundChannelConfiguration =
 	0x00,
 
 	/// SxEV0
-	0x80,
+	0xF0,
 
 	/// SxEV1
 	0x00,
@@ -94,7 +94,7 @@ SoundChannelROM PCMSoundChannel =
 };
 
 
-SoundChannelROM* PCMSoundChannels[] =
+SoundChannelROM* const PCMSoundChannels[] =
 {
 	&PCMSoundChannel,
 	NULL
@@ -106,7 +106,7 @@ SoundROM PCMSound =
 	"PCM Sound Name",
 
 	/// Play in loop
-	true,
+	false,
 
 	/// Target timer resolution in us
 	0,

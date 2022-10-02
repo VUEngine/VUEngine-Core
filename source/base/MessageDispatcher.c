@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MessageDispatcher.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Clock.h>
 #include <VirtualList.h>
 #include <debugUtilities.h>
@@ -81,7 +81,7 @@ void MessageDispatcher::destructor()
  * @param extraInfo	pointer to any extra data that must accompany the message
  * @return			a flag indicating the status of the processing of the message
  */
-static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Object receiver, int32 message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -98,7 +98,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 			Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
 			// send the telegram to the recipient
-			result = Object::handleMessage(receiver, telegram);
+			result = ListenerObject::handleMessage(receiver, telegram);
 
 			delete telegram;
 		}
@@ -112,7 +112,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 			_messageDispatcher->helperTelegramIsInUse = true;
 
 			// send the telegram to the recipient
-			result = Object::handleMessage(receiver, _messageDispatcher->helperTelegram);
+			result = ListenerObject::handleMessage(receiver, _messageDispatcher->helperTelegram);
 
 			_messageDispatcher->helperTelegramIsInUse = false;
 		}
@@ -121,7 +121,7 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
 	}
 	else
 	{
-		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), Game::getMessagingClock(Game::getInstance()), delay, sender, receiver, message, extraInfo);
+		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), VUEngine::getMessagingClock(_vuEngine), delay, sender, receiver, message, extraInfo);
 	}
 
 	return false;
@@ -137,13 +137,13 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, Object sender, Obje
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
- 	Object sender, Object receiver, int32 message, void* extraInfo)
+ 	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// create the telegram
 	DelayedMessage* delayedMessage = new DelayedMessage;
 
 	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
-	delayedMessage->clock = clock ? clock : Game::getMessagingClock(Game::getInstance());
+	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock(_vuEngine);
 	delayedMessage->timeOfArrival = Clock::getTime(delayedMessage->clock) + delay;
 	delayedMessage->discarded = false;
 
@@ -207,7 +207,6 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 		}
 		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 		{
-
 			Telegram telegram = delayedMessage->telegram;
 
 			if(!isDeleted(telegram))
@@ -215,14 +214,36 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 				void* sender = Telegram::getSender(telegram);
 				void* receiver = Telegram::getReceiver(telegram);
 
-				NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
+#ifndef __RELEASE
+				if(isDeleted(sender) || isDeleted(receiver))
+				{
+					Printing::setDebugMode(Printing::getInstance());
+					Printing::clear(Printing::getInstance());
+					PRINT_TEXT("Message: ", 1, 16);
+					PRINT_INT(Telegram::getMessage(telegram), 10, 16);
+
+					if(!isDeleted(sender))
+					{
+						PRINT_TEXT("Sender: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(sender), 10, 15);
+					}
+
+					if(!isDeleted(receiver))
+					{
+						PRINT_TEXT("Receiver: ", 1, 15);
+						PRINT_TEXT(__GET_CLASS_NAME(receiver), 10, 15);
+					}
+				}
+#endif
+
 				NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
+				NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
 
 				// check if sender and receiver are still alive
 				if(!isDeleted(sender) && !isDeleted(receiver))
 				{
 					messagesDispatched |= true;
-					Object::handleMessage(receiver, telegram);
+					ListenerObject::handleMessage(receiver, telegram);
 				}
 			}
 
@@ -277,7 +298,7 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 message)
+bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -308,7 +329,7 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int32 me
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32 message)
+bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -338,7 +359,7 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int32
  * @private
  * @param sender	the object that originally sent the message
  */
-bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
+bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
@@ -363,12 +384,44 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 }
 
 /**
+ * Print all delayed messages sent by an object
+ *
+ * @private
+ * @param sender	the object that originally sent the message
+ */
+void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
+{
+	for(VirtualNode node = this->delayedMessages->head; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage))
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(Telegram::getSender(telegram) == sender)
+			{
+				PRINT_INT(telegram->message, x, y);
+				PRINT_TEXT(__GET_CLASS_NAME(telegram->sender), x + 4, y);
+				PRINT_TEXT(__GET_CLASS_NAME(telegram->receiver), x + 15, y++);
+
+				if(27 < y)
+				{
+					x = 24;
+					y = 1;
+				}
+			}
+		}
+	}
+}
+
+/**
  * Discarded all delayed messages sent to an object
  *
  * @private
  * @param sender	the object that the message was originally sent to
  */
-bool MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
+bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
 {
 	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;

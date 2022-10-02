@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Ball.h>
 #include <CollisionManager.h>
 #include <MessageDispatcher.h>
@@ -41,10 +41,10 @@ friend class Shape;
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan)
 {
 	// construct base Container
-	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, lifeSpan);
+	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, wireframeSpec, lifeSpan);
 
 	this->solidParticleSpec = solidParticleSpec;
 
@@ -75,7 +75,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 	};
 
 	// register a shape for collision detection
-	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
+	this->shape = CollisionManager::createShape(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
 	Shape::activeCollisionChecks(this->shape, true);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -89,7 +89,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 void SolidParticle::destructor()
 {
 	// unregister the shape for collision detection
-	CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), this->shape);
+	CollisionManager::destroyShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this->shape);
 
 	this->shape = NULL;
 
@@ -113,7 +113,7 @@ void SolidParticle::transform()
  */
 void SolidParticle::transformShape()
 {
-	const Rotation shapeRotation = {0, 0, 0};
+	const Rotation shapeRotation = Rotation::zero();
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {this->solidParticleSpec->radius, this->solidParticleSpec->radius, this->solidParticleSpec->radius};
 
@@ -135,7 +135,7 @@ Shape SolidParticle::getShape()
  *
  * @return		Width
  */
-fix10_6 SolidParticle::getWidth()
+fixed_t SolidParticle::getWidth()
 {
 	return this->solidParticleSpec->radius;
 }
@@ -145,7 +145,7 @@ fix10_6 SolidParticle::getWidth()
  *
  * @return		Height
  */
-fix10_6 SolidParticle::getHeight()
+fixed_t SolidParticle::getHeight()
 {
 	return this->solidParticleSpec->radius;
 }
@@ -155,7 +155,7 @@ fix10_6 SolidParticle::getHeight()
  *
  * @return		Depth
  */
-fix10_6 SolidParticle::getDepth()
+fixed_t SolidParticle::getDepth()
 {
 	// must calculate based on the scale because not affine object must be enlarged
 	return this->solidParticleSpec->radius;
@@ -182,10 +182,10 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 		{
 			Shape::resolveCollision(collisionInformation->shape, collisionInformation, false);
 
-			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
-			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
+			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
+			fixed_t bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
 
-			Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
 		}
 	}
@@ -203,7 +203,7 @@ bool SolidParticle::isSubjectToGravity(Acceleration gravity)
 {
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
-	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
+	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
 	Vector3D displacement =
 	{
@@ -307,7 +307,7 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 
 	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));
@@ -319,6 +319,5 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 void SolidParticle::reset()
 {
 	Base::reset(this);
-
 	Shape::reset(this->shape);
 }

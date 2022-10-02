@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <HardwareManager.h>
-#include <Game.h>
 #include <KeypadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
@@ -36,6 +35,7 @@ extern uint32 comVector;
 extern uint32 vipVector;
 extern uint32 zeroDivisionVector;
 extern uint32 invalidOpcodeVector;
+extern uint32 floatingPointVector;
 
 extern uint32 _dramBssEnd;
 extern uint32 _dramDataStart;
@@ -102,9 +102,6 @@ void HardwareManager::constructor()
 	_hardwareRegisters[__WCR] |= 0x0001;
 
 	this->hwRegisters =	(uint8*)0x02000000;
-	this->timerManager = TimerManager::getInstance();
-	this->vipManager = VIPManager::getInstance();
-	this->keypadManager = KeypadManager::getInstance();
 
 	//setup timer interrupts
 	HardwareManager::setInterruptVectors(this);
@@ -186,6 +183,7 @@ void HardwareManager::setExceptionVectors()
 {
 	zeroDivisionVector = (uint32)Error::zeroDivisionException;
 	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
+	floatingPointVector = (uint32)Error::floatingPointException;
 }
 
 /**
@@ -240,12 +238,11 @@ int32 HardwareManager::getInterruptLevel()
  */
 void HardwareManager::setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits)
 {
-	TimerManager::setResolution(this->timerManager, timerResolution);
-	TimerManager::setTimePerInterruptUnits(this->timerManager, timePerInterruptUnits);
-	TimerManager::setTimePerInterrupt(this->timerManager, timePerInterrupt);
+	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
+	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), timePerInterruptUnits);
+	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
 
-	TimerManager::initialize(this->timerManager);
-	TimerManager::enable(this->timerManager, true);
+	TimerManager::initialize(TimerManager::getInstance());
 }
 
 /**
@@ -253,7 +250,7 @@ void HardwareManager::setupTimer(uint16 timerResolution, uint16 timePerInterrupt
  */
 void HardwareManager::clearScreen()
 {
-	VIPManager::clearScreen(this->vipManager);
+	VIPManager::clearScreen(VIPManager::getInstance());
 }
 
 /**
@@ -261,7 +258,7 @@ void HardwareManager::clearScreen()
  */
 void HardwareManager::displayOn()
 {
-	VIPManager::displayOn(this->vipManager);
+	VIPManager::displayOn(VIPManager::getInstance());
 }
 
 /**
@@ -269,7 +266,7 @@ void HardwareManager::displayOn()
  */
 void HardwareManager::displayOff()
 {
-	VIPManager::displayOff(this->vipManager);
+	VIPManager::displayOff(VIPManager::getInstance());
 }
 
 /**
@@ -278,7 +275,7 @@ void HardwareManager::displayOff()
 
 bool HardwareManager::isDrawingAllowed()
 {
-	return VIPManager::isDrawingAllowed(this->vipManager);
+	return VIPManager::isDrawingAllowed(VIPManager::getInstance());
 }
 
 /**
@@ -287,8 +284,8 @@ bool HardwareManager::isDrawingAllowed()
 void HardwareManager::disableRendering()
 {
 	// disable interrupt
-	VIPManager::disableInterrupts(this->vipManager);
-	VIPManager::disableDrawing(this->vipManager);
+	VIPManager::disableInterrupts(VIPManager::getInstance());
+	VIPManager::disableDrawing(VIPManager::getInstance());
 }
 
 /**
@@ -297,9 +294,9 @@ void HardwareManager::disableRendering()
 void HardwareManager::enableRendering()
 {
 	// turn on display
-	VIPManager::displayOn(this->vipManager);
-	VIPManager::enableInterrupts(this->vipManager, __FRAMESTART | __XPEND);
-	VIPManager::enableDrawing(this->vipManager);
+	VIPManager::displayOn(VIPManager::getInstance());
+	VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
+	VIPManager::enableDrawing(VIPManager::getInstance());
 }
 
 /**
@@ -307,7 +304,7 @@ void HardwareManager::enableRendering()
  */
 void HardwareManager::upBrightness()
 {
-	VIPManager::upBrightness(this->vipManager);
+	VIPManager::upBrightness(VIPManager::getInstance());
 }
 
 /**
@@ -315,7 +312,7 @@ void HardwareManager::upBrightness()
  */
 void HardwareManager::lowerBrightness()
 {
-	VIPManager::lowerBrightness(this->vipManager);
+	VIPManager::lowerBrightness(VIPManager::getInstance());
 }
 
 /**
@@ -325,7 +322,7 @@ void HardwareManager::lowerBrightness()
  */
 void HardwareManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
-	VIPManager::setupColumnTable(this->vipManager, columnTableSpec);
+	VIPManager::setupColumnTable(VIPManager::getInstance(), columnTableSpec);
 }
 
 /**
@@ -333,7 +330,7 @@ void HardwareManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
  */
 void HardwareManager::enableKeypad()
 {
-	KeypadManager::enable(this->keypadManager);
+	KeypadManager::enable(KeypadManager::getInstance());
 }
 
 /**
@@ -341,7 +338,7 @@ void HardwareManager::enableKeypad()
  */
 void HardwareManager::disableKeypad()
 {
-	KeypadManager::disable(this->keypadManager);
+	KeypadManager::disable(KeypadManager::getInstance());
 }
 
 /**

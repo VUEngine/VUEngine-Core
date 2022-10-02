@@ -127,8 +127,8 @@ void Texture::loadCharSet()
 			break;
 	}
 
-	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
-	CharSet::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 }
 
 /**
@@ -175,8 +175,8 @@ void Texture::releaseCharSet()
 {
 	if(!isDeleted(this->charSet))
 	{
-		CharSet::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
-		CharSet::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
 
@@ -613,7 +613,7 @@ uint16 Texture::getId()
  * @private
  * @param eventFirer	CharSet
  */
-void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
+void Texture::onCharSetRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	Texture::rewrite(this);
 }
@@ -624,7 +624,7 @@ void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
  * @private
  * @param eventFirer	CharSet
  */
-void Texture::onCharSetDeleted(Object eventFirer)
+void Texture::onCharSetDeleted(ListenerObject eventFirer)
 {
 	this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
 }

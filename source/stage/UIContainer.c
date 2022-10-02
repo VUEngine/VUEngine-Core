@@ -14,8 +14,14 @@
 
 #include <UIContainer.h>
 #include <Optics.h>
-#include <Game.h>
 #include <Camera.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+//												CLASS'S DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+static Camera _camera = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -30,6 +36,8 @@ void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
 
 	// add entities in the spec
 	UIContainer::addEntities(this, uiContainerSpec->entities);
+
+	_camera = Camera::getInstance();
 }
 
 // class's destructor
@@ -69,8 +77,6 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			Entity::initialTransform(entity, &environmentTransform, true);
-
-			Entity::synchronizeGraphics(entity);
 			Entity::ready(entity, true);
 		}
 
@@ -82,48 +88,13 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 
 void UIContainer::synchronizeGraphics()
 {
-	Camera camera = Camera::getInstance();
-	ASSERT(camera, "UIContainer::transform: null camera");
+	NM_ASSERT(_camera, "UIContainer::transform: null camera");
 
-	Camera::prepareForUI(camera);
+	Camera::prepareForUI(_camera);
 
 	Base::synchronizeGraphics(this);
 
-	Camera::doneUITransform(camera);
+	Camera::doneUI(_camera);
 }
 
-// transformation
-void UIContainer::initialTransform(const Transformation* environmentTransform, uint32 recursive)
-{
-	Camera camera = Camera::getInstance();
-	ASSERT(camera, "UIContainer::initialTransform: null camera");
 
-	Vector3D originalCameraPosition  =
-	{
-		0, 0, 0
-	};
-
-	if(camera)
-	{
-		// must hack the camera position for my children's sprites
-		// being properly rendered
-		originalCameraPosition = Camera::getPosition(camera);
-
-		Vector3D tempCameraPosition =
-		{
-			0, 0, 0
-		};
-
-		Camera::setPosition(camera, tempCameraPosition);
-	}
-
-	Base::initialTransform(this, environmentTransform, recursive);
-
-	Container::synchronizeGraphics(this);
-
-	if(camera)
-	{
-		// recover camera
-		Camera::setPosition(camera, originalCameraPosition);
-	}
-}

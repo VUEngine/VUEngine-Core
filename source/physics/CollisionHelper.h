@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Shape.h>
 
 
@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-3d
-static class CollisionHelper : Object
+static class CollisionHelper : ListenerObject
 {
 	/// @publicsection
 	static CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);

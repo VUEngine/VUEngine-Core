@@ -53,7 +53,7 @@ friend class VirtualList;
  * @param mBgmapSpriteSpec		Spec to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner)
+void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&mBgmapSpriteSpec->bgmapSpriteSpec, owner);
 
@@ -64,6 +64,7 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object 
 	if(!isDeleted(this->texture))
 	{
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
+		this->texture = NULL;
 	}
 
 	this->textures = NULL;
@@ -114,8 +115,12 @@ void MBgmapSprite::releaseTextures()
 		for(; NULL != node; node = node->next)
 		{
 			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-			BgmapTexture::removeEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+
+			if(!isDeleted(bgmapTexture))
+			{
+				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+			}
 		}
 
 		delete this->textures;
@@ -137,12 +142,12 @@ void MBgmapSprite::loadTextures()
 		{
 			this->textures = new VirtualList();
 
-			for(int32 i = 0; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
+			for(int32 i = 0; NULL != this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
 
-			this->texture = Texture::safeCast(VirtualList::front(this->textures));
+			this->texture = Texture::safeCast(VirtualList::back(this->textures));
 			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
 			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
@@ -173,16 +178,24 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	if(VirtualList::getSize(this->textures))
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
+
 		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
+
+		// This allows to have bgmaps sprites that are smaller than 512 pixels high
+		// But depends on all the segments being free
+		if(this->mBgmapSpriteSpec->xLoop && 64 > Texture::getRows(bgmapTexture))
+		{
+			minimumSegment += 1;
+		}
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures);
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, this->mBgmapSpriteSpec->scValue);
 
-	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
-	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
+	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
+	NM_ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
-	BgmapTexture::addEventListener(bgmapTexture, Object::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+	BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 	VirtualList::pushBack(this->textures, bgmapTexture);
 }
@@ -340,7 +353,7 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void MBgmapSprite::resize(Scale scale, fix10_6 z)
+void MBgmapSprite::resize(Scale scale, fixed_t z)
 {
 	Base::resize(this, scale, z);
 
@@ -433,4 +446,33 @@ bool MBgmapSprite::writeTextures()
 	return !node;
 }
 
+/**
+ * Prepare textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @return			true it all textures are written
+ */
+bool MBgmapSprite::prepareTexture()
+{
+	bool allTextureAreWritten = true;
+
+	VirtualNode node = this->textures->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		Texture texture = Texture::safeCast(node->data);
+
+		if(kTextureWritten != texture->status)
+		{
+			if(!Texture::prepare(texture))
+			{
+				allTextureAreWritten = false;
+			}
+		}
+	}
+
+	return allTextureAreWritten;
+}
 

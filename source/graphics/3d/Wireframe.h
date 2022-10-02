@@ -15,27 +15,65 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA							__FIXED_EXT_INFINITY
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup graphics-3d
-abstract class Wireframe : Object
+typedef struct WireframeSpec
 {
-	const Vector3D* position;
-	const Rotation* rotation;
+	/// class allocator
+	AllocatorPointer allocator;
+
+	/// color
 	uint8 color;
 
+	/// transparent
+	uint8 transparent;
+
+	/// interlaced
+	bool interlaced;
+
+} WireframeSpec;
+
+typedef const WireframeSpec WireframeROMSpec;
+
+
+/// @ingroup graphics-3d
+abstract class Wireframe : ListenerObject
+{
+	WireframeSpec* wireframeSpec;
+	const Vector3D* position;
+	const Rotation* rotation;
+	const Scale* scale;
+	fixed_ext_t squaredDistanceToCamera;
+	bool interlaced;
+	uint8 color;
+	uint8 bufferIndex;
+	uint8 show;
+	uint8 transparent;
+
 	/// @publicsection
-	void constructor(uint8 color);
+	void constructor(WireframeSpec* wireframeSpec);
+	void setTransparent(bool transparent);
 	void hide();
 	void show();
-	void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
-	virtual void draw(bool calculateParallax) = 0;
+	void setupRenderingMode(const Vector3D* relativePosition);
+
+	virtual void draw() = 0;
 	virtual void render();
+	virtual VirtualList getVertices();
+	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
+	virtual PixelRightBox getPixelRightBox();
 }
 
 

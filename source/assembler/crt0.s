@@ -27,6 +27,9 @@ _zeroDivisionVector = 0x0500FFD4
 .global _invalidOpcodeVector
 _invalidOpcodeVector = 0x0500FFD8
 
+.global _floatingPointVector
+_floatingPointVector = 0x0500FFDC
+
 
 /*************************************************
   startup code
@@ -34,6 +37,56 @@ _invalidOpcodeVector = 0x0500FFD8
 	.global	_start
 
 _start:
+	movhi	1536, r0, r10
+	movea	0, r10, r10
+	ld.b	0[r10], r18
+	ld.b	2[r10], r19
+	ld.b	4[r10], r20
+	ld.b	6[r10], r21
+
+/* store SRAM's sample */
+	movhi	hi(__sramSample), r0, r10
+	movea	lo(__sramSample), r10, r10
+	st.b	r18,    0[r10]
+	add		1, 		r10
+	st.b	r19,    0[r10]
+	add		1, 		r10
+	st.b	r20,    0[r10]
+	add		1, 		r10
+	st.b	r21,    0[r10]
+
+/* read SRAM's sample */
+	movhi	hi(__stack), r0,sp
+	movea	lo(__stack), sp,sp
+	movhi	hi(_continue),r0,lp
+	movea	lo(_continue),lp,lp
+	movhi	hi(_readSRAM),r0,r1
+	movea	lo(_readSRAM),r1,r1
+	jmp	    [r1]
+
+_continue:
+
+/* read WRAM's sample */
+	mov		0, r10
+	ld.b	1280[r10], r18
+	add		2, r10
+	ld.b	1280[r10], r19
+	add		2, r10
+	ld.b	1280[r10], r20
+	add		2, r10
+	ld.b	1280[r10], r21
+
+/* store WRAM's sample */
+	movhi	hi(__wramSample), r0, r10
+	movea	lo(__wramSample), r10, r10
+	st.b	r18,    0[r10]
+	add		1, 		r10
+	st.b	r19,    0[r10]
+	add		1, 		r10
+	st.b	r20,    0[r10]
+	add		1, 		r10
+	st.b	r21,    0[r10]
+
 /* wait for WRAM */
 	movea	0x2000, r0, r6
 wait_for_wram_loop:
@@ -168,8 +221,8 @@ __init_engine:
 	movhi	hi(__call_main),r0,lp
 	movea	lo(__call_main),lp,lp
 
-	movhi	hi(_Game_init), r0, r1
-	movea	lo(_Game_init), r1, r1
+	movhi	hi(_VUEngine_init), r0, r1
+	movea	lo(_VUEngine_init), r1, r1
 	jmp	    [r1]
 
 __call_main:
@@ -272,6 +325,12 @@ __invalid_opcode_exception:
 	ld.w	0[r1],r1
 	jmp	    [r1]
 
+__floating_point_exception:
+	movhi	hi(_floatingPointVector), r0, r1
+	movea	lo(_floatingPointVector), r1, r1
+	ld.w	0[r1],r1
+	jmp	    [r1]
+
 	.section ".vbvectors","ax"
 	.align	1
 
@@ -302,8 +361,8 @@ _interrupt_table:
 	.fill	0x0110
 
     /* (7FFFF60h) - Float exception */
-	reti
-	.fill	0x0E
+	jr __floating_point_exception
+	.fill	0x0c
 
     /* Unused vector */
 	.fill	0x10

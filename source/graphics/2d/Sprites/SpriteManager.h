@@ -18,7 +18,11 @@
 #include <Object.h>
 #include <Sprite.h>
 #include <ObjectSpriteContainer.h>
-
+#include <Printing.h>
+#include <ParamTableManager.h>
+#include <CharSetManager.h>
+#include <BgmapTextureManager.h>
+#include <ObjectTextureManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,6 +56,11 @@ typedef struct SpritesList
 /// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
+	Printing printing;
+	ParamTableManager paramTableManager;
+	CharSetManager charSetManager;
+	BgmapTextureManager bgmapTextureManager;
+	ObjectTextureManager objectTextureManager;
 	// Sprites to render
 	VirtualList sprites;
 	// Object sprite containers
@@ -74,13 +83,11 @@ singleton class SpriteManager : Object
 	int8 deferParamTableEffects;
 	// delay before writing again
 	int8 waitToWriteSpriteTextures;
-	// flag to prevent rendering
-	bool stopRendering;
 
 	/// @publicsection
 	static SpriteManager getInstance();
 
-	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
+	Sprite createSprite(SpriteSpec* spriteSpec, ListenerObject owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
 	void deferParamTableEffects(bool deferAffineTransformations);
@@ -104,7 +111,7 @@ singleton class SpriteManager : Object
 	void setMaximumParamTableRowsToComputePerCall(int32 maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
-	ObjectSpriteContainer getObjectSpriteContainer(fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int32 segment);
 	void sort();
 	bool sortProgressively();

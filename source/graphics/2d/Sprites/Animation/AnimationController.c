@@ -16,7 +16,6 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Game.h>
 #include <Utilities.h>
 #include <debugConfig.h>
 
@@ -299,7 +298,7 @@ void AnimationController::resetFrameDuration()
  * @private
  * @param animationFunction		Animation function to play
  */
-void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, Object scope)
+void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
 {
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
@@ -340,35 +339,35 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
 }
 
 /**
- * Play an animation given an AnimationDescription and the name of an AnimationFunction
+ * Play an animation given an animation function and the name of an AnimationFunction
  *
  * @public
- * @param animationDescription		Animation description holding the animation function
+ * @param animationFunctions		Animation description holding the animation function
  * @param functionName				Name of the animation function's to play
  * @return							True if the animation started playing
  */
-bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName, Object scope)
+bool AnimationController::play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope)
 {
-	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
-	ASSERT(functionName, "AnimationController::play: null functionName");
+	ASSERT(NULL != animationFunctions, "AnimationController::play: null animationFunctions");
+	ASSERT(NULL != functionName, "AnimationController::play: null functionName");
 
 	if(this->animationCoordinator)
 	{
-		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationDescription, functionName))
+		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationFunctions, functionName))
 		{
 			return false;
 		}
 	}
 
-	if(NULL == this->animationFunction || strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		int32 i = 0;
 
 		// search for the animation function
-		for(; animationDescription->animationFunctions[i]; i++ )
+		for(; animationFunctions[i]; i++ )
 		{
 			// compare function's names
-			if(!strncmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+			if(0 == strncmp((const char *)functionName, (const char *)animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
 				// remove previous listeners
 				if(this->animationFunction && this->animationFunction->onAnimationComplete)
@@ -376,14 +375,14 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 					AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 				}
 
-				this->animationFunction = animationDescription->animationFunctions[i];
+				this->animationFunction = animationFunctions[i];
 
 				break;
 			}
 		}
 	}
 
-	if(NULL == this->animationFunction)
+	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		return false;
 	}
@@ -411,10 +410,10 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
  * Replay the last animation if any
  *
  * @public
- * @param animationDescription		Animation description holding the animation function
+ * @param animationFunctions		Animation description holding the animation function
  * @return							True if the animation started playing
  */
-bool AnimationController::replay(const AnimationDescription* animationDescription)
+bool AnimationController::replay(const AnimationFunction** animationFunctions)
 {
 	if(NULL == this->animationFunction)
 	{
@@ -423,7 +422,7 @@ bool AnimationController::replay(const AnimationDescription* animationDescriptio
 
 	if(!isDeleted(this->animationCoordinator))
 	{
-		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationDescription, this->animationFunction->name))
+		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationFunctions, this->animationFunction->name))
 		{
 			return false;
 		}

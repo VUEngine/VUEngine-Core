@@ -22,6 +22,7 @@ enum Events
 
 	// add events here
 	kEventTornFrame,
+	kEventFrameRateDipped,
 
 	kEventSpatialObjectDeleted,
 	kEventContainerDeleted,
@@ -65,7 +66,6 @@ enum Events
 	kEventVIPManagerXPENDDuringXPEND,
 	kEventVIPManagerGAMESTARTDuringXPEND,
 	kEventVIPManagerXPENDDuringGAMESTART,
-	kEventVIPManagerFrameBuffersProcessingSuspended,
 
 	// do not remove me
 	kEventEngineLast

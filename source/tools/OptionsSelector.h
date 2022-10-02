@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VirtualList.h>
 
 
@@ -43,9 +43,9 @@ typedef struct Option
 	/// OptionType
 	uint8 type;
 	/// callback function to be executed for this menu option
-	void (*callback)(Object);
+	void (*callback)(ListenerObject);
 	/// scope of callback function
-	Object callbackScope;
+	ListenerObject callbackScope;
 
 } Option;
 
@@ -73,6 +73,13 @@ enum OptionTypes
 	kChar
 };
 
+enum OptionsAlignment
+{
+	kOptionsAlignLeft = 0,
+	kOptionsAlignCenter,
+	kOptionsAlignRight
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS' DECLARATION
@@ -80,7 +87,7 @@ enum OptionTypes
 
 /// Utility class to render a menu
 /// @ingroup tools
-class OptionsSelector : Object
+class OptionsSelector : ListenerObject
 {
 	// List of pages, each being a VirtualLists of Options
 	VirtualList pages;
@@ -89,9 +96,12 @@ class OptionsSelector : Object
 	// Current option node
 	VirtualNode currentOption;
 	// Printing column
-	uint8 x;
+	int8 x;
+	int8 optionsLength;
 	// Printing row
-	uint8 y;
+	int8 y;
+	uint32 alignment;
+	int8 spacing;
 	// Number of columns per page
 	uint16 cols;
 	// Number of rows per page
@@ -105,15 +115,16 @@ class OptionsSelector : Object
 	// Current option index
 	int32 currentOptionIndex;
 	// Selection mark character
-	char* mark;
+	char* leftMark;
+	char* rightMark;
 	// Font to use for printing the OptionsSelector
 	char* font;
 
 	/// @publicsection
-	void constructor(uint16 cols, uint16 rows, char* font);
+	void constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark);
 	void doCurrentSelectionCallback();
 	void setColumnWidth(uint8 width);
-	void setMarkCharacter(char* mark);
+	void setMarkCharacters(char* leftMark, char* rightMark);
 	uint8 getWidth();
 	void setOptions(VirtualList options);
 	void selectNext();
@@ -122,7 +133,7 @@ class OptionsSelector : Object
 	bool selectPreviousColumn();
 	bool setSelectedOption(int32 optionIndex);
 	int32 getSelectedOption();
-	void printOptions(uint8 x, uint8 y);
+	void printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spacing);
 	int32 getNumberOfOptions();
 }
 

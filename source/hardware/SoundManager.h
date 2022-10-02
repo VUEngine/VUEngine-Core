@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <MiscStructs.h>
 #include <SoundWrapper.h>
 #include <WaveForms.h>
@@ -59,6 +59,7 @@ typedef struct SoundRegistry
 enum SoundRequestMessages
 {
 	kPlayAll = 0, 					// Sound is not allocated if there are not enough free channels to play all the sound's tracks
+	kPlayAsSoonAsPossible,			// Plays all tracks deallocating previous sound if necessary
 	kPlayAny,						// Plays as many sound's tracks as there are free channels
 	kPlayForceAny,					// Plays the priority tracks deallocating previous sound if necessary
 	kPlayForceAll,					// Plays all tracks deallocating previous sound if necessary
@@ -90,7 +91,7 @@ enum ChannelTypes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class SoundManager : Object
+singleton class SoundManager : ListenerObject
 {
 	VirtualList soundWrappers;
 	VirtualList soundWrappersMIDI;
@@ -115,11 +116,12 @@ singleton class SoundManager : Object
 
 	void update();
 
-	void stopAllSounds(bool release);
+	void stopAllSounds(bool release, Sound** excludedSounds);
 	void flushQueuedSounds();
 
-	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, Object scope);
-	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, Object scope);
+	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
+	SoundWrapper findSound(const Sound* sound);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void releaseChannels(VirtualList channels);

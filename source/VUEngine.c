@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <SRAMManager.h>
 #include <HardwareManager.h>
 #include <StopwatchManager.h>
@@ -77,34 +77,39 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+VUEngine _vuEngine = NULL;
+
 uint32 _gameRandomSeed = 0;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-static char* _processNameDuringFRAMESTART = NULL;
+static char* _processNameDuringGAMESTART = NULL;
 #endif
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 static char* _processNameDuringXPEND = NULL;
 #endif
 
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+uint32 _dispatchCycle = 0;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-static void Game::init()
+static void VUEngine::init()
 {
-	Game::getInstance();
+	_vuEngine = VUEngine::getInstance();
 }
 
 // class's constructor
-static bool Game::isConstructed()
+static bool VUEngine::isConstructed()
 {
 	return 0 < _singletonConstructed;
 }
 
 // class's constructor
-void Game::constructor()
+void VUEngine::constructor()
 {
 	// check memory map before anything else
 	HardwareManager::checkMemoryMap();
@@ -129,8 +134,8 @@ void Game::constructor()
 	this->currentState = NULL;
 	this->saveDataManager = NULL;
 	this->nextState = NULL;
-	this->nextFrameStarted = false;
-	this->currentFrameEnded = false;
+	this->nextGameCycleStarted = false;
+	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 
 	// make sure all managers are initialized now
@@ -164,11 +169,11 @@ void Game::constructor()
 	this->nextStateOperation = kSwapState;
 
 	// setup engine parameters
-	Game::initialize(this);
+	VUEngine::initialize(this);
 }
 
 // class's destructor
-void Game::destructor()
+void VUEngine::destructor()
 {
 	// destroy the clocks
 	Clock::destructor(this->clock);
@@ -179,7 +184,7 @@ void Game::destructor()
 }
 
 // setup engine parameters
-void Game::initialize()
+void VUEngine::initialize()
 {
 	// make sure all managers are initialized now
 	this->camera = Camera::getInstance();
@@ -189,8 +194,10 @@ void Game::initialize()
 	this->communicationManager = CommunicationManager::getInstance();
 	this->frameRate = FrameRate::getInstance();
 	this->soundManager = SoundManager::getInstance();
+	this->wireframeManager = WireframeManager::getInstance();
+	this->spriteManager = SpriteManager::getInstance();
 
-	SpriteManager::reset(SpriteManager::getInstance());
+	SpriteManager::reset(this->spriteManager);
 	DirectDraw::reset(DirectDraw::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 
@@ -218,13 +225,17 @@ void Game::initialize()
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
 	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
+#else
+#ifdef __RELEASE
+	TimerManager::wait(TimerManager::getInstance(), 4000);
+#endif
 #endif
 }
 
-void Game::debug()
+void VUEngine::debug()
 {
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
-	WireframeManager::print(WireframeManager::getInstance(), 1, 1);
+	WireframeManager::print(this->wireframeManager, 1, 1);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -237,9 +248,9 @@ void Game::debug()
 }
 
 // set game's initial state
-void Game::start(GameState state)
+void VUEngine::start(GameState state)
 {
-	ASSERT(state, "Game::start: initial state is NULL");
+	ASSERT(state, "VUEngine::start: initial state is NULL");
 
 	// Initialize VPU and turn off the brightness
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
@@ -247,24 +258,26 @@ void Game::start(GameState state)
 	if(!StateMachine::getCurrentState(this->stateMachine))
 	{
 		// Set state
-		Game::setNextState(this, state);
+		VUEngine::setNextState(this, state);
 
 		while(true)
 		{
-			Game::checkForNewState(this);
+			VUEngine::checkForNewState(this);
 
-			Game::currentFrameStarted(this);
+			VUEngine::currentFrameStarted(this);
 
-			Game::run(this);
+			VUEngine::run(this);
 
-			Game::debug(this);
+			VUEngine::currentGameCycleEnded(this);
 
-			Game::currentFrameEnded(this);
+#ifndef __RELEASE
+			VUEngine::debug(this);
+#endif
 
-			while(!this->nextFrameStarted)
+			while(!this->nextGameCycleStarted)
 			{
 				// This breaks PCM playback but reports torn frames more accurately
-				if(!this->nextFrameStarted)
+				if(!this->nextGameCycleStarted)
 				{
 					// Halting the CPU seems to only affect the profiling in Mednafen
 					// But still haven't tested it on hardware
@@ -277,12 +290,12 @@ void Game::start(GameState state)
 	}
 	else
 	{
-		ASSERT(false, "Game::start: already started");
+		ASSERT(false, "VUEngine::start: already started");
 	}
 }
 
 // Set game's state
-void Game::changeState(GameState state)
+void VUEngine::changeState(GameState state)
 {
 	// State changing must be done when no other process
 	// may be affecting the game's general state
@@ -291,7 +304,7 @@ void Game::changeState(GameState state)
 }
 
 // Set game's state after cleaning the stack
-void Game::cleanAndChangeState(GameState state)
+void VUEngine::cleanAndChangeState(GameState state)
 {
 	// state changing must be done when no other process
 	// may be affecting the game's general state
@@ -300,7 +313,7 @@ void Game::cleanAndChangeState(GameState state)
 }
 
 // Add a state to the game's state machine's stack
-void Game::addState(GameState state)
+void VUEngine::addState(GameState state)
 {
 	// State changing must be done when no other process
 	// may be affecting the game's general state
@@ -309,9 +322,9 @@ void Game::addState(GameState state)
 }
 
 // set game's state
-void Game::setNextState(GameState state)
+void VUEngine::setNextState(GameState state)
 {
-	ASSERT(state, "Game::setState: setting NULL state");
+	ASSERT(state, "VUEngine::setState: setting NULL state");
 
 	HardwareManager::displayOff(HardwareManager::getInstance());
 	HardwareManager::disableRendering(HardwareManager::getInstance());
@@ -391,8 +404,8 @@ void Game::setNextState(GameState state)
 	this->nextState = NULL;
 
 	// Reset flags
-	this->currentFrameEnded = true;
-	this->nextFrameStarted = false;
+	this->currentGameCycleEnded = true;
+	this->nextGameCycleStarted = false;
 
 	// Save current state
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -403,20 +416,20 @@ void Game::setNextState(GameState state)
 	}
 
 	// Make sure everything is properly rendered
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	SpriteManager::prepareAll(this->spriteManager);
 
 	HardwareManager::enableRendering(HardwareManager::getInstance());
 	HardwareManager::displayOn(HardwareManager::getInstance());
 
 	// Fire event
-	Game::fireEvent(this, kEventNextStateSet);
+	VUEngine::fireEvent(this, kEventNextStateSet);
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
 }
 
 // erase engine's current status
-void Game::reset()
+void VUEngine::reset(bool resetSounds)
 {
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool::cleanUp(MemoryPool::getInstance());
@@ -429,8 +442,6 @@ void Game::reset()
 	HardwareManager::disableInterrupts();
 
 	// Disable timer
-	TimerManager::enable(this->timerManager, false);
-	TimerManager::reset(this->timerManager);
 
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
@@ -439,8 +450,13 @@ void Game::reset()
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers
-	WireframeManager::reset(WireframeManager::getInstance());
-	SoundManager::reset(this->soundManager);
+	WireframeManager::reset(this->wireframeManager);
+
+	if(resetSounds)
+	{
+		SoundManager::reset(this->soundManager);
+	}
+
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 	CommunicationManager::reset(this->communicationManager);
@@ -449,19 +465,17 @@ void Game::reset()
 
 	// the order of reset for the graphics managers must not be changed!
 	VIPManager::reset(this->vipManager);
-	SpriteManager::reset(SpriteManager::getInstance());
+	SpriteManager::reset(this->spriteManager);
+	DirectDraw::reset(DirectDraw::getInstance());
 	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
-
-	// Enable timer
-	TimerManager::enable(this->timerManager, true);
 
 	HardwareManager::enableInterrupts();
 }
 
 #ifdef __TOOLS
-void Game::openTool(ToolState toolState)
+void VUEngine::openTool(ToolState toolState)
 {
-	if(Game::isInToolState(this, toolState))
+	if(VUEngine::isInToolState(this, toolState))
 	{
 		this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 		StateMachine::popState(this->stateMachine);
@@ -469,7 +483,7 @@ void Game::openTool(ToolState toolState)
 	}
 	else
 	{
-		if(Game::isInSpecialMode(this))
+		if(VUEngine::isInSpecialMode(this))
 		{
 			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 			StateMachine::popState(this->stateMachine);
@@ -484,7 +498,7 @@ void Game::openTool(ToolState toolState)
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 }
 
-bool Game::checkIfOpenTool(UserInput userInput)
+bool VUEngine::checkIfOpenTool(UserInput userInput)
 {
 	ToolState engineToolStates[] =
 	{
@@ -510,7 +524,7 @@ bool Game::checkIfOpenTool(UserInput userInput)
 		// check code to access special feature
 		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
 		{
-			Game::openTool(this, engineToolStates[i]);
+			VUEngine::openTool(this, engineToolStates[i]);
 			return true;
 		}
 	}
@@ -524,7 +538,7 @@ bool Game::checkIfOpenTool(UserInput userInput)
 		// check code to access special feature
 		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
 		{
-			Game::openTool(this, _userToolStates[i]);
+			VUEngine::openTool(this, _userToolStates[i]);
 			return true;
 		}
 	}
@@ -536,7 +550,7 @@ bool Game::checkIfOpenTool(UserInput userInput)
 
 
 // process input data according to the actual game status
-uint32 Game::processUserInput()
+uint32 VUEngine::processUserInput()
 {
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
@@ -555,15 +569,15 @@ uint32 Game::processUserInput()
 	UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
 
 #ifdef __TOOLS
-	if(Game::checkIfOpenTool(this, userInput))
+	if(VUEngine::checkIfOpenTool(this, userInput))
 	{
 		return true;
 	}
 #endif
 
-	if(GameState::processUserInputRegardlessOfInput(Game::getCurrentState(this)) || (userInput.pressedKey | userInput.releasedKey | userInput.holdKey))
+	if(GameState::processUserInputRegardlessOfInput(VUEngine::getCurrentState(this)) || (userInput.pressedKey | userInput.releasedKey | userInput.holdKey))
 	{
-		GameState::processUserInput(Game::getCurrentState(this), userInput);
+		GameState::processUserInput(VUEngine::getCurrentState(this), userInput);
 	}
 
 #ifdef __ENABLE_PROFILER
@@ -573,20 +587,18 @@ uint32 Game::processUserInput()
 	return userInput.pressedKey | userInput.releasedKey;
 }
 
-void Game::dispatchDelayedMessages()
+void VUEngine::dispatchDelayedMessages()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_MESSAGES;
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-	static uint32 dispatchCycle = 0;
-
-	if(dispatchCycle++ & 1)
+	if(_dispatchCycle++ & 1)
 	{
 #endif
 
-	MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
+		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
@@ -599,14 +611,14 @@ void Game::dispatchDelayedMessages()
 }
 
 // update game's logic subsystem
-void Game::updateLogic()
+void VUEngine::updateLogic()
 {
 #ifdef __TOOLS
-	if(!Game::isInSpecialMode(this))
+	if(!VUEngine::isInSpecialMode(this))
 	{
 #endif
 	// it is the update cycle
-	ASSERT(this->stateMachine, "Game::update: no state machine");
+	ASSERT(this->stateMachine, "VUEngine::update: no state machine");
 #ifdef __TOOLS
 	}
 #endif
@@ -624,7 +636,7 @@ void Game::updateLogic()
 }
 
 	// Update sound related logic
-void Game::updateSound()
+void VUEngine::updateSound()
 {
 	SoundManager::update(this->soundManager);
 
@@ -638,14 +650,14 @@ void Game::updateSound()
 }
 
 // update game's rendering subsystem
-void Game::synchronizeGraphics()
+void VUEngine::synchronizeGraphics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_GRAPHICS;
 #endif
 
 #ifdef __TOOLS
-	if(Game::isInSoundTest(this))
+	if(VUEngine::isInSoundTest(this))
 	{
 		return;
 	}
@@ -660,7 +672,7 @@ void Game::synchronizeGraphics()
 }
 
 // update game's physics subsystem
-void Game::updatePhysics()
+void VUEngine::updatePhysics()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_PHYSICS;
@@ -674,14 +686,14 @@ void Game::updatePhysics()
 #endif
 }
 
-void Game::focusCamera()
+void VUEngine::focusCamera()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_CAMERA;
 #endif
 
 #ifdef __TOOLS
-	if(!Game::isInSpecialMode(this))
+	if(!VUEngine::isInSpecialMode(this))
 	{
 #endif
 		// position the camera
@@ -696,7 +708,7 @@ void Game::focusCamera()
 
 }
 
-void Game::updateTransformations()
+void VUEngine::updateTransformations()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_TRANSFORMS;
@@ -710,7 +722,7 @@ void Game::updateTransformations()
 #endif
 }
 
-void Game::updateCollisions()
+void VUEngine::updateCollisions()
 {
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -725,7 +737,7 @@ void Game::updateCollisions()
 #endif
 }
 
-void Game::stream()
+void VUEngine::stream()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_STREAMING;
@@ -738,14 +750,14 @@ void Game::stream()
 #endif
 }
 
-void Game::checkForNewState()
+void VUEngine::checkForNewState()
 {
 	if(this->nextState)
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = PROCESS_NAME_NEW_STATE;
 #endif
-		Game::setNextState(this, this->nextState);
+		VUEngine::setNextState(this, this->nextState);
 
 #undef __DIMM_FOR_PROFILING
 #ifdef __DIMM_FOR_PROFILING
@@ -764,9 +776,9 @@ void Game::checkForNewState()
 	}
 }
 
-void Game::updateFrameRate()
+void VUEngine::updateFrameRate()
 {
-	if(Game::isInSpecialMode(this))
+	if(VUEngine::isInSpecialMode(this))
 	{
 		return;
 	}
@@ -774,17 +786,30 @@ void Game::updateFrameRate()
 	FrameRate::update(this->frameRate);
 }
 
-void Game::nextFrameStarted()
+void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 {
-	FrameRate::gameFrameStarted(this->frameRate, this->currentFrameEnded);
+	this->nextGameCycleStarted = true;
 
-	this->nextFrameStarted = true;
+	ClockManager::update(this->clockManager, gameFrameDuration);
 
+	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
+
+	// Graphics synchronization involves moving the camera for the UI
+	// which can mess rendering if the VIP's XPED interrupt happens when the camera is
+	// modified
+	VUEngine::synchronizeGraphics(this);
+
+	SpriteManager::render(this->spriteManager);
+	WireframeManager::render(this->wireframeManager);
+}
+
+void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
+{
 	static uint16 totalTime = 0;
 
-	totalTime += __GAME_FRAME_DURATION;
+	totalTime += gameFrameDuration;
 
-	TimerManager::nextFrameStarted(this->timerManager, __GAME_FRAME_DURATION * __MICROSECONDS_PER_MILLISECOND);
+	TimerManager::nextFrameStarted(this->timerManager, gameFrameDuration * __MICROSECONDS_PER_MILLISECOND);
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
@@ -797,10 +822,10 @@ void Game::nextFrameStarted()
 
 #ifdef __SHOW_STREAMING_PROFILING
 
-		if(!Game::isInSpecialMode(this))
+		if(!VUEngine::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
-			Stage::showStreamingProfiling(Game::getStage(this), 1, 1);
+			Stage::showStreamingProfiling(VUEngine::getStage(this), 1, 1);
 		}
 #endif
 
@@ -820,7 +845,7 @@ void Game::nextFrameStarted()
 #endif
 
 #ifdef __SHOW_MEMORY_POOL_STATUS
-		if(!Game::isInSpecialMode(this))
+		if(!VUEngine::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 
@@ -833,7 +858,7 @@ void Game::nextFrameStarted()
 #endif
 
 #ifdef __SHOW_STACK_OVERFLOW_ALERT
-		if(!Game::isInSpecialMode(this))
+		if(!VUEngine::isInSpecialMode(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
@@ -842,7 +867,7 @@ void Game::nextFrameStarted()
 	}
 
 #ifdef __ENABLE_PROFILER
-	if(this->currentFrameEnded)
+	if(this->currentGameCycleEnded)
 	{
 		Profiler::end(Profiler::getInstance());
 		Profiler::start(Profiler::getInstance());
@@ -854,145 +879,158 @@ void Game::nextFrameStarted()
 #endif
 }
 
-void Game::currentFrameStarted()
+void VUEngine::currentFrameStarted()
 {
-	this->nextFrameStarted = false;
-	this->currentFrameEnded = false;
+	this->nextGameCycleStarted = false;
+	this->currentGameCycleEnded = false;
 
-	Game::updateFrameRate(this);
+	VUEngine::updateFrameRate(this);
 }
 
-void Game::currentFrameEnded()
+void VUEngine::currentGameCycleEnded()
 {
-	this->currentFrameEnded = true;
+	this->currentGameCycleEnded = true;
 }
 
-bool Game::hasCurrentFrameEnded()
+bool VUEngine::hasCurrentFrameEnded()
 {
 	// raise flag to allow the next frame to start
-	return this->currentFrameEnded;
+	return this->currentGameCycleEnded;
 }
 
-void Game::run()
+void VUEngine::run()
 {
-	// sync entities with their sprites
-	Game::synchronizeGraphics(this);
-
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
 	// process user's input
-	Game::processUserInput(this);
+	VUEngine::processUserInput(this);
 
 	// simulate physics
-	Game::updatePhysics(this);
+	VUEngine::updatePhysics(this);
 
 	// apply transformations
-	Game::updateTransformations(this);
+	VUEngine::updateTransformations(this);
 
 	// process collisions
-	Game::updateCollisions(this);
+	VUEngine::updateCollisions(this);
 
 	// focus the camera once collisions are resolved
-	Game::focusCamera(this);
+	VUEngine::focusCamera(this);
 
 	// dispatch delayed messages
-	Game::dispatchDelayedMessages(this);
+	VUEngine::dispatchDelayedMessages(this);
 
 	// stream
-	Game::stream(this);
+	VUEngine::stream(this);
 
 	// update game's logic
-	Game::updateLogic(this);
+	VUEngine::updateLogic(this);
 
 	// Update sound related logic
-	Game::updateSound(this);
+	VUEngine::updateSound(this);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-void Game::setLastProcessName(char* processName)
+void VUEngine::setLastProcessName(char* processName)
 {
 	this->lastProcessName = processName;
 }
 #endif
 
 // process a telegram
-bool Game::handleMessage(Telegram telegram)
+bool VUEngine::handleMessage(Telegram telegram)
 {
-	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
+	ASSERT(this->stateMachine, "VUEngine::handleMessage: NULL stateMachine");
 
 	return StateMachine::handleMessage(this->stateMachine, telegram);
 }
 
 // retrieve time
-uint32 Game::getTime()
+uint32 VUEngine::getTime()
 {
 	return Clock::getTime(this->clock);
 }
 
 // retrieve clock
-Clock Game::getClock()
+Clock VUEngine::getClock()
 {
 	return this->clock;
 }
 
 // retrieve in game clock
-Clock Game::getMessagingClock()
+Clock VUEngine::getMessagingClock()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getMessagingClock(GameState::safeCast(state));
 }
 
 // retrieve animations' clock
-Clock Game::getUpdateClock()
+Clock VUEngine::getUpdateClock()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getUpdateClock(GameState::safeCast(state));
 }
 
 // retrieve in physics' clock
-Clock Game::getPhysicsClock()
+Clock VUEngine::getPhysicsClock()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getPhysicsClock(GameState::safeCast(state));
 }
 
+uint16 VUEngine::getGameFrameDuration()
+{
+	return VIPManager::getGameFrameDuration(this->vipManager);
+}
+
 // retrieve last process' name
-char* Game::getLastProcessName()
+char* VUEngine::getLastProcessName()
 {
 	return this->lastProcessName;
 }
 
+void VUEngine::setGameFrameRate(uint16 gameFrameRate)
+{
+	if(__MAXIMUM_FPS < gameFrameRate)
+	{
+		gameFrameRate = __MAXIMUM_FPS;
+	}
+
+	FrameRate::setTarget(this->frameRate, gameFrameRate);
+	VIPManager::setFrameCycle(this->vipManager, __MAXIMUM_FPS / gameFrameRate - 1);
+}
+
 #ifdef __TOOLS
-bool Game::isInToolState(ToolState toolState)
+bool VUEngine::isInToolState(ToolState toolState)
 {
 	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(toolState);
 }
 #endif
 
 #ifdef __DEBUG_TOOLS
-bool Game::isInDebugMode()
+bool VUEngine::isInDebugMode()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)DebugState::getInstance();
 }
 #endif
 
 #ifdef __STAGE_EDITOR
-bool Game::isInStageEditor()
+bool VUEngine::isInStageEditor()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)StageEditorState::getInstance();
 }
 #endif
 
 #ifdef __ANIMATION_INSPECTOR
-bool Game::isInAnimationInspector()
+bool VUEngine::isInAnimationInspector()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)AnimationInspectorState::getInstance();
 }
 #endif
 
 #ifdef __SOUND_TEST
-bool Game::isInSoundTest()
+bool VUEngine::isInSoundTest()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)SoundTestState::getInstance();
 }
@@ -1000,28 +1038,28 @@ bool Game::isInSoundTest()
 
 
 // whether if a special mode is active
-bool Game::isInSpecialMode()
+bool VUEngine::isInSpecialMode()
 {
 	int32 isInSpecialMode = false;
 
 #ifdef __DEBUG_TOOLS
-	isInSpecialMode |= Game::isInDebugMode(this);
+	isInSpecialMode |= VUEngine::isInDebugMode(this);
 #endif
 #ifdef __STAGE_EDITOR
-	isInSpecialMode |= Game::isInStageEditor(this);
+	isInSpecialMode |= VUEngine::isInStageEditor(this);
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isInSpecialMode |= Game::isInAnimationInspector(this);
+	isInSpecialMode |= VUEngine::isInAnimationInspector(this);
 #endif
 #ifdef __SOUND_TEST
-	isInSpecialMode |= Game::isInSoundTest(this);
+	isInSpecialMode |= VUEngine::isInSoundTest(this);
 #endif
 
 	return isInSpecialMode;
 }
 
 // whether if a special mode is being started
-bool Game::isEnteringSpecialMode()
+bool VUEngine::isEnteringSpecialMode()
 {
 	int32 isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
@@ -1041,7 +1079,7 @@ bool Game::isEnteringSpecialMode()
 }
 
 // whether if a special mode is being started
-bool Game::isExitingSpecialMode()
+bool VUEngine::isExitingSpecialMode()
 {
 	int32 isExitingSpecialMode = false;
 #ifdef __DEBUG_TOOLS
@@ -1061,15 +1099,15 @@ bool Game::isExitingSpecialMode()
 }
 
 // retrieve state machine, use with caution!!!
-StateMachine Game::getStateMachine()
+StateMachine VUEngine::getStateMachine()
 {
 	return this->stateMachine;
 }
 
 // retrieve the current level's stage
-Stage Game::getStage()
+Stage VUEngine::getStage()
 {
-	if(Game::isInSpecialMode(this))
+	if(VUEngine::isInSpecialMode(this))
 	{
 		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
@@ -1079,15 +1117,15 @@ Stage Game::getStage()
 }
 
 // retrieve current state
-GameState Game::getCurrentState()
+GameState VUEngine::getCurrentState()
 {
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::safeCast(state);
 }
 
-PhysicalWorld Game::getPhysicalWorld()
+PhysicalWorld VUEngine::getPhysicalWorld()
 {
-	if(Game::isInSpecialMode(this))
+	if(VUEngine::isInSpecialMode(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
@@ -1097,9 +1135,9 @@ PhysicalWorld Game::getPhysicalWorld()
 	return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
 }
 
-CollisionManager Game::getCollisionManager()
+CollisionManager VUEngine::getCollisionManager()
 {
-	if(Game::isInSpecialMode(this))
+	if(VUEngine::isInSpecialMode(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
@@ -1110,86 +1148,86 @@ CollisionManager Game::getCollisionManager()
 }
 
 // pause
-void Game::pause(GameState pauseState)
+void VUEngine::pause(GameState pauseState)
 {
-	ASSERT(pauseState, "Game::pause: null pauseState");
+	ASSERT(pauseState, "VUEngine::pause: null pauseState");
 
 	if(pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
 		this->isPaused = true;
-		Game::fireEvent(this, kEventGamePaused);
+		VUEngine::fireEvent(this, kEventGamePaused);
 	}
 }
 
 // resume game
-void Game::unpause(GameState pauseState)
+void VUEngine::unpause(GameState pauseState)
 {
-	ASSERT(pauseState, "Game::unpause: null pauseState");
-	ASSERT(pauseState == this->currentState, "Game::unpause: pauseState sent is not the current one");
+	ASSERT(pauseState, "VUEngine::unpause: null pauseState");
+	ASSERT(pauseState == this->currentState, "VUEngine::unpause: pauseState sent is not the current one");
 
 	if(pauseState && this->currentState == pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
 		this->isPaused = false;
-		Game::fireEvent(this, kEventGameUnpaused);
+		VUEngine::fireEvent(this, kEventGameUnpaused);
 	}
 }
 
 // is game currently paused?
-bool Game::isPaused()
+bool VUEngine::isPaused()
 {
 	return this->isPaused;
 }
 
-void Game::disableKeypad()
+void VUEngine::disableKeypad()
 {
 	KeypadManager::disable(this->keypadManager);
 }
 
-void Game::enableKeypad()
+void VUEngine::enableKeypad()
 {
 	KeypadManager::enable(this->keypadManager);
 }
 
-void Game::pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::wait(uint32 milliSeconds)
+void VUEngine::wait(uint32 milliSeconds)
 {
-	ASSERT(this, "Game::wait: this null");
+	ASSERT(this, "VUEngine::wait: this null");
 
 	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-void Game::saveProcessNameDuringFRAMESTART()
+void VUEngine::saveProcessNameDuringGAMESTART()
 {
-	ASSERT(this, "Game::saveProcessNameDuringFRAMESTART: this null");
+	ASSERT(this, "VUEngine::saveProcessNameDuringGAMESTART: this null");
 
-	_processNameDuringFRAMESTART = this->lastProcessName;
+	_processNameDuringGAMESTART = this->lastProcessName;
 
 #ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
 	PRINT_TEXT("F START:           ", 0, 26);
-	PRINT_TEXT(_processNameDuringFRAMESTART, 9, 26);
+	PRINT_TEXT(_processNameDuringGAMESTART, 9, 26);
 
-	if(strcmp("end frame", _processNameDuringFRAMESTART))
+	if(strcmp("end frame", _processNameDuringGAMESTART))
 	{
-		PRINT_TEXT(_processNameDuringFRAMESTART, 25, 26);
+		PRINT_TEXT(_processNameDuringGAMESTART, 25, 26);
 		PRINT_TEXT("    ", 44, 26);
 		PRINT_INT(TimerManager::getMillisecondsElapsed(this->timerManager), 44, 26);
 	}
@@ -1198,9 +1236,9 @@ void Game::saveProcessNameDuringFRAMESTART()
 #endif
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-void Game::saveProcessNameDuringXPEND()
+void VUEngine::saveProcessNameDuringXPEND()
 {
-	ASSERT(this, "Game::saveProcessNameDuringXPEND: this null");
+	ASSERT(this, "VUEngine::saveProcessNameDuringXPEND: this null");
 
 	_processNameDuringXPEND = this->lastProcessName;
 
@@ -1223,24 +1261,30 @@ void Game::saveProcessNameDuringXPEND()
  *
  * @param saveDataManager
  */
-void Game::registerSaveDataManager(Object saveDataManager)
+void VUEngine::registerSaveDataManager(ListenerObject saveDataManager)
 {
 	this->saveDataManager = saveDataManager;
 }
 
-Object Game::getSaveDataManager()
+ListenerObject VUEngine::getSaveDataManager()
 {
 	return this->saveDataManager;
 }
 
-long Game::getRandomSeed()
+long VUEngine::getRandomSeed()
 {
 	return this->randomSeed;
 }
 
 #ifdef __ENABLE_PROFILER
-void Game::startProfiling()
+void VUEngine::startProfiling()
 {
 	Profiler::initialize(Profiler::getInstance());
 }
 #endif
+
+int32 __GAME_ENTRY_POINT(void);
+int32 main(void)
+{
+	return __GAME_ENTRY_POINT();
+}

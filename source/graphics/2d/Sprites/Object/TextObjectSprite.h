@@ -69,7 +69,7 @@ class TextObjectSprite : ObjectSprite
 	bool printed;
 
 	/// @publicsection
-	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, Object owner);
+	void constructor(const TextObjectSpriteSpec* textObjectSpriteSpec, ListenerObject owner);
 
 	override int16 doRender(int16 index, bool evenFrame);
 }

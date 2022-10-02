@@ -49,7 +49,7 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	TextureSource originalTextureSource;
 
 	/// @publicsection
-	void constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, Object owner);
+	void constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner);
 	override void writeAnimation();
 }
 

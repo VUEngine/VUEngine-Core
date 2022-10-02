@@ -52,16 +52,12 @@ void StateMachine::destructor()
 {
 	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
 
-	// delete the stack
-	VirtualNode node = this->stateStack->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
 	// deallocate the list
 	delete this->stateStack;
+
+	this->owner = NULL;
+	this->currentState = NULL;
+	this->previousState = NULL;
 
 	// free processor memory
 	// must always be called at the end of the destructor
@@ -73,7 +69,7 @@ void StateMachine::destructor()
  */
 void StateMachine::update()
 {
-	if(this->currentState)
+	if(!isDeleted(this->currentState))
 	{
 		State::execute(this->currentState, this->owner);
 	}
@@ -103,7 +99,7 @@ void StateMachine::swapState(State newState)
 	VirtualList::popFront(this->stateStack);
 
 	// finalize current state
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		this->previousState = this->currentState;
 
@@ -135,7 +131,7 @@ uint32 StateMachine::pushState(State newState)
 	}
 
 	// finalize current state
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		// call the pause method from current state
 		State::suspend(this->currentState, this->owner);
@@ -170,7 +166,7 @@ uint32 StateMachine::popStateWithoutResume()
 	}
 
 	// finalize current state
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		// call the exit method from current state
 		State::exit(this->currentState, this->owner);
@@ -209,7 +205,7 @@ uint32 StateMachine::popState()
 	}
 
 	// finalize current state
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		// call the exit method from current state
 		State::exit(this->currentState, this->owner);
@@ -223,7 +219,7 @@ uint32 StateMachine::popState()
 	this->currentState = VirtualList::front(this->stateStack);
 
 	// call resume method from new state
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		State::resume(this->currentState, this->owner);
 	}
@@ -239,7 +235,7 @@ void StateMachine::returnToPreviousState()
 {
 	if(this->previousState)
 	{
-		if(this->currentState)
+		if(NULL != this->currentState)
 		{
 			State::exit(this->currentState, this->owner);
 		}
@@ -261,7 +257,7 @@ void StateMachine::changeToGlobal(State globalState)
 	{
 		return;
 	}
-	if(this->currentState)
+	if(NULL != this->currentState)
 	{
 		State::suspend(this->currentState, this->owner);
 

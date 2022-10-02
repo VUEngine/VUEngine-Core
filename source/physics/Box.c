@@ -81,9 +81,9 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 	// angle | theta | psi
 	if(rotation->z | rotation->y | rotation->x)
 	{
-		fix10_6 width = surroundingBoxSize.x >> 1;
-		fix10_6 height = surroundingBoxSize.y >> 1;
-		fix10_6 depth = surroundingBoxSize.z >> 1;
+		fixed_t width = surroundingBoxSize.x >> 1;
+		fixed_t height = surroundingBoxSize.y >> 1;
+		fixed_t depth = surroundingBoxSize.z >> 1;
 
 		// allow only one rotation
 		if(rotation->z && 256 != rotation->z)
@@ -93,21 +93,21 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
-			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(angle));
+			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
+			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(angle));
 
 			// use vectors (x1, y0, z1) and (x1, y1, z1)
 			Vector3D topRight =
 			{
-				__FIX10_6_MULT(width, cosAngle) - __FIX10_6_MULT(-height, sinAngle),
-				__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(-height, cosAngle),
+				__FIXED_MULT(width, cosAngle) - __FIXED_MULT(-height, sinAngle),
+				__FIXED_MULT(width, sinAngle) + __FIXED_MULT(-height, cosAngle),
 				depth
 			};
 
 			Vector3D bottomRight =
 			{
-				__FIX10_6_MULT(width, cosAngle) - __FIX10_6_MULT(height, sinAngle),
-				__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(height, cosAngle),
+				__FIXED_MULT(width, cosAngle) - __FIXED_MULT(height, sinAngle),
+				__FIXED_MULT(width, sinAngle) + __FIXED_MULT(height, cosAngle),
 				depth
 			};
 
@@ -149,22 +149,22 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
-			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(0));
+			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
+			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(0));
 
 			// use vectors (x0, y1, z0) and (x1, y1, z0)
 			Vector3D bottomLeft =
 			{
-				__FIX10_6_MULT(-width, cosAngle) + __FIX10_6_MULT(-depth, sinAngle),
+				__FIXED_MULT(-width, cosAngle) + __FIXED_MULT(-depth, sinAngle),
 				height,
-				-__FIX10_6_MULT(-width, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
+				-__FIXED_MULT(-width, sinAngle) + __FIXED_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomRight =
 			{
-				__FIX10_6_MULT(width, cosAngle) + __FIX10_6_MULT(-depth, sinAngle),
+				__FIXED_MULT(width, cosAngle) + __FIXED_MULT(-depth, sinAngle),
 				height,
-				-__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
+				-__FIXED_MULT(width, sinAngle) + __FIXED_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomLeftHelper =
@@ -205,22 +205,22 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
-			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(angle));
+			fixed_t sinAngle = __FIX7_9_TO_FIXED(__SIN(angle));
+			fixed_t cosAngle = __FIX7_9_TO_FIXED(__COS(angle));
 
 			// use vectors (x1, y1, z0) and (x1, y1, z1)
 			Vector3D bottomNear =
 			{
 				width,
-				__FIX10_6_MULT(height, cosAngle) - __FIX10_6_MULT(-depth, sinAngle),
-				__FIX10_6_MULT(height, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
+				__FIXED_MULT(height, cosAngle) - __FIXED_MULT(-depth, sinAngle),
+				__FIXED_MULT(height, sinAngle) + __FIXED_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomFar =
 			{
 				width,
-				__FIX10_6_MULT(height, cosAngle) - __FIX10_6_MULT(depth, sinAngle),
-				__FIX10_6_MULT(height, sinAngle) + __FIX10_6_MULT(depth, cosAngle),
+				__FIXED_MULT(height, cosAngle) - __FIXED_MULT(depth, sinAngle),
+				__FIXED_MULT(height, sinAngle) + __FIXED_MULT(depth, cosAngle),
 			};
 
 			Vector3D bottomNearHelper =
@@ -384,15 +384,15 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 	this->normals->vectors[2] = Vector3D::normalize(this->normals->vectors[2]);
 }
 
-static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
+static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max)
 {
 	int32 vertexIndex = 0;
 
 	// project this onto the current normal
-	fix10_6 dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
+	fixed_t dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
 
-	fix10_6 finalMin = dotProduct;
-	fix10_6 finalMax = dotProduct;
+	fixed_t finalMin = dotProduct;
+	fixed_t finalMax = dotProduct;
 
 	// project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
@@ -432,7 +432,7 @@ void Box::projectOntoItself()
 }
 
 // test if collision with the entity give the displacement
-CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement)
 {
 	// save position
 	RightBox rightBox = this->rightBox;
@@ -480,8 +480,24 @@ void Box::configureWireframe()
 		return;
 	}
 
+	PolyhedronSpec polyhedronSpec =
+	{
+		{
+			__TYPE(Polyhedron),
+
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// transparent
+			__TRANSPARENCY_NONE,
+		
+			/// interlaced
+			false
+		},
+	};
+
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Polyhedron(__COLOR_BRIGHT_RED));
+	this->wireframe = Wireframe::safeCast(new Polyhedron(&polyhedronSpec));
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{

@@ -187,7 +187,7 @@ void Printing::setDirection(uint8 value)
 	}
 }
 
-void Printing::onFontCharSetRewritten(Object eventFirer __attribute__((unused)))
+void Printing::onFontCharSetRewritten(ListenerObject eventFirer __attribute__((unused)))
 {
 	Printing::fireEvent(this, kEventFontRewritten);
 	NM_ASSERT(!isDeleted(this), "Printing::onFontCharSetRewritten: deleted this during kEventFontRewritten");
@@ -228,7 +228,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 				}
 			}
 		}
@@ -286,7 +286,7 @@ void Printing::clear()
 
 void Printing::releaseFonts()
 {
-	Printing::removeAllEventListeners(this, kEventFontRewritten);
+	Printing::removeEventListeners(this, NULL, kEventFontRewritten);
 
 	VirtualNode node = VirtualList::begin(this->fonts);
 
@@ -296,7 +296,7 @@ void Printing::releaseFonts()
 
 		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
 		{
-			CharSet::removeEventListener(fontData->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+			CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 
 			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 		}
@@ -352,7 +352,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener(result->charSet, Object::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 			}
 		}
 	}
@@ -366,7 +366,7 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 {
 	if(value < 0)
 	{
-		value *= -1;
+		value = -value;
 
 		Printing::out(this, x++, y, "-", font);
 		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
@@ -563,7 +563,7 @@ void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my _
 {
 	if(!isDeleted(this->printingSprite))
 	{
-		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, my + __PRINTING_BGMAP_Y_OFFSET <= 64 * 8 ? my + __PRINTING_BGMAP_Y_OFFSET : __PRINTING_BGMAP_Y_OFFSET, mp);
+		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, __PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? __PRINTING_BGMAP_Y_OFFSET + my : __PRINTING_BGMAP_Y_OFFSET, mp);
 	}
 }
 
@@ -594,6 +594,14 @@ int16 Printing::getWorldCoordinatesP()
 PixelVector Printing::getSpritePosition()
 {
 	return !isDeleted(this->printingSprite) ? PrintingSprite::getDisplacedPosition(this->printingSprite) : (PixelVector){0, 0, 0, 0};
+}
+
+void Printing::setTransparent(uint8 value)
+{
+	if(!isDeleted(this->printingSprite))
+	{
+		Sprite::setTransparent(this->printingSprite, value);
+	}
 }
 
 void Printing::resetCoordinates()

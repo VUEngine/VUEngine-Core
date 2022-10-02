@@ -22,6 +22,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct PolyhedronSpec
+{
+	// Wireframe
+	WireframeSpec wireframeSpec;
+
+} PolyhedronSpec;
+
 /// @ingroup graphics-3d
 class Polyhedron : Wireframe
 {
@@ -29,9 +36,9 @@ class Polyhedron : Wireframe
 	VirtualList vertices;
 
 	/// @publicsection
-	void constructor(uint8 color);
-	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
-	override void draw(bool calculateParallax);
+	void constructor(PolyhedronSpec* polyhedronSpec);
+	void addVertex(fixed_t x, fixed_t y, fixed_t z);
+	override void draw();
 }
 
 

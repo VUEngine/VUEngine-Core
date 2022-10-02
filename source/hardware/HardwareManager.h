@@ -54,12 +54,6 @@ extern bool _enabledInterrupts;
 /// @ingroup hardware
 singleton class HardwareManager : Object
 {
-	// Timer manager
-	TimerManager timerManager;
-	// VPU manager
-	VIPManager vipManager;
-	// VPU manager
-	KeypadManager keypadManager;
 	// HW registry
 	uint8* hwRegisters;
 

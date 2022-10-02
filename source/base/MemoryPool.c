@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MemoryPool.h>
-#include <Game.h>
 #include <Utilities.h>
 #include <Types.h>
 #include <HardwareManager.h>
@@ -308,22 +307,19 @@ void MemoryPool::free(BYTE* object)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
 
+#ifdef __DEBUG
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
 		return;
 	}
+#endif
 
-#ifdef __DEBUG
-
-	uint32 i;
-	uint32 pool = 0;
-	uint32 displacement = 0;
-	uint32 numberOfOjects = 0;
-
-	if(!object)
+	if(NULL == object)
 	{
 		return;
 	}
+
+	uint32 pool = 0;
 
 	// look for the pool containing the object
 	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
@@ -334,13 +330,16 @@ void MemoryPool::free(BYTE* object)
 	// move one pool back since the above loop passed the target by one
 	pool--;
 
+	this->poolLastFreeBlock[pool] = object;
+
+#ifdef __DEBUG
 	// get the total objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+	uint32 numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
 	HardwareManager::suspendInterrupts();
 
 	// search for the pool in which it is allocated
-	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
+	for(uint32 i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found
 		if(object == &this->poolLocation[pool][displacement])
@@ -380,13 +379,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
+#ifndef __SHIPPING
 #ifndef __RELEASE
 	int32 lp = HardwareManager::getLinkPointer();
 #endif
+#endif
 
 	uint32 pool = __MEMORY_POOLS;
-
-	HardwareManager::suspendInterrupts();
 
 	while(pool--)
 	{
@@ -403,61 +402,88 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocationRight = poolLocationLeft + blockSize;
 		BYTE* poolLocationEnd = &this->poolLocation[pool][blockSize * (numberOfOjects - 1)];
 
+		BYTE* poolLocation = NULL;
+
 		do
 		{
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight) && poolLocationRight <= poolLocationEnd)
+			if(poolLocationRight <= poolLocationEnd)
 			{
-				*((uint32*)poolLocationRight) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationRight;
-				HardwareManager::resumeInterrupts();
-				return poolLocationRight;
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+				{
+					HardwareManager::suspendInterrupts();
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+					{
+						poolLocation = poolLocationRight;
+						break;
+					}
+				}
+				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+				{
+					HardwareManager::suspendInterrupts();
+
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+					{
+						poolLocation = poolLocationEnd;
+						break;
+					}
+				}
+
+				poolLocationRight += blockSize;
+				poolLocationEnd -= blockSize;
 			}
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft) && poolLocationLeft >= poolLocationStart)
+			if(poolLocationLeft >= poolLocationStart)
 			{
-				*((uint32*)poolLocationLeft) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationLeft;
-				HardwareManager::resumeInterrupts();
-				return poolLocationLeft;
-			}
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+				{
+					HardwareManager::suspendInterrupts();
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart) && poolLocationStart <= poolLocationLeft)
-			{
-				*((uint32*)poolLocationStart) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationStart;
-				HardwareManager::resumeInterrupts();
-				return poolLocationStart;
-			}
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+					{
+						poolLocation = poolLocationLeft;
+						break;
+					}
+				}
+				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+				{
+					HardwareManager::suspendInterrupts();
 
-			if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd) && poolLocationEnd >= poolLocationRight)
-			{
-				*((uint32*)poolLocationEnd) = __MEMORY_USED_BLOCK_FLAG;
-				this->poolLastFreeBlock[pool] = poolLocationEnd;
-				HardwareManager::resumeInterrupts();
-				return poolLocationEnd;
-			}
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+					{
+						poolLocation = poolLocationStart;
+						break;
+					}
+				}
 
-			poolLocationStart += blockSize;
-			poolLocationLeft -= blockSize;
-			poolLocationEnd -= blockSize;
-			poolLocationRight += blockSize;
+				poolLocationLeft -= blockSize;
+				poolLocationStart += blockSize;
+			}
 		}
 		while((poolLocationStart <= poolLocationLeft) || (poolLocationEnd >= poolLocationRight));
 		// keep looking for a free block on a bigger pool
+
+		if(NULL != poolLocation)
+		{
+			*((uint32*)poolLocation) = __MEMORY_USED_BLOCK_FLAG;
+			this->poolLastFreeBlock[pool] = poolLocation;
+			HardwareManager::resumeInterrupts();
+			return poolLocation;
+		}
 	}
 
 #ifndef __SHIPPING
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 	MemoryPool::printDetailedUsage(this, 1, 8);
-	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
-	Printing::int32(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+	Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 26, NULL);
+	Printing::int32(Printing::getInstance(), numberOfBytes, 44, 26, NULL);
 #ifndef __RELEASE
-	Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
-	Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
+	Printing::text(Printing::getInstance(), "Caller address: ", 20, 27, NULL);
+	Printing::hex(Printing::getInstance(), lp, 36, 27, 8, NULL);
 #endif
 
-	NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
+	Error::triggerException("MemoryPool::allocate: pool exhausted", NULL);		
 #endif
 
 	// return designed address

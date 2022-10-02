@@ -7,8 +7,8 @@
  * that was distributed with this source code.
  */
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef VUENGINE_H_
+#define VUENGINE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -24,6 +24,8 @@
 #include <PhysicalWorld.h>
 #include <VIPManager.h>
 #include <CommunicationManager.h>
+#include <SpriteManager.h>
+#include <WireframeManager.h>
 #include <SoundManager.h>
 
 
@@ -57,8 +59,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class VUEngine;
+extern VUEngine _vuEngine;
+
 /// @ingroup base
-singleton class Game : Object
+singleton class VUEngine : ListenerObject
 {
 	// game's state machine
 	StateMachine stateMachine;
@@ -68,22 +73,17 @@ singleton class Game : Object
 	Clock clock;
 	// managers
 	ClockManager clockManager;
-	//
 	KeypadManager keypadManager;
-	//
 	VIPManager vipManager;
-	//
+	WireframeManager wireframeManager;
+	SpriteManager spriteManager;
 	TimerManager timerManager;
-	//
 	CommunicationManager communicationManager;
-	//
 	SoundManager soundManager;
-	// current save data manager
-	Object saveDataManager;
-	//
 	FrameRate frameRate;
-	//
 	Camera camera;
+	// current save data manager
+	ListenerObject saveDataManager;
 	// game's next state
 	GameState nextState;
 	// game's next state operation
@@ -91,18 +91,19 @@ singleton class Game : Object
 	// last process' name
 	char* lastProcessName;
 	// frame flags
-	volatile bool currentFrameEnded;
-	volatile bool nextFrameStarted;
+	volatile bool currentGameCycleEnded;
+	volatile bool nextGameCycleStarted;
 	// random seed
 	uint32 randomSeed;
 	// game paused flag
 	bool isPaused;
 
 	/// @publicsection
-	static Game getInstance();
+	static VUEngine getInstance();
 	static bool isConstructed();
-	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void addState(GameState state);
 	void changeState(GameState state);
 	void cleanAndChangeState(GameState state);
@@ -120,14 +121,15 @@ singleton class Game : Object
 	Stage getStage();
 	GameState getCurrentState();
 	Clock getUpdateClock();
+	uint16 getGameFrameDuration();
+	void setGameFrameRate(uint16 gameFrameRate);
 	bool isEnteringSpecialMode();
 	bool isExitingSpecialMode();
 	bool isPaused();
 	bool isInSpecialMode();
 	void pause(GameState pauseState);
 	void printClassSizes(int32 x, int32 y);
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void reset();
+	void reset(bool resetSounds);
 	void resetProfiling();
 	void setOptical(Optical optical);
 	void start(GameState state);
@@ -139,13 +141,14 @@ singleton class Game : Object
 	bool isInAnimationInspector();
 	bool isInSoundTest();
 	void openTool(ToolState toolState);
-	void nextFrameStarted();
+	void nextFrameStarted(uint16 gameFrameDuration);
+	void nextGameCycleStarted(uint16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
-	void saveProcessNameDuringFRAMESTART();
+	void saveProcessNameDuringGAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);
-	void registerSaveDataManager(Object saveDataManager);
-	Object getSaveDataManager();
+	void registerSaveDataManager(ListenerObject saveDataManager);
+	ListenerObject getSaveDataManager();
 	long getRandomSeed();
 	void startProfiling();
 }

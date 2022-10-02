@@ -17,7 +17,7 @@
 #include <VIPManager.h>
 #include <BgmapTextureManager.h>
 #include <Globals.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <VIPManager.h>
@@ -86,9 +86,9 @@ void Error::destructor()
  * @param message
  * @param detail
  */
-#ifndef __RELEASE
-static int32 Error::triggerException(char* message, char* detail)
+static int32 Error::triggerException(char* message __attribute__((unused)), char* detail __attribute__((unused)))
 {
+#ifndef __SHIPPING
 	static bool processingException = false;
 
 	if(processingException)
@@ -139,7 +139,7 @@ static int32 Error::triggerException(char* message, char* detail)
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
 	Printing::text(Printing::getInstance(), "                                                " , x, y++, NULL);
 	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
-	Printing::text(Printing::getInstance(), Game::isConstructed() ? Game::getLastProcessName(Game::getInstance()) : "constructor", x + 15, y++, NULL);
+	Printing::text(Printing::getInstance(), VUEngine::isConstructed() ? VUEngine::getLastProcessName(VUEngine::getInstance()) : "constructor", x + 15, y++, NULL);
 	Printing::text(Printing::getInstance(), " LP:                                  " , x, y, NULL);
 	Printing::hex(Printing::getInstance(), lp, x + 8, y, 8, NULL);
 	Printing::text(Printing::getInstance(), " SP: 		                         " , x, ++y, NULL);
@@ -157,13 +157,13 @@ static int32 Error::triggerException(char* message, char* detail)
 		Printing::text(Printing::getInstance(), "                                                " , x, ++y + 1, NULL);
 		Printing::text(Printing::getInstance(), " Message:                                       " , x, ++y, NULL);
 
-		int32 stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
+		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
-		int32 stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
-		int32 lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
+		int32 stringLength = strnlen(message, stringMaxLength * rowsAvailable) + 1;
+		int32 lines = stringLength / stringMaxLength + (stringLength % stringMaxLength ? 1 : 0);
 		int32 line = 0;
 
-		for(; line < lines; line++, message += stringMaxLenght)
+		for(; line < lines; line++, message += stringMaxLength)
 		{
 			char messageLine[stringLength];
 			strncpy(messageLine, message, stringLength);
@@ -219,14 +219,14 @@ static int32 Error::triggerException(char* message, char* detail)
 
 	// trap the game here
 	while(true);
+#endif
 
 	return false;
 }
-#endif
 
 static void Error::zeroDivisionException()
 {
-#ifndef __RELEASE
+#ifndef __SHIPPING
 	uint32 eipc = 0;
 	// Save EIPC
     asm("					\n\t"      \
@@ -245,7 +245,7 @@ static void Error::zeroDivisionException()
 
 static void Error::invalidOpcodeException()
 {
-#ifndef __RELEASE
+#ifndef __SHIPPING
 
 	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
 	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));
@@ -285,5 +285,50 @@ static void Error::invalidOpcodeException()
 	_vuengineECR = ecr;
 
 	Error::triggerException("Invalid opcode", NULL);
+#endif
+}
+
+static void Error::floatingPointException()
+{
+#ifndef __SHIPPING
+
+	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
+	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));
+
+	uint32 eipc = 0;
+	// Save EIPC
+    asm("						\n\t"      \
+		"stsr	eipc, r10		\n\t"      \
+		"mov	r10, %[eipc]	\n\t"
+    : [eipc] "=r" (eipc)
+    : // No Input
+	: "r10" // regs used
+    );
+
+	uint32 fepc = 0;
+	// Save FEPC
+    asm("						\n\t"      \
+		"stsr	fepc, r11		\n\t"      \
+		"mov	r11, %[fepc]	\n\t"
+    : [fepc] "=r" (fepc)
+    : // No Input
+	: "r11" // regs used
+    );
+
+	uint32 ecr = 0;
+	// Save ECR
+    asm("						\n\t"      \
+		"stsr	ecr, r12		\n\t"      \
+		"mov	r12, %[ecr]		\n\t"
+    : [ecr] "=r" (ecr)
+    : // No Input
+	: "r12" // regs used
+    );
+
+	_vuengineEIPC = eipc;
+	_vuengineFEPC = fepc;
+	_vuengineECR = ecr;
+
+	Error::triggerException("Floating point exception", NULL);
 #endif
 }

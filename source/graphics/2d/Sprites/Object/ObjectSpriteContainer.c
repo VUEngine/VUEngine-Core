@@ -57,7 +57,7 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
@@ -79,11 +79,7 @@ void ObjectSpriteContainer::destructor()
 	VirtualList objectSprites = new VirtualList();
 	VirtualList::copy(objectSprites, this->objectSprites);
 
-	for(VirtualNode node = objectSprites->head; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
+	VirtualList::deleteData(objectSprites);
 	delete objectSprites;
 	delete this->objectSprites;
 	this->objectSprites = NULL;
@@ -99,7 +95,10 @@ void ObjectSpriteContainer::destructor()
  */
 void ObjectSpriteContainer::registerWithManager()
 {
-	this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	if(!this->registered)
+	{
+		this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	}
 }
 
 /**
@@ -190,15 +189,18 @@ void ObjectSpriteContainer::sortProgressively()
 		NM_ASSERT(!isDeleted(previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data");
 		NM_ASSERT(__GET_CAST(Sprite, previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data cast");
 
-		Sprite nextSprite = Sprite::safeCast(previousNode->data);
+		Sprite previousSprite = Sprite::safeCast(previousNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+		if(previousSprite->position.z + previousSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
-			VirtualNode::swapData(node, previousNode);
+			node->data = previousSprite;
+			previousNode->data = sprite;
 
-			sprite->renderFlag = nextSprite->renderFlag = true;
+			sprite->renderFlag = previousSprite->renderFlag = true;
+
+			node = previousNode;
 		}
 	}
 }
@@ -214,8 +216,8 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 
 		if(objectSprite == spareSprite)
 		{
-			ObjectSprite::showForDebug(objectSprite);
-			ObjectSpriteContainer::showForDebug(this);
+			ObjectSprite::forceShow(objectSprite);
+			ObjectSpriteContainer::forceShow(this);
 			continue;
 		}
 
@@ -228,7 +230,7 @@ void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
  */
 void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 {
-	ObjectSpriteContainer::showForDebug(this);
+	ObjectSpriteContainer::forceShow(this);
 
 	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
@@ -240,22 +242,22 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 			continue;
 		}
 
-		ObjectSprite::showForDebug(objectSprite);
+		ObjectSprite::forceShow(objectSprite);
 	}
 }
 #endif
 
-void ObjectSpriteContainer::showForDebug()
+void ObjectSpriteContainer::forceShow()
 {
-	Base::showForDebug(this);
-	this->hidden = false;
+	Base::forceShow(this);
+	this->show = __HIDE;
 	this->positioned = true;
 	this->hideSprites = false;
 }
 
 void ObjectSpriteContainer::hideForDebug()
 {
-	this->hidden = false;
+	this->show = __SHOW_NEXT_FRAME;
 	this->positioned = true;
 	this->hideSprites = true;
 }
@@ -280,22 +282,32 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
+			objectSprite->index = __NO_RENDER_INDEX;
+
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(objectSprite->hidden || !objectSprite->positioned)
+			if(__SHOW != objectSprite->show)
+			{
+				if(__SHOW_NEXT_FRAME == objectSprite->show)
+				{
+					objectSprite->show = __SHOW;
+				}
+				
+				continue;
+			}
+
+			if(!objectSprite->positioned)
 			{
 				continue;
 			}
 
 			if(objectSprite->transparent & evenFrame)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				continue;
 			}
 
 			if(0 > _objectIndex - objectSprite->totalObjects)
 			{
-				objectSprite->index = __NO_RENDER_INDEX;
 				break;
 			}
 

@@ -71,14 +71,7 @@ void AnimationCoordinatorFactory::destructor()
  */
 void AnimationCoordinatorFactory::reset()
 {
-	VirtualNode node = this->animationCoordinators->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		delete node->data;
-	}
-
-	VirtualList::clear(this->animationCoordinators);
+	VirtualList::deleteData(this->animationCoordinators);
 }
 
 /**
@@ -89,7 +82,7 @@ void AnimationCoordinatorFactory::reset()
  * @param charSetSpec
  * @return						AnimationCoordinator instance
  */
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Object scope, const CharSetSpec* charSetSpec)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
 	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 

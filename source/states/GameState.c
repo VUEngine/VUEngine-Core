@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <Camera.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
@@ -118,7 +118,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 	if(!Clock::isPaused(this->updateClock))
 	{
 		// update the stage
-		Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
+		Stage::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
 
 		this->previousUpdateTime = Clock::getTime(this->updateClock);
 	}
@@ -172,15 +172,15 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __DEBUG_TOOLS
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game::isEnteringSpecialMode(Game::getInstance()))
+	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
 	{
 #endif
 
@@ -215,15 +215,17 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
-	if(!Game::isExitingSpecialMode(Game::getInstance()))
+	HardwareManager::disableInterrupts();
+
+	if(!VUEngine::isExitingSpecialMode(VUEngine::getInstance()))
 	{
 		// Set camera to its previous position
 		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
-		Camera::setPosition(Camera::getInstance(), this->cameraPosition);
-		Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
+		Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
+		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
 
 		// Reset the engine state
-		Game::reset(Game::getInstance());
+		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);
 
 		// Update the stage
 		Container::resume(this->stage);
@@ -246,6 +248,8 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	// unpause clock
 	Clock::pause(this->messagingClock, false);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -285,8 +289,19 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
  * @return			The result of the propagation of the message
  */
 int32 GameState::propagateMessage(int32 message)
-{
+{	
 	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, message);
+}
+
+/**
+ * Start pass a message to the Stage for it to forward to its children
+ *
+ * @param string	String
+ * @return			The result of the propagation of the string
+ */
+int32 GameState::propagateString(const char* string)
+{
+	return Container::propagateString(this->stage, Container::onPropagatedString, string);
 }
 
 /**
@@ -309,6 +324,8 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
+	HardwareManager::disableInterrupts();
+
 	do
 	{
 		// Make sure that the focus entity is transformed before focusing the camera
@@ -336,6 +353,8 @@ void GameState::streamAll()
 		}
 	}
 	while(true);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -343,6 +362,8 @@ void GameState::streamAll()
  */
 void GameState::streamOutAll()
 {
+	HardwareManager::disableInterrupts();
+
 	// Make sure that the focus entity is transformed before focusing the camera
 	GameState::transform(this);
 
@@ -358,6 +379,8 @@ void GameState::streamOutAll()
 	
 	// Remove out of range entities
 	Stage::streamAllOut(this->stage);
+
+	HardwareManager::enableInterrupts();
 }
 
 /**
@@ -374,11 +397,8 @@ void GameState::transform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	uint8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_PROJECTION : 0;
-	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
-
 	// then transformation loaded entities
-	Container::transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
+	Container::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 /**
@@ -388,7 +408,6 @@ bool GameState::isVersusMode()
 {
 	return false;
 }
-
 
 /**
  * Call the initial transformation on the Stage to setup its children
@@ -458,6 +477,8 @@ uint32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
+	HardwareManager::disableInterrupts();
+
 	if(NULL == stageSpec)
 	{
 		extern StageROMSpec EmptyStageSpec;
@@ -472,7 +493,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	}
 
 	// Reset the engine state
-	Game::reset(Game::getInstance());
+	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
 
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);
@@ -503,6 +524,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
+
+	HardwareManager::enableInterrupts();
 }
 
 /**

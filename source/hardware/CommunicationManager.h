@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 
@@ -38,7 +38,7 @@ enum CommunicationsBroadcastStates
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class CommunicationManager : Object
+singleton class CommunicationManager : ListenerObject
 {
 	volatile int32 status;
 	volatile BYTE* sentData;
@@ -60,19 +60,19 @@ singleton class CommunicationManager : Object
 	static void interruptHandler();
 	override bool handleMessage(Telegram telegram);
 	void reset();
-	void enableCommunications(EventListener eventLister, Object scope);
+	void enableCommunications(EventListener eventLister, ListenerObject scope);
 	bool cancelCommunications();
 	void update();
 	bool isConnected();
 	bool isMaster();
 	bool broadcastData(BYTE* data, int32 numberOfBytes);
-	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
+	void broadcastDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope);
 	bool sendData(BYTE* data, int32 numberOfBytes);
 	bool receiveData(BYTE* data, int32 numberOfBytes);
 	bool sendAndReceiveData(WORD message, BYTE* data, int32 numberOfBytes);
-	bool sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
-	bool receiveDataAsync(int32 numberOfBytes, EventListener eventLister, Object scope);
-	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, Object scope);
+	bool sendDataAsync(BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope);
+	bool receiveDataAsync(int32 numberOfBytes, EventListener eventLister, ListenerObject scope);
+	bool sendAndReceiveDataAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope);
 	WORD getReceivedMessage();
 	WORD getSentMessage();
 	const BYTE* getReceivedData();

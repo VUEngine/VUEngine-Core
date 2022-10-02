@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <Telegram.h>
 #include <Entity.h>
 
@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup camera
-singleton class CameraMovementManager : Object
+singleton class CameraMovementManager : ListenerObject
 {
 	/// @publicsection
 	static CameraMovementManager getInstance();

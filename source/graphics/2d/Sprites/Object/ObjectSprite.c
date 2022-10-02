@@ -47,7 +47,7 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner)
+void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner)
 {
 	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
@@ -66,7 +66,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object 
 		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 
-		Texture::addEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 
 		this->halfWidth = this->texture->textureSpec->cols << 2;
 		this->halfHeight = this->texture->textureSpec->rows << 2;
@@ -96,7 +96,7 @@ void ObjectSprite::destructor()
 		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
 	}
 
-	Texture::removeEventListener(this->texture, Object::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+	Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));
 	this->texture = NULL;
 
@@ -111,14 +111,14 @@ void ObjectSprite::destructor()
  *
  * @param eventFirer
  */
-void ObjectSprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
+void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	ObjectSprite::rewrite(this);
 }
 
 void ObjectSprite::rewrite()
 {
-	if(this->hidden || !this->positioned)
+	if(__HIDE == this->show || !this->positioned)
 	{
 		return;
 	}

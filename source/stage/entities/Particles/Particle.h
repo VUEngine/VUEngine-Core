@@ -17,6 +17,7 @@
 
 #include <SpatialObject.h>
 #include <Sprite.h>
+#include <Wireframe.h>
 #include <Body.h>
 
 
@@ -41,7 +42,7 @@ typedef struct ParticleSpec
 	void (* behavior)(Particle particle);
 
 	/// name of animation to play if sprite is animated
-	AnimationDescription* animationDescription;
+	const AnimationFunction** animationFunctions;
 
 	/// animation to play automatically
 	char* initialAnimation;
@@ -66,27 +67,29 @@ class Particle : SpatialObject
 	// Particle's life span in milliseconds
 	Vector3D position;
 	// To optimizize parallax computation
-	fix10_6 previousZ;
+	fixed_t previousZ;
 	// sprite
 	Sprite sprite;
+	// sprite
+	Wireframe wireframe;
 	// Particle's life span in milliseconds
 	int16 lifeSpan;
 	bool expired;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int16 lifeSpan);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
-	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationDescription* animationDescription, const char* animationName, bool forceAnimation);
+	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
 	void expire();
 	virtual void synchronizeGraphics();
 	virtual void applySustainedForce(const Force* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
-	virtual void resume(const SpriteSpec* spriteSpec, const AnimationDescription* animationDescription, const char* animationName);
+	virtual void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName);
 	virtual void suspend();
 	virtual void reset();
-	virtual void setMass(fix10_6 mass);
+	virtual void setMass(fixed_t mass);
 	virtual void changeMass();
 	virtual void hide();
 	virtual void show();

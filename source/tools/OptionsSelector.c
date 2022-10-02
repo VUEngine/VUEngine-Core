@@ -12,8 +12,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <OptionsSelector.h>
-#include <Game.h>
 #include <Optics.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
@@ -30,6 +31,7 @@
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
 #include <MiscStructs.h>
+#include <Utilities.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -75,7 +77,7 @@ friend class Printing;
  * @param rows	Number of rows
  * @param font	Font to use for printing selector
  */
-void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font)
+void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font, char* leftMark, char* rightMark)
 {
 	Base::constructor();
 
@@ -86,10 +88,14 @@ void OptionsSelector::constructor(uint16 cols, uint16 rows, char* font)
 	this->currentOptionIndex = 0;
 	this->x = 0;
 	this->y = 0;
+	this->optionsLength = 0;
+	this->alignment = kOptionsAlignLeft;
+	this->spacing = 0;
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
 	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
-	this->mark = __CHAR_SELECTOR;
+	this->leftMark = NULL == leftMark ? __CHAR_SELECTOR_LEFT : leftMark;
+	this->rightMark = rightMark;
 	this->font = font;
 	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;
 }
@@ -140,9 +146,10 @@ void OptionsSelector::flushPages()
  *
  * @param mark	Selection mark character
  */
-void OptionsSelector::setMarkCharacter(char* mark)
+void OptionsSelector::setMarkCharacters(char* leftMark, char* rightMark)
 {
-	this->mark = mark;
+	this->leftMark = leftMark;
+	this->rightMark = rightMark;
 }
 
 /**
@@ -231,7 +238,8 @@ void OptionsSelector::selectNext()
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector::printSelectorMark(this, " ");
+		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
 		// get next option
 		this->currentOption = this->currentOption->next;
@@ -260,7 +268,7 @@ void OptionsSelector::selectNext()
 				ASSERT(this->currentOption, "selectNext: null current option");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y);
+				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing);
 			}
 			else
 			{
@@ -271,7 +279,8 @@ void OptionsSelector::selectNext()
 		}
 
 		// print new selection mark
-		OptionsSelector::printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -283,7 +292,8 @@ void OptionsSelector::selectPrevious()
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector::printSelectorMark(this, " ");
+		OptionsSelector::printSelectorMark(this, " ", -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, " ", this->optionsLength);
 
 		// get previous option
 		this->currentOption = VirtualNode::getPrevious(this->currentOption);
@@ -312,7 +322,7 @@ void OptionsSelector::selectPrevious()
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y);
+				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing);
 			}
 			else
 			{
@@ -323,7 +333,8 @@ void OptionsSelector::selectPrevious()
 		}
 
 		// print new selection mark
-		OptionsSelector::printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -379,9 +390,11 @@ int32 OptionsSelector::getSelectedOption()
  * @param x	 X coordinate to start printing at (in chars)
  * @param y	 Y coordinate to start printing at (in chars)
  */
-void OptionsSelector::printOptions(uint8 x, uint8 y)
+void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spacing)
 {
 	Printing printing = Printing::getInstance();
+
+	spacing++;
 
 	if(this->currentPage && 0 < VirtualList::getSize(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
@@ -389,28 +402,38 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 
 		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
+		this->alignment = alignment;
+		this->spacing = spacing;
 
 		ASSERT(this->currentPage, "printOptions: currentPage");
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
-		int32 i = 0;
-		for(; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
+		for(int32 i = 0; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
 		{
 			int32 j = 0;
 			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
-				Printing::text(printing, " ", x + j, y + i, this->font);
+				Printing::text(printing, " ", x + j, y + i * spacing, this->font);
 			}
 		}
 
-		int32 counter = 0;
 
-		for(; NULL != node; node = node->next, counter++)
+		for(int32 counter = 0; NULL != node; node = node->next, counter++)
 		{
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");
 
+			int8 optionsLength = 0;
+			int8 optionsLengthDivisor = 1;
 			Option* option = VirtualNode::getData(node);
+
+			switch(alignment)
+			{
+				case kOptionsAlignCenter:
+
+					optionsLengthDivisor = 2;
+					break;
+			}
 
 			if(NULL == option->value)
 			{
@@ -421,35 +444,53 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
 				switch(option->type)
 				{
 					case kString:
-						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x, y, this->font);
+
+						optionsLength = strnlen((char*)option->value, this->columnWidth);
+						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kFloat:
-						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, 2, this->font);
+
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value)) - 3;
+						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, 2, this->font);
 						break;
 
 					case kInt:
-						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kShortInt:
-						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
+
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kChar:
-						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
-						break;				}
+
+						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
+						break;				
+				}
 			}
 
-			y += fontData->fontSpec->fontSize.y;
-			if((y >= (this->rows * fontData->fontSpec->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
+			if(__ABS(optionsLength) > __ABS(this->optionsLength))
+			{
+				this->optionsLength = optionsLength;
+			}
+
+			y += fontData->fontSpec->fontSize.y * spacing;
+			
+			if((y >= (this->rows * this->spacing * fontData->fontSpec->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
 			{
 				y = this->y;
 				x += this->columnWidth;
 			}
 		}
 
-		OptionsSelector::printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->leftMark, -this->optionsLength);
+		OptionsSelector::printSelectorMark(this, this->rightMark, this->optionsLength);
 	}
 }
 
@@ -459,9 +500,9 @@ void OptionsSelector::printOptions(uint8 x, uint8 y)
  * @private
  * @param mark	The character to use
  */
-void OptionsSelector::printSelectorMark(char* mark)
+void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 {
-	if(this->currentPage)
+	if(this->currentPage && NULL != mark)
 	{
 		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
@@ -473,11 +514,28 @@ void OptionsSelector::printSelectorMark(char* mark)
 		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;
 
+		switch(this->alignment)
+		{
+			case kOptionsAlignCenter:
+
+				if(0 < optionsLength)
+				{
+					int8 optionsLengthHelper = optionsLength;
+					optionsLength = optionsLength / 2 + (0 == __MODULO(__ABS(optionsLengthHelper), 2) ? 1 : 2);
+				}
+				else
+				{
+					optionsLength /= 2;
+				}
+
+				break;
+		}
+
 		Printing::text(
 			Printing::getInstance(),
 			mark,
-			this->x + optionColumn,
-			this->y + (optionRow * fontData->fontSpec->fontSize.y),
+			this->x + optionColumn + optionsLength,
+			this->y + (optionRow * this->spacing * fontData->fontSpec->fontSize.y),
 			this->font
 		);
 	}

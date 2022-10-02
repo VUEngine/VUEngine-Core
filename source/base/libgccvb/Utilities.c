@@ -14,7 +14,6 @@
 
 #include <Utilities.h>
 #include <HardwareManager.h>
-#include <Game.h>
 
 
 Clock _gameClock = NULL;
@@ -37,6 +36,19 @@ static void Utilities::setKeypadManager(KeypadManager keypadManager)
 	_keypadManager = keypadManager;
 }
 
+static int32 Utilities::getDigitCount(int32 value)
+{
+	int32 size = 0;
+
+	do
+	{
+		value /= 10;
+		size++;
+	}
+	while(value);
+
+	return size;
+}
 
 static int32 Utilities::intLength(int32 value)
 {
@@ -48,7 +60,8 @@ static int32 Utilities::intLength(int32 value)
 
 		length++;
 	}
-	(!length) ? length++ : length;
+
+	(0 == length) ? length++ : length;
 
 	return length;
 }
@@ -133,20 +146,6 @@ static int32 Utilities::equalSign(int32 a, int32 b)
 	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
 }
 
-static int32 Utilities::getDigitCount(int32 value)
-{
-	int32 size = 0;
-
-	do
-	{
-		value /= 10;
-		size++;
-	}
-	while(value);
-
-	return size;
-}
-
 static uint32 Utilities::reverse(uint32 x, int32 bits)
 {
     x = ((x & 0x55555555) << 1) | ((x & 0xAAAAAAAA) >> 1);
@@ -159,24 +158,5 @@ static uint32 Utilities::reverse(uint32 x, int32 bits)
 
 static float Utilities::floor(float x) 
 {
-    float xAux = x < 0 ? x *- 1 : x;
-    uint32 zeros = 0;
-    
-	float n = 1;
-    
-	for(; xAux > n * 10; n *= 10, zeros++);
-
-    for(xAux -=n; -1 != (int32)zeros; xAux -= n)
-	{
-        if(xAux < 0)
-        {
-            xAux += n;
-            n /= 10;
-            --zeros;
-        }
-	}
-
-    xAux += n;
-
-    return x < 0 ? (xAux == 0? x : x - ( 1 - xAux) ) : (x - xAux);
+	return (float)((long)(x * 2 + 0.5f) >> 1);
 }

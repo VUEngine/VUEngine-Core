@@ -29,7 +29,7 @@ typedef struct ParticleSystemSpec
 	/// it has an Entity at the beginning
 	EntitySpec entitySpec;
 
-	/// whether to delete or reuse expired particles
+	/// reuse expired particles?
 	uint8 recycleParticles;
 
 	/// minimum generation delay in milliseconds
@@ -46,6 +46,9 @@ typedef struct ParticleSystemSpec
 
 	/// array of sprites to select randomly
 	const SpriteSpec** spriteSpecs;
+
+	/// array of wireframes to select randomly
+	const WireframeSpec** wireframeSpecs;
 
 	/// auto start
 	bool autoStart;
@@ -101,8 +104,9 @@ class ParticleSystem : Entity
 	int32 nextSpawnTime;
 	// particles' life span increment
 	int16 particleLifeSpanIncrement;
-	// number of sprite specs
-	int16 numberOfSpriteSpecs;
+	// number of specs
+	int8 numberOfSpriteSpecs;
+	int8 numberOfWireframeSpecs;
 	// particle count
 	int8 particleCount;
 	// pause flag
@@ -115,6 +119,8 @@ class ParticleSystem : Entity
 	uint8 maximumNumberOfAliveParticles;
 	// Flag to trigger animations in the particles
 	bool animationChanged;
+	// Flag to auto destroy when done
+	bool selfDestroyWhenDone;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
@@ -130,6 +136,7 @@ class ParticleSystem : Entity
 	void deleteAllParticles();
 	void expireAllParticles();
 	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
+	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();

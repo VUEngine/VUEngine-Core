@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ typedef const CharSetSpec CharSetROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-textures-char
-class CharSet : Object
+class CharSet : ListenerObject
 {
 	// Charset spec
 	CharSetSpec* charSetSpec;

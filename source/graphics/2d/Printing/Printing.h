@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <CharSet.h>
 #include <PrintingSprite.h>
 
@@ -187,7 +187,7 @@ typedef const FontData FontROMData;
  *
  * @ingroup graphics-2d
  */
-singleton class Printing : Object
+singleton class Printing : ListenerObject
 {
 	/// @protectedsection
 
@@ -395,6 +395,12 @@ singleton class Printing : Object
 	 * @return			Sprite's position
 	 */
 	PixelVector getSpritePosition();
+
+	/**
+	 * Set sprite's transparent
+	 *
+	 */
+	void setTransparent(uint8 value);
 
 	/**
 	 * Print a string

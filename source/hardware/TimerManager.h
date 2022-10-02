@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -99,7 +100,7 @@ singleton class TimerManager : Object
 	void clearStat();
 	void initialize();
 	void wait(uint32 milliSeconds);
-	void repeatMethodCall(uint32 callTimes, uint32 duration, Object object, void (*method)(Object, uint32));
+	void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
 	void print(int32 x, int32 y);
 }
 

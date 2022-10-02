@@ -78,17 +78,19 @@ class Container : SpatialObject
 	// whether to inherit position, rotation and scale from environment (parents)
 	uint8 inheritEnvironment;
 	// Flag to update graphics' attributes
-	bool invalidateGraphics;
-	// Flag for parent to know to delete it
-	uint8 deleteMe;
-	// Flag to hide the entity
-	uint8 hidden;
+	uint8 invalidateGraphics;
 	// Flag to recalculate global transformations
 	uint8 invalidateGlobalTransformation;
-	// flag to enable calls to update method
+	// Flag for parent to know to delete it
+	bool deleteMe;
+	// Flag to hide the entity
+	bool hidden;
+	// flag to enable calls to the update method
 	bool update;
-	// flag to enable calls to update method
+	// flag to enable calls to the transform method
 	bool transform;
+	// flag to enable calls to the synchronizeGraphics method
+	bool synchronizeGraphics;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
 	// Raise flag when transformed to allow graphics sync
@@ -119,7 +121,9 @@ class Container : SpatialObject
 	void invalidateGlobalTransformation();
 	bool isHidden();
 	int32 onPropagatedMessage(va_list args);
+	int32 onPropagatedString(va_list args);
 	int32 propagateMessage(int32 (*propagatedMessageHandler)(void*, va_list), ...);
+	int32 propagateString(int32 (*propagatedMessageHandler)(void*, va_list), ...);
 	void purgeChildren();
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
@@ -127,6 +131,10 @@ class Container : SpatialObject
 	void updateChildren(uint32 elapsedTime);
 	void updateBehaviors(uint32 elapsedTime);
 	void synchronizeChildrenGraphics();
+	void translate(const Vector3D* translation);
+	void rotate(const Rotation* rotation);
+	void scale(const Scale* scale);
+	Rotation getRotationFromDirection(const Vector3D* direction, uint8 axis);
 
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
@@ -140,7 +148,9 @@ class Container : SpatialObject
 	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
+	virtual void setTransparent(uint8 transparent);
 	virtual bool handlePropagatedMessage(int32 message);
+	virtual bool handlePropagatedString(const char* string);
 	virtual void addChild(Container child);
 	virtual void removeChild(Container child, bool deleteChild);
 	virtual void changeEnvironment(Transformation* environmentTransform);
@@ -148,7 +158,6 @@ class Container : SpatialObject
 	virtual void resume();
 	virtual void show();
 	virtual void hide();
-	virtual int32 passMessage(int32 (*propagatedMessageHandler)(void*, va_list), va_list args);
 	virtual bool isTransformed();
 
 	override void setPosition(const Vector3D* position);

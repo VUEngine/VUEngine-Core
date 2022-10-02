@@ -14,7 +14,6 @@
 
 #include <PrintingSprite.h>
 #include <Affine.h>
-#include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
@@ -42,7 +41,7 @@
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, Object owner)
+void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner)
 {
 	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
 

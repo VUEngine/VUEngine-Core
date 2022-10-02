@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Profiler.h>
-#include <Game.h>
+#include <VUEngine.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
@@ -112,7 +112,7 @@ void Profiler::reset()
 	this->currentProfilingProcess = 0;
 	this->printedProcessesNames = false;
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
-	this->timePerGameFrameInMS = __GAME_FRAME_DURATION;
+	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->totalTime = 0;
@@ -234,7 +234,7 @@ void Profiler::registerLap(const char* processName, float elapsedTime, uint32 la
 {
 	Lap* lap = new Lap;
 
-	lap->processName = NULL == processName ? "NO NAMe" : processName;
+	lap->processName = NULL == processName ? "NO NAME" : processName;
 	lap->elapsedTime = elapsedTime;
 	lap->lapType = lapType;
 	lap->column = column;

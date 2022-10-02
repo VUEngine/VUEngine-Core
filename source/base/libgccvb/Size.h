@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Size : Object
+static class Size : ListenerObject
 {
 	/// @publicsection
 	static inline Size getFromPixelSize(PixelSize pixelSize);

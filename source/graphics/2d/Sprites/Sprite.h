@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <VIPManager.h>
 #include <MiscStructs.h>
 #include <Texture.h>
@@ -107,32 +107,13 @@ typedef struct AnimationFunction
  */
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
-/**
- * An animation spec
- *
- * @memberof	Sprite
- */
-typedef struct AnimationDescription
-{
-	/// animation functions
-	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
-
-} AnimationDescription;
-
-/**
- * An AnimationDescription that is stored in ROM
- *
- * @memberof	Sprite
- */
-typedef const AnimationDescription AnimationDescriptionROMSpec;
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-abstract class Sprite : Object
+abstract class Sprite : ListenerObject
 {
 	// Projected position based on optics configuration
 	PixelVector position;
@@ -143,7 +124,7 @@ abstract class Sprite : Object
 	// Our texture
 	Texture texture;
 	// Owner
-	Object owner;
+	ListenerObject owner;
 	// Head spec for world entry setup
 	uint16 head;
 	// Texture's half width
@@ -152,8 +133,8 @@ abstract class Sprite : Object
 	int16 halfHeight;
 	// World layer where to render the texture
 	int16 index;
-	// Hidden flag
-	bool hidden;
+	// show flag
+	bool show;
 	// Update animation
 	bool writeAnimationFrame;
 	// Flag for transparency control
@@ -170,7 +151,7 @@ abstract class Sprite : Object
 	uint8 renderFlag;
 
 	/// @publicsection
-	void constructor(const SpriteSpec* spriteSpec, Object owner);
+	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);
 	const PixelVector* getPosition();
 	uint16 getHead();
 	uint16 getMode();
@@ -200,9 +181,9 @@ abstract class Sprite : Object
 	bool isPlayingFunction(char* functionName);
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, char* functionName, Object scope);
+	bool play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope);
 	void stop();
-	bool replay(const AnimationDescription* animationDescription);
+	bool replay(const AnimationFunction** animationFunctions);
 	void previousFrame();
 	void setActualFrame(int16 actualFrame);
 	void setFrameCycleDecrement(uint8 frameDelayDelta);
@@ -216,24 +197,25 @@ abstract class Sprite : Object
 	bool isWithinScreenSpace();
 	bool isDisposed();
 	int16 render(int16 index, bool evenFrame);
-	void calculateParallax(fix10_6 z);
+	void calculateParallax(fixed_t z);
 	void hide();
 	void show();
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
+	void position(const Vector3D* position);
 	virtual void setPosition(const PixelVector* position);
 	virtual void rewrite();
 	virtual void hideForDebug();
-	virtual void showForDebug();
+	virtual void forceShow();
 	virtual Scale getScale();
-	virtual void position(const Vector3D* position);
 	virtual void processEffects();
 	virtual int16 doRender(int16 index, bool evenFrame) = 0;
-	virtual void resize(Scale scale, fix10_6 z);
+	virtual void resize(Scale scale, fixed_t z);
 	virtual void rotate(const Rotation* rotation);
 	virtual void setMode(uint16 display, uint16 mode) = 0;
 	virtual void writeAnimation();
 	virtual bool writeTextures();
+	virtual bool prepareTexture();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels();
 	virtual void registerWithManager() = 0;

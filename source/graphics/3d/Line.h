@@ -23,17 +23,27 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct LineSpec
+{
+	// Wireframe
+	WireframeSpec wireframeSpec;
+
+	Vector3D a;
+	Vector3D b;
+
+} LineSpec;
+
 /// @ingroup graphics-3d
 class Line : Wireframe
 {
 	// Vertices
-	Vector3D normal;
-	Vector3D a;
-	Vector3D b;
+	PixelVector a;
+	PixelVector b;
 
 	/// @publicsection
-	void constructor(Vector3D a, Vector3D b, Vector3D normal, uint8 color);
-	override void draw(bool calculateParallax);
+	void constructor(LineSpec* lineSpec);
+	override void render();
+	override void draw();
 }
 
 

@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <ListenerObject.h>
 #include <SpatialObject.h>
 
 
@@ -106,7 +106,7 @@ extern volatile uint16* _vipRegisters;
 
 #define __CHAR_SPACE_BASE_ADDRESS		0x00078000
 
-#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000 // Base address of Object Attribute Memory
+#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000 // Base address of ListenerObject Attribute Memory
 
 #define __WORLD_SPACE_BASE_ADDRESS		0x0003D800 // Base address of World Attribute Memory
 
@@ -235,7 +235,7 @@ typedef struct PaletteConfig
 		uint8 gplt3;
 	} bgmap;
 
-	struct Object
+	struct ListenerObject
 	{
 		uint8 jplt0;
 		uint8 jplt1;
@@ -253,21 +253,23 @@ typedef void (*PostProcessingEffect) (uint32, SpatialObject);
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup hardware
-singleton class VIPManager : Object
+singleton class VIPManager : ListenerObject
 {
 	VirtualList postProcessingEffects;
+	uint32 totalMilliseconds;
 	uint32 currentDrawingFrameBufferSet;
-	uint16 multiplexedFRAMESTARTCounter;
+	uint16 multiplexedGAMESTARTCounter;
 	uint16 multiplexedXPENDCounter;
 	uint16 timeErrorCounter;
 	uint16 scanErrorCounter;
 	uint16 customInterrupts;
 	uint16 currrentInterrupt;
+	uint16 gameFrameDuration;
+	uint8 frameCycle;
 	bool processingGAMESTART;
 	bool processingXPEND;
 	bool drawingEnded;
-	volatile bool frameStarted;
-	bool forceDrawingSync;
+	volatile bool frameStartedDuringXPEND;
 	bool skipFrameBuffersProcessing;
 
 	/// @publicsection
@@ -288,7 +290,7 @@ singleton class VIPManager : Object
 	void displayHide();
 	void clearScreen();
 	void clearBgmapSegment(int32 segment, int32 size);
-	void setForceDrawingSync(bool forceDrawingSync);
+	void setFrameCycle(uint8 frameCycle);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
 	void setupBrightness(Brightness* brightness);
@@ -302,6 +304,8 @@ singleton class VIPManager : Object
 	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStartedDuringXPEND();
+	uint16 getGameFrameDuration();
+	void wait(uint32 milliSeconds);
 }
 
 
