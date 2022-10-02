@@ -783,7 +783,6 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
 void VIPManager::removePostProcessingEffects()
 {
 	VirtualList::deleteData(this->postProcessingEffects);
-	VirtualList::clear(this->postProcessingEffects);
 }
 
 /**
