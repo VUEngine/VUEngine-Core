@@ -1274,17 +1274,17 @@
             "c5aiN73gemaLA48M": {
                 "typeId": "Messages",
                 "messages": [
-					"BodyBounced",
-					"BodyChangedDirection",
-					"BodyStartedMoving",
-					"BodyStopped",
-					"CheckIfRemoteIsReady",
-					"EntityRemoved",
-					"HighFps",
-					"KeyHold",
-					"KeyPressed",
-					"KeyReleased",
-					"LastCommunicationMessage"
+                    "BodyBounced",
+                    "BodyChangedDirection",
+                    "BodyStartedMoving",
+                    "BodyStopped",
+                    "CheckIfRemoteIsReady",
+                    "EntityRemoved",
+                    "HighFps",
+                    "KeyHold",
+                    "KeyPressed",
+                    "KeyReleased",
+                    "LastCommunicationMessage"
                 ]
             }
         },
@@ -1949,8 +1949,7 @@
                 }
             },
             "icon": "fa fa-hand-paper-o",
-			"category": "Logic"
-
+            "category": "Logic"
         },
         "BrightnessRepeats": {
             "schema": {
@@ -1962,7 +1961,7 @@
                 }
             },
             "icon": "fa fa-sun-o",
-			"category": "Logic"
+            "category": "Effects"
         },
         "BrightnessRepeat": {
             "schema": {
@@ -2010,7 +2009,7 @@
                 }
             },
             "icon": "fa fa-table",
-			"category": "Logic"
+            "category": "Logic"
         },
         "ColumnTable": {
             "schema": {
@@ -2128,96 +2127,197 @@
                     "scrambleBinary": {
                         "type": "boolean",
                         "default": false
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "leaf": true,
-            "icon": "fa fa-cogs",
-			"category": "Configuration",
-            "templates": [
-                "config.make",
-                "vb_release.ld",
-                "vb_beta.ld",
-                "vb_tools.ld",
-                "vb_debug.ld",
-                "config.h"
-            ]
-        },
-        "CompilerMemorySections": {
-            "schema": {
-                "title": "Memory Sections",
-                "properties": {
-                    "typeId": {
-                        "const": "CompilerMemorySections"
                     },
-                    "dram": {
+                    "memorySections": {
                         "type": "object",
                         "properties": {
-                            "length": {
-                                "type": "integer",
-                                "default": -24,
-                                "maximum": 0
+                            "dram": {
+                                "type": "object",
+                                "properties": {
+                                    "length": {
+                                        "type": "integer",
+                                        "default": -24,
+                                        "maximum": 0
+                                    },
+                                    "origin": {
+                                        "type": "string"
+                                    }
+                                }
                             },
-                            "origin": {
-                                "type": "string"
+                            "exp": {
+                                "type": "object",
+                                "properties": {
+                                    "length": {
+                                        "type": "integer",
+                                        "default": 16,
+                                        "minimum": 0
+                                    },
+                                    "origin": {
+                                        "type": "string",
+                                        "default": "0x04000000"
+                                    }
+                                }
+                            },
+                            "rom": {
+                                "type": "object",
+                                "properties": {
+                                    "length": {
+                                        "type": "integer",
+                                        "default": 16,
+                                        "minimum": 0
+                                    },
+                                    "origin": {
+                                        "type": "string",
+                                        "default": "0x07000000"
+                                    }
+                                }
+                            },
+                            "sram": {
+                                "type": "object",
+                                "properties": {
+                                    "length": {
+                                        "type": "integer",
+                                        "default": 16,
+                                        "minimum": 0
+                                    },
+                                    "origin": {
+                                        "type": "string",
+                                        "default": "0x06000000"
+                                    }
+                                }
+                            },
+                            "wram": {
+                                "type": "object",
+                                "properties": {
+                                    "length": {
+                                        "type": "integer",
+                                        "default": 64,
+                                        "minimum": 0
+                                    },
+                                    "origin": {
+                                        "type": "string",
+                                        "default": "0x05000000"
+                                    }
+                                }
                             }
                         }
                     },
-                    "exp": {
+                    "memoryUsage": {
                         "type": "object",
                         "properties": {
-                            "length": {
-                                "type": "integer",
-                                "default": 16,
-                                "minimum": 0
-                            },
-                            "origin": {
+                            "initializedData": {
                                 "type": "string",
-                                "default": "0x04000000"
-                            }
-                        }
-                    },
-                    "rom": {
-                        "type": "object",
-                        "properties": {
-                            "length": {
-                                "type": "integer",
-                                "default": 16,
-                                "minimum": 0
+                                "oneOf": [
+                                    {
+                                        "const": ".data",
+                                        "title": ".data"
+                                    },
+                                    {
+                                        "const": ".dram_bss",
+                                        "title": ".dram_bss"
+                                    },
+                                    {
+                                        "const": ".sbss",
+                                        "title": ".sbss"
+                                    },
+                                    {
+                                        "const": ".sdata",
+                                        "title": ".sdata"
+                                    },
+                                    {
+                                        "const": ".sram_bs",
+                                        "title": ".sram_bs"
+                                    }
+                                ],
+                                "default": ".sdata"
                             },
-                            "origin": {
+                            "memoryPool": {
                                 "type": "string",
-                                "default": "0x07000000"
-                            }
-                        }
-                    },
-                    "sram": {
-                        "type": "object",
-                        "properties": {
-                            "length": {
-                                "type": "integer",
-                                "default": 16,
-                                "minimum": 0
+                                "oneOf": [
+                                    {
+                                        "const": ".dram_bss",
+                                        "title": ".dram_bss"
+                                    },
+                                    {
+                                        "const": ".sbss",
+                                        "title": ".sbss"
+                                    },
+                                    {
+                                        "const": ".sdata",
+                                        "title": ".sdata"
+                                    },
+                                    {
+                                        "const": ".sram_bs",
+                                        "title": ".sram_bs"
+                                    }
+                                ],
+                                "default": ".sdata"
                             },
-                            "origin": {
+                            "staticSingletons": {
                                 "type": "string",
-                                "default": "0x06000000"
-                            }
-                        }
-                    },
-                    "wram": {
-                        "type": "object",
-                        "properties": {
-                            "length": {
-                                "type": "integer",
-                                "default": 64,
-                                "minimum": 0
+                                "oneOf": [
+                                    {
+                                        "const": ".dram_bss",
+                                        "title": ".dram_bss"
+                                    },
+                                    {
+                                        "const": ".sbss",
+                                        "title": ".sbss"
+                                    },
+                                    {
+                                        "const": ".sdata",
+                                        "title": ".sdata"
+                                    },
+                                    {
+                                        "const": ".sram_bs",
+                                        "title": ".sram_bs"
+                                    }
+                                ],
+                                "default": ".dram_bss"
                             },
-                            "origin": {
+                            "uninitializedData": {
                                 "type": "string",
-                                "default": "0x05000000"
+                                "oneOf": [
+                                    {
+                                        "const": ".dram_bss",
+                                        "title": ".dram_bss"
+                                    },
+                                    {
+                                        "const": ".sbss",
+                                        "title": ".sbss"
+                                    },
+                                    {
+                                        "const": ".sdata",
+                                        "title": ".sdata"
+                                    },
+                                    {
+                                        "const": ".sram_bs",
+                                        "title": ".sram_bs"
+                                    }
+                                ],
+                                "default": ".sbss"
+                            },
+                            "virtualTables": {
+                                "type": "string",
+                                "oneOf": [
+                                    {
+                                        "const": ".dram_bss",
+                                        "title": ".dram_bss"
+                                    },
+                                    {
+                                        "const": ".sbss",
+                                        "title": ".sbss"
+                                    },
+                                    {
+                                        "const": ".sdata",
+                                        "title": ".sdata"
+                                    },
+                                    {
+                                        "const": ".sram_bs",
+                                        "title": ".sram_bs"
+                                    }
+                                ],
+                                "default": ".dram_bss"
                             }
                         }
                     }
@@ -2226,108 +2326,191 @@
                 "additionalProperties": false
             },
             "uiSchema": {
-                "type": "VerticalLayout",
+                "type": "Categorization",
                 "elements": [
                     {
-                        "type": "Group",
-                        "label": "DRAM",
+                        "type": "Category",
+                        "label": "Compiler Config",
                         "elements": [
                             {
-                                "type": "HorizontalLayout",
+                                "type": "VerticalLayout",
                                 "elements": [
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/dram/properties/length",
-                                        "label": "Length"
+                                        "scope": "#/properties/framePointer",
+                                        "label": "Frame Pointer"
                                     },
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/dram/properties/origin",
-                                        "label": "Origin"
+                                        "scope": "#/properties/optimization",
+                                        "label": "Optimization"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/output",
+                                        "label": "Output"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/prologFunctions",
+                                        "label": "Prolog Functions"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/scrambleBinary",
+                                        "label": "Scramble Binary"
                                     }
                                 ]
                             }
                         ]
                     },
                     {
-                        "type": "Group",
-                        "label": "Expansion",
+                        "type": "Category",
+                        "label": "Memory Sections",
                         "elements": [
                             {
-                                "type": "HorizontalLayout",
+                                "type": "VerticalLayout",
                                 "elements": [
                                     {
-                                        "type": "Control",
-                                        "scope": "#/properties/exp/properties/length",
-                                        "label": "Length"
+                                        "type": "Group",
+                                        "label": "DRAM",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/dram/properties/length",
+                                                        "label": "Length"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/dram/properties/origin",
+                                                        "label": "Origin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
                                     },
                                     {
-                                        "type": "Control",
-                                        "scope": "#/properties/exp/properties/origin",
-                                        "label": "Origin"
+                                        "type": "Group",
+                                        "label": "Expansion",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/exp/properties/length",
+                                                        "label": "Length"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/exp/properties/origin",
+                                                        "label": "Origin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "label": "WRAM",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/wram/properties/length",
+                                                        "label": "Length"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/wram/properties/origin",
+                                                        "label": "Origin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "label": "SRAM",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/sram/properties/length",
+                                                        "label": "Length"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/sram/properties/origin",
+                                                        "label": "Origin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "label": "ROM",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/rom/properties/length",
+                                                        "label": "Length"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/memorySections/properties/rom/properties/origin",
+                                                        "label": "Origin"
+                                                    }
+                                                ]
+                                            }
+                                        ]
                                     }
                                 ]
                             }
                         ]
                     },
                     {
-                        "type": "Group",
-                        "label": "WRAM",
+                        "type": "Category",
+                        "label": "Memory Usage",
                         "elements": [
                             {
-                                "type": "HorizontalLayout",
+                                "type": "VerticalLayout",
                                 "elements": [
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/wram/properties/length",
-                                        "label": "Length"
+                                        "scope": "#/properties/memoryUsage/properties/initializedData",
+                                        "label": "Initialized Data"
                                     },
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/wram/properties/origin",
-                                        "label": "Origin"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "SRAM",
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/sram/properties/length",
-                                        "label": "Length"
+                                        "scope": "#/properties/memoryUsage/properties/memoryPool",
+                                        "label": "Memory Pools"
                                     },
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/sram/properties/origin",
-                                        "label": "Origin"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "ROM",
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/rom/properties/length",
-                                        "label": "Length"
+                                        "scope": "#/properties/memoryUsage/properties/staticSingletons",
+                                        "label": "Static Singletons"
                                     },
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/rom/properties/origin",
-                                        "label": "Origin"
+                                        "scope": "#/properties/memoryUsage/properties/uninitializedData",
+                                        "label": "Uninitialized Data"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/memoryUsage/properties/virtualTables",
+                                        "label": "Virtual Tables"
                                     }
                                 ]
                             }
@@ -2335,142 +2518,17 @@
                     }
                 ]
             },
-            "parent": {
-                "typeId": "Compiler",
-                "multiple": false
-            },
-            "icon": "fa fa-cog"
-        },
-        "CompilerMemoryUsage": {
-            "schema": {
-                "title": "Memory Usage",
-                "properties": {
-                    "typeId": {
-                        "const": "CompilerMemoryUsage"
-                    },
-                    "initializedData": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": ".data",
-                                "title": ".data"
-                            },
-                            {
-                                "const": ".dram_bss",
-                                "title": ".dram_bss"
-                            },
-                            {
-                                "const": ".sbss",
-                                "title": ".sbss"
-                            },
-                            {
-                                "const": ".sdata",
-                                "title": ".sdata"
-                            },
-                            {
-                                "const": ".sram_bs",
-                                "title": ".sram_bs"
-                            }
-                        ],
-                        "default": ".sdata"
-                    },
-                    "memoryPool": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": ".dram_bss",
-                                "title": ".dram_bss"
-                            },
-                            {
-                                "const": ".sbss",
-                                "title": ".sbss"
-                            },
-                            {
-                                "const": ".sdata",
-                                "title": ".sdata"
-                            },
-                            {
-                                "const": ".sram_bs",
-                                "title": ".sram_bs"
-                            }
-                        ],
-                        "default": ".sdata"
-                    },
-                    "staticSingletons": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": ".dram_bss",
-                                "title": ".dram_bss"
-                            },
-                            {
-                                "const": ".sbss",
-                                "title": ".sbss"
-                            },
-                            {
-                                "const": ".sdata",
-                                "title": ".sdata"
-                            },
-                            {
-                                "const": ".sram_bs",
-                                "title": ".sram_bs"
-                            }
-                        ],
-                        "default": ".dram_bss"
-                    },
-                    "uninitializedData": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": ".dram_bss",
-                                "title": ".dram_bss"
-                            },
-                            {
-                                "const": ".sbss",
-                                "title": ".sbss"
-                            },
-                            {
-                                "const": ".sdata",
-                                "title": ".sdata"
-                            },
-                            {
-                                "const": ".sram_bs",
-                                "title": ".sram_bs"
-                            }
-                        ],
-                        "default": ".sbss"
-                    },
-                    "virtualTables": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": ".dram_bss",
-                                "title": ".dram_bss"
-                            },
-                            {
-                                "const": ".sbss",
-                                "title": ".sbss"
-                            },
-                            {
-                                "const": ".sdata",
-                                "title": ".sdata"
-                            },
-                            {
-                                "const": ".sram_bs",
-                                "title": ".sram_bs"
-                            }
-                        ],
-                        "default": ".dram_bss"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Compiler",
-                "multiple": false
-            },
-            "icon": "fa fa-cog"
+            "leaf": true,
+            "icon": "fa fa-cogs",
+            "category": "Configuration",
+            "templates": [
+                "config.make",
+                "vb_release.ld",
+                "vb_beta.ld",
+                "vb_tools.ld",
+                "vb_debug.ld",
+                "config.h"
+            ]
         },
         "DebugMacros": {
             "schema": {
@@ -2509,7 +2567,7 @@
             },
             "leaf": true,
             "icon": "fa fa-bug",
-			"category": "Configuration",
+            "category": "Configuration",
             "templates": [
                 "debugConfig.h"
             ]
@@ -2520,863 +2578,755 @@
                 "properties": {
                     "typeId": {
                         "const": "EngineConfig"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "leaf": true,
-            "icon": "fa fa-sliders",
-			"category": "Configuration",
-            "templates": [
-                "config.h"
-            ]
-        },
-        "EngineConfigAffine": {
-            "schema": {
-                "title": "Affine",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigAffine"
                     },
-                    "maxRowsPerCall": {
-                        "type": "integer",
-						"description": "The maximum number of rows to write on each call to affine calculation functions.",
-                        "default": 16
-                    },
-                    "maxScale": {
-                        "type": "integer",
-						"description": "The maximum possible scale. Affects param table allocation space.",
-                        "default": 2
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-clone"
-        },
-        "EngineConfigAnimation": {
-            "schema": {
-                "title": "Animation",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigAnimation"
-                    },
-                    "maxAnimationFunctionNameLength": {
-                        "type": "integer",
-						"description": "The maximum length of an animation function name.",
-                        "default": 16
-                    },
-                    "maxAnimationFunctions": {
-                        "type": "integer",
-						"description": "The maximum number of animation functions per description.",
-                        "default": 32
-                    },
-                    "maxFramesPerAnimationFunction": {
-                        "type": "integer",
-						"description": "The maximum number of frames per animation function.",
-                        "default": 16
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-film"
-        },
-        "EngineConfigBrightness": {
-            "schema": {
-                "title": "Brightness",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigBrightness"
-                    },
-                    "brightRed": {
-                        "type": "integer",
-                        "default": 128
-                    },
-                    "mediumRed": {
-                        "type": "integer",
-                        "default": 64
-                    },
-                    "darkRed": {
-                        "type": "integer",
-                        "default": 32
-                    },
-                    "fadeDelay": {
-                        "type": "integer",
-                        "default": 16
-                    },
-                    "fadeIncrement": {
-                        "type": "integer",
-                        "default": 1
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-sun-o"
-        },
-        "EngineConfigChars": {
-            "schema": {
-                "title": "Chars",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigChars"
-                    },
-                    "totalChars": {
-                        "type": "integer",
-						"description": "The total number of available chars in char memory",
-                        "default": 2048
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-table"
-        },
-        "EngineConfigCommunications": {
-            "schema": {
-                "title": "Communications",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigCommunications"
-                    },
-                    "enabled": {
-                        "type": "boolean",
-						"description": "Enable communications at the start of the game, e.g. for link play.",
-                        "default": false
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-commenting-o"
-        },
-        "EngineConfigDebug": {
-            "schema": {
-                "title": "Debug",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigDebug"
-                    },
-                    "alertForTornFrames": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "alertStackOverflow": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "alertVipOvertime": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "dimmForProfiling": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "enableProfiler": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "printDetailedMemoryPoolStatus": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "printFramerate": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "printMemoryPoolStatus": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "profileGame": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "profileGameStateDuringVipInterrupt": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "profileStreaming": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "showDetailedMemoryPoolStatus": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "showGameProfiling": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "showMemoryPoolStatus": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "showStackOverflowAlert": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "showStreamingProfiling": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "stackHeadroom": {
-                        "type": "integer",
-                        "default": 1000
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-bug"
-        },
-        "EngineConfigExceptions": {
-            "schema": {
-                "title": "Exceptions",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigExceptions"
-                    },
-                    "position": {
+                    "affine": {
                         "type": "object",
-						"description": "The camera coordinates for the output of exceptions.",
                         "properties": {
-                            "x": {
+                            "maxRowsPerCall": {
                                 "type": "integer",
-                                "default": 0,
-                                "maximum": 47,
-                                "minimum": 0
+                                "description": "The maximum number of rows to write on each call to affine calculation functions.",
+                                "default": 16
                             },
-                            "y": {
+                            "maxScale": {
                                 "type": "integer",
-                                "default": 0,
-                                "maximum": 27,
-                                "minimum": 0
+                                "description": "The maximum possible scale. Affects param table allocation space.",
+                                "default": 2
                             }
                         }
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "uiSchema": {
-				"type": "Group",
-				"label": "Position",
-				"elements": [
-					{
-						"type": "HorizontalLayout",
-						"elements": [
-							{
-								"type": "Control",
-								"label": false,
-								"scope": "#/properties/position/properties/x"
-							},
-							{
-								"type": "Control",
-								"label": false,
-								"scope": "#/properties/position/properties/y"
-							}
-						]
-					}
-				]
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-exclamation-circle"
-        },
-        "EngineConfigFrameRate": {
-            "schema": {
-                "title": "Frame Rate",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigFrameRate"
                     },
-                    "forceVipSync": {
-                        "type": "boolean",
-						"description": "When defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired before the current game frame is done.",
-                        "default": false
-                    },
-                    "frameCycle": {
-                        "type": "integer",
-						"oneOf": [
-							{
-								"const": 0,
-								"title": "50 FPS"
-							},
-							{
-								"const": 1,
-								"title": "25 FPS"
-							}
-						]
-                    },
-                    "runDelayedMessagesAtHalfFrameRate": {
-                        "type": "boolean",
-						"description": "Define to dispatch the delayed messages every other game frame cycle.",
-                        "default": false
-                    },
-                    "timerResolution": {
-                        "type": "integer",
-                        "default": 10
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-fast-forward"
-        },
-        "EngineConfigMemoryPools": {
-            "schema": {
-                "title": "Memory Pools",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigMemoryPools"
-                    },
-                    "cleanUp": {
-                        "type": "boolean",
-						"description": "Enabling clean-up will reset each byte of each free block to 0 on resetting the game. Use only for debugging! Proper object's initialization must make this macro unnecessary.",
-                        "default": false
-                    },
-                    "warningThreshold": {
-                        "type": "integer",
-						"description": "Percentage above which the memory pool's status shows the pool usage.",
-                        "default": 85,
-                        "minimum": 1,
-						"maximum": 100
-                    },
-                    "pools": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "objects": {
-                                    "type": "integer",
-                                    "default": 1,
-                                    "minimum": 1
-                                },
-                                "size": {
-                                    "type": "integer",
-                                    "default": 1,
-                                    "minimum": 1
-                                }
-                            }
-                        }
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-database"
-        },
-        "EngineConfigOptics": {
-            "schema": {
-                "title": "Optics",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigOptics"
-                    },
-                    "baseFactor": {
-                        "type": "integer",
-                        "default": 32,
-                        "minimum": 0
-                    },
-                    "cameraMinimumDisplacementPixelsPower": {
-                        "type": "integer",
-                        "default": 1,
-                        "minimum": 0
-                    },
-                    "distanceEyeScreen": {
-                        "type": "integer",
-                        "default": 384,
-                        "minimum": 0
-                    },
-                    "horizontalViewPointCenter": {
-                        "type": "integer",
-                        "default": 192,
-                        "minimum": 0
-                    },
-                    "maximumXViewDistance": {
-                        "type": "integer",
-                        "default": 2048,
-                        "minimum": 0
-                    },
-                    "maximumYViewDistance": {
-                        "type": "integer",
-                        "default": 4096,
-                        "minimum": 0
-                    },
-                    "parallaxCorrectionFactor": {
-                        "type": "integer",
-                        "default": 4,
-                        "minimum": 0
-                    },
-                    "scalingModifierFactor": {
-                        "type": "integer",
-                        "default": 1,
-                        "minimum": 0
-                    },
-                    "screenDepth": {
-                        "type": "integer",
-                        "default": 2048,
-                        "minimum": 0
-                    },
-                    "screenHeight": {
-                        "type": "integer",
-                        "default": 224,
-                        "minimum": 0
-                    },
-                    "screenWidth": {
-                        "type": "integer",
-                        "default": 384,
-                        "minimum": 0
-                    },
-                    "verticalViewPointCenter": {
-                        "type": "integer",
-                        "default": 112,
-                        "minimum": 0
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-eye"
-        },
-        "EngineConfigPalettes": {
-            "schema": {
-                "title": "Palettes",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigPalettes"
-                    },
-                    "bgMapPalette0": {
-                        "type": "string",
-                        "default": "11100100"
-                    },
-                    "bgMapPalette1": {
-                        "type": "string",
-                        "default": "11100000"
-                    },
-                    "bgMapPalette2": {
-                        "type": "string",
-                        "default": "10010000"
-                    },
-                    "bgMapPalette3": {
-                        "type": "string",
-                        "default": "01010000"
-                    },
-                    "objectPalette0": {
-                        "type": "string",
-                        "default": "11100100"
-                    },
-                    "objectPalette1": {
-                        "type": "string",
-                        "default": "11100000"
-                    },
-                    "objectPalette2": {
-                        "type": "string",
-                        "default": "10010000"
-                    },
-                    "objectPalette3": {
-                        "type": "string",
-                        "default": "01010000"
-                    },
-                    "printingPalette": {
-                        "type": "integer",
-                        "description": "The BGMap palette that shall be used for text on the printing layer.",
-                        "default": 0,
-                        "maximum": 3,
-                        "minimum": 0
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/bgMapPalette0",
-                        "label": "BGMap Palette 0"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/bgMapPalette1",
-                        "label": "BGMap Palette 1"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/bgMapPalette2",
-                        "label": "BGMap Palette 2"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/bgMapPalette3",
-                        "label": "BGMap Palette 3"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/objectPalette0",
-                        "label": "Object Palette 0"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/objectPalette1",
-                        "label": "Object Palette 1"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/objectPalette2",
-                        "label": "Object Palette 2"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/objectPalette3",
-                        "label": "Object Palette 3"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/printingPalette",
-                        "label": "Printing Palette"
-                    }
-                ]
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-paint-brush"
-        },
-        "EngineConfigPhysics": {
-            "schema": {
-                "title": "Physics",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigPhysics"
-                    },
-                    "bodiesToCheckForGravity": {
-                        "type": "integer",
-						"description": "Number of bodies to check for gravity on each cycle.",
-                        "default": 10,
-                        "minimum": 0
-                    },
-                    "frictionForceFactorPower": {
-                        "type": "integer",
-                        "default": 2,
-                        "minimum": 0
-                    },
-                    "gravity": {
-                        "type": "number",
-                        "default": 20,
-                        "minimum": 0
-                    },
-                    "maximumBouncinessCoefficient": {
-                        "type": "integer",
-						"description": "The maximum allowed bounciness coefficient.",
-                        "default": 1,
-                        "minimum": 0
-                    },
-                    "stopBouncingVelocityThreshold": {
-                        "type": "integer",
-                        "default": 48,
-                        "minimum": 0
-                    },
-                    "stopVelocityThreshold": {
-                        "type": "integer",
-                        "default": 8,
-                        "minimum": 0
-                    },
-                    "timeElapsedDivisor": {
-                        "type": "integer",
-						"description": "Divisor to speed up physics simulations. Bigger number equals faster computations.",
-                        "default": 2,
-                        "minimum": 0
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-compass"
-        },
-        "EngineConfigRandom": {
-            "schema": {
-                "title": "Random",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigRandom"
-                    },
-                    "addUserInputAndTimeToRandomSeed": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "seedCycles": {
-                        "type": "integer",
-                        "default": 2,
-                        "minimum": 1
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-random"
-        },
-        "EngineConfigSound": {
-            "schema": {
-                "title": "Sound",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigSound"
-                    },
-                    "leftEarCenter": {
-                        "type": "integer",
-                        "default": 96
-                    },
-                    "rightEarCenter": {
-                        "type": "integer",
-                        "default": 288
-                    },
-                    "stereoHorizontalAttenuationFactor": {
-                        "type": "integer",
-                        "default": 50,
-                        "minimum": 0
-                    },
-                    "stereoVerticalAttenuationFactor": {
-                        "type": "integer",
-                        "default": 50,
-                        "minimum": 0
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-volume-up"
-        },
-        "EngineConfigSprite": {
-            "schema": {
-                "title": "Sprite",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigSprite"
-                    },
-                    "totalLayers": {
-                        "type": "integer",
-                        "default": 32,
-                        "minimum": 1
-                    },
-                    "hackBgmapSpriteHeight": {
-                        "type": "boolean",
-                        "default": true
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-image"
-        },
-        "EngineConfigSram": {
-            "schema": {
-                "title": "SRAM",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigSram"
-                    },
-                    "totalSram": {
-                        "type": "integer",
-						"description": "The amount of available SRAM space, in bytes. The Virtual Boy allows up to 16 MB, but most cartridges support only 8 kb of SRAM.",
-                        "default": 8192,
-                        "minimum": 0
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-microchip"
-        },
-        "EngineConfigTexture": {
-            "schema": {
-                "title": "Texture",
-                "properties": {
-                    "typeId": {
-                        "const": "EngineConfigTexture"
-                    },
-                    "bgmapsPerSegments": {
-                        "type": "integer",
-						"description": "Number of BGMap specs in each BGMap segment.",
-                        "default": 14,
-                        "minimum": 0
-                    },
-                    "printing": {
+                    "animation": {
                         "type": "object",
                         "properties": {
-                            "offset": {
+                            "maxAnimationFunctionNameLength": {
+                                "type": "integer",
+                                "description": "The maximum length of an animation function name.",
+                                "default": 16
+                            },
+                            "maxAnimationFunctions": {
+                                "type": "integer",
+                                "description": "The maximum number of animation functions per description.",
+                                "default": 32
+                            },
+                            "maxFramesPerAnimationFunction": {
+                                "type": "integer",
+                                "description": "The maximum number of frames per animation function.",
+                                "default": 16
+                            }
+                        }
+                    },
+                    "brightness": {
+                        "type": "object",
+                        "properties": {
+                            "brightRed": {
+                                "type": "integer",
+                                "default": 128
+                            },
+                            "mediumRed": {
+                                "type": "integer",
+                                "default": 64
+                            },
+                            "darkRed": {
+                                "type": "integer",
+                                "default": 32
+                            },
+                            "fadeDelay": {
+                                "type": "integer",
+                                "default": 16
+                            },
+                            "fadeIncrement": {
+                                "type": "integer",
+                                "default": 1
+                            }
+                        }
+                    },
+                    "chars": {
+                        "type": "object",
+                        "properties": {
+                            "totalChars": {
+                                "type": "integer",
+                                "description": "The total number of available chars in char memory",
+                                "default": 2048
+                            }
+                        }
+                    },
+                    "communications": {
+                        "type": "object",
+                        "properties": {
+                            "enabled": {
+                                "type": "boolean",
+                                "description": "Enable communications at the start of the game, e.g. for link play.",
+                                "default": false
+                            }
+                        }
+                    },
+                    "debug": {
+                        "type": "object",
+                        "properties": {
+                            "alertForTornFrames": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "alertStackOverflow": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "alertVipOvertime": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "dimmForProfiling": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "enableProfiler": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "printDetailedMemoryPoolStatus": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "printFramerate": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "printMemoryPoolStatus": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "profileGame": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "profileGameStateDuringVipInterrupt": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "profileStreaming": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "showDetailedMemoryPoolStatus": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "showGameProfiling": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "showMemoryPoolStatus": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "showStackOverflowAlert": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "showStreamingProfiling": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "stackHeadroom": {
+                                "type": "integer",
+                                "default": 1000
+                            }
+                        }
+                    },
+                    "exceptions": {
+                        "type": "object",
+                        "properties": {
+                            "position": {
                                 "type": "object",
+                                "description": "The camera coordinates for the output of exceptions.",
                                 "properties": {
                                     "x": {
                                         "type": "integer",
                                         "default": 0,
+                                        "maximum": 47,
                                         "minimum": 0
                                     },
                                     "y": {
                                         "type": "integer",
                                         "default": 0,
-                                        "minimum": 0
-                                    },
-                                    "parallax": {
-                                        "type": "integer",
-                                        "default": 0,
+                                        "maximum": 27,
                                         "minimum": 0
                                     }
                                 }
+                            }
+                        }
+                    },
+                    "frameRate": {
+                        "type": "object",
+                        "properties": {
+                            "forceVipSync": {
+                                "type": "boolean",
+                                "description": "When defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired before the current game frame is done.",
+                                "default": false
                             },
-                            "printableArea": {
+                            "frameCycle": {
                                 "type": "integer",
-                                "default": 1792,
+                                "oneOf": [
+                                    {
+                                        "const": 0,
+                                        "title": "50 FPS"
+                                    },
+                                    {
+                                        "const": 1,
+                                        "title": "25 FPS"
+                                    }
+                                ]
+                            },
+                            "runDelayedMessagesAtHalfFrameRate": {
+                                "type": "boolean",
+                                "description": "Define to dispatch the delayed messages every other game frame cycle.",
+                                "default": false
+                            },
+                            "timerResolution": {
+                                "type": "integer",
+                                "default": 10
+                            }
+                        }
+                    },
+                    "memoryPools": {
+                        "type": "object",
+                        "properties": {
+                            "cleanUp": {
+                                "type": "boolean",
+                                "description": "Enabling clean-up will reset each byte of each free block to 0 on resetting the game. Use only for debugging! Proper object's initialization must make this macro unnecessary.",
+                                "default": false
+                            },
+                            "warningThreshold": {
+                                "type": "integer",
+                                "description": "Percentage above which the memory pool's status shows the pool usage.",
+                                "default": 85,
+                                "minimum": 1,
+                                "maximum": 100
+                            },
+                            "pools": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objects": {
+                                            "type": "integer",
+                                            "default": 1,
+                                            "minimum": 1
+                                        },
+                                        "size": {
+                                            "type": "integer",
+                                            "default": 1,
+                                            "minimum": 1
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "optics": {
+                        "type": "object",
+                        "properties": {
+                            "baseFactor": {
+                                "type": "integer",
+                                "default": 32,
+                                "minimum": 0
+                            },
+                            "cameraMinimumDisplacementPixelsPower": {
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 0
+                            },
+                            "distanceEyeScreen": {
+                                "type": "integer",
+                                "default": 384,
+                                "minimum": 0
+                            },
+                            "horizontalViewPointCenter": {
+                                "type": "integer",
+                                "default": 192,
+                                "minimum": 0
+                            },
+                            "maximumXViewDistance": {
+                                "type": "integer",
+                                "default": 2048,
+                                "minimum": 0
+                            },
+                            "maximumYViewDistance": {
+                                "type": "integer",
+                                "default": 4096,
+                                "minimum": 0
+                            },
+                            "parallaxCorrectionFactor": {
+                                "type": "integer",
+                                "default": 4,
+                                "minimum": 0
+                            },
+                            "scalingModifierFactor": {
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 0
+                            },
+                            "screenDepth": {
+                                "type": "integer",
+                                "default": 2048,
+                                "minimum": 0
+                            },
+                            "screenHeight": {
+                                "type": "integer",
+                                "default": 224,
+                                "minimum": 0
+                            },
+                            "screenWidth": {
+                                "type": "integer",
+                                "default": 384,
+                                "minimum": 0
+                            },
+                            "verticalViewPointCenter": {
+                                "type": "integer",
+                                "default": 112,
                                 "minimum": 0
                             }
                         }
                     },
-                    "paramTableSegments": {
-                        "type": "integer",
-						"description": "Number of segments for param tables.",
-                        "default": 1,
-                        "minimum": 0
+                    "palettes": {
+                        "type": "object",
+                        "properties": {
+                            "bgMapPalette0": {
+                                "type": "string",
+                                "default": "11100100"
+                            },
+                            "bgMapPalette1": {
+                                "type": "string",
+                                "default": "11100000"
+                            },
+                            "bgMapPalette2": {
+                                "type": "string",
+                                "default": "10010000"
+                            },
+                            "bgMapPalette3": {
+                                "type": "string",
+                                "default": "01010000"
+                            },
+                            "objectPalette0": {
+                                "type": "string",
+                                "default": "11100100"
+                            },
+                            "objectPalette1": {
+                                "type": "string",
+                                "default": "11100000"
+                            },
+                            "objectPalette2": {
+                                "type": "string",
+                                "default": "10010000"
+                            },
+                            "objectPalette3": {
+                                "type": "string",
+                                "default": "01010000"
+                            },
+                            "printingPalette": {
+                                "type": "integer",
+                                "description": "The BGMap palette that shall be used for text on the printing layer.",
+                                "default": 0,
+                                "maximum": 3,
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "physics": {
+                        "type": "object",
+                        "properties": {
+                            "bodiesToCheckForGravity": {
+                                "type": "integer",
+                                "description": "Number of bodies to check for gravity on each cycle.",
+                                "default": 10,
+                                "minimum": 0
+                            },
+                            "frictionForceFactorPower": {
+                                "type": "integer",
+                                "default": 2,
+                                "minimum": 0
+                            },
+                            "gravity": {
+                                "type": "number",
+                                "default": 20,
+                                "minimum": 0
+                            },
+                            "maximumBouncinessCoefficient": {
+                                "type": "integer",
+                                "description": "The maximum allowed bounciness coefficient.",
+                                "default": 1,
+                                "minimum": 0
+                            },
+                            "stopBouncingVelocityThreshold": {
+                                "type": "integer",
+                                "default": 48,
+                                "minimum": 0
+                            },
+                            "stopVelocityThreshold": {
+                                "type": "integer",
+                                "default": 8,
+                                "minimum": 0
+                            },
+                            "timeElapsedDivisor": {
+                                "type": "integer",
+                                "description": "Divisor to speed up physics simulations. Bigger number equals faster computations.",
+                                "default": 2,
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "random": {
+                        "type": "object",
+                        "properties": {
+                            "addUserInputAndTimeToRandomSeed": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "seedCycles": {
+                                "type": "integer",
+                                "default": 2,
+                                "minimum": 1
+                            }
+                        }
+                    },
+                    "sound": {
+                        "type": "object",
+                        "properties": {
+                            "leftEarCenter": {
+                                "type": "integer",
+                                "default": 96
+                            },
+                            "rightEarCenter": {
+                                "type": "integer",
+                                "default": 288
+                            },
+                            "stereoHorizontalAttenuationFactor": {
+                                "type": "integer",
+                                "default": 50,
+                                "minimum": 0
+                            },
+                            "stereoVerticalAttenuationFactor": {
+                                "type": "integer",
+                                "default": 50,
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "sprite": {
+                        "type": "object",
+                        "properties": {
+                            "totalLayers": {
+                                "type": "integer",
+                                "default": 32,
+                                "minimum": 1
+                            },
+                            "hackBgmapSpriteHeight": {
+                                "type": "boolean",
+                                "default": true
+                            }
+                        }
+                    },
+                    "sram": {
+                        "type": "object",
+                        "properties": {
+                            "totalSram": {
+                                "type": "integer",
+                                "description": "The amount of available SRAM space, in bytes. The Virtual Boy allows up to 16 MB, but most cartridges support only 8 kb of SRAM.",
+                                "default": 8192,
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "texture": {
+                        "type": "object",
+                        "properties": {
+                            "bgmapsPerSegments": {
+                                "type": "integer",
+                                "description": "Number of BGMap specs in each BGMap segment.",
+                                "default": 14,
+                                "minimum": 0
+                            },
+                            "printing": {
+                                "type": "object",
+                                "properties": {
+                                    "offset": {
+                                        "type": "object",
+                                        "properties": {
+                                            "x": {
+                                                "type": "integer",
+                                                "default": 0,
+                                                "minimum": 0
+                                            },
+                                            "y": {
+                                                "type": "integer",
+                                                "default": 0,
+                                                "minimum": 0
+                                            },
+                                            "parallax": {
+                                                "type": "integer",
+                                                "default": 0,
+                                                "minimum": 0
+                                            }
+                                        }
+                                    },
+                                    "printableArea": {
+                                        "type": "integer",
+                                        "default": 1792,
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "paramTableSegments": {
+                                "type": "integer",
+                                "description": "Number of segments for param tables.",
+                                "default": 1,
+                                "minimum": 0
+                            }
+                        }
                     }
                 },
                 "required": [],
                 "additionalProperties": false
             },
             "uiSchema": {
-                "type": "VerticalLayout",
+                "type": "Categorization",
                 "elements": [
                     {
-                        "type": "Control",
-                        "scope": "#/properties/bgmapsPerSegments"
+                        "type": "Category",
+                        "label": "Affine",
+                        "elements": [
+                            {}
+                        ]
                     },
                     {
-                        "type": "Control",
-                        "scope": "#/properties/paramTableSegments"
+                        "type": "Category",
+                        "label": "Animation",
+                        "elements": [
+                            {}
+                        ]
                     },
                     {
-                        "type": "Group",
-                        "label": "Printing Area Offset (x, y, parallax)",
+                        "type": "Category",
+                        "label": "Brightness",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Chars",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Communications",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Debug",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Exceptions",
                         "elements": [
                             {
-                                "type": "HorizontalLayout",
+                                "type": "Group",
+                                "label": "Position",
                                 "elements": [
                                     {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/printing/properties/offset/properties/x"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/printing/properties/offset/properties/y"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/printing/properties/offset/properties/parallax"
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "label": false,
+                                                "scope": "#/properties/exceptions/properties/position/properties/x"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "label": false,
+                                                "scope": "#/properties/exceptions/properties/position/properties/y"
+                                            }
+                                        ]
                                     }
                                 ]
                             }
                         ]
                     },
                     {
-                        "type": "Control",
-                        "scope": "#/properties/printing/properties/printableArea"
+                        "type": "Category",
+                        "label": "FrameRate",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "MemoryPools",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Optics",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Palettes",
+                        "elements": [
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/bgMapPalette0",
+                                        "label": "BGMap Palette 0"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/bgMapPalette1",
+                                        "label": "BGMap Palette 1"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/bgMapPalette2",
+                                        "label": "BGMap Palette 2"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/bgMapPalette3",
+                                        "label": "BGMap Palette 3"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/objectPalette0",
+                                        "label": "Object Palette 0"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/objectPalette1",
+                                        "label": "Object Palette 1"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/objectPalette2",
+                                        "label": "Object Palette 2"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/objectPalette3",
+                                        "label": "Object Palette 3"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/palettes/properties/printingPalette",
+                                        "label": "Printing Palette"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Physics",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Random",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Sound",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Sprite",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Sram",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Texture",
+                        "elements": [
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/texture/properties/bgmapsPerSegments"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/texture/properties/paramTableSegments"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "label": "Printing Area Offset (x, y, parallax)",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/texture/properties/printing/properties/offset/properties/x"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/texture/properties/printing/properties/offset/properties/y"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/texture/properties/printing/properties/offset/properties/parallax"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/texture/properties/printing/properties/printableArea"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
-            "parent": {
-                "typeId": "EngineConfig",
-                "multiple": false
-            },
-            "icon": "fa fa-file-image-o"
-        },
-        "Events": {
-            "schema": {
-                "title": "Events",
-                "properties": {
-                    "typeId": {
-                        "const": "Events"
-                    },
-                    "events": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "default": "NewEvent"
-                        }
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
             "leaf": true,
-            "icon": "fa fa-bullhorn",
-			"category": "Logic",
+            "icon": "fa fa-sliders",
+            "category": "Configuration",
             "templates": [
-                "GameEvents.h"
+                "config.h"
             ]
         },
         "Entities": {
@@ -3389,7 +3339,7 @@
                 }
             },
             "icon": "fa fa-id-card-o",
-			"category": "Assets"
+            "category": "Assets"
         },
         "Entity": {
             "schema": {
@@ -3426,6 +3376,457 @@
                                 "minimum": 0
                             }
                         }
+                    },
+                    "animations": {
+                        "type": "object",
+                        "properties": {
+                            "default": {
+                                "type": "string",
+                                "description": "Animation to play as a default when entity is created"
+                            },
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Name of this animation"
+                                        },
+                                        "cycles": {
+                                            "type": "integer",
+                                            "description": "Number of cycles a frame of animation is displayed",
+                                            "minimum": 0,
+                                            "maximum": 255,
+                                            "default": 8
+                                        },
+                                        "callback": {
+                                            "type": "string",
+                                            "description": "Name of method to call on animation completion"
+                                        },
+                                        "loop": {
+                                            "type": "boolean",
+                                            "description": "Play this animation in a loop or stop after playing it once?",
+                                            "default": false
+                                        },
+                                        "frames": {
+                                            "type": "array",
+                                            "description": "The frames to play in this animation",
+                                            "items": {
+                                                "type": "integer",
+                                                "minimum": 0
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "behaviors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "childEntities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "collisions": {
+                        "type": "object",
+                        "properties": {
+                            "typeId": {
+                                "const": "EntityCollisions"
+                            },
+                            "inGameType": {
+                                "type": "string",
+                                "default": "None"
+                            },
+                            "shapes": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "oneOf": [
+                                                {
+                                                    "const": "LineField",
+                                                    "title": "Line Field"
+                                                },
+                                                {
+                                                    "const": "Box",
+                                                    "title": "Box"
+                                                },
+                                                {
+                                                    "const": "InverseBox",
+                                                    "title": "Inverse Box"
+                                                },
+                                                {
+                                                    "const": "Ball",
+                                                    "title": "Ball"
+                                                }
+                                            ]
+                                        },
+                                        "pixelSize": {
+                                            "type": "object",
+                                            "properties": {
+                                                "x": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "y": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "z": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            }
+                                        },
+                                        "displacement": {
+                                            "type": "object",
+                                            "properties": {
+                                                "x": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "y": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "z": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "parallax": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            }
+                                        },
+                                        "rotation": {
+                                            "type": "object",
+                                            "properties": {
+                                                "x": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "y": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "z": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            }
+                                        },
+                                        "scale": {
+                                            "type": "object",
+                                            "properties": {
+                                                "x": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "y": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "z": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            }
+                                        },
+                                        "checkForCollisions": {
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "layers": {
+                                            "type": "string"
+                                        },
+                                        "layersToIgnore": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "meshes": {
+                        "type": "object",
+                        "properties": {
+                            "meshes": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "fromVertex": {
+                                            "type": "string"
+                                        },
+                                        "toVertex": {
+                                            "type": "string"
+                                        },
+                                        "bufferIndex": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 255
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "required": [],
+                        "additionalProperties": false
+                    },
+                    "physics": {
+                        "type": "object",
+                        "properties": {
+                            "enabled": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "mass": {
+                                "type": "number"
+                            },
+                            "friction": {
+                                "type": "number"
+                            },
+                            "bounciness": {
+                                "type": "number"
+                            },
+                            "maximumVelocity": {
+                                "type": "object",
+                                "properties": {
+                                    "x": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    },
+                                    "y": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    },
+                                    "z": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "maximumSpeed": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "sprites": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "oneOf": [
+                                    {
+                                        "const": "Bgmap",
+                                        "title": "Bgmap"
+                                    },
+                                    {
+                                        "const": "Object",
+                                        "title": "Object"
+                                    }
+                                ],
+                                "default": "Bgmap"
+                            },
+                            "useZDisplacementInProjection": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "class": {
+                                            "type": "string",
+                                            "default": "BgmapSprite"
+                                        },
+                                        "bgmapMode": {
+                                            "type": "string",
+                                            "oneOf": [
+                                                {
+                                                    "const": "BGMAP",
+                                                    "title": "Bgmap"
+                                                },
+                                                {
+                                                    "const": "AFFINE",
+                                                    "title": "Affine"
+                                                },
+                                                {
+                                                    "const": "OBJECT",
+                                                    "title": "Object"
+                                                },
+                                                {
+                                                    "const": "HBIAS",
+                                                    "title": "HBias"
+                                                }
+                                            ],
+                                            "default": "BGMAP"
+                                        },
+                                        "displayMode": {
+                                            "type": "string",
+                                            "oneOf": [
+                                                {
+                                                    "const": "Both",
+                                                    "title": "Display on both eyes"
+                                                },
+                                                {
+                                                    "const": "Left",
+                                                    "title": "Display on left eye only"
+                                                },
+                                                {
+                                                    "const": "Right",
+                                                    "title": "Display on right eye only"
+                                                }
+                                            ],
+                                            "default": "Both"
+                                        },
+                                        "transparency": {
+                                            "type": "string",
+                                            "oneOf": [
+                                                {
+                                                    "const": "None",
+                                                    "title": "No transparency"
+                                                },
+                                                {
+                                                    "const": "Even",
+                                                    "title": "Display only on even frames"
+                                                },
+                                                {
+                                                    "const": "Odd",
+                                                    "title": "Display only on odd frames"
+                                                }
+                                            ],
+                                            "default": "None"
+                                        },
+                                        "displacement": {
+                                            "type": "object",
+                                            "properties": {
+                                                "x": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "y": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "z": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                },
+                                                "parallax": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            }
+                                        },
+                                        "manipulationFunction": {
+                                            "type": "string"
+                                        },
+                                        "texture": {
+                                            "type": "object",
+                                            "properties": {
+                                                "charset": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "oneOf": [
+                                                                {
+                                                                    "const": "animatedSingle",
+                                                                    "title": "Animated (Single)"
+                                                                },
+                                                                {
+                                                                    "const": "animatedSingleOptimized",
+                                                                    "title": "Animated (Single Optimized)"
+                                                                },
+                                                                {
+                                                                    "const": "animatedShared",
+                                                                    "title": "Animated (Shared)"
+                                                                },
+                                                                {
+                                                                    "const": "animatedSharedCoordinated",
+                                                                    "title": "Animated (Shared Coordinated)"
+                                                                },
+                                                                {
+                                                                    "const": "animatedMulti",
+                                                                    "title": "Animated (Multi)"
+                                                                },
+                                                                {
+                                                                    "const": "notAnimated",
+                                                                    "title": "Not Animated"
+                                                                }
+                                                            ],
+                                                            "default": "notAnimated"
+                                                        }
+                                                    }
+                                                },
+                                                "image": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "chars": {
+                                                            "type": "integer",
+                                                            "minimum": 0
+                                                        }
+                                                    }
+                                                },
+                                                "padding": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "x": {
+                                                            "type": "integer",
+                                                            "minimum": 0
+                                                        },
+                                                        "y": {
+                                                            "type": "integer",
+                                                            "minimum": 0
+                                                        }
+                                                    }
+                                                },
+                                                "palette": {
+                                                    "type": "integer",
+                                                    "minimum": 0,
+                                                    "maximum": 3
+                                                },
+                                                "recycleable": {
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "size": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "x": {
+                                                            "type": "integer",
+                                                            "minimum": 0
+                                                        },
+                                                        "y": {
+                                                            "type": "integer",
+                                                            "minimum": 0
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "required": [
@@ -3434,44 +3835,174 @@
                 "additionalProperties": false
             },
             "uiSchema": {
-                "type": "VerticalLayout",
+                "type": "Categorization",
                 "elements": [
                     {
-                        "type": "Control",
-                        "scope": "#/properties/name"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/class"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/extraInfo"
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Size (x, y, z)",
+                        "type": "Category",
+                        "label": "General",
                         "elements": [
                             {
-                                "type": "HorizontalLayout",
+                                "type": "VerticalLayout",
                                 "elements": [
                                     {
                                         "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/pixelSize/properties/x"
+                                        "scope": "#/properties/name"
                                     },
                                     {
                                         "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/pixelSize/properties/y"
+                                        "scope": "#/properties/class"
                                     },
                                     {
                                         "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/pixelSize/properties/z"
+                                        "scope": "#/properties/extraInfo"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "label": "Size (x, y, z)",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/pixelSize/properties/x"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/pixelSize/properties/y"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "label": false,
+                                                        "scope": "#/properties/pixelSize/properties/z"
+                                                    }
+                                                ]
+                                            }
+                                        ]
                                     }
                                 ]
                             }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Animations",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Behaviors",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Child Entities",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Collisions",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Meshes",
+                        "elements": [
+                            {}
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Physics",
+                        "elements": [
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "label": "Enable physics",
+                                        "scope": "#/properties/enabled"
+                                    },
+                                    {
+                                        "type": "VerticalLayout",
+                                        "rule": {
+                                            "effect": "HIDE",
+                                            "condition": {
+                                                "scope": "#/properties/enabled",
+                                                "schema": {
+                                                    "const": false
+                                                }
+                                            }
+                                        },
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/mass"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/friction"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/bounciness"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Group",
+                                                "label": "Maximum Velocity (x, y, z)",
+                                                "elements": [
+                                                    {
+                                                        "type": "HorizontalLayout",
+                                                        "elements": [
+                                                            {
+                                                                "type": "Control",
+                                                                "label": false,
+                                                                "scope": "#/properties/maximumVelocity/properties/x"
+                                                            },
+                                                            {
+                                                                "type": "Control",
+                                                                "label": false,
+                                                                "scope": "#/properties/maximumVelocity/properties/y"
+                                                            },
+                                                            {
+                                                                "type": "Control",
+                                                                "label": false,
+                                                                "scope": "#/properties/maximumVelocity/properties/z"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/maximumSpeed"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Sprites",
+                        "elements": [
+                            {}
                         ]
                     }
                 ]
@@ -3482,786 +4013,30 @@
             },
             "icon": "fa fa-id-card-o"
         },
-        "EntityAnimations": {
+        "Events": {
             "schema": {
-                "title": "Animations",
+                "title": "Events",
                 "properties": {
                     "typeId": {
-                        "const": "EntityAnimations"
+                        "const": "Events"
                     },
-                    "default": {
-                        "type": "string",
-                        "description": "Animation to play as a default when entity is created"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-film"
-        },
-        "EntityAnimation": {
-            "schema": {
-                "title": "Animation",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityAnimation"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "Name of this animation"
-                    },
-                    "cycles": {
-                        "type": "integer",
-                        "description": "Number of cycles a frame of animation is displayed",
-                        "minimum": 0,
-                        "maximum": 255,
-                        "default": 8
-                    },
-                    "callback": {
-                        "type": "string",
-                        "description": "Name of method to call on animation completion"
-                    },
-                    "loop": {
-                        "type": "boolean",
-                        "description": "Play this animation in a loop or stop after playing it once?",
-                        "default": false
-                    },
-                    "frames": {
-                        "type": "array",
-                        "description": "The frames to play in this animation",
-                        "items": {
-                            "type": "integer",
-                            "minimum": 0
-                        }
-                    }
-                },
-                "required": [
-                    "name"
-                ],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "EntityAnimations",
-                "multiple": true
-            },
-            "icon": "fa fa-film"
-        },
-        "EntityBehaviors": {
-            "schema": {
-                "title": "Behaviors",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityBehaviors"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-map-signs"
-        },
-        "EntityChildren": {
-            "schema": {
-                "title": "Children",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityChildren"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-sitemap"
-        },
-        "EntityCollisions": {
-            "schema": {
-                "title": "Collisions",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityCollisions"
-                    },
-                    "inGameType": {
-                        "type": "string",
-                        "default": "None"
-                    },
-                    "shapes": {
+                    "events": {
                         "type": "array",
                         "items": {
-                            "type": "object",
-                            "properties": {
-                                "type": {
-                                    "type": "string",
-                                    "oneOf": [
-                                        {
-                                            "const": "LineField",
-                                            "title": "Line Field"
-                                        },
-                                        {
-                                            "const": "Box",
-                                            "title": "Box"
-                                        },
-                                        {
-                                            "const": "InverseBox",
-                                            "title": "Inverse Box"
-                                        },
-                                        {
-                                            "const": "Ball",
-                                            "title": "Ball"
-                                        }
-                                    ]
-                                },
-                                "pixelSize": {
-                                    "type": "object",
-                                    "properties": {
-                                        "x": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "y": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "z": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        }
-                                    }
-                                },
-                                "displacement": {
-                                    "type": "object",
-                                    "properties": {
-                                        "x": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "y": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "z": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "parallax": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        }
-                                    }
-                                },
-                                "rotation": {
-                                    "type": "object",
-                                    "properties": {
-                                        "x": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "y": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "z": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        }
-                                    }
-                                },
-                                "scale": {
-                                    "type": "object",
-                                    "properties": {
-                                        "x": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "y": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        },
-                                        "z": {
-                                            "type": "number",
-                                            "minimum": 0
-                                        }
-                                    }
-                                },
-                                "checkForCollisions": {
-                                    "type": "boolean",
-                                    "default": false
-                                },
-                                "layers": {
-                                    "type": "string"
-                                },
-                                "layersToIgnore": {
-                                    "type": "string"
-                                }
-                            }
+                            "type": "string",
+                            "default": "NewEvent"
                         }
                     }
                 },
                 "required": [],
                 "additionalProperties": false
             },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-object-ungroup"
-        },
-        "EntityMeshes": {
-            "schema": {
-                "title": "Meshes",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityMeshes"
-                    },
-                    "meshes": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "fromVertex": {
-                                    "type": "string"
-                                },
-                                "toVertex": {
-                                    "type": "string"
-                                },
-                                "bufferIndex": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 255
-                                }
-                            }
-                        }
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "codicon codicon-globe"
-        },
-        "EntityPhysics": {
-            "schema": {
-                "title": "Physics",
-                "properties": {
-                    "typeId": {
-                        "const": "EntityPhysics"
-                    },
-                    "enabled": {
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "mass": {
-                        "type": "number"
-                    },
-                    "friction": {
-                        "type": "number"
-                    },
-                    "bounciness": {
-                        "type": "number"
-                    },
-                    "maximumVelocity": {
-                        "type": "object",
-                        "properties": {
-                            "x": {
-                                "type": "number",
-                                "minimum": 0
-                            },
-                            "y": {
-                                "type": "number",
-                                "minimum": 0
-                            },
-                            "z": {
-                                "type": "number",
-                                "minimum": 0
-                            }
-                        }
-                    },
-                    "maximumSpeed": {
-                        "type": "number"
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "label": "Enable physics",
-                        "scope": "#/properties/enabled"
-                    },
-                    {
-                        "type": "VerticalLayout",
-                        "rule": {
-                            "effect": "HIDE",
-                            "condition": {
-                                "scope": "#/properties/enabled",
-                                "schema": {
-                                    "const": false
-                                }
-                            }
-                        },
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/mass"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/friction"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/bounciness"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "Group",
-                                "label": "Maximum Velocity (x, y, z)",
-                                "elements": [
-                                    {
-                                        "type": "HorizontalLayout",
-                                        "elements": [
-                                            {
-                                                "type": "Control",
-                                                "label": false,
-                                                "scope": "#/properties/maximumVelocity/properties/x"
-                                            },
-                                            {
-                                                "type": "Control",
-                                                "label": false,
-                                                "scope": "#/properties/maximumVelocity/properties/y"
-                                            },
-                                            {
-                                                "type": "Control",
-                                                "label": false,
-                                                "scope": "#/properties/maximumVelocity/properties/z"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "Control",
-                                "scope": "#/properties/maximumSpeed"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-compass"
-        },
-        "EntitySprites": {
-            "schema": {
-                "title": "Sprites",
-                "properties": {
-                    "typeId": {
-                        "const": "EntitySprites"
-                    },
-                    "type": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": "Bgmap",
-                                "title": "Bgmap"
-                            },
-                            {
-                                "const": "Object",
-                                "title": "Object"
-                            }
-                        ],
-                        "default": "Bgmap"
-                    },
-                    "useZDisplacementInProjection": {
-                        "type": "boolean",
-                        "default": false
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "parent": {
-                "typeId": "Entity",
-                "multiple": false
-            },
-            "icon": "fa fa-picture-o"
-        },
-        "EntitySprite": {
-            "schema": {
-                "title": "Sprite",
-                "properties": {
-                    "typeId": {
-                        "const": "EntitySprite"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "class": {
-                        "type": "string",
-                        "default": "BgmapSprite"
-                    },
-                    "bgmapMode": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": "BGMAP",
-                                "title": "Bgmap"
-                            },
-                            {
-                                "const": "AFFINE",
-                                "title": "Affine"
-                            },
-                            {
-                                "const": "OBJECT",
-                                "title": "Object"
-                            },
-                            {
-                                "const": "HBIAS",
-                                "title": "HBias"
-                            }
-                        ],
-                        "default": "BGMAP"
-                    },
-                    "displayMode": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": "Both",
-                                "title": "Display on both eyes"
-                            },
-                            {
-                                "const": "Left",
-                                "title": "Display on left eye only"
-                            },
-                            {
-                                "const": "Right",
-                                "title": "Display on right eye only"
-                            }
-                        ],
-                        "default": "Both"
-                    },
-                    "transparency": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": "None",
-                                "title": "No transparency"
-                            },
-                            {
-                                "const": "Even",
-                                "title": "Display only on even frames"
-                            },
-                            {
-                                "const": "Odd",
-                                "title": "Display only on odd frames"
-                            }
-                        ],
-                        "default": "None"
-                    },
-                    "displacement": {
-                        "type": "object",
-                        "properties": {
-                            "x": {
-                                "type": "number",
-                                "minimum": 0
-                            },
-                            "y": {
-                                "type": "number",
-                                "minimum": 0
-                            },
-                            "z": {
-                                "type": "number",
-                                "minimum": 0
-                            },
-                            "parallax": {
-                                "type": "number",
-                                "minimum": 0
-                            }
-                        }
-                    },
-                    "manipulationFunction": {
-                        "type": "string"
-                    },
-                    "texture": {
-                        "type": "object",
-                        "properties": {
-                            "charset": {
-                                "type": "object",
-                                "properties": {
-                                    "type": {
-                                        "type": "string",
-                                        "oneOf": [
-                                            {
-                                                "const": "animatedSingle",
-                                                "title": "Animated (Single)"
-                                            },
-                                            {
-                                                "const": "animatedSingleOptimized",
-                                                "title": "Animated (Single Optimized)"
-                                            },
-                                            {
-                                                "const": "animatedShared",
-                                                "title": "Animated (Shared)"
-                                            },
-                                            {
-                                                "const": "animatedSharedCoordinated",
-                                                "title": "Animated (Shared Coordinated)"
-                                            },
-                                            {
-                                                "const": "animatedMulti",
-                                                "title": "Animated (Multi)"
-                                            },
-                                            {
-                                                "const": "notAnimated",
-                                                "title": "Not Animated"
-                                            }
-                                        ],
-                                        "default": "notAnimated"
-                                    }
-                                }
-                            },
-                            "image": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "chars": {
-                                        "type": "integer",
-                                        "minimum": 0
-                                    }
-                                }
-                            },
-                            "padding": {
-                                "type": "object",
-                                "properties": {
-                                    "x": {
-                                        "type": "integer",
-                                        "minimum": 0
-                                    },
-                                    "y": {
-                                        "type": "integer",
-                                        "minimum": 0
-                                    }
-                                }
-                            },
-                            "palette": {
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 3
-                            },
-                            "recycleable": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "size": {
-                                "type": "object",
-                                "properties": {
-                                    "x": {
-                                        "type": "integer",
-                                        "minimum": 0
-                                    },
-                                    "y": {
-                                        "type": "integer",
-                                        "minimum": 0
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "required": [],
-                "additionalProperties": false
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/name"
-                    },
-                    {
-                        "type": "Control",
-                        "scope": "#/properties/class"
-                    },
-                    {
-                        "type": "HorizontalLayout",
-                        "elements": [
-                            {
-                                "type": "Control",
-                                "scope": "#/properties/bgmapMode"
-                            },
-                            {
-                                "type": "Control",
-                                "scope": "#/properties/displayMode"
-                            },
-                            {
-                                "type": "Control",
-                                "scope": "#/properties/transparency"
-                            }
-                        ]
-                    },
-                    {
-                        "type": "HorizontalLayout",
-                        "rule": {
-                            "effect": "SHOW",
-                            "condition": {
-                                "scope": "#/properties/bgmapMode",
-                                "schema": {
-                                    "enum": [
-                                        "AFFINE",
-                                        "HBIAS"
-                                    ]
-                                }
-                            }
-                        },
-                        "elements": [
-                            {
-                                "type": "Control",
-                                "scope": "#/properties/manipulationFunction"
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Displacement (x, y, z, parallax)",
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/displacement/properties/x"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/displacement/properties/y"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/displacement/properties/z"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": false,
-                                        "scope": "#/properties/displacement/properties/parallax"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Texture",
-                        "elements": [
-                            {
-                                "type": "Control",
-                                "label": "Charset Type",
-                                "scope": "#/properties/texture/properties/charset/properties/type"
-                            },
-                            {
-                                "type": "Group",
-                                "label": "Image",
-                                "elements": [
-                                    {
-                                        "type": "HorizontalLayout",
-                                        "elements": [
-                                            {
-                                                "type": "Control",
-                                                "scope": "#/properties/texture/properties/image/properties/name"
-                                            },
-                                            {
-                                                "type": "Control",
-                                                "scope": "#/properties/texture/properties/image/properties/chars"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "Group",
-                                        "label": "Padding (X, Y)",
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/texture/properties/padding/properties/x"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/texture/properties/padding/properties/y"
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/texture/properties/palette"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/texture/properties/recycleable"
-                                    },
-                                    {
-                                        "type": "Group",
-                                        "label": "Size (X, Y)",
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/texture/properties/size/properties/x"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/texture/properties/size/properties/y"
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            "parent": {
-                "typeId": "EntitySprites",
-                "multiple": true
-            },
-            "icon": "fa fa-picture-o"
+            "leaf": true,
+            "icon": "fa fa-bullhorn",
+            "category": "Logic",
+            "templates": [
+                "GameEvents.h"
+            ]
         },
         "Fonts": {
             "schema": {
@@ -4273,7 +4048,7 @@
                 }
             },
             "icon": "fa fa-font",
-			"category": "Assets"
+            "category": "Assets"
         },
         "Font": {
             "schema": {
@@ -4285,59 +4060,59 @@
                     "name": {
                         "type": "string"
                     },
-					"offset": {
-						"type": "integer",
-						"default": 0,
-						"minimum": 0,
-						"maximum": 255
-					},
-					"characterCount": {
-						"type": "integer",
-						"default": 256,
-						"minimum": 1,
-						"maximum": 256
-					},
-					"size": {
-						"type": "object",
-						"properties": {
-							"x": {
-								"type": "integer",
-								"default": 1,
-								"minimum": 1,
-								"maximum": 4
-							},
-							"y": {
-								"type": "integer",
-								"default": 1,
-								"minimum": 1,
-								"maximum": 4
-							}
-						}
-					},
-					"variableSize": {
-						"type": "object",
-						"properties": {
-							"enabled": {
-								"type": "boolean",
-								"default": false
-							},
-							"x": {
-								"type": "array",
-								"items": {
-									"type": "integer",
-									"default": 8,
-									"minimum": 1,
-									"maximum": 32
-								}
-							},
-							"y": {
-								"type": "integer",
-								"default": 8,
-								"minimum": 1,
-								"maximum": 32
-							}
-						}
-					},
+                    "offset": {
+                        "type": "integer",
+                        "default": 0,
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "characterCount": {
+                        "type": "integer",
+                        "default": 256,
+                        "minimum": 1,
+                        "maximum": 256
+                    },
+                    "size": {
+                        "type": "object",
+                        "properties": {
+                            "x": {
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1,
+                                "maximum": 4
+                            },
+                            "y": {
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1,
+                                "maximum": 4
+                            }
+                        }
+                    },
+                    "variableSize": {
+                        "type": "object",
+                        "properties": {
+                            "enabled": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "x": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer",
+                                    "default": 8,
+                                    "minimum": 1,
+                                    "maximum": 32
+                                }
+                            },
+                            "y": {
+                                "type": "integer",
+                                "default": 8,
+                                "minimum": 1,
+                                "maximum": 32
+                            }
+                        }
+                    },
                     "section": {
                         "type": "string",
                         "oneOf": [
@@ -4352,34 +4127,34 @@
                         ],
                         "default": "rom"
                     },
-					"characters": {
-						"type": "array",
-						"minItems": 256,
-						"maxItems": 256,
-						"items": {
-							"type": "array",
-							"minItems": 8,
-							"maxItems": 32,
-							"items": {
-								"type": "array",
-								"minItems": 8,
-								"maxItems": 32,
-								"items": {
-									"type": "integer",
-									"default": 0,
-									"minimum": 0,
-									"maximum": 3
-								}
-							}
-						}
-					}
+                    "characters": {
+                        "type": "array",
+                        "minItems": 256,
+                        "maxItems": 256,
+                        "items": {
+                            "type": "array",
+                            "minItems": 8,
+                            "maxItems": 32,
+                            "items": {
+                                "type": "array",
+                                "minItems": 8,
+                                "maxItems": 32,
+                                "items": {
+                                    "type": "integer",
+                                    "default": 0,
+                                    "minimum": 0,
+                                    "maximum": 3
+                                }
+                            }
+                        }
+                    }
                 },
                 "required": [],
                 "additionalProperties": false
             },
             "uiSchema": {
-				"type": "Control",
-				"scope": "FontEditor"
+                "type": "Control",
+                "scope": "FontEditor"
             },
             "parent": {
                 "typeId": "Fonts",
@@ -4402,7 +4177,7 @@
                 }
             },
             "icon": "fa fa-image",
-			"category": "Assets"
+            "category": "Assets"
         },
         "Image": {
             "schema": {
@@ -4705,7 +4480,7 @@
             },
             "leaf": true,
             "icon": "fa fa-commenting-o",
-			"category": "Logic"
+            "category": "Logic"
         },
         "Project": {
             "schema": {
@@ -4752,7 +4527,7 @@
             },
             "leaf": true,
             "icon": "fa fa-cog",
-			"category": "Configuration"
+            "category": "Configuration"
         },
         "RomHeader": {
             "schema": {
@@ -4869,7 +4644,7 @@
             },
             "leaf": true,
             "icon": "fa fa-microchip",
-			"category": "Configuration",
+            "category": "Configuration",
             "templates": [
                 "romHeader.h"
             ]
@@ -4884,7 +4659,7 @@
                 }
             },
             "icon": "codicon codicon-screen-full codicon-rotate-90",
-			"category": "Effects"
+            "category": "Effects"
         },
         "RumbleEffect": {
             "schema": {
@@ -4964,7 +4739,7 @@
                 }
             },
             "icon": "fa fa-music",
-			"category": "Assets"
+            "category": "Assets"
         },
         "Song": {
             "schema": {
@@ -4975,7 +4750,7 @@
                     },
                     "name": {
                         "type": "string",
-						"default": "New"
+                        "default": "New"
                     },
                     "channels": {
                         "type": "array",
@@ -4984,59 +4759,59 @@
                             "properties": {
                                 "id": {
                                     "type": "integer",
-									"default": 0
+                                    "default": 0
                                 },
                                 "instrument": {
                                     "type": "integer",
-									"default": 0
+                                    "default": 0
                                 },
-								"sequence": {
-									"type": "array",
-									"items": {
-										"type": "integer",
-										"default": 0
-									}
-								},
-								"patterns": {
-									"type": "array",
-									"items": {
-										"type": "object",
-										"properties": {
-											"size": {
-												"type": "integer",
-												"default": 32
-											},
-											"notes": {
-												"type": "array",
-												"items": {
-													"type": "integer"
-												}
-											},
-											"volumeL": {
-												"type": "array",
-												"items": {
-													"type": "integer"
-												}
-											},
-											"volumeR": {
-												"type": "array",
-												"items": {
-													"type": "integer"
-												}
-											},
-											"effects": {
-												"type": "array",
-												"items": {
-													"type": "string"
-												}
-											}
-										}
-									}
-								},
-								"volume": {
-									"type": "integer",
-									"default": 100
-								},
+                                "sequence": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer",
+                                        "default": 0
+                                    }
+                                },
+                                "patterns": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "size": {
+                                                "type": "integer",
+                                                "default": 32
+                                            },
+                                            "notes": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "volumeL": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "volumeR": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "effects": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "volume": {
+                                    "type": "integer",
+                                    "default": 100
+                                },
                                 "muted": {
                                     "type": "boolean",
                                     "default": false
@@ -5051,67 +4826,78 @@
                                 }
                             }
                         },
-						"default": [{
-							"id": 0,
-							"instrument": 0,
-							"sequence": [0],
-							"patterns": [{
-								"size": 32,
-								"notes": [],
-								"volumeL": [],
-								"volumeR": [],
-								"effects": []
-							}],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}, {
-							"id": 1,
-							"instrument": 0,
-							"sequence": [],
-							"patterns": [],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}, {
-							"id": 2,
-							"instrument": 0,
-							"sequence": [],
-							"patterns": [],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}, {
-							"id": 3,
-							"instrument": 0,
-							"sequence": [],
-							"patterns": [],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}, {
-							"id": 4,
-							"instrument": 0,
-							"sequence": [],
-							"patterns": [],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}, {
-							"id": 5,
-							"instrument": 0,
-							"sequence": [],
-							"patterns": [],
-							"volume": 100,
-							"muted": false,
-							"solo": false,
-							"collapsed": false
-						}]
+                        "default": [
+                            {
+                                "id": 0,
+                                "instrument": 0,
+                                "sequence": [
+                                    0
+                                ],
+                                "patterns": [
+                                    {
+                                        "size": 32,
+                                        "notes": [],
+                                        "volumeL": [],
+                                        "volumeR": [],
+                                        "effects": []
+                                    }
+                                ],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            },
+                            {
+                                "id": 1,
+                                "instrument": 0,
+                                "sequence": [],
+                                "patterns": [],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            },
+                            {
+                                "id": 2,
+                                "instrument": 0,
+                                "sequence": [],
+                                "patterns": [],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            },
+                            {
+                                "id": 3,
+                                "instrument": 0,
+                                "sequence": [],
+                                "patterns": [],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            },
+                            {
+                                "id": 4,
+                                "instrument": 0,
+                                "sequence": [],
+                                "patterns": [],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            },
+                            {
+                                "id": 5,
+                                "instrument": 0,
+                                "sequence": [],
+                                "patterns": [],
+                                "volume": 100,
+                                "muted": false,
+                                "solo": false,
+                                "collapsed": false
+                            }
+                        ]
                     },
                     "instruments": {
                         "type": "array",
@@ -5123,33 +4909,35 @@
                                 }
                             }
                         },
-						"default": [{
-							"name": "Synth"
-						}]
+                        "default": [
+                            {
+                                "name": "Synth"
+                            }
+                        ]
                     },
-					"volume": {
-						"type": "integer",
-						"default": 100
-					},
-					"speed": {
-						"type": "integer",
-						"default": 300
-					},
-					"bar": {
-						"type": "integer",
-						"default": 4
-					},
-					"defaultPatternSize": {
-						"type": "integer",
-						"default": 32
-					}
+                    "volume": {
+                        "type": "integer",
+                        "default": 100
+                    },
+                    "speed": {
+                        "type": "integer",
+                        "default": 300
+                    },
+                    "bar": {
+                        "type": "integer",
+                        "default": 4
+                    },
+                    "defaultPatternSize": {
+                        "type": "integer",
+                        "default": 32
+                    }
                 },
                 "required": [],
                 "additionalProperties": false
             },
             "uiSchema": {
-				"type": "Control",
-				"scope": "MusicEditor"
+                "type": "Control",
+                "scope": "MusicEditor"
             },
             "parent": {
                 "typeId": "Sound",
@@ -5167,7 +4955,7 @@
                 }
             },
             "icon": "fa fa-cube",
-			"category": "Assets"
+            "category": "Assets"
         },
         "WaveForms": {
             "schema": {
@@ -5179,7 +4967,7 @@
                 }
             },
             "icon": "fa fa-bar-chart-o",
-			"category": "Assets"
+            "category": "Assets"
         },
         "WaveForm": {
             "schema": {
