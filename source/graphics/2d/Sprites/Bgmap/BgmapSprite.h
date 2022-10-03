@@ -85,8 +85,12 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	// 3d world position
-	DrawSpec drawSpec;
+	// bgmap's source coordinates
+	TextureSource textureSource;
+	// angle with respect to each axis (indexes for the _sinLut array)
+	Rotation rotation;
+	// scale
+	Scale scale;
 	// pointer to function that implements the param table based effects
 	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
@@ -96,9 +100,7 @@ class BgmapSprite : Sprite
 
 	/// @publicsection
 	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
-	DrawSpec getDrawSpec();
 	void invalidateParamTable();
-	void setDrawSpec(const DrawSpec* const drawSpec);
 	int16 getParamTableRow();
 	uint32 getParam();
 	void setParam(uint32 param);

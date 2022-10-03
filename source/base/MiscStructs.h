@@ -223,20 +223,6 @@ typedef struct TexturePadding
 } TexturePadding;
 
 // a spatial description
-typedef struct DrawSpec
-{
-	// bgmap's source coordinates
-	TextureSource textureSource;
-
-	// angle with respect to each axis (indexes for the _sinLut array)
-	Rotation rotation;
-
-	// scale
-	Scale scale;
-
-} DrawSpec;
-
-// a spatial description
 typedef struct Transformation
 {
 	// spatial local position

@@ -78,9 +78,9 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
-	worldPointer->mx = this->drawSpec.textureSource.mx;
-	worldPointer->mp = this->drawSpec.textureSource.mp;
-	worldPointer->my = this->drawSpec.textureSource.my;
+	worldPointer->mx = this->textureSource.mx;
+	worldPointer->mp = this->textureSource.mp;
+	worldPointer->my = this->textureSource.my;
 	worldPointer->gx = this->position.x;
 	worldPointer->gp = this->position.parallax;
 	worldPointer->gy = this->position.y;
@@ -99,9 +99,9 @@ void PrintingSprite::reset()
 	this->position.y = 0;
 	this->position.parallax = 0;
 
-	this->drawSpec.textureSource.mx = __PRINTING_BGMAP_X_OFFSET;
-	this->drawSpec.textureSource.my = __PRINTING_BGMAP_Y_OFFSET;
-	this->drawSpec.textureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
+	this->textureSource.mx = __PRINTING_BGMAP_X_OFFSET;
+	this->textureSource.my = __PRINTING_BGMAP_Y_OFFSET;
+	this->textureSource.mp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
 	this->w = __SCREEN_WIDTH - 1;
 	this->h = __SCREEN_HEIGHT - 1;
@@ -116,9 +116,9 @@ void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
 
 void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
 {
-	this->drawSpec.textureSource.mx = mx;
-	this->drawSpec.textureSource.my = my;
-	this->drawSpec.textureSource.mp = mp;
+	this->textureSource.mx = mx;
+	this->textureSource.my = my;
+	this->textureSource.mp = mp;
 }
 
 void PrintingSprite::setSize(uint16 w, uint16 h)

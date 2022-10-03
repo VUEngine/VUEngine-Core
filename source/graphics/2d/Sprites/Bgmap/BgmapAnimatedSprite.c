@@ -103,6 +103,6 @@ void BgmapAnimatedSprite::setFrameAnimatedMulti(uint16 frame)
 	int16 my = BgmapTexture::getYOffset(this->texture);
 	int32 totalColumns = 64 - mx;
 	int32 frameColumn = Texture::getCols(this->texture) * frame;
-	this->drawSpec.textureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
-	this->drawSpec.textureSource.my = (my + (frameColumn % totalColumns)) << 3;;
+	this->textureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
+	this->textureSource.my = (my + (frameColumn % totalColumns)) << 3;;
 }

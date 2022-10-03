@@ -60,22 +60,22 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
-		this->drawSpec.textureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
-		this->drawSpec.textureSource.mp = 0;
+		this->textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->textureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+		this->textureSource.mp = 0;
 
 		this->halfWidth = Texture::getCols(this->texture) << 2;
 		this->halfHeight = Texture::getRows(this->texture) << 2;
 	}
 	else
 	{
-		this->drawSpec.textureSource.mx = 0;
-		this->drawSpec.textureSource.my = 0;
-		this->drawSpec.textureSource.mp = 0;
+		this->textureSource.mx = 0;
+		this->textureSource.my = 0;
+		this->textureSource.mp = 0;
 	}
 
-	this->drawSpec.rotation = Rotation::zero();
-	this->drawSpec.scale = Scale::unit();
+	this->rotation = Rotation::zero();
+	this->scale = Scale::unit();
 
 	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
@@ -154,7 +154,7 @@ void BgmapSprite::releaseTexture()
 Scale BgmapSprite::getScale()
 {
 	// return the scale
-	return this->drawSpec.scale;
+	return this->scale;
 }
 
 /**
@@ -166,18 +166,18 @@ Scale BgmapSprite::getScale()
 void BgmapSprite::computeDimensions()
 {
 	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.y))),
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation.y))),
 		__FIXED_MULT(
 			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-			__FIX7_9_TO_FIXED(this->drawSpec.scale.x)
+			__FIX7_9_TO_FIXED(this->scale.x)
 		)
 	))) + 1;
 
 	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->drawSpec.rotation.x))),
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation.x))),
 		__FIXED_MULT(
 			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-			__FIX7_9_TO_FIXED(this->drawSpec.scale.y)
+			__FIX7_9_TO_FIXED(this->scale.y)
 		)
 	))) + 1;
 }
@@ -196,7 +196,7 @@ void BgmapSprite::rotate(const Rotation* rotation)
 	
 	if(this->param)
 	{
-		this->drawSpec.rotation = *rotation;
+		this->rotation = *rotation;
 
 		if(this->texture)
 		{
@@ -258,11 +258,11 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 		ratio = 0 > ratio? __1I_FIXED : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
-		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
-		this->drawSpec.scale.y = __FIX7_9_MULT(scale.y, ratio);
+		this->scale.x = __FIX7_9_MULT(scale.x, ratio);
+		this->scale.y = __FIX7_9_MULT(scale.y, ratio);
 
-		NM_ASSERT(0 < this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
-		NM_ASSERT(0 < this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
+		NM_ASSERT(0 < this->scale.x, "BgmapSprite::resize: null scale x");
+		NM_ASSERT(0 < this->scale.y, "BgmapSprite::resize: null scale y");
 
 		if(this->texture)
 		{
@@ -275,19 +275,6 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
 	}
-}
-
-/**
- * Retrieve the drawspec
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @return			DrawSpec
- */
-DrawSpec BgmapSprite::getDrawSpec()
-{
-	return this->drawSpec;
 }
 
 /**
@@ -316,9 +303,9 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	int16 h = this->halfHeight << 1;
 
 	// set the head
-	int32 mx = this->drawSpec.textureSource.mx;
-	int32 my = this->drawSpec.textureSource.my;
-	int32 mp = this->drawSpec.textureSource.mp;
+	int32 mx = this->textureSource.mx;
+	int32 my = this->textureSource.my;
+	int32 mp = this->textureSource.mp;
 
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
@@ -560,19 +547,6 @@ void BgmapSprite::invalidateParamTable()
 }
 
 /**
- * Set drawspec
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param drawSpec		New drawSpec
- */
-void BgmapSprite::setDrawSpec(const DrawSpec* const drawSpec)
-{
-	this->drawSpec = *drawSpec;
-}
-
-/**
  * Retrieve the next param table row to calculate
  *
  * @memberof			BgmapSprite
@@ -612,12 +586,12 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			// don't do translations
 			__I_TO_FIXED(bgmapSprite->halfWidth),
 			__I_TO_FIXED(bgmapSprite->halfHeight),
-			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.mx),
-			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.my),
+			__I_TO_FIX13_3(bgmapSprite->textureSource.mx),
+			__I_TO_FIX13_3(bgmapSprite->textureSource.my),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
-			&bgmapSprite->drawSpec.scale,
-			&bgmapSprite->drawSpec.rotation
+			&bgmapSprite->scale,
+			&bgmapSprite->rotation
 		);
 	}
 
