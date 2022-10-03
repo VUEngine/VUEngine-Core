@@ -42,9 +42,6 @@ typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-object
 class ObjectAnimatedSprite : ObjectSprite
 {
-	// object's source coordinates
-	TextureSource originalTextureSource;
-
 	/// @publicsection
 	void constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, ListenerObject owner);
 	override void writeAnimation();

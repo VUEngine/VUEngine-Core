@@ -45,9 +45,6 @@ typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class MBgmapAnimatedSprite : MBgmapSprite
 {
-	// bgmap's source coordinates
-	TextureSource originalTextureSource;
-
 	/// @publicsection
 	void constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner);
 	override void writeAnimation();
