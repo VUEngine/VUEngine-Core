@@ -2602,11 +2602,6 @@
                                 "description": "The maximum length of an animation function name.",
                                 "default": 16
                             },
-                            "maxAnimationFunctions": {
-                                "type": "integer",
-                                "description": "The maximum number of animation functions per description.",
-                                "default": 32
-                            },
                             "maxFramesPerAnimationFunction": {
                                 "type": "integer",
                                 "description": "The maximum number of frames per animation function.",

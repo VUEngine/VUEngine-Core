@@ -43,7 +43,7 @@ const uint32 {{ item.name }}FontTiles[{{ 1 + item.characterCount * 4 }}] __attri
 			{%- endfor -%}
 		{%- endif -%}
 	{%- endfor %}
-}
+};
 
 
 {{ macros.sectionHeader('Definitions') }}

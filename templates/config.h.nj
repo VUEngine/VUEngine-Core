@@ -13,10 +13,10 @@
 #include "romHeader.h"
 
 
-{% if game | length -%}
+{% if config.game | length -%}
 {{ macros.sectionHeader('Game specific macros') }}
 
-{% for gameConfig in game -%}
+{% for gameConfig in config.game -%}
 {%- if (gameConfig.type === 'text') -%}
 	{%- set gameConfigValue = '"' ~ gameConfig.value ~ '"' -%}
 {%- elseif (gameConfig.type === 'boolean') -%}
@@ -265,7 +265,7 @@
 {{ macros.sectionHeader('Char management') }}
 
 // total number of available chars in char memory
-#define __CHAR_MEMORY_TOTAL_CHARS 									{{ config.char.totalChars }}
+#define __CHAR_MEMORY_TOTAL_CHARS 									{{ config.chars.totalChars }}
 
 
 {{ macros.sectionHeader('Sprite management') }}
