@@ -39,7 +39,11 @@ typedef struct Event
 	/// the method to execute on event
 	EventListener method;
 	/// the code of the event to listen to
-	uint32 code;
+	uint16 code;
+	/// flag to prevent race conditions when deleting events
+	bool firing;
+	/// flag to prevent race conditions when deleting events
+	bool discard;
 
 } Event;
 
@@ -57,13 +61,13 @@ abstract class ListenerObject : Object
 
 	/// @publicsection
 	void constructor();
-	void addEventListener(ListenerObject listener, EventListener method, uint32 eventCode);
-	void removeEventListener(ListenerObject listener, EventListener method, uint32 eventCode);
-	void removeEventListeners(EventListener method, uint32 eventCode);
-	void removeEventListenerScopes(ListenerObject listener, uint32 eventCode);
+	void addEventListener(ListenerObject listener, EventListener method, uint16 eventCode);
+	void removeEventListener(ListenerObject listener, EventListener method, uint16 eventCode);
+	void removeEventListeners(EventListener method, uint16 eventCode);
+	void removeEventListenerScopes(ListenerObject listener, uint16 eventCode);
 	void removeAllEventListeners();
 	bool hasActiveEventListeners();
-	void fireEvent(uint32 eventCode);
+	void fireEvent(uint16 eventCode);
 	void sendMessageTo(ListenerObject receiver, uint32 message, uint32 delay, uint32 randomDelay);
 	void sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay);
 	void discardAllMessages();

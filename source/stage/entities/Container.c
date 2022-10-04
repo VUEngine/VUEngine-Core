@@ -128,12 +128,12 @@ void Container::destructor()
 	}
 
 	// delete name
-	if(this->name)
+	if(!isDeleted(this->name))
 	{
 		delete this->name;
 	}
 
-	if(this->events)
+	if(!isDeleted(this->events))
 	{
 		Container::fireEvent(this, kEventContainerDeleted);
 		NM_ASSERT(!isDeleted(this), "Container::destructor: deleted this during kEventContainerDeleted");
