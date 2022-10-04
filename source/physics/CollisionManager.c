@@ -55,7 +55,7 @@ void CollisionManager::constructor()
 	this->collisionChecks = 0;
 	this->collisions = 0;
 	this->checkShapesOutOfCameraRange = false;
-	this->dirty = true;
+	this->dirty = false;
 }
 
 // class's destructor
@@ -93,15 +93,14 @@ Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeS
 				delete shapeToCheck;
 			}
 		}
-
-		this->dirty = false;
 	}
-
+	
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject)) shapeSpec->allocator)(owner);
 	Shape::setup(shape, shapeSpec->layers, shapeSpec->layersToIgnore);
 	Shape::setCheckForCollisions(shape, shapeSpec->checkForCollisions);
-	VirtualList::pushBack(this->activeForCollisionCheckingShapes, shape);
+
+	this->dirty = true;
 
 	// register it
 	VirtualList::pushFront(this->shapes, shape);
@@ -117,7 +116,6 @@ void CollisionManager::destroyShape(Shape shape)
 	{
 		NM_ASSERT(NULL != VirtualList::find(this->shapes, shape), "CollisionManager::destroyShape: non registerd shape");
 		shape->destroyMe = true;
-		this->dirty = true;
 	}
 }
 
@@ -134,8 +132,6 @@ uint32 CollisionManager::update(Clock clock)
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
-
-	this->dirty = false;
 
 	// check the shapes
 	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
@@ -213,6 +209,8 @@ uint32 CollisionManager::update(Clock clock)
 	#endif
 	}
 
+	this->dirty = false;
+
 	// check the shapes
 	for(VirtualNode node = this->activeForCollisionCheckingShapes->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -266,6 +264,10 @@ uint32 CollisionManager::update(Clock clock)
 #else
 					Shape::collides(shape, shapeToCheck);
 #endif
+					if(this->dirty)
+					{
+						node = this->shapes->head;
+					}
 				}
 			}
 			
