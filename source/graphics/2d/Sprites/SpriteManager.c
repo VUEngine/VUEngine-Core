@@ -376,7 +376,7 @@ bool SpriteManager::sortProgressively()
 		VirtualNode nextNode = node->next;
 
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL node's data cast");
+		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
@@ -635,6 +635,7 @@ void SpriteManager::render()
 	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
+		NM_ASSERT(__GET_CAST(Sprite, node->data), "SpriteManager::render: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
