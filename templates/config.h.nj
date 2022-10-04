@@ -1,0 +1,398 @@
+{%- set config = project.items.EngineConfig | values | first -%}
+{%- set compiler = project.items.Compiler | values | first -%}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
+
+#ifndef CONFIG_H_
+#define CONFIG_H_
+
+
+{{ macros.sectionHeader('Includes') }}
+
+#include "pluginsConfig.h"
+#include "romHeader.h"
+
+
+{% if config.game | length -%}
+{{ macros.sectionHeader('Game specific macros') }}
+
+{% for gameConfig in config.game -%}
+{%- if (gameConfig.type === 'text') -%}
+	{%- set gameConfigValue = '"' ~ gameConfig.value ~ '"' -%}
+{%- elseif (gameConfig.type === 'boolean') -%}
+	{%- if gameConfig.value === true -%}
+		{%- set gameConfigValue = 1 -%}
+	{%- else -%}
+		{%- set gameConfigValue = 0 -%}
+	{%- endif -%}
+{%- else -%}
+	{%- set gameConfigValue = gameConfig.value -%}
+{%- endif -%}
+#define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfigValue | safe }}
+{% endfor %}
+
+{% endif -%}
+
+{{ macros.sectionHeader('Game Entry Point') }}
+
+#ifndef __GAME_ENTRY_POINT
+#define __GAME_ENTRY_POINT											game
+#endif
+
+
+{{ macros.sectionHeader('Fixed point data type') }}
+
+#define __FIXED_POINT_TYPE 											{% if config.math.fixedPointPrecision %}{{config.math.fixedPointPrecision}}{% else %}6{% endif %}
+
+
+{{ macros.sectionHeader('Communications') }}
+
+// Enable communications at the start of the game
+{% if config.communications.enable %}#define{% else %}#undef{% endif %} __ENABLE_COMMUNICATIONS
+
+
+{{ macros.sectionHeader('Debugging / Profiling') }}
+
+// print memory pool's status
+{% if config.debug.showMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_MEMORY_POOL_STATUS
+{% if config.debug.showDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __SHOW_DETAILED_MEMORY_POOL_STATUS
+
+// Enable profiler
+{% if config.debug.enableProfiler %}#define{% else %}#undef{% endif %} __ENABLE_PROFILER
+
+// print frame rate
+{% if config.debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
+
+// alert stack overflows
+{% if config.debug.showStackOverflowAlert %}#define{% else %}#undef{% endif %} __SHOW_STACK_OVERFLOW_ALERT
+
+// enable streaming's profiling
+{% if config.debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
+
+// show streaming's profiling during game
+{% if config.debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
+
+// dimm screen to make it easier to read the profiling output
+{% if config.debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
+
+// alert vip's overtime
+{% if config.debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __SHOW_VIP_OVERTIME_COUNT
+
+// stack headroom
+#define __STACK_HEADROOM											{{ config.debug.stackHeadroom }}
+
+
+{{ macros.sectionHeader('Debugging tools') }}
+
+// If tools already defined, enable all
+#ifdef __TOOLS
+
+// tools
+#ifndef __DEBUG_TOOLS
+#define __DEBUG_TOOLS
+#endif
+
+#ifndef __STAGE_EDITOR
+#define __STAGE_EDITOR
+#endif
+
+#ifndef __ANIMATION_INSPECTOR
+#define __ANIMATION_INSPECTOR
+#endif
+
+#ifndef __SOUND_TEST
+#define __SOUND_TEST
+#endif
+
+#endif
+
+// Enable different settings for each tool
+#ifdef __DEBUG_TOOLS
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+
+#endif
+
+#ifdef __STAGE_EDITOR
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+#endif
+
+#ifdef __ANIMATION_INSPECTOR
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+#endif
+
+#ifdef __SOUND_TEST
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+#endif
+
+
+{{ macros.sectionHeader('Wireframes') }}
+
+{% if config.wireframe.sort %}
+	{%- if config.wireframe.sort === false -%}
+#undef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+	{%- else -%}
+#define __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+	{%- endif -%}
+{%- else -%}
+#define __WIREFRAME_MANAGER_SORT_FOR_DRAWING
+{% endif -%}
+
+
+{{ macros.sectionHeader('Direct drawing') }}
+
+{% if config.directDraw.interlacedThreshold %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								__PIXELS_TO_METERS({{config.directDraw.interlacedThreshold}}) {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								0{% endif %} 
+
+
+{{ macros.sectionHeader('Optics / Projection') }}
+
+// legacy coordinate system (0, 0, 0) is at the top left corner of the screen
+{% if config.optics.useLegacyCoordinateProjection %}#define{% else %}#undef{% endif %} __LEGACY_COORDINATE_PROJECTION
+
+// screen width in pixels
+#define __SCREEN_WIDTH												{{ config.optics.screenWidth }}
+
+// screen height in pixels
+#define __SCREEN_HEIGHT												{{ config.optics.screenHeight }}
+
+// screen depth in pixels
+#define __SCREEN_DEPTH												{{ config.optics.screenDepth }}
+
+// maximum x view distance (depth) (power of two)
+#define __MAXIMUM_X_VIEW_DISTANCE									{{ config.optics.maximumXViewDistance }}
+
+// maximum y view distance (depth) (power of two)
+#define __MAXIMUM_Y_VIEW_DISTANCE									{{ config.optics.maximumYViewDistance }}
+
+// distance from player's eyes to the virtual screen
+#define __CAMERA_NEAR_PLANE											{% if config.optics.cameraNearPlane %}{{ config.optics.cameraNearPlane }}{% else %}0{% endif %}
+
+// distance between eyes
+#define __BASE_FACTOR												{{ config.optics.baseFactor }}
+
+// player's eyes' horizontal position
+#define __HORIZONTAL_VIEW_POINT_CENTER								{{ config.optics.horizontalViewPointCenter }}
+
+// player's eyes' vertical position
+#define __VERTICAL_VIEW_POINT_CENTER								{{ config.optics.verticalViewPointCenter }}
+
+// parallax values are divide by this factor to control their strength
+#define __PARALLAX_CORRECTION_FACTOR								{{ config.optics.parallaxCorrectionFactor }}
+
+// affects the strength of the scaling
+#define __SCALING_MODIFIER_FACTOR									{{ config.optics.scalingModifierFactor }}{% if not '.' in '' ~ config.optics.scalingModifierFactor %}.0{% endif %}f
+
+// minimum number of pixels that the camera can move
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER					{{ config.optics.cameraMinimumDisplacementPixelsPower }}
+
+
+{{ macros.sectionHeader('Frame rate control') }}
+
+// when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired
+// beforethe current game frame is done
+{% if config.frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
+
+// timer resolution
+#define __TIMER_RESOLUTION											{{ config.frameRate.timerResolution }}
+
+// __FRAME_CYCLE = 0 means __TARGET_FPS = 50
+// __FRAME_CYCLE = 1 means __TARGET_FPS = 25
+#define	__FRAME_CYCLE												{{ config.frameRate.frameCycle }}
+
+// target frames per second
+#define __TARGET_FPS 												(__MAXIMUM_FPS >> __FRAME_CYCLE)
+
+// milliseconds that must take to complete a game cycle
+#define __GAME_FRAME_DURATION										(__MILLISECONDS_PER_SECOND / __TARGET_FPS)
+
+// target frames per second
+#define __OPTIMUM_FPS 												(__TARGET_FPS >> __FRAME_CYCLE)
+
+// define to dispatch the delayed messages every other game frame cycle
+{% if config.frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+
+
+{{ macros.sectionHeader('Animation') }}
+
+// maximum length of an animation function's name
+#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH						{{ config.animation.maxAnimationFunctionNameLength }}
+
+// maximum number of frames per animation function
+#define __MAX_FRAMES_PER_ANIMATION_FUNCTION							{{ config.animation.maxFramesPerAnimationFunction }}
+
+
+{{ macros.sectionHeader('Memory pool') }}
+
+// reset to 0 each byte of each free block on resetting game
+// only use for debugging, proper object's initialization must make this macro unnecessary
+{% if config.memoryPools.cleanUp %}#define{% else %}#undef{% endif %} __MEMORY_POOL_CLEAN_UP
+
+#undef __MEMORY_POOLS
+#define __MEMORY_POOLS												{{ config.memoryPools.pools | length }}
+
+#undef __MEMORY_POOL_ARRAYS
+#define __MEMORY_POOL_ARRAYS \
+{%- set poolBlockDefinitions = '' -%}
+{% for pool in config.memoryPools.pools %}
+	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ pool.size ~ ', ' ~  pool.objects ~') \\\n' ~ poolBlockDefinitions -%}
+{% endfor %}
+{{ poolBlockDefinitions }}
+#undef __SET_MEMORY_POOL_ARRAYS
+#define __SET_MEMORY_POOL_ARRAYS \
+{%- set poolArrayDefinitions = '' -%}
+{% for pool in config.memoryPools.pools -%}
+	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ pool.size ~ ') \\\n' ~ poolArrayDefinitions -%}
+{% endfor %}
+{{ poolArrayDefinitions }}
+// percentage (0-100) above which the memory pool's status shows the pool usage
+#define __MEMORY_POOL_WARNING_THRESHOLD								{{ config.memoryPools.warningThreshold }}
+
+
+{{ macros.sectionHeader('SRAM') }}
+
+// amount of available sram space, in bytes
+// • the vb allows up to 16 mb, but all known carts support only 8 kb of sram
+#define __TOTAL_SAVE_RAM 											{{ config.sram.totalSram }}
+
+
+{{ macros.sectionHeader('Char management') }}
+
+// total number of available chars in char memory
+#define __CHAR_MEMORY_TOTAL_CHARS 									{{ config.chars.totalChars }}
+
+
+{{ macros.sectionHeader('Sprite management') }}
+
+// total number of layers (basically the number of worlds)
+#define __TOTAL_LAYERS												{{ config.sprite.totalLayers }}
+
+// Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
+{% if config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
+
+
+{{ macros.sectionHeader('Texture management') }}
+
+// total number of bgmap segments
+{%- set dramLength = compiler.memorySections.dram.length %}
+{%- set bgmapEndAddress = ((compiler.memorySections.dram.origin | hexToInt) + dramLength*1024) %}
+{%- set bgmapStartAddress = ("0x20000") | hexToInt %}
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 							{{ ((bgmapEndAddress - bgmapStartAddress) / 8192 - 0.5) | round }}
+
+// number of segments for param tables
+#define __PARAM_TABLE_SEGMENTS										{{ config.texture.paramTableSegments }}
+
+// bgmap segments to use (1 for printing)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 							(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - __PARAM_TABLE_SEGMENTS)
+
+// number of bgmap specs in each bgmap segment
+#define __NUM_BGMAPS_PER_SEGMENT 									{{ config.texture.bgmapsPerSegments }}
+
+// printing area
+#define __PRINTING_BGMAP_X_OFFSET									{{ config.texture.printing.offset.x }}
+#define __PRINTING_BGMAP_Y_OFFSET									(64 * 8 - __SCREEN_HEIGHT)
+#define __PRINTING_BGMAP_PARALLAX_OFFSET							{{ config.texture.printing.offset.parallax }}
+#define __PRINTABLE_BGMAP_AREA				 						{{ config.texture.printing.printableArea }}
+
+
+{{ macros.sectionHeader('Param table') }}
+
+// maximum possible scale: affects param table allocation space
+#define __MAXIMUM_SCALE												{{ config.affine.maxScale }}
+
+// maximum number of rows to write on each call to affine calculation functions
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL								{{ config.affine.maxRowsPerCall }}
+
+
+{{ macros.sectionHeader('Physics') }}
+
+#define __GRAVITY													{{ config.physics.gravity }}{% if not '.' in '' ~ config.physics.gravity %}.0{% endif %}f
+
+// number of bodies to check for gravity on each cycle
+#define __BODIES_TO_CHECK_FOR_GRAVITY								{{ config.physics.bodiesToCheckForGravity }}
+
+// maximum friction coefficient
+#define __MAXIMUM_FRICTION_COEFFICIENT								{% if config.physics.maximumFrictionCoefficient %}__I_TO_FIXED({{config.physics.maximumFrictionCoefficient }}){% else %}__I_TO_FIXED(1){% endif %}
+
+// divisor to speed up physics simulations, bigger numbers equal faster computations
+#define __PHYSICS_TIME_ELAPSED_DIVISOR								{{ config.physics.timeElapsedDivisor }}
+
+// define to use fix7.9 computation on Body's direction
+{% if config.physics.highPrecision %}#define{% else %}#undef{% endif %} 		__PHYSICS_HIGH_PRECISION
+
+// thresholds to stop bodies
+#define __STOP_VELOCITY_THRESHOLD									__PIXELS_TO_METERS({{ config.physics.stopVelocityThreshold }})
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 							__PIXELS_TO_METERS({{ config.physics.stopBouncingVelocityThreshold }})
+
+// maximum bounciness coefficient allowed
+#define __MAXIMUM_BOUNCINESS_COEFFICIENT							{{ config.physics.maximumBouncinessCoefficient }}{% if not '.' in '' ~ config.physics.maximumBouncinessCoefficient %}.0{% endif %}f
+
+#define __FRICTION_FORCE_FACTOR_POWER								{{ config.physics.frictionForceFactorPower }}
+
+{{ macros.sectionHeader('Sound') }}
+
+#define __LEFT_EAR_CENTER											{{ config.sound.leftEarCenter }}
+#define __RIGHT_EAR_CENTER											{{ config.sound.rightEarCenter }}
+
+// affects the amount of attenuation caused by the distance between the x coordinate and each ear's
+// position defined by __LEFT_EAR_CENTER and __RIGHT_EAR_CENTER
+#define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR				{{ config.sound.stereoHorizontalAttenuationFactor }}
+#define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR					{{ config.sound.stereoVerticalAttenuationFactor }}
+
+// smaller values allow movement to start when colliding against a shape and trying to move towards it
+#define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if config.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIXED(__COS({{ config.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
+
+// maximum size of shapes allows to avoid checks against far away shapes
+#define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if config.physics.shapesMaximumSize %}{{ config.physics.shapesMaximumSize }}{% else %}256{% endif %})
+
+
+{{ macros.sectionHeader('Brightness') }}
+
+// default brightness settings, actual values are set in stage specs
+// • for a nice progression, each shade should be about twice as big as the previous one
+// • _BRIGHT_RED must be larger than _DARK_RED + _MEDIUM_RED
+#define __BRIGHTNESS_DARK_RED										{{ config.brightness.darkRed }}
+#define __BRIGHTNESS_MEDIUM_RED										{{ config.brightness.mediumRed }}
+#define __BRIGHTNESS_BRIGHT_RED										{{ config.brightness.brightRed }}
+
+// default delay between steps in fade effect
+#define __FADE_DELAY												{{ config.brightness.fadeDelay }}
+
+// defaul step increment in fade transitions
+#define __CAMERA_EFFECT_FADE_INCREMENT								{{ config.brightness.fadeIncrement }}
+
+{{ macros.sectionHeader('Color palettes') }}
+
+#define __PRINTING_PALETTE											{{ config.palettes.printingPalette }}
+
+// default palette values, actual values are set in stage specs
+#define __BGMAP_PALETTE_0											0b{{ config.palettes.bgMapPalette0 }}
+#define __BGMAP_PALETTE_1											0b{{ config.palettes.bgMapPalette1 }}
+#define __BGMAP_PALETTE_2											0b{{ config.palettes.bgMapPalette2 }}
+#define __BGMAP_PALETTE_3											0b{{ config.palettes.bgMapPalette3 }}
+
+#define __OBJECT_PALETTE_0											0b{{ config.palettes.objectPalette0 }}
+#define __OBJECT_PALETTE_1											0b{{ config.palettes.objectPalette1 }}
+#define __OBJECT_PALETTE_2											0b{{ config.palettes.objectPalette2 }}
+#define __OBJECT_PALETTE_3											0b{{ config.palettes.objectPalette3 }}
+
+
+{{ macros.sectionHeader('Random number generation') }}
+
+{% if config.random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+
+
+{{ macros.sectionHeader('Exceptions') }}
+
+// camera coordinates for the output of exceptions
+#define __EXCEPTION_COLUMN											{{ config.exceptions.position.x }}
+#define __EXCEPTION_LINE											{{ config.exceptions.position.y }}
+
+
+#endif

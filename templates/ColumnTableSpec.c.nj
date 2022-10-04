@@ -1,0 +1,28 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <VIPManager.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+{% if item.description -%}
+// {{ item.description }}
+{% endif -%}
+ColumnTableROMSpec {{ item.name }}ColumnTable =
+{
+	// mirror spec?
+	{% if item.mirror %}true{% else %}false{% endif %},
+
+	// column table spec
+	{
+		{% for value in item.values -%}
+		{%- if not (item.mirror and loop.index > 128) -%}
+		{{- (value.repeat * 16 + value.time) | intToHex(2) -}}{{- ', '-}} 
+		{%- if loop.index % 8 == 0 and not (loop.last or (item.mirror and loop.index == 128)) %}{{ "\n		" }}{% endif -%}
+		{%- endif -%}
+		{%- endfor %}
+	}
+};
