@@ -1,0 +1,21 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
+
+#ifndef RUMBLE_EFFECTS_H_
+#define RUMBLE_EFFECTS_H_
+
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <RumbleManager.h>
+
+
+{{ macros.sectionHeader('Declarations') }}
+
+{% if project.combined.items.RumbleEffect %}
+{%- for rumbleEffect in project.combined.items.RumbleEffect | values | unique('name') | sort(attribute='name') -%}
+extern RumbleEffectSpec {{ rumbleEffect.name }}RumbleEffect;
+{% endfor -%}
+{% endif %}
+
+#endif

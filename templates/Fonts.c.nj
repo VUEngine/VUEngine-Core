@@ -1,0 +1,23 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <Fonts.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+FontSpec* const _fonts[] =
+{
+	(FontSpec*)&DefaultFont,
+	(FontSpec*)&ProfilerFont,
+	{% if project.combined.items.Font %}
+	{%- for font in project.combined.items.Font | values | unique('name') | sort(attribute='name') -%}
+	{%- if font._contributor != "engine" -%}
+	(FontSpec*)&{{ font.name }}Font,
+	{% endif -%}
+	{% endfor -%}
+	{% endif %}
+	NULL
+};

@@ -1,0 +1,51 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <RumbleManager.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+RumbleEffectROMSpec {{ item.name }}RumbleEffect =
+{
+	// Effect #
+	{% if item.effect >= 1 and item.effect <= 123 -%}
+		{{ item.effect }}
+	{%- else -%}
+		1
+	{%- endif %},
+	// Frequency
+	{% if item.frequency == 160 or item.frequency == 240 or item.frequency == 320 or item.frequency == 400 -%}
+		__RUMBLE_FREQ_{{ item.frequency }}HZ,
+	{%- else -%}
+		__RUMBLE_FREQ_160HZ,
+	{%- endif %}
+	// Positive Sustain
+	{% if item.sustainPositive >= 0 and item.sustainPositive <= 255 -%}
+		{{ item.sustainPositive }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Negative Sustain
+	{% if item.sustainNegative >= 0 and item.sustainNegative <= 255 -%}
+		{{ item.sustainNegative }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Overdrive
+	{% if item.overdrive >= 0 and item.overdrive <= 255 -%}
+		{{ item.overdrive }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Break
+	{% if item.break >= 0 and item.break <= 255 -%}
+		{{ item.break }}
+	{%- else -%}
+		255
+	{%- endif %},
+	// Stop before starting
+	{% if item.stopBeforeStarting %}true{% else %}false{% endif %},
+};
