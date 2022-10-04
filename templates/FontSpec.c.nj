@@ -56,8 +56,8 @@ CharSetROMSpec {{ item.name }}FontCharSet =
 	// allocation type
 	__NOT_ANIMATED,
 
-	// char spec
-	{{ item.name }}FontTiles,
+	// char data
+	(uint32*){{ item.name }}FontTiles,
 
 	// pointer to the frames offsets
 	NULL,
