@@ -301,6 +301,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 	{
 		ListenerObject::purgeEventListeners(this);
 
+		VirtualList events = NULL;
+
 		for(VirtualNode node = this->events->head; NULL != node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
@@ -308,32 +310,52 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			// safe check in case that the event have been deleted during the previous call to method
 			if(!isDeleted(event) && !event->discard && eventCode == event->code && !event->firing)
 			{
-				event->firing = true;
-				event->method(event->listener, this);
-				NM_ASSERT(!isDeleted(event), "ListenerObject::fireEvent: deleted event");
-
-				if(!isDeleted(event))
+				if(NULL == events)
 				{
-					event->firing = false;
+					events = new VirtualList();
+				}
+
+				VirtualList::pushBack(events, event);
+			}
+		}
+
+		if(NULL != events)
+		{
+			for(VirtualNode node = events->head; NULL != node; node = node->next)
+			{
+				Event* event = (Event*)node->data;
+
+				// safe check in case that the event have been deleted during the previous call to method
+				if(!isDeleted(event) && !event->discard && eventCode == event->code && !event->firing)
+				{
+					event->firing = true;
+					event->method(event->listener, this);
+
+					if(!isDeleted(event))
+					{
+						event->firing = false;
+					}
+				}
+
+				// safe check in case that I have been deleted during the previous event
+				if(isDeleted(this))
+				{
+	#ifndef __RELEASE
+					Printing::setDebugMode(Printing::getInstance());
+					Printing::clear(Printing::getInstance());
+					Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
+					Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
+					Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
+					Printing::hex(Printing::getInstance(), (int32)event->method, 13, 13, 8, NULL);
+					Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
+					Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
+					NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
+	#endif
+					break;
 				}
 			}
 
-			// safe check in case that I have been deleted during the previous event
-			if(isDeleted(this))
-			{
-#ifndef __RELEASE
-				Printing::setDebugMode(Printing::getInstance());
-				Printing::clear(Printing::getInstance());
-				Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
-				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
-				Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
-				Printing::hex(Printing::getInstance(), (int32)event->method, 13, 13, 8, NULL);
-				Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
-				Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
-				NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
-#endif
-				break;
-			}
+			delete events;
 		}
 	}
 }
