@@ -4148,8 +4148,8 @@
                 "additionalProperties": false
             },
             "uiSchema": {
-                "type": "Control",
-                "scope": "FontEditor"
+                "type": "FontEditor",
+                "scope": "#"
             },
             "parent": {
                 "typeId": "Fonts",
@@ -4931,8 +4931,8 @@
                 "additionalProperties": false
             },
             "uiSchema": {
-                "type": "Control",
-                "scope": "MusicEditor"
+                "type": "MusicEditor",
+                "scope": "#"
             },
             "parent": {
                 "typeId": "Sound",
