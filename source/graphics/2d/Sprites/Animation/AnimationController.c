@@ -303,7 +303,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
 	// remove previous listeners
-	if(this->animationFunction && this->animationFunction->onAnimationComplete)
+	if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
 	{
 		AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
@@ -312,7 +312,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	this->animationFunction = animationFunction;
 
 	// register event callback
-	if(!isDeleted(scope) && this->animationFunction && this->animationFunction->onAnimationComplete)
+	if(!isDeleted(scope) && NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
 	{
 		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
@@ -348,10 +348,15 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
  */
 bool AnimationController::play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope)
 {
+	if(NULL == animationFunctions || NULL == functionName)
+	{
+		return false;
+	}
+
 	ASSERT(NULL != animationFunctions, "AnimationController::play: null animationFunctions");
 	ASSERT(NULL != functionName, "AnimationController::play: null functionName");
 
-	if(this->animationCoordinator)
+	if(!isDeleted(this->animationCoordinator))
 	{
 		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationFunctions, functionName))
 		{
@@ -359,36 +364,40 @@ bool AnimationController::play(const AnimationFunction** animationFunctions, con
 		}
 	}
 
+	bool functionNameFound = false;
+
 	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 	{
 		int32 i = 0;
 
 		// search for the animation function
-		for(; animationFunctions[i]; i++ )
+		for(; NULL != animationFunctions[i]; i++ )
 		{
 			// compare function's names
 			if(0 == strncmp((const char *)functionName, (const char *)animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
 				// remove previous listeners
-				if(this->animationFunction && this->animationFunction->onAnimationComplete)
+				if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
 				{
 					AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 				}
 
 				this->animationFunction = animationFunctions[i];
 
+				functionNameFound = true;
+
 				break;
 			}
 		}
 	}
 
-	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+	if(NULL == this->animationFunction || !functionNameFound)
 	{
 		return false;
 	}
 
 	// setup animation frame
-	if(!isDeleted(scope) && this->animationFunction->onAnimationComplete)
+	if(!isDeleted(scope) && NULL != this->animationFunction->onAnimationComplete)
 	{
 		// register event callback
 		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
