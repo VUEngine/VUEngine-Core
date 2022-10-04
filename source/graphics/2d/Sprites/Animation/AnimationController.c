@@ -346,7 +346,7 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
  * @param functionName				Name of the animation function's to play
  * @return							True if the animation started playing
  */
-bool AnimationController::play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope)
+bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope)
 {
 	if(NULL == animationFunctions || NULL == functionName)
 	{
@@ -422,7 +422,7 @@ bool AnimationController::play(const AnimationFunction** animationFunctions, con
  * @param animationFunctions		Animation description holding the animation function
  * @return							True if the animation started playing
  */
-bool AnimationController::replay(const AnimationFunction** animationFunctions)
+bool AnimationController::replay(const AnimationFunction* animationFunctions[])
 {
 	if(NULL == this->animationFunction)
 	{

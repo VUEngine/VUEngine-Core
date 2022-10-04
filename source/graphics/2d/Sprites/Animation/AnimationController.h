@@ -64,8 +64,8 @@ class AnimationController : ListenerObject
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
 	void pause(bool pause);
-	bool play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope);
-	bool replay(const AnimationFunction** animationFunctions);
+	bool play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope);
+	bool replay(const AnimationFunction* animationFunctions[]);
 	void playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope);
 	void nextFrame();
 	void previousFrame();

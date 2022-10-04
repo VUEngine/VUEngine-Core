@@ -719,7 +719,7 @@ void Sprite::pause(bool pause)
  * @param animationFunctions	AnimationFunction*
  * @param functionName			Name of animation function to play
  */
-bool Sprite::play(const AnimationFunction** animationFunctions, const char* functionName, ListenerObject scope)
+bool Sprite::play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope)
 {
 	ASSERT(NULL != animationFunctions, "Sprite::play: null animationFunctions");
 	ASSERT(NULL != functionName, "Sprite::play: null functionName");
@@ -752,7 +752,7 @@ void Sprite::stop()
  *
  * @param animationFunctions	AnimationFunction
  */
-bool Sprite::replay(const AnimationFunction** animationFunctions)
+bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
 	{
