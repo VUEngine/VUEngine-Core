@@ -151,14 +151,14 @@ void ParticleSystem::configure()
  */
 void ParticleSystem::reset()
 {
-	ParticleSystem::processExpiredParticles(this);
-
 	if(!isDeleted(this->particles))
 	{
 		VirtualList::deleteData(this->particles);
 		delete this->particles;
 		this->particles = NULL;
 	}
+
+	this->particleCount	= 0;
 }
 
 void ParticleSystem::setLoop(bool value)
@@ -170,16 +170,7 @@ void ParticleSystem::deleteAllParticles()
 {
 	if(!isDeleted(this->particles))
 	{
-		for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-		{
-			Particle particle = Particle::safeCast(node->data);
-
-			NM_ASSERT(!isDeleted(particle), "ParticleSystem::expireAllParticles: deleted particle");
-
-			delete particle;
-		}
-
-		VirtualList::clear(this->particles);
+		VirtualList::deleteData(this->particles);
 	}
 
 	this->particleCount = 0;
@@ -187,8 +178,6 @@ void ParticleSystem::deleteAllParticles()
 
 void ParticleSystem::expireAllParticles()
 {
-	ParticleSystem::processExpiredParticles(this);
-
 	if(!isDeleted(this->particles))
 	{
 		for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
@@ -206,8 +195,6 @@ void ParticleSystem::expireAllParticles()
 			NM_ASSERT(0 <= this->particleCount, "ParticleSystem::update: negative particle count");
 		}
 	}
-
-	ParticleSystem::processExpiredParticles(this);
 }
 
 bool ParticleSystem::getLoop()
