@@ -67,14 +67,13 @@ void VirtualList::clear()
 {
 	if(NULL != this->head)
 	{
-		VirtualList virtualList = this;
-		this = NULL;
+		HardwareManager::suspendInterrupts();
 
 		// point to the head
-		VirtualNode node = virtualList->head;
+		VirtualNode node = this->head;
 
 		// move the head to next node
-		virtualList->head = virtualList->head->next;
+		this->head = this->head->next;
 
 		// while there are nodes
 		while(NULL != node)
@@ -83,20 +82,20 @@ void VirtualList::clear()
 			delete node;
 
 			// move the node to the head
-			node = virtualList->head;
+			node = this->head;
 
 			// move the head
-			if(NULL != virtualList->head)
+			if(NULL != this->head)
 			{
-				virtualList->head = virtualList->head->next;
+				this->head = this->head->next;
 			}
 		}
 
-		ASSERT(NULL == virtualList->head, "VirtualList::clear: head is not NULL");
+		ASSERT(NULL == this->head, "VirtualList::clear: head is not NULL");
 
-		virtualList->tail = NULL;
+		this->tail = NULL;
 
-		this = virtualList;
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -108,10 +107,9 @@ void VirtualList::deleteData()
 {
 	if(NULL != this->head)
 	{
-		VirtualList virtualList = this;
-		this = NULL;
+		HardwareManager::suspendInterrupts();
 
-		for(VirtualNode node = virtualList->head; NULL != node;)
+		for(VirtualNode node = this->head; NULL != node;)
 		{
 			if(!isDeleted(node->data))
 			{
@@ -125,9 +123,9 @@ void VirtualList::deleteData()
 			delete aux;
 		}
 
-		virtualList->head = virtualList->tail = NULL;
+		this->head = this->tail = NULL;
 
-		this = virtualList;
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -175,6 +173,8 @@ void* VirtualList::popFront()
 	// if head isn't null
 	if(NULL != this->head)
 	{
+		HardwareManager::suspendInterrupts();
+
 		VirtualNode node = this->head;
 		void* data = node->data;
 
@@ -193,8 +193,12 @@ void* VirtualList::popFront()
 		// free dynamic memory
 		delete node;
 
+		HardwareManager::resumeInterrupts();
+
 		return data;
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return NULL;
 }
@@ -209,6 +213,7 @@ void* VirtualList::popBack()
 	// if tail isn't null
 	if(NULL != this->tail)
 	{
+		HardwareManager::suspendInterrupts();
 		VirtualNode node = this->tail;
 		void* data = node->data;
 
@@ -227,8 +232,12 @@ void* VirtualList::popBack()
 		// free dynamic memory
 		delete node;
 
+		HardwareManager::resumeInterrupts();
+
 		return data;
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return NULL;
 }
@@ -397,6 +406,8 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 		return false;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	// if the node is the head of the list
 	if(node == this->head)
 	{
@@ -435,6 +446,8 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 
 	// free dynamic memory
 	delete node;
+
+	HardwareManager::resumeInterrupts();
 
 	return true;
 }
@@ -639,7 +652,7 @@ VirtualNode VirtualList::begin()
  */
 void* VirtualList::front()
 {
-	return this->head ? this->head->data : NULL;
+	return NULL != this->head ? this->head->data : NULL;
 }
 
 /**
@@ -659,7 +672,7 @@ VirtualNode VirtualList::end()
  */
 void* VirtualList::back()
 {
-	return this->tail ? this->tail->data : NULL;
+	return NULL != this->tail ? this->tail->data : NULL;
 }
 
 /**
@@ -702,6 +715,8 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 		return NULL;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	VirtualNode newNode = NULL;
 
 	if(NULL == node || node == this->tail)
@@ -716,6 +731,8 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 
 		if(NULL == newNode)
 		{
+			HardwareManager::resumeInterrupts();
+
 			return false;
 		}
 
@@ -730,6 +747,8 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 
 		newNode->previous = node;
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return newNode;
 }
@@ -748,6 +767,8 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 		return NULL;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	VirtualNode newNode = NULL;
 
 	if(NULL == node || node == this->head)
@@ -762,6 +783,8 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 
 		if(NULL == newNode)
 		{
+			HardwareManager::resumeInterrupts();
+
 			return false;
 		}
 
@@ -776,6 +799,8 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 		node->previous = newNode;
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	return newNode;
 }
 
@@ -786,6 +811,8 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
  */
 void VirtualList::swap(VirtualList secondList)
 {
+	HardwareManager::suspendInterrupts();
+
 	// swap heads
 	VirtualNode aux = this->head;
 
@@ -799,6 +826,8 @@ void VirtualList::swap(VirtualList secondList)
 	this->tail = secondList->tail;
 
 	secondList->tail = aux;
+
+	HardwareManager::resumeInterrupts();
 }
 
 /**
