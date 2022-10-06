@@ -40,10 +40,8 @@ typedef struct Event
 	EventListener method;
 	/// the code of the event to listen to
 	uint16 code;
-	/// flag to prevent race conditions when deleting events
+	/// flag to prevent race conditions when firing events
 	bool firing;
-	/// flag to prevent race conditions when deleting events
-	bool discard;
 
 } Event;
 
