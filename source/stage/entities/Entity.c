@@ -220,7 +220,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 
 	if(destroyOldSprites)
 	{
-		Entity::destroyWireframes(this);
+		Entity::destroySprites(this);
 	}
 
 	if(NULL == this->sprites)
@@ -235,7 +235,7 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 	// go through n sprites in entity's spec
 	for(; spriteSpecs[i]; i++)
 	{
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this), &this->transformation.globalPosition, &this->transformation.globalRotation, &this->transformation.globalScale));
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
@@ -1343,6 +1343,94 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 	{
 		Entity::addBehavior(this, Behavior::create(behaviorSpecs[i]));
 		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
+	}
+}
+void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
+{
+	updatePosition |= updateRotation;
+	updatePosition |= updateProjection;
+	updateScale |= updateRotation;	
+
+	if(this->entitySpec->useZDisplacementInProjection)
+	{
+		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation);
+	}
+	else
+	{
+		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation);
+	}
+}
+
+void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
+{
+	if(!this->sprites)
+	{
+		return;
+	}
+
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
+
+	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(updatePosition)
+		{
+			Vector3D position = relativeGlobalPosition;
+			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
+
+			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, Optics::calculateParallax(position.z));
+			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
+
+			// update sprite's 2D position
+			Sprite::setPosition(sprite, &projectedPosition);
+		}
+
+		if(updateRotation)
+		{
+			// update sprite's 2D rotation
+			Sprite::rotate(sprite, &this->transformation.localRotation);
+		}
+		
+		if(updateScale)
+		{
+			// calculate the scale
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
+		}
+	}
+}
+
+void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
+{
+	if(!this->sprites)
+	{
+		return;
+	}
+
+	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
+	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
+
+	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(updatePosition)
+		{
+			// update sprite's 2D position
+			Sprite::setPosition(sprite, &position);
+		}
+
+		if(updateRotation)
+		{
+			// update sprite's 2D rotation
+			Sprite::rotate(sprite, &this->transformation.localRotation);
+		}
+
+		if(updateScale)
+		{
+			// calculate the scale
+			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
+		}
 	}
 }
 
