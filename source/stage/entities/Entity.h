@@ -62,12 +62,15 @@ class Entity : Container
 	void streamOut();
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
+	void createSprites();
+	void createWireframes();
+	void createShapes();
+	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
+	void addWireframe(Wireframe wireframe);
+	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
+	void addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes);
+	void destroySprites();
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
-	bool addSpriteFromSpecAtIndex(int32 spriteSpecIndex);
-	bool addShapeFromSpecAtIndex(int32 shapeSpecIndex);
-	bool transformShapeAtSpecIndex(int32 shapeSpecIndex);
-	void addSprites(SpriteSpec** spritesSpecs);
-	void addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPreviousWireframes);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();
@@ -93,7 +96,6 @@ class Entity : Container
 	uint32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
-	void setupShapes();
 	bool isVisible(int32 pad, bool recursive);
 	VirtualList getShapes();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
@@ -101,7 +103,6 @@ class Entity : Container
 	bool updateSpriteRotation();
 	bool updateSpriteScale();
 	void addWireframe(Wireframe wireframe);
-	void releaseSprites();
 	void setSpec(void* entitySpec);
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
