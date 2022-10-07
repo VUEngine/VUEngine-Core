@@ -233,10 +233,10 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 	int32 i = 0;
 
 	// go through n sprites in entity's spec
-	for(; spriteSpecs[i]; i++)
+	for(; NULL != spriteSpecs[i]; i++)
 	{
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
-		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, spriteSpecs[i], ListenerObject::safeCast(this)));
+		NM_ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
 
