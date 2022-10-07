@@ -85,8 +85,7 @@ void Entity::destructor()
 {
 	Entity::destroyShapes(this);
 	Entity::destroyWireframes(this);
-
-	Entity::releaseSprites(this);
+	Entity::destroySprites(this);
 
 	if(this->centerDisplacement)
 	{
@@ -195,47 +194,49 @@ void Entity::streamOut()
 }
 
 /**
- * Destroy wireframes
+ * Create sprites
+ */
+void Entity::createSprites()
+{
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(NULL == this->sprites)
+	{
+		Entity::addSprites(this, this->entitySpec->spriteSpecs, true);
+	}
+}
+
+/**
+ * Add sprites from a list of specs
  *
- * @private
+ * @param spriteSpecs
  */
-void Entity::destroyWireframes()
+void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 {
-	if(!isDeleted(this->wireframes))
+	if(NULL == spriteSpecs)
 	{
-		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
-
-		VirtualList::deleteData(this->wireframes);
-		delete this->wireframes;
-		this->wireframes = NULL;
-	}
-}
-
-/**
- * Add shapes
- */
-void Entity::setupShapes()
-{
-	// this method can be called multiple times so only add shapes
-	// if not already done
-	if(NULL == this->shapes)
-	{
-		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
+		return;
 	}
 
-	Entity::transformShapes(this);
-}
-
-/**
- * Add wireframes
- */
-void Entity::setupWireframes()
-{
-	// this method can be called multiple times so only add shapes
-	// if not already done
-	if(NULL == this->wireframes)
+	if(destroyOldSprites)
 	{
-		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, false);
+		Entity::destroyWireframes(this);
+	}
+
+	if(NULL == this->sprites)
+	{
+		this->sprites = new VirtualList();
+	}
+
+	SpriteManager spriteManager = SpriteManager::getInstance();
+
+	int32 i = 0;
+
+	// go through n sprites in entity's spec
+	for(; spriteSpecs[i]; i++)
+	{
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this), &this->transformation.globalPosition, &this->transformation.globalRotation, &this->transformation.globalScale));
+		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
 
@@ -243,7 +244,7 @@ void Entity::setupWireframes()
  * Delete all of the Entity's sprites
  *
  */
-void Entity::releaseSprites()
+void Entity::destroySprites()
 {
 #ifndef __SHIPPING
 #ifndef __RELEASE
@@ -273,10 +274,10 @@ void Entity::releaseSprites()
 				Printing::text(Printing::getInstance(), "Caller address: ", 1, 27, NULL);
 				Printing::hex(Printing::getInstance(), lp, 1, 12, 8, NULL);
 #endif
-				Error::triggerException("Entity::releaseSprites: trying to dispose dead sprite", NULL);		
+				Error::triggerException("Entity::destroySprites: trying to dispose dead sprite", NULL);		
 			}
 #endif
-			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::releaseSprites: trying to dispose dead sprite");
+			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::destroySprites: trying to dispose dead sprite");
 			SpriteManager::disposeSprite(spriteManager, Sprite::safeCast(node->data));
 		}
 
@@ -285,6 +286,138 @@ void Entity::releaseSprites()
 	}
 
 	this->sprites = NULL;
+}
+
+/**
+ * Add wireframes
+ */
+void Entity::createWireframes()
+{
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(NULL == this->wireframes)
+	{
+		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, true);
+	}
+}
+
+/**
+ * Add wireframes from specs list
+ *
+ * @private
+ * @param wireframeSpecs		List of wireframes
+ */ 
+void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes)
+{
+	if(NULL == wireframeSpecs)
+	{
+		return;
+	}
+
+	if(destroyOldWireframes)
+	{
+		Entity::destroyWireframes(this);
+	}
+
+	int32 i = 0;
+
+	if(NULL == this->wireframes)
+	{
+		this->wireframes = new VirtualList();
+	}
+
+	for(; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
+	{
+		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
+		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+		VirtualList::pushBack(this->wireframes, wireframe);
+	}
+}
+
+/**
+ * Add a wireframe
+ *
+ * @private
+ * @param wireframeSpecs		List of wireframes
+ */
+void Entity::addWireframe(Wireframe wireframe)
+{
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	if(NULL == this->wireframes)
+	{
+		this->wireframes = new VirtualList();
+	}
+
+	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+	VirtualList::pushBack(this->wireframes, wireframe);
+}
+
+/**
+ * Destroy wireframes
+ *
+ * @private
+ */
+void Entity::destroyWireframes()
+{
+	if(!isDeleted(this->wireframes))
+	{
+		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
+
+		VirtualList::deleteData(this->wireframes);
+		delete this->wireframes;
+		this->wireframes = NULL;
+	}
+}
+
+/**
+ * Add shapes
+ */
+void Entity::createShapes()
+{
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(NULL == this->shapes)
+	{
+		Entity::addShapes(this, this->entitySpec->shapeSpecs, true);
+	}
+
+	Entity::transformShapes(this);
+}
+
+/**
+ * Add shapes from a list of specs
+ *
+ * @private
+ * @param shapeSpecs		List of shapes
+ */
+void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
+{
+	if(NULL == shapeSpecs)
+	{
+		return;
+	}
+
+	if(destroyOldShapes)
+	{
+		Entity::destroyShapes(this);
+	}
+
+	if(NULL == this->shapes)
+	{
+		this->shapes = new VirtualList();
+	}
+
+	// go through n sprites in entity's spec
+	for(int32 i = 0; shapeSpecs[i].allocator; i++)
+	{
+		Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(_vuEngine), SpatialObject::safeCast(this), &shapeSpecs[i]);
+		ASSERT(shape, "Entity::addShapes: sprite not created");
+		VirtualList::pushBack(this->shapes, shape);
+	}
 }
 
 /**
@@ -877,8 +1010,6 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	// set spatial position
 	Entity::setLocalPosition(entity, &position);
 
-	Entity::addSprites(entity, entity->entitySpec->spriteSpecs);
-
 	// add children if defined
 	if(positionedEntity->childrenSpecs)
 	{
@@ -1185,90 +1316,6 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 }
 
 /**
- * Setup shape
- *
- * @private
- * @param shapeSpecs		List of shapes
- */
-void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
-{
-	if(NULL == shapeSpecs)
-	{
-		return;
-	}
-
-	if(destroyPreviousShapes)
-	{
-		Entity::destroyShapes(this);
-	}
-
-	int32 i = 0;
-
-	if(NULL == this->shapes)
-	{
-		this->shapes = new VirtualList();
-	}
-
-	// go through n sprites in entity's spec
-	for(; shapeSpecs[i].allocator; i++)
-	{
-		Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(_vuEngine), SpatialObject::safeCast(this), &shapeSpecs[i]);
-		ASSERT(shape, "Entity::addShapes: sprite not created");
-		VirtualList::pushBack(this->shapes, shape);
-	}
-}
-
-
-/**
- * Setup wireframe
- *
- * @private
- * @param wireframeSpecs		List of wireframes
- */
-void Entity::addWireframes(WireframeSpec** const wireframeSpecs, bool destroyPreviousWireframes)
-{
-	if(NULL == wireframeSpecs)
-	{
-		return;
-	}
-
-	if(destroyPreviousWireframes)
-	{
-		Entity::destroyWireframes(this);
-	}
-
-	int32 i = 0;
-
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
-	}
-
-	for(; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
-	{
-		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
-		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
-		VirtualList::pushBack(this->wireframes, wireframe);
-	}
-}
-
-void Entity::addWireframe(Wireframe wireframe)
-{
-	if(isDeleted(wireframe))
-	{
-		return;
-	}
-
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
-	}
-
-	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
-	VirtualList::pushBack(this->wireframes, wireframe);
-}
-
-/**
  * Process extra info in initialization
  *
  * @param extraInfo
@@ -1300,193 +1347,6 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 }
 
 /**
- * Add sprites
- *
- * @param spriteSpecs
- */
-void Entity::addSprites(SpriteSpec** spriteSpecs)
-{
-	if(NULL == spriteSpecs)
-	{
-		return;
-	}
-
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
-	}
-
-	SpriteManager spriteManager = SpriteManager::getInstance();
-
-	int32 i = 0;
-
-	// go through n sprites in entity's spec
-	for(; spriteSpecs[i]; i++)
-	{
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
-		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
-
-		this->synchronizeGraphics = true;
-	}
-
-	// make sure that the new sprites are properly initialized
-	this->invalidateGraphics = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
-}
-
-/**
- * Add sprite
- *
- * @param spriteSpecIndex		Index in sprite specs array
- * @return							True if a sprite was created
- */
-bool Entity::addSpriteFromSpecAtIndex(int32 spriteSpecIndex)
-{
-	if(!this->entitySpec->spriteSpecs)
-	{
-		return false;
-	}
-
-	const SpriteSpec* spriteSpec = this->entitySpec->spriteSpecs[spriteSpecIndex];
-
-	if(!spriteSpec || !spriteSpec->allocator)
-	{
-		return false;
-	}
-
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
-	}
-
-	// call the appropriate allocator to support inheritance
-	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
-
-	this->synchronizeGraphics = true;
-
-	return true;
-}
-
-/**
- * Add shape
- *
- * @param shapeSpecIndex			Index in shape specs array
- * @return							True if a shape was created
- */
-bool Entity::addShapeFromSpecAtIndex(int32 shapeSpecIndex)
-{
-	if(!this->entitySpec->shapeSpecs)
-	{
-		return false;
-	}
-
-	if(!this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
-	{
-		return false;
-	}
-
-	if(!this->shapes)
-	{
-		this->shapes = new VirtualList();
-	}
-
-	// call the appropriate allocator to support inheritance
-	Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(_vuEngine), SpatialObject::safeCast(this), &this->entitySpec->shapeSpecs[shapeSpecIndex]);
-	NM_ASSERT(shape, "Entity::addShape: shape not created");
-	VirtualList::pushBack(this->shapes, shape);
-
-	return true;
-}
-
-void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
-{
-	updatePosition |= updateRotation;
-	updatePosition |= updateProjection;
-	updateScale |= updateRotation;	
-
-	if(this->entitySpec->useZDisplacementInProjection)
-	{
-		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-	else
-	{
-		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-}
-
-void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(!this->sprites)
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			Vector3D position = relativeGlobalPosition;
-			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
-
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, Optics::calculateParallax(position.z));
-			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
-
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &projectedPosition);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.localRotation);
-		}
-		
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
-}
-
-void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(!this->sprites)
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &position);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.localRotation);
-		}
-
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
-}
-
-/**
  * Initial transformation
  *
  * @param environmentTransform
@@ -1497,10 +1357,11 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
 
-	this->transformShapes = true;
-	Entity::setupShapes(this);
-	Entity::setupWireframes(this);
+	Entity::createSprites(this);
+	Entity::createWireframes(this);
+	Entity::createShapes(this);
 
+	this->transformShapes = true;
 	this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 
 	if(this->hidden)
@@ -1907,7 +1768,8 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	Entity::releaseSprites(this);
+	Entity::destroySprites(this);
+	Entity::destroyWireframes(this);
 }
 
 /**
@@ -1918,9 +1780,10 @@ void Entity::resume()
 	Base::resume(this);
 
 	// initialize sprites
-	if(this->entitySpec)
+	if(NULL != this->entitySpec)
 	{
-		Entity::addSprites(this, this->entitySpec->spriteSpecs);
+		Entity::createSprites(this);
+		Entity::createWireframes(this);
 	}
 	else
 	{
