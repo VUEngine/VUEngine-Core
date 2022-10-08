@@ -795,7 +795,7 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
 
 	// Graphics synchronization involves moving the camera for the UI
-	// which can mess rendering if the VIP's XPED interrupt happens when the camera is
+	// which can mess rendering if the VIP's XPEND interrupt happens when the camera is
 	// modified
 	VUEngine::synchronizeGraphics(this);
 
