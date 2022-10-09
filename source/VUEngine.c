@@ -671,6 +671,28 @@ void VUEngine::synchronizeGraphics()
 #endif
 }
 
+// update game's rendering subsystem
+void VUEngine::synchronizeUIGraphics()
+{
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_UI_GRAPHICS;
+#endif
+
+#ifdef __TOOLS
+	if(VUEngine::isInSoundTest(this))
+	{
+		return;
+	}
+#endif
+
+	// apply transformations to graphics
+	GameState::synchronizeUIGraphics(this->currentState);
+
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_GRAPHICS);
+#endif
+}
+
 // update game's physics subsystem
 void VUEngine::updatePhysics()
 {
@@ -794,10 +816,10 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
 
-	// Graphics synchronization involves moving the camera for the UI
-	// which can mess rendering if the VIP's XPEND interrupt happens when the camera is
-	// modified
-	VUEngine::synchronizeGraphics(this);
+	// UI graphics synchronization involves moving the camera
+	// which can mess rendering if the VIP's XPEND interrupt 
+	// happens when the camera is modified
+	VUEngine::synchronizeUIGraphics(this);
 
 	SpriteManager::render(this->spriteManager);
 	WireframeManager::render(this->wireframeManager);
@@ -900,6 +922,9 @@ bool VUEngine::hasCurrentFrameEnded()
 
 void VUEngine::run()
 {
+	// Synchronize 2D graphics
+	VUEngine::synchronizeGraphics(this);
+
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 

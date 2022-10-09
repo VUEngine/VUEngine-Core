@@ -1231,10 +1231,8 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 	}
 }
 
-void Stage::synchronizeGraphics()
+void Stage::synchronizeUIGraphics()
 {
-	Base::synchronizeGraphics(this);
-
 	if(!isDeleted(this->uiContainer))
 	{
 		UIContainer::synchronizeGraphics(this->uiContainer);
