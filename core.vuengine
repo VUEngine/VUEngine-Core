@@ -2576,7 +2576,7 @@
                     "communications": {
                         "type": "object",
                         "properties": {
-                            "enabled": {
+                            "enable": {
                                 "type": "boolean",
                                 "description": "Enable communications at the start of the game, e.g. for link play.",
                                 "default": false
