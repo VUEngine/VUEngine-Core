@@ -379,8 +379,12 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					// Allow game start interrupt
 					VIPManager::enableInterrupts(this, __GAMESTART);
 
+					VIPManager::disableDrawing(this);
+
 					// Write to VRAM
 					VIPManager::updateVRAM();
+
+					VIPManager::enableDrawing(this);
 
 					this->processingXPEND = false;
 				}
