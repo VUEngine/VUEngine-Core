@@ -5034,6 +5034,10 @@
                 "required": [],
                 "additionalProperties": false
             },
+            "uiSchema": {
+                "type": "RumbleEffectEditor",
+                "scope": "#"
+            },
             "multiple": true,
             "category": "Effects",
             "icon": "codicon codicon-screen-full codicon-rotate-90",
