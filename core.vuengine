@@ -7,6 +7,7 @@
     "items": {
         "BrightnessRepeat": {
             "HJzLvhLSpJs16gla": {
+                "description": "",
                 "mirror": true,
                 "name": "Default",
                 "values": [
@@ -1924,6 +1925,10 @@
                         "type": "string",
                         "default": ""
                     },
+                    "description": {
+                        "type": "string",
+                        "default": ""
+                    },
                     "mirror": {
                         "type": "boolean",
                         "default": true
@@ -1935,11 +1940,17 @@
                             "default": 15,
                             "minimum": 0,
                             "maximum": 15
-                        }
+                        },
+                        "maxItems": 96,
+                        "minItems": 48
                     }
                 },
                 "required": [],
                 "additionalProperties": false
+            },
+            "uiSchema": {
+                "type": "BrightnessRepeatEditor",
+                "scope": "#"
             },
             "multiple": true,
             "category": "Effects",

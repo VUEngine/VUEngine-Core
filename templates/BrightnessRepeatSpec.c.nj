@@ -8,6 +8,9 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
+{% if item.description -%}
+// {{ item.description }}
+{% endif -%}
 BrightnessRepeatROMSpec {{ item.name }}BrightnessRepeat =
 {
 	// mirror spec?
