@@ -8,6 +8,9 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
+{% if item.description -%}
+// {{ item.description }}
+{% endif -%}
 BrightnessRepeatROMSpec {{ item.name }}BrightnessRepeat =
 {
 	// mirror spec?
@@ -15,8 +18,9 @@ BrightnessRepeatROMSpec {{ item.name }}BrightnessRepeat =
 
 	// brightness repeat values
 	{
-		{% for value in item.values -%}
+        {% for x in range(0, 96) -%}
 		{%- if not (item.mirror and loop.index > 48) -%}
+        {%- set value = item.values[x] | default(15) -%}
 		{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
 		{{- value -}}{{- ', '-}} 
 		{%- if loop.index % 16 == 0 and not (loop.last or (item.mirror and loop.index == 48)) %}{{ "\n		" }}{% endif -%}
