@@ -283,11 +283,6 @@ bool Sprite::isHidden()
  */
 void Sprite::position(const Vector3D* position)
 {
-	if(!this->registered)
-	{
-		Sprite::registerWithManager(this);
-	}
-
 	this->positioned = true;
 
 	PixelVector position2D = Vector3D::projectToPixelVector(*position, this->position.parallax);
@@ -297,11 +292,21 @@ void Sprite::position(const Vector3D* position)
 		(this->position.z - position2D.z) | 
 		(this->position.parallax - position2D.parallax)))
 	{
+		if(!this->registered)
+		{
+			Sprite::registerWithManager(this);
+		}
+
 		return;
 	}
 
 	this->position = position2D;
 	this->renderFlag = true;
+
+	if(!this->registered)
+	{
+		Sprite::registerWithManager(this);
+	}
 }
 
 /**
