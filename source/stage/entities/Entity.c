@@ -294,6 +294,9 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
+
+	this->synchronizeGraphics = this->synchronizeGraphics || !isDeleted(this->sprites);
+	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 }
 
 /**
@@ -472,6 +475,8 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
+
+	this->transformShapes = !isDeleted(this->shapes);
 }
 
 /**
@@ -1481,11 +1486,6 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 	Entity::createSprites(this);
 	Entity::createWireframes(this);
 	Entity::createShapes(this);
-
-	this->synchronizeGraphics = this->synchronizeGraphics || !isDeleted(this->sprites);
-
-	this->transformShapes = true;
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
 	if(this->hidden)
 	{
