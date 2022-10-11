@@ -167,7 +167,7 @@ void Container::addBehavior(Behavior behavior)
 {
 	if(!isDeleted(behavior))
 	{
-		if(!this->behaviors)
+		if(NULL == this->behaviors)
 		{
 			this->behaviors = new VirtualList();
 		}
