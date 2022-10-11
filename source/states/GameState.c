@@ -436,7 +436,23 @@ void GameState::synchronizeGraphics()
 	NM_ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transformation loaded entities
-	Container::synchronizeGraphics(this->stage);
+	Stage::synchronizeGraphics(this->stage);
+}
+
+/**
+ * Start a cycle on the Stage that coordinates the entities with their sprites
+ */
+void GameState::synchronizeUIGraphics()
+{
+	if(!this->synchronizeGraphics)
+	{
+		return;
+	}
+
+	NM_ASSERT(this->stage, "GameState::synchronizeUIGraphics: null stage");
+
+	// then transformation loaded entities
+	Stage::synchronizeUIGraphics(this->stage);
 }
 
 /**

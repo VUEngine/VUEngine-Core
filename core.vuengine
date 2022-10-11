@@ -2657,14 +2657,6 @@
                     "debug": {
                         "type": "object",
                         "properties": {
-                            "alertForTornFrames": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "alertStackOverflow": {
-                                "type": "boolean",
-                                "default": false
-                            },
                             "alertVipOvertime": {
                                 "type": "boolean",
                                 "default": false
@@ -2677,23 +2669,7 @@
                                 "type": "boolean",
                                 "default": false
                             },
-                            "printDetailedMemoryPoolStatus": {
-                                "type": "boolean",
-                                "default": false
-                            },
                             "printFramerate": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "printMemoryPoolStatus": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "profileGame": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "profileGameStateDuringVipInterrupt": {
                                 "type": "boolean",
                                 "default": false
                             },
@@ -2702,10 +2678,6 @@
                                 "default": false
                             },
                             "showDetailedMemoryPoolStatus": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "showGameProfiling": {
                                 "type": "boolean",
                                 "default": false
                             },
@@ -2782,6 +2754,50 @@
                             }
                         }
                     },
+                    "game": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "oneOf": [
+                                        {
+                                            "const": "text",
+                                            "title": "Text"
+                                        },
+                                        {
+                                            "const": "number",
+                                            "title": "Number"
+                                        },
+                                        {
+                                            "const": "boolean",
+                                            "title": "Boolean"
+                                        },
+                                        {
+                                            "const": "constant",
+                                            "title": "Constant"
+                                        }
+                                    ]
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "math": {
+                        "type": "object",
+                        "properties": {
+                            "fixedPointPrecision": {
+                                "type": "integer",
+                                "default": 6
+                            }
+                        }
+                    },
                     "memoryPools": {
                         "type": "object",
                         "properties": {
@@ -2830,10 +2846,8 @@
                                 "default": 1,
                                 "minimum": 0
                             },
-                            "distanceEyeScreen": {
-                                "type": "integer",
-                                "default": 384,
-                                "minimum": 0
+                            "cameraNearPlane": {
+                                "type": "integer"
                             },
                             "horizontalViewPointCenter": {
                                 "type": "integer",
@@ -2879,6 +2893,10 @@
                                 "type": "integer",
                                 "default": 112,
                                 "minimum": 0
+                            },
+                            "useLegacyCoordinateProjection": {
+                                "type": "boolean",
+                                "default": false
                             }
                         }
                     },
@@ -3077,6 +3095,15 @@
                                 "minimum": 0
                             }
                         }
+                    },
+                    "wireframes": {
+                        "type": "object",
+                        "properties": {
+                            "sort": {
+                                "type": "boolean",
+                                "default": true
+                            }
+                        }
                     }
                 },
                 "required": [],
@@ -3089,42 +3116,175 @@
                         "type": "Category",
                         "label": "Affine",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/affine/properties/maxRowsPerCall"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/affine/properties/maxScale"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Animation",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/animation/properties/maxAnimationFunctionNameLength"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/animation/properties/maxFramesPerAnimationFunction"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Brightness",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/brightness/properties/brightRed"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/brightness/properties/mediumRed"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/brightness/properties/darkRed"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/brightness/properties/fadeDelay"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/brightness/properties/fadeIncrement"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Chars",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/chars/properties/totalChars"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Communications",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/communications/properties/enabled"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Debug",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/debug/properties/alertVipOvertime"
+                                    },
+                                    {
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/enableProfiler"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/dimmForProfiling"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/profileStreaming"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/showStreamingProfiling"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/debug/properties/printFramerate"
+                                    },
+                                    {
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/showMemoryPoolStatus"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/showDetailedMemoryPoolStatus"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "HorizontalLayout",
+                                        "elements": [
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/stackHeadroom"
+                                            },
+                                            {
+                                                "type": "Control",
+                                                "scope": "#/properties/debug/properties/showStackOverflowAlert"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
@@ -3158,21 +3318,178 @@
                         "type": "Category",
                         "label": "FrameRate",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/frameRate/properties/forceVipSync"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/frameRate/properties/frameCycle"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/frameRate/properties/runDelayedMessagesAtHalfFrameRate"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/frameRate/properties/timerResolution"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Game specific Macros",
+                        "elements": [
+                            {
+                                "type": "Control",
+                                "scope": "#/properties/game"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Math",
+                        "elements": [
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/math/properties/fixedPointPrecision"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "MemoryPools",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/memoryPools/properties/cleanUp"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/memoryPools/properties/warningThreshold"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/memoryPools/properties/pools"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Optics",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/baseFactor"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/cameraMinimumDisplacementPixelsPower"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/cameraNearPlane"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/maximumXViewDistance",
+                                                        "label": "X"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/maximumYViewDistance",
+                                                        "label": "Y"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "label": "Maximum View Distance"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/parallaxCorrectionFactor"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/scalingModifierFactor"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/horizontalViewPointCenter",
+                                                        "label": "Horizontal"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/verticalViewPointCenter",
+                                                        "label": "Vertical"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "label": "View Point Center"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/screenWidth",
+                                                        "label": "Width"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/screenHeight",
+                                                        "label": "Height"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/optics/properties/screenDepth",
+                                                        "label": "Depth"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "label": "Screen Size"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/optics/properties/useLegacyCoordinateProjection"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
@@ -3235,35 +3552,146 @@
                         "type": "Category",
                         "label": "Physics",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/bodiesToCheckForGravity"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/frictionForceFactorPower"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/gravity"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/maximumBouncinessCoefficient"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/stopBouncingVelocityThreshold"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/stopVelocityThreshold"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/physics/properties/timeElapsedDivisor"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Random",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/random/properties/addUserInputAndTimeToRandomSeed"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/random/properties/seedCycles"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Sound",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Group",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/sound/properties/leftEarCenter",
+                                                        "label": "Left Ear"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/sound/properties/rightEarCenter",
+                                                        "label": "Right Ear"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "label": "Center"
+                                    },
+                                    {
+                                        "type": "Group",
+                                        "elements": [
+                                            {
+                                                "type": "HorizontalLayout",
+                                                "elements": [
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/sound/properties/stereoHorizontalAttenuationFactor",
+                                                        "label": "Horizontal"
+                                                    },
+                                                    {
+                                                        "type": "Control",
+                                                        "scope": "#/properties/sound/properties/stereoVerticalAttenuationFactor",
+                                                        "label": "Vertical"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "label": "Stereo Attenuation Factor"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
                         "label": "Sprite",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/sprite/properties/totalLayers"
+                                    },
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/sprite/properties/hackBgmapSpriteHeight"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
                         "type": "Category",
-                        "label": "Sram",
+                        "label": "SRAM",
                         "elements": [
-                            {}
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/sram/properties/totalSram",
+                                        "label": "Total SRAM"
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {
@@ -3310,6 +3738,21 @@
                                     {
                                         "type": "Control",
                                         "scope": "#/properties/texture/properties/printing/properties/printableArea"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "Category",
+                        "label": "Wireframes",
+                        "elements": [
+                            {
+                                "type": "VerticalLayout",
+                                "elements": [
+                                    {
+                                        "type": "Control",
+                                        "scope": "#/properties/wireframes/properties/sort"
                                     }
                                 ]
                             }
@@ -4586,11 +5029,6 @@
             "uiSchema": {
                 "type": "VerticalLayout",
                 "elements": [
-                    {
-                        "type": "Control",
-                        "label": "Here you can edit the information stored in the ROM file's header.",
-                        "scope": "#/properties/typeId"
-                    },
                     {
                         "type": "Control",
                         "label": "Game Title",
