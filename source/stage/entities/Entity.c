@@ -389,6 +389,8 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
 		VirtualList::pushBack(this->wireframes, wireframe);
 	}
+
+	this->synchronizeGraphics = this->synchronizeGraphics || !isDeleted(this->wireframes);
 }
 
 /**
@@ -1401,7 +1403,7 @@ void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 upd
 
 void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
@@ -1440,7 +1442,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 
 void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
@@ -1486,6 +1488,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 	Entity::createSprites(this);
 	Entity::createWireframes(this);
 	Entity::createShapes(this);
+	Entity::synchronizeGraphics(this);
 
 	if(this->hidden)
 	{
