@@ -119,9 +119,9 @@ typedef struct PositionedEntityDescription
 	Container parent;
 	Entity entity;
 	EventListener callback;
-	int16 spriteSpecIndex;
-	int16 shapeSpecIndex;
-	int16 transformedShapeSpecIndex;
+	bool spritesCreated;
+	bool wireframesCreated;
+	bool shapesCreated;
 	int16 internalId;
 	bool transformed;
 } PositionedEntityDescription;
