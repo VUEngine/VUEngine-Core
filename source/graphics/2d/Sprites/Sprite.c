@@ -109,7 +109,6 @@ bool Sprite::prepareTexture()
 	return true;
 }
 
-
 int16 Sprite::render(int16 index, bool evenFrame)
 {
 	int16 previousIndex = this->index;
@@ -124,6 +123,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
+
 	if(isDeleted(this->texture))
 	{
 		this->index = Sprite::doRender(this, index, evenFrame);
