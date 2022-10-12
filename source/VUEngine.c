@@ -922,9 +922,6 @@ bool VUEngine::hasCurrentFrameEnded()
 
 void VUEngine::run()
 {
-	// Synchronize 2D graphics
-	VUEngine::synchronizeGraphics(this);
-
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
@@ -942,6 +939,9 @@ void VUEngine::run()
 
 	// focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
+
+	// Synchronize 2D graphics
+	VUEngine::synchronizeGraphics(this);
 
 	// dispatch delayed messages
 	VUEngine::dispatchDelayedMessages(this);

@@ -584,7 +584,6 @@ void SpriteManager::writeDRAM()
 	// Update BGMAP memory
 	BgmapTextureManager::updateTextures(this->bgmapTextureManager);
 
-
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
 
@@ -597,7 +596,6 @@ void SpriteManager::writeDRAM()
 
 	// Finally, write OBJ and WORLD attributes to DRAM
 	SpriteManager::writeWORLDAttributesToDRAM(this);
-
 
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))

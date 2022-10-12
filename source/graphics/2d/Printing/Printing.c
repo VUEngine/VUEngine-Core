@@ -148,7 +148,7 @@ void Printing::setupSprite()
 		0, 0, 0, 0
 	};
 
-	PrintingSprite::setPosition(this->printingSprite, &position);	
+	PrintingSprite::setPosition(this->printingSprite, &position);
 }
 
 void Printing::setOrientation(uint8 value)
@@ -244,7 +244,7 @@ void Printing::setFontPage(const char* font, uint16 page)
 {
 	FontData* fontData = Printing::getFontByName(this, font);
 
-	if(!fontData || isDeleted(fontData->charSet))
+	if(NULL == fontData || isDeleted(fontData->charSet))
 	{
 		return;
 	}
@@ -619,7 +619,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
-	if(!fontData)
+	if(NULL == fontData)
 	{
 		// just to make sure that no client code does a 0 division with these results
 		fontSize = (FontSize){8, 8};
@@ -717,7 +717,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
-	if(!fontData || (__PRINTING_MODE_DEBUG != this->mode && isDeleted(fontData->charSet)))
+	if(NULL == fontData || (__PRINTING_MODE_DEBUG != this->mode && isDeleted(fontData->charSet)))
 	{
 		return;
 	}

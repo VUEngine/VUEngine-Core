@@ -142,9 +142,9 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->callback = callback;
 	positionedEntityDescription->internalId = internalId;
 	positionedEntityDescription->transformed = false;
-	positionedEntityDescription->spriteSpecIndex = 0;
-	positionedEntityDescription->shapeSpecIndex = 0;
-	positionedEntityDescription->transformedShapeSpecIndex = 0;
+	positionedEntityDescription->spritesCreated = false;
+	positionedEntityDescription->wireframesCreated = false;
+	positionedEntityDescription->shapesCreated = false;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -166,37 +166,25 @@ uint32 EntityFactory::instantiateEntities()
 		{
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
-/*
-				if(0 == positionedEntityDescription->shapeSpecIndex)
+				if(!positionedEntityDescription->spritesCreated)
 				{
-					Entity::addSprites(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->spriteSpecs);
-					positionedEntityDescription->shapeSpecIndex++;
+					Entity::createSprites(positionedEntityDescription->entity);
+					positionedEntityDescription->spritesCreated = true;
 					return __ENTITY_PENDING_PROCESSING;
 				}
 
-				if(0 == positionedEntityDescription->shapeSpecIndex)
+				if(!positionedEntityDescription->wireframesCreated)
 				{
-					Entity::addShapes(positionedEntityDescription->entity, Entity::getSpec(positionedEntityDescription->entity)->shapeSpecs);
-					positionedEntityDescription->shapeSpecIndex++;
+					Entity::createWireframes(positionedEntityDescription->entity);
+					positionedEntityDescription->wireframesCreated = true;
 					return __ENTITY_PENDING_PROCESSING;
-				}
-*/
-				if(0 <= positionedEntityDescription->spriteSpecIndex && Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
-				{
-					return __ENTITY_PENDING_PROCESSING;
-				}
-				else
-				{
-					positionedEntityDescription->spriteSpecIndex = -1;
 				}
 
-				if(0 <= positionedEntityDescription->shapeSpecIndex && Entity::addShapeFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->shapeSpecIndex++))
+				if(!positionedEntityDescription->shapesCreated)
 				{
+					Entity::createShapes(positionedEntityDescription->entity);
+					positionedEntityDescription->shapesCreated = true;
 					return __ENTITY_PENDING_PROCESSING;
-				}
-				else
-				{
-					positionedEntityDescription->shapeSpecIndex = -1;
 				}
 
 				VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
@@ -250,15 +238,6 @@ uint32 EntityFactory::transformEntities()
 			Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
 
 			return __ENTITY_PENDING_PROCESSING;
-		}
-
-		if(0 <= positionedEntityDescription->transformedShapeSpecIndex && Entity::transformShapeAtSpecIndex(positionedEntityDescription->entity, positionedEntityDescription->transformedShapeSpecIndex++))
-		{
-			return __ENTITY_PENDING_PROCESSING;
-		}
-		else
-		{
-			positionedEntityDescription->transformedShapeSpecIndex = -1;
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
