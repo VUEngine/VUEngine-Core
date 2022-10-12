@@ -1995,14 +1995,19 @@
                             }
                         },
                         "maxItems": 256,
-                        "minItems": 128
+                        "minItems": 128,
+                        "default": []
                     }
                 },
                 "required": [],
                 "additionalProperties": false
             },
+            "uiSchema": {
+                "type": "ColumnTableEditor",
+                "scope": "#"
+            },
             "multiple": true,
-            "category": "Logic",
+            "category": "Effects",
             "icon": "fa fa-table",
             "templates": [
                 "ColumnTableSpec.c"
