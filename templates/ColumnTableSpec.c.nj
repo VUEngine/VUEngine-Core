@@ -11,7 +11,7 @@
 {% if item.description -%}
 // {{ item.description }}
 {% endif -%}
-ColumnTableROMSpec {{ item.name }}ColumnTable =
+ColumnTableROMSpec {{ item.name | sanitizeSpecName }}ColumnTable =
 {
 	// mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},

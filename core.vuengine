@@ -4994,13 +4994,7 @@
                     },
                     "frequency": {
                         "type": "integer",
-                        "enum": [
-                            160,
-                            240,
-                            320,
-                            400
-                        ],
-                        "default": 160
+                        "default": 0
                     },
                     "sustainPositive": {
                         "type": "integer",

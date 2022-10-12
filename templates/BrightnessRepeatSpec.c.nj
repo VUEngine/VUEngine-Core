@@ -11,7 +11,7 @@
 {% if item.description -%}
 // {{ item.description }}
 {% endif -%}
-BrightnessRepeatROMSpec {{ item.name }}BrightnessRepeat =
+BrightnessRepeatROMSpec {{ item.name | sanitizeSpecName }}BrightnessRepeat =
 {
 	// mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},
