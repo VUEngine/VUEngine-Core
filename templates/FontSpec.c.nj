@@ -46,7 +46,7 @@ const uint32 {{ item.name }}FontTiles[{{ 1 + item.characterCount * 4 }}] __attri
 
 {{ macros.sectionHeader('Definitions') }}
 
-CharSetROMSpec {{ item.name }}FontCharSet =
+CharSetROMSpec {{ item.name | sanitizeSpecName }}FontCharSet =
 {
 	// number of chars
 	{{ item.characterCount * item.size.x * item.size.y }},
@@ -61,7 +61,7 @@ CharSetROMSpec {{ item.name }}FontCharSet =
 	NULL,
 };
 
-FontROMSpec {{ item.name }}Font =
+FontROMSpec {{ item.name | sanitizeSpecName }}Font =
 {
 	// font charset spec pointer
 	(CharSetSpec*)&{{ item.name }}FontCharSet,

@@ -8,7 +8,7 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-RumbleEffectROMSpec {{ item.name }}RumbleEffect =
+RumbleEffectROMSpec {{ item.name | sanitizeSpecName }}RumbleEffect =
 {
 	// Effect #
 	{% if item.effect >= 1 and item.effect <= 123 -%}
@@ -17,8 +17,12 @@ RumbleEffectROMSpec {{ item.name }}RumbleEffect =
 		1
 	{%- endif %},
 	// Frequency
-	{% if item.frequency == 160 or item.frequency == 240 or item.frequency == 320 or item.frequency == 400 -%}
-		__RUMBLE_FREQ_{{ item.frequency }}HZ,
+	{% if item.frequency == 1 -%}
+		__RUMBLE_FREQ_240HZ,
+	{%- elseif item.frequency == 2 -%}
+		__RUMBLE_FREQ_320HZ,
+	{%- elseif item.frequency == 3 -%}
+		__RUMBLE_FREQ_400HZ,
 	{%- else -%}
 		__RUMBLE_FREQ_160HZ,
 	{%- endif %}

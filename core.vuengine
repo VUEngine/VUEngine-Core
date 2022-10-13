@@ -1995,14 +1995,19 @@
                             }
                         },
                         "maxItems": 256,
-                        "minItems": 128
+                        "minItems": 128,
+                        "default": []
                     }
                 },
                 "required": [],
                 "additionalProperties": false
             },
+            "uiSchema": {
+                "type": "ColumnTableEditor",
+                "scope": "#"
+            },
             "multiple": true,
-            "category": "Logic",
+            "category": "Effects",
             "icon": "fa fa-table",
             "templates": [
                 "ColumnTableSpec.c"
@@ -4994,13 +4999,7 @@
                     },
                     "frequency": {
                         "type": "integer",
-                        "enum": [
-                            160,
-                            240,
-                            320,
-                            400
-                        ],
-                        "default": 160
+                        "default": 0
                     },
                     "sustainPositive": {
                         "type": "integer",
