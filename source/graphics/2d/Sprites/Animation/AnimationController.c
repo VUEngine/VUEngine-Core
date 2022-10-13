@@ -207,7 +207,7 @@ void AnimationController::setFrameCycleDecrement(uint8 frameCycleDecrement)
 bool AnimationController::updateAnimation()
 {
 	// first check for a valid animation function
-	if(!this->playing | !this->animationFunction)
+	if(!this->playing | NULL == this->animationFunction)
 	{
 		return false;
 	}
