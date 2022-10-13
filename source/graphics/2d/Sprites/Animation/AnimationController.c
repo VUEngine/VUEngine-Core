@@ -364,9 +364,9 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 		}
 	}
 
-	bool functionNameFound = false;
+	bool functionNameFound = NULL != this->animationFunction ? 0 == strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH) : false;
 
-	if(NULL == this->animationFunction || 0 != strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+	if(!functionNameFound)
 	{
 		int32 i = 0;
 

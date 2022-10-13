@@ -121,7 +121,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationF
  */
 void Particle::changeAnimation(const AnimationFunction** animationFunctions, const char* animationName, bool force)
 {
-	if(!isDeleted(this->sprite) && animationName)
+	if(!isDeleted(this->sprite) && NULL != animationName)
 	{
 		if(force || !Sprite::replay(this->sprite, animationFunctions))
 		{
