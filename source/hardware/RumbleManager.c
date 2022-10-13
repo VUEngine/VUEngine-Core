@@ -184,7 +184,7 @@ static void RumbleManager::sendCommandWithValue(uint8 command, uint8 value)
     RumbleManager::sendCode(value);
 }
 
-static void RumbleManager::playEffect(uint8 effect)
+static void RumbleManager::setEffect(uint8 effect)
 {
     if(effect >= __RUMBLE_CMD_MIN_EFFECT && effect <= __RUMBLE_CMD_MAX_EFFECT)
 	{
@@ -202,13 +202,13 @@ static void RumbleManager::storeEffectChain(uint8 chainNumber, uint8* effectChai
     
 	for(i=0; effectChain[i] != __RUMBLE_EFFECT_CHAIN_END && i < __RUMBLE_MAX_EFFECTS_IN_CHAIN; i++)
 	{
-        RumbleManager::playEffect(effectChain[i]);
+        RumbleManager::setEffect(effectChain[i]);
     }
 
     RumbleManager::sendCode(__RUMBLE_EFFECT_CHAIN_END);
 }
 
-static void RumbleManager::playEffectChain(uint8 effectChain)
+static void RumbleManager::setEffectChain(uint8 effectChain)
 {
     uint8 command = effectChain;
 
@@ -350,7 +350,7 @@ static void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
     RumbleManager::setSustainNegative(rumbleEffect->sustainNegative);
     RumbleManager::setOverdrive(rumbleEffect->overdrive);
     RumbleManager::setBreak(rumbleEffect->breaking);
-    RumbleManager::playEffect(rumbleEffect->effect);
+    RumbleManager::setEffect(rumbleEffect->effect);
     RumbleManager::execute();
 }
 
