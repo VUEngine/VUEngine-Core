@@ -228,6 +228,7 @@ void CommunicationManager::endCommunications()
 	CommunicationManager::setReady(this, false);
 
 	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
+	_communicationRegisters[__CDTR] = 0;
 }
 
 bool CommunicationManager::cancelCommunications()
@@ -624,7 +625,7 @@ bool CommunicationManager::isFreeForTransmissions()
 
 bool CommunicationManager::startDataTransmission(BYTE* data, int32 numberOfBytes, bool sendingData)
 {
-	if((sendingData && !data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	if((sendingData && NULL == data) || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
 		return false;
 	}
@@ -868,12 +869,12 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message, BYTE* data, int32 numberOfBytes, EventListener eventLister, ListenerObject scope)
 {
-	if(!data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
+	if(NULL == data || 0 >= numberOfBytes || !CommunicationManager::isFreeForTransmissions(this))
 	{
 		return false;
 	}
 
-	if(eventLister && !isDeleted(scope))
+	if(NULL != eventLister && !isDeleted(scope))
 	{
 		CommunicationManager::removeEventListeners(this, NULL, kEventCommunicationsTransmissionCompleted);
 		CommunicationManager::addEventListener(this, scope, eventLister, kEventCommunicationsTransmissionCompleted);
@@ -896,7 +897,6 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 
 	if(isDeleted(this->sentData))
 	{
-
 		// Allocate memory to hold both the message and the data
 		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
