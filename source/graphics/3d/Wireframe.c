@@ -125,6 +125,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
 	if(NULL == this->wireframeSpec)
 	{
+		this->color = __COLOR_BRIGHT_RED;
 		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 		return;
 	}
