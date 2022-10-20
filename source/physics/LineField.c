@@ -244,6 +244,9 @@ void LineField::configureWireframe()
 		{
 			__TYPE(Line),
 
+			/// displacement
+			{0, 0, 0},
+
 			/// color
 			__COLOR_BRIGHT_RED,
 

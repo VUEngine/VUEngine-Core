@@ -485,6 +485,9 @@ void Box::configureWireframe()
 		{
 			__TYPE(Polyhedron),
 
+			/// displacement
+			{0, 0, 0},
+
 			/// color
 			__COLOR_BRIGHT_RED,
 
