@@ -34,6 +34,9 @@ typedef struct WireframeSpec
 	/// class allocator
 	AllocatorPointer allocator;
 
+	/// displacement
+	Vector3D displacement;
+
 	/// color
 	uint8 color;
 

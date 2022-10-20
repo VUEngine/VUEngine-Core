@@ -354,7 +354,7 @@ void Mesh::render()
 	extern Rotation _previousCameraInvertedRotation;
 	Vector3D position = *this->position;
 
-	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(position, this->wireframeSpec->displacement), _previousCameraPosition);
 	Mesh::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
