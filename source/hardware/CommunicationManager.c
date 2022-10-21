@@ -858,7 +858,10 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 	{
 		CommunicationManager::sendAndReceivePayload(this, *this->syncSentByte, false);
 
-		while(kCommunicationsStatusIdle != this->status);
+		while(kCommunicationsStatusIdle != this->status)
+		{
+			HardwareManager::halt();
+		}
 	}
 
 	this->status = kCommunicationsStatusIdle;
