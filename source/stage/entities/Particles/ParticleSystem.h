@@ -93,8 +93,6 @@ class ParticleSystem : Entity
 {
 	// Vector for particles' movement
 	Vector3D previousGlobalPosition;
-	// system's spec
-	const ParticleSystemSpec* particleSystemSpec;
 	// particle list
 	VirtualList particles;
 	// Flags to speed up particle spawning

@@ -51,19 +51,16 @@ typedef const ActorSpec ActorROMSpec;
 /// @ingroup stage-entities
 class Actor : AnimatedEntity
 {
-	// spec
 	// a state machine to handle entity's logic
 	StateMachine stateMachine;
 	// a physical body
 	Body body;
-	// previous velocity
-	Rotation previousRotation;
 
 	/// @publicsection
 	void constructor(const ActorSpec* actorSpec, int16 internalId, const char* const name);
 	void createBody(const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void initializeStateMachine(State state);
-	bool hasChangedDirection(uint16 axis);
+	bool hasChangedDirection(uint16 axis, const Rotation* previousRotation);
 	void changeDirectionOnAxis(uint16 axis);
 	bool isInsideGame();
 	StateMachine getStateMachine();

@@ -48,7 +48,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	this->stateMachine = NULL;
 
 	this->body = NULL;
-	this->previousRotation = this->transformation.localRotation;
 
 	// create body
 	if(actorSpec->createBody)
@@ -320,8 +319,6 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 	}
 
 	this->transformShapes = transformShapes;
-
-	this->previousRotation = this->transformation.localRotation;
 }
 
 void Actor::resume()
@@ -348,23 +345,28 @@ void Actor::update(uint32 elapsedTime)
 }
 
 // whether changed direction in the last cycle or not
-bool Actor::hasChangedDirection(uint16 axis)
+bool Actor::hasChangedDirection(uint16 axis, const Rotation* previousRotation)
 {
+	if(NULL == previousRotation)
+	{
+		return false;
+	}
+
 	switch(axis)
 	{
 		case __X_AXIS:
 
-			return this->transformation.localRotation.x != this->previousRotation.x;
+			return this->transformation.localRotation.x != previousRotation->x;
 			break;
 
 		case __Y_AXIS:
 
-			return this->transformation.localRotation.y != this->previousRotation.y;
+			return this->transformation.localRotation.y != previousRotation->y;
 			break;
 
 		case __Z_AXIS:
 
-			return this->transformation.localRotation.z != this->previousRotation.z;
+			return this->transformation.localRotation.z != previousRotation->z;
 			break;
 	}
 
@@ -380,9 +382,6 @@ void Actor::changeDirectionOnAxis(uint16 axis)
 	}
 	else
 	{
-		// save current rotation
-		this->previousRotation = this->transformation.localRotation;
-
 		Direction direction = Actor::getDirection(this);
 
 		if((__X_AXIS & axis))
