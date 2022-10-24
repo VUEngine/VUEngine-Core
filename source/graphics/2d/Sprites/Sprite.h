@@ -123,8 +123,6 @@ abstract class Sprite : ListenerObject
 	AnimationController animationController;
 	// Our texture
 	Texture texture;
-	// Owner
-	ListenerObject owner;
 	// Head spec for world entry setup
 	uint16 head;
 	// Texture's half width
