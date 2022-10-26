@@ -13,6 +13,7 @@
 //                                               DEFINITIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
+// The default brightness repeat configuration as provided by Nintendo
 BrightnessRepeatROMSpec DefaultBrightnessRepeat =
 {
 	// mirror spec?
@@ -20,7 +21,7 @@ BrightnessRepeatROMSpec DefaultBrightnessRepeat =
 
 	// brightness repeat values
 	{
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
 		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
 		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
 	}
