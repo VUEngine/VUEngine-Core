@@ -322,3 +322,22 @@ void WireframeManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->wireframes), x + 17, y++, NULL);
 }
 
+void WireframeManager::hideWireframes()
+{
+	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		Wireframe::hide(wireframe);
+	}
+}
+
+void WireframeManager::showWireframes()
+{
+	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
+
+		Wireframe::show(wireframe);
+	}
+}

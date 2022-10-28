@@ -47,6 +47,8 @@ singleton class WireframeManager : ListenerObject
 	void reset();
 	void enable();
 	void disable();
+	void hideWireframes();
+	void showWireframes();	
 }
 
 
