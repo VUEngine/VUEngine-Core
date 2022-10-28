@@ -1058,7 +1058,7 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 {
 	ASSERT(positionedEntity, "Entity::loadFromSpec: null positionedEntity");
 
-	if(!positionedEntity)
+	if(NULL == positionedEntity)
 	{
 		return NULL;
 	}
@@ -1072,12 +1072,12 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	Entity::setLocalPosition(entity, &position);
 
 	// add children if defined
-	if(positionedEntity->childrenSpecs)
+	if(NULL != positionedEntity->childrenSpecs)
 	{
 		Entity::addChildEntities(entity, positionedEntity->childrenSpecs);
 	}
 
-	if(positionedEntity->entitySpec->childrenSpecs)
+	if(NULL != positionedEntity->entitySpec->childrenSpecs)
 	{
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
@@ -1171,7 +1171,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 		return NULL;
 	}
 
-	PixelVector pixelPosition = PixelVector::getFromVector3D(*position, 0);
+	PixelVector pixelPosition = NULL != position ? PixelVector::getFromVector3D(*position, 0) : PixelVector::zero();
 
 	ScreenPixelVector screenPixelVector =
 	{
