@@ -268,7 +268,7 @@ void OptionsSelector::selectNext()
 				ASSERT(this->currentOption, "selectNext: null current option");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing);
+				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
@@ -322,7 +322,7 @@ void OptionsSelector::selectPrevious()
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
 				// render new page
-				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing);
+				OptionsSelector::printOptions(this, this->x, this->y, this->alignment, this->spacing - 1);
 			}
 			else
 			{
@@ -408,12 +408,26 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 		ASSERT(this->currentPage, "printOptions: currentPage");
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
+		int8 jStart = 0;
+
+		switch(alignment)
+		{
+			case kOptionsAlignCenter:
+
+				jStart -= this->columnWidth / 2 - 1;
+				break;
+
+			case kOptionsAlignRight:
+
+				jStart -= this->columnWidth;
+				break;
+		}
+
 		for(int32 i = 0; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
 		{
-			int32 j = 0;
-			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
+			for(int32 j = 0; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
-				Printing::text(printing, " ", x + j, y + i * spacing, this->font);
+				Printing::text(printing, " ", x + j + jStart, y + i * spacing, this->font);
 			}
 		}
 
