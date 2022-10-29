@@ -565,9 +565,8 @@ uint32 VUEngine::processUserInput()
 #endif
 
 	// poll the user's input
-	KeypadManager::captureUserInput(this->keypadManager);
-	UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
-
+	UserInput userInput = KeypadManager::captureUserInput(this->keypadManager);
+	
 #ifdef __TOOLS
 	if(VUEngine::checkIfOpenTool(this, userInput))
 	{
@@ -575,7 +574,7 @@ uint32 VUEngine::processUserInput()
 	}
 #endif
 
-	if(GameState::processUserInputRegardlessOfInput(VUEngine::getCurrentState(this)) || (userInput.pressedKey | userInput.releasedKey | userInput.holdKey))
+	if((userInput.pressedKey || userInput.holdKey || userInput.releasedKey) || GameState::processUserInputRegardlessOfInput(VUEngine::getCurrentState(this)))
 	{
 		GameState::processUserInput(VUEngine::getCurrentState(this), userInput);
 	}

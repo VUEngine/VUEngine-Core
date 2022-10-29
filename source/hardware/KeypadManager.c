@@ -107,7 +107,7 @@ int32 KeypadManager::isEnabled()
 /**
  * Read user input
  */
-void KeypadManager::captureUserInput()
+UserInput KeypadManager::captureUserInput()
 {
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
@@ -142,6 +142,8 @@ void KeypadManager::captureUserInput()
 	this->accumulatedUserInput += this->userInput.allKeys;
 
 	this->reseted = false;
+
+	return this->userInput;
 }
 
 /**
