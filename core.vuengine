@@ -7,7 +7,7 @@
     "items": {
         "BrightnessRepeat": {
             "HJzLvhLSpJs16gla": {
-                "description": "",
+                "description": "The default brightness repeat configuration as provided by Nintendo",
                 "mirror": true,
                 "name": "Default",
                 "values": [
@@ -1945,8 +1945,7 @@
                         "minItems": 48
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "BrightnessRepeatEditor",
@@ -1999,8 +1998,7 @@
                         "default": []
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "ColumnTableEditor",
@@ -2270,8 +2268,7 @@
                         }
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "Categorization",
@@ -2510,8 +2507,7 @@
                         }
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "icon": "fa fa-bug",
             "multiple": false,
@@ -3055,8 +3051,7 @@
                         }
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "Categorization",
@@ -3960,8 +3955,7 @@
                                 }
                             }
                         },
-                        "required": [],
-                        "additionalProperties": false
+                        "required": []
                     },
                     "physics": {
                         "type": "object",
@@ -4214,8 +4208,7 @@
                 },
                 "required": [
                     "name"
-                ],
-                "additionalProperties": false
+                ]
             },
             "uiSchema": {
                 "type": "Categorization",
@@ -4406,8 +4399,7 @@
                         }
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "icon": "fa fa-bullhorn",
             "multiple": false,
@@ -4509,8 +4501,7 @@
                         "default": []
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "FontEditor",
@@ -4658,8 +4649,7 @@
                 "required": [
                     "images",
                     "section"
-                ],
-                "additionalProperties": false
+                ]
             },
             "uiSchema": {
                 "type": "VerticalLayout",
@@ -4817,8 +4807,7 @@
                         }
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "icon": "fa fa-commenting-o",
             "multiple": false,
@@ -4843,8 +4832,7 @@
                 },
                 "required": [
                     "name"
-                ],
-                "additionalProperties": false
+                ]
             },
             "uiSchema": {
                 "type": "VerticalLayout",
@@ -4924,8 +4912,7 @@
                     "gameCodeLanguage",
                     "makerCode",
                     "revision"
-                ],
-                "additionalProperties": false
+                ]
             },
             "uiSchema": {
                 "type": "VerticalLayout",
@@ -5030,8 +5017,7 @@
                         "default": true
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "RumbleEffectEditor",
@@ -5078,6 +5064,10 @@
                                     "items": {
                                         "type": "object",
                                         "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "default": ""
+                                            },
                                             "size": {
                                                 "type": "integer",
                                                 "default": 32
@@ -5137,6 +5127,7 @@
                                 ],
                                 "patterns": [
                                     {
+                                        "name": "",
                                         "size": 32,
                                         "notes": [],
                                         "volumeL": [],
@@ -5235,8 +5226,7 @@
                         "default": 32
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "uiSchema": {
                 "type": "MusicEditor",
@@ -5265,8 +5255,7 @@
                         "minItems": 32
                     }
                 },
-                "required": [],
-                "additionalProperties": false
+                "required": []
             },
             "multiple": true,
             "category": "Assets",
