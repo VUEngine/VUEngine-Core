@@ -431,7 +431,6 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 			}
 		}
 
-
 		for(int32 counter = 0; NULL != node; node = node->next, counter++)
 		{
 			ASSERT(node, "printOptions: push null node");
