@@ -489,16 +489,16 @@ void Stage::alertOfLoadedEntity(Entity entity)
 // add entity to the stage
 Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
 {
-	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++, true);
+	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 
 Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId)
 {
-	return Stage::doAddChildEntity(this, positionedEntity, permanent, internalId, true);
+	return Stage::doAddChildEntity(this, positionedEntity, permanent, internalId);
 }
 
 // add entity to the stage
-Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId, bool makeReady)
+Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId)
 {
 	if(positionedEntity)
 	{
@@ -515,12 +515,9 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 			entity->dontStreamOut = entity->dontStreamOut || permanent;
 			
-			if(makeReady)
+			if(entity->parent == Container::safeCast(this))
 			{
-				if(entity->parent == Container::safeCast(this))
-				{
-					Entity::ready(entity, true);
-				}
+				Entity::ready(entity, true);
 			}
 
 			Stage::alertOfLoadedEntity(this, entity);
@@ -832,7 +829,7 @@ void Stage::loadInitialEntities()
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, false))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
-				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
+				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
 				if(!isDeleted(entity))
@@ -843,11 +840,6 @@ void Stage::loadInitialEntities()
 					}
 
 					stageEntityDescription->internalId = Entity::getInternalId(entity);
-
-					if(entity->parent == Container::safeCast(this))
-					{
-						Entity::ready(entity, true);
-					}
 				}
 			}
 		}
@@ -1006,7 +998,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 						break;
 					}
 				}
@@ -1048,7 +1040,7 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 					}
 					else
 					{
-						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 						break;
 					}
 				}
@@ -1105,7 +1097,7 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 				}
 				else
 				{
-					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
+					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					break;
 				}
 			}
