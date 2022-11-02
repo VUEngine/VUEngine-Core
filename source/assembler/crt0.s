@@ -56,6 +56,7 @@ _start:
 	st.b	r21,    0[r10]
 
 /* read SRAM's sample */
+/*
 	movhi	hi(__stack), r0,sp
 	movea	lo(__stack), sp,sp
 	movhi	hi(_continue),r0,lp
@@ -63,6 +64,7 @@ _start:
 	movhi	hi(_readSRAM),r0,r1
 	movea	lo(_readSRAM),r1,r1
 	jmp	    [r1]
+*/
 
 _continue:
 
