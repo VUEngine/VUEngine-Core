@@ -1514,7 +1514,7 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 
 	if(!isDeleted(this->sprites))
 	{
-		invalidateGraphics = invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+		invalidateGraphics = invalidateTransformationFlag | this->invalidateGlobalTransformation;
 	}
 	
 	if(this->invalidateGlobalTransformation)
@@ -1523,7 +1523,7 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 
 		Entity::transformShapes(this);
 	}
-	else if(this->children)
+	else if(NULL != this->children)
 	{
 		Entity::transformChildren(this, invalidateTransformationFlag);
 	}
@@ -1561,7 +1561,7 @@ void Entity::synchronizeGraphics()
 		return;
 	}
 
-	if(this->children)
+	if(NULL != this->children)
 	{
 		Base::synchronizeGraphics(this);
 	}
@@ -1794,36 +1794,6 @@ bool Entity::isVisible(int32 pad, bool recursive)
 }
 
 /**
- * Check if necessary to update sprite's position
- *
- * @return		Boolean if necessary
- */
-bool Entity::updateSpritePosition()
-{
-	return __INVALIDATE_POSITION & this->invalidateGlobalTransformation;
-}
-
-/**
- * Check if necessary to update sprite's rotation
- *
- * @return		Boolean if necessary
- */
-bool Entity::updateSpriteRotation()
-{
-	return __INVALIDATE_ROTATION & this->invalidateGlobalTransformation;
-}
-
-/**
- * Check if necessary to update sprite's scale
- *
- * @return		Boolean if necessary
- */
-bool Entity::updateSpriteScale()
-{
-	return __INVALIDATE_SCALE & this->invalidateGlobalTransformation;
-}
-
-/**
  * Retrieve shapes list
  *
  * @return		Entity's Shape list
@@ -1914,7 +1884,7 @@ void Entity::resume()
 	else
 	{
 		// force update sprites on next game's cycle
-		this->invalidateGraphics = Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+		this->invalidateGraphics = this->invalidateGlobalTransformation;
 	}
 
 	if(this->hidden)

@@ -99,9 +99,6 @@ class Entity : Container
 	bool isVisible(int32 pad, bool recursive);
 	VirtualList getShapes();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
-	bool updateSpritePosition();
-	bool updateSpriteRotation();
-	bool updateSpriteScale();
 	void addWireframe(Wireframe wireframe);
 	void setSpec(void* entitySpec);
 	virtual void setDirection(Direction direction);
