@@ -552,7 +552,7 @@ void ParticleSystem::transformParticles()
 	{
 		Particle particle = Particle::safeCast(node->data);
 
-		if(particle->expired)
+		if(particle->expired || !particle->transform)
 		{
 			continue;
 		}

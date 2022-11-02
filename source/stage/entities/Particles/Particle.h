@@ -75,6 +75,7 @@ class Particle : SpatialObject
 	// Particle's life span in milliseconds
 	int16 lifeSpan;
 	bool expired;
+	bool transform;
 
 	/// @publicsection
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
