@@ -74,6 +74,9 @@ ROMInfo romInfo __attribute__((section(".rominfo"))) =
 	__ROM_VERSION
 };
 
+uint32 _wramSample __attribute__((section(".dram_dirty"))) __attribute__((unused));
+uint32 _sramSample __attribute__((section(".dram_dirty"))) __attribute__((unused));
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
