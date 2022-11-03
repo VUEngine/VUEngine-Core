@@ -48,7 +48,7 @@ SECTIONS
         *(.rodata*)
     } >rom = 0xFF
 
-    v = .;
+    v = . + 0x20;
 
     /* Ram memory */
     __dataLma = .;
