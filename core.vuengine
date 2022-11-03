@@ -4484,6 +4484,20 @@
                         ],
                         "default": "rom"
                     },
+                    "compression": {
+                        "type": "string",
+                        "oneOf": [
+                            {
+                                "const": "none",
+                                "title": "None"
+                            },
+                            {
+                                "const": "rle",
+                                "title": "RLE"
+                            }
+                        ],
+                        "default": "none"
+                    },
                     "characters": {
                         "type": "array",
                         "items": {
