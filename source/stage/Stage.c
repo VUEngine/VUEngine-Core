@@ -690,6 +690,11 @@ void Stage::preloadAssets()
 
 		for(; this->stageSpec->assets.textureSpecs[i]; i++)
 		{
+			if(NULL == this->stageSpec->assets.textureSpecs[i]->charSetSpec)
+			{
+				continue;
+			}
+			
 			if(__ANIMATED_SINGLE != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType &&
 				__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType)
 			{

@@ -110,9 +110,17 @@ void Texture::loadCharSet()
 {
 	Texture::releaseCharSet(this);
 
+	if(NULL == this->textureSpec->charSetSpec)
+	{
+		return;
+	}
+
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
 
-	ASSERT(this->charSet, "Texture::constructor: null charSet");
+	if(isDeleted(this->charSet))
+	{
+		return;
+	}
 
 	this->status = kTexturePendingWriting;
 
@@ -327,6 +335,21 @@ bool Texture::update()
 	return kTextureWritten == this->status;
 }
 
+uint8 Texture::getAllocationType()
+{
+	if(!isDeleted(this->charSet))
+	{
+		return CharSet::getAllocationType(this->charSet);
+	}
+
+	if(NULL != this->textureSpec->charSetSpec)
+	{
+		return this->textureSpec->charSetSpec->allocationType;
+	}
+
+	return __NO_ALLOCATION_TYPE;
+}
+
 /**
  * Rewrite the map to DRAM
  */
@@ -444,7 +467,7 @@ void Texture::setFrameAnimatedMulti(uint16 frame __attribute__ ((unused)))
 uint32 Texture::getTotalCols()
 {
 	// determine the allocation type
-	switch(this->textureSpec->charSetSpec->allocationType)
+	switch(Texture::getAllocationType(this))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -486,7 +509,7 @@ uint32 Texture::getTotalCols()
 uint32 Texture::getTotalRows()
 {
 	// determine the allocation type
-	switch(this->textureSpec->charSetSpec->allocationType)
+	switch(Texture::getAllocationType(this))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -543,6 +566,30 @@ CharSet Texture::getCharSet(uint32 loadIfNeeded)
 	}
 
 	return this->charSet;
+}
+
+/**
+ * Set CharSet
+ *
+ * @param charset	CharSet
+ */
+void Texture::setCharSet(CharSet charSet)
+{
+	Texture::releaseCharSet(this);
+
+	this->charSet = charSet;
+
+	if(NULL == this->charSet)
+	{
+		return;
+	}	
+
+	this->status = kTexturePendingWriting;
+
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+
+	Texture::rewrite(this);
 }
 
 /**

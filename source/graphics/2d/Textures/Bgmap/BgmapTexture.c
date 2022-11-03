@@ -107,9 +107,24 @@ bool BgmapTexture::write()
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
+	
+	uint8 allocationType = __NO_ALLOCATION_TYPE;
+
+	if(!isDeleted(this->charSet))
+	{
+		allocationType = CharSet::getAllocationType(this->charSet);
+	}
+	else if(NULL != this->textureSpec->charSetSpec)
+	{
+		allocationType = this->textureSpec->charSetSpec->allocationType;
+	}
+	else
+	{
+		return false;
+	}
 
 	//determine the allocation type
-	switch(this->textureSpec->charSetSpec->allocationType)
+	switch(allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:

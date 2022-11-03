@@ -99,7 +99,7 @@ uint8 CharSet::getUsageCount()
  *
  * @return				Allocation type
  */
-uint32 CharSet::getAllocationType()
+uint8 CharSet::getAllocationType()
 {
 	return this->charSetSpec->allocationType;
 }

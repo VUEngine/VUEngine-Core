@@ -128,6 +128,11 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
  */
 CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 {
+	if(NULL == charSetSpec)
+	{
+		return NULL;
+	}
+
 	CharSet charSet = NULL;
 
 	switch(charSetSpec->allocationType)

@@ -22,6 +22,9 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+// non allocation type
+#define __NO_ALLOCATION_TYPE				0x00
+
 // spec of a CharSet for unanimated sprites
 #define __NOT_ANIMATED						0x01
 
@@ -107,7 +110,7 @@ class CharSet : ListenerObject
 	void constructor(CharSetSpec* charSetSpec, uint16 offset);
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	uint32 getAllocationType();
+	uint8 getAllocationType();
 	uint32 getOffset();
 	void setOffset(uint16 offset);
 	void setCharSetSpec(CharSetSpec* charSetSpec);

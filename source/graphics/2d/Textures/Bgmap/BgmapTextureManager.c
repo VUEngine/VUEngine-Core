@@ -287,10 +287,9 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 	{
 		int32 i = Texture::getId(bgmapTexture);
 
-		TextureSpec* textureSpec = Texture::getTextureSpec(bgmapTexture);
-
-		switch(textureSpec->charSetSpec->allocationType)
+		switch(Texture::getAllocationType(bgmapTexture))
 		{
+			case __NO_ALLOCATION_TYPE:
 			case __ANIMATED_SINGLE:
 			case __ANIMATED_SINGLE_OPTIMIZED:
 			case __ANIMATED_SHARED_COORDINATED:
@@ -460,46 +459,60 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
  */
 BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
+	if(NULL == bgmapTextureSpec)
+	{
+		return NULL;
+	}
+
 	BgmapTexture bgmapTexture = NULL;
 
-	//determine the allocation type
-	switch(bgmapTextureSpec->charSetSpec->allocationType)
+	if(NULL == bgmapTextureSpec->charSetSpec)
 	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED:
+		bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
-			// load a new texture
-			bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+		ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
+	}
+	else
+	{
+		//determine the allocation type
+		switch(bgmapTextureSpec->charSetSpec->allocationType)
+		{
+			case __ANIMATED_SINGLE:
+			case __ANIMATED_SINGLE_OPTIMIZED:
+			case __ANIMATED_SHARED_COORDINATED:
 
-			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
-			break;
-
-		case __ANIMATED_SHARED:
-		case __ANIMATED_MULTI:
-		case __NOT_ANIMATED:
-
-			// first try to find an already created texture
-			bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec);
-
-			// if couldn't find the texture
-			if(bgmapTexture)
-			{
-				BgmapTexture::increaseUsageCount(bgmapTexture);
-			}
-			else
-			{
-				// load it
+				// load a new texture
 				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
-			}
 
-			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");
-			break;
+				ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
+				break;
 
-		default:
+			case __ANIMATED_SHARED:
+			case __ANIMATED_MULTI:
+			case __NOT_ANIMATED:
 
-			NM_ASSERT(false, "BgmapTextureManager::getTexture: not valid allocation type");
-			break;
+				// first try to find an already created texture
+				bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec);
+
+				// if couldn't find the texture
+				if(bgmapTexture)
+				{
+					BgmapTexture::increaseUsageCount(bgmapTexture);
+				}
+				else
+				{
+					// load it
+					bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+				}
+
+				ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");
+				break;
+
+			default:
+
+				NM_ASSERT(false, "BgmapTextureManager::getTexture: not valid allocation type");
+				break;
+		}
 	}
 
 	return bgmapTexture;

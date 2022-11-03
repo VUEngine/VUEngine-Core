@@ -120,6 +120,7 @@ abstract class Texture : ListenerObject
 	uint32 getTotalRows();
 	uint32 getNumberOfFrames();
 	CharSet getCharSet(uint32 loadIfNeeded);
+	void setCharSet(CharSet charSet);
 	uint16* getMap();
 	void setPalette(uint8 palette);
 	uint8 getPalette();
@@ -137,6 +138,7 @@ abstract class Texture : ListenerObject
 	uint16 getFrame();
 	bool prepare();
 	bool update();
+	uint8 getAllocationType();
 	virtual bool write();
 	virtual void rewrite();
 	virtual void setFrameAnimatedMulti(uint16 frame);
