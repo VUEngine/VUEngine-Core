@@ -867,6 +867,11 @@ void Shape::hide()
 	}
 }
 
+void Shape::setVisible(bool value)
+{
+	this->isVisible = value;
+}
+
 void Shape::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);

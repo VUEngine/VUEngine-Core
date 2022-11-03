@@ -31,6 +31,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+static int16 _visibilityPadding = 0;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -38,6 +40,11 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
+
+static void Entity::setVisibilityPadding(int16 visibilityPadding)
+{
+	_visibilityPadding = visibilityPadding;
+}
 
 /**
  * Class constructor
@@ -67,6 +74,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
+	this->visible = true;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -1572,6 +1580,8 @@ void Entity::synchronizeGraphics()
 	}
 
 	this->invalidateGraphics = false;
+
+	Entity::computeVisibiliy(this, _visibilityPadding, true);
 }
 
 /**
@@ -1726,16 +1736,42 @@ bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
  * @param recursive
  * @return			Boolean if visible
  */
-bool Entity::isVisible(int32 pad, bool recursive)
+bool Entity::isVisible()
 {
-	bool isVisible = false;
+	return this->visible;
+}
+
+void Entity::computeVisibiliy(int32 pad, bool recursive)
+{
+	this->visible = false;
 
 	if(this->sprites && this->sprites->head)
 	{
-		for(VirtualNode spriteNode = this->sprites->head; !isVisible && spriteNode; spriteNode = spriteNode->next)
+		bool areSpritesVisible = false;
+
+		for(VirtualNode spriteNode = this->sprites->head; !this->visible && spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
-			isVisible = Entity::isSpriteVisible(this, sprite, pad);
+
+			if(Sprite::isVisible(sprite))
+			{
+				this->visible = areSpritesVisible = true;
+				break;
+			}
+
+			if(Entity::isSpriteVisible(this, sprite, pad))
+			{
+				this->visible = areSpritesVisible = true;
+				break;
+			}
+		}
+
+		if(!isDeleted(this->shapes))
+		{
+			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+			{
+				Shape::setVisible(Shape::safeCast(node->data), areSpritesVisible);
+			}			
 		}
 	}
 	else
@@ -1756,41 +1792,47 @@ bool Entity::isVisible(int32 pad, bool recursive)
 		size.y = __ABS(size.y);
 		size.z = __ABS(size.z);
 
-		isVisible = true;
+		this->visible = true;
 
 		int32 helperPad = pad + __ABS(position2D.z);
 
 		// check x visibility
 		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
 		{
-			isVisible = false;
+			this->visible = false;
 		}
 		// check y visibility
 		else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
 		{
-			isVisible = false;
+			this->visible = false;
 		}
 		// check z visibility
 		else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
 		{
-			isVisible = false;
+			this->visible = false;
 		}
 	}
 
-	if(!isVisible && recursive && NULL != this->children)
+	if(!this->visible && recursive && NULL != this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
 			Entity child = Entity::safeCast(VirtualNode::getData(childNode));
 
-			if(!child->hidden && Entity::isVisible(child, pad, true))
+			if(child->hidden)
 			{
-				return true;
+				continue;
+			}
+
+			Entity::computeVisibiliy(child, pad, true);
+
+			if(Entity::isVisible(child))
+			{
+				this->visible = true;
+				break;
 			}
 		}
 	}
-
-	return isVisible;
 }
 
 /**

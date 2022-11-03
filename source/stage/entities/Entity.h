@@ -50,6 +50,8 @@ class Entity : Container
 	bool transformShapes;
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
+	// Flag used to know if the entity is within the camera reach
+	bool visible;
 
 	/// @publicsection
 	static Entity instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
@@ -57,6 +59,7 @@ class Entity : Container
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
+	static void setVisibilityPadding(int16 visibilityPadding);
 
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 	void streamOut();
@@ -96,7 +99,7 @@ class Entity : Container
 	uint32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
-	bool isVisible(int32 pad, bool recursive);
+	bool isVisible();
 	VirtualList getShapes();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	void addWireframe(Wireframe wireframe);

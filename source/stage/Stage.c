@@ -340,6 +340,8 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// load background music
 	Stage::setupSounds(this);
 
+	Entity::setVisibilityPadding(this->streaming.loadPadding + this->streaming.unloadPadding);
+
 	if(overrideCameraPosition)
 	{
 		Camera::reset(Camera::getInstance());
@@ -881,7 +883,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->streaming.loadPadding + this->streaming.unloadPadding), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity))
 		{
 			int16 internalId = Entity::getInternalId(entity);
 

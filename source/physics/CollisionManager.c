@@ -160,13 +160,13 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		shape->isVisible = true;
-
 		extern const Vector3D* _cameraPosition;
 
 		// not ready for collision checks if out of the camera
-		if(!this->checkShapesOutOfCameraRange)
+		if(!shape->isVisible && !this->checkShapesOutOfCameraRange)
 		{
+			shape->isVisible = true;
+
 			extern const Rotation* _cameraInvertedRotation;
 			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
 			RightBox rightBox = Shape::getSurroundingRightBox(shape);

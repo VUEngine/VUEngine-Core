@@ -232,6 +232,8 @@ abstract class Shape : ListenerObject
 	void registerCollisions(bool value);
 	void show();
 	void hide();
+	void setVisible(bool value);
+
 	RightBox getSurroundingRightBox();
 	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
