@@ -129,9 +129,11 @@ uint32 CollisionManager::update(Clock clock)
 
 	uint32 returnValue = false;
 
+#ifdef __SHOW_PHYSICS_PROFILING
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
+#endif
 
 	// check the shapes
 	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)

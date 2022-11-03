@@ -1745,6 +1745,11 @@ void Entity::computeVisibiliy(int32 pad, bool recursive)
 {
 	this->visible = false;
 
+	if(this->hidden)
+	{
+		return;
+	}
+
 	if(this->sprites && this->sprites->head)
 	{
 		bool areSpritesVisible = false;
