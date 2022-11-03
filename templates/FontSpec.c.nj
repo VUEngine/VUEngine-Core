@@ -1,3 +1,40 @@
+{%- set sanitizedSpecName = item.name | sanitizeSpecName -%}
+
+{%- set tilesData = [] -%}
+{%- set block = '' -%}
+{%- set currentByte = '' -%}
+{%- for c in range(item.offset, item.offset + item.characterCount) -%}
+    {%- for y in range(0, item.size.y * 8) -%}
+        {%- for x in range(0, item.size.x * 8) -%}
+            {%- set pixel = item.characters[c][y][x] | default(0) -%}
+            {%- set currentByte = [pixel | intToBin(2), currentByte] | join -%}
+
+            {%- if currentByte | length === 4 -%}
+                {%- set block = [currentByte | binToHex, block] | join -%}
+                {%- set currentByte = '' -%}
+            {%- endif -%}
+
+            {%- if block | length === 8 -%}
+                {%- set tilesData = (tilesData.push(block),tilesData) -%}
+                {%- set block = '' -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endfor -%}
+{%- endfor -%}
+
+{%- if item.compression !== 'none' -%}
+    {%- set compressionResults = compressTiles(tilesData, item.compression, {
+        isAnimation: false,
+        individualFiles: false,
+        frameWidth: 0,
+        frameHeight: 0
+    }) -%}
+    {%- set tilesData = compressionResults.tilesData -%}
+    {%- set tilesData = (tilesData.unshift('00000001'),tilesData) -%}
+{%- else -%}
+    {%- set tilesData = (tilesData.unshift('00000000'),tilesData) -%}
+{%- endif -%}
+
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.c.nj') %}
 
@@ -8,45 +45,19 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-const uint32 {{ item.name }}FontTiles[{{ 1 + item.characterCount * 4 }}] __attribute__((aligned(4)))
+const uint32 {{ sanitizedSpecName }}FontTiles[{{ 1 + item.characterCount * 4 }}] __attribute__((aligned(4)))
 {%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
 {
-	0x00000000,
-	{% set block = '' -%}
-	{%- set blocksThisLine = 0 -%}
-	{%- set currentByte = '' -%}
-
-    {%- for c in range(item.offset, item.offset + item.characterCount) -%}
-        {%- for y in range(0, item.size.y * 8) -%}
-            {%- for x in range(0, item.size.x * 8) -%}
-                {%- set pixel = item.characters[c][y][x] | default(0) -%}
-                {%- set currentByte = [pixel | intToBin(2), currentByte] | join -%}
-
-                {%- if currentByte | length === 4 -%}
-                    {%- set block = [currentByte | binToHex, block] | join -%}
-                    {%- set currentByte = '' -%}
-                {%- endif -%}
-
-                {%- if block | length === 8 -%}
-                    0x{{ block }},
-                    {%- set block = '' -%}
-                    {%- set blocksThisLine = blocksThisLine + 1 -%}
-                {%- endif -%}
-
-                {%- if blocksThisLine ===  8 and not loop.last -%}
-                    {{- "\n    " -}}
-                    {%- set blocksThisLine = 0 -%}
-                {%- endif -%}
-
-            {%- endfor -%}
-        {%- endfor -%}
+    {% for tileData in tilesData -%}
+    0x{{ tileData }},
+    {%- if loop.index % 8 == 0 and not loop.last %}{{ "\n    " }}{% endif -%}
     {%- endfor %}
 };
 
 
 {{ macros.sectionHeader('Definitions') }}
 
-CharSetROMSpec {{ item.name | sanitizeSpecName }}FontCharSet =
+CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 {
 	// number of chars
 	{{ item.characterCount * item.size.x * item.size.y }},
@@ -55,16 +66,16 @@ CharSetROMSpec {{ item.name | sanitizeSpecName }}FontCharSet =
 	__NOT_ANIMATED,
 
 	// char data
-	(uint32*){{ item.name }}FontTiles,
+	(uint32*){{ sanitizedSpecName }}FontTiles,
 
 	// pointer to the frames offsets
 	NULL,
 };
 
-FontROMSpec {{ item.name | sanitizeSpecName }}Font =
+FontROMSpec {{ sanitizedSpecName }}Font =
 {
 	// font charset spec pointer
-	(CharSetSpec*)&{{ item.name }}FontCharSet,
+	(CharSetSpec*)&{{ sanitizedSpecName }}FontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
 	{{ item.offset }},
@@ -79,5 +90,5 @@ FontROMSpec {{ item.name | sanitizeSpecName }}Font =
 	{{ "{" }}{{ item.size.x }}, {{ item.size.y }}{{ "}" }},
 
 	// font's name
-	"{{ item.name }}",
+	"{{ sanitizedSpecName }}",
 };
