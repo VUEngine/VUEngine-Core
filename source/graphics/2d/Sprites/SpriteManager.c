@@ -392,8 +392,6 @@ bool SpriteManager::sortProgressively()
 			node->data = nextSprite;
 			nextNode->data = sprite;
 
-			sprite->renderFlag = nextSprite->renderFlag = true;
-
 			node = nextNode;
 
 			swapped = true;
@@ -960,7 +958,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->visible && sprite->positioned && !sprite->show)
+		if(sprite->positioned && __SHOW == sprite->show)
 		{
 			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
 		}

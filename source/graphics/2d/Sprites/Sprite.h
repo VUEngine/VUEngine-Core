@@ -135,8 +135,6 @@ abstract class Sprite : ListenerObject
 	bool show;
 	// Update animation
 	bool writeAnimationFrame;
-	// Flag for transparency control
-	bool visible;
 	// Flag to allow rendering
 	bool positioned;
 	// Flato to allow registering
@@ -145,8 +143,6 @@ abstract class Sprite : ListenerObject
 	uint8 transparent;
 	// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
-	// Flag to avoid rewriting DRAM's cache if not needed
-	uint8 renderFlag;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);

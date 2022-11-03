@@ -55,12 +55,10 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->show = __SHOW_NEXT_FRAME;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
-	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
 	this->registered = false;
 	this->checkIfWithinScreenSpace = true;
-	this->renderFlag = true;
 }
 
 /**
@@ -110,7 +108,6 @@ bool Sprite::prepareTexture()
 
 int16 Sprite::render(int16 index, bool evenFrame)
 {
-	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
 
 	// If the client code makes these checks before calling this method,
@@ -126,8 +123,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	if(isDeleted(this->texture))
 	{
 		this->index = Sprite::doRender(this, index, evenFrame);
-
-		this->visible = __NO_RENDER_INDEX != this->index;
 
 		return this->index;
 	}
@@ -164,22 +159,12 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	if(this->visible && this->writeAnimationFrame)
+	if(this->writeAnimationFrame)
 	{
 		Sprite::update(this);
 	}
 
-	if((previousIndex == index) && !this->renderFlag)
-	{
-		this->index = previousIndex;
-	}
-	else
-	{
-		this->renderFlag = false;
-		this->index = Sprite::doRender(this, index, evenFrame);
-	}
-
-	this->visible = __NO_RENDER_INDEX != this->index;
+	this->index = Sprite::doRender(this, index, evenFrame);
 
 	return this->index;
 }
@@ -282,30 +267,9 @@ bool Sprite::isHidden()
  */
 void Sprite::position(const Vector3D* position)
 {
-	this->positioned = true;
-
 	PixelVector position2D = Vector3D::projectToPixelVector(*position, this->position.parallax);
 
-	if(!((this->position.x - position2D.x) | 
-		(this->position.y - position2D.y) | 
-		(this->position.z - position2D.z) | 
-		(this->position.parallax - position2D.parallax)))
-	{
-		if(!this->registered)
-		{
-			Sprite::registerWithManager(this);
-		}
-
-		return;
-	}
-
-	this->position = position2D;
-	this->renderFlag = true;
-
-	if(!this->registered)
-	{
-		Sprite::registerWithManager(this);
-	}
+	Sprite::setPosition(this, &position2D);
 }
 
 /**
@@ -322,16 +286,10 @@ void Sprite::setPosition(const PixelVector* position)
 
 	this->positioned = 	true;
 
-	if(!((this->position.x - position->x) | 
-		(this->position.y - position->y) | 
-		(this->position.z - position->z) | 
-		(this->position.parallax - position->parallax)))
+	if(this->position.x != position->x || this->position.y != position->y || this->position.z != position->z || this->position.parallax != position->parallax)
 	{
-		return;
+		this->position = *position;
 	}
-
-	this->position = *position;
-	this->renderFlag = true;
 }
 
 /**
@@ -342,7 +300,6 @@ void Sprite::setPosition(const PixelVector* position)
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
 	int16 parallax = Optics::calculateParallax(z);
-	this->renderFlag |= this->position.parallax != parallax;
 	this->position.parallax = parallax;
 }
 
@@ -563,16 +520,7 @@ const PixelVector* Sprite::getDisplacement()
  */
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
-	if(!((this->displacement.x - displacement->x) | 
-		(this->displacement.y - displacement->y) | 
-		(this->displacement.z - displacement->z) | 
-		(this->displacement.parallax - displacement->parallax)))
-	{
-		return;
-	}
-
 	this->displacement = *displacement;
-	this->renderFlag = true;
 }
 
 /**
@@ -582,7 +530,6 @@ void Sprite::setDisplacement(const PixelVector* displacement)
  */
 void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
 {
-	this->renderFlag = true;
 }
 
 /**
@@ -633,7 +580,7 @@ void Sprite::update()
  */
 bool Sprite::isVisible()
 {
-	return this->visible && __HIDE != this->show;
+	return __NO_RENDER_INDEX != this->index && __HIDE != this->show;
 }
 
 /**
@@ -679,8 +626,6 @@ uint8 Sprite::getTransparent()
 void Sprite::setTransparent(uint8 value)
 {
 	this->transparent = value;
-	this->visible = true;
-	this->renderFlag = true;
 }
 
 /**
@@ -694,9 +639,7 @@ bool Sprite::updateAnimation()
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
-		
 		stillAnimating |= AnimationController::isPlaying(this->animationController);
-		this->renderFlag |= this->writeAnimationFrame;
 	}
 
 	return stillAnimating;

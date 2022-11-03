@@ -58,7 +58,6 @@ void ObjectSpriteContainer::constructor()
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
 	this->show = __SHOW_NEXT_FRAME;
-	this->visible = true;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
 	this->lockSpritesLists = false;
@@ -193,8 +192,6 @@ void ObjectSpriteContainer::sortProgressively()
 			// swap nodes' data
 			node->data = previousSprite;
 			previousNode->data = sprite;
-
-			sprite->renderFlag = previousSprite->renderFlag = true;
 
 			node = previousNode;
 		}
@@ -337,8 +334,6 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	}
 
 	this->lastObjectIndex = _objectIndex;
-
-	this->renderFlag = true;
 
 	return !renderedObjectSprites ? __NO_RENDER_INDEX : index;
 }
