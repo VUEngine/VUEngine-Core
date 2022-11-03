@@ -372,7 +372,7 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sende
 		{
 			Telegram telegram = delayedMessage->telegram;
 
-			if(isDeleted(telegram) || Telegram::getSender(telegram) == sender)
+			if(isDeleted(telegram) || telegram->sender == sender)
 			{
 				delayedMessage->discarded = true;
 				messagesWereDiscarded |= true;
@@ -434,7 +434,38 @@ bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject rece
 		{
 			Telegram telegram = delayedMessage->telegram;
 
-			if(isDeleted(telegram) || Telegram::getReceiver(telegram) == receiver)
+			if(isDeleted(telegram) || telegram->receiver == receiver)
+			{
+				delayedMessage->discarded = true;
+				messagesWereDiscarded |= true;
+			}
+		}
+	}
+
+	return messagesWereDiscarded;
+}
+
+
+/**
+ * Discarded all delayed messages sent to an object
+ *
+ * @private
+ * @param sender	the object that the message was originally sent to
+ */
+bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
+{
+	bool messagesWereDiscarded = false;
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage))
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(isDeleted(telegram) || telegram->receiver == listenerObject || telegram->sender == listenerObject)
 			{
 				delayedMessage->discarded = true;
 				messagesWereDiscarded |= true;

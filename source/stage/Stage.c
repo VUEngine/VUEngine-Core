@@ -629,12 +629,12 @@ void Stage::unloadChild(Container child)
 	}
 
 	Base::removeChild(this, child, true);
-	Container::fireEvent(child, kEventStageChildStreamedOut);
+/*	Container::fireEvent(child, kEventStageChildStreamedOut);
 	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deleted child during kEventStageChildStreamedOut");
 	Container::removeEventListeners(child, NULL, kEventStageChildStreamedOut);
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
-
+*/
 	int16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntityDescriptions->head;

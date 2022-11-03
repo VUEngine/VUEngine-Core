@@ -70,6 +70,7 @@ singleton class MessageDispatcher : Object
 	bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
 	bool discardAllDelayedMessagesFromSender(ListenerObject sender);
 	bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
+	bool discardAllDelayedMessages(ListenerObject listenerObject);
 	void processDiscardedMessages();
 	void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
 	void print(int32 x, int32 y);
