@@ -118,10 +118,17 @@ void Entity::iAmDeletingMyself()
 	Base::iAmDeletingMyself(this);
 
 	// destroy collision shapes
-	Entity::allowCollisions(this, false);
+	Entity::destroyComponents(this);
 
 	// Do not delete components right now since client code may still assume 
 	// they are available
+}
+
+void Entity::destroyComponents()
+{
+	Entity::destroyWireframes(this);
+	Entity::destroySprites(this);
+	Entity::destroyShapes(this);
 }
 
 /**

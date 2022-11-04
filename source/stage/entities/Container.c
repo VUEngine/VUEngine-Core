@@ -264,6 +264,11 @@ void Container::removeChild(Container child, bool deleteChild)
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
+
+		if(deleteChild)
+		{
+			Container::destroyComponents(child);
+		}
 	}
 #ifndef __RELEASE
 	else
@@ -289,6 +294,19 @@ void Container::setupShapes()
 			Container child = Container::safeCast(node->data);
 
 			Container::setupShapes(child);
+		}
+	}
+}
+
+void Container::destroyComponents()
+{
+	if(NULL != this->children)
+	{
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			Container::destroyComponents(child);
 		}
 	}
 }

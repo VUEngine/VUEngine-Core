@@ -129,6 +129,7 @@ class Entity : Container
 	override fixed_t getBounciness();
 	override fixed_t getFrictionCoefficient();
 	override uint32 getInGameType();
+	override void destroyComponents();
 }
 
 

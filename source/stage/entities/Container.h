@@ -159,6 +159,7 @@ class Container : SpatialObject
 	virtual void show();
 	virtual void hide();
 	virtual bool isTransformed();
+	virtual void destroyComponents();
 
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
