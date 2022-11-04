@@ -268,7 +268,7 @@ bool Sprite::isHidden()
  */
 void Sprite::position(const Vector3D* position)
 {
-	PixelVector position2D = Vector3D::projectToPixelVector(*position, this->position.parallax);
+	PixelVector position2D = Vector3D::transformToPixelVector(*position);
 
 	Sprite::setPosition(this, &position2D);
 }
