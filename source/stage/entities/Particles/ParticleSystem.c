@@ -563,7 +563,7 @@ void ParticleSystem::transformParticles()
 
 void ParticleSystem::synchronizeGraphics()
 {
-	NM_ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
+	ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
 
 	if(ParticleSystem::isPaused(this) || isDeleted(this->particles))
 	{

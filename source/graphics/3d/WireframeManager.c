@@ -155,12 +155,12 @@ bool WireframeManager::sortProgressively()
 		VirtualNode nextNode = node->next;
 
 		NM_ASSERT(!isDeleted(node->data), "WireframeManager::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
+		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
 
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data");
-		NM_ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
+		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
 
 		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
 

@@ -313,7 +313,7 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
 void SpriteManager::disposeSprite(Sprite sprite)
 {
 	NM_ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
-	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::disposeSprite: trying to dispose a non sprite");
+	ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::disposeSprite: trying to dispose a non sprite");
 
 	if(isDeleted(sprite))
 	{
@@ -376,12 +376,12 @@ bool SpriteManager::sortProgressively()
 		VirtualNode nextNode = node->next;
 
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-		NM_ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
 
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
@@ -434,7 +434,7 @@ bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
-	NM_ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
+	ASSERT(!__GET_CAST(ObjectSprite, sprite), "SpriteManager::registerSprite: trying to register an object sprite");
 
 	if(VirtualList::find(this->sprites, sprite))
 	{

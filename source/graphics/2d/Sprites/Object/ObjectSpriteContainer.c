@@ -177,12 +177,12 @@ void ObjectSpriteContainer::sortProgressively()
 		VirtualNode previousNode = node->previous;
 
 		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data cast");
+		ASSERT(__GET_CAST(Sprite, node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data cast");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data");
-		NM_ASSERT(__GET_CAST(Sprite, previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data cast");
+		ASSERT(__GET_CAST(Sprite, previousNode->data), "ObjectSpriteContainer::sortProgressively: NULL previousNode's data cast");
 
 		Sprite previousSprite = Sprite::safeCast(previousNode->data);
 
