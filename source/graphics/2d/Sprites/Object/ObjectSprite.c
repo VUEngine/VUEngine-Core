@@ -143,7 +143,7 @@ void ObjectSprite::rewrite()
 
 	int16 jDisplacement = 0;
 
-	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
+	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
 
 	ObjectAttributes* objectPointer = NULL;
 
@@ -156,8 +156,7 @@ void ObjectSprite::rewrite()
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
 
-			int32 charNumberIndex = (jDisplacement + j) << 1;
-			uint16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			uint16 charNumber = charLocation + framePointer[jDisplacement + j];
 			objectPointer->tile = fourthWordValue | charNumber;
 		}
 	}
@@ -264,7 +263,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint8* framePointer = (uint8*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
+	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
@@ -310,8 +309,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 			objectPointer->head = secondWordValue;
 			objectPointer->jy = outputY;
 
-			int32 charNumberIndex = (jDisplacement + j) << 1;
-			uint16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
+			uint16 charNumber = charLocation + framePointer[jDisplacement + j];
 			objectPointer->tile = fourthWordValue | charNumber;
 
 			result = index;
