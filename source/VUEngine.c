@@ -286,6 +286,11 @@ void VUEngine::start(GameState state)
 #endif
 				}
 			}
+
+#ifdef __ENABLE_PROFILER
+			Profiler::end(Profiler::getInstance());
+			Profiler::start(Profiler::getInstance());
+#endif
 		}
 	}
 	else
@@ -686,10 +691,6 @@ void VUEngine::synchronizeUIGraphics()
 
 	// apply transformations to graphics
 	GameState::synchronizeUIGraphics(this->currentState);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_UI_GRAPHICS);
-#endif
 }
 
 // update game's physics subsystem
@@ -886,18 +887,6 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 		}
 #endif
 	}
-
-#ifdef __ENABLE_PROFILER
-	if(this->currentGameCycleEnded)
-	{
-		Profiler::end(Profiler::getInstance());
-		Profiler::start(Profiler::getInstance());
-	}
-	else
-	{
-		Profiler::end(Profiler::getInstance());
-	}
-#endif
 }
 
 void VUEngine::currentFrameStarted()

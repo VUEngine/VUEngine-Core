@@ -34,6 +34,8 @@ typedef struct Lap
 	const char* processName;
 	float elapsedTime;
 	uint32 lapType;
+	uint32 currentTimerCounter;
+	uint32 interruptFlags;
 	uint8 column;
 } Lap;
 
@@ -108,7 +110,6 @@ void Profiler::reset()
 	this->started = false;
 	this->timerManager = TimerManager::getInstance();
 	this->initialized = false;
-	this->previousTimerCounter = 0;
 	this->currentProfilingProcess = 0;
 	this->printedProcessesNames = false;
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
@@ -170,9 +171,9 @@ void Profiler::start()
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->printedProcessesNames = true;
 	this->currentProfilingProcess = 0;
-	this->previousTimerCounter = this->timerCounter;
 	this->totalTime = 0;
 	this->lastLapIndex = 0;
+	this->interruptFlags = 0;
 
 	TimerManager::enable(this->timerManager, false);
 	TimerManager::configureTimerCounter(this->timerManager);
@@ -214,23 +215,7 @@ void Profiler::end()
 	Profiler::print(this);
 }
 
-void Profiler::print()
-{
-	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
-	Printing::clear(_printing);
-	Printing::text(_printing, "================================================", 0, 27, "Profiler");
-
-	uint32 previousLapType = kProfilerLapTypeNormalProcess;
-
-	for(VirtualNode node = VirtualList::begin(this->laps); NULL != node; node = VirtualNode::getNext(node))
-	{
-		Lap* lap = (Lap*)VirtualNode::getData(node);
-		Profiler::printValue(this, lap, previousLapType); 
-		previousLapType = lap->lapType;
-	}
-}
-
-void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
+void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint32 currentTimerCounter, uint8 column)
 {
 	Lap* lap = new Lap;
 
@@ -238,11 +223,27 @@ void Profiler::registerLap(const char* processName, float elapsedTime, uint32 la
 	lap->elapsedTime = elapsedTime;
 	lap->lapType = lapType;
 	lap->column = column;
+	lap->currentTimerCounter = currentTimerCounter;
+	lap->interruptFlags = this->interruptFlags;
+	this->interruptFlags = 0;
 
 	VirtualList::pushBack(this->laps, lap);
 }
 
-void Profiler::printValue(Lap* lap, uint32 previousLapType)
+void Profiler::print()
+{
+	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
+	Printing::clear(_printing);
+	Printing::text(_printing, "================================================", 0, 27, "Profiler");
+
+	for(VirtualNode node = VirtualList::begin(this->laps); NULL != node; node = VirtualNode::getNext(node))
+	{
+		Lap* lap = (Lap*)VirtualNode::getData(node);
+		Profiler::printValue(this, lap); 
+	}
+}
+
+void Profiler::printValue(Lap* lap)
 {
 	if(NULL == lap->processName)
 	{
@@ -256,28 +257,42 @@ void Profiler::printValue(Lap* lap, uint32 previousLapType)
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
 		Printing::text(_printing, /*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
-		Printing::float(_printing, lap->elapsedTime, lap->column, 14 + (10 > lap->elapsedTime ? 0 : 1), 2, "Profiler");
+		Printing::float(_printing, lap->elapsedTime, lap->column, 13 + (10 > lap->elapsedTime ? 0 : 1), 2, "Profiler");
 		Printing::text(_printing, ":;", lap->column, 10, "Profiler"); // "ms"
 
-		uint8 indicatorRow = 8;
+		uint8 indicatorRow = 7;
 
-		if(kProfilerLapTypeVIPInterruptProcess & previousLapType)
+		if(kProfilerLapTypeVIPInterruptFRAMESTARTProcess & lap->interruptFlags)
 		{
 			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
-		if(kProfilerLapTypeTimerInterruptProcess & previousLapType)
+		if(kProfilerLapTypeVIPInterruptGAMESTARTProcess & lap->interruptFlags)
+		{
+			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
+			indicatorRow--;
+		}
+
+		if(kProfilerLapTypeVIPInterruptXPENDProcess & lap->interruptFlags)
+		{
+			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
+			indicatorRow--;
+		}
+
+		if(kProfilerLapTypeTimerInterruptProcess & lap->interruptFlags)
 		{
 			Printing::text(_printing, "?", lap->column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
 		}
 
-		if(kProfilerLapTypeCommunicationsInterruptProcess & previousLapType)
+		if(kProfilerLapTypeCommunicationsInterruptProcess & lap->interruptFlags)
 		{
 			Printing::text(_printing, "@", lap->column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
 		}
+
+//		Printing::int32(_printing, lap->currentTimerCounter, lap->column, indicatorRow - 3, "Profiler");		
 
 		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
 		Printing::setDirection(_printing, kPrintingDirectionLTR);
@@ -289,6 +304,19 @@ void Profiler::lap(uint32 lapType, const char* processName)
 	if(!this->started)
 	{
 		return;
+	}
+
+	switch(lapType)
+	{
+		case kProfilerLapTypeVIPInterruptFRAMESTARTProcess:
+		case kProfilerLapTypeVIPInterruptGAMESTARTProcess:
+		case kProfilerLapTypeVIPInterruptXPENDProcess:
+		case kProfilerLapTypeTimerInterruptProcess:
+		case kProfilerLapTypeCommunicationsInterruptProcess:
+
+			this->interruptFlags |= lapType;
+			return;
+			break;
 	}
 
 	Profiler::computeLap(this, processName, lapType, false);
@@ -311,33 +339,14 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 	TimerManager::enable(this->timerManager, false);
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 
-	if(this->previousTimerCounter < currentTimerCounter)
-	{
-		this->previousTimerCounter += this->timerCounter;
-	}
-
 	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
 
 	if(!isHeadroom)
 	{
-		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
+		elapsedTime = (this->timerCounter - currentTimerCounter) * this->timeProportion;
 		this->totalTime += elapsedTime;
 	}
 
-/*
-	float gameFrameTimePercentage = (elapsedTime * 100) / this->timePerGameFrameInMS;
-
-	int32 columnTableEntries = 96 - 2;
-
-	int32 entries = (int32)(((columnTableEntries * gameFrameTimePercentage) / (float)100) + 0.5f) * 4;
-
-	entries = (entries + (entries % 8)) / 4;
-
-	if(2 > entries)
-	{
-		entries = 2;
-	}
-*/
 	uint8 value = 0;
 
 	if(this->currentProfilingProcess % 2)
@@ -358,17 +367,17 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	uint8 printingColumn = this->lastLapIndex / 2;
 
-	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn);
+	Profiler::registerLap(this, processName, elapsedTime, lapType, currentTimerCounter, printingColumn);
 
 	this->lastLapIndex += entries;
-	this->previousTimerCounter = currentTimerCounter;
 	this->currentProfilingProcess++;
 
 	if(isHeadroom)
 	{
-		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, 46);
+		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, currentTimerCounter, 46);
 	}
 
+	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
 
 	HardwareManager::enableInterrupts();

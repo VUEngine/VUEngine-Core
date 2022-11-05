@@ -395,6 +395,8 @@ bool SpriteManager::sortProgressively()
 			node = nextNode;
 
 			swapped = true;
+
+			break;
 		}
 	}
 

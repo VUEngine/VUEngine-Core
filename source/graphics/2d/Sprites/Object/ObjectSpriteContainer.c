@@ -194,6 +194,8 @@ void ObjectSpriteContainer::sortProgressively()
 			previousNode->data = sprite;
 
 			node = previousNode;
+
+			break;
 		}
 	}
 }

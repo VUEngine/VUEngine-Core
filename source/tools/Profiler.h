@@ -26,10 +26,12 @@
 
 enum ProfilerLapTypes
 {
-	kProfilerLapTypeNormalProcess 					= 0x00000001 << 0,
-	kProfilerLapTypeVIPInterruptProcess				= 0x00000001 << 1,
-	kProfilerLapTypeTimerInterruptProcess			= 0x00000001 << 2,
-	kProfilerLapTypeCommunicationsInterruptProcess	= 0x00000001 << 3,
+	kProfilerLapTypeNormalProcess 								= 0x00000001 << 0,
+	kProfilerLapTypeVIPInterruptFRAMESTARTProcess				= 0x00000001 << 2,
+	kProfilerLapTypeVIPInterruptGAMESTARTProcess				= 0x00000001 << 3,
+	kProfilerLapTypeVIPInterruptXPENDProcess					= 0x00000001 << 4,
+	kProfilerLapTypeTimerInterruptProcess						= 0x00000001 << 5,
+	kProfilerLapTypeCommunicationsInterruptProcess				= 0x00000001 << 6,
 };
 
 
@@ -44,9 +46,9 @@ singleton class Profiler : ListenerObject
 	TimerManager timerManager;
 	float timeProportion;
 	float totalTime;
+	uint32 interruptFlags;
 	uint32 timePerGameFrameInMS;
 	uint16 timerCounter;
-	uint16 previousTimerCounter;
 	uint8 currentProfilingProcess;
 	bool started;
 	bool initialized;

@@ -306,6 +306,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->totalMilliseconds += __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 				this->frameStartedDuringXPEND = this->processingXPEND;
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
+
+#ifdef __ENABLE_PROFILER
+				if(0 == (__GAMESTART & interrupt))
+				{
+					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptFRAMESTARTProcess, PROCESS_NAME_RENDER);
+				}
+#endif
 				break;
 
 			case __GAMESTART:
@@ -345,7 +352,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->processingGAMESTART = false;
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_RENDER);
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
 
 #ifdef __SHOW_VIP_STATUS
@@ -388,7 +395,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->drawingEnded = true;
 
 #ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptProcess, PROCESS_NAME_VRAM_WRITE);
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);
 #endif
 				break;
 
