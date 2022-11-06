@@ -308,10 +308,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 
 #ifdef __ENABLE_PROFILER
-				if(0 == (__GAMESTART & interrupt))
-				{
-					Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptFRAMESTARTProcess, PROCESS_NAME_RENDER);
-				}
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptFRAMESTARTProcess, PROCESS_NAME_RENDER);
 #endif
 				break;
 

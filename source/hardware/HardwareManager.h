@@ -59,6 +59,7 @@ singleton class HardwareManager : Object
 
 	/// @publicsection
 	static HardwareManager getInstance();
+	static inline void setInterruptLevel(uint8 level);
 	static inline void enableInterrupts();
     static inline void disableInterrupts();
 	static inline void resumeInterrupts();
@@ -80,7 +81,6 @@ singleton class HardwareManager : Object
 	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
 	void lowerBrightness();
 	void print(int32 x, int32 y);
-	void setInterruptLevel(uint8 level);
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
@@ -96,6 +96,30 @@ static inline void HardwareManager::halt()
 }
 
 /**
+ * Set the interrupt level
+ *
+ * @param level	 	Interrupt level
+ */
+static inline void HardwareManager::setInterruptLevel(uint8 level)
+{
+	asm(" \n\
+		stsr	sr5,r6 \n\
+		movhi	0xFFF1,r0,r7 \n\
+		movea	0xFFFF,r7,r7 \n\
+		and		r6,r7 \n\
+		mov		%0,r6 \n\
+		andi	0x000F,r6,r6 \n\
+		shl		0x10,r6 \n\
+		or		r7,r6 \n\
+		ldsr	r6,sr5 \n\
+		"
+	: // Output
+	: "r" (level) // Input
+	: "r6", "r7" // Clobber
+	);
+}
+
+/**
  * Enable interrupts
  */
 static inline void HardwareManager::enableInterrupts()
@@ -103,6 +127,7 @@ static inline void HardwareManager::enableInterrupts()
 	_enabledInterrupts = true;
 
 	asm("cli");
+	HardwareManager::setInterruptLevel(0);
 }
 
 /**
@@ -113,6 +138,7 @@ static inline void HardwareManager::disableInterrupts()
 	_enabledInterrupts = false;
 
 	asm("sei");
+	HardwareManager::setInterruptLevel(5);
 }
 
 /**
@@ -123,6 +149,7 @@ static inline void HardwareManager::resumeInterrupts()
 	if(_enabledInterrupts)
 	{
 		asm("cli");
+		HardwareManager::setInterruptLevel(0);
 	}
 }
 
@@ -132,6 +159,7 @@ static inline void HardwareManager::resumeInterrupts()
 static inline void HardwareManager::suspendInterrupts()
 {
 	asm("sei");
+	HardwareManager::setInterruptLevel(5);
 }
 
 /**

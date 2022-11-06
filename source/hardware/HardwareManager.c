@@ -108,7 +108,7 @@ void HardwareManager::constructor()
 
 	//setup timer interrupts
 	HardwareManager::setInterruptVectors(this);
-	HardwareManager::setInterruptLevel(this, 0);
+	HardwareManager::setInterruptLevel(0);
 	HardwareManager::setExceptionVectors(this);
 }
 
@@ -187,30 +187,6 @@ void HardwareManager::setExceptionVectors()
 	zeroDivisionVector = (uint32)Error::zeroDivisionException;
 	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
 	floatingPointVector = (uint32)Error::floatingPointException;
-}
-
-/**
- * Set the interrupt level
- *
- * @param level	 	Interrupt level
- */
-void HardwareManager::setInterruptLevel(uint8 level)
-{
-	asm(" \n\
-		stsr	sr5,r6 \n\
-		movhi	0xFFF1,r0,r7 \n\
-		movea	0xFFFF,r7,r7 \n\
-		and		r6,r7 \n\
-		mov		%0,r6 \n\
-		andi	0x000F,r6,r6 \n\
-		shl		0x10,r6 \n\
-		or		r7,r6 \n\
-		ldsr	r6,sr5 \n\
-		"
-	: // Output
-	: "r" (level) // Input
-	: "r6", "r7" // Clobber
-	);
 }
 
 /**

@@ -22,7 +22,7 @@
 #include <VIPManager.h>
 #include <debugConfig.h>
 
-#define __ENABLE_PROFILER_SKIP_FRAMES				10
+#define __ENABLE_PROFILER_SKIP_FRAMES				2
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -264,31 +264,31 @@ void Profiler::printValue(Lap* lap)
 
 		if(kProfilerLapTypeVIPInterruptFRAMESTARTProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text(_printing, "F", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeVIPInterruptGAMESTARTProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text(_printing, "G", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeVIPInterruptXPENDProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, ">", lap->column, indicatorRow, "Profiler"); // "(x)"
+			Printing::text(_printing, "X", lap->column, indicatorRow, "Profiler"); // "(x)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeTimerInterruptProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "?", lap->column, indicatorRow, "Profiler"); // "(s)"
+			Printing::text(_printing, "T", lap->column, indicatorRow, "Profiler"); // "(s)"
 			indicatorRow--;
 		}
 
 		if(kProfilerLapTypeCommunicationsInterruptProcess & lap->interruptFlags)
 		{
-			Printing::text(_printing, "@", lap->column, indicatorRow, "Profiler"); // "(c)"
+			Printing::text(_printing, "C", lap->column, indicatorRow, "Profiler"); // "(c)"
 			indicatorRow--;
 		}
 
@@ -306,17 +306,10 @@ void Profiler::lap(uint32 lapType, const char* processName)
 		return;
 	}
 
-	switch(lapType)
+	if(kProfilerLapTypeNormalProcess != lapType)
 	{
-		case kProfilerLapTypeVIPInterruptFRAMESTARTProcess:
-		case kProfilerLapTypeVIPInterruptGAMESTARTProcess:
-		case kProfilerLapTypeVIPInterruptXPENDProcess:
-		case kProfilerLapTypeTimerInterruptProcess:
-		case kProfilerLapTypeCommunicationsInterruptProcess:
-
-			this->interruptFlags |= lapType;
-			return;
-			break;
+		this->interruptFlags |= lapType;
+		return;
 	}
 
 	Profiler::computeLap(this, processName, lapType, false);
@@ -338,6 +331,8 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	TimerManager::enable(this->timerManager, false);
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+
+	NM_ASSERT(currentTimerCounter < this->timerCounter, "Profiler::computeLap: timer counter error value");
 
 	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
 
