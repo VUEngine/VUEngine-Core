@@ -95,6 +95,7 @@ singleton class TimerManager : Object
 	uint32 getMillisecondsElapsed();
 	uint32 getTotalMillisecondsElapsed();
 	uint32 resetMilliseconds();
+	uint16 getCurrentTimerCounter();
 	void configureTimerCounter();
 	int32 getStat();
 	void clearStat();

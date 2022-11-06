@@ -567,6 +567,16 @@ uint32 TimerManager::resetMilliseconds()
 }
 
 /**
+ * Retrieve counter
+ *
+ * @return 			Timer manager counter
+ */
+uint16 TimerManager::getCurrentTimerCounter()
+{
+	return (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+}
+
+/**
  * Set Timer's time
  *
  * @param time		New time
