@@ -689,6 +689,13 @@ void VUEngine::synchronizeUIGraphics()
 	}
 #endif
 
+#ifdef __TOOLS
+	if(VUEngine::isInSpecialMode(this) || VUEngine::isEnteringSpecialMode(this) || VUEngine::isExitingSpecialMode(this))
+	{
+		return;
+	}
+#endif
+
 	// apply transformations to graphics
 	GameState::synchronizeUIGraphics(this->currentState);
 }
