@@ -26,7 +26,7 @@
 class InverseBox : Box
 {
 	/// @publicsection
-	void constructor(SpatialObject owner);
+	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 }
 
 

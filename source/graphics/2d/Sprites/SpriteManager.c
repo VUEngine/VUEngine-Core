@@ -490,7 +490,9 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 {
 	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
+#ifndef __ENABLE_PROFILER
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
+#endif
 
 	this->lockSpritesLists = true;
 

@@ -32,9 +32,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void LineField::constructor(SpatialObject owner)
+void LineField::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
-	Base::constructor(owner);
+	Base::constructor(owner, shapeSpec);
 
 	this->lineSpec = NULL;
 	this->a = Vector3D::zero();

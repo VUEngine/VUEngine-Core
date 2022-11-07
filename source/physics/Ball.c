@@ -34,9 +34,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Ball::constructor(SpatialObject owner)
+void Ball::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
-	Base::constructor(owner);
+	Base::constructor(owner, shapeSpec);
 
 	this->center = Vector3D::zero();
 	this->radius = 0;

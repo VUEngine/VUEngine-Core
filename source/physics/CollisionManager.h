@@ -59,6 +59,7 @@ class CollisionManager : ListenerObject
 	void showShapes();
 	void setCheckShapesOutOfCameraRange(bool value);
 	uint32 update(Clock clock);
+	void purgeDestroyedShapes();
 }
 
 

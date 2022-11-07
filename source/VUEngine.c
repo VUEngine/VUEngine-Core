@@ -920,6 +920,10 @@ void VUEngine::run()
 	// Generate random seed
 	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
 
+#ifdef __ENABLE_PROFILER
+	HardwareManager::disableInterrupts();
+#endif
+
 	// process user's input
 	VUEngine::processUserInput(this);
 
@@ -941,14 +945,18 @@ void VUEngine::run()
 	// dispatch delayed messages
 	VUEngine::dispatchDelayedMessages(this);
 
-	// stream
-	VUEngine::stream(this);
-
 	// update game's logic
 	VUEngine::updateLogic(this);
 
+	// stream after the logic to avoid having a very heady frame
+	VUEngine::stream(this);
+
 	// Update sound related logic
 	VUEngine::updateSound(this);
+
+#ifdef __ENABLE_PROFILER
+	HardwareManager::enableInterrupts();
+#endif
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

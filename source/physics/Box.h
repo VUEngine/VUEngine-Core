@@ -42,7 +42,8 @@ class Box : Shape
 
 	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
-	void constructor(SpatialObject owner);
+
+	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();

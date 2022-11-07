@@ -91,9 +91,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
  */
 void Entity::destructor()
 {
-	Entity::destroyShapes(this);
-	Entity::destroyWireframes(this);
-	Entity::destroySprites(this);
+	Entity::destroyComponents(this);
 
 	if(this->centerDisplacement)
 	{
@@ -117,11 +115,7 @@ void Entity::iAmDeletingMyself()
 {
 	Base::iAmDeletingMyself(this);
 
-	// destroy collision shapes
 	Entity::destroyComponents(this);
-
-	// Do not delete components right now since client code may still assume 
-	// they are available
 }
 
 void Entity::destroyComponents()
@@ -188,9 +182,11 @@ void Entity::destroyShapes()
 	{
 		ASSERT(!isDeleted(this->shapes), "Entity::setSpec: dead shapes");
 
+		CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
+
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			CollisionManager::destroyShape(VUEngine::getCollisionManager(_vuEngine), Shape::safeCast(node->data));
+			CollisionManager::destroyShape(collisionManager, Shape::safeCast(node->data));
 		}
 
 		delete this->shapes;
@@ -485,10 +481,12 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 		this->shapes = new VirtualList();
 	}
 
+	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
+
 	// go through n sprites in entity's spec
 	for(int32 i = 0; shapeSpecs[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(_vuEngine), SpatialObject::safeCast(this), &shapeSpecs[i]);
+		Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}

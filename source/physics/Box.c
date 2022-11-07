@@ -40,9 +40,9 @@ friend class InverseBox;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Box::constructor(SpatialObject owner)
+void Box::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
-	Base::constructor(owner);
+	Base::constructor(owner, shapeSpec);
 
 	this->rotationVertexDisplacement = Vector3D::zero();
 

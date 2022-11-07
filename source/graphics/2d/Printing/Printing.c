@@ -203,7 +203,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 	Printing::releaseFonts(this);
 
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
@@ -237,7 +237,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 		VirtualList::pushBack(this->fonts, fontData);
 	}
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::resumeInterrupts();
 }
 
 void Printing::setFontPage(const char* font, uint16 page)
@@ -424,8 +424,8 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 	}
 
 	// Get integral part
-	float floorValue = Utilities::floor(value);
-	char* integer = Utilities::itoa((int32)floorValue, 10, Utilities::getDigitCount((int32)floorValue));
+	int32 floorValue = ((int32)(value * 10)) / 10;
+	char* integer = Utilities::itoa(floorValue, 10, Utilities::getDigitCount(floorValue));
 
 	// Save it right away
 	for(int32 j = 0; integer[j];)
@@ -460,7 +460,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 
 	if(decimals <= precision && zeros < precision)
 	{
-		long roundedDecimalValue = (int32)Utilities::floor(decimalValue);
+		long roundedDecimalValue = (int32)(decimalValue * 10) / 10;
 
 		if(0 == roundedDecimalValue)
 		{
@@ -470,7 +470,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 		{
 			int32 totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
 
-			char* decimalString = Utilities::itoa((int32)Utilities::floor(decimalValue), 10, totalDecimalDigits);
+			char* decimalString = Utilities::itoa((int32)(decimalValue * 10) / 10, 10, totalDecimalDigits);
 
 			int32 j = 0;
 

@@ -73,32 +73,30 @@ void CollisionManager::destructor()
 	Base::destructor();
 }
 
+void CollisionManager::purgeDestroyedShapes()
+{
+	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
+	{
+		auxNextNode = auxNode->next;
+
+		// load the current shape to check against
+		Shape shapeToCheck = Shape::safeCast(auxNode->data);
+
+		if(shapeToCheck->destroyMe)
+		{
+			VirtualList::removeNode(this->shapes, auxNode);
+			VirtualList::removeElement(this->activeForCollisionCheckingShapes, shapeToCheck);
+
+			delete shapeToCheck;
+		}
+	}	
+}
+
 // register a shape
 Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
-{
-	if(this->dirty)
-	{
-		for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
-		{
-			auxNextNode = auxNode->next;
-
-			// load the current shape to check against
-			Shape shapeToCheck = Shape::safeCast(auxNode->data);
-
-			if(shapeToCheck->destroyMe)
-			{
-				VirtualList::removeNode(this->shapes, auxNode);
-				VirtualList::removeElement(this->activeForCollisionCheckingShapes, shapeToCheck);
-
-				delete shapeToCheck;
-			}
-		}
-	}
-	
+{	
 	// create the shape
-	Shape shape = ((Shape (*)(SpatialObject)) shapeSpec->allocator)(owner);
-	Shape::setup(shape, shapeSpec->layers, shapeSpec->layersToIgnore);
-	Shape::setCheckForCollisions(shape, shapeSpec->checkForCollisions);
+	Shape shape = ((Shape (*)(SpatialObject, const ShapeSpec*)) shapeSpec->allocator)(owner, shapeSpec);
 
 	this->dirty = true;
 
@@ -114,7 +112,9 @@ void CollisionManager::destroyShape(Shape shape)
 {
 	if(!isDeleted(shape))
 	{
+#ifndef __ENABLE_PROFILER
 		NM_ASSERT(NULL != VirtualList::find(this->shapes, shape), "CollisionManager::destroyShape: non registerd shape");
+#endif
 		shape->destroyMe = true;
 	}
 }

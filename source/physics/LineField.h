@@ -40,7 +40,8 @@ class LineField : Shape
 
 	/// @publicsection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
-	void constructor(SpatialObject owner);
+
+	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);

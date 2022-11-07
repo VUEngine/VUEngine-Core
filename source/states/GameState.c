@@ -338,7 +338,7 @@ void GameState::streamAll()
 		// can be streamed out
 		GameState::transform(this);
 
-		// Froce graphics to get ready
+		// Force graphics to get ready
 		GameState::synchronizeGraphics(this);
 
 		// Stream in and out all relevant entities
@@ -346,6 +346,9 @@ void GameState::streamAll()
 
 		// Make sure all sprites are ready
 		SpriteManager::prepareAll(SpriteManager::getInstance());
+
+		// Force collision purging
+		CollisionManager::purgeDestroyedShapes(this->collisionManager);
 
 		if(streamedComplete)
 		{
@@ -376,9 +379,11 @@ void GameState::streamOutAll()
 
 	// Froce graphics to get ready
 	GameState::synchronizeGraphics(this);
-	
 	// Remove out of range entities
 	Stage::streamAllOut(this->stage);
+	
+	// Force collision purging
+	CollisionManager::purgeDestroyedShapes(this->collisionManager);	
 
 	HardwareManager::enableInterrupts();
 }

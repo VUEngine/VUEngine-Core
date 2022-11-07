@@ -22,7 +22,7 @@
 #include <VIPManager.h>
 #include <debugConfig.h>
 
-#define __ENABLE_PROFILER_SKIP_FRAMES				2
+#define __ENABLE_PROFILER_SKIP_FRAMES				10
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,7 +34,6 @@ typedef struct Lap
 	const char* processName;
 	float elapsedTime;
 	uint32 lapType;
-	uint32 currentTimerCounter;
 	uint32 interruptFlags;
 	uint8 column;
 } Lap;
@@ -196,14 +195,6 @@ void Profiler::end()
 
 	Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-	Brightness brightness =
-	{
-		2,
-		2,
-		6
-	};
-	
-	VIPManager::setupBrightness(VIPManager::getInstance(), &brightness);
 
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
 
@@ -215,15 +206,16 @@ void Profiler::end()
 	Profiler::print(this);
 }
 
-void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint32 currentTimerCounter, uint8 column)
+void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
 {
 	Lap* lap = new Lap;
+
+	NM_ASSERT(0 <= elapsedTime, "Profiler::registerLap: negative elapsed time")
 
 	lap->processName = NULL == processName ? "NO NAME" : processName;
 	lap->elapsedTime = elapsedTime;
 	lap->lapType = lapType;
 	lap->column = column;
-	lap->currentTimerCounter = currentTimerCounter;
 	lap->interruptFlags = this->interruptFlags;
 	this->interruptFlags = 0;
 
@@ -257,7 +249,7 @@ void Profiler::printValue(Lap* lap)
 		Printing::setDirection(_printing, kPrintingDirectionRTL);
 		
 		Printing::text(_printing, /*Utilities::toUppercase(*/lap->processName/*)*/, lap->column, 26, "Profiler");
-		Printing::float(_printing, lap->elapsedTime, lap->column, 13 + (10 > lap->elapsedTime ? 0 : 1), 2, "Profiler");
+		Printing::float(_printing, lap->elapsedTime, lap->column, 13 + (10 < lap->elapsedTime ? 1 : 0), 2, "Profiler");
 		Printing::text(_printing, ":;", lap->column, 10, "Profiler"); // "ms"
 
 		uint8 indicatorRow = 7;
@@ -292,8 +284,6 @@ void Profiler::printValue(Lap* lap)
 			indicatorRow--;
 		}
 
-//		Printing::int32(_printing, lap->currentTimerCounter, lap->column, indicatorRow - 3, "Profiler");		
-
 		Printing::setOrientation(_printing, kPrintingOrientationHorizontal);
 		Printing::setDirection(_printing, kPrintingDirectionLTR);
 	}
@@ -301,7 +291,7 @@ void Profiler::printValue(Lap* lap)
 
 void Profiler::lap(uint32 lapType, const char* processName)
 {
-	if(!this->started)
+	if(!this->started && kProfilerLapTypeTimerInterruptProcess != lapType)
 	{
 		return;
 	}
@@ -327,14 +317,21 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 		return;
 	}
 
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	TimerManager::enable(this->timerManager, false);
-	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
+	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
 
-	NM_ASSERT(currentTimerCounter < this->timerCounter, "Profiler::computeLap: timer counter error value");
+//	NM_ASSERT(currentTimerCounter < this->timerCounter, "Profiler::computeLap: timer counter error value");
 
 	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
+
+	if(0 > elapsedTime)
+	{
+		TimerManager::configureTimerCounter(this->timerManager);
+		TimerManager::enable(this->timerManager, true);
+		return;
+	}
 
 	if(!isHeadroom)
 	{
@@ -360,22 +357,27 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 		profileBrightnessRepeatSpec.brightnessRepeat[i] = value;
 	}
 
-	uint8 printingColumn = this->lastLapIndex / 2;
+	uint8 printingColumn = this->lastLapIndex >> 1;
 
-	Profiler::registerLap(this, processName, elapsedTime, lapType, currentTimerCounter, printingColumn);
+	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn);
 
 	this->lastLapIndex += entries;
 	this->currentProfilingProcess++;
 
 	if(isHeadroom)
 	{
-		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, currentTimerCounter, 46);
+		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, 46);
 	}
 
 	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
 
-	HardwareManager::enableInterrupts();
+	// Needed to give the timer enough time to reset its registers before this method is called again
+	volatile int16 dummy = 100;
+
+	while(0 < --dummy);
+
+	HardwareManager::resumeInterrupts();
 }
 
 #endif

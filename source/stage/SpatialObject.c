@@ -32,12 +32,6 @@ void SpatialObject::constructor()
 // class's destructor
 void SpatialObject::destructor()
 {
-	if(this->events)
-	{
-		SpatialObject::fireEvent(this, kEventSpatialObjectDeleted);
-		NM_ASSERT(!isDeleted(this), "SpatialObject::destructor: deleted this during kEventSpatialObjectDeleted");
-	}
-
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
 	Base::destructor();

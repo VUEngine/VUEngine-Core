@@ -43,7 +43,7 @@ friend class VirtualList;
  *
  * @param owner
  */
-void Shape::constructor(SpatialObject owner)
+void Shape::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	// construct base object
 	Base::constructor();
@@ -60,12 +60,12 @@ void Shape::constructor(SpatialObject owner)
 
 	// set flag
 	this->checkForCollisions = false;
-	this->layers = 0;
-	this->layersToIgnore = 0;
+	this->layers = shapeSpec->layers;
+	this->layersToIgnore = shapeSpec->layersToIgnore;
 	this->collidingShapes = NULL;
 	this->isVisible = true;
 	this->moved = false;
-	this->registerCollisions = true;
+	this->registerCollisions = shapeSpec->checkForCollisions;
 
 	this->rightBox.x0 = __I_TO_FIXED(-1);
 	this->rightBox.y0 = __I_TO_FIXED(-1);
@@ -160,7 +160,7 @@ void Shape::setup(uint32 layers, uint32 layersToIgnore)
 	this->layers = layers;
 	this->layersToIgnore = layersToIgnore;
 
-	if(this->events)
+	if(NULL != this->events)
 	{
 		Shape::fireEvent(this, kEventShapeChanged);
 		NM_ASSERT(!isDeleted(this), "Shape::setup: deleted this during kEventShapeChanged");
