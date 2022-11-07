@@ -73,7 +73,7 @@ void CollisionManager::destructor()
 	Base::destructor();
 }
 
-void CollisionManager::purge()
+void CollisionManager::purgeDestroyedShapes()
 {
 	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
 	{
