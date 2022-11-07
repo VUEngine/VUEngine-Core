@@ -112,7 +112,9 @@ void CollisionManager::destroyShape(Shape shape)
 {
 	if(!isDeleted(shape))
 	{
+#ifndef __ENABLE_PROFILER
 		NM_ASSERT(NULL != VirtualList::find(this->shapes, shape), "CollisionManager::destroyShape: non registerd shape");
+#endif
 		shape->destroyMe = true;
 	}
 }

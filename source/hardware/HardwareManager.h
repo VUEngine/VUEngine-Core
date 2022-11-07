@@ -158,8 +158,11 @@ static inline void HardwareManager::resumeInterrupts()
  */
 static inline void HardwareManager::suspendInterrupts()
 {
-	asm("sei");
-	HardwareManager::setInterruptLevel(5);
+	if(_enabledInterrupts)
+	{
+		asm("sei");
+		HardwareManager::setInterruptLevel(5);
+	}
 }
 
 /**

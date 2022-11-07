@@ -105,7 +105,9 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
 
+#ifndef __ENABLE_PROFILER
 	NM_ASSERT(!VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::registerSprite: already registered");
+#endif
 
 	if(!isDeleted(objectSprite))
 	{
@@ -130,7 +132,9 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
+#ifndef __ENABLE_PROFILER
 	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
+#endif
 
 	this->lockSpritesLists = true;
 
