@@ -948,7 +948,7 @@ void VUEngine::run()
 	// update game's logic
 	VUEngine::updateLogic(this);
 
-	// stream
+	// stream after the logic to avoid having a very heady frame
 	VUEngine::stream(this);
 
 	// Update sound related logic
