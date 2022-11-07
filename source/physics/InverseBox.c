@@ -36,9 +36,9 @@ friend class Box;
  *
  * @param owner
  */
-void InverseBox::constructor(SpatialObject owner)
+void InverseBox::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
-	Base::constructor(owner);
+	Base::constructor(owner, shapeSpec);
 }
 
 /**

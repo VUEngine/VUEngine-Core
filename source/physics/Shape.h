@@ -208,7 +208,7 @@ abstract class Shape : ListenerObject
 	bool destroyMe;
 
 	/// @publicsection
-	void constructor(SpatialObject owner);
+	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);
 	void exitCollision(CollisionData* collisionData);
