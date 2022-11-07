@@ -94,12 +94,7 @@ void CollisionManager::purge()
 
 // register a shape
 Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
-{
-	if(this->dirty)
-	{
-		CollisionManager::purge(this);
-	}
-	
+{	
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject, const ShapeSpec*)) shapeSpec->allocator)(owner, shapeSpec);
 

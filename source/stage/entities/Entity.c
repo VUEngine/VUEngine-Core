@@ -485,10 +485,12 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 		this->shapes = new VirtualList();
 	}
 
+	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
+
 	// go through n sprites in entity's spec
 	for(int32 i = 0; shapeSpecs[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(VUEngine::getCollisionManager(_vuEngine), SpatialObject::safeCast(this), &shapeSpecs[i]);
+		Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addShapes: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
