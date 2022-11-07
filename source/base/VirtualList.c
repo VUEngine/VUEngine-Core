@@ -460,7 +460,8 @@ bool VirtualList::doRemoveNode(VirtualNode node)
  */
 bool VirtualList::removeNode(VirtualNode node)
 {
-#ifndef __RELEASE && __ENABLE_PROFILER
+#ifndef __ENABLE_PROFILER
+#ifndef __RELEASE
 	// if node isn't null
 	if(VirtualList::checkThatNodeIsPresent(this, node))
 	{
@@ -468,6 +469,9 @@ bool VirtualList::removeNode(VirtualNode node)
 	}
 
 	return false;
+#else
+	return VirtualList::doRemoveNode(this, node);
+#endif
 #else
 	return VirtualList::doRemoveNode(this, node);
 #endif
