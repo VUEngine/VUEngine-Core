@@ -107,7 +107,7 @@ void Printing::setupSprite()
 		return;
 	}
 	
-	PrintingSpriteSpec PRINTING_SP =
+	PrintingSpriteSpec DefaultPrintingSprite =
 	{
 		{
 			{
@@ -141,7 +141,7 @@ void Printing::setupSprite()
 		}
 	};
 
-	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&PRINTING_SP, NULL));
+	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
 
 	PixelVector position = 
 	{
