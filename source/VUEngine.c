@@ -945,11 +945,11 @@ void VUEngine::run()
 	// dispatch delayed messages
 	VUEngine::dispatchDelayedMessages(this);
 
-	// stream
-	VUEngine::stream(this);
-
 	// update game's logic
 	VUEngine::updateLogic(this);
+
+	// stream
+	VUEngine::stream(this);
 
 	// Update sound related logic
 	VUEngine::updateSound(this);
