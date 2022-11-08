@@ -227,6 +227,7 @@ void Profiler::registerLap(const char* processName, float elapsedTime, uint32 la
 
 void Profiler::print()
 {
+	Printing::resetCoordinates(_printing);
 	Printing::setWorldCoordinates(_printing, 0, 0, -8, 2);
 	Printing::clear(_printing);
 	Printing::text(_printing, "================================================", 0, 27, "Profiler");
