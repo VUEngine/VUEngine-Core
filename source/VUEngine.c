@@ -288,7 +288,6 @@ void VUEngine::start(GameState state)
 			}
 
 #ifdef __ENABLE_PROFILER
-			Profiler::end(Profiler::getInstance());
 			Profiler::start(Profiler::getInstance());
 #endif
 		}

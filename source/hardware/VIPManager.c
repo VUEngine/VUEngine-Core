@@ -51,11 +51,6 @@ extern BrightnessRepeatROMSpec DefaultBrightnessRepeat;
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#ifdef __ENABLE_PROFILER
-#undef __FORCE_VIP_SYNC
-//#define __FORCE_VIP_SYNC
-#endif
-
 friend class VirtualNode;
 friend class VirtualList;
 

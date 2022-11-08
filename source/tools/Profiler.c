@@ -114,7 +114,7 @@ void Profiler::reset()
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
 	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
-	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
+	this->skipFrames = 1;
 	this->totalTime = 0;
 	this->lastLapIndex = 0;
 
@@ -147,12 +147,22 @@ void Profiler::initialize()
 	/**/
 }
 
+volatile void Profiler::wait(int16 delay)
+{
+	// Needed to give the timer enough time to reset its registers before this method is called again
+	volatile int16 dummy = delay;
+
+	while(0 < --dummy);
+}
+
 void Profiler::start()
 {
 	if(!this->initialized)
 	{
 		return;
 	}
+
+	Profiler::end(this);
 
 	if(0 < --this->skipFrames)
 	{
@@ -177,33 +187,26 @@ void Profiler::start()
 	TimerManager::enable(this->timerManager, false);
 	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
+	Profiler::wait(this, 1000);
 }
 
 void Profiler::end()
 {
-	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
+	if(this->started)
 	{
-		return;
-	}
+		Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
 
-	if(!this->started)
-	{
-		return;
+		VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
+
+		for(int32 i = 0; i < 96; i++)
+		{
+			profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
+		}
+
+		Profiler::print(this);
 	}
 
 	this->started = false;
-
-	Profiler::computeLap(this, "HEADROOM", kProfilerLapTypeNormalProcess, true);
-
-
-	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), (BrightnessRepeatSpec*)&profileBrightnessRepeatSpec);
-
-	for(int32 i = 0; i < 96; i++)
-	{
-		profileBrightnessRepeatSpec.brightnessRepeat[i] = 16;
-	}
-
-	Profiler::print(this);
 }
 
 void Profiler::registerLap(const char* processName, float elapsedTime, uint32 lapType, uint8 column)
@@ -291,7 +294,7 @@ void Profiler::printValue(Lap* lap)
 
 void Profiler::lap(uint32 lapType, const char* processName)
 {
-	if(!this->started && kProfilerLapTypeTimerInterruptProcess != lapType)
+	if(!this->started)
 	{
 		return;
 	}
@@ -307,16 +310,6 @@ void Profiler::lap(uint32 lapType, const char* processName)
 
 void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadroom)
 {
-	if(!this->started && !isHeadroom)
-	{
-		return;
-	}
-
-	if(!this->initialized || __ENABLE_PROFILER_SKIP_FRAMES != this->skipFrames)
-	{
-		return;
-	}
-
 	HardwareManager::suspendInterrupts();
 
 	TimerManager::enable(this->timerManager, false);
@@ -328,8 +321,6 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	if(0 > elapsedTime)
 	{
-		TimerManager::configureTimerCounter(this->timerManager);
-		TimerManager::enable(this->timerManager, true);
 		return;
 	}
 
@@ -373,9 +364,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 	TimerManager::enable(this->timerManager, true);
 
 	// Needed to give the timer enough time to reset its registers before this method is called again
-	volatile int16 dummy = 100;
-
-	while(0 < --dummy);
+	Profiler::wait(this, 1000);
 
 	HardwareManager::resumeInterrupts();
 }
