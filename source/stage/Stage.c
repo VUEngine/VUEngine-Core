@@ -910,6 +910,8 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 					Stage::unloadChild(this, Container::safeCast(entity));
 
 					unloaded = true;
+	
+					return true;
 				}
 			}
 			else
@@ -918,6 +920,8 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 				Stage::unloadChild(this, Container::safeCast(entity));
 
 				unloaded = true;
+
+				return true;
 			}
 
 			unloadedEntities = unloadedEntities || unloaded;
