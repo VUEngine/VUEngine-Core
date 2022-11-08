@@ -125,6 +125,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streamingPhase = 0;
 	this->soundWrappers = NULL;
 	this->streaming = this->stageSpec->streaming;
+	this->streamingAmplitude = this->streaming.streamingAmplitude;
 	this->forceNoPopIn = false;
 }
 
@@ -854,7 +855,7 @@ void Stage::loadInitialEntities()
 }
 
 // unload non visible entities
-bool Stage::unloadOutOfRangeEntities(int32 defer)
+bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 {
 	if(!this->children)
 	{
@@ -910,8 +911,6 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 					Stage::unloadChild(this, Container::safeCast(entity));
 
 					unloaded = true;
-	
-					return true;
 				}
 			}
 			else
@@ -920,13 +919,11 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 				Stage::unloadChild(this, Container::safeCast(entity));
 
 				unloaded = true;
-
-				return true;
 			}
 
 			unloadedEntities = unloadedEntities || unloaded;
 
-			if(unloaded && defer)
+			if(unloaded)
 			{
 #ifdef __PROFILE_STREAMING
 				uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
@@ -944,7 +941,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer)
 
 	return unloadedEntities;
 }
-
+/*
 bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 {
 #ifdef __PROFILE_STREAMING
@@ -1068,8 +1065,9 @@ bool Stage::loadInRangeEntitiesBackup(int32 defer __attribute__ ((unused)))
 
 	return loadedEntities;
 }
+*/
 
-bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
+bool Stage::loadInRangeEntities(int32 defer)
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
@@ -1080,14 +1078,12 @@ bool Stage::loadInRangeEntities(int32 defer __attribute__ ((unused)))
 
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
-	uint16 amplitude = this->streaming.streamingAmplitude;
-
 	if(NULL == this->streamingHeadNode)
 	{
 		this->streamingHeadNode = this->stageEntityDescriptions->head;
 	}
 
-	for(uint16 counter = 0; NULL != this->streamingHeadNode && counter < amplitude; this->streamingHeadNode = this->streamingHeadNode->next)
+	for(uint16 counter = 0; NULL != this->streamingHeadNode && counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
 
@@ -1193,10 +1189,17 @@ bool Stage::stream()
 bool Stage::streamAll()
 {
 	this->streamingPhase = 0;
+	this->streamingHeadNode = NULL;
+	this->streamingAmplitude = (uint16)-1;
+
 	do 
 	{
+		// Force deletion
+		Stage::purgeChildren(this);
 	}
-	while(Stage::stream(this) || 0 != this->streamingPhase);
+	while(Stage::stream(this));
+
+	this->streamingAmplitude = this->streaming.streamingAmplitude;
 
 	// Force deletion
 	Stage::purgeChildren(this);

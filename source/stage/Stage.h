@@ -194,6 +194,7 @@ class Stage : Container
 	Streaming streaming;
 	// index for method to execute
 	int32 streamingPhase;
+	uint16 streamingAmplitude;
 	// the ui container
 	UIContainer uiContainer;
 	// focus entity: needed for streaming
