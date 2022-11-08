@@ -326,6 +326,11 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
 
+	if(0 > elapsedTime)
+	{
+		return;
+	}
+
 	if(!isHeadroom)
 	{
 		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
