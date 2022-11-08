@@ -203,7 +203,7 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 
 			swapped = true;
 
-			if(deferred)
+			//if(deferred)
 			{
 				break;
 			}
@@ -294,6 +294,11 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
+			if(__HIDE == objectSprite->show)
+			{
+				continue;
+			}
+
 			if(!objectSprite->positioned)
 			{
 				continue;

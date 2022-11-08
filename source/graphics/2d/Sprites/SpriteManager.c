@@ -646,6 +646,11 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
+		if(__HIDE == sprite->show)
+		{
+			continue;
+		}
+
 		if(!sprite->positioned)
 		{
 			continue;

@@ -215,10 +215,7 @@ Texture Sprite::getTexture()
  */
 void Sprite::show()
 {
-	if(__HIDE == this->show)
-	{
-		this->show = __SHOW;
-	}
+	this->show = __SHOW;
 }
 
 /**
@@ -581,7 +578,7 @@ void Sprite::update()
  */
 bool Sprite::isVisible()
 {
-	return __NO_RENDER_INDEX != this->index && __HIDE != this->show;
+	return __NO_RENDER_INDEX != this->index && __SHOW == this->show;
 }
 
 /**
