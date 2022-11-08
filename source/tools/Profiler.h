@@ -49,6 +49,7 @@ singleton class Profiler : ListenerObject
 	uint32 interruptFlags;
 	uint32 timePerGameFrameInMS;
 	uint16 timerCounter;
+	uint16 previousTimerCounter;
 	uint8 currentProfilingProcess;
 	bool started;
 	bool initialized;

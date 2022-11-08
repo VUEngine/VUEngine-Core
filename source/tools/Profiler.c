@@ -117,6 +117,7 @@ void Profiler::reset()
 	this->skipFrames = 1;
 	this->totalTime = 0;
 	this->lastLapIndex = 0;
+	this->previousTimerCounter = 0;
 
 	for(int32 i = 0; i < 96; i++)
 	{
@@ -147,7 +148,7 @@ void Profiler::initialize()
 	/**/
 }
 
-volatile void Profiler::wait(int16 delay)
+void Profiler::wait(int16 delay)
 {
 	// Needed to give the timer enough time to reset its registers before this method is called again
 	volatile int16 dummy = delay;
@@ -188,6 +189,8 @@ void Profiler::start()
 	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
 	Profiler::wait(this, 1000);
+
+	this->previousTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
 }
 
 void Profiler::end()
@@ -316,18 +319,16 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 	TimerManager::enable(this->timerManager, false);
 	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
 
-//	NM_ASSERT(currentTimerCounter < this->timerCounter, "Profiler::computeLap: timer counter error value");
+	if(this->previousTimerCounter < currentTimerCounter)
+	{
+		this->previousTimerCounter += this->timerCounter;
+	}
 
 	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
 
-	if(0 > elapsedTime)
-	{
-		return;
-	}
-
 	if(!isHeadroom)
 	{
-		elapsedTime = (this->timerCounter - currentTimerCounter) * this->timeProportion;
+		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
 		this->totalTime += elapsedTime;
 	}
 
@@ -355,17 +356,14 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	this->lastLapIndex += entries;
 	this->currentProfilingProcess++;
+	this->previousTimerCounter = currentTimerCounter;
 
 	if(isHeadroom)
 	{
 		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, 46);
 	}
 
-	TimerManager::configureTimerCounter(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
-
-	// Needed to give the timer enough time to reset its registers before this method is called again
-	Profiler::wait(this, 1000);
 
 	HardwareManager::resumeInterrupts();
 }
