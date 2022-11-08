@@ -57,7 +57,7 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 	this->transparent = __TRANSPARENCY_NONE;
 	this->positioned = true;
 	this->lockSpritesLists = false;
@@ -169,12 +169,14 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
  *
  * @private
  */
-void ObjectSpriteContainer::sortProgressively()
+bool ObjectSpriteContainer::sortProgressively(bool deferred)
 {
 	if(this->lockSpritesLists)
 	{
-		return;
+		return false;
 	}
+
+	bool swapped = false;
 
 	for(VirtualNode node = this->objectSprites->tail; node && node->previous; node = node->previous)
 	{
@@ -199,9 +201,16 @@ void ObjectSpriteContainer::sortProgressively()
 
 			node = previousNode;
 
-			break;
+			swapped = true;
+
+			if(deferred)
+			{
+				break;
+			}
 		}
 	}
+
+	return swapped;
 }
 
 #ifdef __TOOLS
@@ -256,7 +265,7 @@ void ObjectSpriteContainer::forceShow()
 
 void ObjectSpriteContainer::hideForDebug()
 {
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 	this->positioned = true;
 	this->hideSprites = true;
 }
@@ -285,16 +294,6 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(__SHOW != objectSprite->show)
-			{
-				if(__SHOW_NEXT_FRAME == objectSprite->show)
-				{
-					objectSprite->show = __SHOW;
-				}
-				
-				continue;
-			}
-
 			if(!objectSprite->positioned)
 			{
 				continue;

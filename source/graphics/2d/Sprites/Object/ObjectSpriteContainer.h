@@ -59,7 +59,7 @@ class ObjectSpriteContainer : Sprite
 	int32 getNextFreeObjectIndex();
 	int32 getTotalUsedObjects();
 	bool hasRoomFor(int32 numberOfObjects);
-	void sortProgressively();
+	bool sortProgressively(bool deferred);
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);

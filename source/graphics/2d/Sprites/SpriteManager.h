@@ -114,7 +114,6 @@ singleton class SpriteManager : Object
 	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int32 segment);
 	void sort();
-	bool sortProgressively();
 	void writeTextures();
 	void prepareAll();
 	bool isEvenFrame();

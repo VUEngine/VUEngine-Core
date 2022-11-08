@@ -329,7 +329,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
  */
 void SpriteManager::sort()
 {
-	while(SpriteManager::sortProgressively(this));
+	while(SpriteManager::sortProgressively(this, false));
 }
 
 /**
@@ -367,7 +367,7 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 /**
  * Deferred sorting sprites according to their z coordinate
  */
-bool SpriteManager::sortProgressively()
+bool SpriteManager::sortProgressively(bool deferred)
 {
 	bool swapped = false;
 
@@ -396,7 +396,10 @@ bool SpriteManager::sortProgressively()
 
 			swapped = true;
 
-			break;
+			if(deferred)
+			{
+				break;
+			}
 		}
 	}
 
@@ -406,7 +409,7 @@ bool SpriteManager::sortProgressively()
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
-			ObjectSpriteContainer::sortProgressively(objectSpriteContainer);
+			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, deferred);
 		}
 	}
 
@@ -620,7 +623,7 @@ void SpriteManager::render()
 {
 	if(!this->lockSpritesLists)
 	{
-		SpriteManager::sortProgressively(this);
+		SpriteManager::sortProgressively(this, true);
 	}
 
 	ObjectSpriteContainer::prepareForRendering();
@@ -643,16 +646,6 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(__SHOW != sprite->show)
-		{
-			if(__SHOW_NEXT_FRAME == sprite->show)
-			{
-				sprite->show = __SHOW;
-			}
-			
-			continue;
-		}
-
 		if(!sprite->positioned)
 		{
 			continue;

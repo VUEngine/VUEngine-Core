@@ -53,7 +53,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->texture = NULL;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
@@ -217,7 +217,7 @@ void Sprite::show()
 {
 	if(__HIDE == this->show)
 	{
-		this->show = __SHOW_NEXT_FRAME;
+		this->show = __SHOW;
 	}
 }
 
@@ -235,7 +235,7 @@ void Sprite::hide()
  */
 void Sprite::forceShow()
 {
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 
 	Sprite::setPosition(this, &this->position);
 }
