@@ -157,12 +157,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	}
 	else
 	{
-		if(__COS(__CAMERA_VIEWING_ANGLE) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
-		{
-			this->color = __COLOR_BLACK;
-			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
-			return;
-		}
+		int16 cameraViewingAngle = __CAMERA_VIEWING_ANGLE;
 
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
@@ -198,6 +193,19 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		{
 			this->interlaced = false;
 			this->color = __COLOR_BRIGHT_RED;
+
+			if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) > distanceToCamera)
+			{
+				// This is a hack. The correct operatio should use a fixed div and a conversion to int
+				// but this is ways faster and works nicely
+				cameraViewingAngle += (__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 2)) / distanceToCamera);
+			}
+		}
+
+		if(__COS(cameraViewingAngle) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
+		{
+			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+			return;
 		}
 	}
 
