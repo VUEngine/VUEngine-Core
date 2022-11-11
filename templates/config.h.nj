@@ -148,7 +148,7 @@
 
 {{ macros.sectionHeader('Direct drawing') }}
 
-{% if config.directDraw.interlacedThreshold %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								__PIXELS_TO_METERS({{config.directDraw.interlacedThreshold}}) {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								0{% endif %} 
+{% if config.wireframes.interlacedThreshold %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								__PIXELS_TO_METERS({{config.wireframes.interlacedThreshold}}) {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								0{% endif %} 
 
 
 {{ macros.sectionHeader('Optics / Projection') }}

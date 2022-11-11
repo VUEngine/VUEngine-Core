@@ -2892,6 +2892,13 @@
                     "physics": {
                         "type": "object",
                         "properties": {
+                            "angleToPreventShapeDisplacement": {
+                                "type": "integer",
+                                "description": "Minimum angle to allow movement when colliding against another object.",
+                                "default": 10,
+                                "minimum": 0,
+                                "maximum": 128
+                            },
                             "bodiesToCheckForGravity": {
                                 "type": "integer",
                                 "description": "Number of bodies to check for gravity on each cycle.",
@@ -2905,8 +2912,13 @@
                             },
                             "gravity": {
                                 "type": "number",
-                                "default": 20,
-                                "minimum": 0
+                                "default": 10,
+                                "minimum": 0,
+                                "maximum": 100
+                            },
+                            "highPrecision": {
+                                "type": "boolean",
+                                "default": false
                             },
                             "maximumBouncinessCoefficient": {
                                 "type": "integer",
@@ -2914,6 +2926,13 @@
                                 "default": 1,
                                 "minimum": 0
                             },
+                            "maximumFrictionCoefficient": {
+                                "type": "integer",
+                                "description": "The maximum allowed friction coefficient.",
+                                "default": 1,
+                                "minimum": 0,
+                                "minimum": 256
+                            },							
                             "stopBouncingVelocityThreshold": {
                                 "type": "integer",
                                 "default": 48,
@@ -3047,8 +3066,16 @@
                             "sort": {
                                 "type": "boolean",
                                 "default": true
+                            },
+                            "interlacedThreshold": {
+                                "type": "object",
+                                "description": "The distance to start interlacing wireframe graphics.",
+								"type": "integer",
+								"default": 4096,
+								"maximum": 8191,
+								"minimum": 512
                             }
-                        }
+						}	
                     }
                 },
                 "required": []
