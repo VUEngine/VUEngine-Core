@@ -55,6 +55,7 @@ enum Events
 	kEventCommunicationsTransmissionCompleted,
 
 	kEventActorBounced,
+	kEventActorCannotMove,
 
 	kEventSoundFinished,
 	kEventSoundReleased,

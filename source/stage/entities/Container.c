@@ -1184,7 +1184,7 @@ void Container::setName(const char* const name)
 
 	typedef struct NameWrapper
 	{
-		char name[__MAX_CONTAINER_NAME_LENGTH];
+		char name[__MAX_CONTAINER_NAME_LENGTH + 1];
 
 	} NameWrapper;
 
@@ -1192,6 +1192,7 @@ void Container::setName(const char* const name)
 	this->name = nameWrapper->name;
 
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
+	this->name[__MAX_CONTAINER_NAME_LENGTH] = '\0';
 }
 
 /**

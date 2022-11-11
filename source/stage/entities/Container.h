@@ -55,7 +55,7 @@
 #define __INHERIT_SCALE						0x04
 
 
-#define __MAX_CONTAINER_NAME_LENGTH			8
+#define __MAX_CONTAINER_NAME_LENGTH			16
 
 
 //---------------------------------------------------------------------------------------------------------
