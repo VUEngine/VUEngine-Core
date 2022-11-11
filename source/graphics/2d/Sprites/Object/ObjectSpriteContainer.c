@@ -203,7 +203,7 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 
 			swapped = true;
 
-			//if(deferred)
+			if(deferred)
 			{
 				break;
 			}
