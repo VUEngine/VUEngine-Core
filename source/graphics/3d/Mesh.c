@@ -292,11 +292,6 @@ void Mesh::addSegments(PixelVector (*segments)[2])
 
 void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 {
-	if(Vector3D::areEqual(startVector, endVector))
-	{
-		return;
-	}
-
 	MeshSegment* newMeshSegment = new MeshSegment;
 	newMeshSegment->fromVertex = NULL;
 	newMeshSegment->toVertex = NULL;
