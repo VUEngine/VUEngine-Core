@@ -71,7 +71,7 @@ class Actor : AnimatedEntity
 	void takeHitFrom(Actor other);
 	bool isMoving();
 	uint16 getMovementState();
-	virtual void applyForce(const Force* force, bool checkIfCanMove);
+	virtual bool applyForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(uint16 axis);
 	virtual void syncPositionWithBody();

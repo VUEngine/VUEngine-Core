@@ -601,24 +601,26 @@ void Actor::stopMovement(uint16 axis)
 	}
 }
 
-void Actor::applyForce(const Force* force, bool checkIfCanMove)
+bool Actor::applyForce(const Force* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
 
 	if(!this->body)
 	{
-		return;
+		return false;
 	}
 
 	if(checkIfCanMove)
 	{
 		if(!Actor::canMoveTowards(this, *force))
 		{
-			return;
+			return false;
 		}
 	}
 
 	Body::applyForce(this->body, force);
+
+	return true;
 }
 
 void Actor::moveUniformly(Velocity* velocity)

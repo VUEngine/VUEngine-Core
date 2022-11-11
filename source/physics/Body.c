@@ -351,17 +351,17 @@ uint8 Body::applyForce(const Force* force)
 
 		uint16 axisOfExternalForce = __NO_AXIS;
 
-		if(force->x)
+		if(0 != force->x)
 		{
 			axisOfExternalForce |= __X_AXIS;
 		}
 
-		if(force->y)
+		if(0 != force->y)
 		{
 			axisOfExternalForce |= __Y_AXIS;
 		}
 
-		if(force->z)
+		if(0 != force->z)
 		{
 			axisOfExternalForce |= __Z_AXIS;
 		}

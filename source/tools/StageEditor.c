@@ -341,7 +341,7 @@ void StageEditor::getShape()
 
 	if(!Entity::hasShapes(entity))
 	{
-		this->shape = Shape::safeCast(new Box(SpatialObject::safeCast(entity)));
+		this->shape = Shape::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
 
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};

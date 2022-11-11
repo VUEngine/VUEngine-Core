@@ -241,7 +241,6 @@ void Shape::enterCollision(CollisionData* collisionData)
  */
 void Shape::updateCollision(CollisionData* collisionData)
 {
-
 	SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
 }
 /**
