@@ -648,7 +648,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
-		PRINT_TIME(41, 6);
 		return;
 	}
 
