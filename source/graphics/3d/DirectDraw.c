@@ -29,8 +29,9 @@ extern uint32* _currentDrawingFrameBufferSet;
 DirectDraw _directDraw = NULL;
 
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
+#define	__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS				1000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
-#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		1
+#define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		100
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
@@ -112,6 +113,11 @@ void DirectDraw::destructor()
 void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->maximuDrawPixels = this->totalDrawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+
+	if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximuDrawPixels)
+	{
+		this->maximuDrawPixels = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
+	}
 }
 
 /**
@@ -132,6 +138,7 @@ void DirectDraw::reset()
  */
 void DirectDraw::startDrawing()
 {
+
 #ifdef __PROFILE_DIRECT_DRAWING
 	static int counter = 0;
 
@@ -144,7 +151,7 @@ void DirectDraw::startDrawing()
 	}
 #endif
 
-	if(this->totalDrawPixels < _directDraw->maximuDrawPixels)
+	if(this->totalDrawPixels <= _directDraw->maximuDrawPixels)
 	{
 		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 
@@ -641,6 +648,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
 	{
+		PRINT_TIME(41, 6);
 		return;
 	}
 
