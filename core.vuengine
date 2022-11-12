@@ -2911,7 +2911,7 @@
                                 "minimum": 0
                             },
                             "gravity": {
-                                "type": "number",
+                                "type": "integer",
                                 "default": 10,
                                 "minimum": 0,
                                 "maximum": 100
