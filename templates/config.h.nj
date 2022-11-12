@@ -135,6 +135,7 @@
 
 {{ macros.sectionHeader('Wireframes') }}
 
+// Sort the wireframes based on their distance to the camera to cull off those that are far off if necessary.
 {% if config.wireframe.sort %}
 	{%- if config.wireframe.sort === false -%}
 #undef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
@@ -144,7 +145,6 @@
 {%- else -%}
 #define __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 {% endif -%}
-
 
 // The distance to start interlacing wireframe graphics.
 #define __DIRECT_DRAW_INTERLACED_THRESHOLD							{% if config.wireframes.interlacedThreshold %}__PIXELS_TO_METERS({{config.wireframes.interlacedThreshold}}) {% else %}__PIXELS_TO_METERS(8191){% endif %} 
