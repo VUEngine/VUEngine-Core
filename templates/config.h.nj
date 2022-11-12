@@ -146,9 +146,8 @@
 {% endif -%}
 
 
-{{ macros.sectionHeader('Direct drawing') }}
-
-{% if config.wireframes.interlacedThreshold %}#define 								__PIXELS_TO_METERS({{config.wireframes.interlacedThreshold}}) {% else %}#define __DIRECT_DRAW_INTERLACED_THRESHOLD								0{% endif %} 
+// The distance to start interlacing wireframe graphics.
+#define __DIRECT_DRAW_INTERLACED_THRESHOLD							{% if config.wireframes.interlacedThreshold %}__PIXELS_TO_METERS({{config.wireframes.interlacedThreshold}}) {% else %}__PIXELS_TO_METERS(8191){% endif %} 
 
 
 {{ macros.sectionHeader('Optics / Projection') }}
