@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // memory manipulation
-#define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
+#define __MEMORY_USED_BLOCK_FLAG	((uint16)0xFFFF)
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 
