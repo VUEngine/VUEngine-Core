@@ -32,6 +32,10 @@
 		ClassName ClassName ## _new(__VA_ARGS__)
 
 
+#ifndef __RELEASE
+#undef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
+#endif
+
 #define __OBJECT_MEMORY_FOOT_PRINT		(uint16)(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
 
 // define the class's allocator
