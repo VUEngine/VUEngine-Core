@@ -319,16 +319,10 @@ void MemoryPool::free(BYTE* object)
 		return;
 	}
 
-	uint32 pool = 0;
-
-	// look for the pool containing the object
-	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
+	uint16 pool = *((uint16*)object + 1);
 
 	// look for the registry in which the object is
 	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
-
-	// move one pool back since the above loop passed the target by one
-	pool--;
 
 	this->poolLastFreeBlock[pool] = object;
 
@@ -385,11 +379,24 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 #endif
 #endif
 
-	uint32 pool = __MEMORY_POOLS;
+	uint16 pool = __MEMORY_POOLS >> 1;
+
+	uint32 blockSize = this->poolSizes[pool][eBlockSize];
+
+	if(blockSize > (uint32)numberOfBytes)
+	{
+		pool = __MEMORY_POOLS;
+	}
+	else
+	{
+		pool++;
+	}
+
+	HardwareManager::suspendInterrupts();
 
 	while(pool--)
 	{
-		uint32 blockSize = this->poolSizes[pool][eBlockSize];
+		blockSize = this->poolSizes[pool][eBlockSize];
 
 		if((uint32)numberOfBytes > blockSize)
 		{
@@ -410,23 +417,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
 				{
-					HardwareManager::suspendInterrupts();
-
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
-					{
-						poolLocation = poolLocationRight;
-						break;
-					}
+					poolLocation = poolLocationRight;
+					break;
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
 				{
-					HardwareManager::suspendInterrupts();
-
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
-					{
-						poolLocation = poolLocationEnd;
-						break;
-					}
+					poolLocation = poolLocationEnd;
+					break;
 				}
 
 				poolLocationRight += blockSize;
@@ -437,23 +434,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
 				{
-					HardwareManager::suspendInterrupts();
-
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
-					{
-						poolLocation = poolLocationLeft;
-						break;
-					}
+					poolLocation = poolLocationLeft;
+					break;
 				}
 				else if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
 				{
-					HardwareManager::suspendInterrupts();
-
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
-					{
-						poolLocation = poolLocationStart;
-						break;
-					}
+					poolLocation = poolLocationStart;
+					break;
 				}
 
 				poolLocationLeft -= blockSize;
@@ -465,7 +452,10 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 		if(NULL != poolLocation)
 		{
-			*((uint32*)poolLocation) = __MEMORY_USED_BLOCK_FLAG;
+			*((uint16*)poolLocation) = __MEMORY_USED_BLOCK_FLAG;
+#ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
+			*((uint16*)poolLocation + 1) = (uint16)pool;
+#endif
 			this->poolLastFreeBlock[pool] = poolLocation;
 			HardwareManager::resumeInterrupts();
 			return poolLocation;

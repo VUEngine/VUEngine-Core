@@ -32,7 +32,7 @@
 		ClassName ClassName ## _new(__VA_ARGS__)
 
 
-#define __OBJECT_MEMORY_FOOT_PRINT		(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
+#define __OBJECT_MEMORY_FOOT_PRINT		(uint16)(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
 
 // define the class's allocator
 #define __CLASS_NEW_DEFINITION(ClassName, ...)															\
@@ -47,7 +47,7 @@
 			extern MemoryPool _memoryPool;																\
 																										\
 			/* allocate object */																		\
-			uint32* memoryBlock = (uint32*)MemoryPool_allocate(_memoryPool, 							\
+			uint16* memoryBlock = (uint16*)MemoryPool_allocate(_memoryPool, 							\
 							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
 																										\
 			/* mark memory block as used by an object */												\
@@ -95,16 +95,16 @@
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
-#ifndef __RELEASE
+#ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
 			ASSERT(object && *(uint32*)object, "Deleting null object");									\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
 		{																								\
 			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 						\
 				"Oop: deleting null basic object");														\
@@ -118,11 +118,11 @@
 #else
 #define __DELETE(object)																				\
 																										\
-		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
-		else if(__MEMORY_USED_BLOCK_FLAG == *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
+		else if(__MEMORY_USED_BLOCK_FLAG == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))			\
 		{																								\
 			*(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;				\
 		}																								\

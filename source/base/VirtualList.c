@@ -96,10 +96,7 @@ void VirtualList::deleteData()
 
 		for(VirtualNode node = this->head; NULL != node;)
 		{
-			if(!isDeleted(node->data))
-			{
-				delete node->data;
-			}
+			delete node->data;
 
 			VirtualNode aux = node;
 
