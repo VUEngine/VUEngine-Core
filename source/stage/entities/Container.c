@@ -1162,7 +1162,7 @@ Container Container::getParent()
  */
 int32 Container::getChildCount()
 {
-	return this->children ? VirtualList::getSize(this->children) : 0;
+	return NULL != this->children ? VirtualList::getSize(this->children) : 0;
 }
 
 /**
@@ -1410,7 +1410,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 			}
 		}
 
-		if(VirtualList::getSize(behaviors))
+		if(NULL != behaviors->head)
 		{
 			return true;
 		}

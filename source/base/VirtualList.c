@@ -69,31 +69,16 @@ void VirtualList::clear()
 	{
 		HardwareManager::suspendInterrupts();
 
-		// point to the head
-		VirtualNode node = this->head;
-
-		// move the head to next node
-		this->head = this->head->next;
-
-		// while there are nodes
-		while(NULL != node)
+		for(VirtualNode node = this->head; NULL != node;)
 		{
-			// call destructor
-			delete node;
+			VirtualNode aux = node;
 
-			// move the node to the head
-			node = this->head;
+			node = node->next;
 
-			// move the head
-			if(NULL != this->head)
-			{
-				this->head = this->head->next;
-			}
+			delete aux;
 		}
 
-		ASSERT(NULL == this->head, "VirtualList::clear: head is not NULL");
-
-		this->tail = NULL;
+		this->head = this->tail = NULL;
 
 		HardwareManager::resumeInterrupts();
 	}
@@ -296,7 +281,6 @@ int32 VirtualList::getSize()
 
 		// increment counter
 		ASSERT(counter < LIST_MAX_SIZE, "VirtualList::getSize: endless list getting size");
-
 	}
 
 	return counter;

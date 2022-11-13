@@ -220,7 +220,7 @@ void ListenerObject::removeAllEventListeners()
  */
 bool ListenerObject::hasActiveEventListeners()
 {
-	return !isDeleted(this->events) ? 0 < VirtualList::getSize(this->events) : false;
+	return !isDeleted(this->events) ? NULL != VirtualList::begin(this->events) : false;
 }
 
 /**

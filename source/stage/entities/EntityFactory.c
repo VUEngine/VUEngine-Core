@@ -373,9 +373,9 @@ uint32 EntityFactory::prepareEntities()
 
 uint32 EntityFactory::hasEntitiesPending()
 {
-	return VirtualList::getSize(this->entitiesToInstantiate) ||
-			VirtualList::getSize(this->entitiesToTransform) ||
-			VirtualList::getSize(this->entitiesToMakeReady);
+	return NULL != this->entitiesToInstantiate->head ||
+			NULL != this->entitiesToTransform->head ||
+			NULL != this->entitiesToMakeReady->head;
 }
 
 int32 EntityFactory::getPhase()

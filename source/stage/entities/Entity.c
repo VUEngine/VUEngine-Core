@@ -1374,7 +1374,7 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 		return false;
 	}
 
-	if(this->shapes && 0 <= shapeSpecIndex && VirtualList::getSize(this->shapes))
+	if(this->shapes && 0 <= shapeSpecIndex && NULL != VirtualList::begin(this->shapes))
 	{
 		Shape shape = Shape::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
 
