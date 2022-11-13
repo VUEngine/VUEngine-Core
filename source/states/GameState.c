@@ -348,7 +348,10 @@ void GameState::streamAll()
 		SpriteManager::prepareAll(SpriteManager::getInstance());
 
 		// Force collision purging
-		CollisionManager::purgeDestroyedShapes(this->collisionManager);
+		if(!isDeleted(this->collisionManager))
+		{
+			CollisionManager::purgeDestroyedShapes(this->collisionManager);
+		}
 
 		if(streamedComplete)
 		{
