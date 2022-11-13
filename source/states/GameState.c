@@ -386,7 +386,10 @@ void GameState::streamOutAll()
 	Stage::streamAllOut(this->stage);
 	
 	// Force collision purging
-	CollisionManager::purgeDestroyedShapes(this->collisionManager);	
+	if(!isDeleted(this->collisionManager))
+	{
+		CollisionManager::purgeDestroyedShapes(this->collisionManager);
+	}
 
 	HardwareManager::enableInterrupts();
 }
