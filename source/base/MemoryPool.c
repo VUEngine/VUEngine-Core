@@ -408,11 +408,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocationLeft = this->poolLastFreeBlock[pool];
 		BYTE* poolLocationRight = poolLocationLeft + blockSize;
 		BYTE* poolLocationEnd = &this->poolLocation[pool][blockSize * (numberOfOjects - 1)];
-
 		BYTE* poolLocation = NULL;
+		bool keepLooking = false;
 
 		do
 		{
+			keepLooking = false;
+
 			if(poolLocationRight <= poolLocationEnd)
 			{
 				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
@@ -428,6 +430,8 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 				poolLocationRight += blockSize;
 				poolLocationEnd -= blockSize;
+
+				keepLooking = true;
 			}
 
 			if(poolLocationLeft >= poolLocationStart)
@@ -445,9 +449,11 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 				poolLocationLeft -= blockSize;
 				poolLocationStart += blockSize;
+
+				keepLooking = true;
 			}
 		}
-		while((poolLocationStart <= poolLocationLeft) || (poolLocationEnd >= poolLocationRight));
+		while(keepLooking);
 		// keep looking for a free block on a bigger pool
 
 		if(NULL != poolLocation)
