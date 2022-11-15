@@ -719,150 +719,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 	int16 halfHeight = 0;
 	int16 halfDepth = 5;
 
-	if(positionedEntity->entitySpec->spriteSpecs && positionedEntity->entitySpec->spriteSpecs[0])
-	{
-		int32 i = 0;
-
-		for(; positionedEntity->entitySpec->spriteSpecs[i]; i++)
-		{
-			if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->spriteSpecs[i]->allocator && ((MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i])->textureSpecs[0]))
-			{
-				MBgmapSpriteSpec* mBgmapSpriteSpec = (MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
-
-				int32 j = 0;
-
-				halfWidth = 0;
-				halfHeight = 0;
-				halfDepth = 0;
-
-				for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
-				{
-					if(halfWidth < (int16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
-					{
-						halfWidth = mBgmapSpriteSpec->textureSpecs[j]->cols << 2;
-					}
-
-					if(halfHeight < (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
-					{
-						halfHeight = (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
-					}
-				}
-
-				if(left > -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
-				{
-					left = -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
-				}
-
-				if(right < halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
-				{
-					right = halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
-				}
-
-				if(top > -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
-				{
-					top = -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
-				}
-
-				if(bottom < halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
-				{
-					bottom = halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
-				}
-
-				if(front > mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
-				{
-					front = mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
-				}
-
-				if(back < halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
-				{
-					back = halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
-				}
-
-			}
-			else if(positionedEntity->entitySpec->spriteSpecs[i]->textureSpec)
-			{
-				SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
-				halfWidth = spriteSpec->textureSpec->cols << 2;
-				halfHeight = spriteSpec->textureSpec->rows << 2;
-				halfDepth = 16;
-
-				if(left > -halfWidth + spriteSpec->displacement.x)
-				{
-					left = -halfWidth + spriteSpec->displacement.x;
-				}
-
-				if(right < halfWidth + spriteSpec->displacement.x)
-				{
-					right = halfWidth + spriteSpec->displacement.x;
-				}
-
-				if(top > -halfHeight + spriteSpec->displacement.y)
-				{
-					top = -halfHeight + spriteSpec->displacement.y;
-				}
-
-				if(bottom < halfHeight + spriteSpec->displacement.y)
-				{
-					bottom = halfHeight + spriteSpec->displacement.y;
-				}
-
-				if(front > -halfDepth + spriteSpec->displacement.z)
-				{
-					front = -halfDepth + spriteSpec->displacement.z;
-				}
-
-				if(back < (halfDepth << 1) + spriteSpec->displacement.z)
-				{
-					back = (halfDepth << 1) + spriteSpec->displacement.z;
-				}
-			}
-		}
-	}
-
-	if(positionedEntity->entitySpec->wireframeSpecs && positionedEntity->entitySpec->wireframeSpecs[0])
-	{
-		int32 i = 0;
-
-		for(; positionedEntity->entitySpec->wireframeSpecs[i]; i++)
-		{
-			if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
-			{
-				PixelRightBox pixelRightBox = Mesh::getPixelRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
-
-				if(left > pixelRightBox.x0)
-				{
-					left = pixelRightBox.x0;
-				}
-
-				if(right < pixelRightBox.x1)
-				{
-					right = pixelRightBox.x1;
-				}
-
-				if(top > pixelRightBox.y0)
-				{
-					top = pixelRightBox.y0;
-				}
-
-				if(right < pixelRightBox.y1)
-				{
-					top = pixelRightBox.y1;
-				}
-
-				if(front > pixelRightBox.z0)
-				{
-					front = pixelRightBox.z0;
-				}
-
-				if(back < pixelRightBox.z1)
-				{
-					back = pixelRightBox.z1;
-				}
-			}
-		}
-	}	
-
-	if(!positionedEntity->childrenSpecs && !positionedEntity->entitySpec->childrenSpecs)
+	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
 		// TODO: there should be a class which handles special cases
 		halfWidth = positionedEntity->entitySpec->pixelSize.x >> 1;
@@ -876,6 +733,151 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		front = -halfDepth;
 		back = halfDepth;
 	}
+	else 
+	{
+		if(NULL != positionedEntity->entitySpec->spriteSpecs && NULL != positionedEntity->entitySpec->spriteSpecs[0])
+		{
+			int32 i = 0;
+
+			for(; NULL != positionedEntity->entitySpec->spriteSpecs[i]; i++)
+			{
+				if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->spriteSpecs[i]->allocator && ((MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i])->textureSpecs[0]))
+				{
+					MBgmapSpriteSpec* mBgmapSpriteSpec = (MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
+
+					int32 j = 0;
+
+					halfWidth = 0;
+					halfHeight = 0;
+					halfDepth = 0;
+
+					for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
+					{
+						if(halfWidth < (int16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
+						{
+							halfWidth = mBgmapSpriteSpec->textureSpecs[j]->cols << 2;
+						}
+
+						if(halfHeight < (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
+						{
+							halfHeight = (int16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
+						}
+					}
+
+					if(left > -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
+					{
+						left = -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
+					}
+
+					if(right < halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
+					{
+						right = halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
+					}
+
+					if(top > -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
+					{
+						top = -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
+					}
+
+					if(bottom < halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
+					{
+						bottom = halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
+					}
+
+					if(front > mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
+					{
+						front = mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
+					}
+
+					if(back < halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
+					{
+						back = halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
+					}
+
+				}
+				else if(NULL != positionedEntity->entitySpec->spriteSpecs[i]->textureSpec)
+				{
+					SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
+					halfWidth = spriteSpec->textureSpec->cols << 2;
+					halfHeight = spriteSpec->textureSpec->rows << 2;
+					halfDepth = 16;
+
+					if(left > -halfWidth + spriteSpec->displacement.x)
+					{
+						left = -halfWidth + spriteSpec->displacement.x;
+					}
+
+					if(right < halfWidth + spriteSpec->displacement.x)
+					{
+						right = halfWidth + spriteSpec->displacement.x;
+					}
+
+					if(top > -halfHeight + spriteSpec->displacement.y)
+					{
+						top = -halfHeight + spriteSpec->displacement.y;
+					}
+
+					if(bottom < halfHeight + spriteSpec->displacement.y)
+					{
+						bottom = halfHeight + spriteSpec->displacement.y;
+					}
+
+					if(front > -halfDepth + spriteSpec->displacement.z)
+					{
+						front = -halfDepth + spriteSpec->displacement.z;
+					}
+
+					if(back < (halfDepth << 1) + spriteSpec->displacement.z)
+					{
+						back = (halfDepth << 1) + spriteSpec->displacement.z;
+					}
+				}
+			}
+		}
+
+		if(NULL != positionedEntity->entitySpec->wireframeSpecs && NULL != positionedEntity->entitySpec->wireframeSpecs[0])
+		{
+			int32 i = 0;
+
+			for(; NULL != positionedEntity->entitySpec->wireframeSpecs[i]; i++)
+			{
+				if(__TYPE(Mesh) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->wireframeSpecs[i]->allocator && ((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i])->segments[0]))
+				{
+					PixelRightBox pixelRightBox = Mesh::getPixelRightBoxFromSpec((MeshSpec*)positionedEntity->entitySpec->wireframeSpecs[i]);
+
+					if(left > pixelRightBox.x0)
+					{
+						left = pixelRightBox.x0;
+					}
+
+					if(right < pixelRightBox.x1)
+					{
+						right = pixelRightBox.x1;
+					}
+
+					if(top > pixelRightBox.y0)
+					{
+						top = pixelRightBox.y0;
+					}
+
+					if(right < pixelRightBox.y1)
+					{
+						top = pixelRightBox.y1;
+					}
+
+					if(front > pixelRightBox.z0)
+					{
+						front = pixelRightBox.z0;
+					}
+
+					if(back < pixelRightBox.z1)
+					{
+						back = pixelRightBox.z1;
+					}
+				}
+			}
+		}
+	}	
 
 	if((0 == pixelRightBox->x0) | (pixelGlobalPosition.x + left < pixelRightBox->x0))
 	{
@@ -907,7 +909,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
 
-	if(positionedEntity->childrenSpecs)
+	if(NULL != positionedEntity->childrenSpecs)
 	{
 		int32 i = 0;
 		for(; positionedEntity->childrenSpecs[i].entitySpec; i++)
@@ -916,7 +918,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		}
 	}
 
-	if(positionedEntity->entitySpec->childrenSpecs)
+	if(NULL != positionedEntity->entitySpec->childrenSpecs)
 	{
 		int32 i = 0;
 		for(; positionedEntity->entitySpec->childrenSpecs[i].entitySpec; i++)
@@ -1586,7 +1588,12 @@ void Entity::synchronizeGraphics()
 
 	this->invalidateGraphics = false;
 
-	Entity::computeVisibiliy(this, _visibilityPadding, true);
+	this->visible = this->dontStreamOut;
+
+	if(!this->visible)
+	{
+		Entity::computeVisibiliy(this, _visibilityPadding, true);
+	}
 }
 
 /**
