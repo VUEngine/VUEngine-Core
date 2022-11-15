@@ -58,6 +58,7 @@ class VirtualList : Object
 	int32 pushBack(const void* const data);
 	int32 pushFront(const void* const data);
 	bool removeNode(VirtualNode node);
+	void moveBefore(VirtualNode node, VirtualNode nodeToMove);
 	bool removeElement(const void* const dataPointer);
 	void swap(VirtualList secondList);
 }

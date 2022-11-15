@@ -459,6 +459,90 @@ bool VirtualList::removeNode(VirtualNode node)
 }
 
 /**
+ * Move a node before another
+ *
+ * @param node			Reference node
+ * @param nodeToMove			Node to move
+ */
+void VirtualList::moveBefore(VirtualNode node, VirtualNode nodeToMove)
+{
+	if(isDeleted(node) || isDeleted(nodeToMove) || node == nodeToMove || node->previous == nodeToMove)
+	{
+		return;
+	}
+
+	if(nodeToMove == this->head)
+	{
+		this->head = nodeToMove->next;
+	}
+	else if(nodeToMove == this->tail)
+	{
+		this->tail = nodeToMove->previous;
+	}
+	else if(node == this->head)
+	{
+		this->head = nodeToMove;
+	}
+
+	if(NULL != nodeToMove->previous)
+	{
+		nodeToMove->previous->next = nodeToMove->next;
+	}
+	
+	if(NULL != nodeToMove->next)
+	{
+		nodeToMove->next->previous = nodeToMove->previous;
+	}
+
+	nodeToMove->next = node;
+	nodeToMove->previous = node->previous;
+
+	if(NULL != node->previous)
+	{
+		node->previous->next = nodeToMove;
+	}
+
+	node->previous = nodeToMove;
+}
+
+/**
+ * Move a node before another
+ *
+ * @param node			Reference node
+ * @param nodeToMove			Node to move
+ */
+void VirtualList::moveAfter(VirtualNode node, VirtualNode nodeToMove)
+{
+	if(isDeleted(node) || isDeleted(nodeToMove) || node == nodeToMove)
+	{
+		return;
+	}
+
+	if(nodeToMove == this->head)
+	{
+		this->head = nodeToMove->next;
+	}
+	else if(nodeToMove == this->tail)
+	{
+		this->head = nodeToMove->previous;
+	}
+	else if(node == this->tail)
+	{
+		this->tail = nodeToMove;
+	}
+
+	nodeToMove->previous = node;
+	nodeToMove->next = node->next;
+
+	if(NULL != node->next)
+	{
+		node->next->previous = nodeToMove;
+	}
+
+	node->next = nodeToMove;
+}
+
+/**
  * Find a node in the list
  *
  * @param dataPointer
