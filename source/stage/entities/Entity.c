@@ -36,6 +36,9 @@ static int16 _visibilityPadding = 0;
 friend class VirtualNode;
 friend class VirtualList;
 
+#define ENTITY_SPRITE_DEPTH						16
+#define ENTITY_SPRITE_HALF_DEPTH				(ENTITY_SPRITE_DEPTH >> 1)
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -74,7 +77,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
-	this->visible = true;
+	this->inCameraRange = true;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -517,7 +520,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 	int16 back = 0;
 	int16 halfWidth = 0;
 	int16 halfHeight = 0;
-	int16 halfDepth = 10;
+	int16 halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
 	if((!this->size.x || !this->size.y || !this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
 	{
@@ -530,7 +533,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 
 				halfWidth = Sprite::getHalfWidth(sprite);
 				halfHeight = Sprite::getHalfHeight(sprite);
-				halfDepth = 16;
+				halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
 				PixelVector spriteDisplacement = *Sprite::getDisplacement(sprite);
 
@@ -717,7 +720,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 	int16 back = 0;
 	int16 halfWidth = 0;
 	int16 halfHeight = 0;
-	int16 halfDepth = 5;
+	int16 halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
 	if(0 != positionedEntity->entitySpec->pixelSize.x || 0 != positionedEntity->entitySpec->pixelSize.y || 0 != positionedEntity->entitySpec->pixelSize.z)
 	{
@@ -749,7 +752,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 
 					halfWidth = 0;
 					halfHeight = 0;
-					halfDepth = 0;
+					halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
 					for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
 					{
@@ -800,7 +803,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 					SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
 					halfWidth = spriteSpec->textureSpec->cols << 2;
 					halfHeight = spriteSpec->textureSpec->rows << 2;
-					halfDepth = 16;
+					halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
 					if(left > -halfWidth + spriteSpec->displacement.x)
 					{
@@ -1071,7 +1074,9 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
  */
 static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, int16 internalId)
 {
-	ASSERT(NULL != positionedEntity, "Entity::loadFromSpec: null positionedEntity");
+	NM_ASSERT(NULL != positionedEntity, "Entity::loadEntity: null positionedEntity");
+	NM_ASSERT(NULL != positionedEntity->entitySpec, "Entity::loadEntity: null spec");
+	NM_ASSERT(NULL != positionedEntity->entitySpec->allocator, "Entity::loadEntity: no allocator defined");
 
 	if(NULL == positionedEntity)
 	{
@@ -1138,6 +1143,8 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId)
 {
 	NM_ASSERT(NULL != positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
+	NM_ASSERT(NULL != positionedEntity->entitySpec, "Entity::loadEntityDeferred: null spec");
+	NM_ASSERT(NULL != positionedEntity->entitySpec->allocator, "Entity::loadEntityDeferred: no allocator defined");
 
 	if(!positionedEntity)
 	{
@@ -1588,11 +1595,11 @@ void Entity::synchronizeGraphics()
 
 	this->invalidateGraphics = false;
 
-	this->visible = this->dontStreamOut;
+	this->inCameraRange = this->dontStreamOut;
 
-	if(!this->visible)
+	if(!this->inCameraRange)
 	{
-		Entity::computeVisibiliy(this, _visibilityPadding, true);
+		Entity::computeIfInCameraRange(this, _visibilityPadding, true);
 	}
 }
 
@@ -1704,6 +1711,34 @@ fixed_t Entity::getDepth()
 	return this->size.z;
 }
 
+void Entity::setSize(Size size)
+{
+#ifndef __RELEASE
+	if(this->size.x || this->size.y || this->size.z)
+	{
+		if(size.x != this->size.x)
+		{
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
+			PRINT_TEXT("Entity::setSize: missmatch in size x", 1, 11);
+		}
+
+		if(size.y != this->size.y)
+		{
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
+			PRINT_TEXT("Entity::setSize: missmatch in size y", 1, 12);
+		}
+
+		if(size.z != this->size.z)
+		{
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
+			PRINT_TEXT("Entity::setSize: missmatch in size z", 1, 13);
+		}
+	}
+#endif
+
+	this->size = size;
+}
+
 bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
 {
 	PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
@@ -1711,7 +1746,7 @@ bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
 	PixelSize pixelSize = PixelSize::getFromSize(this->size);
 
 	int16 halfWidth	= pixelSize.x >> 1;
-	int16 halfHeight	= pixelSize.y >> 1;
+	int16 halfHeight = pixelSize.y >> 1;
 	int16 halfDepth	= pixelSize.z >> 1;
 
 	int32 x = spritePosition.x;
@@ -1748,32 +1783,32 @@ bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
  * @param recursive
  * @return			Boolean if visible
  */
-bool Entity::isVisible()
+bool Entity::isInCameraRange()
 {
-	return this->visible;
+	return this->inCameraRange;
 }
 
-void Entity::computeVisibiliy(int32 pad, bool recursive)
+void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 {
-	this->visible = false;
+	this->inCameraRange = false;
 
 	if(this->sprites && this->sprites->head)
 	{
 		bool areSpritesVisible = false;
 
-		for(VirtualNode spriteNode = this->sprites->head; !this->visible && spriteNode; spriteNode = spriteNode->next)
+		for(VirtualNode spriteNode = this->sprites->head; !this->inCameraRange && spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 
 			if(Sprite::isVisible(sprite))
 			{
-				this->visible = areSpritesVisible = true;
+				this->inCameraRange = areSpritesVisible = true;
 				break;
 			}
 
 			if(Entity::isSpriteVisible(this, sprite, pad))
 			{
-				this->visible = areSpritesVisible = true;
+				this->inCameraRange = areSpritesVisible = true;
 				break;
 			}
 		}
@@ -1804,28 +1839,28 @@ void Entity::computeVisibiliy(int32 pad, bool recursive)
 		size.y = __ABS(size.y);
 		size.z = __ABS(size.z);
 
-		this->visible = true;
+		this->inCameraRange = true;
 
 		int32 helperPad = pad + __ABS(position2D.z);
 
 		// check x visibility
 		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
 		{
-			this->visible = false;
+			this->inCameraRange = false;
 		}
 		// check y visibility
 		else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
 		{
-			this->visible = false;
+			this->inCameraRange = false;
 		}
 		// check z visibility
 		else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
 		{
-			this->visible = false;
+			this->inCameraRange = false;
 		}
 	}
 
-	if(!this->visible && recursive && NULL != this->children)
+	if(!this->inCameraRange && recursive && NULL != this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
@@ -1836,11 +1871,11 @@ void Entity::computeVisibiliy(int32 pad, bool recursive)
 				continue;
 			}
 
-			Entity::computeVisibiliy(child, pad, true);
+			Entity::computeIfInCameraRange(child, pad, true);
 
-			if(Entity::isVisible(child))
+			if(Entity::isInCameraRange(child))
 			{
-				this->visible = true;
+				this->inCameraRange = true;
 				break;
 			}
 		}

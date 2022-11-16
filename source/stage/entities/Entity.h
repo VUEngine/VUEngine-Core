@@ -51,7 +51,7 @@ class Entity : Container
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
 	// Flag used to know if the entity is within the camera reach
-	bool visible;
+	bool inCameraRange;
 
 	/// @publicsection
 	static Entity instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
@@ -99,11 +99,12 @@ class Entity : Container
 	uint32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
-	bool isVisible();
+	bool isInCameraRange();
 	VirtualList getShapes();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	void addWireframe(Wireframe wireframe);
 	void setSpec(void* entitySpec);
+	void setSize(Size size);
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();

@@ -377,11 +377,11 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// apply transformations
-	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	if(!isDeleted(this->uiContainer))
 	{
-		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 }
 
@@ -451,7 +451,7 @@ void Stage::setupUI()
 		if(!isDeleted(this->uiContainer))
 		{
 			// apply transformations
-			Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+			UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 		}
 	}
 }
@@ -884,7 +884,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isInCameraRange(entity))
 		{
 			int16 internalId = Entity::getInternalId(entity);
 
@@ -1104,7 +1104,21 @@ bool Stage::loadInRangeEntities(int32 defer)
 				}
 				else
 				{
-					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+					Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+
+#ifndef __RELEASE
+					if(stageEntityDescription->validRightBox)
+					{
+						Size size = 
+						{
+							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0),
+							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0),
+							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0),
+						};
+
+						Entity::setSize(entity, size);
+					}
+#endif
 					break;
 				}
 			}
@@ -1311,7 +1325,7 @@ void Stage::resume()
 	Base::resume(this);
 
 	// apply transformations
-	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1319,8 +1333,8 @@ void Stage::resume()
 
 	if(!isDeleted(this->uiContainer))
 	{
-		Container::resume(this->uiContainer);
-		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		UIContainer::resume(this->uiContainer);
+		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 
 	this->entityFactory = new EntityFactory();
