@@ -343,15 +343,14 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 
 		Sprite otherSprite = Sprite::safeCast(node->data);
 
+		NM_ASSERT(otherSprite != sprite, "SpriteManager::doRegisterSprite: sprite already registered");
+
+#ifndef __RELEASE
 		if(otherSprite == sprite)
 		{
 			return;
 		}
-
-		if(!otherSprite->positioned)
-		{
-			continue;
-		}
+#endif
 
 		// check if z positions are swapped
 		if(otherSprite->position.z + otherSprite->displacement.z > sprite->position.z + sprite->displacement.z)

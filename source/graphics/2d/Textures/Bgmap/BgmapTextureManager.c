@@ -644,12 +644,12 @@ void BgmapTextureManager::print(int32 x, int32 y)
 
 //				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
 				Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(bgmapTexture), x + j, y + i, 8, NULL);
-				Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 10, y + i, NULL);
+				Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
 
 				if(++i + y > __SCREEN_HEIGHT / 8)
 				{
 					i = 0;
-					j += 14;
+					j += 11;
 
 					if(j + x > __SCREEN_WIDTH / 8)
 					{

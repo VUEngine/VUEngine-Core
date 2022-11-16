@@ -1375,7 +1375,7 @@ void Container::setInheritEnvironment(uint8 inheritEnvironment)
 
 bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 {
-	if(this->children && !isDeleted(children))
+	if(!isDeleted(this->children) && !isDeleted(children))
 	{
 		for(VirtualNode node = this->children->head; node ; node = node->next)
 		{

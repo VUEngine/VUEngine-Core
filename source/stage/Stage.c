@@ -857,7 +857,7 @@ void Stage::loadInitialEntities()
 // unload non visible entities
 bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 {
-	if(!this->children)
+	if(isDeleted(this->children))
 	{
 		return false;
 	}
