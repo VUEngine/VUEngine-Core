@@ -840,6 +840,20 @@ void Stage::loadInitialEntities()
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
+#ifndef __RELEASE
+				if(stageEntityDescription->validRightBox)
+				{
+					Size size = 
+					{
+						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0),
+						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0),
+						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0),
+					};
+
+					Entity::setSize(entity, size);
+				}
+#endif
+
 				if(!isDeleted(entity))
 				{
 					if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)

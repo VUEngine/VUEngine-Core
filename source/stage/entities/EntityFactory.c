@@ -198,9 +198,9 @@ uint32 EntityFactory::instantiateEntities()
 		else
 		{
 			NM_ASSERT(!isDeleted(positionedEntityDescription), "EntityFactory::spawnEntities: deleted positionedEntityDescription");
-			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity, "Entity::spawnEntities: null positionedEntity");
-			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec, "Entity::spawnEntities: null spec");
-			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec->allocator, "Entity::spawnEntities: no allocator defined");
+			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity, "EntityFactory::spawnEntities: null positionedEntity");
+			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec, "EntityFactory::spawnEntities: null spec");
+			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec->allocator, "EntityFactory::spawnEntities: no allocator defined");
 
 			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
 			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");

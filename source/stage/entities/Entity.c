@@ -830,9 +830,9 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 						front = -halfDepth + spriteSpec->displacement.z;
 					}
 
-					if(back < (halfDepth << 1) + spriteSpec->displacement.z)
+					if(back < halfDepth + spriteSpec->displacement.z)
 					{
-						back = (halfDepth << 1) + spriteSpec->displacement.z;
+						back = halfDepth + spriteSpec->displacement.z;
 					}
 				}
 			}
@@ -1718,20 +1718,20 @@ void Entity::setSize(Size size)
 	{
 		if(size.x != this->size.x)
 		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
-			PRINT_TEXT("Entity::setSize: missmatch in size x", 1, 11);
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
+			PRINT_TEXT("Entity::setSize: missmatch in size x", 1, 2);
 		}
 
 		if(size.y != this->size.y)
 		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
-			PRINT_TEXT("Entity::setSize: missmatch in size y", 1, 12);
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
+			PRINT_TEXT("Entity::setSize: missmatch in size y", 1, 2);
 		}
 
 		if(size.z != this->size.z)
 		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 10);
-			PRINT_TEXT("Entity::setSize: missmatch in size z", 1, 13);
+			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
+			PRINT_TEXT("Entity::setSize: missmatch in size z", 1, 2);
 		}
 	}
 #endif
