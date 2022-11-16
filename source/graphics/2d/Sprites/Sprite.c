@@ -277,16 +277,16 @@ void Sprite::position(const Vector3D* position)
  */
 void Sprite::setPosition(const PixelVector* position)
 {
-	if(!this->registered)
-	{
-		Sprite::registerWithManager(this);
-	}
-
 	this->positioned = 	true;
 
 	if(this->position.x != position->x || this->position.y != position->y || this->position.z != position->z || this->position.parallax != position->parallax)
 	{
 		this->position = *position;
+	}
+
+	if(!this->registered)
+	{
+		Sprite::registerWithManager(this);
 	}
 }
 

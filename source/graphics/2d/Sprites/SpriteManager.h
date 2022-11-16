@@ -63,7 +63,6 @@ singleton class SpriteManager : Object
 	ObjectTextureManager objectTextureManager;
 	// Sprites to render
 	VirtualList sprites;
-	VirtualNode spriteToSortNode;
 	// Object sprite containers
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects
