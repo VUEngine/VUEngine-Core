@@ -78,6 +78,7 @@ void SpriteManager::constructor()
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
 	this->specialSprites = NULL;
+	this->spriteToSortNode = NULL;
 
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
@@ -168,6 +169,7 @@ void SpriteManager::reset()
 	this->sprites = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
 	this->specialSprites = new VirtualList();
+	this->spriteToSortNode = NULL;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -322,6 +324,8 @@ void SpriteManager::disposeSprite(Sprite sprite)
 
 	Sprite::hide(sprite);
 	delete sprite;
+
+	this->spriteToSortNode = NULL;
 }
 
 /**
@@ -329,7 +333,15 @@ void SpriteManager::disposeSprite(Sprite sprite)
  */
 void SpriteManager::sort()
 {
-	while(SpriteManager::sortProgressively(this, false));
+	HardwareManager::suspendInterrupts();
+	this->spriteToSortNode = NULL;
+
+	while(SpriteManager::sortProgressively(this, false))
+	{
+		this->spriteToSortNode = NULL;
+	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 /**
@@ -362,6 +374,8 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 	}
 
 	VirtualList::pushFront(this->sprites, sprite);
+
+	this->spriteToSortNode = NULL;
 }
 
 /**
@@ -371,47 +385,76 @@ bool SpriteManager::sortProgressively(bool deferred)
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->sprites->head; node && node->next; node = node->next)
+	if(NULL == this->spriteToSortNode)
 	{
-		VirtualNode nextNode = node->next;
+		this->spriteToSortNode = this->sprites->tail;
 
-		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+		if(NULL == this->spriteToSortNode)
+		{
+			return false;
+		}
+	}
 
-		Sprite sprite = Sprite::safeCast(node->data);
+	Sprite spriteToSort = Sprite::safeCast(this->spriteToSortNode->data);
 
-		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+	for(; NULL != this->spriteToSortNode && !spriteToSort->positioned; spriteToSort = Sprite::safeCast(this->spriteToSortNode->data), this->spriteToSortNode = this->spriteToSortNode->previous);
 
-		Sprite nextSprite = Sprite::safeCast(nextNode->data);
+	if(NULL == this->spriteToSortNode)
+	{
+		return false;
+	}
+
+	int16 spriteToSortPosition = spriteToSort->position.z + spriteToSort->displacement.z;
+
+	bool overtook = false;
+
+	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
+	{
+		if(node == this->spriteToSortNode)
+		{
+			overtook = true;
+			continue;
+		}
+
+		Sprite referenceSprite = Sprite::safeCast(node->data);
+
+		if(!referenceSprite->positioned)
+		{
+			continue;
+		}
+
+		int16 referenceSpritePosition = referenceSprite->position.z + referenceSprite->displacement.z;
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+		if((overtook && referenceSpritePosition == spriteToSortPosition) || referenceSpritePosition > spriteToSortPosition)
 		{
-			// swap nodes' data
-			node->data = nextSprite;
-			nextNode->data = sprite;
-
-			node = nextNode;
-
-			swapped = true;
-
-			if(deferred)
+			if(node->previous != this->spriteToSortNode)
 			{
-				break;
+				VirtualNode auxNode = this->spriteToSortNode;
+				this->spriteToSortNode = this->spriteToSortNode->previous;
+				VirtualList::moveBefore(this->sprites, node, auxNode);
+				swapped = true;
+			}
+
+			break;
+		}
+	}
+
+	if(!swapped)
+	{
+		if(!isDeleted(this->objectSpriteContainers))
+		{
+			for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
+			{
+				ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+				swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, deferred);
 			}
 		}
-	}
 
-	if(!swapped && !isDeleted(this->objectSpriteContainers))
-	{
-		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
-		{
-			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
-
-			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, deferred);
-		}
+		this->spriteToSortNode = this->spriteToSortNode->previous;
 	}
+	
 
 	return swapped;
 }
