@@ -3186,7 +3186,7 @@
                                 "elements": [
                                     {
                                         "type": "Control",
-                                        "scope": "#/properties/communications/properties/enabled"
+                                        "scope": "#/properties/communications/properties/enable"
                                     }
                                 ]
                             }

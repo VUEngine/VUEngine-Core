@@ -24,12 +24,13 @@
 
 {%- if item.compression !== 'none' -%}
     {%- set compressionResults = compressTiles(tilesData, item.compression, {
-        isAnimation: false,
+        isAnimation: true,
         individualFiles: false,
-        frameWidth: 0,
-        frameHeight: 0
+        frameWidth: item.size.x,
+        frameHeight: item.size.y
     }) -%}
     {%- set tilesData = compressionResults.tilesData -%}
+    {%- set tilesFrameOffsetsData = compressionResults.frameTileOffsets -%}
     {%- set tilesData = (tilesData.unshift('00000001'),tilesData) -%}
 {%- else -%}
     {%- set tilesData = (tilesData.unshift('00000000'),tilesData) -%}
@@ -54,6 +55,18 @@ const uint32 {{ sanitizedSpecName }}FontTiles[{{ 1 + item.characterCount * 4 }}]
     {%- endfor %}
 };
 
+{%- if tilesFrameOffsetsData is defined %}
+
+const uint32 {{ sanitizedSpecName }} FontTilesFrameOffsets[{{ tilesFrameOffsetsData | length }}] __attribute__((aligned(4)))
+{%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
+{
+    {% for tilesFrameOffset in tilesFrameOffsetsData -%}
+    0x{{  tilesFrameOffset | string | padStart(8, '0') }},
+    {%- if loop.index % 8 == 0 and not loop.last %}{{ "\n    " }}{% endif -%}
+    {%- endfor %}
+};
+{%- endif %}
+
 
 {{ macros.sectionHeader('Definitions') }}
 
@@ -69,7 +82,11 @@ CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 	(uint32*){{ sanitizedSpecName }}FontTiles,
 
 	// pointer to the frames offsets
-	NULL,
+	{% if tilesFrameOffsetsData is defined -%}
+        (uint32*){{ sanitizedSpecName }}FontTilesFrameOffsets
+    {%- else -%}
+        NULL
+    {%- endif %}    
 };
 
 FontROMSpec {{ sanitizedSpecName }}Font =
@@ -84,7 +101,7 @@ FontROMSpec {{ sanitizedSpecName }}Font =
 	{{ item.characterCount }},
 
 	// number of characters per line in charset
-	16,
+	1,
 
 	// size of a single character (in chars) ({width, height})
 	{{ "{" }}{{ item.size.x }}, {{ item.size.y }}{{ "}" }},
