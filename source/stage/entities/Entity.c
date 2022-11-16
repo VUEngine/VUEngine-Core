@@ -1012,8 +1012,8 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
  */
 static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity)
 {
-	NM_ASSERT(NULL != entitySpec, "Entity::load: null spec");
-	NM_ASSERT(NULL != entitySpec->allocator, "Entity::load: no allocator defined");
+	NM_ASSERT(NULL != entitySpec, "Entity::instantiate: null spec");
+	NM_ASSERT(NULL != entitySpec->allocator, "Entity::instantiate: no allocator defined");
 
 	if(NULL == entitySpec || NULL == entitySpec->allocator)
 	{
@@ -1071,7 +1071,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
  */
 static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, int16 internalId)
 {
-	ASSERT(positionedEntity, "Entity::loadFromSpec: null positionedEntity");
+	ASSERT(NULL != positionedEntity, "Entity::loadFromSpec: null positionedEntity");
 
 	if(NULL == positionedEntity)
 	{
@@ -1756,11 +1756,6 @@ bool Entity::isVisible()
 void Entity::computeVisibiliy(int32 pad, bool recursive)
 {
 	this->visible = false;
-
-	if(this->hidden)
-	{
-		return;
-	}
 
 	if(this->sprites && this->sprites->head)
 	{

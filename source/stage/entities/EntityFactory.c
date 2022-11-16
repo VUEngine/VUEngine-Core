@@ -162,7 +162,7 @@ uint32 EntityFactory::instantiateEntities()
 
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
-		if(positionedEntityDescription->entity)
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
@@ -197,6 +197,7 @@ uint32 EntityFactory::instantiateEntities()
 		}
 		else
 		{
+			NM_ASSERT(NULL != positionedEntityDescription, "EntityFactory::spawnEntities: NULL positionedEntityDescription");
 			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
 			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
