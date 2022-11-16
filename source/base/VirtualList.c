@@ -474,14 +474,11 @@ void VirtualList::moveBefore(VirtualNode node, VirtualNode nodeToMove)
 	if(nodeToMove == this->head)
 	{
 		this->head = nodeToMove->next;
+		this->head->previous = NULL;
 	}
 	else if(nodeToMove == this->tail)
 	{
 		this->tail = nodeToMove->previous;
-	}
-	else if(node == this->head)
-	{
-		this->head = nodeToMove;
 	}
 
 	if(NULL != nodeToMove->previous)
@@ -503,6 +500,14 @@ void VirtualList::moveBefore(VirtualNode node, VirtualNode nodeToMove)
 	}
 
 	node->previous = nodeToMove;
+
+	if(node == this->head)
+	{
+		this->head = nodeToMove;
+	}
+
+	NM_ASSERT(NULL == this->head->previous, "VirtualList::moveBefore: head is corrupted");
+	NM_ASSERT(NULL == this->tail->next, "VirtualList::moveBefore: tail is corrupted");
 }
 
 /**
@@ -521,14 +526,21 @@ void VirtualList::moveAfter(VirtualNode node, VirtualNode nodeToMove)
 	if(nodeToMove == this->head)
 	{
 		this->head = nodeToMove->next;
+		this->head->previous = NULL;
 	}
 	else if(nodeToMove == this->tail)
 	{
-		this->head = nodeToMove->previous;
+		this->tail = nodeToMove->previous;
 	}
-	else if(node == this->tail)
+
+	if(NULL != nodeToMove->next)
 	{
-		this->tail = nodeToMove;
+		nodeToMove->next->previous = nodeToMove->previous;
+	}
+	
+	if(NULL != nodeToMove->previous)
+	{
+		nodeToMove->previous->next = nodeToMove->next;
 	}
 
 	nodeToMove->previous = node;
@@ -540,6 +552,15 @@ void VirtualList::moveAfter(VirtualNode node, VirtualNode nodeToMove)
 	}
 
 	node->next = nodeToMove;
+
+	if(node == this->tail)
+	{
+		this->tail = nodeToMove;
+	}
+
+	NM_ASSERT(NULL == this->head->previous, "VirtualList::moveBefore: head is corrupted");
+	NM_ASSERT(NULL == this->tail->next, "VirtualList::moveBefore: tail is corrupted");
+
 }
 
 /**
