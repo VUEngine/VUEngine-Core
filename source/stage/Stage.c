@@ -840,20 +840,6 @@ void Stage::loadInitialEntities()
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInitialEntities: entity not loaded");
 
-#ifndef __RELEASE
-				if(stageEntityDescription->validRightBox)
-				{
-					Size size = 
-					{
-						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0),
-						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0),
-						__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0),
-					};
-
-					Entity::setSize(entity, size);
-				}
-#endif
-
 				if(!isDeleted(entity))
 				{
 					if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -1119,20 +1105,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 				else
 				{
 					Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
-
-#ifndef __RELEASE
-					if(stageEntityDescription->validRightBox)
-					{
-						Size size = 
-						{
-							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0),
-							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0),
-							__PIXELS_TO_METERS(stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0),
-						};
-
-						Entity::setSize(entity, size);
-					}
-#endif
 					break;
 				}
 			}
@@ -1220,19 +1192,17 @@ bool Stage::streamAll()
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
 
-	do 
-	{
-		// Force deletion
-		Stage::purgeChildren(this);
-	}
-	while(Stage::stream(this));
+	// Force deletion
+	Stage::purgeChildren(this);
+
+	bool result = Stage::stream(this);
 
 	this->streamingAmplitude = this->streaming.streamingAmplitude;
 
 	// Force deletion
 	Stage::purgeChildren(this);
 
-	return EntityFactory::hasEntitiesPending(this->entityFactory);
+	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
 }
 
 void Stage::streamAllOut()

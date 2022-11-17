@@ -1713,29 +1713,6 @@ fixed_t Entity::getDepth()
 
 void Entity::setSize(Size size)
 {
-#ifndef __RELEASE
-	if(this->size.x || this->size.y || this->size.z)
-	{
-		if(size.x != this->size.x)
-		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
-			PRINT_TEXT("Entity::setSize: missmatch in size x", 1, 2);
-		}
-
-		if(size.y != this->size.y)
-		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
-			PRINT_TEXT("Entity::setSize: missmatch in size y", 1, 2);
-		}
-
-		if(size.z != this->size.z)
-		{
-			PRINT_TEXT(__GET_CLASS_NAME(this), 1, 1);
-			PRINT_TEXT("Entity::setSize: missmatch in size z", 1, 2);
-		}
-	}
-#endif
-
 	this->size = size;
 }
 

@@ -409,7 +409,7 @@ void GameState::transform()
 	extern Transformation neutralEnvironmentTransformation;
 
 	// then transformation loaded entities
-	Container::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
 }
 
 /**
@@ -431,7 +431,7 @@ void GameState::initialTransform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
 /**
