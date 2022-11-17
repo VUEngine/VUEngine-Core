@@ -1105,7 +1105,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 				}
 				else
 				{
-					Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					break;
 				}
 			}

@@ -48,7 +48,7 @@ singleton class AnimationInspector : Tool
 	// current animated sprite
 	Sprite animatedSprite;
 	// current animation description
-	AnimationFunction** animationFunctions;
+	const AnimationFunction** animationFunctions;
 	// current animation function
 	AnimationFunction animationFunction;
 	// animated in game entity selector

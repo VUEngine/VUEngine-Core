@@ -342,7 +342,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	// try to find a texture with the same bgmap spec
 	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if(this->bgmapTexturesMap[i])
+		if(NULL != this->bgmapTexturesMap[i])
 		{
 			CharSet charSet = Texture::getCharSet(this->bgmapTexturesMap[i], false);
 			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(this->bgmapTexturesMap[i]);
@@ -389,7 +389,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 					selectedBgmapTexture = bgmapTexture;
 					break;
 				}
-				else if(!selectedBgmapTexture)
+				else if(NULL == selectedBgmapTexture)
 				{
 					selectedBgmapTexture = bgmapTexture;
 					selectedTextureSpec = allocatedTextureSpec;
