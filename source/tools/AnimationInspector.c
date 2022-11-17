@@ -713,7 +713,7 @@ void AnimationInspector::loadAnimationFunction()
 {
 	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
-	AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
+	const AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
 
 	int32 i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
@@ -829,7 +829,7 @@ void AnimationInspector::createAnimationsSelector()
 		for(i = 0; this->animationFunctions[i]; i++)
 		{
 			Option* option = new Option;
-			option->value = this->animationFunctions[i]->name;
+			option->value = (void*)this->animationFunctions[i]->name;
 			option->type = kString;
 			VirtualList::pushBack(animationsNames, option);
 		}

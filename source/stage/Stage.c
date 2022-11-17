@@ -620,7 +620,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 }
 
 // unload entity from the stage
-void Stage::unloadChild(Container child)
+void Stage::unloadChild(Entity child)
 {
 	ASSERT(child, "Stage::unloadChild: null child");
 
@@ -629,13 +629,8 @@ void Stage::unloadChild(Container child)
 		return;
 	}
 
-	Base::removeChild(this, child, true);
-/*	Container::fireEvent(child, kEventStageChildStreamedOut);
-	NM_ASSERT(!isDeleted(child), "Stage::unloadChild: deleted child during kEventStageChildStreamedOut");
-	Container::removeEventListeners(child, NULL, kEventStageChildStreamedOut);
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(child));
-*/
+	Base::removeChild(this, Container::safeCast(child), true);
+
 	int16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntityDescriptions->head;
@@ -904,25 +899,18 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 			bool unloaded = false;
 
-			if(stageEntityDescription)
+			if(NULL != stageEntityDescription)
 			{
-				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+				if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
 				{
-					// unload it
-					Stage::unloadChild(this, Container::safeCast(entity));
-
-					unloaded = true;
+					continue;
 				}
 			}
-			else
-			{
-				// unload it
-				Stage::unloadChild(this, Container::safeCast(entity));
 
-				unloaded = true;
-			}
+			// unload it
+			Stage::unloadChild(this, entity);
 
-			unloadedEntities = unloadedEntities || unloaded;
+			unloadedEntities = unloadedEntities || true;
 
 			if(unloaded)
 			{
@@ -1206,12 +1194,14 @@ bool Stage::streamAll()
 	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
 }
 
-void Stage::streamAllOut()
+bool Stage::streamAllOut()
 {
-	Stage::unloadOutOfRangeEntities(this, false);
+	bool result = Stage::unloadOutOfRangeEntities(this, false);
 
 	// Force deletion
 	Stage::purgeChildren(this);
+
+	return result;
 }
 
 // execute stage's logic

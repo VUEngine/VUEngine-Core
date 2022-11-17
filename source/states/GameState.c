@@ -342,7 +342,7 @@ void GameState::streamAll()
 		GameState::synchronizeGraphics(this);
 
 		// Stream in and out all relevant entities
-		bool streamedComplete = !Stage::streamAll(this->stage);
+		bool streamingComplete = !Stage::streamAll(this->stage);
 
 		// Make sure all sprites are ready
 		SpriteManager::prepareAll(SpriteManager::getInstance());
@@ -353,7 +353,7 @@ void GameState::streamAll()
 			CollisionManager::purgeDestroyedShapes(this->collisionManager);
 		}
 
-		if(streamedComplete)
+		if(streamingComplete)
 		{
 			break;
 		}
@@ -370,28 +370,39 @@ void GameState::streamOutAll()
 {
 	HardwareManager::suspendInterrupts();
 
-	// Make sure that the focus entity is transformed before focusing the camera
-	GameState::transform(this);
-
-	// Move the camera to its initial position
-	Camera::focus(Camera::getInstance(), false);
-
-	// Transformation everything so anything outside the camera
-	// can be streamed out
-	GameState::transform(this);
-
-	// Froce graphics to get ready
-	GameState::synchronizeGraphics(this);
-
-	// Remove out of range entities
-	Stage::streamAllOut(this->stage);
-	
-	// Force collision purging
-	if(!isDeleted(this->collisionManager))
+	do
 	{
-		CollisionManager::purgeDestroyedShapes(this->collisionManager);
-	}
+		HardwareManager::suspendInterrupts();
 
+		// Make sure that the focus entity is transformed before focusing the camera
+		GameState::transform(this);
+
+		// Move the camera to its initial position
+		Camera::focus(Camera::getInstance(), false);
+
+		// Transformation everything so anything outside the camera
+		// can be streamed out
+		GameState::transform(this);
+
+		// Froce graphics to get ready
+		GameState::synchronizeGraphics(this);
+
+		// Remove out of range entities
+		bool streamingComplete = !Stage::streamAllOut(this->stage);
+		
+		// Force collision purging
+		if(!isDeleted(this->collisionManager))
+		{
+			CollisionManager::purgeDestroyedShapes(this->collisionManager);
+		}
+
+		if(streamingComplete)
+		{
+			break;
+		}
+	}
+	while(true);
+	
 	HardwareManager::resumeInterrupts();
 }
 
