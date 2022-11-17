@@ -215,7 +215,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	if(!VUEngine::isExitingSpecialMode(VUEngine::getInstance()))
 	{
@@ -249,7 +249,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	// unpause clock
 	Clock::pause(this->messagingClock, false);
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::resumeInterrupts();
 }
 
 /**
@@ -324,7 +324,7 @@ bool GameState::stream()
  */
 void GameState::streamAll()
 {
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	do
 	{
@@ -360,7 +360,7 @@ void GameState::streamAll()
 	}
 	while(true);
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::resumeInterrupts();
 }
 
 /**
@@ -368,7 +368,7 @@ void GameState::streamAll()
  */
 void GameState::streamOutAll()
 {
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	// Make sure that the focus entity is transformed before focusing the camera
 	GameState::transform(this);
@@ -382,6 +382,7 @@ void GameState::streamOutAll()
 
 	// Froce graphics to get ready
 	GameState::synchronizeGraphics(this);
+
 	// Remove out of range entities
 	Stage::streamAllOut(this->stage);
 	
@@ -391,7 +392,7 @@ void GameState::streamOutAll()
 		CollisionManager::purgeDestroyedShapes(this->collisionManager);
 	}
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::resumeInterrupts();
 }
 
 /**
@@ -504,7 +505,7 @@ uint32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
-	HardwareManager::disableInterrupts();
+	HardwareManager::suspendInterrupts();
 
 	if(NULL == stageSpec)
 	{
@@ -552,7 +553,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// Make sure all sprites are ready
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 
-	HardwareManager::enableInterrupts();
+	HardwareManager::resumeInterrupts();
 }
 
 /**

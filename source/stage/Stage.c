@@ -653,6 +653,7 @@ void Stage::unloadChild(Container child)
 			if(!Entity::respawn(child))
 			{
 				VirtualList::removeElement(this->stageEntityDescriptions, node->data);
+				delete node->data;
 			}
 
 			break;
