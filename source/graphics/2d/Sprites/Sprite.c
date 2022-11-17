@@ -196,6 +196,11 @@ Scale Sprite::getScale()
  */
 void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute__ ((unused)))
 {
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
 	this->halfWidth = Texture::getCols(this->texture) << 2;
 	this->halfHeight = Texture::getRows(this->texture) << 2;
 }
@@ -494,11 +499,12 @@ uint16 Sprite::getWorldHeight()
  */
 void Sprite::rewrite()
 {
-	if(this->texture)
+	if(isDeleted(this->texture))
 	{
-		// write it in graphical memory
-		Texture::rewrite(this->texture);
+		return;
 	}
+
+	Texture::rewrite(this->texture);
 }
 
 /**
@@ -977,10 +983,12 @@ void Sprite::print(int32 x, int32 y)
  */
 void Sprite::putChar(Point* texturePixel, uint32* newChar)
 {
-	if(this->texture && newChar && texturePixel)
+	if(isDeleted(this->texture) || NULL == newChar || NULL == texturePixel)
 	{
-		Texture::putChar(this->texture, texturePixel, newChar);
+		return;
 	}
+
+	Texture::putChar(this->texture, texturePixel, newChar);
 }
 
 /**
@@ -992,10 +1000,12 @@ void Sprite::putChar(Point* texturePixel, uint32* newChar)
  */
 void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(this->texture)
+	if(isDeleted(this->texture))
 	{
-		Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
+		return;
 	}
+
+	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
 }
 
 /**

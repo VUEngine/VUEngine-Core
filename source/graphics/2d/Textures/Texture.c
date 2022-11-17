@@ -464,10 +464,15 @@ void Texture::setFrameAnimatedMulti(uint16 frame __attribute__ ((unused)))
  *
  * @return	Number of total columns
  */
-uint32 Texture::getTotalCols()
+static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 {
+	if(NULL == textureSpec->charSetSpec)
+	{
+		return 0;
+	}
+
 	// determine the allocation type
-	switch(Texture::getAllocationType(this))
+	switch(textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -475,13 +480,13 @@ uint32 Texture::getTotalCols()
 		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
-			return this->textureSpec->cols;
+			return textureSpec->cols;
 			break;
 
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				int32 totalCols = this->textureSpec->numberOfFrames * this->textureSpec->cols;
+				int32 totalCols = textureSpec->numberOfFrames * textureSpec->cols;
 				return 64 >= totalCols ? totalCols : 64;
 			}
 			break;
@@ -489,7 +494,7 @@ uint32 Texture::getTotalCols()
 		case __NOT_ANIMATED:
 
 			// just return the cols
-			return this->textureSpec->cols;
+			return textureSpec->cols;
 			break;
 
 		default:
@@ -506,10 +511,15 @@ uint32 Texture::getTotalCols()
  *
  * @return	Number of total rows
  */
-uint32 Texture::getTotalRows()
+static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 {
+	if(NULL == textureSpec->charSetSpec)
+	{
+		return 0;
+	}
+
 	// determine the allocation type
-	switch(Texture::getAllocationType(this))
+	switch(textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -517,20 +527,20 @@ uint32 Texture::getTotalRows()
 		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
-			return this->textureSpec->rows;
+			return textureSpec->rows;
 			break;
 
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				return this->textureSpec->rows + this->textureSpec->rows * (Texture::getTotalCols(this) >> 6);
+				return textureSpec->rows + textureSpec->rows * (Texture::getTotalCols(textureSpec) >> 6);
 			}
 			break;
 
 		case __NOT_ANIMATED:
 
 			// just return the cols
-			return this->textureSpec->rows;
+			return textureSpec->rows;
 			break;
 
 		default:

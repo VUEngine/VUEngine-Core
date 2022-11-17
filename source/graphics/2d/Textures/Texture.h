@@ -108,6 +108,9 @@ abstract class Texture : ListenerObject
 	// update flag
 	bool update;
 
+	static uint32 getTotalCols(TextureSpec* textureSpec);
+	static uint32 getTotalRows(TextureSpec* textureSpec);
+
 	/// @publicsection
 	void constructor(TextureSpec* textureSpec, uint16 id);
 	void setSpec(TextureSpec* textureSpec);
@@ -116,8 +119,6 @@ abstract class Texture : ListenerObject
 	void writeHBiasMode();
 	int32 getNumberOfChars();
 	TextureSpec* getTextureSpec();
-	uint32 getTotalCols();
-	uint32 getTotalRows();
 	uint32 getNumberOfFrames();
 	CharSet getCharSet(uint32 loadIfNeeded);
 	void setCharSet(CharSet charSet);

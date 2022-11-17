@@ -138,7 +138,7 @@ void MBgmapSprite::loadTextures()
 {
 	if(this->mBgmapSpriteSpec)
 	{
-		if(!this->texture && !this->textures)
+		if(NULL == this->texture && NULL == this->textures)
 		{
 			this->textures = new VirtualList();
 

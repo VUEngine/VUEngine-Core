@@ -198,7 +198,7 @@ void BgmapSprite::rotate(const Rotation* rotation)
 	{
 		this->rotation = *rotation;
 
-		if(this->texture)
+		if(!isDeleted(this->texture))
 		{
 			BgmapSprite::computeDimensions(this);
 		}
@@ -264,7 +264,7 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 		NM_ASSERT(0 < this->scale.x, "BgmapSprite::resize: null scale x");
 		NM_ASSERT(0 < this->scale.y, "BgmapSprite::resize: null scale y");
 
-		if(this->texture)
+		if(!isDeleted(this->texture))
 		{
 			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
 			BgmapSprite::computeDimensions(this);
