@@ -231,7 +231,8 @@ class Stage : Container
 	EntityFactory getEntityFactory();
 	VirtualList getSoundWrappers();
 	bool streamAll();
-	bool streamAllOut();
+	bool streamInAll();
+	bool streamOutAll();
 	void forceNoPopIn(bool forceNoPopIn);
 	VirtualList getStageEntityDescriptions();
 	void fadeSounds(uint32 playbackType);

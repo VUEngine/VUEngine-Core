@@ -93,9 +93,9 @@ void Texture::increaseUsageCount()
  */
 bool Texture::decreaseUsageCount()
 {
-	if(this->usageCount)
+	if(0 >= --this->usageCount)
 	{
-		this->usageCount--;
+		this->usageCount = 0;
 	}
 
 	return 0 == this->usageCount;

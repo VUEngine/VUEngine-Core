@@ -322,7 +322,7 @@ bool GameState::stream()
 /**
  * Streaming everything on the Stage
  */
-void GameState::streamAll()
+void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 {
 	HardwareManager::suspendInterrupts();
 
@@ -342,7 +342,7 @@ void GameState::streamAll()
 		GameState::synchronizeGraphics(this);
 
 		// Stream in and out all relevant entities
-		bool streamingComplete = !Stage::streamAll(this->stage);
+		bool streamingComplete = !stageStreamMethod(this->stage);
 
 		// Make sure all sprites are ready
 		SpriteManager::prepareAll(SpriteManager::getInstance());
@@ -363,47 +363,22 @@ void GameState::streamAll()
 	HardwareManager::resumeInterrupts();
 }
 
+void GameState::streamAll()
+{
+	GameState::doStreamAll(this, Stage::streamAll);
+}
+
+void GameState::streamInAll()
+{
+	GameState::doStreamAll(this, Stage::streamInAll);
+}
+
 /**
  * Streaming everything on the Stage
  */
 void GameState::streamOutAll()
 {
-	HardwareManager::suspendInterrupts();
-
-	do
-	{
-		HardwareManager::suspendInterrupts();
-
-		// Make sure that the focus entity is transformed before focusing the camera
-		GameState::transform(this);
-
-		// Move the camera to its initial position
-		Camera::focus(Camera::getInstance(), false);
-
-		// Transformation everything so anything outside the camera
-		// can be streamed out
-		GameState::transform(this);
-
-		// Froce graphics to get ready
-		GameState::synchronizeGraphics(this);
-
-		// Remove out of range entities
-		bool streamingComplete = !Stage::streamAllOut(this->stage);
-		
-		// Force collision purging
-		if(!isDeleted(this->collisionManager))
-		{
-			CollisionManager::purgeDestroyedShapes(this->collisionManager);
-		}
-
-		if(streamingComplete)
-		{
-			break;
-		}
-	}
-	while(true);
-	
-	HardwareManager::resumeInterrupts();
+	GameState::doStreamAll(this, Stage::streamOutAll);
 }
 
 /**

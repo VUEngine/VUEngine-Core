@@ -80,6 +80,7 @@ class GameState : State
 	void stopClocks();
 	void updatePhysics();
 	void streamAll();
+	void streamInAll();
 	void streamOutAll();
 	Clock getClock();
 	void synchronizeUIGraphics();

@@ -720,9 +720,7 @@ void Stage::preloadAssets()
 			}
 		}
 
-		VirtualNode node = VirtualList::begin(recyclableTextures);
-
-		for(; NULL != node; node = node->next)
+		for(VirtualNode node = VirtualList::begin(recyclableTextures); NULL != node; node = node->next)
 		{
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
 		}
@@ -1194,8 +1192,27 @@ bool Stage::streamAll()
 	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
 }
 
-bool Stage::streamAllOut()
+bool Stage::streamInAll()
 {
+	this->streamingPhase = 0;
+	this->streamingHeadNode = NULL;
+	this->streamingAmplitude = (uint16)-1;
+
+	// Force deletion
+	Stage::purgeChildren(this);
+
+	bool result = Stage::loadInRangeEntities(this, false);
+
+	this->streamingAmplitude = this->streaming.streamingAmplitude;
+
+	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
+}
+
+bool Stage::streamOutAll()
+{
+	// Force deletion
+	Stage::purgeChildren(this);
+
 	bool result = Stage::unloadOutOfRangeEntities(this, false);
 
 	// Force deletion
