@@ -273,6 +273,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 			case __ANIMATED_SINGLE_OPTIMIZED:
 			case __ANIMATED_SHARED_COORDINATED:
 
+				Texture::releaseCharSet(bgmapTexture);
 				// Commented out because of the removal of bgmapTextureMaps array
 				// VirtualList::removeElement(this->bgmapTextures, bgmapTexture);
 				// delete bgmapTexture;
