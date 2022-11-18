@@ -177,10 +177,12 @@ void CharSet::writeRLE()
 
 		while(cycles--)
 		{
-			uint32 counter = ((0xF0000000 & compressedData) >> 28) + 1;
-			uint32 data = (0x0F000000 & compressedData) >> 24;
+			uint8 pack = ((BYTE*)&compressedData)[3];
 
-			while(counter--)
+			uint8 counter = (pack >> 4) + 1;
+			uint8 data = 0x0F & (pack);
+
+			while(0 < counter--)
 			{
 				uncompressedData = (uncompressedData << 4) | data;
 				uncompressedDataSize++;
