@@ -553,6 +553,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	fix7_9_ext dy = toPointY - fromPointY;
 	fix7_9_ext dParallax = toPointParallax - fromPointParallax;
 
+	int16 totalPixelRounding = 1;
+	
 	if(0 == dx && 0 == dy)
 	{
 		return;
@@ -560,6 +562,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if((_frustumWidth < xFromDelta) + (_frustumHeight < yFromDelta))
 	{
+		totalPixelRounding = 0;
+
 		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 		{
 			return;
@@ -571,6 +575,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
 	{
+		totalPixelRounding = 0;
+
 		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 		{
 			return;
@@ -624,7 +630,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		yStep = __FIX7_9_EXT_DIV(dy, dxABS);
 		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dxABS);
 
-		totalPixels = __FIX7_9_EXT_TO_I(toPointX - fromPointX);
+		totalPixels = __FIX7_9_EXT_TO_I(toPointX - fromPointX) + totalPixelRounding;
 	}
 	else if(dxABS < dyABS || 0 == dx)
 	{
@@ -643,7 +649,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		xStep = __FIX7_9_EXT_DIV(dx, dyABS);
 		parallaxStep = __FIX7_9_EXT_DIV(dParallax, dyABS);
 
-		totalPixels = __FIX7_9_EXT_TO_I(toPointY - fromPointY);
+		totalPixels = __FIX7_9_EXT_TO_I(toPointY - fromPointY) + totalPixelRounding;
 	}
 
 	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
@@ -686,7 +692,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-		for(; 0 <= totalPixels; totalPixels -=1)
+		for(; 0 < totalPixels; totalPixels -=1)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
 
