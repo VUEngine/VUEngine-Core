@@ -686,7 +686,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-		for(; 0 < totalPixels; totalPixels -=1)
+		for(; 0 <= totalPixels; totalPixels -=1)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIX7_9_EXT_TO_I(fromPointX + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(fromPointY + __05F_FIX7_9_EXT), __FIX7_9_EXT_TO_I(parallaxStart + __05F_FIX7_9_EXT), color);
 
