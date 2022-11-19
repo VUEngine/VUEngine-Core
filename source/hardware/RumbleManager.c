@@ -356,12 +356,7 @@ static void RumbleManager::startEffect(const RumbleEffectSpec* rumbleEffect)
 
 static void RumbleManager::stopEffect(const RumbleEffectSpec* rumbleEffect)
 {
-    if(NULL == rumbleEffect)
-    {
-        return;
-    }
-
-    if(_rumbleManager->rumbleEffect == rumbleEffect)
+    if(NULL == rumbleEffect || _rumbleManager->rumbleEffect == rumbleEffect)
     {
         RumbleManager::stop();
         RumbleManager::execute();
