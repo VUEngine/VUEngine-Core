@@ -1876,6 +1876,11 @@
             "target": "source/romHeader.h",
             "template": "templates/romHeader.h.nj"
         },
+        "PCMSpec.c": {
+            "target": "assets/PCM/${_id}Spec.c",
+            "template": "templates/PCMSpec.c.nj",
+            "itemSpecific": "PCM"
+        },
         "RumbleEffectSpec.c": {
             "target": "assets/RumbleEffect/${_id}.c",
             "template": "templates/RumbleEffectSpec.c.nj",
@@ -4853,6 +4858,52 @@
             "icon": "fa fa-commenting-o",
             "multiple": false,
             "category": "Logic"
+        },
+        "PCM": {
+            "schema": {
+                "title": "PCM",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "sourceFile": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "range": {
+                        "type": "integer",
+                        "default": 1,
+                        "minimum": 1,
+                        "maximum": 5
+                    },
+                    "loop": {
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "section": {
+                        "type": "string",
+                        "oneOf": [
+                            {
+                                "const": "rom",
+                                "title": "ROM Space"
+                            },
+                            {
+                                "const": "exp",
+                                "title": "Expansion Space"
+                            }
+                        ],
+                        "default": "rom"
+                    }
+                },
+                "required": []
+            },
+            "multiple": true,
+            "category": "Assets",
+            "icon": "fa fa-music",
+            "templates": [
+                "PCMSpec.c"
+            ]
         },
         "Project": {
             "schema": {

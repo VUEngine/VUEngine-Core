@@ -1,0 +1,105 @@
+{%- set sanitizedSpecName = item.name | sanitizeSpecName -%}
+{%- set soundData = item.sourceFile | convertPcm(item.range) -%}
+
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.c.nj') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <SoundManager.h>
+#include <WaveForms.h>
+
+
+{{ macros.sectionHeader('Declarations') }}
+
+#define {{ sanitizedSpecName }}SoundTrackLength {{ soundData | length }}
+
+const uint8 {{ sanitizedSpecName }}SoundTrack[]
+{%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
+{
+#ifndef REDUCE_PCM_DATA
+    {% for soundDataValue in soundData -%}
+    {{  soundDataValue | intToHex(2) }},
+    {%- if loop.index % 16 == 0 and not loop.last %}{{ "\n    " }}{% endif -%}
+    {%- endfor %}
+#endif
+};
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+SoundChannelConfigurationROM {{ sanitizedSpecName }}SoundChannelConfiguration =
+{
+	// Type (kMIDI or kPCM)
+	kPCM,
+
+	// SxINT
+	0x00,
+
+	// Volume SxLRV
+	0x00,
+
+	// SxRAM (this is overrode by the SoundManager)
+	0x00,
+
+	// SxEV0
+	0xF0,
+
+	// SxEV1
+	0x00,
+
+	// SxFQH
+	0x00,
+
+	// SxFQL
+	0x00,
+
+	// Ch. 5 only
+	0x00,
+
+	// Waveform data pointer
+	PCMWaveForm,
+
+	// kChannelNormal, kChannelModulation, kChannelNoise
+	kChannelNormal,
+
+	// Volume
+	__SOUND_LR
+};
+
+SoundChannelROM {{ sanitizedSpecName }}SoundChannel =
+{
+	// Configuration
+	(SoundChannelConfiguration*) &{{ sanitizedSpecName }}SoundChannelConfiguration,
+
+	// Length (PCM)
+	{{ sanitizedSpecName }}SoundTrackLength,
+
+	// Sound track
+	{
+		{{ sanitizedSpecName }}SoundTrack
+	}
+};
+
+SoundChannelROM* const {{ sanitizedSpecName }}SoundChannels[] =
+{
+    {% for i in range(0, item.range) -%}
+        &{{ sanitizedSpecName }}SoundChannel,
+    {% endfor -%}
+	NULL
+};
+
+SoundROM {{ sanitizedSpecName }}Sound =
+{
+	// Name
+	"{{ item.name }}",
+
+	// Play in loop
+	{{ item.loop }},
+
+	// Target timer resolution in us
+	0,
+
+	// Tracks
+	(SoundChannel**){{ sanitizedSpecName }}SoundChannels
+};
