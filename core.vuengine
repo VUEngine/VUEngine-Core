@@ -1874,7 +1874,8 @@
         },
         "romHeader.h": {
             "target": "source/romHeader.h",
-            "template": "templates/romHeader.h.nj"
+            "template": "templates/romHeader.h.nj",
+            "encoding": "shift_jis"
         },
         "PCMSpec.c": {
             "target": "assets/PCM/${_id}Spec.c",
@@ -2778,7 +2779,49 @@
                                             "minimum": 1
                                         }
                                     }
-                                }
+                                },
+                                "default": [
+                                    {
+                                        "objects": 450,
+                                        "size": 16
+                                    },
+                                    {
+                                        "objects": 700,
+                                        "size": 20
+                                    },
+                                    {
+                                        "objects": 350,
+                                        "size": 28
+                                    },
+                                    {
+                                        "objects": 30,
+                                        "size": 40
+                                    },
+                                    {
+                                        "objects": 60,
+                                        "size": 68
+                                    },
+                                    {
+                                        "objects": 50,
+                                        "size": 80
+                                    },
+                                    {
+                                        "objects": 40,
+                                        "size": 108
+                                    },
+                                    {
+                                        "objects": 40,
+                                        "size": 116
+                                    },
+                                    {
+                                        "objects": 10,
+                                        "size": 140
+                                    },
+                                    {
+                                        "objects": 10,
+                                        "size": 152
+                                    }
+                                ]
                             }
                         }
                     },
