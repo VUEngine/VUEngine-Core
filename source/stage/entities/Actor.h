@@ -81,7 +81,6 @@ class Actor : AnimatedEntity
 	virtual fixed_t getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fixed_t getSurroundingFrictionCoefficient();
 	virtual bool mustBounce();
-	virtual bool overrideParentingPositioningWhenBodyIsNotMoving();
 	virtual bool registerCollidingShapes();
 	virtual fixed_t getMaximumSpeed();
 	override void iAmDeletingMyself();

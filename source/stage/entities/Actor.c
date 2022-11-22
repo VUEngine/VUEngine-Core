@@ -154,27 +154,26 @@ void Actor::setLocalPosition(const Vector3D* position)
 	Actor::transformShapes(this);
 }
 
-void Actor::syncWithBody()
+uint16 Actor::syncWithBody()
 {
+	uint16 axiOfMovement = Body::getMovementOnAllAxis(this->body);
+
 	if(!isDeleted(this->body))
 	{
 		Actor::syncPositionWithBody(this);
 
-		if(Body::getMovementOnAllAxis(this->body))
+		if(axiOfMovement)
 		{
 			Actor::syncRotationWithBody(this);
 		}
 	}
-}
 
-bool Actor::overrideParentingPositioningWhenBodyIsNotMoving()
-{
-	return true;
+	return axiOfMovement;
 }
 
 void Actor::syncPositionWithBody()
 {
-	if(!this->body)
+	if(isDeleted(this->body))
 	{
 		return;
 	}
@@ -183,14 +182,7 @@ void Actor::syncPositionWithBody()
 	Vector3D bodyLastDisplacement = {0, 0, 0};
 	Vector3D bodyPosition = this->transformation.globalPosition;
 
-	if(
-		!Clock::isPaused(VUEngine::getPhysicsClock(_vuEngine))
-		&&
-		(
-			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||
-			Body::isAwake(this->body)
-		)
-	)
+	if(!Clock::isPaused(VUEngine::getPhysicsClock(_vuEngine)) && Body::isAwake(this->body))
 	{
 		bodyPosition = *Body::getPosition(this->body);
 	}
@@ -284,20 +276,18 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 {
 	bool transformShapes = this->transformShapes;
 
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
-		Actor::syncWithBody(this);
+		uint16 bodyMovement = Actor::syncWithBody(this);
 
 		// Prevent transformation of shapes again when calling Base::transform
 		this->transformShapes = false;
-
-		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
 
 		if(bodyMovement)
 		{
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
-			if(__Z_AXIS & bodyMovement)
+			if(!isDeleted(this->children && (__Z_AXIS & bodyMovement)))
 			{
 				this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 			}
