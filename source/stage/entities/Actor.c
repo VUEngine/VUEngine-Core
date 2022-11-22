@@ -156,10 +156,12 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 uint16 Actor::syncWithBody()
 {
-	uint16 axiOfMovement = Body::getMovementOnAllAxis(this->body);
+	uint16 axiOfMovement = __NO_AXIS;
 
 	if(!isDeleted(this->body))
 	{
+		axiOfMovement = Body::getMovementOnAllAxis(this->body);
+
 		Actor::syncPositionWithBody(this);
 
 		if(axiOfMovement)
@@ -287,7 +289,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 		{
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
-			if(!isDeleted(this->children && (__Z_AXIS & bodyMovement)))
+			if(!isDeleted(this->sprites) && (__Z_AXIS & bodyMovement))
 			{
 				this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 			}
