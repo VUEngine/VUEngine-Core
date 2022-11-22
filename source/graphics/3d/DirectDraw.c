@@ -571,6 +571,11 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
+
+		if(xFromOutside && xToOutside)
+		{
+			return;
+		}
 	}
 
 	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
@@ -584,11 +589,11 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
 		yToOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(toPointY - _frustumFixedPoint.y0);
-	}
 
-	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
-	{
-		return;
+		if(yFromOutside && yToOutside)
+		{
+			return;
+		}
 	}
 
 /*
@@ -652,12 +657,12 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		totalPixels = __FIXED_EXT_TO_I(toPointY - fromPointY) + totalPixelRounding;
 	}
 
-	if(_directDraw->totalDrawPixels + totalPixels > _directDraw->maximuDrawPixels)
+	_directDraw->totalDrawPixels += totalPixels;
+
+	if(_directDraw->totalDrawPixels > _directDraw->maximuDrawPixels)
 	{
 		return;
 	}
-
-	_directDraw->totalDrawPixels += totalPixels;
 
 	if(interlaced)
 	{
@@ -701,7 +706,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			parallaxStart += parallaxStep;
 		}
 	}
-
 }
 
 static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)

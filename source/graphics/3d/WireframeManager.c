@@ -203,7 +203,7 @@ void WireframeManager::render()
 #endif
 
 	// check the shapes
-	for(VirtualNode node = this->wireframes->head; node && !this->stopRendering; node = node->next)
+	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
 	{
 #ifdef __PROFILE_WIREFRAMES
 		wireframes++;
@@ -277,7 +277,7 @@ void WireframeManager::draw()
 #endif
 
 	// check the shapes
-	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
+	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -291,7 +291,6 @@ void WireframeManager::draw()
 #ifdef __PROFILE_WIREFRAMES
 		drawnWireframes++;
 #endif
-
 	}
 
 #ifdef __PROFILE_WIREFRAMES
