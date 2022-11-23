@@ -536,14 +536,19 @@ void Container::changeEnvironment(Transformation* environmentTransform)
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
+	Vector3D localPosition = this->transformation.localPosition;
+
 	if(environmentTransform->globalRotation.x || environmentTransform->globalRotation.y || environmentTransform->globalRotation.z)
 	{
-		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, Vector3D::rotate(this->transformation.localPosition, environmentTransform->globalRotation));
+		localPosition = Vector3D::rotate(localPosition, environmentTransform->globalRotation);
 	}
-	else
+
+	if(environmentTransform->globalScale.x || environmentTransform->globalScale.y || environmentTransform->globalScale.z)
 	{
-		this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, this->transformation.localPosition);
+		localPosition = Vector3D::scale(localPosition, environmentTransform->globalScale);
 	}
+
+	this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, localPosition);
 }
 
 /**
