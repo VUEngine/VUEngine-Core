@@ -161,8 +161,46 @@ uint32 CollisionManager::update(Clock clock)
 		if(!shape->enabled || !shape->ready)
 		{
 			shape->isVisible = false;
+			continue;
 		}
 
+		extern const Vector3D* _cameraPosition;
+
+		// not ready for collision checks if out of the camera
+		if(!shape->isVisible && !this->checkShapesOutOfCameraRange)
+		{
+			shape->isVisible = true;
+
+			extern const Rotation* _cameraInvertedRotation;
+			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
+			RightBox rightBox = Shape::getSurroundingRightBox(shape);
+			PixelVector position = PixelVector::getFromVector3D(relativePosition, 0);
+			int16 pad = __ABS(position.z);
+
+			int16 sizeX = __METERS_TO_PIXELS(__ABS(rightBox.x1 - rightBox.x0)) >> 1;
+			int16 sizeY = __METERS_TO_PIXELS(__ABS(rightBox.y1 - rightBox.y0)) >> 1;
+			int16 sizeZ = __METERS_TO_PIXELS(__ABS(rightBox.z1 - rightBox.z0)) >> 1;
+
+			// check x visibility
+			if(position.x + sizeX < _cameraFrustum->x0 - pad || position.x - sizeX > _cameraFrustum->x1 + pad)
+			{
+				shape->isVisible = false;
+				continue;
+			}
+
+			if(position.y + sizeY < _cameraFrustum->y0 - pad || position.y - sizeY > _cameraFrustum->y1 + pad)
+			{
+				shape->isVisible = false;
+				continue;
+			}
+
+			if(position.z + sizeZ < _cameraFrustum->z0 || position.z - sizeZ > _cameraFrustum->z1)
+			{
+				shape->isVisible = false;
+				continue;
+			}			
+		}
+	
 	#ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
 		{
