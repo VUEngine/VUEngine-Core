@@ -547,7 +547,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 					if(this->allowCollisions && this->shapes)
 					{
-						Entity::activeCollisionChecks(this, true);
+						Actor::activeCollisionChecks(this, true);
 						return true;
 					}
 					break;
@@ -556,7 +556,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 					if(!Body::getMovementOnAllAxis(this->body) && this->shapes)
 					{
-						Entity::activeCollisionChecks(this, false);
+						Actor::activeCollisionChecks(this, false);
 					}
 					break;
 
@@ -622,7 +622,7 @@ void Actor::moveUniformly(Velocity* velocity)
 	{
 		Body::moveUniformly(this->body, *velocity);
 
-		Entity::activeCollisionChecks(this, true);
+		Actor::activeCollisionChecks(this, true);
 	}
 }
 
