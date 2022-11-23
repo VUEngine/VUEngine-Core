@@ -325,7 +325,7 @@ void WireframeManager::print(int32 x, int32 y)
 
 void WireframeManager::hideWireframes()
 {
-	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
+	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -335,7 +335,7 @@ void WireframeManager::hideWireframes()
 
 void WireframeManager::showWireframes()
 {
-	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && node; node = node->next)
+	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
