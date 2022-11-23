@@ -40,11 +40,12 @@ class CollisionManager : ListenerObject
 	// a list of shapes that check for collisions against other shapes
 	VirtualList	activeForCollisionCheckingShapes;
 	// counters for statistics
-	uint32 lastCycleCollisionChecks;
-	uint32 lastCycleCollisions;
-	uint32 collisionChecks;
-	uint32 collisions;
-	uint32 checkCycles;
+	uint16 lastCycleCheckProducts;
+	uint16 lastCycleCollisionChecks;
+	uint16 lastCycleCollisions;
+	uint16 collisionChecks;
+	uint16 collisions;
+	uint16 checkCycles;
 	bool checkShapesOutOfCameraRange;
 	bool dirty;
 

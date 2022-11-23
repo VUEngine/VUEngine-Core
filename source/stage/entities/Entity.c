@@ -1789,14 +1789,6 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				break;
 			}
 		}
-
-		if(!isDeleted(this->shapes))
-		{
-			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
-			{
-				Shape::setVisible(Shape::safeCast(node->data), areSpritesVisible);
-			}			
-		}
 	}
 	else
 	{
@@ -1856,6 +1848,14 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				break;
 			}
 		}
+	}
+
+	if(!isDeleted(this->shapes))
+	{
+		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		{
+			Shape::setVisible(Shape::safeCast(node->data), this->inCameraRange);
+		}			
 	}
 }
 
