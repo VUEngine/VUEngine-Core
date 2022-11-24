@@ -43,7 +43,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->rotation = NULL;
 	this->interlaced = false;
 	this->bufferIndex = 0;
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
 }
@@ -75,7 +75,7 @@ void Wireframe::setTransparent(bool transparent)
  */
 void Wireframe::show()
 {
-	this->show = __SHOW_NEXT_FRAME;
+	this->show = __SHOW;
 }
 
 /**
@@ -126,7 +126,9 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	if(NULL == this->wireframeSpec)
 	{
 		this->color = __COLOR_BRIGHT_RED;
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+#endif
 		return;
 	}
 
@@ -138,7 +140,9 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 	{
 		this->interlaced = this->wireframeSpec->interlaced;
 		this->color = __COLOR_BLACK;
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+#endif
 		return;
 	}
 
@@ -162,7 +166,9 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		if(0 == distanceToCamera)
 		{
 			this->color = __COLOR_BLACK;
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+#endif
 			return;
 		}
 
@@ -175,7 +181,9 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		
 		if(__COS(cameraViewingAngle) > __FIXED_EXT_TO_FIX7_9(Vector3D::dotProduct(Vector3D::normalize(*relativePosition), _cameraDirection)))
 		{
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
+#endif
 			return;
 		}
 
@@ -218,5 +226,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 	this->interlaced += this->wireframeSpec->interlaced;
 
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	this->squaredDistanceToCamera = distanceToCamera;
+#endif
 }

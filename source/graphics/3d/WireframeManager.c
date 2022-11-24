@@ -211,23 +211,11 @@ void WireframeManager::render()
 
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if(__HIDE == wireframe->show)
+		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame))
 		{
+#ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
-			wireframe->color = __COLOR_BLACK;
-			continue;
-		}
-
-		if(wireframe->transparent & this->evenFrame)
-		{
-			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
-			wireframe->color = __COLOR_BLACK;
-			continue;
-		}
-
-		if(__SHOW_NEXT_FRAME == wireframe->show)
-		{
-			wireframe->show = __SHOW;
+#endif
 			wireframe->color = __COLOR_BLACK;
 			continue;
 		}
