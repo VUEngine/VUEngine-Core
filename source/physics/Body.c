@@ -674,13 +674,11 @@ MovementResult Body::updateMovement()
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
 
-	fix7_9_ext elapsedTime = _currentPhysicsElapsedTime;
-
 	Velocity previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, gravity.x, this->mass, this->friction.x, _currentPhysicsElapsedTime);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -697,13 +695,13 @@ MovementResult Body::updateMovement()
 		}
 		else
 		{
-			this->position.x += __FIXED_MULT(this->velocity.x, elapsedTime);
+			this->position.x += __FIXED_MULT(this->velocity.x, _currentPhysicsElapsedTime);
 		}
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, gravity.y, this->mass, this->friction.y, _currentPhysicsElapsedTime);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -720,13 +718,13 @@ MovementResult Body::updateMovement()
 		}
 		else
 		{
-			this->position.y += __FIXED_MULT(this->velocity.y, elapsedTime);
+			this->position.y += __FIXED_MULT(this->velocity.y, _currentPhysicsElapsedTime);
 		}
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z, elapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, gravity.z, this->mass, this->friction.z, _currentPhysicsElapsedTime);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
@@ -743,7 +741,7 @@ MovementResult Body::updateMovement()
 		}
 		else
 		{
-			this->position.z += __FIXED_MULT(this->velocity.z, elapsedTime);
+			this->position.z += __FIXED_MULT(this->velocity.z, _currentPhysicsElapsedTime);
 		}
 	}
 
@@ -751,19 +749,19 @@ MovementResult Body::updateMovement()
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, elapsedTime);
+		this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, _currentPhysicsElapsedTime);
 		this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, elapsedTime);
+		this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, _currentPhysicsElapsedTime);
 		this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, elapsedTime);
+		this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, _currentPhysicsElapsedTime);
 		this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 	}
 
