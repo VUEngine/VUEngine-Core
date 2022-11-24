@@ -37,8 +37,6 @@ class CollisionManager : ListenerObject
 {
 	// a list of registered shapes
 	VirtualList	shapes;
-	// a list of shapes that check for collisions against other shapes
-	VirtualList	activeForCollisionCheckingShapes;
 	// counters for statistics
 	uint16 lastCycleCheckProducts;
 	uint16 lastCycleCollisionChecks;
@@ -56,7 +54,6 @@ class CollisionManager : ListenerObject
 	Shape createShape(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void destroyShape(Shape shape);
 	void reset();
-	void activeCollisionCheckForShape(Shape shape, bool activate);
 	void showShapes();
 	void setCheckShapesOutOfCameraRange(bool value);
 	uint32 update(Clock clock);

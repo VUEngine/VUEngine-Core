@@ -541,7 +541,6 @@ bool Shape::isEnabled()
 void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
-	CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(_vuEngine), this, activate);
 }
 
 /**
@@ -560,11 +559,7 @@ void Shape::enable(bool enable)
 	}
 	
 	this->enabled = enable;
-
-	if(!this->enabled)
-	{
-		CollisionManager::activeCollisionCheckForShape(VUEngine::getCollisionManager(_vuEngine), this, false);
-	}	
+	this->checkForCollisions = this->enabled;
 }
 
 /**

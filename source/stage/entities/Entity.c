@@ -285,7 +285,7 @@ void Entity::createSprites()
  */
 void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 {
-	if(NULL == spriteSpecs)
+	if(NULL == spriteSpecs || NULL == spriteSpecs[0])
 	{
 		return;
 	}
@@ -382,7 +382,7 @@ void Entity::createWireframes()
  */ 
 void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes)
 {
-	if(NULL == wireframeSpecs)
+	if(NULL == wireframeSpecs || NULL == wireframeSpecs[0])
 	{
 		return;
 	}
