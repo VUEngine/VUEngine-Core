@@ -63,7 +63,6 @@ void Shape::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 	this->layers = shapeSpec->layers;
 	this->layersToIgnore = shapeSpec->layersToIgnore;
 	this->collidingShapes = NULL;
-	this->isVisible = true;
 	this->moved = false;
 	this->registerCollisions = shapeSpec->checkForCollisions;
 
@@ -566,7 +565,7 @@ void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
 
-	if(!this->enabled && activate)
+	if(activate && !this->enabled)
 	{
 		Shape::enable(this, activate);
 	}
@@ -887,11 +886,6 @@ void Shape::hide()
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}
-}
-
-void Shape::setVisible(bool value)
-{
-	this->isVisible = value;
 }
 
 void Shape::print(int32 x, int32 y)
