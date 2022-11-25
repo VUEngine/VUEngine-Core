@@ -236,10 +236,12 @@ abstract class Shape : ListenerObject
 	void hide();
 	void setVisible(bool value);
 	Vector3D getPosition();
+	void setPosition(const Vector3D* position);
 
 	RightBox getSurroundingRightBox();
 	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	virtual void updateRightBox();
 	virtual Vector3D getNormal();
 	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement) = 0;
 	virtual void configureWireframe() = 0;

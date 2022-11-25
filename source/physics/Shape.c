@@ -467,6 +467,29 @@ Vector3D Shape::getPosition()
 }
 
 /**
+ * Set position
+ *
+ * @param position				Vector3d*
+ */
+void Shape::setPosition(const Vector3D* position __attribute__((unused)))
+{
+	this->moved = true;
+
+	// TODO: must update the rightbox
+	this->position = *position;
+
+	Shape::updateRightBox(this);
+}
+
+/**
+ * Update right box
+ *
+ */
+void Shape::updateRightBox()
+{
+}
+
+/**
  * Displace owner
  *
  * @param displacement		Displacement to apply to owner
