@@ -127,7 +127,6 @@ uint32 CollisionManager::update(Clock clock)
 
 	uint32 returnValue = false;
 
-#define __SHOW_PHYSICS_PROFILING
 #ifdef __SHOW_PHYSICS_PROFILING
 	this->lastCycleCheckProducts = 0;
 	this->lastCycleCollisionChecks = 0;
