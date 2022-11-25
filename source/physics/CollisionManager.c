@@ -304,27 +304,6 @@ int32 CollisionManager::getNumberOfEnabledShapes()
 	return count;
 }
 
-int32 CollisionManager::getNumberOfVisibleShapes()
-{
-	int32 count = 0;
-
-	// comparing against the other shapes
-	VirtualNode node = this->shapes->head;
-
-	// check the shapes
-	for(; NULL != node; node = node->next)
-	{
-		Shape shape = Shape::safeCast(node->data);
-
-		if(shape->enabled && shape->isVisible)
-		{
-			count++;
-		}
-	}
-
-	return count;
-}
-
 int32 CollisionManager::getNumberOfMovingEnabledShapes()
 {
 	int32 count = 0;
@@ -364,8 +343,6 @@ void CollisionManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Enabled:          ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfEnabledShapes(this), x + 12, y, NULL);
-	Printing::text(Printing::getInstance(), "Visible:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfVisibleShapes(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Moving:          ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfMovingEnabledShapes(this), x + 12, y++, NULL);
 

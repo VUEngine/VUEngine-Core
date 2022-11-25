@@ -202,8 +202,6 @@ abstract class Shape : ListenerObject
 	uint8 enabled;
 	// flag to check against other shapes
 	uint8 checkForCollisions;
-	// flag to cull off shapes outside the screen
-	uint8 isVisible;
 	// flag to allow registration of colliding shapes
 	bool registerCollisions;
 	// flag to destroy it
