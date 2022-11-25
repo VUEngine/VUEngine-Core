@@ -38,7 +38,6 @@ void Ball::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
-	this->center = Vector3D::zero();
 	this->radius = 0;
 }
 
@@ -50,9 +49,10 @@ void Ball::destructor()
 	Base::destructor();
 }
 
-void Ball::position(const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
+void Ball::transform(const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
-	this->center = *position;
+	Base::transform(this, position, rotation, scale, size);
+
 	this->radius = size->z >> 1;
 
 	if(size->x > size->y)
@@ -68,31 +68,17 @@ void Ball::position(const Vector3D* position, const Rotation* rotation __attribu
 	}
 
 	Ball::updateRightBox(this);
-
-	Base::position(this, position, rotation, scale, size);
 }
 
 void Ball::updateRightBox()
 {
-	this->rightBox.x0 = this->center.x - this->radius;
-	this->rightBox.y0 = this->center.y - this->radius;
-	this->rightBox.z0 = this->center.z - this->radius;
+	this->rightBox.x0 = this->position.x - this->radius;
+	this->rightBox.y0 = this->position.y - this->radius;
+	this->rightBox.z0 = this->position.z - this->radius;
 
-	this->rightBox.x1 = this->center.x + this->radius;
-	this->rightBox.y1 = this->center.y + this->radius;
-	this->rightBox.z1 = this->center.z + this->radius;
-}
-
-/**
- * Set position
- *
- * @param position				Vector3d*
- */
-void Ball::setPosition(const Vector3D* position)
-{
-	this->center = *position;
-
-	Ball::updateRightBox(this);
+	this->rightBox.x1 = this->position.x + this->radius;
+	this->rightBox.y1 = this->position.y + this->radius;
+	this->rightBox.z1 = this->position.z + this->radius;
 }
 
 static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
@@ -114,20 +100,20 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement)
 {
 	// save state
-	Vector3D center = this->center;
+	Vector3D center = this->position;
 	fixed_t radius = this->radius;
 	this->radius += sizeIncrement;
 
 	// add displacement
-	this->center.x += displacement.x;
-	this->center.y += displacement.y;
-	this->center.z += displacement.z;
+	this->position.x += displacement.x;
+	this->position.y += displacement.y;
+	this->position.z += displacement.z;
 
 	// test for collision on displaced center
 	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
 
 	// restore state
-	this->center = center;
+	this->position = center;
 	this->radius = radius;
 
 	return collisionInformation;
@@ -135,7 +121,7 @@ CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, 
 
 Vector3D Ball::getPosition()
 {
-	return this->center;
+	return this->position;
 }
 
 // configure Polyhedron
@@ -148,7 +134,7 @@ void Ball::configureWireframe()
 
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Sphere(NULL));
-	Wireframe::setup(this->wireframe, &this->center, NULL, NULL);
+	Wireframe::setup(this->wireframe, &this->position, NULL, NULL);
 	Sphere::setRadius(this->wireframe, this->radius);
 }
 
@@ -158,22 +144,22 @@ void Ball::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "R:             " , x, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->radius), x + 2, y++, NULL);
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x), x + 2, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y), x + 8, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z), x + 14, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.x), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.y), x + 8, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.z), x + 14, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x - this->radius), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.x - this->radius), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x + this->radius), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.x + this->radius), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y - this->radius), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.y - this->radius), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y + this->radius), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.y + this->radius), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z - this->radius), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.z - this->radius), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z + this->radius), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->position.z + this->radius), x + 8, y++, NULL);
 }

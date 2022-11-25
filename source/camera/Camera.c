@@ -192,8 +192,8 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 
 	if(focusEntity)
 	{
-		this->focusEntityPosition = SpatialObject::getPosition(this->focusEntity);
-		this->focusEntityRotation = SpatialObject::getRotation(this->focusEntity);
+		this->focusEntityPosition = Entity::getPosition(this->focusEntity);
+		this->focusEntityRotation = Entity::getRotation(this->focusEntity);
 
 		// focus now
 		Camera::focus(this, false);

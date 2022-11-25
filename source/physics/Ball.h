@@ -28,17 +28,13 @@ class Ball : Shape
 {
 	// the radius of the ball
 	fixed_t radius;
-	// the center of the ball
-	Vector3D center;
 
 	/// @publicsection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 	
 	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
-	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void setPosition(const Vector3D* position);
+	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
-	override Vector3D getPosition();
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }

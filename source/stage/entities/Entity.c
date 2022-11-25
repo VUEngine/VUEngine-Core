@@ -1313,11 +1313,11 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
 
 			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
 
-			Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			Shape::transform(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 		else
 		{
-			Shape::position(shape, myPosition, myRotation, myScale, &this->size);
+			Shape::transform(shape, myPosition, myRotation, myScale, &this->size);
 		}
 	}
 }

@@ -117,7 +117,7 @@ void SolidParticle::transformShape()
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {this->solidParticleSpec->radius, this->solidParticleSpec->radius, this->solidParticleSpec->radius};
 
-	Shape::position(this->shape, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
+	Shape::transform(this->shape, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
 
 /**

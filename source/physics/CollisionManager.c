@@ -220,7 +220,7 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		Vector3D shapePosition = Shape::getPosition(shape);
+		Vector3D shapePosition = shape->position;
 
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
@@ -242,7 +242,7 @@ uint32 CollisionManager::update(Clock clock)
 					continue;
 				}
 
-				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(Shape::getPosition(shapeToCheck), shapePosition));
+				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheck->position, shapePosition));
 
 				if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) >= distanceVectorSquareLength)
 				{

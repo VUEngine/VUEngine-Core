@@ -58,12 +58,14 @@ void LineField::destructor()
 	Base::destructor();
 }
 
-void LineField::position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
+void LineField::transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
 {
 	if(NULL == position || NULL == rotation || NULL == size || NULL == scale)
 	{
 		return;
 	}
+
+	Base::transform(this, position, rotation, scale, size);
 
 	fix7_9 normalScale = __I_TO_FIX7_9(1);
 	if(scale->x > normalScale)
@@ -153,8 +155,6 @@ void LineField::position(const Vector3D* position, const Rotation* rotation, con
 	this->normal = Vector3D::normalize((Vector3D){dy, -dx, dz});
 
 	LineField::updateRightBox(this);
-
-	Base::position(this, position, rotation, scale, size);
 }
 
 void LineField::updateRightBox()
@@ -223,11 +223,6 @@ CollisionInformation LineField::testForCollision(Shape shape __attribute__((unus
 	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
 
 	return collisionInformation;
-}
-
-Vector3D LineField::getPosition()
-{
-	return Vector3D::intermediate(this->a, this->b);
 }
 
 // configure Polyhedron

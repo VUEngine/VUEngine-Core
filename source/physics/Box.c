@@ -70,8 +70,10 @@ void Box::destructor()
 	Base::destructor();
 }
 
-void Box::position(const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box::transform(const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
+	Base::transform(this, position, rotation, scale, size);
+
 	this->rotationVertexDisplacement.x = 0;
 	this->rotationVertexDisplacement.y = 0;
 	this->rotationVertexDisplacement.z = 0;
@@ -277,8 +279,6 @@ void Box::position(const Vector3D* position, const Rotation* rotation, const Sca
 	{
 		Box::projectOntoItself(this);
 	}
-
-	Base::position(this, position, rotation, scale, size);
 }
 
 void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
@@ -458,18 +458,6 @@ CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, f
 	Box::projectOntoItself(this);
 
 	return collisionInformation;
-}
-
-Vector3D Box::getPosition()
-{
-	Vector3D position =
-	{
-		this->rightBox.x0 + ((this->rightBox.x1 - this->rightBox.x0) >> 1),
-		this->rightBox.y0 + ((this->rightBox.y1 - this->rightBox.y0) >> 1),
-		this->rightBox.z0 + ((this->rightBox.z1 - this->rightBox.z0) >> 1),
-	};
-
-	return position;
 }
 
 // configure Polyhedron

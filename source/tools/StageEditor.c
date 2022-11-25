@@ -346,7 +346,7 @@ void StageEditor::getShape()
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Shape::transform(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 		Shape::setReady(this->shape, false);
 	}
 }
@@ -370,7 +370,7 @@ void StageEditor::positionShape()
 	if(!Entity::hasShapes(entity) && this->shape)
 	{
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
-		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Shape::transform(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 		Shape::show(this->shape);
 	}
 }

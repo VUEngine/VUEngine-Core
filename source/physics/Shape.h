@@ -182,6 +182,8 @@ abstract class Shape : ListenerObject
 {
 	// the rectangle
 	RightBox rightBox;
+	// Position
+	Vector3D position;
 	// the entity to which the shape belongs
 	SpatialObject owner;
 	// colliding shapes list
@@ -233,14 +235,13 @@ abstract class Shape : ListenerObject
 	void show();
 	void hide();
 	void setVisible(bool value);
+	Vector3D getPosition();
 
 	RightBox getSurroundingRightBox();
 	virtual void setup(uint32 layers, uint32 layersToIgnore);
-	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	virtual void setPosition(const Vector3D* position);
+	virtual void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	virtual Vector3D getNormal();
 	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement) = 0;
-	virtual Vector3D getPosition() = 0;
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
 }

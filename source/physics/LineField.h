@@ -44,9 +44,8 @@ class LineField : Shape
 	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
-	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
-	override Vector3D getPosition();
 	override Vector3D getNormal();
 	override void configureWireframe();
 	override void print(int32 x, int32 y);

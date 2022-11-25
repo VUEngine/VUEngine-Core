@@ -67,6 +67,8 @@ void Shape::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 	this->moved = false;
 	this->registerCollisions = shapeSpec->checkForCollisions;
 
+	this->position = Vector3D::zero();
+
 	this->rightBox.x0 = __I_TO_FIXED(-1);
 	this->rightBox.y0 = __I_TO_FIXED(-1);
 	this->rightBox.z0 = __I_TO_FIXED(-1);
@@ -190,30 +192,19 @@ Vector3D Shape::getNormal()
  * @param scale					Scale*
  * @param size					Size*
  */
-void Shape::position(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Shape::transform(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
-	if(this->enabled && this->events)
+	if(this->enabled && NULL != this->events)
 	{
 		Shape::fireEvent(this, kEventShapeChanged);
-		NM_ASSERT(!isDeleted(this), "Shape::position: deleted this during kEventShapeChanged");
+		NM_ASSERT(!isDeleted(this), "Shape::transformm: deleted this during kEventShapeChanged");
 	}
 
 	this->ready = true;
 	this->moved = true;
 
 	// TODO: must update the rightbox
-}
-
-/**
- * Set position
- *
- * @param position				Vector3d*
- */
-void Shape::setPosition(const Vector3D* position __attribute__((unused)))
-{
-	this->moved = true;
-
-	// TODO: must update the rightbox
+	this->position = *position;
 }
 
 /**
@@ -464,6 +455,16 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 	}
 }
 */
+
+/**
+ * Retrieve the position
+ *
+ * @return Vector3D			Shape's position
+ */
+Vector3D Shape::getPosition()
+{
+	return this->position;
+}
 
 /**
  * Displace owner
