@@ -197,7 +197,7 @@ abstract class Sprite : ListenerObject
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
 	void position(const Vector3D* position);
-	virtual void setPosition(const PixelVector* position);
+	void setPosition(const PixelVector* position);
 	virtual void rewrite();
 	virtual void hideForDebug();
 	virtual void forceShow();
