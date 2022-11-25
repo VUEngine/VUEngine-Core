@@ -1846,7 +1846,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
 			Shape::setVisible(Shape::safeCast(node->data), this->inCameraRange);
-		}			
+		}
 	}
 }
 
@@ -2014,6 +2014,7 @@ void Entity::activeCollisionChecks(bool active)
 			Shape shape = Shape::safeCast(node->data);
 
 			Shape::activeCollisionChecks(shape, active);
+			Shape::setVisible(shape, this->inCameraRange);
 		}
 	}
 }
@@ -2031,6 +2032,7 @@ void Entity::registerCollisions(bool value)
 			Shape shape = Shape::safeCast(node->data);
 
 			Shape::registerCollisions(shape, value);
+			Shape::setVisible(shape, this->inCameraRange);
 		}
 	}
 }
@@ -2046,7 +2048,10 @@ void Entity::allowCollisions(bool value)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape::enable(node->data, value);
+			Shape shape = Shape::safeCast(node->data);
+
+			Shape::enable(shape, value);
+			Shape::setVisible(shape, this->inCameraRange);
 		}
 	}
 }

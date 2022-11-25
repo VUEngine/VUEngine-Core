@@ -565,6 +565,11 @@ bool Shape::isEnabled()
 void Shape::activeCollisionChecks(bool activate)
 {
 	Shape::setCheckForCollisions(this, activate);
+
+	if(!this->enabled && activate)
+	{
+		Shape::enable(this, activate);
+	}
 }
 
 /**
@@ -583,7 +588,6 @@ void Shape::enable(bool enable)
 	}
 	
 	this->enabled = enable;
-	this->checkForCollisions = this->enabled;
 }
 
 /**

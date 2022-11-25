@@ -158,7 +158,6 @@ uint32 CollisionManager::update(Clock clock)
 		// the layers of the shapeToCheck are not excluded by the current shape
 		if(!shape->enabled || !shape->ready)
 		{
-			shape->isVisible = false;
 			continue;
 		}
 
@@ -170,7 +169,7 @@ uint32 CollisionManager::update(Clock clock)
 			shape->isVisible = true;
 
 			extern const Rotation* _cameraInvertedRotation;
-			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(Shape::getPosition(shape)), *_cameraInvertedRotation);
+			Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(shape->position), *_cameraInvertedRotation);
 			RightBox rightBox = Shape::getSurroundingRightBox(shape);
 			PixelVector position = PixelVector::getFromVector3D(relativePosition, 0);
 			int16 pad = __ABS(position.z);
@@ -199,11 +198,6 @@ uint32 CollisionManager::update(Clock clock)
 			}			
 		}
 
-		if(!shape->isVisible)
-		{
-			continue;
-		}
-
 	#ifdef __DRAW_SHAPES
 		if(shapeToCheck->enabled && shapeToCheck->isVisible)
 		{
@@ -226,7 +220,7 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			Shape shapeToCheck = Shape::safeCast(node->data);
 
-			if(!shapeToCheck->isVisible)
+			if(!(shape->enabled && shape->ready && shapeToCheck->isVisible))
 			{
 				continue;
 			}
@@ -265,7 +259,6 @@ uint32 CollisionManager::update(Clock clock)
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -356,7 +349,7 @@ int32 CollisionManager::getNumberOfMovingEnabledShapes()
 	{
 		Shape shape = Shape::safeCast(node->data);
 
-		if(shape->checkForCollisions)
+		if(shape->enabled && shape->checkForCollisions)
 		{
 			count++;
 		}
