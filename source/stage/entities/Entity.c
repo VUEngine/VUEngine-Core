@@ -1303,8 +1303,6 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 
-			//uint16 axisForShapeSyncWithDirection = Entity::getAxisForShapeSyncWithDirection(this);
-
 			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), this->transformation.localRotation);
 
 			Vector3D shapePosition = Vector3D::sum(*myPosition, shapeDisplacement);
@@ -2266,16 +2264,6 @@ void Entity::setTransparent(uint8 transparent)
 			Wireframe::setTransparent(node->data, transparent);
 		}
 	}
-}
-
-/**
- * Get axis for Shape sync with direction
- *
- * @return		Axis
- */
-uint16 Entity::getAxisForShapeSyncWithDirection()
-{
-	return __ALL_AXIS;
 }
 
 /**

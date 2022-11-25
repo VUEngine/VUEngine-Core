@@ -108,7 +108,6 @@ class Entity : Container
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
-	virtual uint16 getAxisForShapeSyncWithDirection();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
