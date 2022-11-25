@@ -69,7 +69,6 @@
 #include <Actor.h>
 #include <Entity.h>
 #include <Particle.h>
-#include <ParticleBody.h>
 #include <ParticleSystem.h>
 #include <SolidParticle.h>
 
@@ -752,7 +751,6 @@ void Debug::memoryStatusShowSixthPage(int32 increment __attribute__ ((unused)), 
 	ClassSizeData classesSizeData[] =
 	{
 		{&Particle_getObjectSize,						"Particle"},
-		{&ParticleBody_getObjectSize,					"ParticleBody"},
 		{&ParticleSystem_getObjectSize,					"ParticleSystem"},
 		{&SolidParticle_getObjectSize,					"SolidParticle"},
 		{&SpatialObject_getObjectSize,					"SpatialObject"},

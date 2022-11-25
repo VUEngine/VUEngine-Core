@@ -211,8 +211,7 @@ class Body : ListenerObject
 	MovementResult updateMovement();
 	bool changedDirection();
 	void sendMessages(bool value);
-
-	virtual void update();
+	void update();
 }
 
 

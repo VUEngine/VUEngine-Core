@@ -91,12 +91,12 @@ void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint1
 
 	if(NULL != physicalSpecification)
 	{
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
 	}
 	else
 	{
 		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
 	}
 
 	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
@@ -162,11 +162,28 @@ uint16 Actor::syncWithBody()
 	{
 		axiOfMovement = Body::getMovementOnAllAxis(this->body);
 
-		Actor::syncPositionWithBody(this);
-
 		if(axiOfMovement)
 		{
-			Actor::syncRotationWithBody(this);
+			if(Actor::overrides(this, syncPositionWithBody))
+			{
+				Actor::syncPositionWithBody(this);
+			}
+			else
+			{
+				Actor::doSyncPositionWithBody(this);
+			}
+
+			if((uint16)__LOCK_AXIS != ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
+			{
+				if(Actor::overrides(this, syncRotationWithBody))
+				{
+					Actor::syncRotationWithBody(this);
+				}
+				else
+				{
+					Actor::doSyncRotationWithBody(this);
+				}
+			}
 		}
 	}
 
@@ -174,6 +191,11 @@ uint16 Actor::syncWithBody()
 }
 
 void Actor::syncPositionWithBody()
+{
+	Actor::doSyncPositionWithBody(this);
+}
+
+void Actor::doSyncPositionWithBody()
 {
 	if(isDeleted(this->body))
 	{
@@ -212,15 +234,15 @@ void Actor::syncPositionWithBody()
 
 void Actor::doSyncRotationWithBody()
 {
-	if(!isDeleted(this->body) && Body::getMovementOnAllAxis(this->body))
+	if(!isDeleted(this->body))
 	{
-		Direction3D direction3D = *Body::getDirection3D(this->body);
-
 		if((uint16)__LOCK_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			return;
 		}
 
+		Direction3D direction3D = *Body::getDirection3D(this->body);
+		
 		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
 			Direction direction = Actor::getDirection(this);
@@ -368,7 +390,7 @@ bool Actor::hasChangedDirection(uint16 axis, const Rotation* previousRotation)
 // change direction over axis
 void Actor::changeDirectionOnAxis(uint16 axis)
 {
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Actor::syncRotationWithBody(this);
 	}

@@ -70,7 +70,7 @@ class PhysicalWorld : ListenerObject
 	bool isSpatialObjectRegistered(SpatialObject owner);
 	void print(int32 x, int32 y);
 	void purgeBodyLists();
-	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
+	Body createBody(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void destroyBody(Body body);
 	void reset();
 	void setGravity(Acceleration gravity);

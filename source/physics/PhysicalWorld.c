@@ -85,7 +85,7 @@ void PhysicalWorld::destructor()
  * @param physicalSpecification
  * @return				Registered Body
  */
-Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
 {
 	if(this->dirty)
 	{
@@ -106,19 +106,12 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 	}
 
 	// if the entity is already registered
-	if(bodyAllocator)
-	{
-		Body body = bodyAllocator(owner, physicalSpecification, axisSubjectToGravity);
-		VirtualList::pushFront(this->bodies, body);
-		ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
+	Body body = new Body(owner, physicalSpecification, axisSubjectToGravity);
+	VirtualList::pushFront(this->bodies, body);
+	ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
-		// return created shape
-		return Body::safeCast(VirtualList::front(this->bodies));
-	}
-
-	ASSERT(false, "PhysicalWorld::createBody: could not create body");
-
-	return NULL;
+	// return created shape
+	return body;
 }
 
 /**
