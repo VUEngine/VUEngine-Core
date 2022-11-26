@@ -903,8 +903,9 @@ static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color
 	}
 
 	int16 lengthHelper = 0;
-	int16 x = center.x - length / 2;
-	int16 y = center.y - length / 2;
+	int16 halfLength = length >> 1;
+	int16 x = center.x - halfLength;
+	int16 y = center.y - halfLength;
 
 	if(interlaced)
 	{
@@ -919,14 +920,14 @@ static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, x, y, center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, (center.x + length / 2) - lengthHelper, y, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
 
 			x++;
 			y++;
 			lengthHelper++;
 
 			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, x, y, -center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, (center.x + length / 2) - lengthHelper, y, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, -center.parallax, color);
 		}
 	}
 	else
@@ -937,7 +938,7 @@ static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color
 		for(; lengthHelper <= length; lengthHelper++, x++, y++)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + length / 2) - lengthHelper, y, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
 		}
 	}
 }
@@ -950,6 +951,7 @@ static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 c
 	}
 
 	int16 lengthHelper = 0;
+	int16 halfLength = length >> 1;
 
 	if(interlaced)
 	{
@@ -961,7 +963,7 @@ static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 c
 			center.parallax = -center.parallax;
 		}
 
-		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		for(int16 coordinate = -halfLength; lengthHelper < length; coordinate++, lengthHelper++)
 		{
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + coordinate, center.y, center.parallax, color);
 			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x, center.y + coordinate, center.parallax, color);
@@ -978,7 +980,7 @@ static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 c
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-		for(int16 coordinate = -length / 2; lengthHelper < length; coordinate++, lengthHelper++)
+		for(int16 coordinate = -halfLength; lengthHelper < length; coordinate++, lengthHelper++)
 		{
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + coordinate, center.y, center.parallax, color);
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
