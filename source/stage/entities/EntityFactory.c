@@ -166,27 +166,6 @@ uint32 EntityFactory::instantiateEntities()
 		{
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
-				if(!positionedEntityDescription->spritesCreated)
-				{
-					Entity::createSprites(positionedEntityDescription->entity);
-					positionedEntityDescription->spritesCreated = true;
-					return __ENTITY_PENDING_PROCESSING;
-				}
-
-				if(!positionedEntityDescription->wireframesCreated)
-				{
-					Entity::createWireframes(positionedEntityDescription->entity);
-					positionedEntityDescription->wireframesCreated = true;
-					return __ENTITY_PENDING_PROCESSING;
-				}
-
-				if(!positionedEntityDescription->shapesCreated)
-				{
-					Entity::createShapes(positionedEntityDescription->entity);
-					positionedEntityDescription->shapesCreated = true;
-					return __ENTITY_PENDING_PROCESSING;
-				}
-
 				VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
 				VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
 
@@ -245,6 +224,27 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
+		if(!positionedEntityDescription->spritesCreated)
+		{
+			Entity::createSprites(positionedEntityDescription->entity);
+			positionedEntityDescription->spritesCreated = true;
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
+		if(!positionedEntityDescription->wireframesCreated)
+		{
+			Entity::createWireframes(positionedEntityDescription->entity);
+			positionedEntityDescription->wireframesCreated = true;
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
+		if(!positionedEntityDescription->shapesCreated)
+		{
+			Entity::createShapes(positionedEntityDescription->entity);
+			positionedEntityDescription->shapesCreated = true;
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
 		{
 			VirtualList::pushBack(this->entitiesToMakeReady, positionedEntityDescription);
@@ -252,6 +252,10 @@ uint32 EntityFactory::transformEntities()
 
 			return __ENTITY_PROCESSED;
 		}
+
+		Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
+
+		Container::transform(positionedEntityDescription->entity, environmentTransform, false);
 
 		return __ENTITY_PENDING_PROCESSING;
 	}

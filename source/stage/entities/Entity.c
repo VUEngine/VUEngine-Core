@@ -400,7 +400,7 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 	for(int32 i = 0; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
 	{
 		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
-		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
 		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 
@@ -425,7 +425,7 @@ void Entity::addWireframe(Wireframe wireframe)
 		this->wireframes = new VirtualList();
 	}
 
-	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this));
+	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
 	VirtualList::pushBack(this->wireframes, wireframe);
 }
 

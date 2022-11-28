@@ -109,7 +109,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationF
 	{
 		// call the appropriate allocator to support inheritance
 		this->wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec);
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL);
+		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, this->expired);
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
@@ -355,7 +355,7 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* forc
 
 	if(!isDeleted(this->wireframe))
 	{
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL);
+		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
 	}
 
 	if(force->x | force->y | force->z)

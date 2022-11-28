@@ -46,6 +46,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->show = __SHOW;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
+	this->draw = false;
 }
 
 /**
@@ -83,6 +84,7 @@ void Wireframe::show()
  */
 void Wireframe::hide()
 {
+	this->draw = false;
 	this->show = __HIDE;
 }
 
@@ -96,11 +98,16 @@ void Wireframe::render()
 /**
  * Position
  */
-void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)))
+void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Rotation* rotation __attribute__((unused)), const Scale* scale __attribute__((unused)), bool hidden)
 {
 	this->position = position;
 	this->rotation = rotation;
 	this->scale = scale;
+
+	if(hidden)
+	{
+		Wireframe::hide(this);
+	}
 
 	WireframeManager::register(WireframeManager::getInstance(), this);
 }
@@ -184,6 +191,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
+			this->color = __COLOR_BLACK;
 			return;
 		}
 

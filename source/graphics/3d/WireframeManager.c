@@ -228,6 +228,8 @@ void WireframeManager::render()
 
 		Wireframe::render(wireframe);
 
+		wireframe->draw = true;
+
 #ifdef __PROFILE_WIREFRAMES
 		if(__COLOR_BLACK != wireframe->color)
 		{
@@ -280,7 +282,7 @@ void WireframeManager::draw()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if(__COLOR_BLACK == wireframe->color)
+		if(!wireframe->draw || __COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}

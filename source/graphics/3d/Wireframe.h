@@ -64,6 +64,7 @@ abstract class Wireframe : ListenerObject
 	uint8 bufferIndex;
 	uint8 show;
 	uint8 transparent;
+	bool draw;
 
 	/// @publicsection
 	void constructor(WireframeSpec* wireframeSpec);
@@ -75,7 +76,7 @@ abstract class Wireframe : ListenerObject
 	virtual void draw() = 0;
 	virtual void render();
 	virtual VirtualList getVertices();
-	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale);
+	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale, bool hidden);
 	virtual PixelRightBox getPixelRightBox();
 }
 

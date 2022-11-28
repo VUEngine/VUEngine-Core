@@ -259,7 +259,7 @@ void LineField::configureWireframe()
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Line(this->lineSpec));
 
-	Wireframe::setup(this->wireframe, SpatialObject::getPosition(this->owner), NULL, NULL);
+	Wireframe::setup(this->wireframe, SpatialObject::getPosition(this->owner), NULL, NULL, false);
 }
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
