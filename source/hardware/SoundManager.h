@@ -119,7 +119,7 @@ singleton class SoundManager : ListenerObject
 	void stopAllSounds(bool release, Sound** excludedSounds);
 	void flushQueuedSounds();
 
-	void playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+	bool playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
 	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
 	SoundWrapper findSound(const Sound* sound);
 

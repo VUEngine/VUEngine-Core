@@ -747,11 +747,11 @@ void SoundManager::unlock()
 	this->lock = false;
 }
 
-void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope)
+bool SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope)
 {
 	if(this->lock || NULL == sound)
 	{
-		return;
+		return false;
 	}
 
 	SoundWrapper soundWrapper = SoundManager::doGetSound(this, sound, command, soundReleaseListener, scope, false);
@@ -759,6 +759,8 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 	if(!isDeleted(soundWrapper))
 	{
 		SoundWrapper::play(soundWrapper, position, playbackType);
+
+		return true;
 	}
 	else if(kPlayAsSoonAsPossible == playbackType)
 	{
@@ -773,6 +775,8 @@ void SoundManager::playSound(const Sound* sound, uint32 command, const Vector3D*
 
 		VirtualList::pushBack(this->queuedSounds, queuedSound);
 	}
+
+	return kPlayForceAll != playbackType;
 }
 
 /**
