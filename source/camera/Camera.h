@@ -99,11 +99,12 @@ singleton class Camera : ListenerObject
 	CameraFrustum cameraFrustum;
 	// Transformation flags
 	uint8 transformationFlags;
+	// Flag raised when synchronizing UI graphics
+	bool synchronizingUIGraphics;
 
 	/// @publicsection
 	static Camera getInstance();
 	void capPosition();
-	void doneUI();
 	void focus(uint32 checkIfFocusEntityIsMoving);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
@@ -114,7 +115,10 @@ singleton class Camera : ListenerObject
 	Size getStageSize();
 	void translate(Vector3D, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
-	void prepareForUI();
+	void startUIGraphicsSynchronization();
+	void stopUIGraphicsSynchronization();
+	void suspendUIGraphicsSynchronization();
+	void resumeUIGraphicsSynchronization();
 	void reset();
 	void resetCameraFrustum();
 	void setCameraEffectManager(CameraEffectManager cameraEffectManager);

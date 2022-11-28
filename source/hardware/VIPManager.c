@@ -20,6 +20,7 @@
 #include <SpriteManager.h>
 #include <DirectDraw.h>
 #include <WireframeManager.h>
+#include <Camera.h>
 #include <Profiler.h>
 #include <Mem.h>
 #ifdef __DEBUG_TOOLS
@@ -95,6 +96,7 @@ void VIPManager::constructor()
 
 	this->postProcessingEffects = new VirtualList();
 	this->currentDrawingFrameBufferSet = 0;
+	this->logicEnded = false;
 	this->drawingEnded = false;
 	this->frameStartedDuringXPEND = false;
 	this->processingXPEND = false;
@@ -138,6 +140,7 @@ void VIPManager::reset()
 	this->skipFrameBuffersProcessing = false;
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
+	this->logicEnded = false;
 	this->drawingEnded = false;
 	this->totalMilliseconds = 0;
 
@@ -267,15 +270,6 @@ static void VIPManager::interruptHandler()
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
 }
 
-static void VIPManager::updateVRAM()
-{
-	SpriteManager::writeDRAM(_spriteManager);
-
-	DirectDraw::startDrawing(_directDraw);
-	WireframeManager::draw(_wireframeManager);
-	VIPManager::applyPostProcessingEffects(_vipManager);
-}
-
 /**
  * Process interrupt method
  */
@@ -316,32 +310,39 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->drawingEnded = false;
 				this->processingGAMESTART = true;
 
+				// Configure the drawing frame buffers
+				VIPManager::registerCurrentDrawingFrameBufferSet(this);
+
 				if(this->processingXPEND)
 				{
 					this->multiplexedGAMESTARTCounter++;
 
-					VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
+					if(NULL != this->events)
+					{
+						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
+					}
 				}
 				else
 				{
 					// Listen for the end of drawing operations
-					VIPManager::enableInterrupts(this, __XPEND);
+					if(!(__XPEND & interrupt))
+					{
+						VIPManager::enableInterrupts(this, __XPEND);
+					}
+
+					// Process game's logic
+					VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+
+					// The VIP finished drawing the current frame when the game was being rendered
+					// so it didn't touch VRAM during the last XPEND
+					if(this->drawingEnded)
+					{
+						SpriteManager::writeDRAM(_spriteManager);
+					}
 				}
 
-				// Configure the drawing frame buffers
-				VIPManager::registerCurrentDrawingFrameBufferSet(this);
-
-				// Process game's logic
-				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
-
-				// The VIP finished drawing the current frame when the game was being rendered
-				// so it didn't touch VRAM during the last XPEND
-				if(this->drawingEnded)
-				{
-					VIPManager::updateVRAM();
-				}	
-
 				this->processingGAMESTART = false;
+				this->logicEnded = true;
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
@@ -364,26 +365,46 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
 #endif
+				
+				this->logicEnded = false;
+				this->processingXPEND = true;
 
 				if(this->processingGAMESTART)
 				{
 					this->multiplexedXPENDCounter++;
 
-					VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
+					if(NULL != this->events)
+					{
+						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
+					}
 				}
 				else
 				{
-					this->processingXPEND = true;
-
-					// Allow game start interrupt
-					VIPManager::enableInterrupts(this, __GAMESTART);
-
-					// Write to VRAM
-					VIPManager::updateVRAM();
-
-					this->processingXPEND = false;
+					// Allow game start interrupt because the frame buffers can change mid drawing
+					if(!(__GAMESTART & interrupt))
+					{
+						VIPManager::enableInterrupts(this, __GAMESTART);
+					}
 				}
 
+				// Frame buffers manipulation must happen as soon as possible
+				// and should happen every XPEND even if multiplexed to prevent
+				// black frame flickering
+				WireframeManager::draw(_wireframeManager);
+				VIPManager::applyPostProcessingEffects(_vipManager);
+
+				if(!this->processingGAMESTART)
+				{
+					// Write to DRAM
+					SpriteManager::writeDRAM(_spriteManager);
+
+					if(this->logicEnded)
+					{
+						VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+					}
+				}
+
+				this->processingXPEND = false;
 				this->drawingEnded = true;
 
 #ifdef __ENABLE_PROFILER

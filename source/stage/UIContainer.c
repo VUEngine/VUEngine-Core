@@ -90,11 +90,11 @@ void UIContainer::synchronizeGraphics()
 {
 	NM_ASSERT(_camera, "UIContainer::transform: null camera");
 
-	Camera::prepareForUI(_camera);
+	Camera::startUIGraphicsSynchronization(_camera);
 
 	Base::synchronizeGraphics(this);
 
-	Camera::doneUI(_camera);
+	Camera::stopUIGraphicsSynchronization(_camera);
 }
 
 

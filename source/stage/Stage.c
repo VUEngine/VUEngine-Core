@@ -1251,6 +1251,11 @@ void Stage::synchronizeUIGraphics()
 	}
 }
 
+void Stage::synchronizeGraphics()
+{
+	Base::synchronizeGraphics(this);
+}
+
 // retrieve ui
 UIContainer Stage::getUIContainer()
 {

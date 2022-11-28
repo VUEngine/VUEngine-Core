@@ -15,6 +15,7 @@
 #include <WireframeManager.h>
 #include <VirtualList.h>
 #include <Camera.h>
+#include <DirectDraw.h>
 #include <debugConfig.h>
 #include <debugUtilities.h>
 
@@ -191,6 +192,11 @@ void WireframeManager::render()
 		return;
 	}
 
+	// UI graphics synchronization involves moving the camera
+	// which can mess rendering if the VIP's XPEND interrupt 
+	// happens when the camera is modified
+	Camera::suspendUIGraphicsSynchronization(Camera::getInstance());
+
 	this->stopRendering = false;
 
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
@@ -246,6 +252,9 @@ void WireframeManager::render()
 
 	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
 	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
+
+
+	Camera::resumeUIGraphicsSynchronization(Camera::getInstance());
 }
 
 /**
@@ -257,6 +266,8 @@ void WireframeManager::draw()
 	{
 		return;
 	}
+
+	DirectDraw::startDrawing(DirectDraw::getInstance());
 
 	this->stopDrawing = false;
 

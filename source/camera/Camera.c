@@ -83,6 +83,7 @@ void Camera::constructor()
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
 	this->transformationFlags = false;
+	this->synchronizingUIGraphics = false;
 
 	PixelOptical pixelOptical =
     {
@@ -387,11 +388,13 @@ void Camera::rotate(Rotation rotation)
 /**
  * Set camera's position for UI transformation
  */
-void Camera::prepareForUI()
+void Camera::startUIGraphicsSynchronization()
 {
 	this->positionBackup = this->position;
 	this->rotationBackup = this->rotation;
 	this->opticalBackup = this->optical;
+
+	this->synchronizingUIGraphics = true;
 
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
@@ -405,12 +408,35 @@ void Camera::prepareForUI()
 /**
  * Set camera's position after UI transformation
  */
-void Camera::doneUI()
+void Camera::stopUIGraphicsSynchronization()
 {
 	this->position = this->positionBackup;
 	this->rotation = this->rotationBackup;
 	this->invertedRotation = Rotation::invert(this->rotation);
 	this->optical = this->opticalBackup;
+
+	this->synchronizingUIGraphics = false;
+}
+
+void Camera::suspendUIGraphicsSynchronization()
+{
+	if(this->synchronizingUIGraphics)
+	{
+		this->position = this->positionBackup;
+		this->rotation = this->rotationBackup;
+		this->invertedRotation = Rotation::invert(this->rotation);
+		this->optical = this->opticalBackup;
+	}
+}
+
+void Camera::resumeUIGraphicsSynchronization()
+{
+	if(this->synchronizingUIGraphics)
+	{
+		this->position = Vector3D::zero();
+		this->rotation = Rotation::zero();
+		this->invertedRotation = Rotation::zero();
+	}
 }
 
 /**
@@ -517,6 +543,7 @@ void Camera::reset()
 	this->invertedRotation = Rotation::zero();
 
 	this->transformationFlags = false;
+	this->synchronizingUIGraphics = false;
 
 	Camera::resetCameraFrustum(this);
 

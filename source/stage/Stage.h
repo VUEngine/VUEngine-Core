@@ -238,14 +238,16 @@ class Stage : Container
 	void fadeSounds(uint32 playbackType);
 	void pauseSounds();
 	void unpauseSounds();
-	void synchronizeUIGraphics();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
+	virtual void synchronizeUIGraphics();
+	
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void suspend();
 	override void resume();
+	override void synchronizeGraphics();
 	override void removeChild(Container child, bool deleteChild);
 	override bool handlePropagatedMessage(int32 message);
 	override bool handlePropagatedString(const char* string);
