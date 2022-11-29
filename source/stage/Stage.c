@@ -1254,6 +1254,11 @@ void Stage::synchronizeUIGraphics()
 void Stage::synchronizeGraphics()
 {
 	Base::synchronizeGraphics(this);
+
+	if(!isDeleted(this->uiContainer))
+	{
+		UIContainer::synchronizeGraphics(this->uiContainer);
+	}
 }
 
 // retrieve ui

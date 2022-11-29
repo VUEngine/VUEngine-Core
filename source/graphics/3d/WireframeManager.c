@@ -201,8 +201,6 @@ void WireframeManager::render()
 
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
-	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
-
 #ifdef __PROFILE_WIREFRAMES
 	uint16 wireframes = 0;
 	uint16 renderedWireframes = 0;
@@ -222,7 +220,6 @@ void WireframeManager::render()
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
-			wireframe->color = __COLOR_BLACK;
 			continue;
 		}
 
@@ -239,10 +236,10 @@ void WireframeManager::render()
 	}
 
 #ifdef __PROFILE_WIREFRAMES
-	PRINT_TEXT("Wireframes: ", 1, 1);
-	PRINT_TEXT("Rendered: ", 1, 2);
-	PRINT_INT(wireframes, 15, 1);
-	PRINT_INT(renderedWireframes, 15, 2);
+	PRINT_TEXT("Wireframes: ", 1, 5);
+	PRINT_TEXT("Rendered: ", 1, 6);
+	PRINT_INT(wireframes, 15, 5);
+	PRINT_INT(renderedWireframes, 15, 6);
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
@@ -277,6 +274,8 @@ void WireframeManager::draw()
 	uint16 drawnWireframes = 0;
 #endif
 
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
+
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
@@ -286,7 +285,12 @@ void WireframeManager::draw()
 		{
 			continue;
 		}
-		
+
+		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame))
+		{
+			continue;
+		}
+
 		Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
@@ -295,8 +299,8 @@ void WireframeManager::draw()
 	}
 
 #ifdef __PROFILE_WIREFRAMES
-	PRINT_TEXT("Drawn: ", 1, 3);
-	PRINT_INT(drawnWireframes, 15, 3);
+	PRINT_TEXT("Drawn: ", 1, 7);
+	PRINT_INT(drawnWireframes, 15, 7);
 #endif
 }
 

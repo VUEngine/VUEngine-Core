@@ -332,12 +332,16 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 					// Process game's logic
 					VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+					SpriteManager::render(_spriteManager);
+					WireframeManager::render(_wireframeManager);
 
 					// The VIP finished drawing the current frame when the game was being rendered
 					// so it didn't touch VRAM during the last XPEND
 					if(this->drawingEnded)
 					{
 						SpriteManager::writeDRAM(_spriteManager);
+						WireframeManager::draw(_wireframeManager);
+						VIPManager::applyPostProcessingEffects(_vipManager);
 					}
 				}
 
@@ -385,22 +389,20 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
-				}
 
-				// Frame buffers manipulation must happen as soon as possible
-				// and should happen every XPEND even if multiplexed to prevent
-				// black frame flickering
-				WireframeManager::draw(_wireframeManager);
-				VIPManager::applyPostProcessingEffects(_vipManager);
-
-				if(!this->processingGAMESTART)
-				{
+					// Frame buffers manipulation must happen as soon as possible
+					// and should happen every XPEND even if multiplexed to prevent
+					// black frame flickering
+					WireframeManager::draw(_wireframeManager);
+					VIPManager::applyPostProcessingEffects(_vipManager);
 					// Write to DRAM
 					SpriteManager::writeDRAM(_spriteManager);
 
 					if(this->logicEnded)
 					{
 						VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+						SpriteManager::render(_spriteManager);
+						WireframeManager::render(_wireframeManager);
 					}
 				}
 
