@@ -59,6 +59,7 @@ void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), 
 	this->positioned = false;
 	this->registered = false;
 	this->checkIfWithinScreenSpace = true;
+	this->renderFlag = false;
 }
 
 /**
@@ -108,6 +109,7 @@ bool Sprite::prepareTexture()
 
 int16 Sprite::render(int16 index, bool evenFrame)
 {
+	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
 
 	// If the client code makes these checks before calling this method,
@@ -165,7 +167,15 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		Sprite::update(this);
 	}
 
-	this->index = Sprite::doRender(this, index, evenFrame);
+	if((previousIndex == index) && !this->renderFlag)
+ 	{
+ 		this->index = previousIndex;
+ 	}
+ 	else
+ 	{
+ 		this->renderFlag = false;
+ 		this->index = Sprite::doRender(this, index, evenFrame);
+ 	}
 
 	return this->index;
 }
@@ -287,6 +297,8 @@ void Sprite::setPosition(const PixelVector* position)
 	if(this->position.x != position->x || this->position.y != position->y || this->position.z != position->z || this->position.parallax != position->parallax)
 	{
 		this->position = *position;
+
+		this->renderFlag = true;
 	}
 
 	if(!this->registered)
@@ -303,6 +315,7 @@ void Sprite::setPosition(const PixelVector* position)
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
 	int16 parallax = Optics::calculateParallax(z);
+	this->renderFlag |= this->position.parallax != parallax;
 	this->position.parallax = parallax;
 }
 
@@ -525,6 +538,8 @@ const PixelVector* Sprite::getDisplacement()
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
 	this->displacement = *displacement;
+
+	this->renderFlag = true;
 }
 
 /**
@@ -534,6 +549,7 @@ void Sprite::setDisplacement(const PixelVector* displacement)
  */
 void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
 {
+	this->renderFlag = true;
 }
 
 /**
@@ -630,6 +646,8 @@ uint8 Sprite::getTransparent()
 void Sprite::setTransparent(uint8 value)
 {
 	this->transparent = value;
+
+	this->renderFlag = true;
 }
 
 /**
@@ -643,6 +661,7 @@ bool Sprite::updateAnimation()
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
+		this->renderFlag |= this->writeAnimationFrame;
 		stillAnimating |= AnimationController::isPlaying(this->animationController);
 	}
 

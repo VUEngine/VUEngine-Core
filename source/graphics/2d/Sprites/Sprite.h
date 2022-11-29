@@ -137,12 +137,14 @@ abstract class Sprite : ListenerObject
 	bool writeAnimationFrame;
 	// Flag to allow rendering
 	bool positioned;
-	// Flato to allow registering
+	// Flag to signal if the sprite has been already registered
 	bool registered;
 	// Flag for making it transparent
 	uint8 transparent;
 	// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
+	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
+ 	bool renderFlag;
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);

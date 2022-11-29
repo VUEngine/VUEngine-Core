@@ -641,22 +641,11 @@ void SpriteManager::render()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		sprite->index = __NO_RENDER_INDEX;
-
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(__HIDE == sprite->show)
+		if(__HIDE == sprite->show || !sprite->positioned || (sprite->transparent & this->evenFrame))
 		{
-			continue;
-		}
-
-		if(!sprite->positioned)
-		{
-			continue;
-		}
-
-		if(sprite->transparent & this->evenFrame)
-		{
+			sprite->index = __NO_RENDER_INDEX;
 			continue;
 		}
 
