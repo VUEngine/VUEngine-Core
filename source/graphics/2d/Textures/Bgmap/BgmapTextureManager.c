@@ -109,6 +109,8 @@ void BgmapTextureManager::reset()
 	}
 
 	VirtualList::deleteData(this->bgmapTextures);
+
+	this->deferTextureUpdate = false;
 }
 
 /**
@@ -293,6 +295,17 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
  * Update textures
  *
  * @public
+ * @param value			Boolean flag
+ */
+void BgmapTextureManager::setDeferTextureUpdate(bool value)
+{
+	this->deferTextureUpdate = value;
+}
+
+/**
+ * Update textures
+ *
+ * @public
  */
 void BgmapTextureManager::updateTextures()
 {
@@ -303,6 +316,11 @@ void BgmapTextureManager::updateTextures()
 		if(kTextureWritten != texture->status && texture->update)
 		{
 			texture->update = !Texture::update(texture);
+
+			if(this->deferTextureUpdate)
+			{
+				break;
+			}
 		}
 	}
 }

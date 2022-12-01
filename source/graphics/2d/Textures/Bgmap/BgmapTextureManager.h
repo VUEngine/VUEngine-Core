@@ -60,6 +60,8 @@ singleton class BgmapTextureManager : Object
 	int16 availableBgmapSegmentsForTextures;
 	// Segment for printing
 	int16 printingBgmapSegment;
+	// Defer texture update
+	bool deferTextureUpdate;
 
 	/// @publicsection
 	static BgmapTextureManager getInstance();
@@ -74,7 +76,7 @@ singleton class BgmapTextureManager : Object
 	void releaseTexture(BgmapTexture bgmapTexture);
 	void updateTextures();
 	void reset();
-	void setSpareBgmapSegments(uint8 paramTableSegments);
+	void setDeferTextureUpdate(bool value);
 }
 
 
