@@ -340,9 +340,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					if(this->drawingEnded)
 					{
 						SpriteManager::writeDRAM(_spriteManager);
+						/*
 						DirectDraw::startDrawing(_directDraw);
 						WireframeManager::draw(_wireframeManager);
 						VIPManager::applyPostProcessingEffects(_vipManager);
+						*/
 					}
 				}
 
@@ -390,10 +392,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
+				}
 
-					DirectDraw::startDrawing(_directDraw);
-					WireframeManager::draw(_wireframeManager);
-					VIPManager::applyPostProcessingEffects(_vipManager);
+				DirectDraw::startDrawing(_directDraw);
+				WireframeManager::draw(_wireframeManager);
+				VIPManager::applyPostProcessingEffects(_vipManager);
+
+				if(!this->processingGAMESTART)
+				{
 					SpriteManager::writeDRAM(_spriteManager);
 
 					if(this->logicEnded)
