@@ -17,6 +17,7 @@
 #include <VirtualList.h>
 #include <TimerManager.h>
 #include <Profiler.h>
+#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -338,6 +339,9 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
+	Camera camera = Camera::getInstance();
+	Camera::suspendUIGraphicsSynchronization(camera);
+
 	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
 	{
 		static uint32 accumulatedElapsedMicroseconds = 0;
@@ -363,6 +367,8 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
 	}
+
+	Camera::resumeUIGraphicsSynchronization(camera);
 }
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)

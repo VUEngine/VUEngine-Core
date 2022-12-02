@@ -720,7 +720,7 @@ void SoundWrapper::completedPlayback()
 	}
 }
 
-void SoundWrapper::playMIDINote(Channel* channel, int16 leftVolumeFactor, int16 rightVolumeFactor)
+void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
 {
 	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
 	uint8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
@@ -728,26 +728,12 @@ void SoundWrapper::playMIDINote(Channel* channel, int16 leftVolumeFactor, int16 
 	int16 leftVolume = volume;
 	int16 rightVolume = volume;
 
-	if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
+	if(0 != volume && 0 <= leftVolumeFactor + rightVolumeFactor)
 	{
-		leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-		//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+		fixed_t volumeHelper = __I_TO_FIXED(volume);
 
-		rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
-		//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
-
-		/* The maximum sound level for each side is 0xF
-		* In the center position the output level is the one
-		* defined in the sound's spec */
-		if(0 >= leftVolume)
-		{
-			leftVolume = 0 < volume ? 1 : 0;
-		}
-
-		if(0 >= rightVolume)
-		{
-			rightVolume = 0 < volume ? 1 : 0;
-		}
+		leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
+		rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
 	}
 
 	uint8 SxLRV = (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume) * this->unmute;
@@ -882,8 +868,8 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	SoundWrapper::updateVolumeReduction(this);
 
-	int16 leftVolumeFactor = -1;
-	int16 rightVolumeFactor = -1;
+	fixed_t leftVolumeFactor = -1;
+	fixed_t rightVolumeFactor = -1;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -916,16 +902,17 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
 			{
-				Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
-				PixelVector projectedPosition = Vector3D::projectToPixelVector(relativeGlobalPosition, 0);
-				projectedPosition.z = __ABS(projectedPosition.z);
+				Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
+				Vector3D leftEar = (Vector3D){__PIXELS_TO_METERS(-__EAR_DISPLACEMENT), 0, 0};
+				Vector3D rightEar = (Vector3D){__PIXELS_TO_METERS(__EAR_DISPLACEMENT), 0, 0};
 
-				int16 verticalDistance = (__ABS(projectedPosition.y - __HALF_SCREEN_HEIGHT) * projectedPosition.z) / __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR;
-				int16 leftDistance = (__ABS(projectedPosition.x - __LEFT_EAR_CENTER) * projectedPosition.z) / __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR;
-				int16 rightDistance = (__ABS(projectedPosition.x - __RIGHT_EAR_CENTER) * projectedPosition.z) / __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR;
-				
-				leftVolumeFactor = (leftDistance + verticalDistance);
-				rightVolumeFactor = (rightDistance + verticalDistance);
+				fixed_ext_t squaredDistanceToLeftEar = Vector3D::squareLength(Vector3D::get(leftEar, relativePosition));
+				fixed_ext_t squaredDistanceToRightEar = Vector3D::squareLength(Vector3D::get(rightEar, relativePosition));
+
+				leftVolumeFactor  = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+				rightVolumeFactor = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+				leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
+				rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
 			}
 
 			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);

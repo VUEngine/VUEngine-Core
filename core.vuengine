@@ -3016,22 +3016,14 @@
                     "sound": {
                         "type": "object",
                         "properties": {
-                            "leftEarCenter": {
+                            "earDisplacement": {
                                 "type": "integer",
-                                "default": 96
-                            },
-                            "rightEarCenter": {
-                                "type": "integer",
-                                "default": 288
-                            },
-                            "stereoHorizontalAttenuationFactor": {
-                                "type": "integer",
-                                "default": 50,
+                                "default": 384,
                                 "minimum": 0
                             },
-                            "stereoVerticalAttenuationFactor": {
+                            "stereoAttenuationDistance": {
                                 "type": "integer",
-                                "default": 50,
+                                "default": 2048,
                                 "minimum": 0
                             }
                         }

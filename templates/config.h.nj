@@ -334,21 +334,20 @@
 
 #define __FRICTION_FORCE_FACTOR_POWER								{{ config.physics.frictionForceFactorPower }}
 
-{{ macros.sectionHeader('Sound') }}
-
-#define __LEFT_EAR_CENTER											{{ config.sound.leftEarCenter }}
-#define __RIGHT_EAR_CENTER											{{ config.sound.rightEarCenter }}
-
-// affects the amount of attenuation caused by the distance between the x coordinate and each ear's
-// position defined by __LEFT_EAR_CENTER and __RIGHT_EAR_CENTER
-#define __SOUND_STEREO_HORIZONTAL_ATTENUATION_FACTOR				{{ config.sound.stereoHorizontalAttenuationFactor }}
-#define __SOUND_STEREO_VERTICAL_ATTENUATION_FACTOR					{{ config.sound.stereoVerticalAttenuationFactor }}
-
 // smaller values allow movement to start when colliding against a shape and trying to move towards it
 #define __SHAPE_ANGLE_TO_PREVENT_DISPLACEMENT						{% if config.physics.angleToPreventShapeDisplacement %}__FIX7_9_TO_FIXED(__COS({{ config.physics.angleToPreventShapeDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
 
 // maximum size of shapes allows to avoid checks against far away shapes
 #define __SHAPE_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if config.physics.shapesMaximumSize %}{{ config.physics.shapesMaximumSize }}{% else %}256{% endif %})
+
+
+{{ macros.sectionHeader('Sound') }}
+
+#define __EAR_DISPLACEMENT											{{ config.sound.earDisplacement }}
+
+// affects the amount of attenuation caused by the distance between the x coordinate and each ear's
+// position defined by __EAR_DISPLACEMENT
+#define __SOUND_STEREO_ATTENUATION_DISTANCE							{{ config.sound.stereoAttenuationDistance }}
 
 
 {{ macros.sectionHeader('Brightness') }}
