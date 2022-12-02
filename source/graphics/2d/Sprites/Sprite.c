@@ -134,7 +134,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	if(kTextureWritten != this->texture->status)
+	if(kTexturePendingWriting == this->texture->status)
 	{
 		if(!Sprite::prepareTexture(this))
 		{
