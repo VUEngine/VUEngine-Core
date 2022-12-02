@@ -340,6 +340,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					if(this->drawingEnded)
 					{
 						SpriteManager::writeDRAM(_spriteManager);
+						DirectDraw::startDrawing(_directDraw);
 						WireframeManager::draw(_wireframeManager);
 						VIPManager::applyPostProcessingEffects(_vipManager);
 					}
@@ -390,12 +391,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
 
-					// Frame buffers manipulation must happen as soon as possible
-					// and should happen every XPEND even if multiplexed to prevent
-					// black frame flickering
+					DirectDraw::startDrawing(_directDraw);
 					WireframeManager::draw(_wireframeManager);
 					VIPManager::applyPostProcessingEffects(_vipManager);
-					// Write to DRAM
 					SpriteManager::writeDRAM(_spriteManager);
 
 					if(this->logicEnded)

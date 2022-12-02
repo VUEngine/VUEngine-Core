@@ -266,8 +266,6 @@ void WireframeManager::draw()
 		return;
 	}
 
-	DirectDraw::startDrawing(DirectDraw::getInstance());
-
 	this->stopDrawing = false;
 
 #ifdef __PROFILE_WIREFRAMES
