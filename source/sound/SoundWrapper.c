@@ -743,7 +743,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 	{
 		case PAU:
 
-			_soundRegistries[channel->number].SxLRV = 0;
+			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 | 0x1;
 			break;
 
 		case HOLD:
@@ -784,6 +784,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 			_soundRegistries[channel->number].SxFQH = (note >> 8);
 			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
 			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 
 			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
 			{
