@@ -84,6 +84,7 @@ void Camera::constructor()
 
 	this->transformationFlags = false;
 	this->synchronizingUIGraphics = false;
+	this->UISynchronizationInterruptions = 0;
 
 	PixelOptical pixelOptical =
     {
@@ -390,19 +391,23 @@ void Camera::rotate(Rotation rotation)
  */
 void Camera::startUIGraphicsSynchronization()
 {
-	this->positionBackup = this->position;
-	this->rotationBackup = this->rotation;
-	this->opticalBackup = this->optical;
+	if(!this->synchronizingUIGraphics)
+	{
+		this->positionBackup = this->position;
+		this->rotationBackup = this->rotation;
+		this->opticalBackup = this->optical;
 
-	this->synchronizingUIGraphics = true;
+		this->UISynchronizationInterruptions = 0;
+		this->synchronizingUIGraphics = true;
 
-	this->position = Vector3D::zero();
-	this->rotation = Rotation::zero();
-	this->invertedRotation = Rotation::zero();
+		this->position = Vector3D::zero();
+		this->rotation = Rotation::zero();
+		this->invertedRotation = Rotation::zero();
 
 #ifndef __LEGACY_COORDINATE_PROJECTION
-	this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+		this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
 #endif
+	}
 }
 
 /**
@@ -410,22 +415,32 @@ void Camera::startUIGraphicsSynchronization()
  */
 void Camera::stopUIGraphicsSynchronization()
 {
-	this->position = this->positionBackup;
-	this->rotation = this->rotationBackup;
-	this->invertedRotation = Rotation::invert(this->rotation);
-	this->optical = this->opticalBackup;
+	if(this->synchronizingUIGraphics)
+	{
+		HardwareManager::suspendInterrupts();
 
-	this->synchronizingUIGraphics = false;
+		this->synchronizingUIGraphics = false;
+		this->position = this->positionBackup;
+		this->rotation = this->rotationBackup;
+		this->invertedRotation = Rotation::invert(this->rotation);
+		this->optical = this->opticalBackup;
+
+		this->UISynchronizationInterruptions = 0;
+		HardwareManager::resumeInterrupts();
+	}
 }
 
 void Camera::suspendUIGraphicsSynchronization()
 {
 	if(this->synchronizingUIGraphics)
 	{
-		this->position = this->positionBackup;
-		this->rotation = this->rotationBackup;
-		this->invertedRotation = Rotation::invert(this->rotation);
-		this->optical = this->opticalBackup;
+		if(0 == this->UISynchronizationInterruptions++)
+		{
+			this->position = this->positionBackup;
+			this->rotation = this->rotationBackup;
+			this->invertedRotation = Rotation::invert(this->rotation);
+			this->optical = this->opticalBackup;
+		}
 	}
 }
 
@@ -433,9 +448,16 @@ void Camera::resumeUIGraphicsSynchronization()
 {
 	if(this->synchronizingUIGraphics)
 	{
-		this->position = Vector3D::zero();
-		this->rotation = Rotation::zero();
-		this->invertedRotation = Rotation::zero();
+		if(0 == --this->UISynchronizationInterruptions)
+		{
+			this->position = Vector3D::zero();
+			this->rotation = Rotation::zero();
+			this->invertedRotation = Rotation::zero();
+
+#ifndef __LEGACY_COORDINATE_PROJECTION
+			this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+#endif
+		}
 	}
 }
 
@@ -544,6 +566,7 @@ void Camera::reset()
 
 	this->transformationFlags = false;
 	this->synchronizingUIGraphics = false;
+	this->UISynchronizationInterruptions = 0;
 
 	Camera::resetCameraFrustum(this);
 

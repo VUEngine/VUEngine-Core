@@ -101,6 +101,8 @@ singleton class Camera : ListenerObject
 	uint8 transformationFlags;
 	// Flag raised when synchronizing UI graphics
 	bool synchronizingUIGraphics;
+	// Counter to keep track of concurrent calls to suspend UI synchronization
+	int8 UISynchronizationInterruptions;
 
 	/// @publicsection
 	static Camera getInstance();
