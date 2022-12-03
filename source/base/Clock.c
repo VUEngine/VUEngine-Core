@@ -82,7 +82,7 @@ void Clock::update(uint32 millisecondsElapsed)
 
 	this->milliSeconds += millisecondsElapsed;
 
-	if(this->events)
+	if(NULL != this->events)
 	{
 		uint32 currentSecond = Clock::getSeconds(this);
 
