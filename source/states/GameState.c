@@ -679,6 +679,16 @@ void GameState::pausePhysics(bool pause)
 }
 
 /**
+ * Pause the Clock used for messaging
+ *
+ * @param pause		Pause flag
+ */
+void GameState::pauseMessaging(bool pause)
+{
+	Clock::pause(this->messagingClock, pause);
+}
+
+/**
  * Retrieve the PhysicalWorld
  *
  * @return			PhysicalWorld

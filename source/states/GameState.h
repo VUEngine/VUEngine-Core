@@ -70,6 +70,7 @@ class GameState : State
 	void pauseMessagingClock(bool pause);
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
+	void pauseMessaging(bool pause);
 	int32 propagateMessage(int32 message);
 	int32 propagateString(const char* string);
 	void resumeClocks();
