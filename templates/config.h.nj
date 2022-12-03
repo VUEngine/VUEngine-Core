@@ -343,11 +343,11 @@
 
 {{ macros.sectionHeader('Sound') }}
 
-#define __EAR_DISPLACEMENT											{{ config.sound.earDisplacement }}
+#define __EAR_DISPLACEMENT											{% if config.sound.earDisplacement %}{{ config.sound.earDisplacement }}{% else %}384{% endif %}
 
 // affects the amount of attenuation caused by the distance between the x coordinate and each ear's
 // position defined by __EAR_DISPLACEMENT
-#define __SOUND_STEREO_ATTENUATION_DISTANCE							{{ config.sound.stereoAttenuationDistance }}
+#define __SOUND_STEREO_ATTENUATION_DISTANCE							{% if config.sound.stereoAttenuationDistance %}{{ config.sound.stereoAttenuationDistance }}{% else %}1024{% endif %}
 
 
 {{ macros.sectionHeader('Brightness') }}

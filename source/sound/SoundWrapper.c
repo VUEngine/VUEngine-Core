@@ -912,8 +912,22 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 				leftVolumeFactor  = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToLeftEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
 				rightVolumeFactor = __1I_FIXED - __FIXED_EXT_DIV(squaredDistanceToRightEar, __FIXED_SQUARE(__PIXELS_TO_METERS(__SOUND_STEREO_ATTENUATION_DISTANCE)));
+
+				if(leftVolumeFactor > rightVolumeFactor)
+				{
+					rightVolumeFactor -= (leftVolumeFactor - rightVolumeFactor);
+				}
+				else
+				{
+					leftVolumeFactor -= (rightVolumeFactor - leftVolumeFactor);
+				}
+
 				leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
 				rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
+
+
+				PRINT_INT(leftVolumeFactor, 1, 10);
+				PRINT_INT(rightVolumeFactor, 40, 10);
 			}
 
 			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);
