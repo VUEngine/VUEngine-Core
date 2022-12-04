@@ -85,7 +85,11 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
-	ASSERT(receiver, "MessageDispatcher::dispatchMessage: null receiver");
+
+	if(isDeleted(receiver))
+	{
+		return false;
+	}
 
 	if(0 >= delay)
 	{
