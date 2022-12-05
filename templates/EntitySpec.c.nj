@@ -20,8 +20,8 @@
 {{ macros.sectionHeader('Declarations') }}
 
 {% for sprite in entity.sprites -%}
-extern uint32 {{ sprite.texture.image.name }}Tiles[];
-extern uint16 {{ sprite.texture.image.name }}Map[];
+extern uint32 {{ sprite.texture.image.name | sanitizeSpecName }}Tiles[];
+extern uint16 {{ sprite.texture.image.name | sanitizeSpecName }}Map[];
 {% endfor %}
 
 {% if entity.animations.definitions.length -%}
@@ -48,7 +48,7 @@ AnimationFunctionROMSpec {{ entityName }}{{ animation.name | toUpperSnakeCase }}
 	{% if animation.callback %}(EventListener){{ animation.callback }}{% else %}NULL{% endif %},
 
 	// function's name
-	"{{ animation.name }}",
+	"{{ animation.name | sanitizeSpecName }}",
 };
 
 {% endfor -%}
@@ -94,7 +94,7 @@ CharSetROMSpec {{ spriteName }}Charset =
 	__{{ sprite.texture.charset.type | toUpperSnakeCase }},
 
 	// char spec
-	{{ sprite.texture.image.name }}Tiles,
+	{{ sprite.texture.image.name | sanitizeSpecName }}Tiles,
 
 	// pointer to the frames offsets
 	NULL,
@@ -106,7 +106,7 @@ TextureROMSpec {{ spriteName }}Texture =
 	(CharSetSpec*)&{{ spriteName }}Charset,
 
 	// bgmap spec
-	{{ sprite.texture.image.name }}Map,
+	{{ sprite.texture.image.name | sanitizeSpecName }}Map,
 
 	// cols (max 64)
 	{{ sprite.texture.size.x }},

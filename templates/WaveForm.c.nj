@@ -3,7 +3,7 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-const int8 {{ item.name }}WaveForm[] =
+const int8 {{ item.name | sanitizeSpecName }}WaveForm[] =
 {
 	{% for value in item.values -%}
 	{%- if value < 10 -%}{{ ' ' }} {%- endif -%}
