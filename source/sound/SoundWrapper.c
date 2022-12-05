@@ -415,7 +415,6 @@ void SoundWrapper::turnOn()
  */
 void SoundWrapper::rewind()
 {
-	PRINT_TIME(1, 10);
 	this->elapsedMicroseconds = 0;
 	this->previouslyElapsedMicroseconds = 0;
 
@@ -689,20 +688,7 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 
 bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
-	if(channel->cursor >= channel->length)
-	{
-		channel->finished = true;
-
-		if(this->sound->loop)
-		{
-			channel->cursor = 0;
-		}
-		else
-		{
-			channel->finished = true;
-			channel->cursor = channel->length;
-		}
-	}
+	channel->finished = channel->cursor >= channel->length;
 
 	return channel->finished;
 }
