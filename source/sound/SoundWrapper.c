@@ -64,6 +64,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
+	this->locked = false;
 
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
@@ -522,6 +523,16 @@ void SoundWrapper::mute()
 void SoundWrapper::unmute()
 {
 	this->unmute = true;
+}
+
+void SoundWrapper::lock()
+{
+	this->locked = true;
+}
+
+void SoundWrapper::unlock()
+{
+	this->locked = false;
 }
 
 void SoundWrapper::setupChannels(int8* waves)

@@ -720,7 +720,7 @@ uint8 SoundManager::getFreeChannels(const Sound* sound, VirtualList availableCha
 					{
 						SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-						if(!isDeleted(soundWrapper) && NULL != soundWrapper->sound)
+						if(!isDeleted(soundWrapper) && NULL != soundWrapper->sound && !soundWrapper->locked)
 						{
 							if(SoundWrapper::isUsingChannel(soundWrapper, &this->channels[i]))
 							{
