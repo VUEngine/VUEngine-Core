@@ -235,11 +235,10 @@ class SoundWrapper : ListenerObject
 	bool hasPCMTracks;
 	bool unmute;
 	bool autoReleaseOnFinish;
-	bool released;
-	bool referencedExternally;
+	bool locked;
 
 	/// @publicsection
-	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally);
+	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope);
 
 	const Channel* getChannel(uint8 index);
 	bool isUsingChannel(Channel* channel);
@@ -258,6 +257,8 @@ class SoundWrapper : ListenerObject
 	void release();
 	void mute();
 	void unmute();
+	void lock();
+	void unlock();
 	void autoReleaseOnFinish(bool value);
 	void updateMIDIPlayback(uint32 elapsedMicroseconds);
 	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);

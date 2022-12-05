@@ -121,7 +121,7 @@ singleton class SoundManager : ListenerObject
 
 	bool playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
 	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
-	SoundWrapper findSound(const Sound* sound);
+	SoundWrapper findSound(const Sound* sound, EventListener soundReleaseListener, ListenerObject scope);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void releaseChannels(VirtualList channels);

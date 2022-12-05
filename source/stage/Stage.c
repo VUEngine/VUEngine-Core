@@ -1376,7 +1376,7 @@ void Stage::setupSounds()
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundWrapper soundWrapper = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i]);
+		SoundWrapper soundWrapper = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundWrapperReleased, ListenerObject::safeCast(this));
 
 		if(isDeleted(soundWrapper))
 		{

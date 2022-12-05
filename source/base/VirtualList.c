@@ -132,14 +132,11 @@ int32 VirtualList::pushFront(const void* const data)
 		// link new node to the head
 		newNode->next = this->head;
 
+		// link the head to the new node
+		this->head->previous = newNode;
+		
 		// move the head
 		this->head = newNode;
-
-		// set previous if list isn't empty
-		if(NULL != this->head->next)
-		{
-			this->head->next->previous = newNode;
-		}
 	}
 
 	return true;
@@ -245,14 +242,11 @@ int32 VirtualList::pushBack(const void* const data)
 		// link new node to the tail
 		newNode->previous = this->tail;
 
+		// link the tail to the new node
+		this->tail->next = newNode;
+
 		// move the tail
 		this->tail = newNode;
-
-		// set previous if list isn't empty
-		if(NULL != this->tail->previous)
-		{
-			this->tail->previous->next = newNode;
-		}
 	}
 
 	return true;

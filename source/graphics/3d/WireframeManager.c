@@ -63,6 +63,7 @@ void WireframeManager::constructor()
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
+	this->lockWireframeList = false;
 
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
@@ -101,10 +102,14 @@ void WireframeManager::register(Wireframe wireframe)
 {
 	ASSERT(wireframe, "WireframeManager::register: null wireframe");
 
+	this->lockWireframeList = true;
+
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
 		VirtualList::pushBack(this->wireframes, wireframe);
 	}
+
+	this->lockWireframeList = false;
 }
 
 /**
@@ -116,7 +121,11 @@ void WireframeManager::remove(Wireframe wireframe)
 {
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
+	this->lockWireframeList = true;
+
 	VirtualList::removeElement(this->wireframes, wireframe);
+
+	this->lockWireframeList = false;
 }
 
 /**
@@ -128,6 +137,7 @@ void WireframeManager::reset()
 	
 	VirtualList::clear(this->wireframes);
 	this->disabled = false;
+	this->lockWireframeList = false;
 
 	_previousCameraPosition = *_cameraPosition;
 	_previousCameraPositionBuffer = _previousCameraPosition;
@@ -151,7 +161,7 @@ bool WireframeManager::sortProgressively()
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->wireframes->head; node && node->next; node = node->next)
+	for(VirtualNode node = this->wireframes->head; NULL != node && NULL != node->next; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 
@@ -243,7 +253,10 @@ void WireframeManager::render()
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
-	WireframeManager::sortProgressively(this);
+	if(!this->lockWireframeList)
+	{
+		WireframeManager::sortProgressively(this);
+	}
 #endif
 
 	_previousCameraPosition = _previousCameraPositionBuffer;
