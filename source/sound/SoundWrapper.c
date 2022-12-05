@@ -47,7 +47,7 @@ friend class VirtualList;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally)
+void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope)
 {
 	// construct base Container
 	Base::constructor();
@@ -64,8 +64,6 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
-	this->released = false;
-	this->referencedExternally = referencedExternally;
 
 #ifdef __MUTE_ALL_SOUND
 	this->unmute = false;
@@ -97,6 +95,8 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
  */
 void SoundWrapper::destructor()
 {
+	this->sound = NULL;
+
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 
 	if(!isDeleted(this->channels))
@@ -261,7 +261,7 @@ bool SoundWrapper::isFadingOut()
  */
 void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 {
-	if(this->released)
+	if(NULL == this->sound)
 	{
 		return;
 	}
@@ -415,6 +415,7 @@ void SoundWrapper::turnOn()
  */
 void SoundWrapper::rewind()
 {
+	PRINT_TIME(1, 10);
 	this->elapsedMicroseconds = 0;
 	this->previouslyElapsedMicroseconds = 0;
 
@@ -434,9 +435,15 @@ void SoundWrapper::rewind()
 			case kPCM:
 				break;
 
-			default:
+#ifndef __RELEASE
+			case kUnknownType:
 
 				NM_ASSERT(false, "SoundWrapper::rewind: unknown track type");
+				break;
+#endif
+			default:
+
+				NM_ASSERT(false, "SoundWrapper::rewind: invalid channel");
 				break;
 		}
 	}
@@ -474,14 +481,14 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
-	if(this->released)
+	if(NULL == this->sound)
 	{
 		return;
 	}
 
-	this->released = true;
-
 	SoundWrapper::stop(this);
+
+	this->sound = NULL;
 
 	if(!isDeleted(this->channels))
 	{
@@ -497,7 +504,6 @@ void SoundWrapper::release()
 		NM_ASSERT(!isDeleted(this), "SoundWrapper::release: deleted this during kEventSoundReleased");
 	}
 
-	this->sound = NULL;
 }
 
 /**
@@ -560,9 +566,15 @@ void SoundWrapper::setupChannels(int8* waves)
 				SoundWrapper::computePCMNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
 				break;
 
-			default:
+#ifndef __RELEASE
+			case kUnknownType:
 
 				NM_ASSERT(false, "SoundWrapper::setupChannels: unknown track type");
+				break;
+#endif
+			default:
+
+				NM_ASSERT(false, "SoundWrapper::setupChannels: invalid track type");
 				break;
 		}
 
@@ -857,11 +869,13 @@ void SoundWrapper::updateVolumeReduction()
 
 void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 {
-	// Skip if sound is NULL since this should be purged
-	if((!this->sound) + this->paused + (!this->turnedOn) + this->released)
+	// Optimization, if no sound or paused, the sum will be different than 0
+	if((NULL == this->sound) + this->paused + (!this->turnedOn))
 	{
 		return;
 	}
+
+	NM_ASSERT(NULL != this->channels, "SoundWrapper::updateMIDIPlayback: invalid channels list");
 
 	bool finished = elapsedMicroseconds ? true : false;
 
@@ -944,10 +958,8 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
-	// Skip if sound is NULL since this should be purged
-//	if((!this->sound) + this->paused)
 	// Optimization, if no sound or paused, the sum will be different than 0
-	if((!this->sound) + this->paused + this->released)
+	if((NULL == this->sound) + this->paused + (!this->turnedOn))
 	{
 		return;
 	}
@@ -1313,9 +1325,15 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 				rightValue = rightVolume;
 				break;
 
+#ifndef __RELEASE
+			case kUnknownType:
+
+				NM_ASSERT(false, "SoundWrapper::printVolume: unknown track type");
+				break;
+#endif
 			default:
 
-				NM_ASSERT(false, "SoundWrapper::printMetadata: unknown track type");
+				NM_ASSERT(false, "SoundWrapper::printVolume: invalid channel");
 				break;
 		}
 

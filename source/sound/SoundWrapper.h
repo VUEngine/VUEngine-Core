@@ -236,10 +236,9 @@ class SoundWrapper : ListenerObject
 	bool unmute;
 	bool autoReleaseOnFinish;
 	bool released;
-	bool referencedExternally;
 
 	/// @publicsection
-	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope, bool referencedExternally);
+	void constructor(const Sound* sound, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope);
 
 	const Channel* getChannel(uint8 index);
 	bool isUsingChannel(Channel* channel);
