@@ -318,8 +318,6 @@ void WireframeManager::draw()
 void WireframeManager::enable()
 {
 	this->disabled = false;
-
-	DirectDraw::reset(DirectDraw::getInstance());
 }
 
 void WireframeManager::disable()
