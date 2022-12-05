@@ -32,7 +32,8 @@ singleton class WireframeManager : ListenerObject
 	volatile bool stopDrawing;
 	bool evenFrame;
 	bool disabled;
-	
+	bool lockWireframeList;
+		
 	// Wireframes
 	VirtualList wireframes;
 

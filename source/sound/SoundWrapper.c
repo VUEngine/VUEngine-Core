@@ -491,7 +491,7 @@ void SoundWrapper::release()
 		this->channels = NULL;
 	}
 
-	if(this->events)
+	if(!isDeleted(this->events))
 	{
 		SoundWrapper::fireEvent(this, kEventSoundReleased);
 		NM_ASSERT(!isDeleted(this), "SoundWrapper::release: deleted this during kEventSoundReleased");
@@ -697,7 +697,7 @@ bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 
 void SoundWrapper::completedPlayback()
 {
-	if(this->events)
+	if(!isDeleted(this->events))
 	{
 		SoundWrapper::fireEvent(this, kEventSoundFinished);
 		NM_ASSERT(!isDeleted(this), "SoundWrapper::completedPlayback: deleted this during kEventSoundFinished");

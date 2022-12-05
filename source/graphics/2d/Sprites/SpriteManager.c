@@ -370,7 +370,7 @@ bool SpriteManager::sortProgressively(bool deferred)
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->sprites->head; node && node->next; node = node->next)
+	for(VirtualNode node = this->sprites->head; NULL != node && NULL != node->next; node = node->next)
 	{
 		VirtualNode nextNode = node->next;
 
