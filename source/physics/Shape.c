@@ -67,14 +67,6 @@ void Shape::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 	this->registerCollisions = shapeSpec->checkForCollisions;
 
 	this->position = Vector3D::zero();
-
-	this->rightBox.x0 = __I_TO_FIXED(-1);
-	this->rightBox.y0 = __I_TO_FIXED(-1);
-	this->rightBox.z0 = __I_TO_FIXED(-1);
-
-	this->rightBox.x1 = __I_TO_FIXED(1);
-	this->rightBox.y1 = __I_TO_FIXED(1);
-	this->rightBox.z1 = __I_TO_FIXED(1);
 }
 
 /**
@@ -166,11 +158,6 @@ void Shape::setup(uint32 layers, uint32 layersToIgnore)
 		Shape::fireEvent(this, kEventShapeChanged);
 		NM_ASSERT(!isDeleted(this), "Shape::setup: deleted this during kEventShapeChanged");
 	}
-}
-
-RightBox Shape::getSurroundingRightBox()
-{
-	return this->rightBox;
 }
 
 /**
@@ -476,16 +463,6 @@ void Shape::setPosition(const Vector3D* position __attribute__((unused)))
 
 	// TODO: must update the rightbox
 	this->position = *position;
-
-	Shape::updateRightBox(this);
-}
-
-/**
- * Update right box
- *
- */
-void Shape::updateRightBox()
-{
 }
 
 /**

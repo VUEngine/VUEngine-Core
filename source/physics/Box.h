@@ -35,6 +35,8 @@ class Box : Shape
 {
 	// the normals of the box
 	VertexProjection vertexProjections[__SHAPE_NORMALS];
+	// the rectangle
+	RightBox rightBox;
 	// for collision detection purposes
 	Normals* normals;
 	// for rotation purposes

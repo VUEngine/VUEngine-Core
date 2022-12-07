@@ -54,6 +54,14 @@ void Box::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 		this->vertexProjections[normalIndex].min = 0;
 		this->vertexProjections[normalIndex].max = 0;
 	}
+
+	this->rightBox.x0 = __I_TO_FIXED(-1);
+	this->rightBox.y0 = __I_TO_FIXED(-1);
+	this->rightBox.z0 = __I_TO_FIXED(-1);
+
+	this->rightBox.x1 = __I_TO_FIXED(1);
+	this->rightBox.y1 = __I_TO_FIXED(1);
+	this->rightBox.z1 = __I_TO_FIXED(1);
 }
 
 // class's destructor

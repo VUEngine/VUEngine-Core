@@ -66,19 +66,6 @@ void Ball::transform(const Vector3D* position, const Rotation* rotation __attrib
 	{
 		this->radius = size->y >> 1;
 	}
-
-	Ball::updateRightBox(this);
-}
-
-void Ball::updateRightBox()
-{
-	this->rightBox.x0 = this->position.x - this->radius;
-	this->rightBox.y0 = this->position.y - this->radius;
-	this->rightBox.z0 = this->position.z - this->radius;
-
-	this->rightBox.x1 = this->position.x + this->radius;
-	this->rightBox.y1 = this->position.y + this->radius;
-	this->rightBox.z1 = this->position.z + this->radius;
 }
 
 static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)

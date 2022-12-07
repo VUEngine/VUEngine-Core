@@ -34,7 +34,6 @@ class Ball : Shape
 	
 	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
 	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void updateRightBox();
 	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
