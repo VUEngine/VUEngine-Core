@@ -197,37 +197,16 @@ void Actor::syncPositionWithBody()
 
 void Actor::doSyncPositionWithBody()
 {
-	if(isDeleted(this->body))
+	if(isDeleted(this->body) || !Body::isAwake(this->body))
 	{
 		return;
 	}
 
-	// retrieve the body's displacement
-	Vector3D bodyLastDisplacement = {0, 0, 0};
-	Vector3D bodyPosition = this->transformation.globalPosition;
-
-	if(!Clock::isPaused(VUEngine::getPhysicsClock(_vuEngine)) && Body::isAwake(this->body))
-	{
-		bodyPosition = *Body::getPosition(this->body);
-	}
-
 	// modify the global position according to the body's displacement
-	bodyLastDisplacement = Vector3D::get(this->transformation.globalPosition, bodyPosition);
-
-//  Optimization: this doesn't seem to do anything useful
-//	globalPosition.x += bodyLastDisplacement.x;
-//	globalPosition.y += bodyLastDisplacement.y;
-//	globalPosition.z += bodyLastDisplacement.z;
-
-	// move the body to the new global position
-	// to account for any parenting
-//	Body::setPosition(this->body, &globalPosition, SpatialObject::safeCast(this));
+	Vector3D bodyLastDisplacement = Vector3D::get(this->transformation.globalPosition, *Body::getPosition(this->body));
 
 	// sync local position with global position
-	Vector3D localPosition = this->transformation.localPosition;
-	localPosition.x += bodyLastDisplacement.x;
-	localPosition.y += bodyLastDisplacement.y;
-	localPosition.z += bodyLastDisplacement.z;
+	Vector3D localPosition = Vector3D::sum(this->transformation.localPosition, bodyLastDisplacement);
 
 	Base::setLocalPosition(this, &localPosition);
 }
