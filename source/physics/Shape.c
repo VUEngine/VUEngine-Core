@@ -749,9 +749,7 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 		return NULL;
 	}
 
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; NULL != node; node = node->next)
+	for(VirtualNode node = this->collidingShapes->head; NULL != node; node = node->next)
 	{
 		ASSERT(!isDeleted(node->data), "Shape::findCollidingShapeRegistry: deleted registry");
 
