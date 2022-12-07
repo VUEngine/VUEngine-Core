@@ -350,6 +350,7 @@ void ListenerObject::sendMessageToSelf(uint32 message, uint32 delay, uint32 rand
 void ListenerObject::discardAllMessages()
 {
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 }
 
 /**
@@ -360,4 +361,5 @@ void ListenerObject::discardAllMessages()
 void ListenerObject::discardMessages(uint32 message)
 {
 	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
+	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
 }
