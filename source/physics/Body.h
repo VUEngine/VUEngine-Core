@@ -136,8 +136,6 @@ class Body : ListenerObject
 	bool active;
 	// raise flag to update body's physics
 	bool awake;
-	// Flag to indicate if the body changed direction during the last frame
-	bool changedDirection;
 	// Flag to enable messages
 	bool sendMessages;
 	// Delete flag
@@ -209,7 +207,6 @@ class Body : ListenerObject
 	fixed_t getMaximumSpeed();
 	void print(int32 x, int32 y);
 	MovementResult updateMovement();
-	bool changedDirection();
 	void sendMessages(bool value);
 	void update();
 }

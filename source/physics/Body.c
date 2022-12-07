@@ -128,7 +128,6 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 
 	this->active = true;
 	this->awake = false;
-	this->changedDirection = false;
 	this->sendMessages = true;
 	this->axisSubjectToGravity = axisSubjectToGravity;
 
@@ -412,61 +411,54 @@ void Body::applySustainedForce(const Force* force)
 // update movement
 void Body::update()
 {
-	if(this->active)
+	if(!this->active || !this->awake)
 	{
-		if(this->awake)
+		return;
+	}
+	
+	MovementResult movementResult;
+
+	if(0 != this->skipCycles)
+	{
+		if(0 < this->skipCycles)
 		{
-			MovementResult movementResult;
-
-			if(0 != this->skipCycles)
+			if(this->skipCycles > this->skipedCycles++)
 			{
-				if(0 < this->skipCycles)
-				{
-					if(this->skipCycles > this->skipedCycles++)
-					{
-						return;
-					}
-
-					this->skipedCycles = 0;
-
-					movementResult = Body::updateMovement(this);
-				}
-				else if(0 > this->skipCycles)
-				{
-					this->skipedCycles = 0;
-
-					while(this->skipCycles <= this->skipedCycles--)
-					{
-						movementResult = Body::updateMovement(this);
-					}
-				}
+				return;
 			}
-			else
+
+			this->skipedCycles = 0;
+
+			movementResult = Body::updateMovement(this);
+		}
+		else if(0 > this->skipCycles)
+		{
+			this->skipedCycles = 0;
+
+			while(this->skipCycles <= this->skipedCycles--)
 			{
 				movementResult = Body::updateMovement(this);
 			}
-
-			// if stopped on any axis
-			if(movementResult.axisStoppedMovement)
-			{
-				Body::stopMovement(this, movementResult.axisStoppedMovement);
-
-				if(movementResult.axisStoppedMovement && this->sendMessages)
-				{
-					MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
-				}
-			}
-
-			// no one uses this
-/*			if(movementResult.axisOfChangeOfMovement)
-			{
-				MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyChangedDirection, &movementResult.axisOfChangeOfMovement);
-			}
-*/		}
-
-		// clear any force so the next update does not get influenced
-		Body::clearExternalForce(this);
+		}
 	}
+	else
+	{
+		movementResult = Body::updateMovement(this);
+	}
+
+	// if stopped on any axis
+	if(movementResult.axisStoppedMovement)
+	{
+		Body::stopMovement(this, movementResult.axisStoppedMovement);
+
+		if(movementResult.axisStoppedMovement && this->sendMessages)
+		{
+			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
+		}
+	}
+
+	// clear any force so the next update does not get influenced
+	Body::clearExternalForce(this);
 }
 
 // retrieve last displacement
@@ -583,34 +575,25 @@ void Body::computeDirectionAndSpeed(bool useExternalForceForDirection)
 		this->speed = Vector3D::length(this->velocity);
 		this->direction = Vector3D::normalize(this->externalForce);
 		this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
-		this->changedDirection = true;
 	}
 	else
 	{
 #ifndef __PHYSICS_HIGH_PRECISION
 		this->speed = Vector3D::length(this->velocity);
 
-		Vector3D newDirection = Vector3D::scalarDivision(this->velocity, this->speed);
+		this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
 #else
 		fix7_9_ext speed = __F_TO_FIX7_9_EXT(Math::squareRoot(__FIXED_EXT_TO_F(Vector3D::squareLength(this->velocity))));
 
 		this->speed = __FIX7_9_EXT_TO_FIXED(speed);
 
-		Vector3D newDirection = this->direction;
-
 		if(0 < speed)
 		{
-			newDirection.x = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.x, speed));
-			newDirection.y = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.y, speed));
-			newDirection.z = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.z, speed));
+			this->direction.x = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.x, speed));
+			this->direction.y = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.y, speed));
+			this->direction.z = __FIX7_9_EXT_TO_FIXED(__FIX7_9_EXT_DIV(this->internalVelocity.z, speed));
 		}
 #endif	
-		this->changedDirection = this->direction.x != newDirection.x || this->direction.y != newDirection.y || this->direction.z != newDirection.z;
-
-		if(this->changedDirection)
-		{
-			this->direction = newDirection;
-		}
 	}
 }
 
@@ -619,7 +602,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 	Body::computeDirectionAndSpeed(this, useExternalForceForDirection);
 
 	// First check if must clamp speed
-	if(this->maximumSpeed && this->maximumSpeed < this->speed)
+	if(0 != this->maximumSpeed && this->maximumSpeed < this->speed)
 	{
 		this->speed = this->maximumSpeed;
 
@@ -631,7 +614,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 	}
 
 	// Then clamp speed based on each axis configuration
-	if(this->maximumVelocity.x)
+	if(0 != this->maximumVelocity.x)
 	{
 		if(__ABS(this->maximumVelocity.x) < __ABS(this->velocity.x))
 		{
@@ -642,7 +625,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 		}
 	}
 
-	if(this->maximumVelocity.y)
+	if(0 != this->maximumVelocity.y)
 	{
 		if(__ABS(this->maximumVelocity.y) < __ABS(this->velocity.y))
 		{
@@ -653,7 +636,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 		}
 	}
 
-	if(this->maximumVelocity.z)
+	if(0 != this->maximumVelocity.z)
 	{
 		if(__ABS(this->maximumVelocity.z) < __ABS(this->velocity.z))
 		{
@@ -768,11 +751,6 @@ MovementResult Body::updateMovement()
 	return Body::getMovementResult(this, previousVelocity, gravity);
 }
 
-bool Body::changedDirection()
-{
-	return this->changedDirection;
-}
-
 // stop movement over an axis
 uint16 Body::stopMovement(uint16 axis)
 {
@@ -813,7 +791,6 @@ uint16 Body::stopMovement(uint16 axis)
 
 	if(!Body::getMovementOnAllAxis(this))
 	{
-		this->changedDirection = false;
 		Body::sleep(this);
 	}
 
