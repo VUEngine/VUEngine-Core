@@ -192,10 +192,6 @@ void PhysicalWorld::update(Clock clock)
 		}
 	}
 
-	// TODO: time scale
-	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
-	Body::setCurrentGravity(&this->gravity);
-
 	this->dirty = false;
 
 	for(VirtualNode node = this->bodies->head, nextNode = NULL; NULL != node; node = nextNode)
