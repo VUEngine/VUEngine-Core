@@ -14,7 +14,7 @@
 
 {% if project.combined.items.RumbleEffect %}
 {%- for rumbleEffect in project.combined.items.RumbleEffect | values | unique('name') | sort(attribute='name') -%}
-extern RumbleEffectSpec {{ rumbleEffect.name }}RumbleEffect;
+extern RumbleEffectSpec {{ rumbleEffect.name | sanitizeSpecName }}RumbleEffect;
 {% endfor -%}
 {% endif %}
 

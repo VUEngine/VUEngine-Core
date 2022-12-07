@@ -9,7 +9,7 @@
 
 {% if project.combined.items.WaveForm %}
 {%- for waveForm in project.combined.items.WaveForm | values | unique('name') | sort(attribute='name') -%}
-extern const int8 {{ waveForm.name }}WaveForm[];
+extern const int8 {{ waveForm.name | sanitizeSpecName }}WaveForm[];
 {% endfor -%}
 {% endif %}
 
