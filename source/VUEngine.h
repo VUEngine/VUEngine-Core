@@ -111,6 +111,7 @@ singleton class VUEngine : ListenerObject
 	void disableKeypad();
 	void enableKeypad();
 	Clock getClock();
+	void resetClock();
 	CollisionManager getCollisionManager();
 	char* getLastProcessName();
 	Clock getMessagingClock();

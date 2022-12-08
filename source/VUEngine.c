@@ -977,6 +977,11 @@ Clock VUEngine::getClock()
 	return this->clock;
 }
 
+void VUEngine::resetClock()
+{
+	Clock::reset(this->clock);
+}
+
 // retrieve in game clock
 Clock VUEngine::getMessagingClock()
 {
