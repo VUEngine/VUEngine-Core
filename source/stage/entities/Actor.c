@@ -551,6 +551,8 @@ bool Actor::handleMessage(Telegram telegram)
 						Actor::activeCollisionChecks(this, true);
 						return true;
 					}
+
+					Actor::invalidateGlobalTransformation(this);
 					break;
 
 				case kMessageBodyStopped:
@@ -559,6 +561,8 @@ bool Actor::handleMessage(Telegram telegram)
 					{
 						Actor::activeCollisionChecks(this, false);
 					}
+
+					Actor::invalidateGlobalTransformation(this);
 					break;
 
 				case kMessageBodyChangedDirection:
