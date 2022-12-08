@@ -154,40 +154,31 @@ void Actor::setLocalPosition(const Vector3D* position)
 	Actor::transformShapes(this);
 }
 
-uint16 Actor::syncWithBody()
+void Actor::syncWithBody()
 {
-	uint16 axiOfMovement = __NO_AXIS;
-
 	if(!isDeleted(this->body))
 	{
-		axiOfMovement = Body::getMovementOnAllAxis(this->body);
-
-		if(axiOfMovement)
+		if(Actor::overrides(this, syncPositionWithBody))
 		{
-			if(Actor::overrides(this, syncPositionWithBody))
+			Actor::syncPositionWithBody(this);
+		}
+		else
+		{
+			Actor::doSyncPositionWithBody(this);
+		}
+
+		if((uint16)__LOCK_AXIS != ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
+		{
+			if(Actor::overrides(this, syncRotationWithBody))
 			{
-				Actor::syncPositionWithBody(this);
+				Actor::syncRotationWithBody(this);
 			}
 			else
 			{
-				Actor::doSyncPositionWithBody(this);
-			}
-
-			if((uint16)__LOCK_AXIS != ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
-			{
-				if(Actor::overrides(this, syncRotationWithBody))
-				{
-					Actor::syncRotationWithBody(this);
-				}
-				else
-				{
-					Actor::doSyncRotationWithBody(this);
-				}
+				Actor::doSyncRotationWithBody(this);
 			}
 		}
 	}
-
-	return axiOfMovement;
 }
 
 void Actor::syncPositionWithBody()
@@ -197,7 +188,7 @@ void Actor::syncPositionWithBody()
 
 void Actor::doSyncPositionWithBody()
 {
-	if(isDeleted(this->body) || !Body::isAwake(this->body))
+	if(isDeleted(this->body))
 	{
 		return;
 	}
@@ -281,13 +272,15 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 
 	if(!isDeleted(this->body))
 	{
-		uint16 bodyMovement = Actor::syncWithBody(this);
-
-		// Prevent transformation of shapes again when calling Base::transform
-		this->transformShapes = false;
+		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
 
 		if(bodyMovement)
 		{
+			Actor::syncWithBody(this);
+
+			// Prevent transformation of shapes again when calling Base::transform
+			this->transformShapes = false;
+
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
 			if(!isDeleted(this->sprites) && (__Z_AXIS & bodyMovement))
@@ -552,7 +545,7 @@ bool Actor::handleMessage(Telegram telegram)
 						return true;
 					}
 
-					Actor::invalidateGlobalTransformation(this);
+					Actor::syncWithBody(this);
 					break;
 
 				case kMessageBodyStopped:
@@ -562,7 +555,7 @@ bool Actor::handleMessage(Telegram telegram)
 						Actor::activeCollisionChecks(this, false);
 					}
 
-					Actor::invalidateGlobalTransformation(this);
+					Actor::syncWithBody(this);
 					break;
 
 				case kMessageBodyChangedDirection:
