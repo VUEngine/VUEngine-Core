@@ -111,6 +111,8 @@ class Entity : Container
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
+	override void setPosition(const Vector3D* position);
+	override void setRotation(const Rotation* rotation);
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
 	override void setTransparent(uint8 transparent);

@@ -1545,6 +1545,26 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 }
 
 /**
+ * Set global position
+ */
+void Entity::setPosition(const Vector3D* position)
+{
+	Base::setPosition(this, position);
+
+	Entity::transformShapes(this);
+}
+
+/**
+ * Set global rotation
+ */
+void Entity::setRotation(const Rotation* rotation)
+{
+	Base::setRotation(this, rotation);
+
+	Entity::transformShapes(this);
+}
+
+/**
  * Set local position
  */
 void Entity::setLocalPosition(const Vector3D* position)
