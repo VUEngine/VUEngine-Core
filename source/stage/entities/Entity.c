@@ -1297,9 +1297,9 @@ uint32 Entity::areAllChildrenReady()
  */
 void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection __attribute__((unused)), int32 shapeSpecIndex)
 {
-	if(shape)
+	if(!isDeleted(shape))
 	{
-		if(this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
+		if(NULL != this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && NULL != this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 
