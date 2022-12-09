@@ -914,7 +914,11 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
 			{
+#ifndef __LEGACY_COORDINATE_PROJECTION
 				Vector3D relativePosition = Vector3D::rotate(Vector3D::getRelativeToCamera(*this->position), *_cameraInvertedRotation);
+#else
+				Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::getRelativeToCamera(*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}), *_cameraInvertedRotation);
+#endif
 				Vector3D leftEar = (Vector3D){__PIXELS_TO_METERS(-__EAR_DISPLACEMENT), 0, 0};
 				Vector3D rightEar = (Vector3D){__PIXELS_TO_METERS(__EAR_DISPLACEMENT), 0, 0};
 
@@ -935,6 +939,9 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 				leftVolumeFactor = 0 > leftVolumeFactor ? 0 : leftVolumeFactor;
 				rightVolumeFactor = 0 > rightVolumeFactor ? 0 : rightVolumeFactor;
+
+				PRINT_INT((leftVolumeFactor), 18, 23);
+				PRINT_INT((rightVolumeFactor), 47-18, 23);
 			}
 
 			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);
