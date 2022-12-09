@@ -878,8 +878,6 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds)));
 
-	SoundWrapper::updateVolumeReduction(this);
-
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
 
@@ -955,6 +953,8 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	{
 		SoundWrapper::completedPlayback(this);
 	}
+
+	SoundWrapper::updateVolumeReduction(this);
 }
 
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
@@ -969,8 +969,6 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	this->elapsedMicroseconds += elapsedMicroseconds;
 
 	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
-
-	SoundWrapper::updateVolumeReduction(this);
 
 	int8 volume = this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction;
 
@@ -1005,6 +1003,8 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	{
 		SoundWrapper::completedPlayback(this);
 	}
+
+	SoundWrapper::updateVolumeReduction(this);
 }
 
 void SoundWrapper::print(int32 x, int32 y)
