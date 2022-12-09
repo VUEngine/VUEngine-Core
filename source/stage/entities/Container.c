@@ -797,8 +797,8 @@ void Container::setRotation(const Rotation* rotation)
 {
 	Rotation displacement = Rotation::sub(this->transformation.globalRotation, *rotation);
 
-	this->transformation.localRotation = Rotation::sum(this->transformation.globalRotation, displacement);
-	this->transformation.globalRotation = *rotation;
+	this->transformation.globalRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
+	this->transformation.localRotation = Rotation::sub(this->transformation.globalRotation, displacement);
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 }
