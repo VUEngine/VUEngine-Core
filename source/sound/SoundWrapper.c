@@ -697,7 +697,7 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 	return (uint8)value;
 }
 
-bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
+inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
 	channel->finished = channel->cursor >= channel->length;
 
@@ -810,7 +810,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 	}
 }
 
-void SoundWrapper::updateVolumeReduction()
+inline void SoundWrapper::updateVolumeReduction()
 {
 	if(kSoundWrapperPlaybackNormal != this->playbackType)
 	{
@@ -987,12 +987,12 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 		}
 		else if(__MAXIMUM_VOLUME <= volume)
 		{
-			_soundRegistries[channel->number].SxLRV = 0xFF & channel->soundChannelConfiguration.volume;
+			_soundRegistries[channel->number].SxLRV = 0xFF;
 			volume -= __MAXIMUM_VOLUME;
 		}
 		else
 		{
-			_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
+			_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume);
 			volume = 0;
 		}
 	}

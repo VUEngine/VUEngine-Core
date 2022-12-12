@@ -333,11 +333,11 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
-	Camera camera = Camera::getInstance();
-	Camera::suspendUIGraphicsSynchronization(camera);
-
 	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
 	{
+		Camera camera = Camera::getInstance();
+		Camera::suspendUIGraphicsSynchronization(camera);
+
 		static uint32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
@@ -354,15 +354,18 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 			_soundManager->soundWrapperMIDINode = _soundManager->soundWrapperMIDINode->next;
 		}
 	}
-	else
+	else if(NULL != _soundManager->soundWrappersMIDI->head)
 	{
+		Camera camera = Camera::getInstance();
+		Camera::suspendUIGraphicsSynchronization(camera);
+
 		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; NULL != node; node = node->next)
 		{
 			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
-	}
 
-	Camera::resumeUIGraphicsSynchronization(camera);
+		Camera::resumeUIGraphicsSynchronization(camera);
+	}
 }
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
@@ -929,7 +932,6 @@ SoundWrapper SoundManager::doGetSound(const Sound* sound, uint32 command, EventL
 					{
 						VirtualList::pushBack(this->soundWrappersPCM, soundWrapper);
 					}
-
 				}
 			}
 			break;
