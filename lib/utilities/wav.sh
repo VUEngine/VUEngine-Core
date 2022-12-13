@@ -10,9 +10,7 @@ fi
 
 levels=$(( amplitude / 15 ))
 
-mkdir -p Spec/
-mkdir -p Binary/
-
+rm *.c
 channels=""
 
 echo $levels
@@ -34,17 +32,10 @@ for file in $files; do
 #	echo $name
 	finalDestination=`echo $file | sed -e "s@\.wav@SoundTrack@g" | sed -e "s@sample@@g"`
 #	echo $finalDestination
-	mv $output Binary/$finalDestination.c
-	sed -i -e 's@sample_@'$finalDestination'@g' Binary/$finalDestination.c
-	sed -i -e "s@static@@g" Binary/$finalDestination.c
-	length=`grep _LEN Binary/$finalDestination.c | sed -E "s@.*_LEN@@g"`
+	mv $output $finalDestination.c
+	sed -i -e 's@sample_@'$finalDestination'@g' $finalDestination.c
+	sed -i -e "s@static@@g" $finalDestination.c
+	length=`grep _LEN $finalDestination.c | sed -E "s@.*_LEN@@g"`
 	echo $length
-	specFile=$name"Spec.c"
-	cp $VUENGINE_HOME/PCMSoundSpec.c Spec/$specFile
-	sed -i -e 's@&PCMSoundChannel,@'"$channels"'@g' Spec/$specFile
-	sed -i -e 's@PCMSound@'$name'Sound@g' Spec/$specFile
-	sed -i -e 's@#define .*TrackLength.*@#define '"$name"'SoundTrackLength '"$length"'@g' Spec/$specFile
-	sed -i -e 's@PCM Sound Name@'$name'@g' Spec/$specFile
-	rm Binary/*-e
-	rm Spec/*-e
+	rm *-e
 done

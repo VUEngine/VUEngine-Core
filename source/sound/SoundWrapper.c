@@ -67,9 +67,9 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->locked = false;
 
 #ifdef __MUTE_ALL_SOUND
-	this->unmute = false;
+	this->unmute = 0x00;
 #else
-	this->unmute = true;
+	this->unmute = 0xFF;
 #endif
 	this->frequencyModifier = 0;
 	this->position = NULL;
@@ -517,12 +517,12 @@ void SoundWrapper::autoReleaseOnFinish(bool value)
 
 void SoundWrapper::mute()
 {
-	this->unmute = false;
+	this->unmute = 0x00;
 }
 
 void SoundWrapper::unmute()
 {
-	this->unmute = true;
+	this->unmute = 0xFF;
 }
 
 void SoundWrapper::lock()
@@ -699,9 +699,13 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 
 inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
-	channel->finished = channel->cursor >= channel->length;
+	if(channel->cursor >= channel->length)
+	{
+		channel->finished = true;
+		return true;
+	}
 
-	return channel->finished;
+	return false;
 }
 
 void SoundWrapper::completedPlayback()
@@ -732,7 +736,7 @@ void SoundWrapper::completedPlayback()
 void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
 {
 	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
-	uint8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
+	uint8 volume = (SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction)) & this->unmute;
 
 	int16 leftVolume = volume;
 	int16 rightVolume = volume;
@@ -745,7 +749,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 		rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
 	}
 
-	uint8 SxLRV = (((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume) * this->unmute;
+	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 
 	// Is it a special note?
 	switch(note)
@@ -810,57 +814,55 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 	}
 }
 
-inline void SoundWrapper::updateVolumeReduction()
+__attribute__((noinline)) 
+void SoundWrapper::updateVolumeReduction()
 {
-	if(kSoundWrapperPlaybackNormal != this->playbackType)
+	uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
+
+	if(VUEngine::getGameFrameDuration(_vuEngine) <= (elapsedMilliseconds >> 1))
 	{
-		uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
-
-		if(VUEngine::getGameFrameDuration(_vuEngine) <= (elapsedMilliseconds >> 1))
+		switch(this->playbackType)
 		{
-			switch(this->playbackType)
-			{
-				case kSoundWrapperPlaybackFadeIn:
+			case kSoundWrapperPlaybackFadeIn:
 
-					this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction -= (this->volumeReductionMultiplier >> 1) + 1;
 
-					if(0 >= this->volumeReduction)
-					{
-						this->volumeReduction = 0;
-						this->playbackType = kSoundWrapperPlaybackNormal;
-					}
+				if(0 >= this->volumeReduction)
+				{
+					this->volumeReduction = 0;
+					this->playbackType = kSoundWrapperPlaybackNormal;
+				}
 
-					break;
+				break;
 
-				case kSoundWrapperPlaybackFadeOut:
+			case kSoundWrapperPlaybackFadeOut:
 
-					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
 
-					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
-					{
-						this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-						this->playbackType = kSoundWrapperPlaybackNormal;
-						SoundWrapper::pause(this);
-					}
+				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				{
+					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->playbackType = kSoundWrapperPlaybackNormal;
+					SoundWrapper::pause(this);
+				}
 
-					break;
+				break;
 
-				case kSoundWrapperPlaybackFadeOutAndRelease:
+			case kSoundWrapperPlaybackFadeOutAndRelease:
 
-					this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
+				this->volumeReduction += (this->volumeReductionMultiplier >> 1) + 1;
 
-					if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
-					{
-						this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-						this->playbackType = kSoundWrapperPlaybackNormal;
-						SoundWrapper::release(this);
-					}
+				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
+				{
+					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
+					this->playbackType = kSoundWrapperPlaybackNormal;
+					SoundWrapper::release(this);
+				}
 
-					break;
-			}
-
-			this->previouslyElapsedMicroseconds = this->elapsedMicroseconds;
+				break;
 		}
+
+		this->previouslyElapsedMicroseconds = this->elapsedMicroseconds;
 	}
 }
 
@@ -954,7 +956,10 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 		SoundWrapper::completedPlayback(this);
 	}
 
-	SoundWrapper::updateVolumeReduction(this);
+	if(kSoundWrapperPlaybackNormal != this->playbackType)
+	{
+		SoundWrapper::updateVolumeReduction(this);
+	}
 }
 
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
@@ -970,12 +975,7 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-	int8 volume = this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction;
-
-	if(!this->unmute)
-	{
-		volume = 0;
-	}
+	int8 volume = (this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction) & this->unmute;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -999,12 +999,15 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 	// PCM playback must be totally in sync on all channels, so, check if completed only
 	// in the first one
-	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, this->mainChannel))
+	if(this->mainChannel->cursor >= this->mainChannel->length)
 	{
 		SoundWrapper::completedPlayback(this);
 	}
 
-	SoundWrapper::updateVolumeReduction(this);
+	if(kSoundWrapperPlaybackNormal != this->playbackType)
+	{
+		SoundWrapper::updateVolumeReduction(this);
+	}
 }
 
 void SoundWrapper::print(int32 x, int32 y)
