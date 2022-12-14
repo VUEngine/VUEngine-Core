@@ -329,6 +329,9 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 					
 					if(this->hasPCMTracks)
 					{
+						CACHE_DISABLE;
+						CACHE_CLEAR;
+
 						SoundManager::startPCMPlayback(SoundManager::getInstance());
 					}
 				}	
@@ -964,6 +967,8 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates)
 {
+	CACHE_ENABLE;
+
 	// Optimization, if no sound or paused, the sum will be different than 0
 	if((NULL == this->sound) + this->paused + (!this->turnedOn))
 	{
@@ -975,39 +980,43 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
 
-	int8 volume = (this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction) & this->unmute;
-
-	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		if(0 >= volume)
-		{
-			_soundRegistries[channel->number].SxLRV = 0;	
-		}
-		else if(__MAXIMUM_VOLUME <= volume)
-		{
-			_soundRegistries[channel->number].SxLRV = 0xFF;
-			volume -= __MAXIMUM_VOLUME;
-		}
-		else
-		{
-			_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume);
-			volume = 0;
-		}
-	}
-
-	// PCM playback must be totally in sync on all channels, so, check if completed only
-	// in the first one
 	if(this->mainChannel->cursor >= this->mainChannel->length)
 	{
 		SoundWrapper::completedPlayback(this);
 	}
-
-	if(kSoundWrapperPlaybackNormal != this->playbackType)
+	else
 	{
-		SoundWrapper::updateVolumeReduction(this);
+		// PCM playback must be totally in sync on all channels, so, check if completed only
+		// in the first one
+		int8 volume = (this->mainChannel->soundTrack.dataPCM[this->mainChannel->cursor] - this->volumeReduction) & this->unmute;
+
+		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+
+			if(0 >= volume)
+			{
+				_soundRegistries[channel->number].SxLRV = 0;	
+			}
+			else if(__MAXIMUM_VOLUME <= volume)
+			{
+				_soundRegistries[channel->number].SxLRV = 0xFF;
+				volume -= __MAXIMUM_VOLUME;
+			}
+			else
+			{
+				_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume);
+				volume = 0;
+			}
+		}
+	
+		if(kSoundWrapperPlaybackNormal != this->playbackType)
+		{
+			SoundWrapper::updateVolumeReduction(this);
+		}
 	}
+
+	CACHE_DISABLE;
 }
 
 void SoundWrapper::print(int32 x, int32 y)
