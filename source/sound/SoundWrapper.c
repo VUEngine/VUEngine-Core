@@ -108,6 +108,11 @@ void SoundWrapper::destructor()
 		this->channels = NULL;
 	}
 
+	if(this->hasPCMTracks)
+	{
+		CACHE_RESET;
+	}
+
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
