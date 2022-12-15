@@ -171,7 +171,7 @@ void SoundWrapper::setSpeed(fix7_9_ext speed)
 	// Prevent timer interrupts to unsync tracks
 	if(!this->hasPCMTracks)
 	{
-		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed <= __F_TO_FIX7_9_EXT(2.0f) ? speed : __F_TO_FIX7_9_EXT(2.0f);
+		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(2) ? speed : __I_TO_FIX7_9_EXT(2);
 	}
 }
 
@@ -426,6 +426,8 @@ void SoundWrapper::rewind()
 {
 	this->elapsedMicroseconds = 0;
 	this->previouslyElapsedMicroseconds = 0;
+	this->volumeReduction = 0;
+	this->playbackType = kSoundWrapperPlaybackNormal;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
