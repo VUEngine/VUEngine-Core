@@ -298,7 +298,7 @@ uint32 EntityFactory::makeReadyEntities()
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
 			// Must add the child to its parent before making it ready
-			Entity::addChild(positionedEntityDescription->parent, Entity::safeCast(positionedEntityDescription->entity));
+			Entity::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
