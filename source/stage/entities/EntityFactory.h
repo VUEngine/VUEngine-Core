@@ -124,6 +124,7 @@ typedef struct PositionedEntityDescription
 	bool shapesCreated;
 	int16 internalId;
 	bool transformed;
+	bool graphicsSynchronized;
 } PositionedEntityDescription;
 
 

@@ -142,6 +142,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->callback = callback;
 	positionedEntityDescription->internalId = internalId;
 	positionedEntityDescription->transformed = false;
+	positionedEntityDescription->graphicsSynchronized = false;
 	positionedEntityDescription->spritesCreated = false;
 	positionedEntityDescription->wireframesCreated = false;
 	positionedEntityDescription->shapesCreated = false;
@@ -217,13 +218,14 @@ uint32 EntityFactory::transformEntities()
 		{
 			positionedEntityDescription->transformed = true;
 
-			Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
+			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
 
-			Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
+			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
 
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
+		// This isn't doing any work since Entity::initialTransform already creates the components
 		if(!positionedEntityDescription->spritesCreated)
 		{
 			Entity::createSprites(positionedEntityDescription->entity);
@@ -245,6 +247,14 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
+		if(!positionedEntityDescription->graphicsSynchronized)
+		{
+			Entity::synchronizeGraphics(positionedEntityDescription->entity);
+			positionedEntityDescription->graphicsSynchronized = true;
+
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
 		{
 			VirtualList::pushBack(this->entitiesToMakeReady, positionedEntityDescription);
@@ -253,9 +263,9 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PROCESSED;
 		}
 
-		Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
+		Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
 
-		Container::transform(positionedEntityDescription->entity, environmentTransform, false);
+		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 
 		return __ENTITY_PENDING_PROCESSING;
 	}
@@ -288,7 +298,7 @@ uint32 EntityFactory::makeReadyEntities()
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
 			// Must add the child to its parent before making it ready
-			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
+			Entity::addChild(positionedEntityDescription->parent, Entity::safeCast(positionedEntityDescription->entity));
 
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
