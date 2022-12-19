@@ -86,7 +86,7 @@ class Actor : AnimatedEntity
 	override void iAmDeletingMyself();
 	override void update(uint32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
+	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
 	override void resume();
 	override bool handleMessage(Telegram telegram);
 	override void setLocalPosition(const Vector3D* position);

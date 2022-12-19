@@ -145,7 +145,7 @@ class Container : SpatialObject
 	virtual void update(uint32 elapsedTime);
 	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
-	virtual void initialTransform(const Transformation* environmentTransform, uint32 recursive);
+	virtual void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
 	virtual void setLocalPosition(const Vector3D* position);
 	virtual void setLocalRotation(const Rotation* rotation);
 	virtual void setTransparent(uint8 transparent);

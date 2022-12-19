@@ -579,7 +579,7 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
  * @param environmentTransform
  * @param recursive
  */
-void Container::initialTransform(const Transformation* environmentTransform, uint32 recursive)
+void Container::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
 {
 	// concatenate transformation
 	if(__INHERIT_SCALE & this->inheritEnvironment)
@@ -600,7 +600,7 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 	Container::invalidateGlobalTransformation(this);
 
 	// if I have children
-	if(recursive && this->children)
+	if(createComponents && this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{

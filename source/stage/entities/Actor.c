@@ -654,10 +654,10 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
  * @param environmentTransform
  * @param recursive
  */
-void Actor::initialTransform(const Transformation* environmentTransform, uint32 recursive)
+void Actor::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
 {
 	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform, recursive);
+	Base::initialTransform(this, environmentTransform, createComponents);
 
 	if(!isDeleted(this->body))
 	{

@@ -1493,24 +1493,27 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
  * @param environmentTransform
  * @param recursive
  */
-void Entity::initialTransform(const Transformation* environmentTransform, uint32 recursive)
+void Entity::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
 {
 	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform, recursive);
+	Base::initialTransform(this, environmentTransform, createComponents);
 
-	Entity::createSprites(this);
-	Entity::createWireframes(this);
-	Entity::createShapes(this);
-
-	// now can calculate the size
-	if(recursive && (!this->size.x || !this->size.y || !this->size.z))
+	if(createComponents)
 	{
-		// must force size calculation now
-		Entity::calculateSize(this);
-	}
+		Entity::createSprites(this);
+		Entity::createWireframes(this);
+		Entity::createShapes(this);
 
-	// graphics synchronization calls computeIfInCameraRange, which depends on the size already be calculated
-	Entity::synchronizeGraphics(this);
+		// now can calculate the size
+		if(!this->size.x || !this->size.y || !this->size.z)
+		{
+			// must force size calculation now
+			Entity::calculateSize(this);
+		}
+
+		// graphics synchronization calls computeIfInCameraRange, which depends on the size already be calculated
+		Entity::synchronizeGraphics(this);
+	}
 
 	if(this->hidden)
 	{

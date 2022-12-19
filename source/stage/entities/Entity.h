@@ -112,7 +112,7 @@ class Entity : Container
 	virtual bool respawn();
 
 	override void iAmDeletingMyself();
-	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
+	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setPosition(const Vector3D* position);
 	override void setRotation(const Rotation* rotation);
