@@ -105,9 +105,12 @@ class Entity : Container
 	void addWireframe(Wireframe wireframe);
 	void setSpec(void* entitySpec);
 	void setSize(Size size);
+	void computeIfInCameraRange(int32 pad, bool recursive);
+
 	virtual void setDirection(Direction direction);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
+
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, uint32 recursive);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);

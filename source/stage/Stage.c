@@ -878,7 +878,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isInCameraRange(entity))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !entity->inCameraRange)
 		{
 			int16 internalId = Entity::getInternalId(entity);
 
