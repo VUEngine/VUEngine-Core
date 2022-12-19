@@ -96,5 +96,3 @@ void UIContainer::synchronizeGraphics()
 
 	Camera::stopUIGraphicsSynchronization(_camera);
 }
-
-

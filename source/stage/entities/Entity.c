@@ -1501,18 +1501,20 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 	Entity::createSprites(this);
 	Entity::createWireframes(this);
 	Entity::createShapes(this);
-	Entity::synchronizeGraphics(this);
-
-	if(this->hidden)
-	{
-		Entity::hide(this);
-	}
 
 	// now can calculate the size
 	if(recursive && (!this->size.x || !this->size.y || !this->size.z))
 	{
 		// must force size calculation now
 		Entity::calculateSize(this);
+	}
+
+	// graphics synchronization calls computeIfInCameraRange, which depends on the size already be calculated
+	Entity::synchronizeGraphics(this);
+
+	if(this->hidden)
+	{
+		Entity::hide(this);
 	}
 }
 
