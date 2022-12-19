@@ -27,7 +27,6 @@
 enum TextureStatus
 {
 	kTexturePendingWriting = 1,
-	kTextureSpecChanged,
 	kTexturePendingRewriting,
 	kTextureMapDisplacementChanged,
 	kTextureFrameChanged,

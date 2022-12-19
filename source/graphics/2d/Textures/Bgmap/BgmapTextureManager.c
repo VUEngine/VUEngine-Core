@@ -332,7 +332,7 @@ void BgmapTextureManager::updateTextures()
  * @param bgmapTextureSpec		Texture spec
  * @return								Allocated Texture
  */
-BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec)
+BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec, bool recyclableOnly)
 {
 	TextureSpec* textureSpec = (TextureSpec*)bgmapTextureSpec;
 	BgmapTexture selectedBgmapTexture = NULL;
@@ -343,16 +343,19 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 
-		CharSet charSet = Texture::getCharSet(bgmapTexture, false);
-		TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
-
-		if(allocatedTextureSpec == textureSpec &&
-			(NULL == charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
-			(allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols && allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows)
-		)
+		if(!recyclableOnly)
 		{
-			// return if found
-			return bgmapTexture;
+			CharSet charSet = Texture::getCharSet(bgmapTexture, false);
+			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
+
+			if(allocatedTextureSpec == textureSpec &&
+				(NULL == charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
+				(allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols && allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows)
+			)
+			{
+				// return if found
+				return bgmapTexture;
+			}
 		}
 
 		if(!textureSpec->recyclable)
@@ -397,8 +400,6 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	if(!isDeleted(selectedBgmapTexture))
 	{
 		Texture::setSpec(selectedBgmapTexture, textureSpec);
-		Texture::setPalette(selectedBgmapTexture, textureSpec->palette);
-		Texture::rewrite(selectedBgmapTexture);
 	}
 
 	return selectedBgmapTexture;
@@ -469,8 +470,16 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 			case __ANIMATED_SINGLE_OPTIMIZED:
 			case __ANIMATED_SHARED_COORDINATED:
 
-				// load a new texture
-				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+				if(bgmapTextureSpec->recyclable)
+				{
+					bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec, true);
+				}
+				
+				if(NULL == bgmapTexture)
+				{
+					// load a new texture
+					bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
+				}
 
 				ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 				break;
@@ -480,7 +489,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 			case __NOT_ANIMATED:
 
 				// first try to find an already created texture
-				bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec);
+				bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec, false);
 
 				// if couldn't find the texture
 				if(NULL != bgmapTexture)
