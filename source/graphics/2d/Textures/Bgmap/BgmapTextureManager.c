@@ -384,8 +384,11 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 				}
 				else if(textureSpec->cols <= selectedTextureSpec->cols && textureSpec->rows <= selectedTextureSpec->rows)
 				{
-					selectedBgmapTexture = bgmapTexture;
-					selectedTextureSpec = allocatedTextureSpec;
+					if(textureSpec->cols * textureSpec->rows >= ((selectedTextureSpec->cols * selectedTextureSpec->rows) >> 1))
+					{
+						selectedBgmapTexture = bgmapTexture;
+						selectedTextureSpec = allocatedTextureSpec;
+					}
 				}
 			}
 		}
