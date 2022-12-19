@@ -216,16 +216,13 @@ uint32 EntityFactory::transformEntities()
 	{
 		if(!positionedEntityDescription->transformed)
 		{
-			positionedEntityDescription->transformed = true;
-
 			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
-
 			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
+			positionedEntityDescription->transformed = true;
 
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
-		// This isn't doing any work since Entity::initialTransform already creates the components
 		if(!positionedEntityDescription->spritesCreated)
 		{
 			Entity::createSprites(positionedEntityDescription->entity);
@@ -244,14 +241,6 @@ uint32 EntityFactory::transformEntities()
 		{
 			Entity::createShapes(positionedEntityDescription->entity);
 			positionedEntityDescription->shapesCreated = true;
-			return __ENTITY_PENDING_PROCESSING;
-		}
-
-		if(!positionedEntityDescription->graphicsSynchronized)
-		{
-			Entity::synchronizeGraphics(positionedEntityDescription->entity);
-			positionedEntityDescription->graphicsSynchronized = true;
-
 			return __ENTITY_PENDING_PROCESSING;
 		}
 
@@ -295,6 +284,16 @@ uint32 EntityFactory::makeReadyEntities()
 
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
+		if(!positionedEntityDescription->graphicsSynchronized)
+		{
+			Entity::calculateSize(positionedEntityDescription->entity);
+			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
+			Entity::synchronizeGraphics(positionedEntityDescription->entity);
+			positionedEntityDescription->graphicsSynchronized = true;
+
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
 			// Must add the child to its parent before making it ready
