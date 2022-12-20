@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 friend class Texture;
+friend class BgmapTexture;
 friend class VirtualList;
 friend class VirtualNode;
 
@@ -341,12 +342,12 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	// try to find a texture with the same bgmap spec
 	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
-		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
+		BgmapTexture allocatedBgmapTexture = BgmapTexture::safeCast(node->data);
+		TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(allocatedBgmapTexture);
 
 		if(!recyclableOnly)
 		{
-			CharSet charSet = Texture::getCharSet(bgmapTexture, false);
-			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
+			CharSet charSet = Texture::getCharSet(allocatedBgmapTexture, false);
 
 			if(allocatedTextureSpec == textureSpec &&
 				(NULL == charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
@@ -354,7 +355,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			)
 			{
 				// return if found
-				return bgmapTexture;
+				return allocatedBgmapTexture;
 			}
 		}
 
@@ -363,33 +364,30 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			continue;
 		}
 
-		if(0 == BgmapTexture::getUsageCount(bgmapTexture))
+		if(allocatedTextureSpec->recyclable && 0 == BgmapTexture::getUsageCount(allocatedBgmapTexture))
 		{
-			uint16 id = Texture::getId(bgmapTexture);
+			uint16 id = Texture::getId(allocatedBgmapTexture);
 			uint16 cols = this->offset[id][kCols];
 			uint16 rows = this->offset[id][kRows];
 
-			TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
 
-			if(allocatedTextureSpec->recyclable &&
-				(textureSpec->cols <= cols && textureSpec->rows <= rows)
-			)
+			if(textureSpec->cols <= cols && textureSpec->rows <= rows)
 			{
 				if(textureSpec->cols == cols && textureSpec->rows == rows)
 				{
-					selectedBgmapTexture = bgmapTexture;
+					selectedBgmapTexture = allocatedBgmapTexture;
 					break;
 				}
 				else if(NULL == selectedBgmapTexture)
 				{
-					selectedBgmapTexture = bgmapTexture;
+					selectedBgmapTexture = allocatedBgmapTexture;
 					selectedTextureSpec = allocatedTextureSpec;
 				}
 				else if(textureSpec->cols <= selectedTextureSpec->cols && textureSpec->rows <= selectedTextureSpec->rows)
 				{
 					if(textureSpec->cols * textureSpec->rows >= ((selectedTextureSpec->cols * selectedTextureSpec->rows) >> 1))
 					{
-						selectedBgmapTexture = bgmapTexture;
+						selectedBgmapTexture = allocatedBgmapTexture;
 						selectedTextureSpec = allocatedTextureSpec;
 					}
 				}
@@ -475,7 +473,11 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 					bgmapTexture = BgmapTextureManager::findTexture(this, bgmapTextureSpec, true);
 				}
 				
-				if(NULL == bgmapTexture)
+				if(NULL != bgmapTexture)
+				{
+					BgmapTexture::increaseUsageCount(bgmapTexture);
+				}
+				else
 				{
 					// load a new texture
 					bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
