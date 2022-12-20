@@ -444,6 +444,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 {
 	if(NULL == bgmapTextureSpec)
 	{
+		NM_ASSERT(false, "BgmapTextureManager::getTexture: NULL spec provided");
 		return NULL;
 	}
 
@@ -453,7 +454,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 	{
 		bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 
-		ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
+		NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (animated) texture no allocated");
 	}
 	else
 	{
@@ -479,7 +480,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 					bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 				}
 
-				ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
+				NM_ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 				break;
 
 			case __ANIMATED_SHARED:
@@ -500,7 +501,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 					bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
 				}
 
-				ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");
+				NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::getTexture: (shared) texture no allocated");
 				break;
 
 			default:
@@ -543,7 +544,7 @@ int16 BgmapTextureManager::getYOffset(int32 id)
  * @private
  * @return 			Number of non used BGMAP segments for texture allocation
  */
-int16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
+int8 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
 	return this->availableBgmapSegmentsForTextures;
 }
@@ -554,7 +555,7 @@ int16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
  * @private
  * @return 			BGMAP segment available for printing
  */
-int16 BgmapTextureManager::getPrintingBgmapSegment()
+int8 BgmapTextureManager::getPrintingBgmapSegment()
 {
 	return this->printingBgmapSegment;
 }

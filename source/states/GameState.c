@@ -491,8 +491,6 @@ uint32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
 {
-	HardwareManager::suspendInterrupts();
-
 	if(NULL == stageSpec)
 	{
 		extern StageROMSpec EmptyStageSpec;
@@ -508,6 +506,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// Reset the engine state
 	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
+
+	HardwareManager::suspendInterrupts();
 
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);

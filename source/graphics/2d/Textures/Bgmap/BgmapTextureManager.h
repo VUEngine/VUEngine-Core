@@ -57,9 +57,9 @@ singleton class BgmapTextureManager : Object
 	// 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment
 	int8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];
 	// Number of available bgmap segments
-	int16 availableBgmapSegmentsForTextures;
+	int8 availableBgmapSegmentsForTextures;
 	// Segment for printing
-	int16 printingBgmapSegment;
+	int8 printingBgmapSegment;
 	// Defer texture update
 	bool deferTextureUpdate;
 
@@ -67,8 +67,8 @@ singleton class BgmapTextureManager : Object
 	static BgmapTextureManager getInstance();
 	void allocateText(BgmapTexture bgmapTexture);
 	void calculateAvailableBgmapSegments();
-	int16 getAvailableBgmapSegmentsForTextures();
-	int16 getPrintingBgmapSegment();
+	int8 getAvailableBgmapSegmentsForTextures();
+	int8 getPrintingBgmapSegment();
 	BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue);
 	int16 getXOffset(int32 id);
 	int16 getYOffset(int32 id);

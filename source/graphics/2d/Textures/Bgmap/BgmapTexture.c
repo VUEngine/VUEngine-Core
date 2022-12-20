@@ -54,12 +54,12 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 	this->horizontalFlip = this->textureSpec->horizontalFlip;
 	this->verticalFlip = this->textureSpec->verticalFlip;
 
-	if(!_bgmapTextureManager)
+	if(NULL == _bgmapTextureManager)
 	{
 		_bgmapTextureManager = BgmapTextureManager::getInstance();
 	}
 
-	if(!_spriteManager)
+	if(NULL == _spriteManager)
 	{
 		_spriteManager = SpriteManager::getInstance();
 	}
