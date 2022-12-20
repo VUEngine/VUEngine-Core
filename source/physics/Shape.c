@@ -457,7 +457,7 @@ Vector3D Shape::getPosition()
  *
  * @param position				Vector3d*
  */
-void Shape::setPosition(const Vector3D* position __attribute__((unused)))
+void Shape::setPosition(const Vector3D* position)
 {
 	this->moved = true;
 
