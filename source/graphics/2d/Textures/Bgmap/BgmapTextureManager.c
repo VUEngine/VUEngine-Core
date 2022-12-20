@@ -28,7 +28,7 @@ friend class BgmapTexture;
 friend class VirtualList;
 friend class VirtualNode;
 
-
+	
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -75,6 +75,8 @@ void BgmapTextureManager::reset()
 {
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
+	VirtualList::deleteData(this->bgmapTextures);
+
 	this->availableBgmapSegmentsForTextures = (uint32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
@@ -84,32 +86,26 @@ void BgmapTextureManager::reset()
 
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
 
-	int32 i = 0;
-
 	// clear each bgmap segment usage
-	for(; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
+	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
 		this->numberOfChars[i] = 0;
 
-		int32 j = 0;
-
 		// clear the offsets
-		for(j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
+		for(int32 j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
 		{
 			this->xOffset[i][j] = 0;
 			this->yOffset[i][j] = 0;
 		}
 	}
 
-	for(i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT; i++)
+	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
 		this->offset[i][kXOffset] = -1;
 		this->offset[i][kYOffset] = -1;
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
 	}
-
-	VirtualList::deleteData(this->bgmapTextures);
 
 	this->deferTextureUpdate = false;
 }

@@ -66,8 +66,6 @@ void Texture::destructor()
 	Base::destructor();
 }
 
-
-
 /**
  * Retrieve the count usage for this Texture
  *
