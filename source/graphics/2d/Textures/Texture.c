@@ -66,8 +66,6 @@ void Texture::destructor()
 	Base::destructor();
 }
 
-
-
 /**
  * Retrieve the count usage for this Texture
  *
@@ -148,22 +146,21 @@ void Texture::setSpec(TextureSpec* textureSpec)
 {
 	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
 
-	if(0 == this->usageCount || NULL == this->textureSpec || isDeleted(this->charSet))
+	if(NULL == textureSpec)
 	{
-		// Since the texture cannot be used without a spec or a charSet
-		// it is safe to assume that it is not being displayed and can be written
-		// outside XPEND
-		this->status = kTexturePendingWriting;
+		return;
 	}
-	else if(this->textureSpec != textureSpec)
+
+	if(this->textureSpec != textureSpec)
 	{
 		Texture::releaseCharSet(this);
 
-		// Since the texture
-		this->status = kTextureSpecChanged;
+		this->textureSpec = textureSpec;
+		this->frame = 0;
+		this->mapDisplacement = 0;
+		this->palette = this->textureSpec->palette;
+		this->status = kTexturePendingWriting;
 	}
-
-	this->textureSpec = textureSpec;
 }
 
 /**
@@ -250,12 +247,6 @@ bool Texture::prepare()
 				return true;
 			}
 
-			break;
-
-		case kTextureSpecChanged:
-
-			Texture::loadCharSet(this);
-			Texture::update(this);
 			break;
 	}
 

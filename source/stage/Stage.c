@@ -1346,8 +1346,6 @@ void Stage::prepareGraphics()
 {
 	// Must clean DRAM
 	SpriteManager::reset(SpriteManager::getInstance());
-	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
-	CharSetManager::reset(CharSetManager::getInstance());
 
 	// set palettes
 	Stage::setupPalettes(this);

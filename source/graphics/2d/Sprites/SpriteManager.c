@@ -137,6 +137,8 @@ void SpriteManager::cleanUp()
  */
 void SpriteManager::reset()
 {
+	HardwareManager::suspendInterrupts();
+
 	this->printing = Printing::getInstance();
 	this->paramTableManager = ParamTableManager::getInstance();
 	this->charSetManager = CharSetManager::getInstance();
@@ -180,6 +182,8 @@ void SpriteManager::reset()
 
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
+
+	HardwareManager::resumeInterrupts();
 }
 
 /**
