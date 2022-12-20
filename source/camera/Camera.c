@@ -492,10 +492,8 @@ void Camera::setOptical(Optical optical)
 void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
 	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
-
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->opticalBackup = this->optical;
-
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 }
 
@@ -609,17 +607,17 @@ CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 		cameraFrustum.z1 = 1;
 	}
 
-	if(cameraFrustum.x0 > cameraFrustum.x1)
+	if(cameraFrustum.x0 >= cameraFrustum.x1)
 	{
 		cameraFrustum.x0 = cameraFrustum.x1 - 1;
 	}
 
-	if(cameraFrustum.y0 > cameraFrustum.y1)
+	if(cameraFrustum.y0 >= cameraFrustum.y1)
 	{
 		cameraFrustum.y0 = cameraFrustum.y1 - 1;
 	}
 
-	if(cameraFrustum.z0 > cameraFrustum.z1)
+	if(cameraFrustum.z0 >= cameraFrustum.z1)
 	{
 		cameraFrustum.z0 = cameraFrustum.z1 - 1;
 	}
