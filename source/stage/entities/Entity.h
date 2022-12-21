@@ -73,6 +73,7 @@ class Entity : Container
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
 	void addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes);
 	void destroySprites();
+	void calculateSize();
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
