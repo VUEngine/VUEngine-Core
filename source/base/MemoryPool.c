@@ -55,7 +55,7 @@
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
 																										\
 			/* make sure that the class is properly set */												\
-			ClassName ## _checkVTable();																\
+			__CALL_CHECK_VTABLE(ClassName);																\
 																										\
 			/*  */																						\
 			ClassName instance = &_singletonWrapper ## ClassName.instance;								\

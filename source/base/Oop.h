@@ -45,7 +45,7 @@
 		ClassName ClassName ## _new(__VA_ARGS__)														\
 		{																								\
 			/* make sure that the class is properly set */												\
-			ClassName ## _checkVTable();																\
+			__CALL_CHECK_VTABLE(ClassName);																\
 																										\
 			/* to speed things up */																	\
 			extern MemoryPool _memoryPool;																\
@@ -232,7 +232,6 @@
 		}
 
 // configure class's vtable
-#ifndef __RELEASE
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
 																										\
 		/* define the static method */																	\
@@ -249,13 +248,10 @@
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## ## is abstract);		\
 			}																							\
 		}
+#ifndef __RELEASE
+#define __CALL_CHECK_VTABLE(ClassName)		ClassName ## _checkVTable()
 #else
-#define __CHECK_VTABLE_DEFINITION(ClassName)															\
-																										\
-		/* define the static method */																	\
-		void __attribute__ ((noinline)) ClassName ## _checkVTable()										\
-		{																								\
-		}
+#define __CALL_CHECK_VTABLE(ClassName)
 #endif
 
 // configure class's vtable
@@ -479,7 +475,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
 																										\
 			/* make sure that the class is properly set */												\
-			ClassName ## _checkVTable();																\
+			__CALL_CHECK_VTABLE(ClassName);																\
 																										\
 			/*  */																						\
 			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
