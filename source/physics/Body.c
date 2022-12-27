@@ -1313,6 +1313,10 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 	this->velocity = Vector3D::get(u, w);
 
+	this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+	this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+	this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
+
 	Body::clampVelocity(this, false);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
