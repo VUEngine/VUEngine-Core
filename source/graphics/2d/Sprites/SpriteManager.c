@@ -198,7 +198,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
-	if(this->objectSpriteContainers && VirtualList::getSize(this->objectSpriteContainers))
+	if(isDeleted(this->objectSpriteContainers) ||  0 < VirtualList::getSize(this->objectSpriteContainers))
 	{
 		return;
 	}
@@ -238,13 +238,20 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 {
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
-	VirtualNode node = this->objectSpriteContainers->head;
 
-	for(; NULL != node; node = node->next)
+	NM_ASSERT(!isDeleted(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers created");
+	NM_ASSERT(0 < VirtualList::getSize(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+
+	if(isDeleted(this->objectSpriteContainers))
+	{
+		return NULL;
+	}
+
+	for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
-		if(!suitableObjectSpriteContainer)
+		if(NULL == suitableObjectSpriteContainer)
 		{
 			suitableObjectSpriteContainer = objectSpriteContainer;
 		}
@@ -257,7 +264,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 		}
 	}
 
-	NM_ASSERT(suitableObjectSpriteContainer, "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+	NM_ASSERT(suitableObjectSpriteContainer, "SpriteManager::getObjectSpriteContainer: no suitable ObjectSpriteContainers found");
 
 	return suitableObjectSpriteContainer;
 }
