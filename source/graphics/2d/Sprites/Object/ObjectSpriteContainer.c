@@ -113,7 +113,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 	{
 		this->lockSpritesLists = true;
 
-		VirtualList::pushBack(this->objectSprites, objectSprite);
+		VirtualList::pushFront(this->objectSprites, objectSprite);
 
 		this->lockSpritesLists = false;
 
