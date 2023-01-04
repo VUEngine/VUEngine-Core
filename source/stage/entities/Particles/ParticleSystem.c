@@ -238,7 +238,7 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(uint32 elapsedTime)
 {
-	if(ParticleSystem::isPaused(this) || this->invalidateGlobalTransformation)
+	if(ParticleSystem::isPaused(this) || (this->invalidateGlobalTransformation && !this->transformed))
 	{
 		return;
 	}
