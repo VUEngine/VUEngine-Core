@@ -238,7 +238,7 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(uint32 elapsedTime)
 {
-	if(ParticleSystem::isPaused(this) || (this->invalidateGlobalTransformation && !this->transformed))
+	if(ParticleSystem::isPaused(this))
 	{
 		return;
 	}
@@ -251,6 +251,11 @@ void ParticleSystem::update(uint32 elapsedTime)
 	}
 
 	ParticleSystem::processExpiredParticles(this);
+
+	if(this->invalidateGlobalTransformation && !this->transformed)
+	{
+		return;
+	}
 
 	VirtualNode node = this->particles->head;
 
