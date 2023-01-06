@@ -508,6 +508,8 @@ void VIPManager::displayOff()
  */
 void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
 	_vipRegisters[__GPLT2] = paletteConfig->bgmap.gplt2;
