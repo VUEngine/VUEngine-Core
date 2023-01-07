@@ -81,16 +81,16 @@ typedef const SpriteSpec SpriteROMSpec;
 typedef struct AnimationFunction
 {
 	/// number of frames of this animation function
-	int32 numberOfFrames;
+	uint8 numberOfFrames;
 
 	/// frames to play in animation
 	uint8 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
 	/// number of cycles a frame of animation is displayed
-	int32 delay;
+	uint8 delay;
 
 	/// whether to play it in loop or not
-	int32 loop;
+	bool loop;
 
 	/// method to call on function completion
 	EventListener onAnimationComplete;
