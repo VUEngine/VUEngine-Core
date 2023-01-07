@@ -239,6 +239,11 @@ bool Texture::prepare()
 
 			if(isDeleted(this->charSet))
 			{
+				Texture::loadCharSet(this);
+			}
+
+			if(isDeleted(this->charSet))
+			{
 				this->status = kTextureInvalid;
 			}
 			else
