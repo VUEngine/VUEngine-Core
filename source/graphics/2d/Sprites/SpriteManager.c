@@ -645,7 +645,7 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	for(VirtualNode node = this->sprites->tail; node && 0 < this->freeLayer; node = node->previous)
+	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
 		NM_ASSERT(__GET_CAST(Sprite, node->data), "SpriteManager::render: node's data isn't a sprite");
@@ -678,6 +678,18 @@ void SpriteManager::render()
 		SpriteManager::computeTotalPixelsDrawn(this);
 	}
 #endif
+}
+
+/**
+ * Invalidate render flag on all sprites
+ *
+ */
+void SpriteManager::forceRendering()
+{
+	for(VirtualNode node = this->sprites->tail; NULL != node; node = node->previous)
+	{
+		Sprite::invalidateRenderFlag(Sprite::safeCast(node->data));
+	}
 }
 
 /**

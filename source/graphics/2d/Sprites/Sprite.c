@@ -1042,6 +1042,15 @@ int32 Sprite::getTotalPixels()
 	return 0;
 }
 
+/**
+ * Invalidate render flag
+ *
+ */
+void Sprite::invalidateRenderFlag()
+{
+	this->renderFlag = true;
+}
+
 
 //---------------------------------------------------------------------------------------------------------
 //										CLASS'S METHODS (Affine & HBias FX)

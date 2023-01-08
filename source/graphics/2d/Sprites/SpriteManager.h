@@ -93,6 +93,7 @@ singleton class SpriteManager : Object
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);
+	void forceRendering();
 	int8 getFreeLayer();
 	int32 getNumberOfSprites();
 	int32 getMaximumParamTableRowsToComputePerCall();

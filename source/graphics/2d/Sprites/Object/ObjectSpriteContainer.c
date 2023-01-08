@@ -284,7 +284,7 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 
 	if(!this->hideSprites)
 	{
-		for(VirtualNode node = this->objectSprites->head; node && 0 < _objectIndex; node = node->next)
+		for(VirtualNode node = this->objectSprites->head; NULL != node && 0 < _objectIndex; node = node->next)
 		{
 			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::doRender: NULL node's data");
 
@@ -504,4 +504,16 @@ static void ObjectSpriteContainer::writeDRAM()
 	extern int32 _writtenObjectTiles;
 	_writtenObjectTiles = __AVAILABLE_CHAR_OBJECTS - _objectIndex;
 #endif
+}
+
+/**
+ * Invalidate render flag on all sprites
+ *
+ */
+void ObjectSpriteContainer::invalidateRenderFlag()
+{
+	for(VirtualNode node = this->objectSprites->tail; NULL != node; node = node->previous)
+	{
+		ObjectSprite::invalidateRenderFlag(ObjectSprite::safeCast(node->data));
+	}
 }

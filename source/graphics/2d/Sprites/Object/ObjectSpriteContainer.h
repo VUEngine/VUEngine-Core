@@ -72,6 +72,7 @@ class ObjectSpriteContainer : Sprite
 	override bool writeTextures();
 	override void print(int32 x, int32 y);
 	override int32 getTotalPixels();
+	override void invalidateRenderFlag();
 }
 
 

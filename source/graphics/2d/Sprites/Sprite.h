@@ -215,6 +215,7 @@ abstract class Sprite : ListenerObject
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels();
 	virtual void registerWithManager() = 0;
+	virtual void invalidateRenderFlag();
 }
 
 
