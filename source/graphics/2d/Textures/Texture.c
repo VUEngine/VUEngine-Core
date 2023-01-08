@@ -415,9 +415,12 @@ void Texture::setFrame(uint16 frame)
 	}
 
 	this->frame = frame;
-	this->status = kTextureFrameChanged;
 
-	if(!isDeleted(this->charSet))
+	bool statusChanged = kTextureFrameChanged != this->status;
+
+	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
+
+	if(statusChanged && kTextureFrameChanged == this->status)
 	{
 		// write according to the allocation type
 		switch(CharSet::getAllocationType(this->charSet))
@@ -427,9 +430,9 @@ void Texture::setFrame(uint16 frame)
 				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 				break;
 		}
-	}
 
-	Texture::prepare(this);
+		Texture::prepare(this);
+	}
 }
 
 
