@@ -160,3 +160,13 @@ static float Utilities::floor(float x)
 {
 	return (float)((long)(x * 2 + 0.5f) >> 1);
 }
+
+static int32 Utilities::min(int32 x, int32 y)
+{
+	return x < y ? x : y;
+}
+
+static int32 Utilities::max(int32 x, int32 y)
+{
+	return x > y ? x : y;
+}

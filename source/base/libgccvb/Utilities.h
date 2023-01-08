@@ -53,6 +53,8 @@ static class Utilities : ListenerObject
 	static int32 intLength(int32 value);
 	static uint32 reverse(uint32 x, int32 bits);
 	static float floor(float x);
+    static int32 min(int32 x, int32 y);
+    static int32 max(int32 x, int32 y);
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
