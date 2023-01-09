@@ -257,7 +257,7 @@ const AnimationFunction** AnimatedEntity::getAnimationFunctions()
 
 void AnimatedEntity::setActualFrame(int16 frame)
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}

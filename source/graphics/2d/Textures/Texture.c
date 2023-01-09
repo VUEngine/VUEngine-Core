@@ -351,7 +351,7 @@ uint8 Texture::getAllocationType()
  */
 void Texture::rewrite()
 {
-	bool statusChanged = kTexturePendingRewriting != this->status;
+	bool statusChanged = kTexturePendingRewriting != this->status || !this->update;
 
 	this->status = this->status > kTexturePendingRewriting ? kTexturePendingRewriting : this->status;
 
@@ -416,7 +416,7 @@ void Texture::setFrame(uint16 frame)
 
 	this->frame = frame;
 
-	bool statusChanged = kTextureFrameChanged != this->status;
+	bool statusChanged = kTextureFrameChanged != this->status || !this->update;
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
@@ -733,7 +733,7 @@ bool Texture::isWritten()
  */
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
-	bool statusChanged = kTextureMapDisplacementChanged != this->status;
+	bool statusChanged = kTextureMapDisplacementChanged != this->status || !this->update;
 
 	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
