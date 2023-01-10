@@ -129,7 +129,7 @@ class Entity : Container
 	override fixed_t getDepth();
 	override void suspend();
 	override void resume();
-	override bool isSubjectToGravity(Acceleration gravity);
+	override bool isSubjectToGravity(Vector3D gravity);
 	override void show();
 	override void hide();
 	override fixed_t getBounciness();

@@ -38,7 +38,7 @@ void SpatialObject::destructor()
 }
 
 // defaults to true
-bool SpatialObject::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
+bool SpatialObject::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return false;
 }
@@ -139,9 +139,9 @@ fixed_t SpatialObject::getFrictionCoefficient()
 }
 
 // get velocity
-Velocity SpatialObject::getVelocity()
+const Vector3D* SpatialObject::getVelocity()
 {
-	return Vector3D::zero();
+	return NULL;
 }
 
 fixed_t SpatialObject::getSpeed()

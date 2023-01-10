@@ -64,14 +64,14 @@ class Actor : AnimatedEntity
 	void changeDirectionOnAxis(uint16 axis);
 	bool isInsideGame();
 	StateMachine getStateMachine();
-	void moveUniformly(Velocity* velocity);
+	void moveUniformly(Vector3D* velocity);
 	void stopAllMovement();
 	void resetCollisionStatus();
 	Body getBody();
 	void takeHitFrom(Actor other);
 	bool isMoving();
 	uint16 getMovementState();
-	virtual bool applyForce(const Force* force, bool checkIfCanMove);
+	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(uint16 axis);
 	virtual void syncPositionWithBody();
@@ -93,8 +93,8 @@ class Actor : AnimatedEntity
 	override fixed_t getBounciness();
 	override const Vector3D* getPosition();
 	override void setPosition(const Vector3D* position);
-	override bool isSubjectToGravity(Acceleration gravity);
-	override Velocity getVelocity();
+	override bool isSubjectToGravity(Vector3D gravity);
+	override const Vector3D* getVelocity();
 	override fixed_t getSpeed();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);

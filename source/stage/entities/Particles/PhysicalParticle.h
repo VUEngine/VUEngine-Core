@@ -59,9 +59,9 @@ class PhysicalParticle : Particle
 
 	/// @publicsection
 	void constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
-	override bool isSubjectToGravity(Acceleration gravity);
+	override bool isSubjectToGravity(Vector3D gravity);
 	override void setPosition(const Vector3D* position);
-	override void applySustainedForce(const Force* force, uint32 movementType);
+	override void applySustainedForce(const Vector3D* force, uint32 movementType);
 	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
 	override void setMass(fixed_t mass);

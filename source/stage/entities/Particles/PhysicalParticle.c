@@ -98,13 +98,13 @@ void PhysicalParticle::transform()
  * @param force
  * @param movementType
  */
-void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementType)
+void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movementType)
 {
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
 		fixed_t mass = Body::getMass(this->body);
 
-		Acceleration acceleration =
+		Vector3D acceleration =
 		{
 			force->x,
 			force->y,
@@ -118,7 +118,7 @@ void PhysicalParticle::applySustainedForce(const Force* force, uint32 movementTy
 			acceleration.z = __FIXED_DIV(acceleration.z, mass);
 		}
 
-		Velocity velocity =
+		Vector3D velocity =
 		{
 			acceleration.x,
 			acceleration.y,
@@ -182,7 +182,7 @@ void PhysicalParticle::hide()
  * @param acceleration
  * @return				Boolean that tells whether the PhysicalParticle's body can move over axis (defaults to true)
  */
-bool PhysicalParticle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
+bool PhysicalParticle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return (bool)Body::getAxisSubjectToGravity(this->body);
 }

@@ -60,6 +60,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->selfDestroyWhenDone = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
+	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
 }
 
 /**
@@ -243,7 +244,10 @@ void ParticleSystem::update(uint32 elapsedTime)
 		return;
 	}
 
-	Base::update(this, elapsedTime);
+	if(NULL != this->children && NULL != this->behaviors)
+	{
+		Base::update(this, elapsedTime);
+	}
 
 	if(isDeleted(this->particles))
 	{
@@ -278,7 +282,6 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 		if(Particle::update(particle, elapsedTime, behavior))
 		{
-			Particle::expire(particle);
 			this->particleCount--;
 		}
 
@@ -348,12 +351,23 @@ bool ParticleSystem::recycleParticle()
 		if(particle->expired)
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-			Force force = ParticleSystem::getParticleSpawnForce(this);
 			int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + (((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) : 0);
 
-			Particle::setup(particle, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+			if(this->applyForceToParticles)
+			{
+				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
 
-			ParticleSystem::particleRecycled(this, particle);
+				Particle::setup(particle, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+			}
+			else
+			{
+				Particle::setup(particle, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+			}
+
+			if(ParticleSystem::overrides(this, particleRecycled))
+			{
+				ParticleSystem::particleRecycled(this, particle);
+			}
 
 			return true;
 		}
@@ -390,9 +404,9 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 
 /**
  * @private
- * @return		Force
+ * @return		Vector3D
  */
-Force ParticleSystem::getParticleSpawnForce()
+Vector3D ParticleSystem::getParticleSpawnForce()
 {
 	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
 	{
@@ -402,7 +416,7 @@ Force ParticleSystem::getParticleSpawnForce()
 		return Vector3D::scalarProduct(direction, strength);
 	}
 
-	Force force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
+	Vector3D force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
 
 	if(this->spawnForceDelta.x)
 	{
@@ -421,6 +435,34 @@ Force ParticleSystem::getParticleSpawnForce()
 
 	return force;
 }
+
+/**
+ * @private
+ * @return		Bool
+ */
+bool ParticleSystem::appliesForceToParticles()
+{
+	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
+	{
+		return true;
+	}
+
+	if(0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x ||
+	0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y ||
+	0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z)
+	{
+		return true;
+	}
+
+	if(0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.x ||
+	0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.y ||
+	0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.z)
+	{
+		return true;
+	}
+
+	return false;
+} 
 
 /**
  * Spawn all particles at once. This function's intended use is for recyclable particles mainly.
@@ -495,11 +537,19 @@ Particle ParticleSystem::spawnParticle()
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-	Force force = ParticleSystem::getParticleSpawnForce(this);
 	Particle::setPosition(particle, &position);
-	Particle::applySustainedForce(particle, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType);
 
-	ParticleSystem::particleSpawned(this, particle);
+	if(this->applyForceToParticles)
+	{
+		Vector3D force = ParticleSystem::getParticleSpawnForce(this);
+		
+		Particle::applySustainedForce(particle, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType);
+	}
+
+	if(ParticleSystem::overrides(this, particleSpawned))
+	{
+		ParticleSystem::particleSpawned(this, particle);
+	}
 
 	return particle;
 }

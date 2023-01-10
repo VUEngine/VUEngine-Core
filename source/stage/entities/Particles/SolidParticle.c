@@ -199,7 +199,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
  * @param acceleration
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool SolidParticle::isSubjectToGravity(Acceleration gravity)
+bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 {
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
@@ -289,9 +289,9 @@ uint32 SolidParticle::getInGameType()
 /**
  * Get velocity
  *
- * @return		Velocity vector
+ * @return		Vector3D vector
  */
-Velocity SolidParticle::getVelocity()
+const Vector3D* SolidParticle::getVelocity()
 {
 	return Body::getVelocity(this->body);
 }

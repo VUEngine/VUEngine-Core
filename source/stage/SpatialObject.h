@@ -30,7 +30,7 @@ class SpatialObject : ListenerObject
 	/// @publicsection
 	void constructor();
 	void destructor();
-	virtual bool isSubjectToGravity(Acceleration gravity);
+	virtual bool isSubjectToGravity(Vector3D gravity);
 	virtual fixed_t getRadius();
 	virtual fixed_t getWidth();
 	virtual fixed_t getHeight();
@@ -43,7 +43,7 @@ class SpatialObject : ListenerObject
 	virtual void setScale(const Scale* scale);
 	virtual fixed_t getBounciness();
 	virtual fixed_t getFrictionCoefficient();
-	virtual Velocity getVelocity();
+	virtual const Vector3D* getVelocity();
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);

@@ -61,7 +61,7 @@ friend class VirtualNode;
 
 fix7_9_ext _currentPhysicsElapsedTime = 0;
 static fixed_t _currentWorldFriction = 0;
-static const Acceleration* _currentGravity = 0;
+static const Vector3D* _currentGravity = 0;
 
 static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
 {
@@ -78,12 +78,12 @@ static fix7_9_ext Body::getCurrentElapsedTime()
 	return _currentPhysicsElapsedTime;
 }
 
-static void Body::setCurrentGravity(const Acceleration* currentGravity)
+static void Body::setCurrentGravity(const Vector3D* currentGravity)
 {
 	_currentGravity = currentGravity;
 }
 
-static const Acceleration* Body::getCurrentGravity()
+static const Vector3D* Body::getCurrentGravity()
 {
 	return _currentGravity;
 }
@@ -192,12 +192,12 @@ SpatialObject Body::getOwner()
 }
 
 // retrieve velocity
-Velocity Body::getVelocity()
+const Vector3D* Body::getVelocity()
 {
-	return this->velocity;
+	return &this->velocity;
 }
 
-void Body::setVelocity(Velocity* velocity)
+void Body::setVelocity(Vector3D* velocity)
 {
 	if(velocity)
 	{
@@ -205,7 +205,7 @@ void Body::setVelocity(Velocity* velocity)
 	}
 }
 
-const Direction3D* Body::getDirection3D()
+const Vector3D* Body::getDirection3D()
 {
 	return &this->direction;
 }
@@ -215,7 +215,7 @@ fixed_t Body::getSpeed()
 	return this->speed;
 }
 
-void Body::modifyVelocity(const Velocity* modifier)
+void Body::modifyVelocity(const Vector3D* modifier)
 {
 	ASSERT(modifier, "Body::modifyVelocity: null multiplier");
 
@@ -233,7 +233,7 @@ Vector3DFlag Body::getAccelerationState()
 }
 
 // retrieve applied force
-Force Body::getAppliedForce()
+Vector3D Body::getAppliedForce()
 {
 	return this->externalForce;
 }
@@ -291,7 +291,7 @@ void Body::moveAccelerated(uint16 axis)
 }
 
 // set movement type to uniform
-void Body::moveUniformly(Velocity velocity)
+void Body::moveUniformly(Vector3D velocity)
 {
 	uint16 axisOfUniformMovement = 0;
 
@@ -340,7 +340,7 @@ void Body::clearExternalForce()
 }
 
 // apply force
-uint8 Body::applyForce(const Force* force)
+uint8 Body::applyForce(const Vector3D* force)
 {
 	if(force)
 	{
@@ -387,7 +387,7 @@ uint8 Body::applyGravity(uint16 axis)
 	{
 		axis &= this->axisSubjectToGravity;
 
-		Force force =
+		Vector3D force =
 		{
 			__X_AXIS & axis ? __FIXED_MULT(_currentGravity->x, this->mass) : 0,
 			__Y_AXIS & axis ? __FIXED_MULT(_currentGravity->y, this->mass) : 0,
@@ -401,7 +401,7 @@ uint8 Body::applyGravity(uint16 axis)
 }
 
 // add force
-void Body::applySustainedForce(const Force* force)
+void Body::applySustainedForce(const Vector3D* force)
 {
 	ASSERT(force, "Body::applySustainedForce: null force");
 
@@ -475,7 +475,7 @@ Vector3D Body::getLastDisplacement()
 	return displacement;
 }
 
-MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration gravity)
+MovementResult Body::getMovementResult(Vector3D previousVelocity, Vector3D gravity)
 {
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS, __NO_AXIS};
 
@@ -538,14 +538,14 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity, Acceleration g
 	return movementResult;
 }
 
-Force Body::getFriction()
+Vector3D Body::getFriction()
 {
 	return this->friction;
 }
 
-Acceleration Body::getGravity()
+Vector3D Body::getGravity()
 {
-	return (Acceleration)
+	return (Vector3D)
 	{
 		__X_AXIS & this->axisSubjectToGravity ? _currentGravity->x : 0,
 		__Y_AXIS & this->axisSubjectToGravity ? _currentGravity->y : 0,
@@ -651,13 +651,13 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 // update movement over axis
 MovementResult Body::updateMovement()
 {
-	Acceleration gravity = Body::getGravity(this);
+	Vector3D gravity = Body::getGravity(this);
 	this->weight = Vector3D::scalarProduct(gravity, this->mass);
 
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
 
-	Velocity previousVelocity = this->velocity;
+	Vector3D previousVelocity = this->velocity;
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
@@ -921,12 +921,12 @@ void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnit
 	Body::computeTotalNormal(this);
 }
 
-Force Body::getNormal()
+Vector3D Body::getNormal()
 {
 	return this->totalNormal;
 }
 
-Force Body::getLastNormalDirection()
+Vector3D Body::getLastNormalDirection()
 {
 	if(!this->normals || !this->normals->head)
 	{
@@ -1060,7 +1060,7 @@ void Body::computeFrictionForceMagnitude()
 	}
 	else
 	{
-		Acceleration gravity = Body::getGravity(this);
+		Vector3D gravity = Body::getGravity(this);
 		this->weight = Vector3D::scalarProduct(gravity, this->mass);
 		fixed_t weight = Vector3D::length(this->weight);
 
@@ -1265,7 +1265,7 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 // bounce back
 void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness)
 {
-	Acceleration gravity = Body::getGravity(this);
+	Vector3D gravity = Body::getGravity(this);
 
 	// set friction
 	Body::setSurroundingFrictionCoefficient(this, frictionCoefficient);
@@ -1360,12 +1360,12 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	}
 }
 
-void Body::setMaximumVelocity(Velocity maximumVelocity)
+void Body::setMaximumVelocity(Vector3D maximumVelocity)
 {
 	this->maximumVelocity = maximumVelocity;
 }
 
-Velocity Body::getMaximumVelocity()
+Vector3D Body::getMaximumVelocity()
 {
 	return this->maximumVelocity;
 }
@@ -1440,7 +1440,7 @@ void Body::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->accelerating.y, xDisplacement + x + 8, y, NULL);
 	Printing::int32(Printing::getInstance(), this->accelerating.z, xDisplacement + x + 8 * 2, y++, NULL);
 
-	Acceleration gravity = Body::getGravity(this);
+	Vector3D gravity = Body::getGravity(this);
 
 	Printing::text(Printing::getInstance(), "Gravity", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);

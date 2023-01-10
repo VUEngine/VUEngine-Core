@@ -45,7 +45,7 @@ class PhysicalWorld : ListenerObject
 	// list of registered bodies
 	VirtualList	bodies;
 	// gravity
-	Acceleration gravity;
+	Vector3D gravity;
 	// frictionCoefficient
 	fixed_t frictionCoefficient;
 	// time scale
@@ -73,7 +73,7 @@ class PhysicalWorld : ListenerObject
 	Body createBody(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
 	void destroyBody(Body body);
 	void reset();
-	void setGravity(Acceleration gravity);
+	void setGravity(Vector3D gravity);
 	void setFrictionCoefficient(fixed_t frictionCoefficient);
 	void start();
 	void update(Clock clock);

@@ -89,17 +89,6 @@ typedef struct Vector3DFlag
 
 } Vector3DFlag;
 
-// spatial movement vector
-typedef struct Vector3D Velocity;
-
-// spatial velocity variation vector
-typedef struct Vector3D Acceleration;
-
-// spatial velocity variation vector
-typedef struct Vector3D Force;
-
-// spatial direction variation vector
-typedef struct Vector3D Direction3D;
 
 // movement type flag vector
 typedef struct MovementType

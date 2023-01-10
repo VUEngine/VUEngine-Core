@@ -119,6 +119,8 @@ class ParticleSystem : Entity
 	bool animationChanged;
 	// Flag to auto destroy when done
 	bool selfDestroyWhenDone;
+	// Flag to prevent computing force when not necessary
+	bool applyForceToParticles;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);

@@ -211,7 +211,7 @@ void Actor::doSyncRotationWithBody()
 			return;
 		}
 
-		Direction3D direction3D = *Body::getDirection3D(this->body);
+		Vector3D direction3D = *Body::getDirection3D(this->body);
 		
 		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
@@ -411,7 +411,7 @@ void Actor::changeDirectionOnAxis(uint16 axis)
 }
 
 // check if gravity must apply to this actor
-bool Actor::isSubjectToGravity(Acceleration gravity)
+bool Actor::isSubjectToGravity(Vector3D gravity)
 {
 	return Actor::canMoveTowards(this, gravity);
 }
@@ -591,7 +591,7 @@ void Actor::stopMovement(uint16 axis)
 	}
 }
 
-bool Actor::applyForce(const Force* force, bool checkIfCanMove)
+bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
 
@@ -613,7 +613,7 @@ bool Actor::applyForce(const Force* force, bool checkIfCanMove)
 	return true;
 }
 
-void Actor::moveUniformly(Velocity* velocity)
+void Actor::moveUniformly(Vector3D* velocity)
 {
 	// move me with physics
 	if(this->body)
@@ -693,7 +693,7 @@ fixed_t Actor::getBounciness()
 }
 
 // get velocity
-Velocity Actor::getVelocity()
+const Vector3D* Actor::getVelocity()
 {
 	return !isDeleted(this->body) ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }

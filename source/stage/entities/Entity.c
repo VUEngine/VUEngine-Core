@@ -1980,7 +1980,7 @@ void Entity::resume()
  * @param acceleration
  * @return				Defaults to true
  */
-bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
+bool Entity::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return true;
 }

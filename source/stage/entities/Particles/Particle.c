@@ -146,6 +146,7 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 
 		if(0 > this->lifeSpan)
 		{
+			Particle::expire(this);
 			return true;
 		}
 
@@ -193,7 +194,7 @@ void Particle::synchronizeGraphics()
  * @param force
  * @param movementType
  */
-void Particle::applySustainedForce(const Force* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
+void Particle::applySustainedForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
 {
 }
 
@@ -292,7 +293,7 @@ void Particle::hide()
  * @param acceleration
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool Particle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
+bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return false;
 }
@@ -345,7 +346,7 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
+void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
 	Particle::reset(this);
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);

@@ -115,7 +115,7 @@ typedef struct StageSpec
 	struct Physics
 	{
 		// physical world's gravity
-		Acceleration gravity;
+		Vector3D gravity;
 
 		// physical world's friction coefficient
 		fixed_t frictionCoefficient;

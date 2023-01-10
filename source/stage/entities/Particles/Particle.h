@@ -81,10 +81,10 @@ class Particle : SpatialObject
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
-	void setup(int16 lifeSpan, const Vector3D* position, const Force* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
+	void setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
 	void expire();
 	virtual void synchronizeGraphics();
-	virtual void applySustainedForce(const Force* force, uint32 movementType);
+	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void transform();
 	virtual void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName);
@@ -95,7 +95,7 @@ class Particle : SpatialObject
 	virtual void hide();
 	virtual void show();
 	void setAnimationName(const char* animationName);
-	override bool isSubjectToGravity(Acceleration gravity);
+	override bool isSubjectToGravity(Vector3D gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
 }

@@ -60,7 +60,7 @@ typedef struct PhysicalSpecification
 	/// bounciness
 	fixed_t bounciness;
 	/// maximum velocity
-	Velocity maximumVelocity;
+	Vector3D maximumVelocity;
 	/// maximum speed
 	fixed_t maximumSpeed;
 
@@ -88,27 +88,27 @@ class Body : ListenerObject
 	// owner
 	SpatialObject owner;
 	// direction
-	Force weight;
+	Vector3D weight;
 	// direction
-	Force externalForce;
+	Vector3D externalForce;
 	// friction surrounding object
-	Force friction;
+	Vector3D friction;
 	// total normal forces applied to the body
-	Force totalNormal;
+	Vector3D totalNormal;
 	// List of normal forces affecting the body
 	VirtualList normals;
 	// spatial position
 	Vector3D position;
 	Vector3DPlus internalPosition;
 	// velocity on each instance
-	Velocity velocity;
+	Vector3D velocity;
 	Vector3DPlus internalVelocity;
 	// direction
-	Direction3D direction;
+	Vector3D direction;
 	// speed
 	fixed_t speed;
 	// maximum velocity on each instance
-	Velocity maximumVelocity;
+	Vector3D maximumVelocity;
 	// maximum speed
 	fixed_t maximumSpeed;
 	// acceleration structure
@@ -149,47 +149,47 @@ class Body : ListenerObject
 	static void setCurrentElapsedTime(fix7_9_ext currentElapsedTime);
 	static fix7_9_ext getCurrentElapsedTime();
 	static void setCurrentWorldFrictionCoefficient(fixed_t _currentWorldFriction);
-	static void setCurrentGravity(const Acceleration* currentGravity);
-	static const Acceleration* getCurrentGravity();
+	static void setCurrentGravity(const Vector3D* currentGravity);
+	static const Vector3D* getCurrentGravity();
 	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
 
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
-	void applySustainedForce(const Force* force);
-	uint8 applyForce(const Force* force);
+	void applySustainedForce(const Vector3D* force);
+	uint8 applyForce(const Vector3D* force);
 	uint8 applyGravity(uint16 axis);
 	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
 	void clearAcceleration(uint16 axis);
 	void clearExternalForce();
 	Vector3DFlag getAccelerationState();
-	Force getAppliedForce();
+	Vector3D getAppliedForce();
 	uint16 getAxisSubjectToGravity();
 	fixed_t getBounciness();
 	Vector3D getLastDisplacement();
-	Acceleration getGravity();
-	Force getFriction();
+	Vector3D getGravity();
+	Vector3D getFriction();
 	fixed_t getMass();
 	MovementType getMovementType();
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
-	Velocity getVelocity();
-	void setVelocity(Velocity* velocity);
-	const Direction3D* getDirection3D();
+	const Vector3D* getVelocity();
+	void setVelocity(Vector3D* velocity);
+	const Vector3D* getDirection3D();
 	fixed_t getSpeed();
 	fixed_ext_t getSpeedSquare();
-	void modifyVelocity(const Velocity* multiplier);
+	void modifyVelocity(const Vector3D* multiplier);
 	bool isActive();
 	bool isAwake();
 	bool reachedMaximumSpeed();
 	uint16 getMovementOnAllAxis();
 	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
-	void moveUniformly(Velocity velocity);
+	void moveUniformly(Vector3D velocity);
 	void setActive(bool active);
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
 	void setBounciness(fixed_t bounciness);
 	void setSkipCycles(int8 skipCycles);
-	Force getNormal();
-	Force getLastNormalDirection();
+	Vector3D getNormal();
+	Vector3D getLastNormalDirection();
 	void reset();
 	void clearNormal(ListenerObject referent);
 	fixed_t getFrictionForceMagnitude();
@@ -201,8 +201,8 @@ class Body : ListenerObject
 	void setPosition(const Vector3D* position, SpatialObject caller);
 	uint16 stopMovement(uint16 axis);
 	void takeHitFrom(Body other);
-	void setMaximumVelocity(Velocity maximumVelocity);
-	Velocity getMaximumVelocity();
+	void setMaximumVelocity(Vector3D maximumVelocity);
+	Vector3D getMaximumVelocity();
 	void setMaximumSpeed(fixed_t maximumSpeed);
 	fixed_t getMaximumSpeed();
 	void print(int32 x, int32 y);

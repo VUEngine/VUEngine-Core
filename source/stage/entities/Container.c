@@ -396,7 +396,7 @@ void Container::update(uint32 elapsedTime)
  */
 void Container::updateBehaviors(uint32 elapsedTime)
 {
-	if(this->behaviors)
+	if(NULL != this->behaviors)
 	{
 		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
 		{

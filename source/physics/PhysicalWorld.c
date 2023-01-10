@@ -350,7 +350,7 @@ uint32 PhysicalWorld::getTimeScale()
 }
 
 // set gravity
-void PhysicalWorld::setGravity(Acceleration gravity)
+void PhysicalWorld::setGravity(Vector3D gravity)
 {
 	this->gravity = gravity;
 	Body::setCurrentGravity(&this->gravity);
