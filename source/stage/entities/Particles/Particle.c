@@ -364,6 +364,7 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		Particle::applySustainedForce(this, force, movementType);
 	}
 	
+	Particle::synchronizeGraphics(this);
 	Particle::show(this);
 }
 
