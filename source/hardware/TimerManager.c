@@ -490,6 +490,8 @@ static void TimerManager::interruptHandler()
 	TimerManager::clearStat(_timerManager);
 #else
 	TimerManager::enableInterrupt(_timerManager, false);
+
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
 #ifdef __SHOW_TIMER_MANAGER_STATUS

@@ -305,8 +305,15 @@ void Profiler::lap(uint32 lapType, const char* processName)
 
 	if(kProfilerLapTypeNormalProcess != lapType)
 	{
-		this->interruptFlags |= lapType;
-		return;
+		if(kProfilerLapTypeStartInterrupt == lapType)
+		{
+			this->previousTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
+			return;
+		}
+		else
+		{
+			this->interruptFlags |= lapType;
+		}
 	}
 
 	Profiler::computeLap(this, processName, lapType, false);

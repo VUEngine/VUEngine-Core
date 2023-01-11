@@ -252,7 +252,9 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
+#ifndef __ENABLE_PROFILER
 	HardwareManager::enableMultiplexedInterrupts();
+#endif
 
 #ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
 	if(_vipManager->events)
@@ -264,7 +266,9 @@ static void VIPManager::interruptHandler()
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
+#ifndef __ENABLE_PROFILER
 	HardwareManager::disableMultiplexedInterrupts();
+#endif
 
 	// enable interrupts
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
@@ -295,13 +299,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				this->totalMilliseconds += __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 				this->frameStartedDuringXPEND = this->processingXPEND;
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
-
-#ifdef __ENABLE_PROFILER
-				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptFRAMESTARTProcess, PROCESS_NAME_RENDER);
-#endif
 				break;
 
 			case __GAMESTART:
+
+#ifdef __ENABLE_PROFILER
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+#endif
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 				VUEngine::saveProcessNameDuringGAMESTART(_vuEngine);
@@ -324,12 +328,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 				else
 				{
+#ifndef __ENABLE_PROFILER
 					// Listen for the end of drawing operations
 					if(!(__XPEND & interrupt))
 					{
 						VIPManager::enableInterrupts(this, __XPEND);
 					}
-
+#endif
 					// Process game's logic
 					VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
 					SpriteManager::render(_spriteManager);
@@ -369,6 +374,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 			case __XPEND:
 
+#ifdef __ENABLE_PROFILER
+				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+#endif
+
 #ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
 #endif
@@ -385,6 +394,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 					}
 				}
+#ifndef __ENABLE_PROFILER
 				else
 				{
 					// Allow game start interrupt because the frame buffers can change mid drawing
@@ -393,7 +403,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
 				}
-
+#endif
 				DirectDraw::startDrawing(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);

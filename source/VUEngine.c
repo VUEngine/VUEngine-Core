@@ -286,10 +286,6 @@ void VUEngine::start(GameState state)
 #endif
 				}
 			}
-
-#ifdef __ENABLE_PROFILER
-			Profiler::start(Profiler::getInstance());
-#endif
 		}
 	}
 	else
@@ -913,6 +909,7 @@ void VUEngine::run()
 
 #ifdef __ENABLE_PROFILER
 	HardwareManager::disableInterrupts();
+	Profiler::start(Profiler::getInstance());
 #endif
 
 	// process user's input

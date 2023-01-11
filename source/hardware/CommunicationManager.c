@@ -466,6 +466,10 @@ bool CommunicationManager::isCommunicationControlInterrupt()
  */
 static void CommunicationManager::interruptHandler()
 {
+#ifdef __ENABLE_PROFILER
+	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
+#endif
+
 	if(kCommunicationsBroadcastNone == _communicationManager->broadcast && CommunicationManager::isMaster(_communicationManager))
 	{
 		_communicationManager->communicationMode = __COM_AS_REMOTE;

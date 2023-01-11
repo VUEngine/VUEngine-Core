@@ -648,7 +648,6 @@ void SpriteManager::render()
 	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
-		NM_ASSERT(__GET_CAST(Sprite, node->data), "SpriteManager::render: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 

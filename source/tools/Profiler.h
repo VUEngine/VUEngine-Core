@@ -27,6 +27,7 @@
 enum ProfilerLapTypes
 {
 	kProfilerLapTypeNormalProcess 								= 0x00000001 << 0,
+	kProfilerLapTypeStartInterrupt								= 0x00000001 << 1,
 	kProfilerLapTypeVIPInterruptFRAMESTARTProcess				= 0x00000001 << 2,
 	kProfilerLapTypeVIPInterruptGAMESTARTProcess				= 0x00000001 << 3,
 	kProfilerLapTypeVIPInterruptXPENDProcess					= 0x00000001 << 4,
