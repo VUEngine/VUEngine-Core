@@ -146,7 +146,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 
 		if(0 > this->lifeSpan)
 		{
-			Particle::expire(this);
 			return true;
 		}
 

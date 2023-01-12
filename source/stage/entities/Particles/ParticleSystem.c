@@ -282,6 +282,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 		if(Particle::update(particle, elapsedTime, behavior))
 		{
+			Particle::expire(this);
 			this->particleCount--;
 		}
 
@@ -795,4 +796,11 @@ void ParticleSystem::unpause()
 bool ParticleSystem::isPaused()
 {
 	return this->paused && 0 == this->particleCount;
+}
+
+void ParticleSystem::print(int16 x, int16 y)
+{
+	PRINT_INT(this->maximumNumberOfAliveParticles, x, y);
+	PRINT_INT(this->particleCount, x, ++y);
+	PRINT_INT(VirtualList::getSize(this->particles), x, ++y);
 }
