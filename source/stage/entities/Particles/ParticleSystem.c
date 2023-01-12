@@ -282,7 +282,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 		if(Particle::update(particle, elapsedTime, behavior))
 		{
-			Particle::expire(this);
+			Particle::expire(particle);
 			this->particleCount--;
 		}
 
@@ -292,6 +292,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 	if(this->selfDestroyWhenDone && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles && 0 == this->particleCount && !this->loop)
 	{
 		ParticleSystem::deleteMyself(this);
+		return;
 	}
 
 	if(!this->transformed || this->paused || this->hidden)
@@ -319,15 +320,23 @@ void ParticleSystem::update(uint32 elapsedTime)
 			{
 				if(!ParticleSystem::recycleParticle(this))
 				{
-					VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+					if(VirtualList::getSize(this->particles) < this->maximumNumberOfAliveParticles)
+					{
+						VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+						this->particleCount++;
+					}
+				}
+				else
+				{
+					this->particleCount++;
 				}
 			}
 			else
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+				this->particleCount++;
 			}
 
-			this->particleCount++;
 			this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 		}
 		while(++spawnedParticles < ((ParticleSystemSpec*)this->entitySpec)->maximumNumberOfParticlesToSpawnPerCycle && 0 == ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay && this->particleCount < this->maximumNumberOfAliveParticles);
@@ -340,11 +349,6 @@ void ParticleSystem::update(uint32 elapsedTime)
  */
 bool ParticleSystem::recycleParticle()
 {
-	if(isDeleted(this->particles))
-	{
-		return false;
-	}
-
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);
@@ -374,7 +378,7 @@ bool ParticleSystem::recycleParticle()
 		}
 	}
 
-	return VirtualList::getSize(this->particles) >= this->maximumNumberOfAliveParticles;
+	return false;
 }
 
 /**
