@@ -374,7 +374,7 @@ bool ParticleSystem::recycleParticle()
 		}
 	}
 
-	return VirtualList::getSize(this->particles) < this->maximumNumberOfAliveParticles;
+	return VirtualList::getSize(this->particles) >= this->maximumNumberOfAliveParticles;
 }
 
 /**
