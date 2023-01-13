@@ -315,7 +315,7 @@ void Sprite::setPosition(const PixelVector* position)
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
 	int16 parallax = Optics::calculateParallax(z);
-	this->renderFlag |= this->position.parallax != parallax;
+	this->renderFlag = this->renderFlag || this->position.parallax != parallax;
 	this->position.parallax = parallax;
 }
 
@@ -661,7 +661,6 @@ bool Sprite::updateAnimation()
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
-		this->renderFlag |= this->writeAnimationFrame;
 		stillAnimating |= AnimationController::isPlaying(this->animationController);
 	}
 
@@ -700,6 +699,7 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* fun
 	{
 		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
 		this->writeAnimationFrame |= playBackStarted;
+		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
 	}
 
 	return playBackStarted;
@@ -726,7 +726,8 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationFunctions);
+		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::replay(this->animationController, animationFunctions);
+		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
 
 		return this->writeAnimationFrame;
 	}
