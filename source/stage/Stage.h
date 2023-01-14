@@ -243,7 +243,7 @@ class Stage : Container
 	virtual bool stream();
 	virtual void synchronizeUIGraphics();
 	
-	override void update(uint32 elapsedTime);
+	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void suspend();
 	override void resume();

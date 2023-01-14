@@ -128,8 +128,8 @@ class Container : SpatialObject
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
 	void setInheritEnvironment(uint8 inheritEnvironment);
-	void updateChildren(uint32 elapsedTime);
-	void updateBehaviors(uint32 elapsedTime);
+	void updateChildren();
+	void updateChildren();
 	void synchronizeChildrenGraphics();
 	void translate(const Vector3D* translation);
 	void rotate(const Rotation* rotation);
@@ -142,7 +142,7 @@ class Container : SpatialObject
 	void transformChildren(uint8 invalidateTransformationFlag);
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
-	virtual void update(uint32 elapsedTime);
+	virtual void update();
 	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();
 	virtual void initialTransform(const Transformation* environmentTransform, uint32 createComponents);

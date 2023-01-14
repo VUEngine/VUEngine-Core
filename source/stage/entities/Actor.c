@@ -315,10 +315,10 @@ void Actor::resume()
 }
 
 // execute character's logic
-void Actor::update(uint32 elapsedTime)
+void Actor::update()
 {
 	// call base
-	Base::update(this, elapsedTime);
+	Base::update(this);
 
 	if(!isDeleted(this->stateMachine))
 	{

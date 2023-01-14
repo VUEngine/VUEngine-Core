@@ -235,9 +235,9 @@ void ParticleSystem::processExpiredParticles()
 }
 
 /**
- * @param elapsedTime
+ * @public
  */
-void ParticleSystem::update(uint32 elapsedTime)
+void ParticleSystem::update()
 {
 	if(ParticleSystem::isPaused(this))
 	{
@@ -246,7 +246,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 
 	if(NULL != this->children && NULL != this->behaviors)
 	{
-		Base::update(this, elapsedTime);
+		Base::update(this);
 	}
 
 	if(isDeleted(this->particles))
@@ -280,7 +280,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 			continue;
 		}
 
-		if(Particle::update(particle, elapsedTime, behavior))
+		if(Particle::update(particle, behavior))
 		{
 			Particle::expire(particle);
 			this->particleCount--;
@@ -301,7 +301,7 @@ void ParticleSystem::update(uint32 elapsedTime)
 	}
 
 	// check if it is time to spawn new particles
-	this->nextSpawnTime -= elapsedTime;
+	this->nextSpawnTime -= __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 
 	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{

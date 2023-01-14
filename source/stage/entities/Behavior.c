@@ -54,7 +54,7 @@ void Behavior::start(Container owner __attribute__((unused)))
 {
 }
 
-void Behavior::update(Container owner __attribute__((unused)), uint32 elapsedTime __attribute__((unused)))
+void Behavior::update(Container owner __attribute__((unused)))
 {
 }
 

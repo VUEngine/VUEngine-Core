@@ -69,13 +69,12 @@ void PhysicalParticle::destructor()
 /**
  * Update
  *
- * @param elapsedTime
  * @param behavior
  * @return				Boolean that tells whether a body was set active(?)
  */
-bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
+bool PhysicalParticle::update(void (* behavior)(Particle particle))
 {
-	if(Base::update(this, elapsedTime, behavior))
+	if(Base::update(this, behavior))
 	{
 		Body::stopMovement(this->body, __ALL_AXIS);
 		return true;

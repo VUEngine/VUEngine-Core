@@ -98,15 +98,10 @@ void AnimatedEntity::onAnimationStarted(ListenerObject eventFirer __attribute__ 
 }
 
 // execute character's logic
-void AnimatedEntity::update(uint32 elapsedTime)
+void AnimatedEntity::update()
 {
 	// call base
-	Base::update(this, elapsedTime);
-
-	if(!elapsedTime)
-	{
-		return;
-	}
+	Base::update(this);
 
 	AnimatedEntity::animate(this);
 }

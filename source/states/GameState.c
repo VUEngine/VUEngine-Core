@@ -45,7 +45,6 @@ void GameState::constructor()
 	this->cameraPosition.x = 0;
 	this->cameraPosition.y = 0;
 	this->cameraPosition.z = 0;
-	this->previousUpdateTime = 0;
 
 	this->stream = true;
 	this->transform = true;
@@ -101,7 +100,6 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 	Printing::resetCoordinates(Printing::getInstance());
 
 	GameState::pauseClocks(this);
-	this->previousUpdateTime = Clock::getTime(this->updateClock);
 
 	Clock::start(this->messagingClock);
 }
@@ -118,9 +116,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 	if(!Clock::isPaused(this->updateClock))
 	{
 		// update the stage
-		Stage::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
-
-		this->previousUpdateTime = Clock::getTime(this->updateClock);
+		Stage::update(this->stage);
 	}
 }
 
@@ -593,8 +589,6 @@ void GameState::startClocks()
 	Clock::start(this->messagingClock);
 	Clock::start(this->updateClock);
 	Clock::start(this->physicsClock);
-
-	this->previousUpdateTime = Clock::getTime(this->updateClock);
 }
 
 /**

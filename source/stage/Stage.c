@@ -1222,13 +1222,13 @@ bool Stage::streamOutAll()
 }
 
 // execute stage's logic
-void Stage::update(uint32 elapsedTime)
+void Stage::update()
 {
-	Base::update(this, elapsedTime);
+	Container::updateChildren(this);
 
 	if(!isDeleted(this->uiContainer))
 	{
-		Container::update(this->uiContainer, elapsedTime);
+		Container::update(this->uiContainer);
 	}
 }
 

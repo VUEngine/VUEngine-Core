@@ -55,7 +55,7 @@ abstract class Behavior : ListenerObject
 	static Behavior create(const BehaviorSpec* behaviorSpec);
 
 	virtual void start(Container owner);
-	virtual void update(Container owner, uint32 elapsedTime);
+	virtual void update(Container owner);
 	virtual void pause(Container owner);
 	virtual void resume(Container owner);
 }

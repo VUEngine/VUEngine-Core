@@ -134,15 +134,14 @@ void Particle::changeAnimation(const AnimationFunction** animationFunctions, con
 /**
  * Update
  *
- * @param elapsedTime
  * @param behavior
  * @return				Returns true if the particle's life span has elapsed
  */
-bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
+bool Particle::update(void (* behavior)(Particle particle))
 {
 	if(0 <= this->lifeSpan)
 	{
-		this->lifeSpan -= elapsedTime;
+		this->lifeSpan -= __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 
 		if(0 > this->lifeSpan)
 		{

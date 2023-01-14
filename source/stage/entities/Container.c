@@ -381,20 +381,18 @@ void Container::ready(bool recursive)
 /**
  * Update container
  *
- * @param elapsedTime
  */
-void Container::update(uint32 elapsedTime)
+void Container::update()
 {
-	Container::updateBehaviors(this, elapsedTime);
-	Container::updateChildren(this, elapsedTime);
+	Container::updateBehaviors(this);
+	Container::updateChildren(this);
 }
 
 /**
  * Update container's behaviors
  *
- * @param elapsedTime
  */
-void Container::updateBehaviors(uint32 elapsedTime)
+void Container::updateBehaviors()
 {
 	if(NULL != this->behaviors)
 	{
@@ -404,7 +402,7 @@ void Container::updateBehaviors(uint32 elapsedTime)
 
 			if(Behavior::isEnabled(behavior))
 			{
-				Behavior::update(behavior, this, elapsedTime);
+				Behavior::update(behavior, this);
 			}
 		}
 	}
@@ -413,9 +411,8 @@ void Container::updateBehaviors(uint32 elapsedTime)
 /**
  * Update container's children
  *
- * @param elapsedTime
  */
-void Container::updateChildren(uint32 elapsedTime)
+void Container::updateChildren()
 {
 	// if I have children
 	if(NULL != this->children)
@@ -451,7 +448,7 @@ void Container::updateChildren(uint32 elapsedTime)
 				continue;
 			}
 
-			Container::update(child, elapsedTime);
+			Container::update(child);
 		}
 	}
 }
@@ -459,7 +456,6 @@ void Container::updateChildren(uint32 elapsedTime)
 /**
  * Retrieve environment transformation
  *
- * @param elapsedTime
  * @return				Environment Transformation
  */
 Transformation Container::getEnvironmentTransform()

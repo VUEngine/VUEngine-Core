@@ -47,8 +47,6 @@ class GameState : State
 	Clock updateClock;
 	// clock for physics
 	Clock physicsClock;
-	// previous update time
-	uint32 previousUpdateTime;
 	// Flags to disable some processes
 	bool stream;
 	bool transform;

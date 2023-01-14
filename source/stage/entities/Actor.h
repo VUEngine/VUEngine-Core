@@ -84,7 +84,7 @@ class Actor : AnimatedEntity
 	virtual bool registerCollidingShapes();
 	virtual fixed_t getMaximumSpeed();
 	override void iAmDeletingMyself();
-	override void update(uint32 elapsedTime);
+	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
 	override void resume();

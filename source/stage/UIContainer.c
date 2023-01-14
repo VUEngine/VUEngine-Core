@@ -55,7 +55,7 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 	int32 i = 0;
 
-	for(;entities && entities[i].entitySpec; i++)
+	for(;NULL != entities && NULL != entities[i].entitySpec; i++)
 	{
 		UIContainer::addChildEntity(this, &entities[i]);
 	}
