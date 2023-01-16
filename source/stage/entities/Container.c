@@ -647,10 +647,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 	}
 
 	// Check since the call is virtual
-	if(NULL != this->children)
-	{
-		Container::transformChildren(this, invalidateTransformationFlag);
-	}
+	Container::transformChildren(this, invalidateTransformationFlag);
 
 	// don't update position on next transformation cycle
 	this->invalidateGlobalTransformation = false;
