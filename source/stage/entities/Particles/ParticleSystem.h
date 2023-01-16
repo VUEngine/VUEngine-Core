@@ -98,6 +98,8 @@ class ParticleSystem : Entity
 	// Flags to speed up particle spawning
 	Vector3DFlag spawnPositionDisplacement;
 	Vector3DFlag spawnForceDelta;
+	// elapsed time per tick
+	uint32 elapsedTime;
 	// next spawn time
 	int32 nextSpawnTime;
 	// particles' life span increment
@@ -137,6 +139,7 @@ class ParticleSystem : Entity
 	void expireAllParticles();
 	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
 	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
+	void setElapsedTime(uint32 elapsedTime);
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();

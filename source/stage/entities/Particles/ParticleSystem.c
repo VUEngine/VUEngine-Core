@@ -58,6 +58,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->animationChanged = true;
 	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 	this->selfDestroyWhenDone = false;
+	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
@@ -280,7 +281,7 @@ void ParticleSystem::update()
 			continue;
 		}
 
-		if(Particle::update(particle, behavior))
+		if(Particle::update(particle, this->elapsedTime, behavior))
 		{
 			Particle::expire(particle);
 			this->particleCount--;
@@ -301,7 +302,7 @@ void ParticleSystem::update()
 	}
 
 	// check if it is time to spawn new particles
-	this->nextSpawnTime -= __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
+	this->nextSpawnTime -= this->elapsedTime;
 
 	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{
@@ -765,6 +766,15 @@ void ParticleSystem::setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAlive
 void ParticleSystem::setSelfDestroyWhenDone(bool selfDestroyWhenDone)
 {
 	this->selfDestroyWhenDone = selfDestroyWhenDone;
+}
+
+/**
+ * @public
+ * @param elapsedTime		Elapsed time per tick
+ */
+void ParticleSystem::setElapsedTime(uint32 elapsedTime)
+{
+	this->elapsedTime = elapsedTime;
 }
 
 void ParticleSystem::start()
