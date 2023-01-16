@@ -574,9 +574,11 @@ uint32 VUEngine::processUserInput()
 	}
 #endif
 
-	if((userInput.pressedKey || userInput.holdKey || userInput.releasedKey) || GameState::processUserInputRegardlessOfInput(VUEngine::getCurrentState(this)))
+	GameState currentGameState = VUEngine::getCurrentState(this);
+
+	if((userInput.pressedKey || userInput.holdKey || userInput.releasedKey) || GameState::processUserInputRegardlessOfInput(currentGameState))
 	{
-		GameState::processUserInput(VUEngine::getCurrentState(this), userInput);
+		GameState::processUserInput(currentGameState, userInput);
 	}
 
 #ifdef __ENABLE_PROFILER

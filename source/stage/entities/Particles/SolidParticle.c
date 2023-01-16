@@ -182,8 +182,9 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 		{
 			Shape::resolveCollision(collisionInformation->shape, collisionInformation, false);
 
-			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
-			fixed_t bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
+			SpatialObject owner = Shape::getOwner(collisionInformation->collidingShape);
+			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(owner);
+			fixed_t bounciness =  SpatialObject::getBounciness(owner);
 
 			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
