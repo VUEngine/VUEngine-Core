@@ -599,14 +599,14 @@ void VUEngine::dispatchDelayedMessages()
 
 		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
-#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-	}
-
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+	}
 #endif
+
 }
 
 // update game's logic subsystem
