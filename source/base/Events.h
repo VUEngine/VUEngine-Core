@@ -68,6 +68,8 @@ enum Events
 	kEventVIPManagerGAMESTARTDuringXPEND,
 	kEventVIPManagerXPENDDuringGAMESTART,
 
+	kEventKeypadManagerRaisedPowerFlag,
+
 	// do not remove me
 	kEventEngineLast
 };

@@ -119,7 +119,16 @@ UserInput KeypadManager::captureUserInput()
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
 	// store keys
-	this->userInput.powerFlag 	= this->userInput.allKeys & K_PWR;
+	if(0 == this->userInput.powerFlag)
+	{
+		if(this->userInput.allKeys & K_PWR)
+		{
+			KeypadManager::fireEvent(this, kEventKeypadManagerRaisedPowerFlag);
+
+			this->userInput.powerFlag 	= this->userInput.allKeys & K_PWR;
+		}
+	}
+
 	this->userInput.allKeys 	&= K_ANY;
 
 	if(this->reseted)
