@@ -40,7 +40,7 @@ friend class Texture;
  * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), ListenerObject owner __attribute__((unused)))
+void Sprite::constructor(const SpriteSpec* spriteSpec, ListenerObject owner __attribute__((unused)))
 {
 	Base::constructor();
 
