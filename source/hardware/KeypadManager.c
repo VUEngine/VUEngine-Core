@@ -121,15 +121,15 @@ UserInput KeypadManager::captureUserInput()
 	// store keys
 	if(0 == this->userInput.powerFlag)
 	{
-		if(this->userInput.allKeys & K_PWR)
+		if(K_PWR == (this->userInput.allKeys & K_PWR))
 		{
 			KeypadManager::fireEvent(this, kEventKeypadManagerRaisedPowerFlag);
 
-			this->userInput.powerFlag 	= this->userInput.allKeys & K_PWR;
+			this->userInput.powerFlag = this->userInput.allKeys & K_PWR;
 		}
 	}
 
-	this->userInput.allKeys 	&= K_ANY;
+	this->userInput.allKeys &= K_ANY;
 
 	if(this->reseted)
 	{
