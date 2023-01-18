@@ -536,6 +536,7 @@ void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
  */
 void VIPManager::upBrightness()
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
@@ -546,6 +547,7 @@ void VIPManager::upBrightness()
  */
 void VIPManager::lowerBrightness()
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
 	_vipRegisters[__BRTC] = 0;
@@ -675,6 +677,7 @@ void VIPManager::useInternalColumnTable(bool useInternal)
  */
 void VIPManager::setupBrightness(Brightness* brightness)
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__BRTA] = brightness->darkRed;
 	_vipRegisters[__BRTB] = brightness->mediumRed;
 	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
