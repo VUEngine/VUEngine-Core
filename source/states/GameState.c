@@ -333,8 +333,10 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		// Move the camera to its initial position
 		Camera::focus(Camera::getInstance(), false);
 
-		// Transformation everything so anything outside the camera
-		// can be streamed out
+		// invalidate transformations
+		Stage::invalidateGlobalTransformation(this->stage);
+
+		// Transformation everything
 		GameState::transform(this);
 
 		// Force graphics to get ready
@@ -364,7 +366,8 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 
 void GameState::streamAll()
 {
-	GameState::doStreamAll(this, Stage::streamAll);
+	GameState::streamOutAll(this);
+	GameState::streamInAll(this);
 }
 
 void GameState::streamInAll()

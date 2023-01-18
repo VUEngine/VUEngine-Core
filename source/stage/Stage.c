@@ -1168,17 +1168,23 @@ bool Stage::streamAll()
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
 
-	// Force deletion
-	Stage::purgeChildren(this);
+	bool result = false;
 
-	bool result = Stage::stream(this);
+	do
+	{
+		// Force deletion
+		Stage::purgeChildren(this);
+
+		result = Stage::stream(this);
+
+		// Force deletion
+		Stage::purgeChildren(this);
+	}
+	while(result);
 
 	this->streamingAmplitude = this->streaming.streamingAmplitude;
 
-	// Force deletion
-	Stage::purgeChildren(this);
-
-	return result || EntityFactory::hasEntitiesPending(this->entityFactory);
+	return EntityFactory::hasEntitiesPending(this->entityFactory);
 }
 
 bool Stage::streamInAll()
@@ -1199,6 +1205,9 @@ bool Stage::streamInAll()
 
 bool Stage::streamOutAll()
 {
+	this->streamingPhase = 0;
+	this->streamingHeadNode = NULL;
+
 	// Force deletion
 	Stage::purgeChildren(this);
 
