@@ -972,7 +972,7 @@ void Container::invalidateGlobalTransformation()
 {
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
-	if(NULL != this->children)
+	if(!isDeleted(this->children))
 	{
 		// update each child
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)

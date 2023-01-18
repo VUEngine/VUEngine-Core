@@ -895,8 +895,6 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 				}
 			}
 
-			bool unloaded = false;
-
 			if(NULL != stageEntityDescription)
 			{
 				if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -908,16 +906,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			// unload it
 			Stage::unloadChild(this, entity);
 
-			unloadedEntities = unloadedEntities || true;
-
-			if(unloaded)
-			{
-#ifdef __PROFILE_STREAMING
-				uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
-				unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
-#endif
-				return true;
-			}
+			unloadedEntities = true;
 		}
 	}
 
