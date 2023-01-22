@@ -1222,7 +1222,7 @@ bool Stage::streamOutAll()
 // execute stage's logic
 void Stage::update()
 {
-	Container::updateChildren(this);
+	Base::update(this);
 
 	if(!isDeleted(this->uiContainer))
 	{
