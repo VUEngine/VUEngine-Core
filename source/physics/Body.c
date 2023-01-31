@@ -210,6 +210,21 @@ const Vector3D* Body::getDirection3D()
 	return &this->direction;
 }
 
+void Body::setDirection3D(const Vector3D* direction)
+{
+	if(NULL == direction)
+	{
+		return;
+	}
+
+	this->direction = *direction;
+	this->velocity = Vector3D::scalarProduct(this->direction, this->speed);
+
+	this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+	this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+	this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
+}
+
 fixed_t Body::getSpeed()
 {
 	return this->speed;
