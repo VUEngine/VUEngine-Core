@@ -257,6 +257,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	}
 #endif
 
+#ifndef __SHIPPING
 	Printing::setDebugMode(Printing::getInstance());
 	Printing::clear(Printing::getInstance());
 	CharSetManager::print(this, 1, 10);
@@ -268,6 +269,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
+#endif
 
 	return NULL;
 }
