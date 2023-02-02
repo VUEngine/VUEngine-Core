@@ -85,8 +85,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->invalidateGraphics = 0;
 	this->transformShapes = true;
 	this->allowCollisions = true;
-
-	Entity::createBehaviors(this);
 }
 
 /**
@@ -1329,7 +1327,7 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
  */
 void Entity::transformShapes()
 {
-	if(this->shapes && this->transformShapes)
+	if(!isDeleted(this->shapes) && this->transformShapes)
 	{
 		// setup shape
 		const Vector3D* myPosition = Entity::getPosition(this);
@@ -1503,9 +1501,10 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 		Entity::createSprites(this);
 		Entity::createWireframes(this);
 		Entity::createShapes(this);
+		Entity::createBehaviors(this);
 
 		// now can calculate the size
-		if(!this->size.x || !this->size.y || !this->size.z)
+		if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
 		{
 			// must force size calculation now
 			Entity::calculateSize(this);

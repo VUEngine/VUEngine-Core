@@ -218,7 +218,7 @@ void Container::addChild(Container child)
 	// first remove from previous parent
 	if(this != child->parent)
 	{
-		if(child->parent)
+		if(NULL != child->parent)
 		{
 			Container::removeChild(child->parent, child, false);
 
@@ -1210,12 +1210,12 @@ int32 Container::getChildCount()
  */
 void Container::setName(const char* const name)
 {
-	if(this->name)
+	if(NULL != this->name)
 	{
 		delete this->name;
 	}
 
-	if(!name)
+	if(NULL == name)
 	{
 		return;
 	}
