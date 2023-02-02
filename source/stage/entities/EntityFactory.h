@@ -123,10 +123,10 @@ typedef struct PositionedEntityDescription
 	bool spritesCreated;
 	bool wireframesCreated;
 	bool shapesCreated;
-	bool shapesBehaviors;
+	bool behaviorsCreated;
 	bool transformed;
 	bool graphicsSynchronized;
-	
+
 } PositionedEntityDescription;
 
 
