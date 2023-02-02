@@ -32,7 +32,9 @@
 		ClassName ClassName ## _new(__VA_ARGS__)
 
 
-#ifndef __RELEASE
+#ifdef __RELEASE
+#define __BYPASS_MEMORY_MANAGER_WHEN_DELETING
+#else
 #undef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #endif
 
