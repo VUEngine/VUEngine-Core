@@ -146,6 +146,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->spritesCreated = false;
 	positionedEntityDescription->wireframesCreated = false;
 	positionedEntityDescription->shapesCreated = false;
+	positionedEntityDescription->shapesBehaviors = false;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -241,6 +242,13 @@ uint32 EntityFactory::transformEntities()
 		{
 			Entity::createShapes(positionedEntityDescription->entity);
 			positionedEntityDescription->shapesCreated = true;
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
+		if(!positionedEntityDescription->shapesBehaviors)
+		{
+			Entity::createBehaviors(positionedEntityDescription->entity);
+			positionedEntityDescription->shapesBehaviors = true;
 			return __ENTITY_PENDING_PROCESSING;
 		}
 

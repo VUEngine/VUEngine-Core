@@ -119,12 +119,14 @@ typedef struct PositionedEntityDescription
 	Container parent;
 	Entity entity;
 	EventListener callback;
+	int16 internalId;
 	bool spritesCreated;
 	bool wireframesCreated;
 	bool shapesCreated;
-	int16 internalId;
+	bool shapesBehaviors;
 	bool transformed;
 	bool graphicsSynchronized;
+	
 } PositionedEntityDescription;
 
 

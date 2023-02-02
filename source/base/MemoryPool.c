@@ -403,8 +403,8 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 		uint32 numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 		BYTE* poolLocationStart = &this->poolLocation[pool][0];
-		BYTE* poolLocationLeft = this->poolLastFreeBlock[pool];
-		BYTE* poolLocationRight = poolLocationLeft + blockSize;
+		BYTE* poolLocationRight = this->poolLastFreeBlock[pool];
+		BYTE* poolLocationLeft = poolLocationRight - blockSize;
 		BYTE* poolLocationEnd = &this->poolLocation[pool][blockSize * (numberOfOjects - 1)];
 		BYTE* poolLocation = NULL;
 		bool keepLooking = false;
