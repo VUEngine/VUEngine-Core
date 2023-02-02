@@ -68,6 +68,7 @@ class Entity : Container
 	void createSprites();
 	void createWireframes();
 	void createShapes();
+	void createBehaviors();
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
 	void addWireframe(Wireframe wireframe);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
