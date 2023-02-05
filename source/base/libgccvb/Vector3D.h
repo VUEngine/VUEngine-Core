@@ -398,12 +398,12 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 
 static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
 {
-	return 0 < (__FIXED_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_MULT((b.y - a.y), (p.x - a.x)));
+	return 0 < (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
 
 static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
 {
-	return 0 > (__FIXED_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_MULT((b.y - a.y), (p.x - a.x)));
+	return 0 > (__FIXED_EXT_MULT((b.x - a.x), (p.y - a.y)) - __FIXED_EXT_MULT((b.y - a.y), (p.x - a.x)));
 }
 
 static inline bool Vector3D::areEqual(Vector3D a, Vector3D b)
