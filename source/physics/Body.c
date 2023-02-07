@@ -357,42 +357,42 @@ void Body::clearExternalForce()
 // apply force
 uint8 Body::applyForce(const Vector3D* force)
 {
-	if(force)
+	if(NULL == force)
 	{
-		this->externalForce.x += force->x;
-		this->externalForce.y += force->y;
-		this->externalForce.z += force->z;
-
-		uint16 axisOfExternalForce = __NO_AXIS;
-
-		if(0 != force->x)
-		{
-			axisOfExternalForce |= __X_AXIS;
-		}
-
-		if(0 != force->y)
-		{
-			axisOfExternalForce |= __Y_AXIS;
-		}
-
-		if(0 != force->z)
-		{
-			axisOfExternalForce |= __Z_AXIS;
-		}
-
-		if(axisOfExternalForce)
-		{
-			Body::clearNormalOnAxis(this, axisOfExternalForce);
-			Body::setMovementType(this, __ACCELERATED_MOVEMENT, axisOfExternalForce);
-			Body::awake(this, axisOfExternalForce);
-		}
-
-		this->clearExternalForce |= axisOfExternalForce;
-
-		return axisOfExternalForce;
+		return __NO_AXIS;
 	}
 
-	return __NO_AXIS;
+	this->externalForce.x += force->x;
+	this->externalForce.y += force->y;
+	this->externalForce.z += force->z;
+
+	uint16 axisOfExternalForce = __NO_AXIS;
+
+	if(0 != force->x)
+	{
+		axisOfExternalForce |= __X_AXIS;
+	}
+
+	if(0 != force->y)
+	{
+		axisOfExternalForce |= __Y_AXIS;
+	}
+
+	if(0 != force->z)
+	{
+		axisOfExternalForce |= __Z_AXIS;
+	}
+
+	if(__NO_AXIS != axisOfExternalForce)
+	{
+		Body::clearNormalOnAxis(this, axisOfExternalForce);
+		Body::setMovementType(this, __ACCELERATED_MOVEMENT, axisOfExternalForce);
+		Body::awake(this, axisOfExternalForce);
+	}
+
+	this->clearExternalForce |= axisOfExternalForce;
+
+	return axisOfExternalForce;
 }
 
 // apply gravity
@@ -886,7 +886,7 @@ void Body::computeTotalNormal()
 {
 	this->totalNormal = Vector3D::zero();
 
-	if(this->normals)
+	if(NULL != this->normals)
 	{
 		VirtualNode node = this->normals->head;
 
@@ -905,9 +905,11 @@ void Body::computeTotalNormal()
 		}
 	}
 
-	Body::computeTotalFrictionCoefficient(this);
-
-	Body::computeFrictionForceMagnitude(this);
+	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
+	{
+		Body::computeTotalFrictionCoefficient(this);
+		Body::computeFrictionForceMagnitude(this);
+	}
 }
 
 void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnitude)
@@ -987,8 +989,10 @@ void Body::reset()
 
 void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 {
-	if(this->normals && !isDeleted(this->normals->head))
+	if(!isDeleted(this->normals))
 	{
+		bool computeTotalNormal = false;
+
 		for(VirtualNode node = this->normals->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -1003,20 +1007,26 @@ void Body::clearNormalOnAxis(uint16 axis __attribute__ ((unused)))
 			{
 				VirtualList::removeNode(this->normals, node);
 				delete node->data;
+				computeTotalNormal = true;
 			}
 		}
-	}
 
-	Body::computeTotalNormal(this);
+		if(computeTotalNormal)
+		{
+			Body::computeTotalNormal(this);
+		}
+	}
 }
 
 void Body::clearNormal(ListenerObject referent)
 {
 	ASSERT(!isDeleted(referent), "Body::clearNormal: dead referent");
 
-	if(this->normals)
+	if(!isDeleted(this->normals))
 	{
-		for(VirtualNode node = this->normals->head; NULL != node; node = node->next)
+		VirtualNode node = this->normals->head;
+
+		for(; NULL != node; node = node->next)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
@@ -1030,9 +1040,12 @@ void Body::clearNormal(ListenerObject referent)
 				break;
 			}
 		}
-	}
 
-	Body::computeTotalNormal(this);
+		if(NULL != node)
+		{
+			Body::computeTotalNormal(this);
+		}
+	}
 }
 
 fixed_t Body::getFrictionForceMagnitude()
@@ -1069,7 +1082,7 @@ void Body::computeFrictionForceMagnitude()
 		return;
 	}
 
-	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
+	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		this->frictionForceMagnitude = __ABS(__FIXED_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
 	}
@@ -1154,13 +1167,13 @@ bool Body::isAwake()
 // awake body
 void Body::awake(uint16 axisOfAwakening)
 {
-	bool dispatchMessage = false;
-
 	this->awake = true;
 	this->active = true;
 
 	if(this->sendMessages)
 	{
+		bool dispatchMessage = false;
+
 		if(!this->velocity.x && (__X_AXIS & axisOfAwakening))
 		{
 			dispatchMessage |= (__X_AXIS & axisOfAwakening);
