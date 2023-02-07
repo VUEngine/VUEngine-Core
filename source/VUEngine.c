@@ -672,31 +672,6 @@ void VUEngine::synchronizeGraphics()
 #endif
 }
 
-// update game's rendering subsystem
-void VUEngine::synchronizeUIGraphics()
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_UI_GRAPHICS;
-#endif
-
-#ifdef __TOOLS
-	if(VUEngine::isInSoundTest(this))
-	{
-		return;
-	}
-#endif
-
-#ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this) || VUEngine::isEnteringSpecialMode(this) || VUEngine::isExitingSpecialMode(this))
-	{
-		return;
-	}
-#endif
-
-	// apply transformations to graphics
-	GameState::synchronizeUIGraphics(this->currentState);
-}
-
 // update game's physics subsystem
 void VUEngine::updatePhysics()
 {

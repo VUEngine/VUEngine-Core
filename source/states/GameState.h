@@ -82,7 +82,6 @@ class GameState : State
 	void streamInAll();
 	void streamOutAll();
 	Clock getClock();
-	void synchronizeUIGraphics();
 
 	virtual void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);

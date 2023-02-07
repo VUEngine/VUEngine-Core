@@ -241,7 +241,6 @@ class Stage : Container
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
-	virtual void synchronizeUIGraphics();
 	
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
