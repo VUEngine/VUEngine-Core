@@ -153,7 +153,10 @@ void Texture::setSpec(TextureSpec* textureSpec)
 
 	if(this->textureSpec != textureSpec)
 	{
-		Texture::releaseCharSet(this);
+		if(NULL != this->charSet && textureSpec->charSetSpec != CharSet::getCharSetSpec(this->charSet))
+		{
+			Texture::releaseCharSet(this);
+		}
 
 		this->textureSpec = textureSpec;
 		this->frame = 0;
