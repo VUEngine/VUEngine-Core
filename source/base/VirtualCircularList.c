@@ -640,7 +640,7 @@ void VirtualCircularList::copy(VirtualCircularList sourceList)
  */
 void VirtualCircularList::reverse()
 {
-	if(this->head && this->tail != this->head)
+	if(NULL != this->head && this->tail != this->head)
 	{
 		VirtualNode node = this->head;
 		VirtualNode nextNode = node->next;

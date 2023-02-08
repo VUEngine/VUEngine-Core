@@ -698,24 +698,31 @@ void VirtualList::substract(VirtualList sourceList)
  *
  * @param sourceList
  */
-void VirtualList::reverse(VirtualList sourceList)
+void VirtualList::reverse()
 {
-#ifdef __DEBUG
-	int32 counter = 0;
-#endif
-
-	VirtualNode node = sourceList->head;
-
-	VirtualList::clear(this);
-
-	while(NULL != node)
+	if(NULL != this->head && this->tail != this->head)
 	{
-		// add next node
-		VirtualList::pushFront(this, node->data);
-		// move to next node
-		node = node->next;
+		VirtualNode node = this->head;
+		VirtualNode nextNode = node->next;
 
-		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
+		do
+		{
+			VirtualNode helper = node->next;
+			node->next = node->previous;
+			node->previous = helper;
+
+			node = nextNode;
+			nextNode = nextNode->next;
+		}
+		while(NULL != nextNode);
+
+		VirtualNode helper = node->next;
+		node->next = node->previous;
+		node->previous = helper;
+
+		helper = this->head;
+		this->head = this->tail;
+		this->tail = helper;
 	}
 }
 
