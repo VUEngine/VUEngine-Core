@@ -321,12 +321,9 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 		BgmapTexture allocatedBgmapTexture = BgmapTexture::safeCast(node->data);
 		TextureSpec* allocatedTextureSpec = BgmapTexture::getTextureSpec(allocatedBgmapTexture);
 
-		if(!recyclableOnly)
+		if(!recyclableOnly && allocatedTextureSpec == textureSpec)
 		{
-			CharSet charSet = Texture::getCharSet(allocatedBgmapTexture, false);
-
-			if(allocatedTextureSpec == textureSpec &&
-				(NULL == charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
+			if((NULL == allocatedBgmapTexture->charSet || allocatedTextureSpec->charSetSpec->allocationType == bgmapTextureSpec->charSetSpec->allocationType) &&
 				(allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols && allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows)
 			)
 			{
@@ -340,9 +337,9 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			continue;
 		}
 
-		if(allocatedTextureSpec->recyclable && 0 == BgmapTexture::getUsageCount(allocatedBgmapTexture))
+		if(allocatedTextureSpec->recyclable && 0 == allocatedBgmapTexture->usageCount)
 		{
-			uint16 id = Texture::getId(allocatedBgmapTexture);
+			uint16 id = allocatedBgmapTexture->id;
 			uint16 cols = this->offset[id][kCols];
 			uint16 rows = this->offset[id][kRows];
 
@@ -359,7 +356,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 				}
 				else 
 				{
-					uint16 selectedBgmapTextureId = Texture::getId(selectedBgmapTexture);
+					uint16 selectedBgmapTextureId = selectedBgmapTexture->id;
 					uint16 selectedBgmapTextureCols = this->offset[selectedBgmapTextureId][kCols];
 					uint16 selectedBgmapTextureRows = this->offset[selectedBgmapTextureId][kRows];
 
