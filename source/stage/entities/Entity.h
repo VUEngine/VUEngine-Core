@@ -65,10 +65,10 @@ class Entity : Container
 	void streamOut();
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
-	void createSprites();
-	void createWireframes();
-	void createShapes();
-	void createBehaviors();
+	bool createSprites();
+	bool createWireframes();
+	bool createShapes();
+	bool createBehaviors();
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
 	void addWireframe(Wireframe wireframe);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);

@@ -208,12 +208,14 @@ void Entity::streamOut()
 /**
  * Create behaviors
  */
-void Entity::createBehaviors()
+bool Entity::createBehaviors()
 {
 	if(NULL == this->behaviors)
 	{
 		Entity::addBehaviors(this, this->entitySpec->behaviorSpecs, true);
 	}
+
+	return NULL != this->behaviors;
 }
 
 /**
@@ -266,7 +268,7 @@ void Entity::destroyBehaviors()
 /**
  * Create sprites
  */
-void Entity::createSprites()
+bool Entity::createSprites()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
@@ -274,6 +276,8 @@ void Entity::createSprites()
 	{
 		Entity::addSprites(this, this->entitySpec->spriteSpecs, true);
 	}
+
+	return NULL != this->sprites;
 }
 
 /**
@@ -362,7 +366,7 @@ void Entity::destroySprites()
 /**
  * Add wireframes
  */
-void Entity::createWireframes()
+bool Entity::createWireframes()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
@@ -370,6 +374,8 @@ void Entity::createWireframes()
 	{
 		Entity::addWireframes(this, this->entitySpec->wireframeSpecs, true);
 	}
+
+	return NULL != this->wireframes;
 }
 
 /**
@@ -447,7 +453,7 @@ void Entity::destroyWireframes()
 /**
  * Add shapes
  */
-void Entity::createShapes()
+bool Entity::createShapes()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
@@ -457,6 +463,8 @@ void Entity::createShapes()
 	}
 
 	Entity::transformShapes(this);
+
+	return NULL != this->shapes;
 }
 
 /**

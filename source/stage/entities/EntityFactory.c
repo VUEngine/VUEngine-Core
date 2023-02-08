@@ -226,30 +226,46 @@ uint32 EntityFactory::transformEntities()
 
 		if(!positionedEntityDescription->spritesCreated)
 		{
-			Entity::createSprites(positionedEntityDescription->entity);
+			bool createdSprites = Entity::createSprites(positionedEntityDescription->entity);
 			positionedEntityDescription->spritesCreated = true;
-			return __ENTITY_PENDING_PROCESSING;
+
+			if(createdSprites)
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
 		}
 
 		if(!positionedEntityDescription->wireframesCreated)
 		{
-			Entity::createWireframes(positionedEntityDescription->entity);
+			bool createdWireframes = Entity::createWireframes(positionedEntityDescription->entity);
 			positionedEntityDescription->wireframesCreated = true;
-			return __ENTITY_PENDING_PROCESSING;
+
+			if(createdWireframes)
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
 		}
 
 		if(!positionedEntityDescription->shapesCreated)
 		{
-			Entity::createShapes(positionedEntityDescription->entity);
+			bool createdShapes = Entity::createShapes(positionedEntityDescription->entity);
 			positionedEntityDescription->shapesCreated = true;
-			return __ENTITY_PENDING_PROCESSING;
+
+			if(createdShapes)
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
 		}
 
 		if(!positionedEntityDescription->behaviorsCreated)
 		{
-			Entity::createBehaviors(positionedEntityDescription->entity);
+			bool createdBehaviors = Entity::createBehaviors(positionedEntityDescription->entity);
 			positionedEntityDescription->behaviorsCreated = true;
-			return __ENTITY_PENDING_PROCESSING;
+
+			if(createdBehaviors)
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
