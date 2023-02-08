@@ -129,7 +129,7 @@ void EntityFactory::destructor()
 
 void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Container parent, EventListener callback, int16 internalId)
 {
-	if(!positionedEntity || !parent)
+	if(NULL == positionedEntity || NULL == parent)
 	{
 		return;
 	}
@@ -155,7 +155,7 @@ uint32 EntityFactory::instantiateEntities()
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
 
-	if(!this->entitiesToInstantiate->head)
+	if(NULL == this->entitiesToInstantiate->head)
 	{
 		return __LIST_EMPTY;
 	}
@@ -186,7 +186,7 @@ uint32 EntityFactory::instantiateEntities()
 			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
 			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
-			if(positionedEntityDescription->callback)
+			if(NULL != positionedEntityDescription->callback)
 			{
 				Entity::addEventListener(positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
 			}
@@ -204,7 +204,7 @@ uint32 EntityFactory::instantiateEntities()
 // transformation spawned entities
 uint32 EntityFactory::transformEntities()
 {
-	if(!this->entitiesToTransform->head)
+	if(NULL == this->entitiesToTransform->head)
 	{
 		return __LIST_EMPTY;
 	}
@@ -279,6 +279,7 @@ uint32 EntityFactory::transformEntities()
 		Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
 
 		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
+		Entity::calculateSize(positionedEntityDescription->entity);
 
 		return __ENTITY_PENDING_PROCESSING;
 	}
@@ -299,7 +300,7 @@ uint32 EntityFactory::transformEntities()
 
 uint32 EntityFactory::makeReadyEntities()
 {
-	if(!this->entitiesToMakeReady->head)
+	if(NULL == this->entitiesToMakeReady->head)
 	{
 		return __LIST_EMPTY;
 	}
@@ -310,7 +311,6 @@ uint32 EntityFactory::makeReadyEntities()
 	{
 		if(!positionedEntityDescription->graphicsSynchronized)
 		{
-			Entity::calculateSize(positionedEntityDescription->entity);
 			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 			Entity::synchronizeGraphics(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
@@ -348,7 +348,7 @@ uint32 EntityFactory::makeReadyEntities()
 
 uint32 EntityFactory::cleanUp()
 {
-	if(!this->spawnedEntities->head)
+	if(NULL == this->spawnedEntities->head)
 	{
 		return __LIST_EMPTY;
 	}
@@ -357,7 +357,7 @@ uint32 EntityFactory::cleanUp()
 
 	if(!isDeleted(positionedEntityDescription->parent) && !isDeleted(positionedEntityDescription->entity))
 	{
-		if(positionedEntityDescription->callback)
+		if(NULL != positionedEntityDescription->callback)
 		{
 			Entity::fireEvent(positionedEntityDescription->entity, kEventEntityLoaded);
 			NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::cleanUp: deleted entity during kEventEntityLoaded");

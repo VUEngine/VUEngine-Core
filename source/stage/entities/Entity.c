@@ -463,8 +463,6 @@ bool Entity::createShapes()
 		Entity::addShapes(this, this->entitySpec->shapeSpecs, true);
 	}
 
-	Entity::transformShapes(this);
-
 	return NULL != this->shapes;
 }
 
@@ -657,7 +655,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
 
-	if(this->children)
+	if(!isDeleted(this->children))
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
@@ -1276,7 +1274,7 @@ uint32 Entity::areAllChildrenTransformed()
  */
 uint32 Entity::areAllChildrenReady()
 {
-	if(this->entityFactory)
+	if(!isDeleted(this->entityFactory))
 	{
 		uint32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
 
@@ -1284,15 +1282,10 @@ uint32 Entity::areAllChildrenReady()
 		{
 			delete this->entityFactory;
 			this->entityFactory = NULL;
-
-			// must force size calculation now that all children are loaded
-			Entity::calculateSize(this);
 		}
 
 		return returnValue;
 	}
-
-	Entity::calculateSize(this);
 
 	return true;
 }
