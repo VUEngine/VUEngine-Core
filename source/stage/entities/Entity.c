@@ -124,6 +124,7 @@ void Entity::destroyComponents()
 	Entity::destroyWireframes(this);
 	Entity::destroySprites(this);
 	Entity::destroyShapes(this);
+	Entity::destroyBehaviors(this);
 }
 
 /**
