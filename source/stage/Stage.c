@@ -1022,7 +1022,7 @@ bool Stage::stream()
 	}
 #endif
 
-	if(Stage::updateEntityFactory(this) && this->streaming.deferred)
+	if(Stage::updateEntityFactory(this))
 	{
 		return true;
 	}
@@ -1068,6 +1068,9 @@ bool Stage::streamInAll()
 	this->streamingHeadNode = NULL;
 	this->streamingAmplitude = (uint16)-1;
 
+	// make sure that the entity factory doesn't have any pending operations
+	EntityFactory::prepareAllEntities(this->entityFactory);
+
 	// Force deletion
 	Stage::purgeChildren(this);
 
@@ -1082,6 +1085,9 @@ bool Stage::streamOutAll()
 {
 	this->streamingPhase = 0;
 	this->streamingHeadNode = NULL;
+
+	// make sure that the entity factory doesn't have any pending operations
+	EntityFactory::prepareAllEntities(this->entityFactory);
 
 	// Force deletion
 	Stage::purgeChildren(this);
