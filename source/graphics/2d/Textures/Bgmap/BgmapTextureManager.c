@@ -246,7 +246,7 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 	BgmapTextureManager::print(this, 1, 10);
 	Printing::text(Printing::getInstance(), "Texture ", 1, 19, NULL);
 	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
-	Printing::hex(Printing::getInstance(), (WORD)&textureSpec, 14, 21, 8, NULL);
+	Printing::hex(Printing::getInstance(), (WORD)textureSpec, 14, 21, 8, NULL);
 
 	// throw an exception if there is no enough space to allocate the bgmap spec
 	Error::triggerException("BgmapTextureManager::doAllocate: bgmap segments depleted", NULL);		
