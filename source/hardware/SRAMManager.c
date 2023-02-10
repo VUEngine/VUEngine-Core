@@ -103,7 +103,7 @@ void SRAMManager::clear(int32 startOffset, int32 endOffset)
 }
 
 /**
- * Save data from SRAM
+ * Save data to SRAM
  *
  * @param source			WRAM address from were data will be copied
  * @param memberOffset		WRAM address offset
