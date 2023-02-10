@@ -66,7 +66,8 @@ printComponentsToBuildInformation:
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt >> $(WORKING_FOLDER)/traces/components.txt.tmp)
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/components.txt > $(WORKING_FOLDER)/traces/builtComponents.txt)
 	@$(eval COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/components.txt.tmp))
-	@echo "Components: $(COMPONENTS)"
+	@echo "Components:  $$(($(COMPONENTS) / 2))"
+	@echo "Build steps: $(COMPONENTS)"
 	@echo "COMPONENTS=$(COMPONENTS)" > \$(WORKING_FOLDER)/traces/components.txt
 	@cat \$(WORKING_FOLDER)/traces/components.txt.tmp >> $(WORKING_FOLDER)/components.txt
 	@rm -f \$(WORKING_FOLDER)/traces/components.txt.tmp 
