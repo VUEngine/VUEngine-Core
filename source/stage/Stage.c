@@ -738,6 +738,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 
 	StageEntityDescription* stageEntityDescription = new StageEntityDescription;
 
+	stageEntityDescription->extraInfo = NULL;
 	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
@@ -934,8 +935,13 @@ bool Stage::loadInRangeEntities(int32 defer)
 		this->streamingHeadNode = this->stageEntityDescriptions->head;
 	}
 
-	for(uint16 counter = 0; NULL != this->streamingHeadNode && counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next)
+	for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next)
 	{
+		if(NULL == this->streamingHeadNode)
+		{
+			this->streamingHeadNode = this->stageEntityDescriptions->head;
+		}
+
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
 
 		if(0 > stageEntityDescription->internalId)
