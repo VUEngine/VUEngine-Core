@@ -935,11 +935,18 @@ bool Stage::loadInRangeEntities(int32 defer)
 		this->streamingHeadNode = this->stageEntityDescriptions->head;
 	}
 
+	bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
+
 	for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next)
 	{
 		if(NULL == this->streamingHeadNode)
 		{
 			this->streamingHeadNode = this->stageEntityDescriptions->head;
+
+			if(negativeStreamingAmplitude)
+			{
+				break;
+			}
 		}
 
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
