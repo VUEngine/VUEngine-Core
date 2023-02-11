@@ -278,6 +278,7 @@ uint32 EntityFactory::transformEntities()
 
 		Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
 
+		Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 		Entity::calculateSize(positionedEntityDescription->entity);
 
