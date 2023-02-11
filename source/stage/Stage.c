@@ -937,7 +937,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 	bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
 
-	for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next)
+	for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
 	{
 		if(NULL == this->streamingHeadNode)
 		{
@@ -953,7 +953,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 		if(0 > stageEntityDescription->internalId)
 		{
-			counter++;
 
 			// if entity in load range
 			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
