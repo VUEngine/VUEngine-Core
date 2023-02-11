@@ -1495,9 +1495,6 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
  */
 void Entity::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
 {
-	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform, createComponents);
-
 	if(createComponents)
 	{
 		Entity::createSprites(this);
@@ -1514,6 +1511,14 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 
 		// graphics synchronization calls computeIfInCameraRange, which depends on the size already be calculated
 		Entity::synchronizeGraphics(this);
+	}
+
+	// call base class's transformation method
+	Base::initialTransform(this, environmentTransform, createComponents);
+
+	if(createComponents)
+	{
+		Entity::transformShapes(this);
 	}
 
 	if(this->hidden)
