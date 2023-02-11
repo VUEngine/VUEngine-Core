@@ -1120,7 +1120,7 @@ int32 Container::propagateArguments(int32 (*propagationHandler)(void*, va_list),
 			Container child = Container::safeCast(node->data);
 
 			// pass message to each child
-			if(Container::propagateArguments(child, propagationHandler, args))
+			if(!child->deleteMe && Container::propagateArguments(child, propagationHandler, args))
 			{
 				return true;
 			}
