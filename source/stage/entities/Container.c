@@ -267,6 +267,7 @@ void Container::removeChild(Container child, bool deleteChild)
 
 		if(deleteChild)
 		{
+			Container::discardAllMessages(child);
 			Container::destroyComponents(child);
 		}
 	}
