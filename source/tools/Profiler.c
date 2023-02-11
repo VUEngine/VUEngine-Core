@@ -364,7 +364,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	uint8 printingColumn = this->lastLapIndex >> 1;
 
-	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn);
+	Profiler::registerLap(this, processName, elapsedTime, lapType, printingColumn + 1);
 
 	this->lastLapIndex += entries;
 	this->currentProfilingProcess++;
