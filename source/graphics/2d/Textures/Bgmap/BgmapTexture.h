@@ -66,7 +66,7 @@ class BgmapTexture : Texture
 	void setSegment(int8 segment);
 	void setHorizontalFlip(bool value);
 	void setVerticalFlip(bool value);
-	override bool write();
+	override bool write(int16 maximumTextureRowsToWrite);
 	override void rewrite();
 }
 

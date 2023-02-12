@@ -546,17 +546,10 @@ void SpriteManager::writeTextures()
 {
 	CharSetManager::writeCharSets(this->charSetManager);
 
-	int8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
-
-	// allow complete texture writing
-	this->texturesMaximumRowsToWrite = -1;
-
 	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
-		Sprite::writeTextures(node->data);
+		Sprite::writeTextures(node->data, -1);
 	}
-
-	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
 
 	CharSetManager::writeCharSets(this->charSetManager);
 }
@@ -597,7 +590,7 @@ void SpriteManager::writeDRAM()
 	CharSetManager::writeCharSetsProgressively(this->charSetManager);
 
 	// Update BGMAP memory
-	BgmapTextureManager::updateTextures(this->bgmapTextureManager);
+	BgmapTextureManager::updateTextures(this->bgmapTextureManager, this->texturesMaximumRowsToWrite);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -605,7 +598,7 @@ void SpriteManager::writeDRAM()
 	// Finally, write OBJ and WORLD attributes to DRAM
 	if(NULL != this->objectSpriteContainers->head)
 	{
-		ObjectTextureManager::updateTextures(this->objectTextureManager);
+		ObjectTextureManager::updateTextures(this->objectTextureManager, this->texturesMaximumRowsToWrite);
 		ObjectSpriteContainer::writeDRAM();
 	}
 

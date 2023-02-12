@@ -373,7 +373,7 @@ int16 Sprite::getIndex()
  *
  * @return			true it all textures are written
  */
-bool Sprite::writeTextures()
+bool Sprite::writeTextures(int16 maximumTextureRowsToWrite)
 {
 	if(isDeleted(this->texture))
 	{
@@ -382,7 +382,7 @@ bool Sprite::writeTextures()
 
 	if(kTexturePendingWriting == this->texture->status)
 	{
-		Texture::write(this->texture);
+		Texture::write(this->texture, maximumTextureRowsToWrite);
 	}
 
 	return kTexturePendingWriting != this->texture->status;

@@ -285,7 +285,7 @@ void BgmapTextureManager::setDeferTextureUpdate(bool value)
  *
  * @public
  */
-void BgmapTextureManager::updateTextures()
+void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite)
 {
 	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
@@ -293,7 +293,7 @@ void BgmapTextureManager::updateTextures()
 
 		if(kTextureWritten != texture->status && texture->update)
 		{
-			texture->update = !Texture::update(texture);
+			texture->update = !Texture::update(texture, maximumTextureRowsToWrite);
 
 			if(this->deferTextureUpdate)
 			{

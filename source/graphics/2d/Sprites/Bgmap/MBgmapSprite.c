@@ -426,7 +426,7 @@ void MBgmapSprite::setMode(uint16 display, uint16 mode __attribute__ ((unused)))
  *
  * @return			true it all textures are written
  */
-bool MBgmapSprite::writeTextures()
+bool MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
 {
 	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
 
@@ -438,7 +438,7 @@ bool MBgmapSprite::writeTextures()
 
 		if(kTexturePendingWriting == texture->status)
 		{
-			Texture::write(texture);
+			Texture::write(texture, maximumTextureRowsToWrite);
 			break;
 		}
 	}

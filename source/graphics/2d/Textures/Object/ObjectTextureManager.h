@@ -38,7 +38,7 @@ singleton class ObjectTextureManager : Object
 	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
 	void releaseTexture(ObjectTexture bgmapTexture);
 	void reset();
-	void updateTextures();
+	void updateTextures(int16 maximumTextureRowsToWrite);
 }
 
 

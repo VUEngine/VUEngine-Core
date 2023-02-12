@@ -424,13 +424,13 @@ void ObjectSpriteContainer::setMode(uint16 display __attribute__ ((unused)), uin
  *
  * @return			true it all textures are written
  */
-bool ObjectSpriteContainer::writeTextures()
+bool ObjectSpriteContainer::writeTextures(int16 maximumTextureRowsToWrite)
 {
 	if(!isDeleted(this->objectSprites))
 	{
 		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 		{
-			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data));
+			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data), maximumTextureRowsToWrite);
 		}
 	}
 

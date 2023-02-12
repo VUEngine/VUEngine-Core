@@ -88,7 +88,7 @@ void BgmapTexture::rewrite()
 /**
  * Write the texture to DRAM
  */
-bool BgmapTexture::write()
+bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 {
 	if(isDeleted(this->charSet))
 	{
@@ -98,7 +98,7 @@ bool BgmapTexture::write()
 	
 	uint8 status = this->status;
 
-	if(!Base::write(this))
+	if(!Base::write(this, maximumTextureRowsToWrite))
 	{
 		return false;
 	}
@@ -131,18 +131,18 @@ bool BgmapTexture::write()
 		case __ANIMATED_SHARED_COORDINATED:
 		case __NOT_ANIMATED:
 
-			BgmapTexture::doWrite(this, kTexturePendingRewriting == status);
+			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingRewriting == status);
 			break;
 
 		case __ANIMATED_SINGLE_OPTIMIZED:
 
-			BgmapTexture::doWrite(this, kTextureFrameChanged >= status);
+			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTextureFrameChanged >= status);
 			break;
 
 		case __ANIMATED_MULTI:
 
 			// write the spec to graphic memory
-			BgmapTexture::writeAnimatedMulti(this);
+			BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
 			break;
 
 		default:
@@ -167,7 +167,7 @@ bool BgmapTexture::write()
  *
  * @private
  */
-void BgmapTexture::writeAnimatedMulti()
+void BgmapTexture::writeAnimatedMulti(int16 maximumTextureRowsToWrite)
 {
 	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
 	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
@@ -187,10 +187,10 @@ void BgmapTexture::writeAnimatedMulti()
 	int32 frames = CharSet::getNumberOfChars(this->charSet) / area;
 	uint32 mapDisplacement = this->mapDisplacement;
 
-	int32 counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
+	int32 counter = maximumTextureRowsToWrite;
 
 	// put the map into memory calculating the number of char for each reference
-	for(; counter && this->remainingRowsToBeWritten--; counter--)
+	for(; 0 != counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		int32 j = 1;
 		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
@@ -301,7 +301,7 @@ static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HW
  *
  * @private
  */
-void BgmapTexture::doWrite(bool forceFullRewrite)
+void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrite)
 {
 	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
 	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
@@ -315,7 +315,7 @@ void BgmapTexture::doWrite(bool forceFullRewrite)
 	int32 offsetDisplacement = xOffset + (yOffset << 6);
 	uint16 offset = (int32)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
-	int32 counter = forceFullRewrite ? -1 : SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
+	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
 	uint32 mapDisplacement = this->mapDisplacement;
 
 	uint32 numberOfHWORDS = this->textureSpec->cols;

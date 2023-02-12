@@ -197,7 +197,7 @@ void Texture::releaseCharSet()
 /**
  * Write the map to DRAM
  */
-bool Texture::write()
+bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
 	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
@@ -223,11 +223,7 @@ bool Texture::prepare()
 	{
 		case kTexturePendingWriting:
 
-			// Non written textures can be written at any time 
-			// since they are not visible yet
-			Texture::write(this);
-
-			// Leave a cycle to make sure that everything is ready
+			this->update = true;
 			return false;
 			break;
 
@@ -261,13 +257,18 @@ bool Texture::prepare()
 	return kTextureWritten == this->status;
 }
 
-bool Texture::update()
+bool Texture::update(int16 maximumTextureRowsToWrite)
 {
 	switch(this->status)
 	{
+		case kTexturePendingWriting:
+
+			Texture::write(this, maximumTextureRowsToWrite);
+			break;
+
 		case kTexturePendingRewriting:
 
-			Texture::write(this);
+			Texture::write(this, maximumTextureRowsToWrite);
 
 			if(kTextureWritten == this->status)
 			{
@@ -280,7 +281,7 @@ bool Texture::update()
 
 		case kTextureMapDisplacementChanged:
 
-			Texture::write(this);
+			Texture::write(this, maximumTextureRowsToWrite);
 
 			if(kTextureWritten != this->status)
 			{
@@ -296,7 +297,7 @@ bool Texture::update()
 
 			if(isDeleted(this->charSet))
 			{
-				Texture::write(this);
+				Texture::write(this, maximumTextureRowsToWrite);
 			}
 			else
 			{
@@ -307,7 +308,7 @@ bool Texture::update()
 
 						CharSet::setFrame(this->charSet, this->frame);
 						CharSet::write(this->charSet);
-						Texture::write(this);
+						Texture::write(this, maximumTextureRowsToWrite);
 						break;
 
 					case __NOT_ANIMATED:

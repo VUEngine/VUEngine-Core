@@ -83,7 +83,7 @@ class MBgmapSprite : BgmapSprite
 	override void resize(Scale scale, fixed_t z);
 	override void setMode(uint16 display, uint16 mode);
 	override bool prepareTexture();
-	override bool writeTextures();
+	override bool writeTextures(int16 maximumTextureRowsToWrite);
 }
 
 

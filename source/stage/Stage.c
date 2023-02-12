@@ -709,7 +709,7 @@ void Stage::preloadAssets()
 					}
 					else
 					{
-						Texture::write(bgmapTexture);
+						Texture::write(bgmapTexture, -1);
 						Texture::releaseCharSet(bgmapTexture);
 					}
 				}

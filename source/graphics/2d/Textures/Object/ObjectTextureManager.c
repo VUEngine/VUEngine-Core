@@ -120,7 +120,7 @@ void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
  *
  * @public
  */
-void ObjectTextureManager::updateTextures()
+void ObjectTextureManager::updateTextures(int16 maximumTextureRowsToWrite)
 {
 	for(VirtualNode node = this->objectTextures->head; NULL != node; node = node->next)
 	{
@@ -128,7 +128,7 @@ void ObjectTextureManager::updateTextures()
 
 		if(texture->update)
 		{
-			texture->update = !Texture::update(texture);
+			texture->update = !Texture::update(texture, maximumTextureRowsToWrite);
 		}
 	}
 }

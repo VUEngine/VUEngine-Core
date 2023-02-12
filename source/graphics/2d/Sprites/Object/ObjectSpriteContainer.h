@@ -69,7 +69,7 @@ class ObjectSpriteContainer : Sprite
 	override void forceShow();
 	override int16 doRender(int16 index, bool evenFrame);
 	override void setMode(uint16 display, uint16 mode);
-	override bool writeTextures();
+	override bool writeTextures(int16 maximumTextureRowsToWrite);
 	override void print(int32 x, int32 y);
 	override int32 getTotalPixels();
 	override void invalidateRenderFlag();
