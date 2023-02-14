@@ -953,7 +953,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 		if(0 > stageEntityDescription->internalId)
 		{
-
 			// if entity in load range
 			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
 			{
