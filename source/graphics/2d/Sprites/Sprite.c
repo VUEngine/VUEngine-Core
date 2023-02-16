@@ -151,20 +151,15 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
-	// Do not remove this check, it prevents sprites from loop
-	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
-	{
-		if(this->writeAnimationFrame)
-		{
-			Sprite::update(this);
-		}
-
-		return __NO_RENDER_INDEX;
-	}
-
 	if(this->writeAnimationFrame)
 	{
 		Sprite::update(this);
+	}
+
+	// Do not remove this check, it prevents sprites from loop
+	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
+	{
+		return __NO_RENDER_INDEX;
 	}
 
 	if((previousIndex == index) && !this->renderFlag)
