@@ -115,9 +115,11 @@ void Profiler::reset()
 	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
 	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
 	this->skipFrames = 1;
+	this->lastCycleTotalTime = 0;
 	this->totalTime = 0;
 	this->lastLapIndex = 0;
 	this->previousTimerCounter = 0;
+	this->cycles = 0;
 
 	for(int32 i = 0; i < 96; i++)
 	{
@@ -181,7 +183,7 @@ void Profiler::start()
 	this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	this->printedProcessesNames = true;
 	this->currentProfilingProcess = 0;
-	this->totalTime = 0;
+	this->lastCycleTotalTime = 0;
 	this->lastLapIndex = 0;
 	this->interruptFlags = 0;
 
@@ -331,7 +333,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 		this->previousTimerCounter += this->timerCounter;
 	}
 
-	float elapsedTime = this->timePerGameFrameInMS - this->totalTime;
+	float elapsedTime = this->timePerGameFrameInMS - this->lastCycleTotalTime;
 
 	if(0 > elapsedTime)
 	{
@@ -341,7 +343,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 	if(!isHeadroom)
 	{
 		elapsedTime = (this->previousTimerCounter - currentTimerCounter) * this->timeProportion;
-		this->totalTime += elapsedTime;
+		this->lastCycleTotalTime += elapsedTime;
 	}
 
 	uint8 value = 0;
@@ -372,7 +374,10 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 
 	if(isHeadroom)
 	{
-		Profiler::registerLap(this, "TOTAL", this->totalTime, lapType, 46);
+		Profiler::registerLap(this, "TOTAL", this->lastCycleTotalTime, lapType, 46);
+		this->cycles++;
+		this->totalTime += this->lastCycleTotalTime;
+		Profiler::registerLap(this, "AVERAGE", this->totalTime / this->cycles, lapType, 47);		
 	}
 
 	TimerManager::enable(this->timerManager, true);

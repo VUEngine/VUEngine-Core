@@ -46,9 +46,11 @@ singleton class Profiler : ListenerObject
 	VirtualList laps;
 	TimerManager timerManager;
 	float timeProportion;
+	float lastCycleTotalTime;
 	float totalTime;
 	uint32 interruptFlags;
 	uint32 timePerGameFrameInMS;
+	uint32 cycles;
 	uint16 timerCounter;
 	uint16 previousTimerCounter;
 	uint8 currentProfilingProcess;
