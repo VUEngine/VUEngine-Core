@@ -264,6 +264,11 @@ void SoundManager::startPCMPlayback()
 void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 {
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
+
+	if(0 == this->pcmTargetPlaybackFrameRate)
+	{
+		this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	}
 }
 
 void SoundManager::flushQueuedSounds()
