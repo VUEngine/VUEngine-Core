@@ -308,7 +308,8 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 	// go through n sprites in entity's spec
 	for(int32 i = 0; NULL != spriteSpecs[i] && NULL != spriteSpecs[i]->allocator; i++)
 	{
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this)));
+		Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpecs[i]->allocator)((const SpriteSpec*)spriteSpecs[i], this);
+		VirtualList::pushBack(this->sprites, sprite);
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 
@@ -354,7 +355,7 @@ void Entity::destroySprites()
 			}
 #endif
 			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::destroySprites: trying to dispose dead sprite");
-			SpriteManager::disposeSprite(spriteManager, Sprite::safeCast(node->data));
+			delete Sprite::safeCast(node->data);
 		}
 
 		// delete the sprites
