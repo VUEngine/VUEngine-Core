@@ -57,8 +57,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 
 	if(!isDeleted(this->texture))
 	{
-		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-
 		switch(Texture::getAllocationType(this->texture))
 		{
 			case __ANIMATED_MULTI:
@@ -93,6 +91,11 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
 	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
+
+	if(0 != this->param && !isDeleted(this->texture))
+	{
+		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+	}
 }
 
 /**
@@ -154,7 +157,11 @@ void BgmapSprite::releaseTexture()
 			ParamTableManager::free(ParamTableManager::getInstance(), this);
 		}
 
-		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		if(0 != this->param)
+		{
+			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		}
+		
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
