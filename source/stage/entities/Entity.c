@@ -303,12 +303,10 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 		this->sprites = new VirtualList();
 	}
 
-	SpriteManager spriteManager = SpriteManager::getInstance();
-
 	// go through n sprites in entity's spec
 	for(int32 i = 0; NULL != spriteSpecs[i] && NULL != spriteSpecs[i]->allocator; i++)
 	{
-		Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpecs[i]->allocator)((const SpriteSpec*)spriteSpecs[i], this);
+		Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpecs[i]->allocator)((SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this));
 		VirtualList::pushBack(this->sprites, sprite);
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
@@ -331,8 +329,6 @@ void Entity::destroySprites()
 
 	if(!isDeleted(this->sprites))
 	{
-		SpriteManager spriteManager = SpriteManager::getInstance();
-
 		// Must use a temporal list to prevent any race condition
 		VirtualList sprites = this->sprites;
 		this->sprites = NULL;
