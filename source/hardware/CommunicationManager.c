@@ -197,9 +197,9 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 
 	// Wait a little bit for channel to stabilize
 #ifdef __RELEASE
-	TimerManager::wait(TimerManager::getInstance(), 2000);
+	VUEngine::wait(VUEngine::getInstance(), 2000);
 #else
-	TimerManager::wait(TimerManager::getInstance(), 500);
+	VUEngine::wait(VUEngine::getInstance(), 500);
 #endif
 
 	// If handshake is taking place

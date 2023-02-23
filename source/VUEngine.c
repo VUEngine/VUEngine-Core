@@ -227,7 +227,7 @@ void VUEngine::initialize()
 	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
 #else
 #ifdef __RELEASE
-	TimerManager::wait(TimerManager::getInstance(), 4000);
+	VUEngine::wait(VUEngine::getInstance(), 4000);
 #endif
 #endif
 }
