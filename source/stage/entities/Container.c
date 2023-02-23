@@ -1260,11 +1260,16 @@ Container Container::findChildByName(VirtualList children, const char* childName
 	{
 		Container child = Container::safeCast(node->data);
 
-		if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
+		if(child->deleteMe)
+		{
+			continue;
+		}
+
+		if(NULL != child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
 		{
 			return child;
 		}
-		else if(recursive && child->children)
+		else if(recursive && NULL != child->children)
 		{
 			Container grandChild = Container::findChildByName(this, child->children, childName, recursive);
 			
