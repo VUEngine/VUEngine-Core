@@ -583,9 +583,9 @@ void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester,
 // remove entity from the stage
 void Stage::removeChild(Container child, bool deleteChild)
 {
-	ASSERT(child, "Stage::removeEntity: null child");
+	NM_ASSERT(!isDeleted(child), "Stage::removeEntity: null child");
 
-	if(!child)
+	if(isDeleted(child))
 	{
 		return;
 	}
@@ -607,22 +607,22 @@ void Stage::removeChild(Container child, bool deleteChild)
 		}
 	}
 
-	if(node)
+	if(NULL != node)
 	{
 		if(this->streamingHeadNode == node)
 		{
 			this->streamingHeadNode = this->streamingHeadNode->previous;
 		}
 
-		VirtualList::removeElement(this->stageEntityDescriptions, node->data);
 		delete node->data;
+		VirtualList::removeNode(this->stageEntityDescriptions, node);
 	}
 }
 
 // unload entity from the stage
-void Stage::unloadChild(Entity child)
+void Stage::removeChildEntity(Entity child)
 {
-	ASSERT(child, "Stage::unloadChild: null child");
+	ASSERT(child, "Stage::removeChildEntity: null child");
 
 	if(!child)
 	{
@@ -647,8 +647,8 @@ void Stage::unloadChild(Entity child)
 			// if the entity is not to be respawned
 			if(!Entity::respawn(child))
 			{
-				VirtualList::removeElement(this->stageEntityDescriptions, node->data);
 				delete node->data;
+				VirtualList::removeNode(this->stageEntityDescriptions, node);
 			}
 
 			break;
@@ -905,7 +905,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			}
 
 			// unload it
-			Stage::unloadChild(this, entity);
+			Stage::removeChildEntity(this, entity);
 
 			unloadedEntities = true;
 		}
