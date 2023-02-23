@@ -321,8 +321,10 @@ uint32 EntityFactory::makeReadyEntities()
 
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
+			NM_ASSERT(!isDeleted(positionedEntityDescription->parent), "EntityFactory::makeReadyEntities: deleted parent");
+
 			// Must add the child to its parent before making it ready
-			Entity::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
+			Container::addChild(positionedEntityDescription->`, Container::safeCast(positionedEntityDescription->entity));
 
 			// call ready method
 			Entity::ready(positionedEntityDescription->entity, false);
