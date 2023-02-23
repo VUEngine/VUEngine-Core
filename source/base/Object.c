@@ -74,10 +74,28 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		asm(" mov lp,%0  ": "=r" (lp));
 	}
 
-	if(!object)
+#ifdef __DEBUG
+	static int counter = 0;
+
+	if(100 < ++counter)
+	{
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::hex(Printing::getInstance(), (uint32)object, 18, 15, 8, NULL);
+	
+		_vuengineLinkPointer = lp;
+		_vuengineStackPointer = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: infinite callback");
+	}
+#endif
+
+	if(NULL == object)
 	{
 		lp = -1;
 		sp = -1;
+#ifdef __DEBUG
+		counter = 0;
+#endif
 		return NULL;
 	}
 
@@ -124,6 +142,9 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		{
 			lp = -1;
 			sp = -1;
+#ifdef __DEBUG
+			counter = 0;
+#endif
 			return object;
 		}
 
@@ -136,6 +157,10 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	{
 		lp = -1;
 		sp = -1;
+
+#ifdef __DEBUG
+		counter = 0;
+#endif
 		return NULL;
 	}
 
@@ -143,6 +168,10 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	{
 		lp = -1;
 		sp = -1;
+
+#ifdef __DEBUG
+		counter = 0;
+#endif
 		return object;
 	}
 
