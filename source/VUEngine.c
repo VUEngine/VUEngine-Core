@@ -779,11 +779,12 @@ void VUEngine::checkForNewState()
 
 void VUEngine::updateFrameRate()
 {
+#ifdef __TOOLS
 	if(VUEngine::isInSpecialMode(this))
 	{
 		return;
 	}
-
+#endif
 	FrameRate::update(this->frameRate);
 }
 
@@ -1105,10 +1106,12 @@ StateMachine VUEngine::getStateMachine()
 // retrieve the current level's stage
 Stage VUEngine::getStage()
 {
+#ifdef __TOOLS
 	if(VUEngine::isInSpecialMode(this))
 	{
 		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
+#endif
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
@@ -1123,11 +1126,13 @@ GameState VUEngine::getCurrentState()
 
 PhysicalWorld VUEngine::getPhysicalWorld()
 {
+#ifdef __TOOLS
 	if(VUEngine::isInSpecialMode(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
 	}
+#endif
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
@@ -1135,11 +1140,13 @@ PhysicalWorld VUEngine::getPhysicalWorld()
 
 CollisionManager VUEngine::getCollisionManager()
 {
+#ifdef __TOOLS
 	if(VUEngine::isInSpecialMode(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
 	}
+#endif
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getCollisionManager(state);
