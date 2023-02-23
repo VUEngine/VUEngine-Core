@@ -476,7 +476,12 @@ void VIPManager::applyPostProcessingEffects()
 
 void VIPManager::setFrameCycle(uint8 frameCycle)
 {
+#ifndef __DEBUG
 	this->frameCycle = frameCycle;
+#else
+	this->frameCycle = 2;
+#endif
+
 
 	if(3 < this->frameCycle)
 	{
