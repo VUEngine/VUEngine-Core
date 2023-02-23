@@ -91,6 +91,9 @@ singleton class HardwareManager : Object
 
 static inline void HardwareManager::halt()
 {
+	// Make sure that I don't halt forever
+	HardwareManager::enableInterrupts();
+
     static const long code = 0x181F6800L;
     ((void(*)())&code)();
 }
@@ -124,10 +127,13 @@ static inline void HardwareManager::setInterruptLevel(uint8 level)
  */
 static inline void HardwareManager::enableInterrupts()
 {
-	_enabledInterrupts = true;
+	if(!_enabledInterrupts)
+	{
+		_enabledInterrupts = true;
 
-	asm("cli");
-	HardwareManager::setInterruptLevel(0);
+		asm("cli");
+		HardwareManager::setInterruptLevel(0);
+	}
 }
 
 /**
@@ -135,10 +141,13 @@ static inline void HardwareManager::enableInterrupts()
  */
 static inline void HardwareManager::disableInterrupts()
 {
-	_enabledInterrupts = false;
+	if(_enabledInterrupts)
+	{
+		_enabledInterrupts = false;
 
-	asm("sei");
-	HardwareManager::setInterruptLevel(5);
+		asm("sei");
+		HardwareManager::setInterruptLevel(5);
+	}
 }
 
 /**
