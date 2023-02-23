@@ -109,16 +109,6 @@ void Entity::destructor()
 	Base::destructor();
 }
 
-/**
- * Clean up method
- */
-void Entity::iAmDeletingMyself()
-{
-	Base::iAmDeletingMyself(this);
-
-	Entity::destroyComponents(this);
-}
-
 void Entity::destroyComponents()
 {
 	Entity::destroyWireframes(this);

@@ -140,7 +140,7 @@ class Container : SpatialObject
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	void transformChildren(uint8 invalidateTransformationFlag);
-	virtual void iAmDeletingMyself();
+	
 	virtual void ready(bool recursive);
 	virtual void update();
 	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);

@@ -83,7 +83,6 @@ class Actor : AnimatedEntity
 	virtual bool mustBounce();
 	virtual bool registerCollidingShapes();
 	virtual fixed_t getMaximumSpeed();
-	override void iAmDeletingMyself();
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
@@ -100,6 +99,7 @@ class Actor : AnimatedEntity
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);
 	override bool enterCollision(const CollisionInformation* collisionInformation);
+	override void destroyComponents();
 }
 
 

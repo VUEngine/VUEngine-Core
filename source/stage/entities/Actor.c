@@ -114,14 +114,16 @@ void Actor::initializeStateMachine(State state)
 	this->update = true;
 }
 
-void Actor::iAmDeletingMyself()
+void Actor::destroyComponents()
 {
-	Base::iAmDeletingMyself(this);
+	Base::destroyComponents(this);
 
 	// destroy body to prevent any more physical interactions
 	if(!isDeleted(this->body))
 	{
-		Body::setActive(this->body, false);
+		// remove a body
+		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(_vuEngine), this->body);
+		this->body = NULL;
 	}
 }
 

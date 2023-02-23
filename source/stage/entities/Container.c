@@ -151,11 +151,14 @@ void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
 
+	this->update = false;
+	this->transform = false;
+	this->synchronizeGraphics = false;
+
 	if(!isDeleted(this->parent))
 	{
 		Container::hide(this);
 		Container::removeChild(this->parent, this, true);
-		Container::iAmDeletingMyself(this);
 	}
 	else if(!this->deleteMe)
 	{
@@ -185,13 +188,6 @@ void Container::removeBehavior(Behavior behavior)
 	{
 		VirtualList::removeElement(this->behaviors, behavior);
 	}
-}
-
-void Container::iAmDeletingMyself()
-{
-	this->update = false;
-	this->transform = false;
-	this->synchronizeGraphics = false;
 }
 
 /**
