@@ -83,7 +83,32 @@ void LineField::transform(const Vector3D* position, const Rotation* rotation, co
 		normalScale = scale->z;
 	}
 
-	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
+	this->normalLength = __PIXELS_TO_METERS(8);
+	
+	if(size->x > size->y)
+	{
+		if(size->x > size->z)
+		{
+			this->normalLength = size->x;
+		}
+		else
+		{
+			this->normalLength = size->z;
+		}
+	}
+	else
+	{
+		if(size->y > size->z)
+		{
+			this->normalLength = size->y;
+		}
+		else
+		{
+			this->normalLength = size->z;
+		}		
+	}
+
+	this->normalLength = __FIXED_MULT(this->normalLength, __FIX7_9_TO_FIXED(normalScale));	
 	
 	if(0 != size->x)
 	{
@@ -211,6 +236,9 @@ void LineField::configureWireframe()
 			/// interlaced
 			false
 		},
+
+//		Vector3D::intermediate(this->a, this->b),
+//		Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)
 
 		this->a,
 		this->b,
