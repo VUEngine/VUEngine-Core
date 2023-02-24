@@ -514,7 +514,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 	int16 halfHeight = 0;
 	int16 halfDepth = ENTITY_SPRITE_HALF_DEPTH;
 
-	if((!this->size.x || !this->size.y || !this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
+	if((0 == this->size.x || 0 == this->size.y || 0 == this->size.z) && (NULL != this->sprites || NULL != this->wireframes))
 	{
 		if(NULL != this->sprites)
 		{

@@ -280,7 +280,6 @@ uint32 EntityFactory::transformEntities()
 
 		Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
-		Entity::calculateSize(positionedEntityDescription->entity);
 
 		return __ENTITY_PENDING_PROCESSING;
 	}
@@ -312,6 +311,7 @@ uint32 EntityFactory::makeReadyEntities()
 	{
 		if(!positionedEntityDescription->graphicsSynchronized)
 		{
+			Entity::calculateSize(positionedEntityDescription->entity);
 			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 			Entity::synchronizeGraphics(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
