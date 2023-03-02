@@ -317,7 +317,12 @@ void ParticleSystem::update()
 
 			++this->totalSpawnedParticles;
 
-			if(((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+			if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+			{
+				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+				this->particleCount++;
+			}
+			else
 			{
 				if(!ParticleSystem::recycleParticle(this))
 				{
@@ -331,11 +336,6 @@ void ParticleSystem::update()
 				{
 					this->particleCount++;
 				}
-			}
-			else
-			{
-				VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
-				this->particleCount++;
 			}
 
 			this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);

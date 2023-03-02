@@ -359,11 +359,14 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
 	}
 
-	if(force->x | force->y | force->z)
+	if(NULL != force)
 	{
-		Particle::applySustainedForce(this, force, movementType);
+		if(0 != force->x || 0 != force->y || 0 != force->z)
+		{
+			Particle::applySustainedForce(this, force, movementType);
+		}
 	}
-	
+
 	Particle::synchronizeGraphics(this);
 	Particle::show(this);
 }
