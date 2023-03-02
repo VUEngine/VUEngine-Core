@@ -166,16 +166,6 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 }
 
 /**
- * Make PhysicalParticle invisible
- */
-void PhysicalParticle::hide()
-{
-	Base::hide(this);
-
-	Body::stopMovement(this->body, __ALL_AXIS);
-}
-
-/**
  * Can move over axis?
  *
  * @param acceleration

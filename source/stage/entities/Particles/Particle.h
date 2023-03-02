@@ -83,6 +83,9 @@ class Particle : SpatialObject
 	bool isVisible();
 	void setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
 	void expire();
+	void hide();
+	void show();
+	void setAnimationName(const char* animationName);
 	virtual void synchronizeGraphics();
 	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
@@ -92,9 +95,6 @@ class Particle : SpatialObject
 	virtual void reset();
 	virtual void setMass(fixed_t mass);
 	virtual void changeMass();
-	virtual void hide();
-	virtual void show();
-	void setAnimationName(const char* animationName);
 	override bool isSubjectToGravity(Vector3D gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();

@@ -65,7 +65,6 @@ class PhysicalParticle : Particle
 	override bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
 	override void transform();
 	override void setMass(fixed_t mass);
-	override void hide();
 	override void reset();
 	override void changeMass();
 }

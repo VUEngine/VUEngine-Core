@@ -348,11 +348,31 @@ void Particle::reset()
  */
 void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
-	Particle::reset(this);
+	if(Particle::overrides(this, reset))
+	{
+		Particle::reset(this);
+	}
+	else
+	{
+		this->expired = false;
+	}
+
+	if(Particle::overrides(this, changeMass))
+	{
+		Particle::changeMass(this);
+	}
+
+	if(Particle::overrides(this, setPosition))
+	{
+		Particle::setPosition(this, position);
+	}
+	else
+	{
+		this->position = *position;
+	}
+
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
-	Particle::changeMass(this);
-	Particle::setPosition(this, position);
 
 	if(!isDeleted(this->wireframe))
 	{
@@ -367,7 +387,7 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		}
 	}
 
-	Particle::synchronizeGraphics(this);
+//	Particle::synchronizeGraphics(this);
 	Particle::show(this);
 }
 
