@@ -242,14 +242,12 @@ void BgmapTexture::setFrameAnimatedMulti(uint16 frame __attribute__((unused)))
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward)
+static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
 {
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenTextureTiles;
 	_writtenTextureTiles += numberOfHWORDS;
 #endif
-
-	int16 increment = backward ? -2 : 2;
 
 	const HWORD* finalSource = source + numberOfHWORDS;
 
@@ -272,10 +270,8 @@ static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* sourc
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
-static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward)
+static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
 {
-	int16 increment = backward ? -2 : 2;
-
 	const HWORD* finalSource = source + numberOfHWORDS;
 
     asm("					\n\t"      \
@@ -312,42 +308,41 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	}
 
 	int32 bgmapSegment = this->segment;
-	int32 offsetDisplacement = xOffset + (yOffset << 6);
+	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(bgmapSegment) + xOffset + (yOffset << 6);
+	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement;
 	uint16 offset = (int32)CharSet::getOffset(this->charSet) | (this->palette << 14);
-
 	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
-	uint32 mapDisplacement = this->mapDisplacement;
-
-	uint32 numberOfHWORDS = this->textureSpec->cols;
-
 	uint16 flip = ((this->horizontalFlip << 1) | this->verticalFlip) << 12;
+	int8 remainingRowsToBeWritten = this->remainingRowsToBeWritten;
+	int16 cols = this->textureSpec->cols;
+	int16 rows = this->textureSpec->rows;
 
 	if(this->horizontalFlip)
 	{
 		if(this->verticalFlip)
 		{
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + ((this->remainingRowsToBeWritten) << 6) + numberOfHWORDS - 1,
-						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
-						numberOfHWORDS,
+				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + ((remainingRowsToBeWritten) << 6) + cols - 1,
+						mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
+						cols,
 						offset,
 						flip,
-						true);
+						-2);
 			}
 		}
 		else
 		{
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6) + numberOfHWORDS - 1,
-						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
-						numberOfHWORDS,
+				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6) + cols - 1,
+						mapDisplacement + ((remainingRowsToBeWritten) * cols),
+						cols,
 						offset,
 						flip,
-						true);
+						-2);
 			}
 		}
 	}
@@ -356,39 +351,41 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		if(this->verticalFlip)
 		{
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->textureSpec->rows - this->remainingRowsToBeWritten - 1) * this->textureSpec->cols),
-						numberOfHWORDS,
+				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+						mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
+						cols,
 						offset,
 						flip,
-						false);
+						2);
 			}
 		}
 		else
 		{
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && this->remainingRowsToBeWritten--; counter--)
+			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-						(const HWORD*)this->textureSpec->map + mapDisplacement + ((this->remainingRowsToBeWritten) * this->textureSpec->cols),
-						numberOfHWORDS,
+				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+						mapDisplacement + ((remainingRowsToBeWritten) * cols),
+						cols,
 						offset,
 						flip,
-						false);
+						2);
 			}
 		}
 	}
 
-	if(this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
+	this->remainingRowsToBeWritten = remainingRowsToBeWritten;
+
+	if(0 < this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
 	{
-		BgmapTexture::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->textureSpec->rows << 6),
+		BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (rows << 6),
 				(const HWORD*)_emptyTextureRow,
-				numberOfHWORDS,
+				cols,
 				0,
 				false,
-				false);
+				2);
 	}
 }
 

@@ -55,9 +55,6 @@ class BgmapTexture : Texture
 	bool horizontalFlip : 1;
 	bool verticalFlip : 1;
 
-	/// @publicsection
-	static void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, bool backward);
-
 	void constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id);
 	int8 getRemainingRowsToBeWritten();
 	int16 getXOffset();
