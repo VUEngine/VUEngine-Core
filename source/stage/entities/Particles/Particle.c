@@ -148,7 +148,7 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 			return true;
 		}
 
-		if(behavior)
+		if(NULL != behavior)
 		{
 			behavior(this);
 		}
@@ -169,21 +169,23 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
  */
 void Particle::synchronizeGraphics()
 {
-	if(!isDeleted(this->sprite))
+	if(isDeleted(this->sprite))
 	{
-		if(this->position.z != this->previousZ)
-		{
-			// calculate sprite's parallax
-			Sprite::calculateParallax(this->sprite, this->position.z);
-
-			this->previousZ = this->position.z;
-		}
-
-		PixelVector position = Vector3D::transformToPixelVector(this->position);
-
-		// update sprite's 2D position
-		Sprite::setPosition(this->sprite, &position);
+		return;
 	}
+
+	if(this->position.z != this->previousZ)
+	{
+		// calculate sprite's parallax
+		Sprite::calculateParallax(this->sprite, this->position.z);
+
+		this->previousZ = this->position.z;
+	}
+
+	PixelVector position = Vector3D::transformToPixelVector(this->position);
+
+	// update sprite's 2D position
+	Sprite::setPosition(this->sprite, &position);
 }
 
 /**
