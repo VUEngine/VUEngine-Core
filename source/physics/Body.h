@@ -173,7 +173,7 @@ class Body : ListenerObject
 	const Vector3D* getPosition();
 	const Vector3D* getVelocity();
 	void setVelocity(Vector3D* velocity);
-	const Vector3D* getDirection3D();
+	const Vector3D* getDirection();
 	void setDirection3D(const Vector3D* direction);
 	fixed_t getSpeed();
 	fixed_ext_t getSpeedSquare();

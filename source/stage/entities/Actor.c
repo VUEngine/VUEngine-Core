@@ -213,44 +213,44 @@ void Actor::doSyncRotationWithBody()
 			return;
 		}
 
-		Vector3D direction3D = *Body::getDirection3D(this->body);
+		Vector3D direction = *Body::getDirection(this->body);
 		
 		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 		{
-			Direction direction = Actor::getDirection(this);
+			NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this);
 
-			if(0 > direction3D.x)
+			if(0 > direction.x)
 			{
-				direction.x = __LEFT;
+				normalizedDirection.x = __LEFT;
 			}
-			else if(0 < direction3D.x)
+			else if(0 < direction.x)
 			{
-				direction.x = __RIGHT;
-			}
-
-			if(0 > direction3D.y)
-			{
-				direction.y = __UP;
-			}
-			else if(0 < direction3D.y)
-			{
-				direction.y = __DOWN;
+				normalizedDirection.x = __RIGHT;
 			}
 
-			if(0 > direction3D.z)
+			if(0 > direction.y)
 			{
-				direction.z = __NEAR;
+				normalizedDirection.y = __UP;
 			}
-			else if(0 < direction3D.z)
+			else if(0 < direction.y)
 			{
-				direction.z = __FAR;
+				normalizedDirection.y = __DOWN;
 			}
 
-			Actor::setDirection(this, direction);
+			if(0 > direction.z)
+			{
+				normalizedDirection.z = __NEAR;
+			}
+			else if(0 < direction.z)
+			{
+				normalizedDirection.z = __FAR;
+			}
+
+			Actor::setNormalizedDirection(this, normalizedDirection);
 		}
 		else
 		{
-			Rotation localRotation = Actor::getRotationFromDirection(this, &direction3D, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
+			Rotation localRotation = Actor::getRotationFromDirection(this, &direction, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
 			Base::setLocalRotation(this, &localRotation);
 		}
 	}
@@ -370,45 +370,45 @@ void Actor::changeDirectionOnAxis(uint16 axis)
 	}
 	else
 	{
-		Direction direction = Actor::getDirection(this);
+		NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this);
 
 		if((__X_AXIS & axis))
 		{
-			if(__RIGHT == direction.x)
+			if(__RIGHT == normalizedDirection.x)
 			{
-				direction.x = __LEFT;
+				normalizedDirection.x = __LEFT;
 			}
 			else
 			{
-				direction.x = __RIGHT;
+				normalizedDirection.x = __RIGHT;
 			}
 		}
 
 		if((__Y_AXIS & axis))
 		{
-			if(__UP == direction.y)
+			if(__UP == normalizedDirection.y)
 			{
-				direction.y = __DOWN;
+				normalizedDirection.y = __DOWN;
 			}
 			else
 			{
-				direction.y = __UP;
+				normalizedDirection.y = __UP;
 			}
 		}
 
 		if((__Z_AXIS & axis))
 		{
-			if(__NEAR == direction.z)
+			if(__NEAR == normalizedDirection.z)
 			{
-				direction.x = __FAR;
+				normalizedDirection.x = __FAR;
 			}
 			else
 			{
-				direction.x = __NEAR;
+				normalizedDirection.x = __NEAR;
 			}
 		}
 
-		Actor::setDirection(this, direction);
+		Actor::setNormalizedDirection(this, normalizedDirection);
 	}
 }
 
@@ -698,6 +698,11 @@ fixed_t Actor::getBounciness()
 const Vector3D* Actor::getVelocity()
 {
 	return !isDeleted(this->body) ? Body::getVelocity(this->body) : Base::getVelocity(this);
+}
+
+const Vector3D* Actor::getDirection()
+{
+	return !isDeleted(this->body) ? Body::getDirection(this->body) : Base::getDirection(this);
 }
 
 fixed_t Actor::getSpeed()

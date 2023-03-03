@@ -144,6 +144,11 @@ const Vector3D* SpatialObject::getVelocity()
 	return NULL;
 }
 
+const Vector3D* SpatialObject::getDirection()
+{
+	return NULL;
+}
+
 fixed_t SpatialObject::getSpeed()
 {
 	return 0;

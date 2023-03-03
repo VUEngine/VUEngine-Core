@@ -126,13 +126,13 @@ typedef struct PixelRotation
 } PixelRotation;
 
 // spatial direction vector
-typedef struct Direction
+typedef struct NormalizedDirection
 {
 	int8 x;
 	int8 y;
 	int8 z;
 
-} Direction;
+} NormalizedDirection;
 
 // engine's optical values structure
 typedef struct Optical

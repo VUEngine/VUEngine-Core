@@ -44,6 +44,7 @@ class SpatialObject : ListenerObject
 	virtual fixed_t getBounciness();
 	virtual fixed_t getFrictionCoefficient();
 	virtual const Vector3D* getVelocity();
+	virtual const Vector3D* getDirection();
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);

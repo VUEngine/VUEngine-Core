@@ -94,6 +94,7 @@ class Actor : AnimatedEntity
 	override void setPosition(const Vector3D* position);
 	override bool isSubjectToGravity(Vector3D gravity);
 	override const Vector3D* getVelocity();
+	override const Vector3D* getDirection();
 	override fixed_t getSpeed();
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);

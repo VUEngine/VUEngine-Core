@@ -1282,7 +1282,7 @@ uint32 Entity::areAllChildrenReady()
  *
  * @private
  */
-void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection __attribute__((unused)), int32 shapeSpecIndex)
+void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, int32 shapeSpecIndex)
 {
 	if(!isDeleted(shape))
 	{
@@ -1323,8 +1323,6 @@ void Entity::transformShapes()
 		const Rotation* myRotation = Entity::getRotation(this);
 		const Scale* myScale = Entity::getScale(this);
 
-		Direction currentDirection = Entity::getDirection(this);
-
 		if(this->entitySpec->shapeSpecs)
     	{
 			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
@@ -1334,7 +1332,7 @@ void Entity::transformShapes()
 			{
 				Shape shape = Shape::safeCast(node->data);
 
-				Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, i);
+				Entity::transformShape(this, shape, myPosition, myRotation, myScale, i);
 			}
 		}
 		else
@@ -1343,7 +1341,7 @@ void Entity::transformShapes()
 			{
 				Shape shape = Shape::safeCast(node->data);
 
-				Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, -1);
+				Entity::transformShape(this, shape, myPosition, myRotation, myScale, -1);
 			}
 		}
 	}
@@ -1367,7 +1365,7 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 
 		if(!isDeleted(shape))
 		{
-			Entity::transformShape(this, shape, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), Entity::getDirection(this), shapeSpecIndex);
+			Entity::transformShape(this, shape, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), shapeSpecIndex);
 		}
 
 		return true;
@@ -2106,18 +2104,18 @@ void Entity::hideShapes()
 /**
  * Set direction
  *
- * @param direction		Direction
+ * @param direction		NormalizedDirection
  */
-void Entity::setDirection(Direction direction)
+void Entity::setNormalizedDirection(NormalizedDirection normalizedDirection)
 {
-	Direction currentDirection = Entity::getDirection(this);
+	NormalizedDirection currentNormalizedDirection = Entity::getNormalizedDirection(this);
 
 	// if directions XOR is 0, they are equal
 	if(
 		!(
-			(currentDirection.x ^ direction.x) |
-			(currentDirection.y ^ direction.y) |
-			(currentDirection.z ^ direction.z)
+			(currentNormalizedDirection.x ^ normalizedDirection.x) |
+			(currentNormalizedDirection.y ^ normalizedDirection.y) |
+			(currentNormalizedDirection.z ^ normalizedDirection.z)
 		)
 	)
 	{
@@ -2126,8 +2124,8 @@ void Entity::setDirection(Direction direction)
 
 	Rotation rotation =
 	{
-		__UP == direction.y ? __HALF_ROTATION_DEGREES : __DOWN == direction.y ? 0 : this->transformation.localRotation.x,
-		__LEFT == direction.x ? __HALF_ROTATION_DEGREES : __RIGHT == direction.x ? 0 : this->transformation.localRotation.y,
+		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->transformation.localRotation.x,
+		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->transformation.localRotation.y,
 		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transformation.localRotation.z,
 		this->transformation.localRotation.z,
 	};
@@ -2138,31 +2136,31 @@ void Entity::setDirection(Direction direction)
 /**
  * Get direction
  *
- * @return		Direction
+ * @return		NormalizedDirection
  */
-Direction Entity::getDirection()
+NormalizedDirection Entity::getNormalizedDirection()
 {
-	Direction direction =
+	NormalizedDirection normalizedDirection =
 	{
 		__RIGHT, __DOWN, __FAR
 	};
 
 	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.y))
 	{
-		direction.x = __LEFT;
+		normalizedDirection.x = __LEFT;
 	}
 
 	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.x))
 	{
-		direction.y = __UP;
+		normalizedDirection.y = __UP;
 	}
 
 	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.z))
 	{
-		direction.z = __NEAR;
+		normalizedDirection.z = __NEAR;
 	}
 
-	return direction;
+	return normalizedDirection;
 }
 
 /**

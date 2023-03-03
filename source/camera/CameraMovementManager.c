@@ -82,7 +82,7 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 		return;
 	}
 
-	Direction direction = Entity::getDirection(focusEntity);
+	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(focusEntity);
 
 	Vector3D focusEntityPosition = Camera::getFocusEntityPosition(camera);
 	Vector3D focusEntityPositionDisplacement = Camera::getFocusEntityPositionDisplacement(camera);
@@ -90,9 +90,9 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 	// calculate the target position
 	Vector3D cameraNewPosition =
 	{
-		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,
-		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
-		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
+		focusEntityPosition.x + normalizedDirection.x * focusEntityPositionDisplacement.x - __HALF_SCREEN_WIDTH_METERS,
+		focusEntityPosition.y + normalizedDirection.y * focusEntityPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
+		focusEntityPosition.z + normalizedDirection.z * focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
 	Camera::setPosition(camera, cameraNewPosition, true);

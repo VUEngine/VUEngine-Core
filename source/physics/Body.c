@@ -205,7 +205,7 @@ void Body::setVelocity(Vector3D* velocity)
 	}
 }
 
-const Vector3D* Body::getDirection3D()
+const Vector3D* Body::getDirection()
 {
 	return &this->direction;
 }
@@ -1448,7 +1448,7 @@ void Body::print(int32 x, int32 y)
 	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->velocity.y), xDisplacement + x + 8, y, 2, NULL);
 	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->velocity.z), xDisplacement + x + 8 * 2, y++, 2, NULL);
 
-	Printing::text(Printing::getInstance(), "Direction", x, y, NULL);
+	Printing::text(Printing::getInstance(), "NormalizedDirection", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->direction.x), xDisplacement + x, y, 2, NULL);
 	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->direction.y), xDisplacement + x + 8, y, 2, NULL);

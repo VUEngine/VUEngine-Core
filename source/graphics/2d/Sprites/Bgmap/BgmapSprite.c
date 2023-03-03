@@ -235,27 +235,27 @@ void BgmapSprite::rotate(const Rotation* rotation)
 	}
 	else if(!isDeleted(this->texture))
 	{
-		Direction direction =
+		NormalizedDirection normalizedDirection =
 		{
 			__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
 			__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
 			__FAR,
 		};
 
-		if(__LEFT == direction.x)
+		if(__LEFT == normalizedDirection.x)
 		{
 			BgmapTexture::setHorizontalFlip(this->texture, true);
 		}
-		else if(__RIGHT == direction.x)
+		else if(__RIGHT == normalizedDirection.x)
 		{
 			BgmapTexture::setHorizontalFlip(this->texture, false);
 		}
 
-		if(__UP == direction.y)
+		if(__UP == normalizedDirection.y)
 		{
 			BgmapTexture::setVerticalFlip(this->texture, true);
 		}
-		else if(__DOWN == direction.y)
+		else if(__DOWN == normalizedDirection.y)
 		{
 			BgmapTexture::setVerticalFlip(this->texture, false);
 		}		

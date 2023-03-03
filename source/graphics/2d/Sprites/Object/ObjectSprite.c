@@ -172,27 +172,27 @@ void ObjectSprite::rewrite()
  */
 void ObjectSprite::rotate(const Rotation* rotation)
 {
-	Direction direction =
+	NormalizedDirection normalizedDirection =
 	{
 		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
 		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
 		__FAR,
 	};
 
-	if(__LEFT == direction.x)
+	if(__LEFT == normalizedDirection.x)
 	{
 		this->head |= 0x2000;
 	}
-	else if(__RIGHT == direction.x)
+	else if(__RIGHT == normalizedDirection.x)
 	{
 		this->head &= 0xDFFF;
 	}
 
-	if(__UP == direction.y)
+	if(__UP == normalizedDirection.y)
 	{
 		this->head |= 0x1000;
 	}
-	else if(__DOWN == direction.y)
+	else if(__DOWN == normalizedDirection.y)
 	{
 		this->head &= 0xEFFF;
 	}

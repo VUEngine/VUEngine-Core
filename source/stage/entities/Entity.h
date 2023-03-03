@@ -95,7 +95,7 @@ class Entity : Container
 	bool hasShapes();
 	void showShapes();
 	void hideShapes();
-	Direction getDirection();
+	NormalizedDirection getNormalizedDirection();
 	uint32 getShapesLayers();
 	void setShapesLayers(uint32 layers);
 	uint32 getShapesLayersToIgnore();
@@ -109,7 +109,7 @@ class Entity : Container
 	void setSize(Size size);
 	void computeIfInCameraRange(int32 pad, bool recursive);
 
-	virtual void setDirection(Direction direction);
+	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 
