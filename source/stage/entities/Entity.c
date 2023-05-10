@@ -1776,7 +1776,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 {
 	this->inCameraRange = false;
 
-	if(this->sprites && this->sprites->head)
+	if(NULL != this->sprites && NULL != this->sprites->head)
 	{
 		bool areSpritesVisible = false;
 

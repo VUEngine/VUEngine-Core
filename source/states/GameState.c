@@ -519,7 +519,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);
 
-	// Transformation everything definitively
+	// Transform everything definitively
 	GameState::transform(this);
 
 	// Make sure all sprites are ready
