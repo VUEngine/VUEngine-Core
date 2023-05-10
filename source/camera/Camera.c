@@ -235,11 +235,11 @@ void Camera::onFocusEntityDeleted(Entity actor)
 
 static uint8 Camera::computeTranslationFlags(Vector3D translation)
 {
-	if(translation.z)
+	if(0 != translation.z)
 	{
 		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
 	}
-	else if(translation.x || translation.y)
+	else if(0 != translation.x || 0 != translation.y)
 	{
 		return __INVALIDATE_PROJECTION;
 	}
@@ -255,14 +255,15 @@ static uint8 Camera::computeTranslationFlags(Vector3D translation)
  */
 void Camera::translate(Vector3D translation, int32 cap)
 {
-	this->transformationFlags |= Camera::computeTranslationFlags(translation);
-
+	Vector3D previousPosition = this->position;
 	this->position = Vector3D::sum(this->position, translation);
 
 	if(cap)
 	{
 		Camera::capPosition(this);
 	}
+
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, previousPosition));
 }
 
 /**
@@ -340,14 +341,16 @@ Rotation Camera::getRotation()
  */
 void Camera::setPosition(Vector3D position, bool cap)
 {
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(position, this->position));
-
+	Vector3D previousPosition = this->position;
 	this->position = position;
 
 	if(cap)
 	{
 		Camera::capPosition(this);
 	}
+
+
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, previousPosition));
 }
 
 static uint8 Camera::computeRotationFlags(Rotation rotation)
