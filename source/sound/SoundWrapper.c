@@ -120,6 +120,16 @@ void SoundWrapper::destructor()
 
 bool SoundWrapper::isUsingChannel(Channel* channel)
 {
+	if(NULL == this->sound)
+	{
+		return false;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return false;
+	}
+
 	// Prepare channels
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -272,6 +282,11 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 		return;
 	}
 
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	this->playbackType = playbackType;
 
 	switch(playbackType)
@@ -352,6 +367,16 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
  */
 void SoundWrapper::pause()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	if(!this->paused && this->turnedOn)
 	{
 		this->paused = true;
@@ -371,6 +396,16 @@ void SoundWrapper::pause()
  */
 void SoundWrapper::unpause()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	if(this->paused && this->turnedOn)
 	{
 		// Silence all channels first
@@ -391,6 +426,16 @@ void SoundWrapper::unpause()
  */
 void SoundWrapper::turnOff()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	this->turnedOn = false;
 
 	// Silence all channels first
@@ -407,6 +452,16 @@ void SoundWrapper::turnOff()
  */
 void SoundWrapper::turnOn()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	// Silence all channels first
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -424,6 +479,16 @@ void SoundWrapper::turnOn()
  */
 void SoundWrapper::rewind()
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
+	{
+		return;
+	}
+
 	this->elapsedMicroseconds = 0;
 	this->previouslyElapsedMicroseconds = 0;
 	this->volumeReduction = 0;
@@ -466,6 +531,11 @@ void SoundWrapper::rewind()
 void SoundWrapper::stop()
 {
 	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
 	{
 		return;
 	}
@@ -547,6 +617,11 @@ void SoundWrapper::unlock()
 
 void SoundWrapper::setupChannels(int8* waves)
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
 	if(isDeleted(this->channels))
 	{
 		return;
@@ -624,6 +699,11 @@ void SoundWrapper::setupChannels(int8* waves)
 void SoundWrapper::configureSoundRegistries()
 {
 	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	if(isDeleted(this->channels))
 	{
 		return;
 	}
@@ -1028,6 +1108,11 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 
 void SoundWrapper::print(int32 x, int32 y)
 {
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
 	if(isDeleted(this->channels))
 	{
 		return;
