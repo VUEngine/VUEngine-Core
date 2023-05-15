@@ -1421,7 +1421,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 		{
 			Container child = Container::safeCast(node->data);
 
-			if(NULL == classPointer || Object::getCast((ListenerObject)child, classPointer, NULL))
+			if(NULL == classPointer || Object::getCast(child, classPointer, NULL))
 			{
 				VirtualList::pushBack(children, child);
 			}
@@ -1444,7 +1444,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
-			if(!classPointer || Object::getCast((ListenerObject)behavior, classPointer, NULL))
+			if(!classPointer || Object::getCast(behavior, classPointer, NULL))
 			{
 				VirtualList::pushBack(behaviors, behavior);
 			}
