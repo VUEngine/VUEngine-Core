@@ -4933,6 +4933,10 @@
                 },
                 "required": []
             },
+            "uiSchema": {
+                "type": "PCMEditor",
+                "scope": "#"
+            },
             "multiple": true,
             "category": "Assets",
             "icon": "fa fa-music",
