@@ -1310,6 +1310,22 @@ Container Container::getChildByName(const char* childName, bool recursive)
 }
 
 /**
+ * Get child by its position in my children list
+ *
+ * @param position	Index
+ * @return			Child Container
+ */
+Container Container::getChildAtPosition(int16 position)
+{
+	if(isDeleted(this->children))
+	{
+		return NULL;
+	}
+
+	return Container::safeCast(VirtualList::getObjectAtPosition(this->children, position));
+}
+
+/**
  * Suspend for pause
  */
 void Container::suspend()

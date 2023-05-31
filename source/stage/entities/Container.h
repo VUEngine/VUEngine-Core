@@ -106,6 +106,7 @@ class Container : SpatialObject
 	int32 doKeyPressed(int32 pressedKey);
 	int32 doKeyUp(int32 pressedKey);
 	Container getChildByName(const char* childName, bool recursive);
+	Container getChildAtPosition(int16 position);
 	int32 getChildCount();
 	Transformation getEnvironmentTransform();
 	const Vector3D* getGlobalPosition();

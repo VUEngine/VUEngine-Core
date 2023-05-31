@@ -711,3 +711,22 @@ Clock GameState::getClock()
 {
 	return this->updateClock;
 }
+
+/**
+ * Find an entity in the stage
+ *
+ * @return			CollisionManager
+ */
+Entity GameState::getEntityByName(const char* entityName)
+{
+	if(isDeleted(this->stage))
+	{
+		return NULL;
+	}
+	
+	return Entity::safeCast(Stage::getChildByName(
+		this->stage,
+		entityName,
+		false
+	));
+}
