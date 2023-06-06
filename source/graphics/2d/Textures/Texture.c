@@ -407,6 +407,25 @@ TextureSpec* Texture::getTextureSpec()
 }
 
 /**
+ * Set displacement to add to the offset within the BGMAP memory
+ *
+ * @param mapDisplacement	Displacement
+ */
+void Texture::setMapDisplacement(uint32 mapDisplacement)
+{
+	bool statusChanged = kTextureMapDisplacementChanged != this->status || !this->update;
+
+	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
+
+	this->mapDisplacement = mapDisplacement;
+
+	if(statusChanged && kTextureMapDisplacementChanged == this->status)
+	{
+		Texture::prepare(this);
+	}
+}
+
+/**
  * Set Texture's frame
  *
  * @param frame	Texture's frame to display
@@ -438,7 +457,6 @@ void Texture::setFrame(uint16 frame)
 		Texture::prepare(this);
 	}
 }
-
 
 /**
  * Get Texture's frame
@@ -728,23 +746,4 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
 bool Texture::isWritten()
 {
 	return this->status;
-}
-
-/**
- * Set displacement to add to the offset within the BGMAP memory
- *
- * @param mapDisplacement	Displacement
- */
-void Texture::setMapDisplacement(uint32 mapDisplacement)
-{
-	bool statusChanged = kTextureMapDisplacementChanged != this->status || !this->update;
-
-	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
-
-	this->mapDisplacement = mapDisplacement;
-
-	if(statusChanged && kTextureMapDisplacementChanged == this->status)
-	{
-		Texture::prepare(this);
-	}
 }
