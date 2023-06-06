@@ -366,6 +366,10 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 
 		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; NULL != node; node = node->next)
 		{
+			NM_ASSERT(NULL != node, "SoundManager::playMIDISounds: NULL node");
+			NM_ASSERT(!isDeleted(node), "SoundManager::playMIDISounds: deleted node");
+			NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
+			NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
 			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
 
