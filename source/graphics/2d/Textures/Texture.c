@@ -192,6 +192,10 @@ void Texture::releaseCharSet()
 	}
 
 	this->status = kTexturePendingWriting;
+	this->update = false;
+	this->frame = 0;
+	this->mapDisplacement = 0;
+	this->palette = this->textureSpec->palette;
 }
 
 /**
