@@ -102,7 +102,11 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 		if(this->targetFPS > this->fps)
 		{
 #ifdef __PRINT_FRAMERATE_DIP
-			FrameRate::print(this, 21, 14);
+#ifdef __PRINT_FRAMERATE_AT_X
+#ifdef __PRINT_FRAMERATE_AT_Y
+			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
+#endif
+#endif
 #endif
 			if(!isDeleted(this->events))
 			{
@@ -111,10 +115,14 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 		}
 
 #ifdef __PRINT_FRAMERATE
+#ifdef __PRINT_FRAMERATE_AT_X
+#ifdef __PRINT_FRAMERATE_AT_Y
 		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
 		{
-			FrameRate::print(this, 21, 14);
+			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}
+#endif
+#endif
 #endif
 		this->fps = 0;
 		this->unevenFps = 0;
