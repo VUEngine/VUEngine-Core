@@ -165,6 +165,9 @@ void SoundManager::reset()
 {
 	VirtualList::deleteData(this->queuedSounds);
 
+	VirtualList::clear(this->soundWrappersMIDI);
+	VirtualList::clear(this->soundWrappersPCM);
+
 	for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
@@ -175,8 +178,6 @@ void SoundManager::reset()
 	}
 
 	VirtualList::clear(this->soundWrappers);
-	VirtualList::clear(this->soundWrappersMIDI);
-	VirtualList::clear(this->soundWrappersPCM);
 
 	int32 i = 0;
 
