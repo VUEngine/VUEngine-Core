@@ -90,7 +90,7 @@ void VirtualList::clear()
  */
 void VirtualList::deleteData()
 {
-	if(NULL != this->head)
+	if(!isDeleted(this->head))
 	{
 		HardwareManager::suspendInterrupts();
 

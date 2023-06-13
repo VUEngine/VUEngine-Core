@@ -100,7 +100,9 @@
 
 // like delete in C++ (calls virtual destructor)
 #ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
-#define __DELETE(object)																				\
+#define __DELETE(objectToDelete)																		\
+	{																									\
+		void* object = (void*)objectToDelete;															\
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
@@ -118,9 +120,13 @@
 		else 																							\
 		{																								\
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
-		}
+		}																								\
+																										\
+	}
 #else
-#define __DELETE(object)																				\
+#define __DELETE(objectToDelete)																				\
+	{																									\
+		void* object = (void*)objectToDelete;															\
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
@@ -133,7 +139,9 @@
 		else 																							\
 		{																								\
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
-		}
+		}																								\
+																										\
+	}
 #endif
 
 

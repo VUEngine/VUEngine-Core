@@ -314,13 +314,14 @@ void MemoryPool::free(BYTE* object)
 
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
+		// Calls to delete non dynamic singletons are intented to fall here.
 		return;
 	}
 
 	uint16 pool = *((uint16*)object + 1);
 
 	// look for the registry in which the object is
-	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
+	NM_ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
 
 	this->poolLastFreeBlock[pool] = object;
 
