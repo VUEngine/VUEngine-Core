@@ -73,5 +73,6 @@ void ObjectAnimatedSprite::destructor()
  */
 void ObjectAnimatedSprite::writeAnimation()
 {
+	this->renderFlag = true;
 	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 }
