@@ -479,7 +479,7 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
 
 	// go through n sprites in entity's spec
-	for(int32 i = 0; shapeSpecs[i].allocator; i++)
+	for(int32 i = 0; NULL != shapeSpecs[i].allocator; i++)
 	{
 		Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addShapes: sprite not created");
@@ -1349,12 +1349,12 @@ void Entity::transformShapes()
 
 bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 {
-	if(!this->entitySpec->shapeSpecs)
+	if(NULL == this->entitySpec->shapeSpecs)
 	{
 		return false;
 	}
 
-	if(!this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
+	if(NULL == this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
 	{
 		return false;
 	}

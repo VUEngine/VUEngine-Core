@@ -93,6 +93,13 @@ void CollisionManager::purgeDestroyedShapes()
 // register a shape
 Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
+	NM_ASSERT(!(NULL == shapeSpec || NULL == shapeSpec->allocator), "CollisionManager::createShape: invalid shape spec");
+
+	if(NULL == shapeSpec || NULL == shapeSpec->allocator)
+	{
+		return;
+	}
+
 	CollisionManager::purgeDestroyedShapes(this);
 
 	// create the shape
