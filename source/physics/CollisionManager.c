@@ -97,7 +97,7 @@ Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeS
 
 	if(NULL == shapeSpec || NULL == shapeSpec->allocator)
 	{
-		return;
+		return NULL;
 	}
 
 	CollisionManager::purgeDestroyedShapes(this);
