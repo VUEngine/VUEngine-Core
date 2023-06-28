@@ -724,9 +724,69 @@ Entity GameState::getEntityByName(const char* entityName)
 		return NULL;
 	}
 	
-	return Entity::safeCast(Stage::getChildByName(
-		this->stage,
-		entityName,
-		false
-	));
+	return 
+	(
+		Container::getChildByName
+		(
+			this->stage,
+			entityName,
+			false
+		)
+	);
+}
+
+/**
+ * Hide an entity in the stage
+ *
+ * @param entityName
+ */
+void GameState::hideEntityWithName(const char* entityName)
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+	
+	Entity entity = 
+	(
+		Container::getChildByName
+		(
+			this->stage,
+			entityName,
+			false
+		)
+	);
+
+	if(!isDeleted(entity))
+	{
+		Entity::hide(entity);
+	}
+}
+
+/**
+ * Hide an entity in the stage
+ *
+ * @param entityName
+ */
+void GameState::showEntityWithName(const char* entityName)
+{
+	if(isDeleted(this->stage))
+	{
+		return;
+	}
+	
+	Entity entity = 
+	(
+		Container::getChildByName
+		(
+			this->stage,
+			entityName,
+			false
+		)
+	);
+
+	if(!isDeleted(entity))
+	{
+		Entity::show(entity);
+	}
 }

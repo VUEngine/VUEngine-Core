@@ -83,6 +83,8 @@ class GameState : State
 	void streamOutAll();
 	Clock getClock();
 	Entity getEntityByName(const char* entityName);
+	void hideEntityWithName(const char* entityName);
+	void showEntityWithName(const char* entityName);
 
 	virtual void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);
