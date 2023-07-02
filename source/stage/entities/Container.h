@@ -100,6 +100,7 @@ class Container : SpatialObject
 	void constructor(const char* const name);
 	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
 	void deleteMyself();
+	void deleteAllChildren();
 	void addBehavior(Behavior behavior);
 	void removeBehavior(Behavior behavior);
 	int32 doKeyHold(int32 pressedKey);

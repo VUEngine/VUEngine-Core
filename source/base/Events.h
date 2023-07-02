@@ -26,6 +26,7 @@ enum Events
 
 	kEventSpatialObjectDeleted,
 	kEventContainerDeleted,
+	kEventContainerAllChildrenDeleted,
 	kEventEntityLoaded,
 	kEventStageChildStreamedOut,
 	kEventShapeDeleted,

@@ -81,7 +81,7 @@ void Container::destructor()
 	// if I have children
 	if(NULL != this->children)
 	{
-		for(VirtualNode node = this->children->head; node ; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -188,6 +188,20 @@ void Container::removeBehavior(Behavior behavior)
 	{
 		VirtualList::removeElement(this->behaviors, behavior);
 	}
+}
+
+void Container::deleteAllChildren()
+{
+	// if I have children
+	if(NULL != this->children)
+	{
+		// update each child
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+		{			
+			Container child = Container::safeCast(node->data);
+			child->deleteMe = true;
+		}
+	}	
 }
 
 /**
@@ -317,7 +331,7 @@ void Container::purgeChildren()
 	if(NULL != this->children)
 	{
 		// update each child
-		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
+		for(VirtualNode node = this->children->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 			
@@ -355,7 +369,7 @@ void Container::ready(bool recursive)
 {
 	if(this->behaviors)
 	{
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -393,7 +407,7 @@ void Container::updateBehaviors()
 {
 	if(NULL != this->behaviors)
 	{
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -414,7 +428,9 @@ void Container::updateChildren()
 	// if I have children
 	if(NULL != this->children)
 	{
-		for(VirtualNode node = this->children->head, nextNode = NULL; node ; node = nextNode)
+		bool hadChildren = NULL != this->children->head;
+
+		for(VirtualNode node = this->children->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
 			
@@ -446,6 +462,11 @@ void Container::updateChildren()
 			}
 
 			Container::update(child);
+		}
+
+		if(hadChildren && NULL == this->children->head)
+		{
+			Container::fireEvent(this, kEventContainerAllChildrenDeleted);
 		}
 	}
 }
@@ -1256,7 +1277,7 @@ Container Container::findChildByName(VirtualList children, const char* childName
 	}
 
 	// look through all children
-	for(VirtualNode node = children->head; node ; node = node->next)
+	for(VirtualNode node = children->head; NULL != node; node = node->next)
 	{
 		Container child = Container::safeCast(node->data);
 
@@ -1332,7 +1353,7 @@ void Container::suspend()
 {
 	if(this->behaviors)
 	{
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -1363,7 +1384,7 @@ void Container::resume()
 {
 	if(this->behaviors)
 	{
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
@@ -1433,7 +1454,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 {
 	if(!isDeleted(this->children) && !isDeleted(children))
 	{
-		for(VirtualNode node = this->children->head; node ; node = node->next)
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
@@ -1456,7 +1477,7 @@ bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 {
 	if(this->behaviors && !isDeleted(behaviors))
 	{
-		for(VirtualNode node = this->behaviors->head; node ; node = node->next)
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
 			Behavior behavior = Behavior::safeCast(node->data);
 
