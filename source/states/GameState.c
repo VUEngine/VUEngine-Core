@@ -724,15 +724,7 @@ Entity GameState::getEntityByName(const char* entityName)
 		return NULL;
 	}
 	
-	return 
-	(
-		Container::getChildByName
-		(
-			this->stage,
-			entityName,
-			false
-		)
-	);
+	return Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
 }
 
 /**
@@ -747,15 +739,7 @@ void GameState::hideEntityWithName(const char* entityName)
 		return;
 	}
 	
-	Entity entity = 
-	(
-		Container::getChildByName
-		(
-			this->stage,
-			entityName,
-			false
-		)
-	);
+	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
 
 	if(!isDeleted(entity))
 	{
@@ -775,15 +759,7 @@ void GameState::showEntityWithName(const char* entityName)
 		return;
 	}
 	
-	Entity entity = 
-	(
-		Container::getChildByName
-		(
-			this->stage,
-			entityName,
-			false
-		)
-	);
+	Entity entity = Entity::safeCast(Stage::getChildByName(this->stage, entityName, false));
 
 	if(!isDeleted(entity))
 	{
