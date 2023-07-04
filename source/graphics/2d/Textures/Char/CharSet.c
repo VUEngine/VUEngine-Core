@@ -76,7 +76,7 @@ void CharSet::increaseUsageCount()
  */
 bool CharSet::decreaseUsageCount()
 {
-	if(this->usageCount)
+	if(0 < this->usageCount)
 	{
 		this->usageCount--;
 	}
@@ -143,7 +143,10 @@ CharSetSpec* CharSet::getCharSetSpec()
  */
 void CharSet::setCharSetSpec(CharSetSpec* charSetSpec)
 {
-	this->charSetSpec = charSetSpec;
+	if(NULL != charSetSpec)
+	{
+		this->charSetSpec = charSetSpec;
+	}
 }
 
 /**

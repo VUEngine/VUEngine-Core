@@ -447,18 +447,21 @@ void Texture::setFrame(uint16 frame)
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
-	if(statusChanged && kTextureFrameChanged == this->status)
+	if(!isDeleted(this->charSet))
 	{
-		// write according to the allocation type
-		switch(CharSet::getAllocationType(this->charSet))
+		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			case __ANIMATED_SINGLE_OPTIMIZED:
+			// write according to the allocation type
+			switch(CharSet::getAllocationType(this->charSet))
+			{
+				case __ANIMATED_SINGLE_OPTIMIZED:
 
-				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-				break;
+					this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+					break;
+			}
+
+			Texture::prepare(this);
 		}
-
-		Texture::prepare(this);
 	}
 }
 

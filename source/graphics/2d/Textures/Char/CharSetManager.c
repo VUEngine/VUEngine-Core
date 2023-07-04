@@ -226,7 +226,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
-	if(this->charSets->head)
+	if(NULL != this->charSets->head)
 	{
 		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(this->charSets));
 		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
@@ -356,19 +356,14 @@ bool CharSetManager::defragmentProgressively()
 
 				if(this->freedOffset < offset)
 				{
-	#ifndef __RELEASE
-					for(WORD* x = (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)charSet->offset) << 4)); x < (WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)charSet->offset) << 4)) + __BYTES_PER_CHARS(charSet->charSetSpec->numberOfChars) / sizeof(WORD); x++)
-					{
-						*x = 0;
-					}
-	#endif
-					CharSet::setOffset(charSet, this->freedOffset);
+					VirtualList::removeElement(this->charSetsPendingWriting, charSet);
+					uint16 newOffset = this->freedOffset;
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
+					CharSet::setOffset(charSet, newOffset);
 
 					//write to CHAR memory
 					CharSet::rewrite(charSet);
-					this->freedOffset += CharSet::getNumberOfChars(charSet);
 
-					VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 					return true;
 				}
 				else if(this->freedOffset == offset)
