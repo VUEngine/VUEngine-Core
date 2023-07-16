@@ -306,9 +306,9 @@ singleton class Printing : ListenerObject
 	void addSprite();
 
 	/**
-     * Set the current printing sprite
+     * Set the active printing sprite
      */
-	void setActiveSprite(uint16 printingSpriteIndex);
+	bool setActiveSprite(uint16 printingSpriteIndex);
 
 	/**
      * Sets the orientation for the following call to print.

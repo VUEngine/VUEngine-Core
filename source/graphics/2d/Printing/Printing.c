@@ -167,16 +167,20 @@ void Printing::addSprite()
 }
 
 /**
-	* Set the current printing sprite
-	*/
-void Printing::setActiveSprite(uint16 printingSpriteIndex)
+* Set the current printing sprite
+*/
+bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 {
 	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, printingSpriteIndex));
+
+	bool result = NULL != this->activePrintingSprite;
 
 	if(NULL == this->activePrintingSprite)
 	{
 		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, 0));
 	}
+
+	return result;
 }
 
 void Printing::setOrientation(uint8 value)
