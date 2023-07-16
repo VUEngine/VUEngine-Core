@@ -191,8 +191,9 @@ singleton class Printing : ListenerObject
 {
 	/// @protectedsection
 
-	// sprite
-	PrintingSprite printingSprite;
+	// sprites
+	VirtualList printingSprites;
+	PrintingSprite activePrintingSprite;
 
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
@@ -300,9 +301,14 @@ singleton class Printing : ListenerObject
 	void reset();
 
 	/**
-     * Setup printing sprite
+     * Create a printing sprite
      */
-	void setupSprite();
+	void addSprite();
+
+	/**
+     * Set the current printing sprite
+     */
+	void setActiveSprite(uint16 printingSpriteIndex);
 
 	/**
      * Sets the orientation for the following call to print.

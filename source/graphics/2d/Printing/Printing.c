@@ -65,19 +65,32 @@ void Printing::constructor()
 
 	// initialize members
 	this->fonts = new VirtualList();
+	this->printingSprites = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
 	this->orientation = kPrintingOrientationHorizontal;
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFontData = NULL;
-	this->printingSprite = NULL;
+	this->activePrintingSprite = NULL;
 
 	Printing::reset(this);
 }
 
 void Printing::destructor()
 {
-	delete this->fonts;
+	if(!isDeleted(this->fonts))
+	{
+		delete this->fonts;
+	}
+
+	this->fonts = NULL;
+
+	if(!isDeleted(this->printingSprites))
+	{
+		delete this->printingSprites;
+	}
+
+	this->printingSprites = NULL;
 
 	// allow a new construct
 	Base::destructor();
@@ -85,12 +98,17 @@ void Printing::destructor()
 
 void Printing::reset()
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->printingSprites))
 	{
-		SpriteManager::disposeSprite(SpriteManager::getInstance(), Sprite::safeCast(this->printingSprite));
+		for(VirtualNode node = VirtualList::begin(this->printingSprites); NULL != node; node = VirtualNode::getNext(node))
+		{
+			SpriteManager::disposeSprite(SpriteManager::getInstance(), Sprite::safeCast(VirtualNode::getData(node)));
+		}
+
+		VirtualList::clear(this->printingSprites);
 	}
 
-	this->printingSprite = NULL;
+	this->activePrintingSprite = NULL;
 
 	Printing::releaseFonts(this);
 
@@ -100,13 +118,8 @@ void Printing::reset()
 	Printing::setDirection(this, kPrintingDirectionLTR);
 }
 
-void Printing::setupSprite()
+void Printing::addSprite()
 {
-	if(!isDeleted(this->printingSprite))
-	{
-		return;
-	}
-	
 	PrintingSpriteSpec DefaultPrintingSprite =
 	{
 		{
@@ -141,14 +154,29 @@ void Printing::setupSprite()
 		}
 	};
 
-	this->printingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
+	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
 
 	PixelVector position = 
 	{
 		0, 0, 0, 0
 	};
 
-	PrintingSprite::setPosition(this->printingSprite, &position);
+	PrintingSprite::setPosition(this->activePrintingSprite, &position);
+
+	VirtualList::pushBack(this->printingSprites, this->activePrintingSprite);
+}
+
+/**
+	* Set the current printing sprite
+	*/
+void Printing::setActiveSprite(uint16 printingSpriteIndex)
+{
+	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, printingSpriteIndex));
+
+	if(NULL == this->activePrintingSprite)
+	{
+		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, 0));
+	}
 }
 
 void Printing::setOrientation(uint8 value)
@@ -278,7 +306,7 @@ void Printing::setPalette(uint8 palette)
 
 void Printing::clear()
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
 		Mem::clear((BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
 	}
@@ -317,7 +345,7 @@ FontData* Printing::getFontByName(const char* font)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
 	}
-	else if(this->fonts)
+	else if(NULL != this->fonts)
 	{
 		if(NULL != this->lastUsedFontData && NULL != font)
 		{
@@ -332,13 +360,15 @@ FontData* Printing::getFontByName(const char* font)
 
 		if(result)
 		{
-			if(font)
+			if(NULL != font)
 			{
 				// iterate over registered fonts to find spec of font to use
 				VirtualNode node = VirtualList::begin(this->fonts);
+				
 				for(; NULL != node; node = VirtualNode::getNext(node))
 				{
 					FontData* fontData = VirtualNode::getData(node);
+					
 					if(!strcmp(fontData->fontSpec->name, font))
 					{
 						result = fontData;
@@ -509,30 +539,30 @@ void Printing::setCoordinates(int16 x __attribute__ ((unused)), int16 y __attrib
 
 void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
 		PixelVector position = 
 		{
 			0, 0, -64, -4
 		};
 
-		PrintingSprite::setPosition(this->printingSprite, &position);
+		PrintingSprite::setPosition(this->activePrintingSprite, &position);
 	}
 }
 
 void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setMValues(this->printingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
+		PrintingSprite::setMValues(this->activePrintingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
 	}
 }
 
 void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setSize(this->printingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
+		PrintingSprite::setSize(this->activePrintingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
 	}
 }
 
@@ -545,7 +575,7 @@ void Printing::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 
 void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
 		PixelVector position = 
 		{
@@ -555,60 +585,60 @@ void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 			parallax
 		};
 
-		PrintingSprite::setPosition(this->printingSprite, &position);
+		PrintingSprite::setPosition(this->activePrintingSprite, &position);
 	}
 }
 
 void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setMValues(this->printingSprite, mx <= 64 * 8 ? mx : 0, __PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? __PRINTING_BGMAP_Y_OFFSET + my : __PRINTING_BGMAP_Y_OFFSET, mp);
+		PrintingSprite::setMValues(this->activePrintingSprite, mx <= 64 * 8 ? mx : 0, __PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? __PRINTING_BGMAP_Y_OFFSET + my : __PRINTING_BGMAP_Y_OFFSET, mp);
 	}
 }
 
 void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::setSize(this->printingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT);
+		PrintingSprite::setSize(this->activePrintingSprite, w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH, h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT);
 	}
 }
 #endif
 
 int16 Printing::getWorldCoordinatesX()
 {
-	return !isDeleted(this->printingSprite) ? PrintingSprite::getGX(this->printingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGX(this->activePrintingSprite) : 0;
 }
 
 int16 Printing::getWorldCoordinatesY()
 {
-	return !isDeleted(this->printingSprite) ? PrintingSprite::getGY(this->printingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGY(this->activePrintingSprite) : 0;
 }
 
 int16 Printing::getWorldCoordinatesP()
 {
-	return !isDeleted(this->printingSprite) ? PrintingSprite::getGP(this->printingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGP(this->activePrintingSprite) : 0;
 }
 
 PixelVector Printing::getSpritePosition()
 {
-	return !isDeleted(this->printingSprite) ? PrintingSprite::getDisplacedPosition(this->printingSprite) : (PixelVector){0, 0, 0, 0};
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getDisplacedPosition(this->activePrintingSprite) : (PixelVector){0, 0, 0, 0};
 }
 
 void Printing::setTransparent(uint8 value)
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		Sprite::setTransparent(this->printingSprite, value);
+		Sprite::setTransparent(this->activePrintingSprite, value);
 	}
 }
 
 void Printing::resetCoordinates()
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::reset(this->printingSprite);
+		PrintingSprite::reset(this->activePrintingSprite);
 	}
 }
 
@@ -675,26 +705,26 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 void Printing::show()
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::show(this->printingSprite);
-		PrintingSprite::setPosition(this->printingSprite, PrintingSprite::getPosition(this->printingSprite));
+		PrintingSprite::show(this->activePrintingSprite);
+		PrintingSprite::setPosition(this->activePrintingSprite, PrintingSprite::getPosition(this->activePrintingSprite));
 	}
 }
 
 void Printing::hide()
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::hide(this->printingSprite);
+		PrintingSprite::hide(this->activePrintingSprite);
 	}
 }
 
 void Printing::render(uint8 textLayer)
 {
-	if(!isDeleted(this->printingSprite))
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::doRender(this->printingSprite, textLayer, false);
+		PrintingSprite::doRender(this->activePrintingSprite, textLayer, false);
 	}
 }
 
