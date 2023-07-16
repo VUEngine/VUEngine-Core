@@ -714,7 +714,7 @@ void ParticleSystem::setTransparent(uint8 transparent)
 
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
-		Particle::setTransparente(Particle::safeCast(node->data), transparent);
+		Particle::setTransparent(Particle::safeCast(node->data), transparent);
 	}
 }
 
