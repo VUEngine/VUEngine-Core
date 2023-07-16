@@ -262,6 +262,17 @@ void Particle::show()
 }
 
 /**
+ * Set sprite's transparency
+ */
+void Particle::setTransparent(uint8 transparent)
+{
+	if(!isDeleted(this->sprite))
+	{
+		Sprite::setTransparent(this->sprite, transparent);
+	}
+}
+
+/**
  * Make Particle expire
  */
 void Particle::expire()

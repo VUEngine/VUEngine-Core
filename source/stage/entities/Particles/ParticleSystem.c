@@ -703,6 +703,22 @@ void ParticleSystem::hide()
 	}
 }
 
+void ParticleSystem::setTransparent(uint8 transparent)
+{
+	Base::setTransparent(this, transparent);
+
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle::setTransparente(Particle::safeCast(node->data), transparent);
+	}
+}
+
+
 void ParticleSystem::resume()
 {
 	if(isDeleted(this->particles))

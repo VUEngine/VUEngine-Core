@@ -85,7 +85,7 @@ class Particle : SpatialObject
 	void expire();
 	void hide();
 	void show();
-	void setAnimationName(const char* animationName);
+	void setTransparent(uint8 transparent);
 	virtual void synchronizeGraphics();
 	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
