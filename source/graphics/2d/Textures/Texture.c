@@ -313,9 +313,9 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 						if(CharSet::setFrame(this->charSet, this->frame))
 						{
 							CharSet::write(this->charSet);
-							Texture::write(this, maximumTextureRowsToWrite);
 						}
-
+						
+						Texture::write(this, maximumTextureRowsToWrite);
 						break;
 
 					case __NOT_ANIMATED:
@@ -327,9 +327,8 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 						{
 							CharSet::write(this->charSet);
 						}
-						
-						this->status = kTextureWritten;
 
+						this->status = kTextureWritten;
 						break;
 
 					case __ANIMATED_MULTI:
