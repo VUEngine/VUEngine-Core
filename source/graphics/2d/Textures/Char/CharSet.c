@@ -337,8 +337,10 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  *
  * @param frame		ROM memory displacement multiplier
  */
-void CharSet::setFrame(uint16 frame)
+bool CharSet::setFrame(uint16 frame)
 {
+	uint32 currentTilesDisplacement = this->tilesDisplacement;
+
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
 		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
@@ -347,4 +349,6 @@ void CharSet::setFrame(uint16 frame)
 	{
 		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
 	}
+
+	return currentTilesDisplacement != this->tilesDisplacement;
 }
