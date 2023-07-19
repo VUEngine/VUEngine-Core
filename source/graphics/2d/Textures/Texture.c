@@ -310,11 +310,8 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 				{
 					case __ANIMATED_SINGLE_OPTIMIZED:
 
-						if(CharSet::setFrame(this->charSet, this->frame))
-						{
-							CharSet::write(this->charSet);
-						}
-						
+						CharSet::setFrame(this->charSet, this->frame);
+						CharSet::write(this->charSet);
 						Texture::write(this, maximumTextureRowsToWrite);
 						break;
 
@@ -323,11 +320,9 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 					case __ANIMATED_SHARED:
 					case __ANIMATED_SHARED_COORDINATED:
 
-						if(CharSet::setFrame(this->charSet, this->frame))
-						{
-							CharSet::write(this->charSet);
-						}
-
+						CharSet::setFrame(this->charSet, this->frame);
+						CharSet::write(this->charSet);
+						
 						this->status = kTextureWritten;
 						break;
 
