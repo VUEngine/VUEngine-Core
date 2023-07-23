@@ -34,6 +34,8 @@
 
 #ifndef __RELEASE
 #undef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
+#else
+#define __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #endif
 
 #define __OBJECT_MEMORY_FOOT_PRINT		(uint16)(__MEMORY_USED_BLOCK_FLAG + sizeof(uint16) * 8)
