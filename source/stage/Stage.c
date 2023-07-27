@@ -254,48 +254,6 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 
 	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
 	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
-	int32 pad = this->streaming.loadPadding + __ABS(position2D.z);
-
-	if(NULL != pixelRightBox)
-	{
-		// check x visibility
-		if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 - pad || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 + pad)
-		{
-			return false;
-		}
-
-		// check y visibility
-		if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 - pad || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + pad)
-		{
-			return false;
-		}
-
-		// check z visibility
-		if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + this->streaming.loadPadding)
-		{
-			return false;
-		}
-	}
-	else
-	{
-		// check x visibility
-		if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
-		{
-			return false;
-		}
-
-		// check y visibility
-		if(position2D.y < _cameraFrustum->y0 - pad || position2D.y > _cameraFrustum->y1 + pad)
-		{
-			return false;
-		}
-
-		// check z visibility
-		if(position2D.z < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z > _cameraFrustum->z1 + this->streaming.loadPadding)
-		{
-			return false;
-		}		
-	}
 
 	if(forceNoPopIn)
 	{
@@ -318,6 +276,51 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 		}
 
 		return false;
+	}
+	else
+	{
+		if(NULL == pixelRightBox)
+		{
+			int32 pad = this->streaming.loadPadding + __ABS(position2D.z);
+
+			// check x visibility
+			if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
+			{
+				return false;
+			}
+
+			// check y visibility
+			if(position2D.y < _cameraFrustum->y0 - pad || position2D.y > _cameraFrustum->y1 + pad)
+			{
+				return false;
+			}
+
+			// check z visibility
+			if(position2D.z < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z > _cameraFrustum->z1 + this->streaming.loadPadding)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			// check x visibility
+			if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1)
+			{
+				return false;
+			}
+
+			// check y visibility
+			if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1)
+			{
+				return false;
+			}
+
+			// check z visibility
+			if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1)
+			{
+				return false;
+			}
+		}
 	}
 
 	return true;
@@ -746,16 +749,28 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	PixelVector environmentPosition = {0, 0, 0, 0};
 	stageEntityDescription->pixelRightBox = Entity::getTotalSizeFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
+	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
+
+	int32 pad = this->streaming.loadPadding + __ABS(stageEntityDescription->positionedEntity->onScreenPosition.z);
+
+	stageEntityDescription->pixelRightBox.x0 -= pad;
+	stageEntityDescription->pixelRightBox.x1 += pad;
+	stageEntityDescription->pixelRightBox.y0 -= pad;
+	stageEntityDescription->pixelRightBox.y1 += pad;
+	stageEntityDescription->pixelRightBox.z0 -= this->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.z1 += this->streaming.loadPadding;
+
+	return stageEntityDescription;
+}
+
+static uint32 Stage::computeDistanceToOrigin(StageEntityDescription* stageEntityDescription)
+{
 	int32 x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
 	int32 y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
 	int32 z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
 
-	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
-
-	stageEntityDescription->distance = x * x + y * y + z * z;
-
-	return stageEntityDescription;
-}
+	return x * x + y * y + z * z;
+} 
 
 // register the stage's spec entities in the streaming list
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
@@ -791,6 +806,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 		}
 
 		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageSpec->entities.children[i]);
+		uint32 distanceToOrigin = Stage::computeDistanceToOrigin(stageEntityDescription);
 
 		VirtualNode auxNode = this->stageEntityDescriptions->head;
 
@@ -798,7 +814,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 		{
 			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-			if(stageEntityDescription->distance > auxStageEntityDescription->distance)
+			if(distanceToOrigin > Stage::computeDistanceToOrigin(auxStageEntityDescription))
 			{
 				continue;
 			}

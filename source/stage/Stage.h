@@ -164,7 +164,6 @@ typedef struct StageEntityDescription
 {
 	PixelRightBox pixelRightBox;
 	PositionedEntity* positionedEntity;
-	uint32 distance;
 	void* extraInfo;
 	int16 internalId;
 	bool validRightBox;
