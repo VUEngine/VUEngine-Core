@@ -206,6 +206,8 @@ class Stage : Container
 	int16 nextEntityId;
 	// flag to prevent loading entities that are within the screen's space
 	bool forceNoPopIn;
+	// flag to determine the direction of the stream in
+	bool reverseStreaming;
 
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);

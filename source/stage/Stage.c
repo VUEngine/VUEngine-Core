@@ -127,6 +127,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->streaming = this->stageSpec->streaming;
 	this->streamingAmplitude = this->streaming.streamingAmplitude;
 	this->forceNoPopIn = false;
+	this->reverseStreaming = false;
 }
 
 // class's destructor
@@ -611,7 +612,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 	{
 		if(this->streamingHeadNode == node)
 		{
-			this->streamingHeadNode = this->streamingHeadNode->previous;
+			this->streamingHeadNode = this->reverseStreaming ? this->streamingHeadNode->next : this->streamingHeadNode->previous;
 		}
 
 		delete node->data;
@@ -930,44 +931,92 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
-	if(NULL == this->streamingHeadNode)
+	if(this->reverseStreaming)
 	{
-		this->streamingHeadNode = this->stageEntityDescriptions->head;
+		if(NULL == this->streamingHeadNode)
+		{
+			this->streamingHeadNode = this->stageEntityDescriptions->tail;
+		}
+
+		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
+
+		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->previous, counter++)
+		{
+			if(NULL == this->streamingHeadNode)
+			{
+				this->streamingHeadNode = this->stageEntityDescriptions->tail;
+
+				if(negativeStreamingAmplitude)
+				{
+					break;
+				}
+			}
+
+			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+
+			if(0 > stageEntityDescription->internalId)
+			{
+				// if entity in load range
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
+				{
+					loadedEntities = true;
+
+					stageEntityDescription->internalId = this->nextEntityId++;
+
+					if(defer)
+					{
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
+					}
+					else
+					{
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						break;
+					}
+				}
+			}
+		}
 	}
-
-	bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
-
-	for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
+	else
 	{
 		if(NULL == this->streamingHeadNode)
 		{
 			this->streamingHeadNode = this->stageEntityDescriptions->head;
-
-			if(negativeStreamingAmplitude)
-			{
-				break;
-			}
 		}
 
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
 
-		if(0 > stageEntityDescription->internalId)
+		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
 		{
-			// if entity in load range
-			if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
+			if(NULL == this->streamingHeadNode)
 			{
-				loadedEntities = true;
+				this->streamingHeadNode = this->stageEntityDescriptions->head;
 
-				stageEntityDescription->internalId = this->nextEntityId++;
-
-				if(defer)
+				if(negativeStreamingAmplitude)
 				{
-					EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
-				}
-				else
-				{
-					Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					break;
+				}
+			}
+
+			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->streamingHeadNode->data;
+
+			if(0 > stageEntityDescription->internalId)
+			{
+				// if entity in load range
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
+				{
+					loadedEntities = true;
+
+					stageEntityDescription->internalId = this->nextEntityId++;
+
+					if(defer)
+					{
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), !isDeleted(this->entityLoadingListeners) ? (EventListener)Stage::onEntityLoaded : NULL, stageEntityDescription->internalId);
+					}
+					else
+					{
+						Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						break;
+					}
 				}
 			}
 		}
