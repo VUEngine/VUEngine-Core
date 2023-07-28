@@ -806,26 +806,57 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 		}
 
 		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageSpec->entities.children[i]);
-		uint32 distanceToOrigin = Stage::computeDistanceToOrigin(stageEntityDescription);
 
+		Vector3D stageEntityPosition = (Vector3D)
+		{
+			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2),
+			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2),
+			__PIXELS_TO_METERS(stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2)
+		};
+
+		VirtualNode closestEnitryDescriptionNode = NULL;
 		VirtualNode auxNode = this->stageEntityDescriptions->head;
+		StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
+
+		fixed_ext_t closestDistance = 0;
 
 		for(; auxNode; auxNode = auxNode->next)
 		{
-			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
+			auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-			if(distanceToOrigin > Stage::computeDistanceToOrigin(auxStageEntityDescription))
+			Vector3D auxStageEntityPosition = (Vector3D)
 			{
-				continue;
-			}
+				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.x - (auxStageEntityDescription->pixelRightBox.x1 - auxStageEntityDescription->pixelRightBox.x0) / 2),
+				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.y - (auxStageEntityDescription->pixelRightBox.y1 - auxStageEntityDescription->pixelRightBox.y0) / 2),
+				__PIXELS_TO_METERS(auxStageEntityDescription->positionedEntity->onScreenPosition.z - (auxStageEntityDescription->pixelRightBox.z1 - auxStageEntityDescription->pixelRightBox.z0) / 2)
+			};
 
-			VirtualList::insertBefore(this->stageEntityDescriptions, auxNode, stageEntityDescription);
-			break;
+			fixed_ext_t squaredDistance = Vector3D::squareLength(Vector3D::get(stageEntityPosition, auxStageEntityPosition));
+
+			if(NULL == closestEnitryDescriptionNode || closestDistance > squaredDistance)
+			{
+				closestEnitryDescriptionNode = auxNode;
+				closestDistance = squaredDistance;
+			}
 		}
 
-		if(!auxNode)
+		if(NULL == auxNode)
 		{
 			VirtualList::pushBack(this->stageEntityDescriptions, stageEntityDescription);
+		}
+		else
+		{
+			uint32 stageEntityDistanceToOrigin = Stage::computeDistanceToOrigin(stageEntityDescription);
+			uint32 auxStageEntityDistanceToOrigin = Stage::computeDistanceToOrigin(auxStageEntityDescription);
+
+			if(stageEntityDistanceToOrigin > auxStageEntityDistanceToOrigin)
+			{
+				VirtualList::insertAfter(this->stageEntityDescriptions, auxNode, stageEntityDescription);
+			}
+			else
+			{
+				VirtualList::insertBefore(this->stageEntityDescriptions, auxNode, stageEntityDescription);
+			}
 		}
 	}
 }
