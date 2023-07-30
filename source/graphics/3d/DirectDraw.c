@@ -35,7 +35,6 @@ DirectDraw _directDraw = NULL;
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
-#define __FRAME_BUFFERS_SIZE								0x6000
 
 enum DirectDrawLineShrinkingResult
 {

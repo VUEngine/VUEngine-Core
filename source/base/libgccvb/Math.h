@@ -196,7 +196,8 @@ inline int32 customAbs(int32 number)
 #define __SINF(x)										__FIX7_9_TO_F(__SIN(x))
 
 //#define __SIN_LUT_ENTRIES								(sizeof(_sinLut) / sizeof(int16))
-#define __SIN_LUT_ENTRIES								(64 * 8)
+#define __SIN_LUT_ENTRIES								(512)
+#define __SIN_LUT_ENTRIES_2_POWER						(9) // 512 = 2^9
 #define __QUARTER_ROTATION_DEGREES						__I_TO_FIXED((signed)(__SIN_LUT_ENTRIES >> 2))
 #define __HALF_ROTATION_DEGREES							((signed)__I_TO_FIXED(__SIN_LUT_ENTRIES >> 1))
 #define __FULL_ROTATION_DEGREES							((signed)__I_TO_FIXED_EXT(__SIN_LUT_ENTRIES))
