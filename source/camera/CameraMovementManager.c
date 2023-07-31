@@ -100,9 +100,11 @@ void CameraMovementManager::focus(Camera camera, uint32 checkIfFocusEntityIsMovi
 		focusEntityPosition.z + normalizedDirection.z * focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
-	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, Camera::getPosition(camera));
+	Vector3D currentCameraPosition = Camera::getPosition(camera);
 
 	Camera::setPosition(camera, cameraNewPosition, true);
+
+	this->lastCameraDisplacement = Vector3D::sub(Camera::getPosition(camera), currentCameraPosition);
 }
 
 /**
