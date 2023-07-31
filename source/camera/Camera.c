@@ -174,7 +174,7 @@ void Camera::focus(uint32 checkIfFocusEntityIsMoving)
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
+	CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving);
 
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
@@ -341,7 +341,7 @@ Rotation Camera::getRotation()
  */
 void Camera::setPosition(Vector3D position, bool cap)
 {
-	Vector3D previousPosition = this->position;
+	this->positionBackup = this->position;
 	this->position = position;
 
 	if(cap)
@@ -350,7 +350,7 @@ void Camera::setPosition(Vector3D position, bool cap)
 	}
 
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, previousPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, this->positionBackup));
 }
 
 static uint8 Camera::computeRotationFlags(Rotation rotation)
@@ -666,6 +666,21 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
 Rotation Camera::getFocusEntityRotation()
 {
 	return NULL != this->focusEntityRotation ? *this->focusEntityRotation : Rotation::zero();
+}
+
+/**
+ * Retrieve last position displacement
+ *
+ * @return		Last position displacement vector
+ */
+Vector3D Camera::getLastDisplacement()
+{
+	if(NULL == this->cameraMovementManager)
+	{
+		return Vector3D::zero();
+	}
+
+	return CameraMovementManager::getLastCameraDisplacement(this->cameraMovementManager);
 }
 
 /**

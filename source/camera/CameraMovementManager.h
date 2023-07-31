@@ -24,14 +24,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class Camera;
+
 /// @ingroup camera
 singleton class CameraMovementManager : ListenerObject
 {
+	Vector3D lastCameraDisplacement;
+	
 	/// @publicsection
 	static CameraMovementManager getInstance();
 	void constructor();
-	virtual void focus(uint32 checkIfFocusEntityIsMoving);
-}
 
+	Vector3D getLastCameraDisplacement();
+	virtual void focus(Camera camera, uint32 checkIfFocusEntityIsMoving);
+}
 
 #endif

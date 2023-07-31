@@ -54,6 +54,8 @@ void CameraMovementManager::constructor()
 {
 	// construct base object
 	Base::constructor();
+
+	this->lastCameraDisplacement = Vector3D::zero();
 }
 
 /**
@@ -70,9 +72,12 @@ void CameraMovementManager::destructor()
  *
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute__ ((unused)))
+void CameraMovementManager::focus(Camera camera, uint32 checkIfFocusEntityIsMoving __attribute__ ((unused)))
 {
-	Camera camera = Camera::getInstance();
+	if(isDeleted(camera))
+	{
+		return;
+	}
 
 	// if focusEntity is defined
 	Entity focusEntity = Camera::getFocusEntity(camera);
@@ -95,5 +100,17 @@ void CameraMovementManager::focus(uint32 checkIfFocusEntityIsMoving __attribute_
 		focusEntityPosition.z + normalizedDirection.z * focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
+	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, Camera::getPosition(camera));
+
 	Camera::setPosition(camera, cameraNewPosition, true);
+}
+
+/**
+ * Retrieve the camera's last position displacement
+ *
+ * @return		Last position displacement vector
+ */
+Vector3D CameraMovementManager::getLastCameraDisplacement()
+{
+	return this->lastCameraDisplacement;
 }
