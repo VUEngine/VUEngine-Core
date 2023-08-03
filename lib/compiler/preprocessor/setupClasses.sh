@@ -24,6 +24,10 @@ do
 		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
+		-b)
+		BUILD_MODE="$2"
+		shift # past argument
+		;;
 		-c)
 		CLASSES_HIERARCHY_FILE="$2"
 		shift # past argument
@@ -83,14 +87,14 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 	done
 	echo "}" >> $OUTPUT_C_FILE
 
-	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/objects/setupClasses.c
+	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/objects/$BUILD_MODE/setupClasses.c
 
 	if [ -f $FINAL_SETUP_CLASSES_FILE ]; then
 		rm $FINAL_SETUP_CLASSES_FILE
 	fi
 
 	# Setup calls in final file
-	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/objects/ -name "*SetupClasses.c"`
+	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/objects/$BUILD_MODE/ -name "*SetupClasses.c"`
 
 	echo "// setup function" > $FINAL_SETUP_CLASSES_FILE
 

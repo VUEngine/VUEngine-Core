@@ -296,7 +296,7 @@ baseClassFile=
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
-	processedBaseClassFile=`sed -e 's#.*/source/#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/source/#g' <<< "$baseClassFile"`
+	processedBaseClassFile=`sed -e 's#.*/source/#'"$WORKING_FOLDER"'/headers/'"$LIBRARY_NAME"'/source/#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
@@ -328,7 +328,7 @@ then
 	then
 		if [ ! -f "$processedBaseClassFile" ];
 		then
-			processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+			processedBaseClassFile=`find $WORKING_FOLDER/headers -name "$baseClassName.h" -print -quit`
 		fi
 
 		if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
@@ -373,7 +373,7 @@ then
 
 	if [ ! -z "$baseClassName" ];
 	then
-		processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+		processedBaseClassFile=`find $WORKING_FOLDER/headers -name "$baseClassName.h" -print -quit`
 		baseClassLock=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
 		counter=0
 
@@ -385,7 +385,7 @@ then
 				echo "Waiting for $baseClassName during computation of whole hierarchy"  >> $CLASS_LOG_FILE
 			fi
 			waitRandom
-			processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+			processedBaseClassFile=`find $WORKING_FOLDER/headers -name "$baseClassName.h" -print -quit`
 
 			counter=$((counter + 1))
 
@@ -731,7 +731,7 @@ fi
 
 echo "Writing temporal file on caller $CALLER"  >> $CLASS_LOG_FILE
 
-TEMPORAL_FILE=$WORKING_FOLDER/$className"Temporal.txt"
+TEMPORAL_FILE=$WORKING_FOLDER/classes/$className"Temporal.txt"
 #echo created $TEMPORAL_FILE
 touch $TEMPORAL_FILE
 

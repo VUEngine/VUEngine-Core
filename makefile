@@ -33,7 +33,7 @@ include $(ENGINE_HOME)/makefile-common
 
 # the target file
 TARGET_FILE = lib$(BASENAME)
-TARGET = $(WORKING_FOLDER)/$(TARGET_FILE)-$(TYPE)
+TARGET = $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
 all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).a
@@ -42,8 +42,8 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/builtComponents.txt)
-	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/builtComponents.txt))
+	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
+	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt))
 	@echo "Building $(BASENAME)"
 #	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
 #	@$(eval START_TIME=$(shell date +%s))
@@ -54,15 +54,15 @@ printPostBuildingInfo:
 
 ifeq ($(SCRAMBLE_BINARY),1)
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
-	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/hashes -name "*.o" | sort -R))
+	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes -name "*.o" | sort -R))
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(OBJECT_FILES) $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(OBJECT_FILES) $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
 else
 $(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
 endif
 
 $(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a

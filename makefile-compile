@@ -111,15 +111,15 @@ ifeq ($(TYPE), preprocessor)
 endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME)/source -type d -print)
-INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects -path $(WORKING_FOLDER)/objects/$(GAME_NAME) -prune -o -type d -print)
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/headers/$(GAME_NAME)/source -type d -print)
+INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/headers -path $(WORKING_FOLDER)/headers/$(GAME_NAME) -prune -o -type d -print)
 
 PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@")
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 									\
 						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 						\
-						-include $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/source/libvuengine.h 											\
+						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/libvuengine.h 											\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then			\
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))											\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 	\
@@ -133,21 +133,21 @@ ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
 ASSETS_BINARIES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
 
 # Makes a list of the binary files that will have to be created.
-ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSETS_BINARIES:.mid=.bin))
+ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSETS_BINARIES:.mid=.bin))
 ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the assets (.mid, etc) files.
 BINARY_ASSETS = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
 
 # Makes a list of the binary files that will have to be created.
-BINARY_ASSETS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(BINARY_ASSETS:.mid=.bin))
+BINARY_ASSETS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(BINARY_ASSETS:.mid=.bin))
 BINARY_ASSETS := $(shell echo $(BINARY_ASSETS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the special assets (.c) files.
 ASSETS_SOURCES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.c))
 
 # Makes a list of the binary files that will have to be created.
-ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/../assets/$(NAME)/, $(ASSETS_SOURCES:.c=.o))
+ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/assets/$(NAME)/, $(ASSETS_SOURCES:.c=.o))
 ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Which directories contain source files
@@ -161,23 +161,23 @@ C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
 ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
+C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.c))
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(C_SOURCES:.c=.c))
 C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Class setup file
 SETUP_CLASSES = $(BASENAME)SetupClasses
-SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
-SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES)
 FINAL_SETUP_CLASSES = setupClasses
-FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
-FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
+FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/setupClasses
+FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(FINAL_SETUP_CLASSES)
 
 compile: phony $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(BINARY_ASSETS) $(ASSETS_OBJECTS)
 
@@ -189,7 +189,7 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(eval OBJECT_FILE=$@)
 	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
 	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
-	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
+	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
 
 $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
@@ -197,47 +197,47 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
 	@rm -f $*.dd
 
-$(WORKING_FOLDER)/../assets/$(NAME)/%.o: $(MY_HOME)/%.c
+$(WORKING_FOLDER)/assets/$(NAME)/%.o: $(MY_HOME)/%.c
 	@$(eval SOURCE_FILE=$(shell basename $<))
 	@echo "Compiling asset file: $(SOURCE_FILE)"
-	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/../assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
+	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -x c -$(COMPILER_OUTPUT) $< -o $@
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/../assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/../assets/$(NAME)/$*.d
-	@cp $(WORKING_FOLDER)/../assets/$(NAME)/$*.d $(WORKING_FOLDER)/../assets/$(NAME)/$*.dd
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/assets/$(NAME)/$*.d
+	@cp $(WORKING_FOLDER)/assets/$(NAME)/$*.d $(WORKING_FOLDER)/assets/$(NAME)/$*.dd
 	@rm -f $*.dd
 
 # Rule for creating object file and .d file, the sed magic is used to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-#$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
+#$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.c: $(MY_HOME)/%.c
 
 # Override make's default call to GCC
-$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.c
+$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.c
 	@$(eval RAW_SOURCE_FILE=$<)
-	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(NAME)/\1/@g"))
+	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@.*/(source|assets)/@$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/\1/@g"))
 	@$(eval OBJECT_FILE=$@)
 	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
 	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@rm -f $(OBJECT_FILE)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
-		$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
+		$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
         	$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)" && \
-		sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp && \
-		sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd && \
-		sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d && \
-		cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
-#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
-#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
-#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+		sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp && \
+		sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd && \
+		sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d && \
+		cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
+#	@rm -f $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd
+#	@rm -f $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp
+#	@rm -f $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d.tmp
 
-$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
+$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(eval OBJECT_FILE=$@)
 	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
 	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@$(AS) -o $@ $<
-	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/hashes/$(NAME)/$(HASH_OBJECT).o
+	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
 
-$(WORKING_FOLDER)/objects/$(NAME)/%.bin: $(MY_HOME)/%.mid
+$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.bin: $(MY_HOME)/%.mid
 	@$(eval OLD_SYMBOL_NAME=_binary_$(shell echo $< | sed -e "s@[/-]@_@g" | sed -e "s@.mid@_mid_start@g"))
 	@$(eval NEW_SYMBOL_NAME=_$(shell echo $< | sed -e "s@.*/@@g" | sed -e "s@.mid@@g" | sed -e "s/[A-Z]/_&/g;s/^_//" | tr '[:lower:]' '[:upper:]'))
 	@$(OBJCOPY) -I binary -O elf32-v810 -B v810 --rename-section .data=.rodata --redefine-sym $(OLD_SYMBOL_NAME)=$(NEW_SYMBOL_NAME) $< $@
@@ -256,12 +256,12 @@ phony:
 
 D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(ASSETS_OBJECTS:.o=.d)
-D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES).d
+D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES).d
 D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Same for the .d (dependency) files.
 #D_FILES = $(C_OBJECTS:.o=.d)
-#D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES).d
+#D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES).d
 #D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
 #D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 

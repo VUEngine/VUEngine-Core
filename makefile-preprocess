@@ -10,7 +10,7 @@ HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
@@ -18,23 +18,23 @@ D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then
 
 # Class setup file
 SETUP_CLASSES = $(BASENAME)SetupClasses
-SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES)
 
 preprocess: phony $(SETUP_CLASSES_SOURCE).c
-	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
+	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/classes/dependencies/$(BASENAME).dependencies.txt )
 
 PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
 
 # Override makefile's below dependencies for header files so proper propagation of changes in base classes are catched up
 -include $(D_FILES)
 
-$(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
+$(WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -e $(ENGINE_HOME) -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(PLUGINS_FOLDER) -u $(USER_PLUGINS_FOLDER) -g makefile -t $(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR) -l $(PLUGINS_ARGUMENT)
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER) -b $(BUILD_MODE)
 
 phony:
 	@echo > /dev/null
-#	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
+#	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/classes/dependencies/$(BASENAME).dependencies.txt )
 
