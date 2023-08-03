@@ -44,7 +44,8 @@ printBuildingInfo:
 	@echo ""
 	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/builtComponents.txt)
 	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/builtComponents.txt))
-	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
+	@echo "Building $(BASENAME)"
+#	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
 #	@$(eval START_TIME=$(shell date +%s))
 
 printPostBuildingInfo:
@@ -56,12 +57,12 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/hashes -name "*.o" | sort -R))
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(OBJECT_FILES)
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(OBJECT_FILES) $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
 else
 $(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/hashes/$(NAME)/*.o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
 endif
 
 $(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a

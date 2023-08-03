@@ -55,18 +55,27 @@ PLUGINS_PATH = $(BUILD_DIR)/
 PLUGIN_MAKEFILE=$(ENGINE_HOME)/makefile
 
 # Which directories will contain source files
-SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
 ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
 
 SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
-#ASSETS_DIRS_CLEAN = $(shell echo $(ASSETS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+ASSETS_DIRS_CLEAN = $(shell echo $(ASSETS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the assets (.mid, etc) files.
-ASSETS_BINARIES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
+BINARY_ASSETS = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
 
 # Makes a list of the binary files that will have to be created.
-ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSETS_BINARIES:.mid=.bin))
+BINARY_ASSETS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(BINARY_ASSETS:.mid=.bin))
+BINARY_ASSETS := $(shell echo $(BINARY_ASSETS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Makes a list of the special assets (.c) files.
+ASSETS_SOURCES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.c))
+
+# Makes a list of the binary files that will have to be created.
+ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/../assets/$(NAME)/, $(ASSETS_SOURCES:.c=.o))
 ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Which directories contain source files
+SOURCES_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 
 # Makes a list of the source (.c) files.
 C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
@@ -119,7 +128,8 @@ printClassPreprocessingInfo:
 	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/preprocessedComponents.txt)
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/preprocessedComponents.txt > $(WORKING_FOLDER)/preprocessedComponents.txt.tmp)
 	@$(eval PREPROCESSED_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/preprocessedComponents.txt))
-	@echo "($(PREPROCESSED_COMPONENTS)/$(COMPONENTS)) Preprocessing $(BASENAME)"
+	@echo "Preprocessing $(BASENAME)"
+#	@echo "($(PREPROCESSED_COMPONENTS)/$(COMPONENTS)) Preprocessing $(BASENAME)"
 #	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
@@ -300,8 +310,10 @@ ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/hashes/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/../assets/$(NAME)
 	@rm -Rf $(WORKING_FOLDER)/classes/locks
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
+	@-$(foreach DIR,$(ASSETS_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/../assets/$(NAME)/$(DIR); )
 #	@echo " done"
 #	@$(eval CHECKING_DIRS_END_TIME=$(shell date +%s))
 #	@echo "Total time:" $$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) / 60 ))" min. "$$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) % 60 ))" sec."
