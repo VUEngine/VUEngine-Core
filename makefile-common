@@ -310,7 +310,6 @@ endif
 
 dirs:
 ifeq ($(DIRS_EXIST), 0)
-	@echo -n Creating working dirs for $(NAME)...
 	@mkdir -p $(WORKING_FOLDER)/traces/$(BUILD_MODE)/$(BUILD_MODE)
 	@mkdir -p $(WORKING_FOLDER)/libraries/$(BUILD_MODE)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
