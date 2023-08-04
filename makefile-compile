@@ -150,12 +150,8 @@ ASSETS_OBJECTS_PREFIX=$(WORKING_FOLDER)/assets/$(NAME)
 ASSETS_OBJECTS = $(shell find $(MY_HOME)/assets -type f -name "*.c" -print | sed -e 's@'"$(MY_HOME)"/'@'"$(ASSETS_OBJECTS_PREFIX)"/'@g' -e 's@\.c@\.o@g')
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS_PREFIX=$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
-C_OBJECTS = $(shell find $(MY_HOME)/source -type f -name "*.c" -print | sed -e 's@'"$(MY_HOME)"/'@'"$(C_OBJECTS_PREFIX)"/'@g' -e 's@\.c@\.o@g')
-
-# Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS_PREFIX=$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
-ASSEMBLY_OBJECTS = $(shell find $(MY_HOME)/source -type f -name "*.s" -print | sed -e 's@'"$(MY_HOME)"/'@'"$(ASSEMBLY_OBJECTS_PREFIX)"/'@g' -e 's@\.s@\.o@g')
+SOURCE_OBJECTS_PREFIX=$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
+SOURCE_OBJECTS = $(shell find $(MY_HOME)/source -type f -name "*.[cs]" -print | sed -e 's@'"$(MY_HOME)"/'@'"$(SOURCE_OBJECTS_PREFIX)"/'@g' -e 's@\.c@\.o@g' -e 's@\.s@\.o@g')
 
 # Class setup file
 SETUP_CLASSES = $(BASENAME)SetupClasses
@@ -165,7 +161,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(FINAL_SETUP_CLASSES)
 
-compile: phony $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(BINARY_ASSETS) $(ASSETS_OBJECTS)
+compile: phony $(SOURCE_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(BINARY_ASSETS) $(ASSETS_OBJECTS)
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
@@ -227,7 +223,7 @@ $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.bin: $(MY_HOME)/%.mid
 	@$(eval NEW_SYMBOL_NAME=_$(shell echo $< | sed -e "s@.*/@@g" | sed -e "s@.mid@@g" | sed -e "s/[A-Z]/_&/g;s/^_//" | tr '[:lower:]' '[:upper:]'))
 	@$(OBJCOPY) -I binary -O elf32-v810 -B v810 --rename-section .data=.rodata --redefine-sym $(OLD_SYMBOL_NAME)=$(NEW_SYMBOL_NAME) $< $@
 
-D_FILES = $(C_OBJECTS:.o=.d)
+D_FILES = $(SOURCE_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(ASSETS_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CLASSES).d
 #D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
