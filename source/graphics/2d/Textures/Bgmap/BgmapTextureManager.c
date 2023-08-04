@@ -17,6 +17,7 @@
 #include <ParamTableManager.h>
 #include <VIPManager.h>
 #include <VirtualList.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

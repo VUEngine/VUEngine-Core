@@ -16,6 +16,7 @@
 #include <VirtualList.h>
 #include <Utilities.h>
 #include <MessageDispatcher.h>
+#include <Printing.h>
 #include <string.h>
 #include <debugConfig.h>
 

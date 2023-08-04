@@ -17,7 +17,6 @@
 
 #include <ListenerObject.h>
 #include <VIPManager.h>
-#include <MiscStructs.h>
 #include <Texture.h>
 #include <Clock.h>
 

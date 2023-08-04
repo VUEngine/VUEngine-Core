@@ -64,18 +64,7 @@ inline int32 customAbs(int32 number)
 #define __1I_FIX19_13									0x00002000
 #define __05F_FIX19_13									0x00001000
 
-// fixed point macros
-#define fix7_9											int16
-#define fix7_9_ext										int32
-#define fix13_3											int16
-#define fix13_3											int16
-#define fix10_6											int16
-#define fix10_6_ext										int32
-#define fix19_13										int32
-#define fix17_15										int32
-
 // maximum values
-
 #define __FIX7_9_MAXIMUM_VALUE_TO_I						((1 << (7 - 1)) - 1)
 #define __FIX7_9_MAXIMUM_VALUE							(__I_TO_FIX7_9(__FIX7_9_MAXIMUM_VALUE_TO_I))
 #define __FIX10_6_MAXIMUM_VALUE_TO_I					((1 << (10 - 1)) - 1)
@@ -207,9 +196,6 @@ extern const int16 _sinLut[];
 
 #if __FIXED_POINT_TYPE == 13
 
-#define fixed_t											fix19_13
-#define fixed_ext_t										fix19_13
-
 #define __FIXED_INFINITY								0x7FFFFFFF
 #define __FIXED_EXT_INFINITY							0x7FFFFFFF
 #define __FIXED_MAXIMUM_VALUE							__FIX19_13_MAXIMUM_VALUE
@@ -251,9 +237,6 @@ extern const int16 _sinLut[];
 #endif
 
 #if __FIXED_POINT_TYPE == 6
-
-#define fixed_t											fix10_6
-#define fixed_ext_t										fix10_6_ext
 
 #define __FIXED_INFINITY								0x7FFF
 #define __FIXED_EXT_INFINITY							0x7FFFFFFF
@@ -298,9 +281,6 @@ extern const int16 _sinLut[];
 #endif
 
 #if __FIXED_POINT_TYPE == 9
-
-#define fixed_t											fix7_9
-#define fixed_ext_t										fix7_9_ext
 
 #define __FIXED_INFINITY								0x7FFF
 #define __FIXED_EXT_INFINITY							0x7FFFFFFF

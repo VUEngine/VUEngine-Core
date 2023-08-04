@@ -22,6 +22,7 @@
 #include <WireframeManager.h>
 #include <Camera.h>
 #include <Profiler.h>
+#include <Printing.h>
 #include <Mem.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>

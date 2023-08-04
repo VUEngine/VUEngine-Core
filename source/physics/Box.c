@@ -20,6 +20,7 @@
 #include <Polyhedron.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

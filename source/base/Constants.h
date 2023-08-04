@@ -15,7 +15,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Error.h>
 #include <Globals.h>
 
 
@@ -139,6 +138,7 @@ enum DefaulCollisionLayers
 #define __REGISTER_LAST_PROCESS_NAME
 
 void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
+int32 Error_triggerException(char* message, char* detail);
 
 #define __CHECK_STACK_STATUS																				\
 	extern bool _stackHeadroomViolation;																	\
@@ -148,11 +148,9 @@ void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
 		asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));													\
 																											\
 		if((0x05000000 & _vuengineStackPointer) &&															\
-			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)									\
+			_vuengineStackPointer - __STACK_HEADROOM < (int32)&_bssEnd)										\
 		{																									\
 			_stackHeadroomViolation = true;																	\
-			Printing_setDebugMode(Printing_getInstance());													\
-			Printing_clear(Printing_getInstance());															\
 			HardwareManager_printStackStatus(1, 15, false);													\
 			NM_ASSERT(false, "HardwareManager_checkStack: surpassed headroom boundary!");					\
 		}																									\

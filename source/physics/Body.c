@@ -18,6 +18,7 @@
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
 #include <FrameRate.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

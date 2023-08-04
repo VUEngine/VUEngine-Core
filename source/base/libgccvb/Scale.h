@@ -15,9 +15,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Math.h>
-#include <MiscStructs.h>
-#include <Constants.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,7 +35,7 @@ static class Scale : ListenerObject
 	static inline Scale scalarProduct(Scale scale, int16 scalar);
 	static inline Scale scalarDivision(Scale scale, int16 scalar);
 	static inline bool areEqual(Scale a, Scale b);
-	static inline void print(Scale scale, int32 x, int32 y);
+	static void print(Scale scale, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -105,16 +102,7 @@ static inline bool Scale::areEqual(Scale a, Scale b)
 	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
-static inline void Scale::print(Scale scale, int32 x, int32 y)
-{
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
 
-	PRINT_INT(scale.x, x + 2, y);
-	PRINT_INT(scale.y, x + 2, y + 1);
-	PRINT_INT(scale.z, x + 2, y + 2);
-}
 
 
 #endif

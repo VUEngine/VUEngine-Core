@@ -15,7 +15,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Math.h>
-#include <MiscStructs.h>
 #include <Optical.h>
 #include <Optics.h>
 

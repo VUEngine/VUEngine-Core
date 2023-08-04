@@ -24,6 +24,7 @@
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
 #include <Mesh.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

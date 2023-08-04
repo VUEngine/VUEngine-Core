@@ -16,6 +16,7 @@
 #include <ClockManager.h>
 #include <MessageDispatcher.h>
 #include <Utilities.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

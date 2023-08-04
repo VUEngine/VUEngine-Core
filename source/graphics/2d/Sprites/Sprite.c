@@ -20,6 +20,7 @@
 #include <SpriteManager.h>
 #include <BgmapTexture.h>
 #include <TimerManager.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 

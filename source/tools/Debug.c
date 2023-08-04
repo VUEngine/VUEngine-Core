@@ -32,7 +32,6 @@
 #include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
-#include <MiscStructs.h>
 #include <MBgmapSprite.h>
 #include <KeypadManager.h>
 #include <SRAMManager.h>

@@ -15,6 +15,7 @@
 #include <UIContainer.h>
 #include <Optics.h>
 #include <Camera.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -19,7 +19,6 @@
 #include <SpatialObject.h>
 #include <Shape.h>
 #include <HardwareManager.h>
-#include <MiscStructs.h>
 #include <VirtualList.h>
 #include <Behavior.h>
 

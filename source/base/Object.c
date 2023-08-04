@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Printing.h>
 #include <string.h>
 #include <debugConfig.h>
 

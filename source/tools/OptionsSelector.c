@@ -30,8 +30,8 @@
 #include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
-#include <MiscStructs.h>
 #include <Utilities.h>
+#include <Printing.h>
 
 #include <Clock.h>
 #include <State.h>

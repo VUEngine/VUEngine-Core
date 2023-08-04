@@ -21,6 +21,7 @@
 #include <ClockManager.h>
 #include <SpriteManager.h>
 #include <Utilities.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -415,6 +416,9 @@ void HardwareManager::print(int32 x, int32 y)
  */
 static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 {
+	Printing::setDebugMode(Printing::getInstance());
+	Printing::clear(Printing::getInstance());
+	
 	int32 sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 

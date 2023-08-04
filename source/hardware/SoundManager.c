@@ -18,6 +18,7 @@
 #include <TimerManager.h>
 #include <Profiler.h>
 #include <Camera.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

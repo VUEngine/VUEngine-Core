@@ -19,6 +19,7 @@
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
 #include <Utilities.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

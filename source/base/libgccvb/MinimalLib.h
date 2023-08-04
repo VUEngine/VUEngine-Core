@@ -22,22 +22,16 @@
 
 	BTW, "Seiryu" (sigh-roo) is a variety of Japanese Red-Leaf Maple tree.
 */
-#ifndef LIBGCCVB_H_
-#define	LIBGCCVB_H_
+#ifndef MINIMAL_LIBGCCVB_H_
+#define	MINIMAL_LIBGCCVB_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //											INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include "MinimalLib.h"
-#include <Vector3D.h>
-#include <Rotation.h>
-#include <Scale.h>
-#include <Size.h>
-#include <Optical.h>
-#include <PixelVector.h>
-#include <PixelSize.h>
-
+#include <Types.h>
+#include <Math.h>
+#include <Constants.h>
 
 #endif

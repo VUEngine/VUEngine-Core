@@ -16,6 +16,7 @@
 #include <Utilities.h>
 #include <Types.h>
 #include <HardwareManager.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

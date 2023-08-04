@@ -114,6 +114,10 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 			}
 		}
 
+#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE_AT_X 20
+#define __PRINT_FRAMERATE_AT_Y 24
+
 #ifdef __PRINT_FRAMERATE
 #ifdef __PRINT_FRAMERATE_AT_X
 #ifdef __PRINT_FRAMERATE_AT_Y

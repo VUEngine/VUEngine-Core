@@ -17,7 +17,6 @@
 
 #include <Container.h>
 #include <Entity.h>
-#include <Printing.h>
 #include <EntityFactory.h>
 #include <Texture.h>
 #include <UIContainer.h>
@@ -31,6 +30,8 @@
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+typedef struct FontSpec FontSpec;
 
 typedef struct Streaming
 {

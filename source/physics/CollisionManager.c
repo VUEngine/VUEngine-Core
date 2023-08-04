@@ -17,6 +17,7 @@
 #include <HardwareManager.h>
 #include <VirtualList.h>
 #include <Camera.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

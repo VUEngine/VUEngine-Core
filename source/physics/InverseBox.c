@@ -15,7 +15,6 @@
 #include <InverseBox.h>
 #include <Optics.h>
 #include <Polyhedron.h>
-#include <Math.h>
 #include <CollisionHelper.h>
 #include <VirtualList.h>
 

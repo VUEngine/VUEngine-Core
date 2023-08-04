@@ -21,6 +21,7 @@
 #include <SoundTest.h>
 #include <VUEngine.h>
 #include <Profiler.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -16,6 +16,7 @@
 #include <VUEngine.h>
 #include <CollisionManager.h>
 #include <CollisionHelper.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

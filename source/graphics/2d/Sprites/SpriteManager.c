@@ -23,6 +23,7 @@
 #include <ObjectTextureManager.h>
 #include <Camera.h>
 #include <TimerManager.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

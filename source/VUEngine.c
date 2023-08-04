@@ -22,7 +22,6 @@
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
 #include <Optics.h>
-#include <MiscStructs.h>
 #include <FrameRate.h>
 #include <Clock.h>
 #include <BgmapTextureManager.h>

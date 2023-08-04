@@ -20,6 +20,7 @@
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Camera.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

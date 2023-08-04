@@ -17,6 +17,7 @@
 #include <VIPManager.h>
 #include <Mem.h>
 #include <HardwareManager.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 

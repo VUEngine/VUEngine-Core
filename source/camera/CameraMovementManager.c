@@ -17,7 +17,6 @@
 #include <ClockManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
-
 #include <debugConfig.h>
 
 

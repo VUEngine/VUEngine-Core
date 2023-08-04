@@ -17,8 +17,6 @@
 
 #include <Events.h>
 #include <Libgccvb.h>
-#include <MiscStructs.h>
-#include <Constants.h>
 #include <Error.h>
 #include <MemoryPool.h>
 #include <HardwareManager.h>
