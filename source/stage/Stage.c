@@ -30,6 +30,7 @@
 #include <ParamTableManager.h>
 #include <VIPManager.h>
 #include <MessageDispatcher.h>
+#include <Printing.h>
 #include <debugConfig.h>
 #ifdef __PROFILE_STREAMING
 #include <TimerManager.h>
