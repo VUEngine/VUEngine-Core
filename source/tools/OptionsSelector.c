@@ -458,31 +458,31 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 				{
 					case kString:
 
-						optionsLength = strnlen((char*)option->value, this->columnWidth);
+						optionsLength = alignment == kOptionsAlignLeft ? 0 : strnlen((char*)option->value, this->columnWidth);
 						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kFloat:
 
-						optionsLength = Utilities::getDigitCount(*((int32*)option->value)) - 3;
+						optionsLength = alignment == kOptionsAlignLeft ? 0 : Utilities::getDigitCount(*((int32*)option->value)) - 3;
 						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, 2, this->font);
 						break;
 
 					case kInt:
 
-						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						optionsLength = alignment == kOptionsAlignLeft ? 0 : Utilities::getDigitCount(*((int32*)option->value));
 						Printing::int32(printing, *((int32*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kShortInt:
 
-						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						optionsLength = alignment == kOptionsAlignLeft ? 0 : Utilities::getDigitCount(*((int32*)option->value));
 						Printing::int32(printing, *((int16*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;
 
 					case kChar:
 
-						optionsLength = Utilities::getDigitCount(*((int32*)option->value));
+						optionsLength = alignment == kOptionsAlignLeft ? 0 : Utilities::getDigitCount(*((int32*)option->value));
 						Printing::int32(printing, *((int8*)option->value), x + fontData->fontSpec->fontSize.x - optionsLength / optionsLengthDivisor, y, this->font);
 						break;				
 				}
