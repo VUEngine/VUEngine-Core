@@ -56,10 +56,10 @@ printPreBuildingInfo:
 	@echo "Make Jobs:   $(MAKE_JOBS)"
 	@echo
 #	@echo "Finding total number of components"
-#	@$(shell rm -f \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/*omponents.txt*)
-#	@$(shell echo "core" > \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt)
-#	@rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessing.txt
-#	@rm -f $(WORKING_FOLDER)/*.a
+	@$(shell rm -f \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/*omponents.txt*)
+	@$(shell echo "core" > \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt)
+	@rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessing.txt
+	@rm -f $(WORKING_FOLDER)/*.a
 
 printComponentsToBuildInformation:
 	@$(shell sort -u \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp)
