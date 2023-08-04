@@ -20,6 +20,7 @@
 #include <MessageDispatcher.h>
 #include <VUEngine.h>
 #include <Profiler.h>
+#include <Printing.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif

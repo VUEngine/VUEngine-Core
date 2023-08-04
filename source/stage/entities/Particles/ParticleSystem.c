@@ -18,6 +18,8 @@
 #include <Shape.h>
 #include <CollisionManager.h>
 #include <Utilities.h>
+#include <Printing.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

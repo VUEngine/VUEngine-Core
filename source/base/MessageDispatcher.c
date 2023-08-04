@@ -16,6 +16,7 @@
 #include <VUEngine.h>
 #include <Clock.h>
 #include <VirtualList.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 
