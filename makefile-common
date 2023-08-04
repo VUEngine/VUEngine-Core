@@ -19,15 +19,11 @@ else
 	-include $(CONFIG_MAKE_FILE)
 endif
 
-CREATE_ENGINE_DIRS =
 PREPROCESS_ENGINE =
-BUILD_ENGINE =
 
 # All, except the core, must include the core as a build target
 ifneq ($(NAME), $(ENGINE_NAME))
-	override CREATE_ENGINE_DIRS := createEngineDirs
 	override PREPROCESS_ENGINE := preprocessEngine
-	override BUILD_ENGINE := engine
 else
 	override PLUGINS =
 endif
@@ -149,12 +145,12 @@ ifeq ($(ENGINE_CLASSES_HIERARCHY_FILE_EXISTS), 0)
 preprocessEngine:
 	@$(MAKE) --no-print-directory preprocessClasses																									\
 			-f $(ENGINE_HOME)/makefile																												\
+			-e NAME=$(ENGINE_NAME)																													\
 			-e GAME_NAME=$(GAME_NAME)																												\
 			-e GAME_HOME=$(GAME_HOME)																												\
 			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
-			-e NAME=$(ENGINE_NAME)																													\
-			-e MAKE_JOBS=$(MAKE_JOBS)																												\
-			-e COMPONENTS=$(COMPONENTS)
+			-e COMPONENTS=$(COMPONENTS)																												\
+			-e MAKE_JOBS=$(MAKE_JOBS)
 else
 ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
 MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
@@ -163,13 +159,13 @@ ifeq ($(MUST_PREPROCESS_ENGINE), 1)
 preprocessEngine:
 	@$(MAKE) --no-print-directory preprocessClasses																									\
 		-f $(ENGINE_HOME)/makefile																													\
+		-e NAME=$(ENGINE_NAME)																														\
 		-e GAME_NAME=$(GAME_NAME)																													\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
-		-e NAME=$(ENGINE_NAME)																														\
-		-e MAKE_JOBS=$(MAKE_JOBS)																													\
+		-e COMPONENTS=$(COMPONENTS)																													\
 		-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)														\
-		-e COMPONENTS=$(COMPONENTS)
+		-e MAKE_JOBS=$(MAKE_JOBS)
 else
 preprocessEngine:
 endif
@@ -229,10 +225,9 @@ compile:
 		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-compile																											\
 		-e TYPE=$(TYPE)																																\
-		-e GAME_NAME=$(GAME_NAME)																													\
-		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
 		-e MY_HOME=$(MY_HOME)																														\
+		-e GAME_NAME=$(GAME_NAME)																													\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
 		-e CLASSES_HIERARCHY_FILE=$(CLASSES_HIERARCHY_FILE) 																						\
@@ -241,22 +236,20 @@ compile:
 		-e PLUGINS="$(PLUGINS)"																														\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
-		-e GAME_NAME=$(GAME_NAME)																													\
 		-e COMPONENTS=$(COMPONENTS)
 
 engine: deleteLibraries
 	@$(MAKE) --no-print-directory	 																												\
 		$(GAME_HOME)/build/lib$(ENGINE_NAME).a																										\
 		-f $(ENGINE_HOME)/makefile																													\
+		-e NAME=$(ENGINE_NAME)																														\
+		-e GAME_NAME=$(GAME_NAME)																													\
+		-e GAME_HOME=$(GAME_HOME)																													\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
-		-e GAME_HOME=$(GAME_HOME)																													\
-		-e MAKE_JOBS=$(MAKE_JOBS)																													\
-		-e NAME=$(ENGINE_NAME)																														\
-		-e GAME_NAME=$(GAME_NAME)																													\
-		-e COMPONENTS=$(COMPONENTS);
-
+		-e COMPONENTS=$(COMPONENTS)																													\
+		-e MAKE_JOBS=$(MAKE_JOBS);
 plugins: deleteLibraries
 	@-$(foreach PLUGIN, $(PLUGINS),	 																												\
 		$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																			\
@@ -265,14 +258,14 @@ plugins: deleteLibraries
 			$(MAKE) --no-print-directory	 																										\
 				$(PLUGIN_FILE).a 																													\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+				-e NAME=$(PLUGIN)																													\
+				-e GAME_NAME=$(GAME_NAME)																											\
+				-e GAME_HOME=$(GAME_HOME)																											\
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
 				-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																							\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
-				-e GAME_HOME=$(GAME_HOME)																											\
-				-e MAKE_JOBS=$(MAKE_JOBS)																											\
-				-e NAME=$(PLUGIN)																													\
-				-e GAME_NAME=$(GAME_NAME)																											\
-				-e COMPONENTS=$(COMPONENTS);																										\
+				-e COMPONENTS=$(COMPONENTS)																											\
+				-e MAKE_JOBS=$(MAKE_JOBS);																											\
 		fi;																																			\
 	)																																				\
 
@@ -289,27 +282,7 @@ clean:
 # Making the check to fail handles new folders without trouble
 DIRS_EXIST=0
 
-createEngineDirs:
-ifeq ($(DIRS_EXIST), 0)
-	@$(MAKE) --no-print-directory dirs																										\
-		-f $(ENGINE_HOME)/makefile																											\
-		-e GAME_HOME=$(GAME_HOME)																											\
-		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
-		-e NAME=$(ENGINE_NAME);
-endif
 
-createPluginDirs:
-ifeq ($(DIRS_EXIST), 0)
-	@-$(foreach PLUGIN, $(PLUGINS), 	 																										\
-		$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																		\
-		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
-		$(MAKE) --no-print-directory dirs																										\
-			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
-			-e GAME_HOME=$(GAME_HOME)																											\
-			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
-			-e NAME=$(PLUGIN);																													\
-	)
-endif
 
 printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)

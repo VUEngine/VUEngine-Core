@@ -133,7 +133,7 @@ ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CO
 
 ASSETS_ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 								\
 						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 						\
-						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/base/libgccvb/MinimalLib.h 									\
+						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/base/libgccvb/MinimalLib.h 							\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then			\
 							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))											\
 						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 	\
