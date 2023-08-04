@@ -99,8 +99,9 @@ ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NA
 ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 FOLDER_TO_CLEAN=$(MY_HOME)/build
+
 ifneq ($(CLEAN_TYPE), all)
-	FOLDER_TO_CLEAN=$(MY_HOME)/build/$(CLEAN_TYPE)*
+	FOLDER_TO_CLEAN=$(MY_HOME)/build/working/objects/$(CLEAN_TYPE)*
 endif
 
 # Configuration files
