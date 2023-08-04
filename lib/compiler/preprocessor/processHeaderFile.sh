@@ -203,10 +203,16 @@ do
 		PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR="$2"
 		shift # past argument
 		;;
+		-x)
+		GAME_NAME="$2"
+		shift # past argument
+		;;
 	esac
 
 	shift
 done
+
+WORKING_FOLDER="build/working"
 
 if [ -z "$CALLER" ];
 then
@@ -574,7 +580,7 @@ do
 	if [ -f "$headerFile" ];
 	then
 		##echo "."
-		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
+		echo " $headerFile \\" | sed -e 's@^.*/vuengine/plugins@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@^.*/vuengine/core@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g' >> $CLASS_DEPENDENCIES_FILE
 	else
 
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "

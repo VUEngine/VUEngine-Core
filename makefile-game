@@ -1,9 +1,3 @@
-# Project name
-override NAME = Game
-
-# Game name
-override GAME_NAME = $(NAME)
-
 # Engine name
 override ENGINE_NAME = core
 
@@ -15,6 +9,12 @@ override MY_HOME = $(shell pwd)
 
 # Where the game lives
 override GAME_HOME = $(MY_HOME)
+
+# Project name
+override GAME_NAME = $(shell basename $(MY_HOME))
+
+# Game name
+override NAME = $(GAME_NAME)
 
 # Common
 include $(ENGINE_HOME)/makefile-common
@@ -112,7 +112,7 @@ $(TARGET).vb: compile $(TARGET).elf
 ifeq ($(SCRAMBLE_BINARY),1)
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo 
-	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
+	@$(AR) rcs $(BUILD_DIR)/lib$(GAME_NAME).a $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
 	@echo Linking $(TARGET).elf...
 	@echo 
 	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes -name "*.o" | sort -R))
@@ -126,7 +126,7 @@ else
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo 
 	@echo Linking game library
-	@$(AR) rcs $(BUILD_DIR)/libGame.a $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(BINARY_ASSETS)
+	@$(AR) rcs $(BUILD_DIR)/lib$(GAME_NAME).a $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(BINARY_ASSETS)
 	@echo Linking $(TARGET).elf...
 	@echo 
 	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(BINARY_ASSETS) $(VUENGINE) $(LD_PARAMS) \
