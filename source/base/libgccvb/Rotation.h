@@ -17,7 +17,6 @@
 #include <Math.h>
 #include <MiscStructs.h>
 #include <Constants.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,7 +39,7 @@ static class Rotation : ListenerObject
 	static inline Rotation getRelativeToCamera(Rotation rotation);
 	static inline Rotation getFromPixelRotation(PixelRotation pixelRotation);
 	static inline bool areEqual(Rotation a, Rotation b);
-	static inline void print(Rotation rotation, int32 x, int32 y);
+	static void print(Rotation rotation, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -145,17 +144,6 @@ static inline Rotation Rotation::getFromPixelRotation(PixelRotation pixelRotatio
 static inline bool Rotation::areEqual(Rotation a, Rotation b)
 {
 	return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-
-static inline void Rotation::print(Rotation rotation, int32 x, int32 y)
-{
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
-
-	PRINT_FLOAT(__FIXED_TO_F(rotation.x), x + 2, y);
-	PRINT_FLOAT(__FIXED_TO_F(rotation.y), x + 2, y + 1);
-	PRINT_FLOAT(__FIXED_TO_F(rotation.z), x + 2, y + 2);
 }
 
 

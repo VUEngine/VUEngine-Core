@@ -19,6 +19,8 @@
 #include <Math.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
+#include <Sprite.h>
+#include <SpatialObject.h>
 #include <debugConfig.h>
 
 

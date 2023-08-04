@@ -14,6 +14,7 @@
 
 #include <Wireframe.h>
 #include <WireframeManager.h>
+#include <Camera.h>
 #include <debugConfig.h>
 
 

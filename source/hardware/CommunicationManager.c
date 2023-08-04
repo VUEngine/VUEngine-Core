@@ -24,6 +24,7 @@
 #include <Debug.h>
 #endif
 #include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

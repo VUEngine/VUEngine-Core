@@ -40,7 +40,7 @@ static class PixelVector : ListenerObject
 	static inline PixelVector project(Vector3D vector3D, int16 parallax);
 	static inline PixelVector getProjectionDisplacementHighPrecision(Vector3D vector3D, int16 parallax);
 	static inline PixelVector projectHighPrecision(Vector3D vector3D, int16 parallax);
-	static inline void print(PixelVector vector, int32 x, int32 y);
+	static void print(PixelVector vector, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -168,19 +168,6 @@ static inline PixelVector PixelVector::projectHighPrecision(Vector3D vector3D, i
 	};
 
 	return PixelVector::sum(pixelVector, displacement);
-}
-
-static inline void PixelVector::print(PixelVector vector, int32 x, int32 y)
-{
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
-	PRINT_TEXT("p:    ", x, y + 3);
-
-	PRINT_INT(vector.x, x + 2, y);
-	PRINT_INT(vector.y, x + 2, y + 1);
-	PRINT_INT(vector.z, x + 2, y + 2);
-	PRINT_INT(vector.parallax, x + 2, y + 3);
 }
 
 

@@ -17,7 +17,6 @@
 #include <Math.h>
 #include <MiscStructs.h>
 #include <Constants.h>
-#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -16,8 +16,6 @@
 
 #include <Math.h>
 #include <MiscStructs.h>
-#include <Constants.h>
-#include <Printing.h>
 #include <Optical.h>
 #include <Optics.h>
 
@@ -25,6 +23,9 @@
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
+
+extern const Vector3D* _cameraPosition;
+extern const Optical* _optical;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,8 +73,8 @@ static class Vector3D : ListenerObject
 	static inline Vector3D rotateYAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
-	static inline void print(Vector3D vector, int32 x, int32 y);
-	static inline void printRaw(Vector3D vector, int32 x, int32 y);
+	static void print(Vector3D vector, int32 x, int32 y);
+	static void printRaw(Vector3D vector, int32 x, int32 y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -291,8 +292,6 @@ static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 
 static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 {
-	extern const Vector3D* _cameraPosition;
-
 	vector3D.x -= _cameraPosition->x;
 	vector3D.y -= _cameraPosition->y;
 	vector3D.z -= _cameraPosition->z;
@@ -302,9 +301,6 @@ static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 
 static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, int16 parallax)
 {
-	extern const Vector3D* _cameraPosition;
-	extern const Optical* _optical;
-
 	fixed_ext_t x = (fixed_ext_t)(vector3D.x);
 	fixed_ext_t y = (fixed_ext_t)(vector3D.y);
 	fixed_ext_t z = (fixed_ext_t)(vector3D.z);
@@ -573,28 +569,6 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 	}
 
 	return result;
-}
-
-static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
-{
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
-
-	PRINT_FLOAT(__FIXED_TO_F(vector.x), x + 2, y);
-	PRINT_FLOAT(__FIXED_TO_F(vector.y), x + 2, y + 1);
-	PRINT_FLOAT(__FIXED_TO_F(vector.z), x + 2, y + 2);
-}
-
-static inline void Vector3D::printRaw(Vector3D vector, int32 x, int32 y)
-{
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
-
-	PRINT_INT((vector.x), x + 2, y);
-	PRINT_INT((vector.y), x + 2, y + 1);
-	PRINT_INT((vector.z), x + 2, y + 2);
 }
 
 #endif

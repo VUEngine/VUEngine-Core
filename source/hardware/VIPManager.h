@@ -16,7 +16,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <SpatialObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -244,6 +243,8 @@ typedef struct PaletteConfig
 	} object;
 
 } PaletteConfig;
+
+class SpatialObject;
 
 typedef void (*PostProcessingEffect) (uint32, SpatialObject);
 

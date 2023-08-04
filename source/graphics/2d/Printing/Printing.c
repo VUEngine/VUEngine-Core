@@ -21,7 +21,7 @@
 #include <Utilities.h>
 #include <Mem.h>
 #include <VirtualList.h>
-#include <Printing.h>
+#include <PrintingSprite.h>
 #include <config.h>
 #include <debugConfig.h>
 
