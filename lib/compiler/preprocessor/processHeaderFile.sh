@@ -350,7 +350,7 @@ then
 	exit 0
 fi
 
-# The continue
+# Then continue
 #echo "Preprocessing class: $className"
 #echo
 #echo "$className PLUGINS $PLUGINS"
@@ -535,7 +535,7 @@ do
 
 done
 
-echo "Starting computation of dependcies on caller $CALLER with search path $searchPath "  >> $CLASS_LOG_FILE
+echo "Starting computation of dependencies on caller $CALLER with search path $searchPath "  >> $CLASS_LOG_FILE
 
 if [ ! -z "$baseClassesNames" ];
 then
@@ -592,7 +592,7 @@ then
 	echo " $INPUT_FILE " >> $CLASS_DEPENDENCIES_FILE
 fi
 
-echo "Computation of dependcies done on caller $CALLER"  >> $CLASS_LOG_FILE
+echo "Computation of dependencies done on caller $CALLER"  >> $CLASS_LOG_FILE
 
 rm -f $CLASS_DEPENDENCIES_FILE-e
 
