@@ -61,7 +61,11 @@ PLUGIN_MAKEFILE=$(ENGINE_HOME)/makefile
 ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
 
 SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+OBJECTS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/objects/'"$(BUILD_MODE)"'/'"$(NAME)"'/@')
+HEADERS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/headers/'"$(NAME)"'/@')
+
 ASSETS_DIRS_CLEAN = $(shell echo $(ASSETS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+ASSETS_OBJECTS_DIRS = $(shell echo $(ASSETS_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/assets/'"$(NAME)"'/@')
 
 # Makes a list of the assets (.mid, etc) files.
 BINARY_ASSETS = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
@@ -314,6 +318,8 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
+DIRS_HELPER_FILE = .tmp.txt
+
 dirs:
 ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/traces/$(BUILD_MODE)/$(BUILD_MODE)
@@ -326,12 +332,13 @@ ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/assets/$(NAME)
 	@rm -Rf $(WORKING_FOLDER)/classes/locks
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(DIR); )
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/headers/$(NAME)/$(DIR); )
-	@-$(foreach DIR,$(ASSETS_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/assets/$(NAME)/$(DIR); )
-#	@echo " done"
-#	@$(eval CHECKING_DIRS_END_TIME=$(shell date +%s))
-#	@echo "Total time:" $$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) / 60 ))" min. "$$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) % 60 ))" sec."
+	@echo "$(OBJECTS_DIRS)" > $(DIRS_HELPER_FILE)
+	@xargs mkdir -p < $(DIRS_HELPER_FILE)
+	@echo "$(ASSETS_OBJECTS_DIRS)" > $(DIRS_HELPER_FILE)
+	@xargs mkdir -p < $(DIRS_HELPER_FILE)
+	@echo "$(HEADERS_DIRS)" > $(DIRS_HELPER_FILE)
+	@xargs mkdir -p < $(DIRS_HELPER_FILE)
+	@rm $(DIRS_HELPER_FILE)
 endif
 
 phony:

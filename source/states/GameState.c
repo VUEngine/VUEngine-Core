@@ -16,6 +16,7 @@
 #include <VUEngine.h>
 #include <Camera.h>
 #include <SpriteManager.h>
+#include <Printing.h>
 #include <CharSetManager.h>
 #include <VIPManager.h>
 

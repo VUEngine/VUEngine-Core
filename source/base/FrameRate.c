@@ -15,6 +15,7 @@
 #include <FrameRate.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 
