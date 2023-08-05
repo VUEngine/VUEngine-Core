@@ -578,6 +578,8 @@ do
 
 	if [ -f "$headerFile" ];
 	then
+		# It needs to depend on both the original and the preprocessed base class header file
+		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 		echo " $headerFile \\" | sed -e 's@'"$LIBRARIES_PATH"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_LIBRARIES_PATH"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g' >> $CLASS_DEPENDENCIES_FILE
 	else
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
