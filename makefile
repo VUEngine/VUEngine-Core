@@ -18,10 +18,10 @@ CLEAN_NAME = $(shell echo $(NAME) | sed -e "s@.*//@@")
 ifeq ($(NAME), $(ENGINE_NAME))
     override MY_HOME = $(ENGINE_HOME)
 else
-ifneq (,$(findstring vuengine,$(NAME)))
-    override MY_HOME = $(PLUGINS_FOLDER)/$(CLEAN_NAME)
-else
+ifneq (,$(findstring user,$(NAME)))
     override MY_HOME = $(USER_PLUGINS_FOLDER)/$(CLEAN_NAME)
+else
+    override MY_HOME = $(PLUGINS_FOLDER)/$(CLEAN_NAME)
 endif
 endif
 
