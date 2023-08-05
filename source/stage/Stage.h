@@ -25,13 +25,12 @@
 #include <SpriteManager.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-typedef struct FontSpec FontSpec;
 
 typedef struct Streaming
 {
