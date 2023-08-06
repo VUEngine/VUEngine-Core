@@ -55,13 +55,12 @@ PLUGIN_MAKEFILE=$(ENGINE_HOME)/makefile
 
 # Which directories will contain source files
 ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
+SOURCES_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 
-SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
-OBJECTS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/objects/'"$(BUILD_MODE)"'/'"$(NAME)"'/@')
-HEADERS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/headers/'"$(NAME)"'/@')
-
-ASSETS_DIRS_CLEAN = $(shell echo $(ASSETS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
-ASSETS_OBJECTS_DIRS = $(shell echo $(ASSETS_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/assets/'"$(NAME)"'/@')
+# Makes a list of the special assets (.c) files.
+ASSETS_SOURCES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.c))
+C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
+ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 
 # Makes a list of the assets (.mid, etc) files.
 BINARY_ASSETS = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
@@ -70,33 +69,22 @@ BINARY_ASSETS = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
 BINARY_ASSETS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(BINARY_ASSETS:.mid=.bin))
 BINARY_ASSETS := $(shell echo $(BINARY_ASSETS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-# Makes a list of the special assets (.c) files.
-ASSETS_SOURCES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.c))
-
 # Makes a list of the binary files that will have to be created.
 ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/assets/$(NAME)/, $(ASSETS_SOURCES:.c=.o))
 ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
-
-# Which directories contain source files
-SOURCES_DIRS = $(shell find $(MY_HOME)/source -type d -print)
-
-# Makes a list of the source (.c) files.
-C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
-
-# Makes a list of the source (.s) files.
-ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
+# Makes a list of the object files that will have to be created.
+ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
 # Override make's default call to GCC
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o:
 	@echo > /dev/null
 
-# Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
-ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 FOLDER_TO_CLEAN=$(MY_HOME)/build
 
@@ -237,7 +225,7 @@ compile:
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
 		-e COMPONENTS=$(COMPONENTS)
-
+		
 engine: deleteLibraries
 	@$(MAKE) --no-print-directory	 																												\
 		$(GAME_HOME)/build/lib$(ENGINE_NAME).a																										\
@@ -277,12 +265,6 @@ clean:
 	@rm -Rf $(FOLDER_TO_CLEAN)
 	@echo "Cleaning done."
 
-# Create necessary directories
-#DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME) ] && echo 1 || echo 0 )
-# Making the check to fail handles new folders without trouble
-DIRS_EXIST=0
-
-
 
 printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)
@@ -293,8 +275,26 @@ endif
 
 DIRS_HELPER_FILE = .tmp.txt
 
-dirs:
+# Which directories contain source files
+# Create necessary directories
+DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME) ] && echo 1 || echo 0 )
+
 ifeq ($(DIRS_EXIST), 0)
+	SOURCES_DIRS_HELPER = $(SOURCES_DIRS)
+	ASSETS_DIRS_HELPER = $(ASSETS_DIRS)
+else
+	SOURCES_DIRS_HELPER = $(shell find $(MY_HOME)/source -type d -mmin -1 -print)
+	ASSETS_DIRS_HELPER = $(shell find $(MY_HOME)/assets -type d -mmin -1 -print)
+endif
+
+SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS_HELPER) | sed -e 's@'"$(MY_HOME)"/'@@g')
+OBJECTS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/objects/'"$(BUILD_MODE)"'/'"$(NAME)"'/@')
+HEADERS_DIRS = $(shell echo $(SOURCES_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/headers/'"$(NAME)"'/@')
+
+ASSETS_DIRS_CLEAN = $(shell echo $(ASSETS_DIRS_HELPER) | sed -e 's@'"$(MY_HOME)"/'@@g')
+ASSETS_OBJECTS_DIRS = $(shell echo $(ASSETS_DIRS_CLEAN) | tr " " "\n" | sed -e 's@^@'"$(WORKING_FOLDER)"'/assets/'"$(NAME)"'/@')
+
+dirs:
 	@mkdir -p $(WORKING_FOLDER)/traces/$(BUILD_MODE)/$(BUILD_MODE)
 	@mkdir -p $(WORKING_FOLDER)/libraries/$(BUILD_MODE)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
@@ -312,7 +312,6 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo "$(HEADERS_DIRS)" > $(DIRS_HELPER_FILE)
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
 	@rm $(DIRS_HELPER_FILE)
-endif
 
 phony:
 	@echo > /dev/null
