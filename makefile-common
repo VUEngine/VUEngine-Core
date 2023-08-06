@@ -276,18 +276,24 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
-DIRS_HELPER_FILE = .tmp.txt
+DIRS_HELPER_FILE = $(WORKING_FOLDER)/traces/$(BUILD_MODE)/$(BUILD_MODE)/.tmp.txt
 
 # Which directories contain source files
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME) ] && echo 1 || echo 0 )
+DIRS_HELPER_FILE_IS_TOO_OLD=$(shell test `find $(DIRS_HELPER_FILE) -mmin +1` && echo 1 || echo 0 )
 
+ifeq ($(DIRS_HELPER_FILE_IS_TOO_OLD), 1)
+	SOURCES_DIRS_HELPER = $(SOURCES_DIRS)
+	ASSETS_DIRS_HELPER = $(ASSETS_DIRS)
+else
 ifeq ($(DIRS_EXIST), 0)
 	SOURCES_DIRS_HELPER = $(SOURCES_DIRS)
 	ASSETS_DIRS_HELPER = $(ASSETS_DIRS)
 else
-	SOURCES_DIRS_HELPER = $(shell find $(MY_HOME)/source -type d -mmin -1 -print)
-	ASSETS_DIRS_HELPER = $(shell find $(MY_HOME)/assets -type d -mmin -1 -print)
+	SOURCES_DIRS_HELPER = $(shell find $(MY_HOME)/source -type d -mtime -1 -print)
+	ASSETS_DIRS_HELPER = $(shell find $(MY_HOME)/assets -type d -mtime -1 -print)
+endif
 endif
 
 SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS_HELPER) | sed -e 's@'"$(MY_HOME)"/'@@g')
@@ -314,7 +320,6 @@ dirs:
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
 	@echo "$(HEADERS_DIRS)" > $(DIRS_HELPER_FILE)
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
-	@rm $(DIRS_HELPER_FILE)
 
 phony:
 	@echo > /dev/null
