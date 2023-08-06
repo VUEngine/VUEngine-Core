@@ -75,6 +75,7 @@ ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(C_SOURCES:.c=.o))
+C_OBJECTS_TEMP := $(C_OBJECTS_TEMP) $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
@@ -209,7 +210,7 @@ preprocessHeaderFiles:
 		-e PLUGINS="$(PLUGINS)"
 
 compile:
-	@$(MAKE) --no-print-directory compile																											\
+	@$(MAKE) --no-print-directory compile -s		 																									\
 		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-compile																											\
 		-e TYPE=$(TYPE)																																\
@@ -224,7 +225,9 @@ compile:
 		-e PLUGINS="$(PLUGINS)"																														\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
-		-e COMPONENTS=$(COMPONENTS)
+		-e COMPONENTS=$(COMPONENTS)																													\
+		-e C_OBJECTS=$(C_OBJECTS)																													\
+		-e ASSETS_OBJECTS=$(ASSETS_OBJECTS)
 		
 engine: deleteLibraries
 	@$(MAKE) --no-print-directory	 																												\
