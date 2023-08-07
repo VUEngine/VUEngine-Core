@@ -210,7 +210,7 @@ preprocessHeaderFiles:
 		-e PLUGINS="$(PLUGINS)"
 
 compile:
-	@$(MAKE) --no-print-directory compile -s		 																									\
+	@$(MAKE) --no-print-directory compile -s		 																								\
 		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-compile																											\
 		-e TYPE=$(TYPE)																																\
@@ -226,8 +226,8 @@ compile:
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
 		-e COMPONENTS=$(COMPONENTS)																													\
-		-e C_OBJECTS=$(C_OBJECTS)																													\
-		-e ASSETS_OBJECTS=$(ASSETS_OBJECTS)
+		-e C_OBJECTS="$(C_OBJECTS)"																													\
+		-e ASSETS_OBJECTS="$(ASSETS_OBJECTS)"
 		
 engine: deleteLibraries
 	@$(MAKE) --no-print-directory	 																												\

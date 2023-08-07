@@ -220,6 +220,7 @@ D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$(SETUP_CL
 
 phony:
 	@echo > /dev/null
+#	@echo ASSETS_OBJECTS $(ASSETS_OBJECTS)
 #	@echo $(D_FILES)
 #	@echo $(INCLUDE_PATHS)
 #	@echo WORKING_FOLDER $(WORKING_FOLDER)
