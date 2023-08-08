@@ -13,13 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Box.h>
-#include <InverseBox.h>
-#include <Ball.h>
-#include <CollisionHelper.h>
-#include <Optics.h>
 #include <Polyhedron.h>
-#include <HardwareManager.h>
-#include <VirtualList.h>
+#include <CollisionHelper.h>
+#include <Polyhedron.h>
 #include <Printing.h>
 #include <debugConfig.h>
 
@@ -27,8 +23,6 @@
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
-
-friend class InverseBox;
 
 
 //---------------------------------------------------------------------------------------------------------

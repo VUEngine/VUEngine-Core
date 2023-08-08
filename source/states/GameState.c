@@ -14,10 +14,14 @@
 
 #include <GameState.h>
 #include <VUEngine.h>
+#include <Telegram.h>
+#include <Stage.h>
+#include <Clock.h>
+#include <PhysicalWorld.h>
+#include <CollisionManager.h>
 #include <Camera.h>
 #include <SpriteManager.h>
 #include <Printing.h>
-#include <CharSetManager.h>
 #include <VIPManager.h>
 
 

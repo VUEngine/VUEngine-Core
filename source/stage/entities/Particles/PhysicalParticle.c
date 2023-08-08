@@ -13,10 +13,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <PhysicalParticle.h>
+#include <Body.h>
 #include <PhysicalWorld.h>
-#include <ObjectAnimatedSprite.h>
+#include <Sprite.h>
 #include <VUEngine.h>
-#include <Clock.h>
 #include <Utilities.h>
 
 

@@ -15,8 +15,8 @@
 #include <ObjectTexture.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
-#include <VIPManager.h>
 #include <VirtualList.h>
+#include <VirtualNode.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -13,12 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ParticleSystem.h>
-#include <VUEngine.h>
-#include <Optics.h>
-#include <Shape.h>
-#include <CollisionManager.h>
-#include <Utilities.h>
+#include <Particle.h>
 #include <Printing.h>
+#include <Utilities.h>
+#include <VirtualList.h>
+#include <VUEngine.h>
 #include <debugUtilities.h>
 
 

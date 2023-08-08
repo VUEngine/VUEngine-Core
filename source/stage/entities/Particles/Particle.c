@@ -14,8 +14,8 @@
 
 #include <Particle.h>
 #include <SpriteManager.h>
-#include <Clock.h>
-#include <Optics.h>
+#include <Sprite.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------

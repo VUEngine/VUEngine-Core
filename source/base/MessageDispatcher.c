@@ -13,10 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MessageDispatcher.h>
-#include <VUEngine.h>
 #include <Clock.h>
-#include <VirtualList.h>
 #include <Printing.h>
+#include <Telegram.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugUtilities.h>
 
 

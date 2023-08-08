@@ -13,11 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ToolState.h>
-#include <AnimationInspector.h>
+#include <StateMachine.h>
+#include <Tool.h>
 #include <VUEngine.h>
-#include <MessageDispatcher.h>
-#include <Telegram.h>
-#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

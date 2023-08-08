@@ -13,17 +13,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <VIPManager.h>
-#include <HardwareManager.h>
-#include <TimerManager.h>
-#include <VUEngine.h>
-#include <FrameRate.h>
-#include <SpriteManager.h>
 #include <DirectDraw.h>
-#include <WireframeManager.h>
-#include <Camera.h>
+#include <HardwareManager.h>
+#include <Mem.h>
+#include <ObjectSprite.h>
+#include <ObjectSpriteContainer.h>
 #include <Profiler.h>
 #include <Printing.h>
-#include <Mem.h>
+#include <SpriteManager.h>
+#include <VUEngine.h>
+#include <WireframeManager.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif

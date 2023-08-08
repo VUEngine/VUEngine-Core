@@ -23,6 +23,8 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class VirtualList;
+
 /// @ingroup graphics-2d-textures-char
 singleton class CharSetManager : Object
 {

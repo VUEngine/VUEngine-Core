@@ -13,10 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <StopwatchManager.h>
-#include <FrameRate.h>
-#include <HardwareManager.h>
-#include <MessageDispatcher.h>
-#include <TimerManager.h>
+#include <Stopwatch.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <debugConfig.h>
 
 
@@ -24,8 +23,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class VirtualNode;
 friend class VirtualList;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------

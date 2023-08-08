@@ -1,6 +1,6 @@
 # Fully qualified plugin name
 # (this is set from outside)
-NAME = vuengine//plugin-name
+NAME = context//plugin-name
 
 # Engine name
 override ENGINE_NAME = core

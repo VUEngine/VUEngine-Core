@@ -14,10 +14,10 @@
 
 #include <Stopwatch.h>
 #include <StopwatchManager.h>
-#include <HardwareManager.h>
 #include <TimerManager.h>
-#include <VUEngine.h>
 #include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 
 
 //---------------------------------------------------------------------------------------------------------

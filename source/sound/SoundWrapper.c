@@ -14,9 +14,9 @@
 
 #include <SoundWrapper.h>
 #include <VUEngine.h>
+#include <VirtualList.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
-#include <HardwareManager.h>
 #include <MessageDispatcher.h>
 #include <Utilities.h>
 #include <Printing.h>

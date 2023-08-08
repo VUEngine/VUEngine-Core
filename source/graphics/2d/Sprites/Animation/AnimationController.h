@@ -16,8 +16,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Clock.h>
-#include <CharSet.h>
 #include <Sprite.h>
 
 
@@ -73,7 +71,6 @@ class AnimationController : ListenerObject
 	void setFrameCycleDecrement(uint8 frameCycleDecrement);
 	void setFrameDuration(uint8 frameDuration);
 	void stop();
-	bool update(Clock clock);
 	bool updateAnimation();
 	void write();
 	void writeAnimation();

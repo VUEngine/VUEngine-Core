@@ -12,29 +12,30 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <Stage.h>
-#include <Optics.h>
-#include <VUEngine.h>
-#include <EntityFactory.h>
-#include <PhysicalWorld.h>
-#include <TimerManager.h>
-#include <SoundManager.h>
-#include <Camera.h>
-#include <HardwareManager.h>
-#include <SpriteManager.h>
-#include <BgmapTextureManager.h>
-#include <CharSetManager.h>
 #include <BgmapTexture.h>
+#include <BgmapTextureManager.h>
+#include <Camera.h>
+#include <CharSetManager.h>
+#include <Entity.h>
+#include <EntityFactory.h>
+#include <HardwareManager.h>
 #include <ParamTableManager.h>
-#include <VIPManager.h>
-#include <MessageDispatcher.h>
+#include <PhysicalWorld.h>
 #include <Printing.h>
+#include <SpriteManager.h>
+#include <SoundManager.h>
+#include <TimerManager.h>
+#include <UIContainer.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VIPManager.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 #ifdef __PROFILE_STREAMING
 #include <TimerManager.h>
 #endif
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

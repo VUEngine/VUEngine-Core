@@ -17,8 +17,7 @@
 #include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
 #include <ObjectTexture.h>
-#include <Optics.h>
-#include <Camera.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 

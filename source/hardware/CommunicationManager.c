@@ -13,14 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CommunicationManager.h>
-#include <TimerManager.h>
 #include <Mem.h>
-#include <Utilities.h>
-#include <VIPManager.h>
 #include <MessageDispatcher.h>
 #include <VUEngine.h>
 #include <Profiler.h>
 #include <Printing.h>
+#include <Telegram.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif

@@ -14,7 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Types.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ extern const int16 _sinLut[];
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Math : ListenerObject
+static class Math : Object
 {
 	/// @publicsection
 	static inline float squareRoot(float number);

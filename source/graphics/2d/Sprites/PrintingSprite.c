@@ -13,12 +13,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <PrintingSprite.h>
-#include <Affine.h>
-#include <Optics.h>
-#include <SpriteManager.h>
 #include <BgmapTextureManager.h>
-#include <ParamTableManager.h>
-#include <Camera.h>
+#include <Optics.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <VIPManager.h>
 #include <debugConfig.h>
 

@@ -17,7 +17,6 @@
 
 #include <ListenerObject.h>
 #include <SoundWrapper.h>
-#include <WaveForms.h>
 
 
 //---------------------------------------------------------------------------------------------------------

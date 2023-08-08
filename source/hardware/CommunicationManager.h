@@ -16,8 +16,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Telegram.h>
-#include <VirtualList.h>
 
 
 
@@ -36,6 +34,8 @@ enum CommunicationsBroadcastStates
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class Telegram;
 
 /// @ingroup hardware
 singleton class CommunicationManager : ListenerObject

@@ -22,9 +22,22 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-// memory manipulation
+// Memory manipulation
 #define __MEMORY_USED_BLOCK_FLAG	((uint16)0xFFFF)
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
+
+
+// Graphics
+#define __TRANSPARENCY_NONE			0
+#define __TRANSPARENCY_ODD			1
+#define __TRANSPARENCY_EVEN			2
+
+#define __NO_RENDER_INDEX			-1
+
+#define	__COLOR_BLACK			0x00
+#define	__COLOR_DARK_RED		0x01
+#define	__COLOR_MEDIUM_RED		0x02
+#define	__COLOR_BRIGHT_RED		0x03
 
 
 // Camera half width in pixels

@@ -15,12 +15,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <stdarg.h>
 #include <SpatialObject.h>
 #include <Shape.h>
-#include <HardwareManager.h>
-#include <VirtualList.h>
-#include <Behavior.h>
+#include <stdarg.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,6 +57,9 @@
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class Behavior;
+class VirtualList;
 
 /// @ingroup stage-entities
 class Container : SpatialObject

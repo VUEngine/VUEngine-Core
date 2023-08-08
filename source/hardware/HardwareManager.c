@@ -18,8 +18,6 @@
 #include <TimerManager.h>
 #include <CommunicationManager.h>
 #include <VIPManager.h>
-#include <ClockManager.h>
-#include <SpriteManager.h>
 #include <Utilities.h>
 #include <Printing.h>
 #include <debugConfig.h>

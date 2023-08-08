@@ -14,6 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <Math.h>
 
 
@@ -22,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Scale : ListenerObject
+static class Scale : Object
 {
 	/// @publicsection
 	static inline Scale zero();

@@ -14,10 +14,9 @@
 
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
+#include <CharSet.h>
 #include <SpriteManager.h>
-#include <HardwareManager.h>
 #include <Mem.h>
-#include <VIPManager.h>
 #include <debugConfig.h>
 #include <debugUtilities.h>
 

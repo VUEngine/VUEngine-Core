@@ -12,16 +12,19 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <AnimationCoordinator.h>
+#include <AnimationController.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class VirtualNode;
 friend class VirtualList;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------

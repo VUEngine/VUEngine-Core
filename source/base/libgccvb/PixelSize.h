@@ -14,7 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Types.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class PixelSize : ListenerObject
+static class PixelSize : Object
 {
 	/// @publicsection
 	static inline PixelSize getFromSize(Size size);

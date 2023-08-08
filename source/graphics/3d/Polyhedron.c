@@ -16,8 +16,6 @@
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
-#include <WireframeManager.h>
-#include <VIPManager.h>
 #include <debugConfig.h>
 
 

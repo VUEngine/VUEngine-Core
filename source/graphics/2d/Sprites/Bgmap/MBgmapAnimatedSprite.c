@@ -13,12 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBgmapAnimatedSprite.h>
-#include <SpriteManager.h>
-#include <BgmapTextureManager.h>
-#include <ParamTableManager.h>
-#include <Optics.h>
-#include <Camera.h>
+#include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 

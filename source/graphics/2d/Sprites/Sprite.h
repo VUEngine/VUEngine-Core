@@ -16,9 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <VIPManager.h>
 #include <Texture.h>
-#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -31,18 +29,13 @@
 #define __UPDATE_SIZE				0x04
 #define __UPDATE_M					0x08
 
-#define __TRANSPARENCY_NONE			0
-#define __TRANSPARENCY_ODD			1
-#define __TRANSPARENCY_EVEN			2
-
-#define __NO_RENDER_INDEX			-1
-
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class AnimationController;
+
 
 /**
  * A SpriteSpec

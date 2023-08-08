@@ -16,14 +16,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Telegram.h>
-#include <State.h>
-#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class Telegram;
+class State;
+class VirtualList;
 
 /// @ingroup base
 class StateMachine : ListenerObject

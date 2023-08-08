@@ -17,8 +17,6 @@
 
 #include <SpatialObject.h>
 #include <Sprite.h>
-#include <Wireframe.h>
-#include <Body.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -26,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 class Particle;
+class Wireframe;
 
 typedef struct ParticleSpec
 {

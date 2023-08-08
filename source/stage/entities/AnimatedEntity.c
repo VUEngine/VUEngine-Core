@@ -12,17 +12,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <AnimatedEntity.h>
-#include <Clock.h>
-#include <MessageDispatcher.h>
-#include <Optics.h>
-#include <Camera.h>
-#include <Shape.h>
-#include <PhysicalWorld.h>
-#include <Body.h>
-#include <Box.h>
+#include <AnimationController.h>
+#include <Sprite.h>
+#include <VirtualList.h>
+#include <string.h>
 #include <debugUtilities.h>
 
 

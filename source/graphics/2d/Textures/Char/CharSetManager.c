@@ -13,10 +13,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSetManager.h>
+#include <CharSet.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
-#include <Mem.h>
-#include <HardwareManager.h>
 #include <Printing.h>
 #include <debugUtilities.h>
 

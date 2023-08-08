@@ -14,13 +14,17 @@
 
 #include <ObjectSpriteContainer.h>
 #include <Mem.h>
+#include <ObjectSprite.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
-#include <Camera.h>
-#include <SpriteManager.h>
-#include <VIPManager.h>
-#include <Utilities.h>
 #include <Printing.h>
+#include <Sprite.h>
+#include <SpriteManager.h>
+#include <Texture.h>
+#include <Utilities.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -28,11 +32,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+friend class ObjectSprite;
 friend class Sprite;
 friend class Texture;
-friend class ObjectSprite;
-friend class VirtualNode;
 friend class VirtualList;
+friend class VirtualNode;
 
 
 static int32 _spt;

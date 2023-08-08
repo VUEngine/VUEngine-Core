@@ -13,12 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
-#include <VUEngine.h>
-#include <Clock.h>
-#include <PhysicalWorld.h>
-#include <MessageDispatcher.h>
 #include <FrameRate.h>
+#include <MessageDispatcher.h>
+#include <PhysicalWorld.h>
 #include <Printing.h>
+#include <SpatialObject.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 
 

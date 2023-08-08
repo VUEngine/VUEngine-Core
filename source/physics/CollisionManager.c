@@ -13,11 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CollisionManager.h>
-#include <MessageDispatcher.h>
-#include <HardwareManager.h>
+#include <Clock.h>
 #include <VirtualList.h>
-#include <Camera.h>
+#include <SpatialObject.h>
 #include <Printing.h>
+#include <Shape.h>
 #include <debugConfig.h>
 
 

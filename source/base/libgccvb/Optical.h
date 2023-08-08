@@ -14,7 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Types.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@
 //											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static class Optical : ListenerObject
+static class Optical : Object
 {
 	static inline Optical getFromPixelOptical(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
 	static inline Optical updateWithCameraFrustum(Optical optical, CameraFrustum cameraFrustum);

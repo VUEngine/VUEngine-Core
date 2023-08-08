@@ -13,10 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
-#include <VUEngine.h>
 #include <Ball.h>
+#include <Body.h>
 #include <CollisionManager.h>
-#include <MessageDispatcher.h>
+#include <Shape.h>
+#include <Telegram.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugUtilities.h>
 
 
@@ -24,9 +28,9 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class VirtualNode;
-friend class VirtualList;
 friend class Shape;
+friend class VirtualList;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------

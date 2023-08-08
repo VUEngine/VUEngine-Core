@@ -12,16 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <TextObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <SpriteManager.h>
-#include <ObjectTexture.h>
-#include <Optics.h>
-#include <Camera.h>
 #include <Printing.h>
+#include <Texture.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

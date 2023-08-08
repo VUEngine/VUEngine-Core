@@ -16,16 +16,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
+#include <CharSet.h>
 #include <Entity.h>
 #include <EntityFactory.h>
+#include <Printing.h>
+#include <SoundManager.h>
+#include <SpriteManager.h>
 #include <Texture.h>
+#include <TimerManager.h>
 #include <UIContainer.h>
 #include <VIPManager.h>
-#include <Camera.h>
-#include <SpriteManager.h>
-#include <TimerManager.h>
-#include <SoundManager.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -174,6 +174,9 @@ typedef struct StageEntityDescription
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class VirtualList;
+class VirtualNode;
 
 /// @ingroup stage
 class Stage : Container

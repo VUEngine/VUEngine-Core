@@ -15,9 +15,6 @@
 #include <LineField.h>
 #include <Line.h>
 #include <CollisionHelper.h>
-#include <Optics.h>
-#include <VirtualList.h>
-#include <Sprite.h>
 #include <SpatialObject.h>
 #include <Printing.h>
 #include <debugConfig.h>

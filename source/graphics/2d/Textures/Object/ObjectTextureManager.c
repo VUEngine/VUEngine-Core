@@ -13,9 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectTextureManager.h>
-#include <HardwareManager.h>
-#include <ParamTableManager.h>
-#include <VIPManager.h>
+#include <ObjectTexture.h>
 #include <VirtualList.h>
 
 

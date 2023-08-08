@@ -15,18 +15,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Clock.h>
-#include <Stage.h>
-#include <GameState.h>
-#include <ToolState.h>
-#include <StateMachine.h>
-#include <CollisionManager.h>
-#include <PhysicalWorld.h>
+#include <ListenerObject.h>
 #include <VIPManager.h>
-#include <CommunicationManager.h>
-#include <SpriteManager.h>
-#include <WireframeManager.h>
-#include <SoundManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,6 +51,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 class VUEngine;
+class Clock;
+class Stage;
+class GameState;
+class ToolState;
+class StateMachine;
+class CollisionManager;
+class PhysicalWorld;
+class CommunicationManager;
+class SpriteManager;
+class WireframeManager;
+class SoundManager;
+class SpatialObject;
+
 extern VUEngine _vuEngine;
 
 /// @ingroup base

@@ -38,6 +38,7 @@
 #include <StateMachine.h>
 #include <Telegram.h>
 #include <VirtualList.h>
+#include <VirtualNode.h>
 #include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>

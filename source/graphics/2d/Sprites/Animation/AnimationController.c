@@ -12,12 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <Utilities.h>
+#include <Sprite.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <debugConfig.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,9 +36,6 @@ extern int32 strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @param owner					Controller's owner
- * @param sprite				Sprite to animate
- * @param charSetSpec		CharSetSpec used to decide the animation allocation type
  */
 void AnimationController::constructor()
 {

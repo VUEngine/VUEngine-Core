@@ -16,15 +16,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <ListenerObject.h>
-#include <StateMachine.h>
-#include <Telegram.h>
-#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+class Clock;
+class Telegram;
 
 /**
  * Delayed Message
@@ -49,8 +48,12 @@ typedef struct DelayedMessage
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup base
+class ListenerObject;
+class StateMachine;
+class Telegram;
+class Clock;
 
+/// @ingroup base
 singleton class MessageDispatcher : Object
 {
 	// Delayed messages

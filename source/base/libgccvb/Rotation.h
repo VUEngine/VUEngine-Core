@@ -14,6 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <Math.h>
 
 
@@ -22,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Rotation : ListenerObject
+static class Rotation : Object
 {
 	/// @publicsection
 	static inline Rotation zero();

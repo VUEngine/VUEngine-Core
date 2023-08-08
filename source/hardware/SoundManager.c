@@ -13,11 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundManager.h>
-#include <Optics.h>
-#include <VirtualList.h>
-#include <TimerManager.h>
 #include <Profiler.h>
 #include <Camera.h>
+#include <SoundWrapper.h>
+#include <VirtualList.h>
+#include <WaveForms.h>
 #include <Printing.h>
 
 

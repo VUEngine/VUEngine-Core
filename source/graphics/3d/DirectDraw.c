@@ -13,9 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DirectDraw.h>
-#include <Box.h>
-#include <Polyhedron.h>
-#include <VirtualList.h>
 #include <VIPManager.h>
 #include <Camera.h>
 #include <debugConfig.h>

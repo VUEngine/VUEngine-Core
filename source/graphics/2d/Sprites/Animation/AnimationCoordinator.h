@@ -18,12 +18,14 @@
 #include <ListenerObject.h>
 #include <CharSet.h>
 #include <Sprite.h>
-#include <AnimationController.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class AnimationController;
+
 
 /// @ingroup graphics-2d-sprites-animation
 class AnimationCoordinator : ListenerObject

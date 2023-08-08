@@ -17,6 +17,7 @@
 #include <CameraMovementManager.h>
 #include <CameraEffectManager.h>
 #include <Printing.h>
+#include <Entity.h>
 #include <debugConfig.h>
 
 

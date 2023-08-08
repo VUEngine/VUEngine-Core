@@ -16,6 +16,7 @@
 #include <VirtualList.h>
 #include <Camera.h>
 #include <DirectDraw.h>
+#include <Wireframe.h>
 #include <Printing.h>
 #include <debugConfig.h>
 #include <debugUtilities.h>

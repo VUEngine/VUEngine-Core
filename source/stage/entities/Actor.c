@@ -13,15 +13,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Actor.h>
-#include <Clock.h>
-#include <MessageDispatcher.h>
-#include <CollisionManager.h>
-#include <Optics.h>
-#include <Camera.h>
-#include <Shape.h>
-#include <PhysicalWorld.h>
 #include <Body.h>
-#include <Box.h>
+#include <Camera.h>
+#include <PhysicalWorld.h>
+#include <Shape.h>
+#include <State.h>
+#include <StateMachine.h>
+#include <Telegram.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <VUEngine.h>
 #include <debugUtilities.h>
 

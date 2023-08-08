@@ -13,11 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSet.h>
-#include <HardwareManager.h>
 #include <CharSetManager.h>
 #include <Mem.h>
 #include <VIPManager.h>
-#include <VirtualList.h>
 #include <debugConfig.h>
 
 

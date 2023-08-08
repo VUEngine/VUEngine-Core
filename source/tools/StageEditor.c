@@ -184,7 +184,7 @@ void StageEditor::hide()
 }
 
 /**
- * Process user input
+ * Process  input
  *
  * @param pressedKey	User input
  */
@@ -465,7 +465,7 @@ void StageEditor::selectNextEntity()
  *
  * @memberof 			StageEditor
  * @private
- * @param pressedKey	The controller button pressed by the user
+ * @param pressedKey	The controller button pressed by the 
  */
 void StageEditor::moveCamera(uint32 pressedKey)
 {
@@ -560,7 +560,7 @@ void StageEditor::moveCamera(uint32 pressedKey)
  *
  * @memberof StageEditor
  * @private
- * @param pressedKey	The controller button pressed by the user
+ * @param pressedKey	The controller button pressed by the 
  */
 void StageEditor::changeProjection(uint32 pressedKey)
 {
@@ -641,7 +641,7 @@ void StageEditor::changeProjection(uint32 pressedKey)
  *
  * @memberof 			StageEditor
  * @private
- * @param pressedKey	The controller button pressed by the user
+ * @param pressedKey	The controller button pressed by the 
  */
 void StageEditor::translateEntity(uint32 pressedKey)
 {
@@ -791,7 +791,7 @@ void StageEditor::removePreviousSprite()
 }
 
 /**
- * Show selected user object
+ * Show selected  object
  *
  * @memberof 	StageEditor
  * @private
@@ -829,11 +829,11 @@ void StageEditor::showSelectedUserObject()
 }
 
 /**
- * Select user object
+ * Select  object
  *
  * @memberof 			StageEditor
  * @private
- * @param pressedKey	The controller button pressed by the user
+ * @param pressedKey	The controller button pressed by the 
  */
 void StageEditor::selectUserObject(uint32 pressedKey)
 {
@@ -1019,7 +1019,7 @@ void StageEditor::printProjectionValues()
 }
 
 /**
- * Print user objects
+ * Print  objects
  *
  * @memberof 	StageEditor
  * @private

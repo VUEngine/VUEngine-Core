@@ -16,14 +16,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <ListenerObject.h>
-#include <AnimationController.h>
-#include <AnimationCoordinator.h>
-
+#include <CharSet.h>
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class AnimationController;
+class AnimationCoordinator;
+class ListenerObject;
+
 
 /// @ingroup graphics-2d-sprites-animation
 singleton class AnimationCoordinatorFactory : Object

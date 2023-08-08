@@ -16,9 +16,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Entity.h>
-#include <CameraMovementManager.h>
-#include <CameraEffectManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,6 +39,11 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class Entity;
+class CameraMovementManager;
+class CameraEffectManager;
+
 
 /// @ingroup camera
 singleton class Camera : ListenerObject

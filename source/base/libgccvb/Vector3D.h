@@ -14,6 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <Math.h>
 #include <Optical.h>
 #include <Optics.h>
@@ -32,7 +33,7 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Vector3D : ListenerObject
+static class Vector3D : Object
 {
 	/// @publicsection
 	static inline Vector3D zero();

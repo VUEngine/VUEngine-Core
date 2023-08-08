@@ -14,6 +14,8 @@
 
 #include <StateMachine.h>
 #include <VirtualList.h>
+#include <State.h>
+#include <Telegram.h>
 
 
 //---------------------------------------------------------------------------------------------------------

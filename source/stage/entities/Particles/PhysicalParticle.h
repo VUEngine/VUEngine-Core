@@ -22,6 +22,8 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+class Body;
+
 typedef struct PhysicalParticleSpec
 {
 	ParticleSpec particleSpec;

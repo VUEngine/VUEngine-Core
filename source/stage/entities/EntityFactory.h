@@ -16,10 +16,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Sprite.h>
-#include <Container.h>
-#include <Shape.h>
+#include <Behavior.h>
 #include <Body.h>
+#include <Entity.h>
+#include <Sprite.h>
+#include <Shape.h>
 #include <Wireframe.h>
 
 
@@ -36,77 +37,6 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-class Entity;
-
-// defines an entity in ROM memory
-typedef struct EntitySpec
-{
-	/// class allocator
-	AllocatorPointer allocator;
-
-	/// children
-	struct PositionedEntity* childrenSpecs;
-
-	/// behaviors
-	BehaviorSpec** behaviorSpecs;
-
-	/// extra info
-	void* extraInfo;
-
-	/// sprites
-	SpriteSpec** spriteSpecs;
-
-	/// use z displacement in projection
-	bool useZDisplacementInProjection;
-
-	/// wireframees
-	WireframeSpec** wireframeSpecs;
-
-	/// collision shapes
-	ShapeSpec* shapeSpecs;
-
-	/// pixelSize
-	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
-	PixelSize pixelSize;
-
-	/// object's in-game type
-	uint8 inGameType;
-
-	/// physical specification
-	PhysicalSpecification* physicalSpecification;
-
-} EntitySpec;
-
-typedef const EntitySpec EntityROMSpec;
-
-
-// an entity associated with a position
-typedef struct PositionedEntity
-{
-	// pointer to the entity spec in ROM
-	EntitySpec* entitySpec;
-
-	// position in the screen coordinates
-	ScreenPixelVector onScreenPosition;
-
-	// entity's id
-	int16 id;
-
-	// name
-	char* name;
-
-	// the children
-	struct PositionedEntity* childrenSpecs;
-
-	// extra info
-	void* extraInfo;
-
-	// force load
-	bool loadRegardlessOfPosition;
-
-} PositionedEntity;
-
-typedef const PositionedEntity PositionedEntityROMSpec;
 
 /**
  * Positioned Entity Description
@@ -133,6 +63,8 @@ typedef struct PositionedEntityDescription
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class VirtualList;
 
 /// @ingroup stage-entities
 class EntityFactory : ListenerObject

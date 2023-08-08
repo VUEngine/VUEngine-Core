@@ -13,10 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
-#include <VUEngine.h>
-#include <CollisionManager.h>
 #include <CollisionHelper.h>
+#include <CollisionManager.h>
 #include <Printing.h>
+#include <SpatialObject.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
 
 

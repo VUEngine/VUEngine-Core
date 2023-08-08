@@ -14,12 +14,11 @@
 
 #include <Mesh.h>
 #include <DirectDraw.h>
-#include <Optics.h>
-#include <VIPManager.h>
-#include <WireframeManager.h>
-#include <PixelVector.h>
 #include <Math.h>
-#include <Camera.h>
+#include <Optics.h>
+#include <PixelVector.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <debugConfig.h>
 
 
@@ -30,8 +29,6 @@
 friend class VirtualNode;
 friend class VirtualList;
 
-
-VIPManager _vipManager = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -53,11 +50,6 @@ void Mesh::constructor(MeshSpec* meshSpec)
 	if(NULL != this->wireframeSpec)
 	{
 		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments);
-	}
-
-	if(NULL == _vipManager)
-	{
-		_vipManager = VIPManager::getInstance();
 	}
 }
 

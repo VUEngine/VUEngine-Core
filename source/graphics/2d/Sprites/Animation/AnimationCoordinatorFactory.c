@@ -13,14 +13,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationCoordinatorFactory.h>
+#include <AnimationController.h>
+#include <AnimationCoordinator.h>
+#include <ListenerObject.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class VirtualNode;
 friend class VirtualList;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------

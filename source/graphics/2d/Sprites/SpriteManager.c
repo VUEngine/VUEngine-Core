@@ -12,19 +12,20 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <SpriteManager.h>
-#include <Mem.h>
-#include <VUEngine.h>
-#include <VIPManager.h>
-#include <ParamTableManager.h>
-#include <CharSetManager.h>
 #include <BgmapTextureManager.h>
+#include <CharSetManager.h>
+#include <Mem.h>
+#include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
-#include <Camera.h>
-#include <TimerManager.h>
+#include <ParamTableManager.h>
 #include <Printing.h>
+#include <Sprite.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

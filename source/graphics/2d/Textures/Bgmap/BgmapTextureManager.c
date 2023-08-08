@@ -12,11 +12,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
-#include <HardwareManager.h>
 #include <ParamTableManager.h>
-#include <VIPManager.h>
 #include <VirtualList.h>
+#include <VIPManager.h>
 #include <Printing.h>
 
 

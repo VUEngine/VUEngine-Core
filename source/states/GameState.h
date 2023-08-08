@@ -16,17 +16,20 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <State.h>
-#include <Telegram.h>
-#include <Stage.h>
-#include <Clock.h>
-#include <PhysicalWorld.h>
-#include <CollisionManager.h>
 #include <KeypadManager.h>
+#include <Stage.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+class Clock;
+class CollisionManager;
+class Entity;
+class PhysicalWorld;
+class Telegram;
+class VirtualList;
 
 /// @ingroup states
 class GameState : State

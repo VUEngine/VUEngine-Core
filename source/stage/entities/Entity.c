@@ -12,20 +12,21 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <Entity.h>
-#include <Camera.h>
-#include <VUEngine.h>
-#include <Entity.h>
-#include <Optics.h>
-#include <Shape.h>
-#include <CollisionManager.h>
-#include <SpriteManager.h>
 #include <BgmapSprite.h>
+#include <CollisionManager.h>
+#include <EntityFactory.h>
 #include <MBgmapSprite.h>
 #include <Mesh.h>
+#include <Optics.h>
 #include <Printing.h>
+#include <Shape.h>
+#include <Telegram.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <VUEngine.h>
 #include <debugConfig.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

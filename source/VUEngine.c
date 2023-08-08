@@ -12,8 +12,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <VUEngine.h>
+#include <ToolState.h>
+#include <CommunicationManager.h>
 #include <SRAMManager.h>
 #include <HardwareManager.h>
 #include <StopwatchManager.h>
@@ -44,6 +45,7 @@
 #include <VIPManager.h>
 #include <Profiler.h>
 #include <debugConfig.h>
+#include <string.h>
 
 #ifdef __DEBUG_TOOLS
 #include <DebugState.h>

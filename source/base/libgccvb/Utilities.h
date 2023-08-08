@@ -15,6 +15,7 @@
 //											 INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <Clock.h>
 #include <KeypadManager.h>
 
@@ -36,7 +37,7 @@ extern uint32 _seed;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base-libgccvb
-static class Utilities : ListenerObject
+static class Utilities : Object
 {
 	/// @publicsection
 	static void setClock(Clock clock);

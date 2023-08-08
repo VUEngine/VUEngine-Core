@@ -17,11 +17,6 @@
 
 #include <Object.h>
 #include <Sprite.h>
-#include <ObjectSpriteContainer.h>
-#include <ParamTableManager.h>
-#include <CharSetManager.h>
-#include <BgmapTextureManager.h>
-#include <ObjectTextureManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,6 +29,14 @@
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+class BgmapTextureManager;
+class CharSetManager;
+class ObjectSpriteContainer;
+class ObjectTextureManager;
+class ParamTableManager;
+class Printing;
+class VirtualList;
 
 /**
  * Sprites List
@@ -52,7 +55,6 @@ typedef struct SpritesList
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-class Printing;
 
 /// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object

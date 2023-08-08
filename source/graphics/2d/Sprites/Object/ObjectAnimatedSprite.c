@@ -12,13 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <ObjectAnimatedSprite.h>
 #include <ObjectSpriteContainer.h>
 #include <AnimationController.h>
-#include <ObjectTexture.h>
 #include <AnimationCoordinatorFactory.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

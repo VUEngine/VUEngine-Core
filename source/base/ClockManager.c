@@ -13,10 +13,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ClockManager.h>
-#include <FrameRate.h>
-#include <HardwareManager.h>
-#include <MessageDispatcher.h>
-#include <TimerManager.h>
+#include <Clock.h>
+#include <VirtualList.h>
 #include <debugConfig.h>
 
 

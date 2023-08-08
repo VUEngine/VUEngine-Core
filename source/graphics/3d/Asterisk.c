@@ -15,8 +15,6 @@
 #include <Asterisk.h>
 #include <DirectDraw.h>
 #include <Optics.h>
-#include <VIPManager.h>
-#include <WireframeManager.h>
 #include <Math.h>
 
 

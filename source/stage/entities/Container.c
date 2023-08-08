@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
+#include <Behavior.h>
+#include <VirtualList.h>
 #include <Printing.h>
-#include <string.h>
 #include <debugUtilities.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -14,13 +14,12 @@
 
 #include <Sprite.h>
 #include <AnimationController.h>
-#include <Camera.h>
-#include <VIPManager.h>
-#include <Optics.h>
-#include <SpriteManager.h>
 #include <BgmapTexture.h>
-#include <TimerManager.h>
+#include <Optics.h>
 #include <Printing.h>
+#include <SpriteManager.h>
+#include <Texture.h>
+#include <VIPManager.h>
 #include <debugUtilities.h>
 
 
