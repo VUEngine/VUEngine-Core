@@ -38,6 +38,8 @@ SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegi
 #define __SSTOP						*(uint8*)0x01000580
 
 static SoundManager _soundManager = NULL;
+static Camera _camera = NULL;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												 FRIENDS
@@ -81,6 +83,8 @@ typedef struct QueuedSound
  */
 void SoundManager::constructor()
 {
+	_camera = Camera::getInstance();
+	
 	Base::constructor();
 
 	this->soundWrappers = new VirtualList();
@@ -342,9 +346,8 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
 	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
-	{
-		Camera camera = Camera::getInstance();
-		Camera::suspendUIGraphicsSynchronization(camera);
+	{		
+		Camera::suspendUIGraphicsSynchronization(_camera);
 
 		static uint32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
@@ -364,8 +367,7 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 	}
 	else if(NULL != _soundManager->soundWrappersMIDI->head)
 	{
-		Camera camera = Camera::getInstance();
-		Camera::suspendUIGraphicsSynchronization(camera);
+		Camera::suspendUIGraphicsSynchronization(_camera);
 
 		for(VirtualNode node = _soundManager->soundWrappersMIDI->head; NULL != node; node = node->next)
 		{
@@ -376,7 +378,7 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 			SoundWrapper::updateMIDIPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds);
 		}
 
-		Camera::resumeUIGraphicsSynchronization(camera);
+		Camera::resumeUIGraphicsSynchronization(_camera);
 	}
 }
 

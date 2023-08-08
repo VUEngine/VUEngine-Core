@@ -89,7 +89,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
 		// call the appropriate allocator to support inheritance
 		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
 
-		if(animationName && animationFunctions)
+		if(NULL != animationName && NULL != animationFunctions)
 		{
 			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
 		}

@@ -46,7 +46,6 @@ void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, L
 	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
 
 	PrintingSprite::reset(this);
-
 	PrintingSprite::registerWithManager(this);
 }
 
@@ -86,7 +85,7 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 	worldPointer->gy = this->position.y;
 	worldPointer->w = this->w;
 	worldPointer->h = this->h;
-	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
 
 	return index;
 }
@@ -105,6 +104,8 @@ void PrintingSprite::reset()
 
 	this->w = __SCREEN_WIDTH - 1;
 	this->h = __SCREEN_HEIGHT - 1;
+
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 }
 
 void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)

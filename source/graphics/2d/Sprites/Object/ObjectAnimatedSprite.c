@@ -45,14 +45,17 @@ void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAni
 
 	this->animationController = new AnimationController();
 
-	AnimationController::setAnimationCoordinator(
+	AnimationController::setAnimationCoordinator
+	(
 		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator(
-			AnimationCoordinatorFactory::getInstance(), 
+		AnimationCoordinatorFactory::getCoordinator
+		(
+			AnimationCoordinatorFactory::getInstance(),
+			
 			this->animationController, 
 			owner,
 			objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec
-			)
+		)
 	);
 }
 

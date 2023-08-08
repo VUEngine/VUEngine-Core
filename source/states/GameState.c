@@ -27,6 +27,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												CLASS'S STATICS
+//---------------------------------------------------------------------------------------------------------
+
+static Camera _camera = NULL;
+
+
+//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -35,6 +42,8 @@
  */
 void GameState::constructor()
 {
+	_camera = Camera::getInstance();
+
 	Base::constructor();
 
 	this->stage = NULL;
@@ -404,7 +413,8 @@ void GameState::transform()
 	extern Transformation neutralEnvironmentTransformation;
 
 	// then transformation loaded entities
-	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(Camera::getInstance()));
+	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
+	
 }
 
 /**

@@ -34,14 +34,16 @@ void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAni
 
     this->animationController = new AnimationController();
 
-	AnimationController::setAnimationCoordinator(
+	AnimationController::setAnimationCoordinator
+	(
 		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator(
-			AnimationCoordinatorFactory::getInstance(), 
+		AnimationCoordinatorFactory::getCoordinator
+		(
+			AnimationCoordinatorFactory::getInstance(),
 			this->animationController, 
 			owner, 
 			mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec
-			)
+		)
 	);
 }
 

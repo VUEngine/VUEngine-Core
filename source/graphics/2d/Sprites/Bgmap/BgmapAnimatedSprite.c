@@ -50,14 +50,16 @@ void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimat
 
     this->animationController = new AnimationController();
 
-	AnimationController::setAnimationCoordinator(
+	AnimationController::setAnimationCoordinator
+	(
 		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator(
-			AnimationCoordinatorFactory::getInstance(), 
+		AnimationCoordinatorFactory::getCoordinator
+		(
+			AnimationCoordinatorFactory::getInstance(),
 			this->animationController, 
 			owner, 
 			bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec
-			)
+		)
 	);
 }
 

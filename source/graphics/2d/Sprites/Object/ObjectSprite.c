@@ -99,6 +99,7 @@ void ObjectSprite::destructor()
 
 	Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
 	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));
+
 	this->texture = NULL;
 
 	// destroy the super object

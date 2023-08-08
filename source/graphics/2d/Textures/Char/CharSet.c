@@ -231,7 +231,8 @@ void CharSet::write()
 
 		default:
 			
-			Mem::copyWORD(
+			Mem::copyWORD
+			(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
 				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
 				__UINT32S_PER_CHARS(this->charSetSpec->numberOfChars)

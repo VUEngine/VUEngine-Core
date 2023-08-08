@@ -73,6 +73,7 @@ void Printing::constructor()
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	Printing::reset(this);
 }
@@ -110,6 +111,7 @@ void Printing::reset()
 	}
 
 	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	Printing::releaseFonts(this);
 
@@ -749,8 +751,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 #endif
 
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
-	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
-	uint32 printingBgmap = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;	
 
 	FontData* fontData = Printing::getFontByName(this, font);
 
@@ -811,7 +812,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
+							bgmapSpaceBaseAddress[(0x1000 * (this->printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
 									offset +
