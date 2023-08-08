@@ -22,6 +22,7 @@
 #include <Printing.h>
 #include <Profiler.h>
 #include <Telegram.h>
+#include <TimerManager.h>
 #include <VUEngine.h>
 
 #include <debugConfig.h>

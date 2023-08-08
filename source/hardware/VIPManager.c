@@ -25,6 +25,8 @@
 #include <Printing.h>
 #include <Profiler.h>
 #include <SpriteManager.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
