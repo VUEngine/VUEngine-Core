@@ -30,7 +30,7 @@
 //											INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include "MinimalLib.h"
+#include <MinimalLib.h>
 #include <Vector3D.h>
 #include <Rotation.h>
 #include <Scale.h>

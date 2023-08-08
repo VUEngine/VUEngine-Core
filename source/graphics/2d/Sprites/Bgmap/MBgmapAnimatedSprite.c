@@ -15,6 +15,7 @@
 #include <MBgmapAnimatedSprite.h>
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
+#include <BgmapTexture.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VIPManager.h>
