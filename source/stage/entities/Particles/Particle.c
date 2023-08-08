@@ -13,8 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Particle.h>
-#include <SpriteManager.h>
+
 #include <Sprite.h>
+#include <SpriteManager.h>
 #include <Wireframe.h>
 
 

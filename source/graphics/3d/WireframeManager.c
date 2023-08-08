@@ -13,12 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <WireframeManager.h>
+
 #include <Camera.h>
 #include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
 #include <Wireframe.h>
+
 #include <debugConfig.h>
 #include <debugUtilities.h>
 

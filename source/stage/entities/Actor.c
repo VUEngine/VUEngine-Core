@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Actor.h>
+
 #include <Body.h>
 #include <Camera.h>
 #include <PhysicalWorld.h>
@@ -23,6 +24,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+
 #include <debugUtilities.h>
 
 

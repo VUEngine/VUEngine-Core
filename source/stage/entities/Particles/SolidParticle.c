@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
+
 #include <Ball.h>
 #include <Body.h>
 #include <CollisionManager.h>
@@ -21,6 +22,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+
 #include <debugUtilities.h>
 
 

@@ -13,12 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Error.h>
+
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
 #include <Printing.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SpriteManager.h>
+
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
 #include <Mem.h>
@@ -24,6 +25,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

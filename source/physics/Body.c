@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
+
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
 #include <PhysicalWorld.h>
@@ -21,6 +22,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
 
 

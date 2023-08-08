@@ -13,10 +13,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Stopwatch.h>
+
 #include <StopwatchManager.h>
 #include <TimerManager.h>
-#include <VirtualList.h>
-#include <VirtualNode.h>
 #include <VUEngine.h>
 
 

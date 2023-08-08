@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainer.h>
+
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectTexture.h>
@@ -25,6 +26,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

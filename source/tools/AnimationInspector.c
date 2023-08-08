@@ -15,17 +15,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationInspector.h>
-#include <Optics.h>
-#include <SpriteManager.h>
-#include <GameState.h>
-#include <Stage.h>
-#include <Camera.h>
-#include <string.h>
-#include <OptionsSelector.h>
-#include <Texture.h>
+
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
+#include <Camera.h>
+#include <GameState.h>
 #include <KeypadManager.h>
+#include <Optics.h>
+#include <OptionsSelector.h>
+#include <Stage.h>
+#include <SpriteManager.h>
+#include <Texture.h>
+
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

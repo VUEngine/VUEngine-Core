@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Ball.h>
-#include <Sphere.h>
+
 #include <CollisionHelper.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Printing.h>
+#include <Sphere.h>
+
 #include <debugConfig.h>
 
 

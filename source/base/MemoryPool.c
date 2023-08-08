@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MemoryPool.h>
-#include <Utilities.h>
+
 #include <HardwareManager.h>
 #include <Printing.h>
+#include <Utilities.h>
+
 #include <debugConfig.h>
 
 

@@ -13,12 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <TextObjectSprite.h>
+
 #include <ObjectSpriteContainer.h>
 #include <Printing.h>
 #include <Texture.h>
-#include <VirtualList.h>
-#include <VirtualNode.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

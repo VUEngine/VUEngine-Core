@@ -12,15 +12,17 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Printing.h>
+
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
 #include <Mem.h>
-#include <Printing.h>
 #include <PrintingSprite.h>
 #include <SpriteManager.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

@@ -13,10 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Box.h>
-#include <Polyhedron.h>
+
 #include <CollisionHelper.h>
 #include <Polyhedron.h>
 #include <Printing.h>
+
 #include <debugConfig.h>
 
 

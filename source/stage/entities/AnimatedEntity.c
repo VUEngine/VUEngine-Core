@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimatedEntity.h>
+
 #include <AnimationController.h>
 #include <Sprite.h>
 #include <VirtualList.h>
-#include <string.h>
+
 #include <debugUtilities.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------

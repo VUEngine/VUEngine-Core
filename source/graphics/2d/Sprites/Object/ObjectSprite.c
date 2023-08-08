@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSprite.h>
-#include <SpriteManager.h>
+
 #include <ObjectSpriteContainer.h>
-#include <ObjectTextureManager.h>
 #include <ObjectTexture.h>
+#include <ObjectTextureManager.h>
+#include <SpriteManager.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

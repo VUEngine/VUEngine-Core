@@ -13,13 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapAnimatedSprite.h>
+
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
 #include <Texture.h>
-#include <VirtualList.h>
-#include <VirtualNode.h>
 #include <VIPManager.h>
+
 #include <debugUtilities.h>
 #include <string.h>
 

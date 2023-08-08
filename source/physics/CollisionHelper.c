@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CollisionHelper.h>
+
+#include <Ball.h>
 #include <Box.h>
 #include <InverseBox.h>
-#include <Ball.h>
 #include <LineField.h>
 #include <Shape.h>
+
 #include <debugUtilities.h>
 
 

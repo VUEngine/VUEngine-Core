@@ -13,13 +13,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundWrapper.h>
-#include <VUEngine.h>
-#include <VirtualList.h>
-#include <TimerManager.h>
-#include <SoundManager.h>
+
 #include <MessageDispatcher.h>
-#include <Utilities.h>
 #include <Printing.h>
+#include <SoundManager.h>
+#include <TimerManager.h>
+#include <VirtualList.h>
+#include <Utilities.h>
+#include <VUEngine.h>
+
 #include <debugConfig.h>
 
 

@@ -13,8 +13,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DirectDraw.h>
-#include <VIPManager.h>
+
 #include <Camera.h>
+#include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

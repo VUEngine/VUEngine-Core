@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTexture.h>
+
 #include <BgmapTextureManager.h>
 #include <CharSet.h>
 #include <Mem.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 #include <debugUtilities.h>
 

@@ -15,22 +15,23 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <StageEditor.h>
-#include <VUEngine.h>
+
+#include <BgmapTextureManager.h>
+#include <Box.h>
 #include <Camera.h>
-#include <Optics.h>
-#include <Entity.h>
 #include <CollisionManager.h>
+#include <Debug.h>
+#include <Entity.h>
+#include <GameState.h>
+#include <KeypadManager.h>
+#include <Optics.h>
+#include <OptionsSelector.h>
 #include <PhysicalWorld.h>
 #include <SpriteManager.h>
-#include <GameState.h>
-#include <Stage.h>
 #include <Shape.h>
-#include <Camera.h>
-#include <Box.h>
-#include <OptionsSelector.h>
-#include <KeypadManager.h>
-#include <BgmapTextureManager.h>
-#include <Debug.h>
+#include <Stage.h>
+#include <VUEngine.h>
+
 #include <debugUtilities.h>
 
 

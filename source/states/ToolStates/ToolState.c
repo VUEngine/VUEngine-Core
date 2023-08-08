@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ToolState.h>
+
 #include <StateMachine.h>
 #include <Tool.h>
 #include <VUEngine.h>

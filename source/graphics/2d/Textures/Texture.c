@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Texture.h>
+
 #include <CharSetManager.h>
 #include <Optics.h>
 #include <SpriteManager.h>
+
 #include <debugUtilities.h>
 
 

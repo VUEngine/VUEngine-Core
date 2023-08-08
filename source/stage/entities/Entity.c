@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
+
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
 #include <EntityFactory.h>
@@ -25,6 +26,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Line.h>
+
 #include <DirectDraw.h>
-#include <Optics.h>
 #include <Math.h>
+#include <Optics.h>
+
 #include <debugUtilities.h>
 
 

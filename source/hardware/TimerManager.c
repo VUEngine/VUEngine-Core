@@ -13,14 +13,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <TimerManager.h>
-#include <ListenerObject.h>
+
 #include <HardwareManager.h>
+#include <ListenerObject.h>
+#include <Printing.h>
+#include <Profiler.h>
 #include <SoundManager.h>
 #include <StopwatchManager.h>
 #include <SoundTest.h>
 #include <VUEngine.h>
-#include <Profiler.h>
-#include <Printing.h>
+
 #include <debugConfig.h>
 
 

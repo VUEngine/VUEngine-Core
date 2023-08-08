@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSet.h>
+
 #include <CharSetManager.h>
 #include <Mem.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

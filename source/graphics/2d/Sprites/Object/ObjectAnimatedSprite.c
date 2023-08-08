@@ -13,11 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectAnimatedSprite.h>
-#include <ObjectSpriteContainer.h>
+
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
-#include <VirtualList.h>
-#include <VirtualNode.h>
+#include <ObjectSpriteContainer.h>
+
 #include <string.h>
 
 

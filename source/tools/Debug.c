@@ -15,78 +15,65 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Debug.h>
-#include <VUEngine.h>
-#include <Optics.h>
-#include <FrameRate.h>
-#include <MemoryPool.h>
-#include <MessageDispatcher.h>
-#include <CharSetManager.h>
-#include <ClockManager.h>
-#include <CollisionManager.h>
-#include <HardwareManager.h>
-#include <SoundManager.h>
-#include <SpriteManager.h>
-#include <ObjectTexture.h>
+
+#include <Actor.h>
+#include <AnimationCoordinatorFactory.h>
+#include <AnimatedEntity.h>
+#include <Ball.h>
 #include <BgmapTextureManager.h>
-#include <ParamTableManager.h>
-#include <VIPManager.h>
-#include <PhysicalWorld.h>
-#include <DirectDraw.h>
-#include <MBgmapSprite.h>
-#include <KeypadManager.h>
-#include <SRAMManager.h>
+#include <Body.h>
+#include <Box.h>
 #include <Camera.h>
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
-#include <TimerManager.h>
-
-#include <Clock.h>
-#include <State.h>
-#include <StateMachine.h>
-#include <Telegram.h>
-#include <VirtualList.h>
 #include <CharSet.h>
-#include <Sprite.h>
-#include <Texture.h>
-
-#include <Body.h>
-#include <Ball.h>
-#include <Box.h>
+#include <CharSetManager.h>
+#include <Clock.h>
+#include <ClockManager.h>
+#include <Container.h>
+#include <DebugState.h>
+#include <DirectDraw.h>
+#include <Entity.h>
+#include <CollisionManager.h>
+#include <FrameRate.h>
+#include <GameState.h>
+#include <HardwareManager.h>
+#include <KeypadManager.h>
 #include <InverseBox.h>
 #include <LineField.h>
-#include <Shape.h>
-#include <Wireframe.h>
-#include <Sphere.h>
-#include <Polyhedron.h>
-
-#include <Container.h>
-#include <Entity.h>
-#include <Entity.h>
-#include <AnimatedEntity.h>
-#include <AnimationCoordinatorFactory.h>
-#include <Entity.h>
-#include <Actor.h>
-#include <Entity.h>
+#include <MBgmapSprite.h>
+#include <Mem.h>
+#include <MemoryPool.h>
+#include <MessageDispatcher.h>
+#include <ObjectTexture.h>
+#include <Optics.h>
+#include <OptionsSelector.h>
+#include <ParamTableManager.h>
 #include <Particle.h>
 #include <ParticleSystem.h>
+#include <PhysicalWorld.h>
+#include <Polyhedron.h>
+#include <Shape.h>
 #include <SolidParticle.h>
-
-#include <GameState.h>
+#include <SoundManager.h>
+#include <Sphere.h>
+#include <Sprite.h>
+#include <SpriteManager.h>
+#include <SRAMManager.h>
 #include <Stage.h>
-#include <UIContainer.h>
-#include <Mem.h>
-
-#include <SoundWrapper.h>
-
-#include <DebugState.h>
-#include <DebugState.h>
-#include <GameState.h>
-#include <StageEditorState.h>
-
-#include <Debug.h>
-#include <Debug.h>
-#include <OptionsSelector.h>
 #include <StageEditor.h>
+#include <StageEditorState.h>
+#include <State.h>
+#include <StateMachine.h>
+#include <SoundWrapper.h>
+#include <Telegram.h>
+#include <Texture.h>
+#include <TimerManager.h>
+#include <UIContainer.h>
+#include <VirtualList.h>
+#include <VIPManager.h>
+#include <VUEngine.h>
+#include <Wireframe.h>
 
 #include <debugUtilities.h>
 

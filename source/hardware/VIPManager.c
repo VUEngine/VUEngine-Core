@@ -13,19 +13,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <VIPManager.h>
+
+#ifdef __DEBUG_TOOLS
+#include <Debug.h>
+#endif
 #include <DirectDraw.h>
 #include <HardwareManager.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <Profiler.h>
 #include <Printing.h>
+#include <Profiler.h>
 #include <SpriteManager.h>
 #include <VUEngine.h>
 #include <WireframeManager.h>
-#ifdef __DEBUG_TOOLS
-#include <Debug.h>
-#endif
+
 #include <debugConfig.h>
 
 

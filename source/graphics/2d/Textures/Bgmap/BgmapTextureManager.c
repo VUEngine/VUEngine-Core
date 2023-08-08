@@ -13,11 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTexture.h>
+
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
+#include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

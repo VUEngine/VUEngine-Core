@@ -13,10 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <RumbleManager.h>
+
 #include <CommunicationManager.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif
+
 #include <debugConfig.h>
 
 

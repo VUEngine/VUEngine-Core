@@ -15,14 +15,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundTest.h>
-#include <VUEngine.h>
+
+#include <BgmapTextureManager.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
-#include <VIPManager.h>
 #include <SpriteManager.h>
-#include <BgmapTextureManager.h>
-#include <Utilities.h>
 #include <TimerManager.h>
+#include <Utilities.h>
+#include <VIPManager.h>
+#include <VUEngine.h>
 
 
 //---------------------------------------------------------------------------------------------------------

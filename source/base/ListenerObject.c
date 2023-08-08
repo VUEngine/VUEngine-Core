@@ -13,10 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <VirtualList.h>
-#include <Utilities.h>
+
 #include <MessageDispatcher.h>
 #include <Printing.h>
+#include <Telegram.h>
+#include <Utilities.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
+
 #include <debugConfig.h>
 
 

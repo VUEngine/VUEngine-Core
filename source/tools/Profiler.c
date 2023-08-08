@@ -15,11 +15,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Profiler.h>
-#include <VUEngine.h>
+
 #include <HardwareManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>
 #include <VIPManager.h>
+#include <VUEngine.h>
+
 #include <debugConfig.h>
 
 #define __ENABLE_PROFILER_SKIP_FRAMES				10

@@ -13,11 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationController.h>
+
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
 #include <Sprite.h>
-#include <VirtualList.h>
-#include <VirtualNode.h>
+
 #include <debugConfig.h>
 #include <string.h>
 

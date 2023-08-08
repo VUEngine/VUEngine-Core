@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectTextureManager.h>
+
 #include <ObjectTexture.h>
 #include <VirtualList.h>
 

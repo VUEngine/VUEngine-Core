@@ -13,10 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Affine.h>
-#include <HardwareManager.h>
+
 #include <BgmapTextureManager.h>
-#include <SpriteManager.h>
 #include <ParamTableManager.h>
+#include <SpriteManager.h>
+
 #include <debugUtilities.h>
 
 

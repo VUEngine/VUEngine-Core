@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBgmapSprite.h>
+
 #include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <Optics.h>
@@ -20,6 +21,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

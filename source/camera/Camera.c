@@ -13,11 +13,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Camera.h>
-#include <Optics.h>
-#include <CameraMovementManager.h>
+
 #include <CameraEffectManager.h>
-#include <Printing.h>
+#include <CameraMovementManager.h>
 #include <Entity.h>
+#include <Optics.h>
+#include <Printing.h>
+
 #include <debugConfig.h>
 
 

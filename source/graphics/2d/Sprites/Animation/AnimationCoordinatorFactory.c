@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationCoordinatorFactory.h>
+
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <ListenerObject.h>

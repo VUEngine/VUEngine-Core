@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Polyhedron.h>
+
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
+
 #include <debugConfig.h>
 
 

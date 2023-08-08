@@ -13,12 +13,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Mesh.h>
+
 #include <DirectDraw.h>
 #include <Math.h>
 #include <Optics.h>
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+
 #include <debugConfig.h>
 
 

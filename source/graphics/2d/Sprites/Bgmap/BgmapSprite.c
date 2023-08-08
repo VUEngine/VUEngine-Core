@@ -13,14 +13,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapSprite.h>
+
 #include <Affine.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <Optics.h>
-#include <SpriteManager.h>
 #include <ParamTableManager.h>
+#include <SpriteManager.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Stage.h>
+
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <Camera.h>
@@ -31,10 +32,8 @@
 #include <VirtualNode.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
-#ifdef __PROFILE_STREAMING
-#include <TimerManager.h>
-#endif
 #include <string.h>
 
 

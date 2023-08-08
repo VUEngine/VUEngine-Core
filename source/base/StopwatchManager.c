@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <StopwatchManager.h>
+
 #include <Stopwatch.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+
 #include <debugConfig.h>
 
 

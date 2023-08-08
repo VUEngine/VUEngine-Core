@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CameraEffectManager.h>
+
 #include <Camera.h>
 #include <Entity.h>
 #include <GameState.h>
@@ -21,6 +22,7 @@
 #include <TimerManager.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
+
 #include <debugConfig.h>
 
 

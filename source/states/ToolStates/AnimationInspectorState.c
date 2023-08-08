@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationInspectorState.h>
+
 #include <AnimationInspector.h>
 
 

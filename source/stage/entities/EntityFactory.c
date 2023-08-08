@@ -13,12 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <EntityFactory.h>
+
 #include <Entity.h>
 #include <Printing.h>
 #include <VirtualList.h>
+
 #include <debugConfig.h>
-#ifdef __PROFILE_STREAMING
-#endif
 
 
 //---------------------------------------------------------------------------------------------------------

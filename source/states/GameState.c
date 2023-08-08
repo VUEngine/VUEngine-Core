@@ -13,16 +13,17 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
-#include <VUEngine.h>
-#include <Telegram.h>
-#include <Stage.h>
-#include <Clock.h>
-#include <PhysicalWorld.h>
-#include <CollisionManager.h>
+
 #include <Camera.h>
-#include <SpriteManager.h>
+#include <Clock.h>
+#include <CollisionManager.h>
+#include <PhysicalWorld.h>
 #include <Printing.h>
+#include <Stage.h>
+#include <SpriteManager.h>
+#include <Telegram.h>
 #include <VIPManager.h>
+#include <VUEngine.h>
 
 
 //---------------------------------------------------------------------------------------------------------

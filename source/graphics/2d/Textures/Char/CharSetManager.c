@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSetManager.h>
+
 #include <CharSet.h>
-#include <VirtualList.h>
 #include <Printing.h>
+#include <VirtualList.h>
+
 #include <debugUtilities.h>
 
 

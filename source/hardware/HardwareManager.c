@@ -13,13 +13,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <HardwareManager.h>
+
+#include <CommunicationManager.h>
 #include <KeypadManager.h>
+#include <Printing.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
-#include <CommunicationManager.h>
-#include <VIPManager.h>
 #include <Utilities.h>
-#include <Printing.h>
+#include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
+
 #include <AnimationController.h>
 #include <BgmapTexture.h>
 #include <Optics.h>
@@ -20,6 +21,7 @@
 #include <SpriteManager.h>
 #include <Texture.h>
 #include <VIPManager.h>
+
 #include <debugUtilities.h>
 
 

@@ -13,10 +13,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <LineField.h>
-#include <Line.h>
+
 #include <CollisionHelper.h>
-#include <SpatialObject.h>
+#include <Line.h>
 #include <Printing.h>
+#include <SpatialObject.h>
+
 #include <debugConfig.h>
 
 

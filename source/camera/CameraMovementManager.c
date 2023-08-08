@@ -13,9 +13,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CameraMovementManager.h>
+
 #include <Camera.h>
-#include <VIPManager.h>
 #include <Entity.h>
+#include <VIPManager.h>
+
 #include <debugConfig.h>
 
 

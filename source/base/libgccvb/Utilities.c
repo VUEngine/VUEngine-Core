@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Utilities.h>
-#include <HardwareManager.h>
 
 
 Clock _gameClock = NULL;

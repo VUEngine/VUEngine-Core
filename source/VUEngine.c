@@ -13,52 +13,78 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <VUEngine.h>
-#include <ToolState.h>
+
+
+#include <Actor.h>
+#include <AnimationCoordinatorFactory.h>
+#include <AnimatedEntity.h>
+#include <AnimationInspectorState.h>
+#include <Ball.h>
+#include <BgmapTextureManager.h>
+#include <Body.h>
+#include <Box.h>
+#include <Camera.h>
+#include <CameraEffectManager.h>
+#include <CameraMovementManager.h>
 #include <CommunicationManager.h>
-#include <SRAMManager.h>
-#include <HardwareManager.h>
-#include <StopwatchManager.h>
+#include <CharSet.h>
+#include <CharSetManager.h>
+#include <Clock.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
-#include <PhysicalWorld.h>
+#include <Container.h>
+#include <DebugState.h>
 #include <DirectDraw.h>
-#include <Optics.h>
+#include <Entity.h>
+#include <CollisionManager.h>
 #include <FrameRate.h>
-#include <Clock.h>
-#include <BgmapTextureManager.h>
-#include <WireframeManager.h>
 #include <GameState.h>
-#include <Utilities.h>
-#include <MessageDispatcher.h>
-#include <Stage.h>
-#include <ParamTableManager.h>
-#include <SpriteManager.h>
-#include <CharSetManager.h>
-#include <AnimationCoordinatorFactory.h>
-#include <StateMachine.h>
-#include <Camera.h>
-#include <CameraMovementManager.h>
+#include <HardwareManager.h>
 #include <KeypadManager.h>
-#include <SoundManager.h>
+#include <InverseBox.h>
+#include <LineField.h>
+#include <MBgmapSprite.h>
+#include <Mem.h>
+#include <MemoryPool.h>
+#include <MessageDispatcher.h>
+#include <ObjectTexture.h>
+#include <Optics.h>
+#include <OptionsSelector.h>
+#include <ParamTableManager.h>
+#include <Particle.h>
+#include <ParticleSystem.h>
+#include <PhysicalWorld.h>
+#include <Polyhedron.h>
 #include <RumbleManager.h>
+#include <Shape.h>
+#include <SolidParticle.h>
+#include <SoundManager.h>
+#include <Sphere.h>
+#include <Sprite.h>
+#include <SpriteManager.h>
+#include <SRAMManager.h>
+#include <Stage.h>
+#include <StageEditor.h>
+#include <StageEditorState.h>
+#include <State.h>
+#include <StateMachine.h>
+#include <StopwatchManager.h>
+#include <SoundTestState.h>
+#include <SoundWrapper.h>
+#include <Telegram.h>
+#include <Texture.h>
+#include <ToolState.h>
 #include <TimerManager.h>
+#include <UIContainer.h>
+#include <Utilities.h>
+#include <VirtualList.h>
 #include <VIPManager.h>
-#include <Profiler.h>
+#include <VUEngine.h>
+#include <Wireframe.h>
+#include <WireframeManager.h>
+
 #include <debugConfig.h>
 #include <string.h>
-
-#ifdef __DEBUG_TOOLS
-#include <DebugState.h>
-#endif
-#ifdef __STAGE_EDITOR
-#endif
-#include <StageEditorState.h>
-#ifdef __ANIMATION_INSPECTOR
-#include <AnimationInspectorState.h>
-#endif
-#ifdef __SOUND_TEST
-#include <SoundTestState.h>
-#endif
 
 
 //---------------------------------------------------------------------------------------------------------
