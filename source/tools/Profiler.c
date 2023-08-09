@@ -17,8 +17,10 @@
 #include <Profiler.h>
 
 #include <HardwareManager.h>
+#include <Printing.h>
 #include <TimerManager.h>
 #include <Utilities.h>
+#include <VirtualList.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
 
