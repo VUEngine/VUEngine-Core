@@ -46,8 +46,6 @@ typedef struct MovementResult
 {
 	uint16 axisStoppedMovement;
 	uint16 axisOfAcceleratedBouncing;
-	uint16 axisOfChangeOfMovement;
-	uint16 axisOfChangeOfDirection;
 
 } MovementResult;
 
@@ -69,11 +67,6 @@ typedef struct PhysicalSpecification
 
 typedef const PhysicalSpecification PhysicalSpecificationROMSpec;
 
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef struct Vector3DPlus
 {
 	fix7_9_ext x;
@@ -83,14 +76,19 @@ typedef struct Vector3DPlus
 } Vector3DPlus;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+
 /// @ingroup physics
 class Body : ListenerObject
 {
 	// owner
 	SpatialObject owner;
-	// direction
-	Vector3D weight;
-	// direction
+	// gravity
+	Vector3D gravity;
+	// applied external force
 	Vector3D externalForce;
 	// friction surrounding object
 	Vector3D friction;
