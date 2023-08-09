@@ -14,7 +14,6 @@
 
 #include <VUEngine.h>
 
-
 #include <Actor.h>
 #include <AnimationCoordinatorFactory.h>
 #include <AnimatedEntity.h>
@@ -55,6 +54,7 @@
 #include <ParticleSystem.h>
 #include <PhysicalWorld.h>
 #include <Polyhedron.h>
+#include <Profiler.h>
 #include <RumbleManager.h>
 #include <Shape.h>
 #include <SolidParticle.h>
