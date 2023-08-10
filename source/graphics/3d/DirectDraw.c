@@ -122,17 +122,10 @@ void DirectDraw::reset()
 {
 	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
-#ifndef __LEGACY_COORDINATE_PROJECTION
 	DirectDraw::setFrustum(this, (CameraFrustum)
 	{
 		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
 	});
-#else
-	DirectDraw::setFrustum(this, (CameraFrustum)
-	{
-		0, 0, -512, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 512
-	});
-#endif
 }
 
 /**

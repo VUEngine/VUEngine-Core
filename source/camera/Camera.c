@@ -502,6 +502,8 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
 	this->opticalBackup = this->optical;
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
+
+	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
 }
 
 /**
