@@ -84,19 +84,16 @@ uint16 _frustumHeightExtended = __SCREEN_HEIGHT << 2;
  */
 void DirectDraw::constructor()
 {
-	Base::constructor();
+	_directDraw = this;
 
-	DirectDraw::setFrustum(this, (CameraFrustum)
-	{
-		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
-	});
+	Base::constructor();
 
 	this->totalDrawPixels = 0;
 	this->maximuDrawPixels = 0;
 
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+	DirectDraw::reset(this);
 
-	_directDraw = this;
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
 
 /**
@@ -125,10 +122,17 @@ void DirectDraw::reset()
 {
 	this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 
+#ifndef __LEGACY_COORDINATE_PROJECTION
 	DirectDraw::setFrustum(this, (CameraFrustum)
 	{
 		0, 0, 0, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 8191
 	});
+#else
+	DirectDraw::setFrustum(this, (CameraFrustum)
+	{
+		0, 0, -512, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1, 512
+	});
+#endif
 }
 
 /**
@@ -193,11 +197,6 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	if(frustum.z0 > frustum.z1)
 	{
 		frustum.z0 = frustum.z1 - 1;
-	}
-
-	if(0 > frustum.z0)
-	{
-		frustum.z0 = 0;
 	}
 
 	_frustum = frustum;
