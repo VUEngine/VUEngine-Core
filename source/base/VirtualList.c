@@ -896,6 +896,118 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 	return newNode;
 }
 
+void VirtualList::moveNodeBefore(VirtualNode movingNode, VirtualNode node)
+{
+	if(NULL == movingNode || NULL == node)
+	{
+		return;
+	}
+
+	if(movingNode == node->previous)
+	{
+		return;
+	}
+
+	if(!VirtualList::checkThatNodeIsPresent(this, movingNode) || !VirtualList::checkThatNodeIsPresent(this, node))
+	{
+		return;
+	}
+
+	HardwareManager::suspendInterrupts();
+
+	if(this->head == movingNode)
+	{
+		this->head = movingNode->next;
+	}
+
+	if(this->tail == movingNode)
+	{
+		this->tail = movingNode->previous;
+	}
+
+	if(NULL != movingNode->previous)
+	{
+		movingNode->previous->next = movingNode->next;
+	}
+
+	if(NULL != movingNode->next)
+	{
+		movingNode->next->previous = movingNode->previous;
+	}
+
+	movingNode->previous = node->previous;
+	movingNode->next = node;
+	node->previous = movingNode;
+
+	if(NULL != movingNode->previous)
+	{
+		movingNode->previous->next = movingNode;
+	}
+
+	if(this->head == node)
+	{
+		this->head = movingNode;
+	}
+
+	HardwareManager::resumeInterrupts();
+}
+
+void VirtualList::moveNodeAfter(VirtualNode movingNode, VirtualNode node)
+{
+	if(NULL == movingNode || NULL == node)
+	{
+		return;
+	}
+
+	if(movingNode == node->previous)
+	{
+		return;
+	}
+
+	if(!VirtualList::checkThatNodeIsPresent(this, movingNode) || !VirtualList::checkThatNodeIsPresent(this, node))
+	{
+		return;
+	}
+
+	HardwareManager::suspendInterrupts();
+
+	if(this->head == movingNode)
+	{
+		this->head = movingNode->next;
+	}
+
+	if(this->tail == movingNode)
+	{
+		this->tail = movingNode->previous;
+	}
+
+	if(NULL != movingNode->previous)
+	{
+		movingNode->previous->next = movingNode->next;
+	}
+
+	if(NULL != movingNode->next)
+	{
+		movingNode->next->previous = movingNode->previous;
+	}
+
+	movingNode->next = node->next;
+	movingNode->previous = node;
+	node->next = movingNode;
+
+	if(NULL != movingNode->next)
+	{
+		movingNode->next->previous = movingNode;
+	}
+
+	if(this->tail == node)
+	{
+		this->tail = movingNode;
+	}
+
+	HardwareManager::resumeInterrupts();
+}
+
 /**
  * Swap two lists' heads and tails
  *

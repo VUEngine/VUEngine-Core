@@ -53,6 +53,8 @@ class VirtualList : Object
 	int32 getSize();
 	VirtualNode insertAfter(VirtualNode node, const void* const data);
 	VirtualNode insertBefore(VirtualNode node, const void* const data);
+	void moveNodeBefore(VirtualNode movingNode, VirtualNode node);
+	void moveNodeAfter(VirtualNode movingNode, VirtualNode node);
 	void* popFront();
 	void* popBack();
 	int32 pushBack(const void* const data);
