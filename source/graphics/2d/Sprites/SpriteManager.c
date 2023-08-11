@@ -78,6 +78,7 @@ void SpriteManager::constructor()
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;
+	this->deferredSort = false;
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
@@ -176,6 +177,7 @@ void SpriteManager::reset()
 	this->specialSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->deferredSort = false;
 
 	this->texturesMaximumRowsToWrite = -1;
 	this->waitToWriteSpriteTextures = 0;
@@ -316,6 +318,8 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
 
 	Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
+
+	this->deferredSort = false;
 
 	return sprite;
 }
@@ -630,7 +634,7 @@ void SpriteManager::render()
 {
 	if(!this->lockSpritesLists)
 	{
-		SpriteManager::sortProgressively(this, true);
+		this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
 	}
 
 	ObjectSpriteContainer::prepareForRendering();
