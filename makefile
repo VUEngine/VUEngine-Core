@@ -42,8 +42,8 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
-#	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt))
+	@$(shell echo $(NAME) >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
+#	@$(eval BUILT_COMPONENTS=$(shell wc -l < $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt))
 	@echo "Building $(BASENAME)"
 #	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
 #	@$(eval START_TIME=$(shell date +%s))

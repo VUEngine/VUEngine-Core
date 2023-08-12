@@ -60,26 +60,26 @@ printPreBuildingInfo:
 
 postDirCleanUp:
 #	@echo "Finding total number of components"
-	@$(shell rm -f \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/*omponents.txt*)
-	@$(shell echo "core" > \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt)
+	@$(shell rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/*omponents.txt*)
+	@$(shell echo "core" > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt)
 	@rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessing.txt
 	@rm -f $(WORKING_FOLDER)/*.a
 
 printComponentsToBuildInformation:
-	@$(shell sort -u \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp)
-	@$(shell sort -u \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp)
-	@$(shell sort -u \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
-	@$(eval COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp))
+	@$(shell sort -u $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp)
+	@$(shell sort -u $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp)
+	@$(shell sort -u $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
+	@$(eval COMPONENTS=$(shell wc -l < $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp))
 	@echo "Components:  $$(($(COMPONENTS) / 2))"
 	@echo "Build steps: $(COMPONENTS)"
-	@echo "COMPONENTS=$(COMPONENTS)" > \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt
-	@cat \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp >> $(WORKING_FOLDER)/components.txt
-	@rm -f \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp 
+	@echo "COMPONENTS=$(COMPONENTS)" > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt
+	@cat $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp >> $(WORKING_FOLDER)/components.txt
+	@rm -f $(WORKING_FOLDER)/traces/$(BUILD_MODE)/components.txt.tmp 
 
 printBuildingInfo:
 	@echo ""
-	@$(shell echo $(NAME) >> \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
-#	@$(eval BUILT_COMPONENTS=$(shell wc -l < \$(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt))
+	@$(shell echo $(NAME) >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt)
+#	@$(eval BUILT_COMPONENTS=$(shell wc -l < $(WORKING_FOLDER)/traces/$(BUILD_MODE)/builtComponents.txt))
 	@echo "Building $(BASENAME)"
 #	@echo "($(BUILT_COMPONENTS)/$(COMPONENTS)) Building $(BASENAME)"
 

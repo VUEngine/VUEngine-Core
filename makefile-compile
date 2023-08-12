@@ -169,7 +169,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 	@rm -f $*.dd
 
 $(WORKING_FOLDER)/assets/$(NAME)/%.o: $(MY_HOME)/%.c
-	@$(eval SOURCE_FILE=$(shell basename $<))
+	@$(eval SOURCE_FILE=$(shell echo $< | sed -E "s@$(MY_HOME)/assets/@@g"))
 	@echo "Compiling asset file: $(SOURCE_FILE)"
 	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c -$(COMPILER_OUTPUT) $< -o $@
