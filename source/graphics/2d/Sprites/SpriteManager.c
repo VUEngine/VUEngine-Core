@@ -319,8 +319,6 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
 	Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
-	this->deferredSort = false;
-
 	return sprite;
 }
 
@@ -356,6 +354,8 @@ void SpriteManager::sort()
  */
 void SpriteManager::doRegisterSprite(Sprite sprite)
 {
+	this->deferredSort = false;
+
 	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
@@ -372,14 +372,14 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 #endif
 
 		// check if z positions are swapped
-		if(otherSprite->position.z + otherSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
 			return;
 		}
 	}
 
-	VirtualList::pushFront(this->sprites, sprite);
+	VirtualList::pushBack(this->sprites, sprite);
 }
 
 /**
