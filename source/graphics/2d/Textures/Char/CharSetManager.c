@@ -284,7 +284,7 @@ void CharSetManager::writeCharSets()
 
 	CharSetManager::defragment(this);
 
-	VirtualNode node = this->charSetsPendingWriting->head;
+	VirtualNode node = this->charSets->head;
 
 	for(; NULL != node; node = node->next)
 	{
