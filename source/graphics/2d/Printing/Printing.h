@@ -210,8 +210,6 @@ singleton class Printing : ListenerObject
 	uint8 orientation;
 	// printing direction
 	uint8 direction;
-	// printing segment
-	int8 printingBgmapSegment;
 
 	/// @publicsection
 
