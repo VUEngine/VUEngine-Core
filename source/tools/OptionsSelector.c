@@ -12,7 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
+#include <OptionsSelector.h>
 
 #include <Actor.h>
 #include <AnimationCoordinatorFactory.h>
@@ -45,11 +45,11 @@
 #include <MessageDispatcher.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
-#include <OptionsSelector.h>
 #include <ParamTableManager.h>
 #include <Particle.h>
 #include <ParticleSystem.h>
 #include <PhysicalWorld.h>
+#include <Printing.h>
 #include <Polyhedron.h>
 #include <Shape.h>
 #include <SolidParticle.h>
@@ -73,6 +73,8 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 #include <Wireframe.h>
+
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
