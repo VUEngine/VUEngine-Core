@@ -16,6 +16,7 @@
 
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
+#include <DirectDraw.h>
 #include <Entity.h>
 #include <Optics.h>
 #include <Printing.h>
