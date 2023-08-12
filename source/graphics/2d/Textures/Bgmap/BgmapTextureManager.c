@@ -557,6 +557,8 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 	}
 
 	this->printingBgmapSegment = this->availableBgmapSegmentsForTextures - 1;
+
+	Printing::setPrintingBgmapSegment(Printing::getInstance(), this->printingBgmapSegment);
 }
 
 /**

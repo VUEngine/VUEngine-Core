@@ -65,6 +65,14 @@ void PrintingSprite::destructor()
 void PrintingSprite::setMode(uint16 display __attribute__((unused)), uint16 mode __attribute__((unused)))
 {}
 
+void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
+{
+	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	{
+		this->printingBgmapSegment = printingBgmapSegment;
+	}
+}
+
 /**
  * Write WORLD data to DRAM
  *

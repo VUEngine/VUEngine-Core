@@ -73,6 +73,7 @@ void Printing::constructor()
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	Printing::reset(this);
 }
@@ -110,6 +111,7 @@ void Printing::reset()
 	}
 
 	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	Printing::releaseFonts(this);
 
@@ -117,6 +119,19 @@ void Printing::reset()
 
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
 	Printing::setDirection(this, kPrintingDirectionLTR);
+}
+
+void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
+{
+	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	{
+		this->printingBgmapSegment = printingBgmapSegment;
+
+		for(VirtualNode node = VirtualList::begin(this->printingSprites); NULL != node; node = VirtualNode::getNext(node))
+		{
+			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
+		}
+	}	
 }
 
 void Printing::addSprite()
@@ -758,7 +773,6 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 		return;
 	}
 
-	int8 printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	uint16* const bgmapSpaceBaseAddress = (uint16*)__BGMAP_SPACE_BASE_ADDRESS;
 	uint32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
@@ -811,7 +825,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 						{
 							charOffset = charOffsetX + (charOffsetY * fontData->fontSpec->charactersPerLineInCharset * fontData->fontSpec->fontSize.x);
 
-							bgmapSpaceBaseAddress[(0x1000 * (printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
+							bgmapSpaceBaseAddress[(0x1000 * (this->printingBgmapSegment + 1) - __PRINTABLE_BGMAP_AREA) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// offset of charset in char memory
 									offset +

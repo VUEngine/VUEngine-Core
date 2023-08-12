@@ -67,6 +67,7 @@ class PrintingSprite : BgmapSprite
 	void constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner);
 	void reset();
 
+	void setPrintingBgmapSegment(int8 printingBgmapSegment);
 	void setGValues(int16 gx, int16 gy, int16 gp);
 	void setMValues(int16 mx, int16 my, int16 mp);
 	void setSize(uint16 w, uint16 h);

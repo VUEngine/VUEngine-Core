@@ -197,7 +197,6 @@ singleton class Printing : ListenerObject
 	// sprites
 	VirtualList printingSprites;
 	PrintingSprite activePrintingSprite;
-
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
 	// Cache the last used font to speed up searchs
@@ -210,6 +209,8 @@ singleton class Printing : ListenerObject
 	uint8 orientation;
 	// printing direction
 	uint8 direction;
+	// printing segment
+	int8 printingBgmapSegment;
 
 	/// @publicsection
 
@@ -302,6 +303,13 @@ singleton class Printing : ListenerObject
      * Empties internal virtual list of registered fonts
      */
 	void reset();
+
+	/**
+     * Cache the printing bgmap segment
+     *
+	 * @param printingBgmapSegment	Index of the bgmap segment to print to
+     */
+	void setPrintingBgmapSegment(int8 printingBgmapSegment);
 
 	/**
      * Create a printing sprite
