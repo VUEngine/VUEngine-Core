@@ -45,7 +45,7 @@ int32 _vuengineLinkPointer = 0;
 int32 _vuengineStackPointer = 0;
 bool _stackHeadroomViolation = false;
 bool _enabledInterrupts = false;
-
+int16 _suspendInterruptRequest = 0;
 
 typedef const struct ROMInfo
 {

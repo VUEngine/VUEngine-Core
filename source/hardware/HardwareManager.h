@@ -44,6 +44,7 @@ static uint8* const _hardwareRegisters =			(uint8*)0x02000000;
 #define CACHE_RESET		CACHE_DISABLE; CACHE_CLEAR; CACHE_ENABLE
 
 extern bool _enabledInterrupts;
+extern int16 _suspendInterruptRequest;
 
 typedef struct ColumnTableSpec ColumnTableSpec;
 
@@ -128,6 +129,7 @@ static inline void HardwareManager::setInterruptLevel(uint8 level)
 static inline void HardwareManager::enableInterrupts()
 {
 	_enabledInterrupts = true;
+	_suspendInterruptRequest = 0;
 
 	asm("cli");
 	HardwareManager::setInterruptLevel(0);
@@ -138,6 +140,8 @@ static inline void HardwareManager::enableInterrupts()
  */
 static inline void HardwareManager::disableInterrupts()
 {
+	_suspendInterruptRequest = 0;
+
 	asm("sei");
 	HardwareManager::setInterruptLevel(5);
 }
@@ -149,8 +153,12 @@ static inline void HardwareManager::resumeInterrupts()
 {
 	if(_enabledInterrupts)
 	{
-		asm("cli");
-		HardwareManager::setInterruptLevel(0);
+		if(0 >= --_suspendInterruptRequest)
+		{
+			_suspendInterruptRequest = 0;
+			asm("cli");
+			HardwareManager::setInterruptLevel(0);
+		}
 	}
 }
 
@@ -161,6 +169,7 @@ static inline void HardwareManager::suspendInterrupts()
 {
 	if(_enabledInterrupts)
 	{
+		_suspendInterruptRequest++;
 		asm("sei");
 		HardwareManager::setInterruptLevel(5);
 	}
