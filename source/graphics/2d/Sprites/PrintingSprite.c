@@ -112,8 +112,6 @@ void PrintingSprite::reset()
 
 	this->w = __SCREEN_WIDTH - 1;
 	this->h = __SCREEN_HEIGHT - 1;
-
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 }
 
 void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)

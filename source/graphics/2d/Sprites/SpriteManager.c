@@ -184,8 +184,6 @@ void SpriteManager::reset()
 
 	SpriteManager::stopRendering(this);
 
-	Printing::addSprite(this->printing);
-
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 

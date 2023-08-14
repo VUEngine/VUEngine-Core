@@ -73,7 +73,7 @@ void Printing::constructor()
 	this->direction = kPrintingDirectionLTR;
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	this->printingBgmapSegment = -1;
 
 	Printing::reset(this);
 }
@@ -111,7 +111,7 @@ void Printing::reset()
 	}
 
 	this->activePrintingSprite = NULL;
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	this->printingBgmapSegment = -1;
 
 	Printing::releaseFonts(this);
 
@@ -170,7 +170,10 @@ void Printing::addSprite()
 		}
 	};
 
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
+
+	PrintingSprite::setPrintingBgmapSegment(this->activePrintingSprite, this->printingBgmapSegment);
 
 	PixelVector position = 
 	{
@@ -283,6 +286,11 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 
 		// add fontdata to internal list
 		VirtualList::pushBack(this->fonts, fontData);
+	}
+
+	if(NULL == this->activePrintingSprite)
+	{
+		Printing::addSprite(this);
 	}
 
 	HardwareManager::resumeInterrupts();
@@ -762,6 +770,16 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 #ifdef __FORCE_FONT
 	font = __FORCE_FONT;
 #endif
+
+	if(-1 == this->printingBgmapSegment)
+	{
+		this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+
+		if(-1 == this->printingBgmapSegment)
+		{
+			return;
+		}
+	}
 
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
 	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;	
