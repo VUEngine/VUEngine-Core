@@ -236,6 +236,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		// temporary lists to being able to modify the event lists while firing them
 		VirtualList eventsToFire = NULL;
 
@@ -311,6 +313,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
 
 			delete eventsToFire;
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
