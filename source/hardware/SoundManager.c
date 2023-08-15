@@ -384,10 +384,19 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
 {
+	if(NULL == _soundManager->soundWrappersPCM->head)
+	{
+		return;
+	}
+
+	HardwareManager::suspendInterrupts();
+
 	for(VirtualNode node = _soundManager->soundWrappersPCM->head; NULL != node; node = node->next)
 	{
 		SoundWrapper::updatePCMPlayback(SoundWrapper::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 void SoundManager::updateFrameRate()

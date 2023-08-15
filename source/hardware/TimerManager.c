@@ -34,6 +34,7 @@
 static TimerManager _timerManager;
 static SoundManager _soundManager;
 static StopwatchManager _stopwatchManager;
+static Printing _printing;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -77,6 +78,7 @@ void TimerManager::constructor()
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
 	_stopwatchManager = StopwatchManager::getInstance();
+	_printing = Printing::getInstance();
 }
 
 /**
@@ -462,7 +464,7 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 #ifdef __SHOW_TIMER_MANAGER_STATUS
 void TimerManager::nextSecondStarted()
 {
-	TimerManager::printStatus(this, 1, 0);
+	TimerManager::printStatus(this, 1, 10);
 
 	this->interruptsPerSecond = 0;
 }
