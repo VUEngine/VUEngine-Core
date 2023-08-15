@@ -1360,6 +1360,11 @@ void Stage::setupSounds()
 			soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, ListenerObject::safeCast(this));
 		}
 
+		if(SoundWrapper::hasPCMTracks(soundWrapper))
+		{
+			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNonVIPMultiplexedInterrupts);
+		}
+
 		if(!isDeleted(soundWrapper))
 		{
 			if(isDeleted(this->soundWrappers))
