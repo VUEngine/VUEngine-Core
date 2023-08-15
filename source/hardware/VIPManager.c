@@ -113,6 +113,7 @@ void VIPManager::constructor()
 	this->timeErrorCounter = 0;
 	this->scanErrorCounter = 0;
 	this->totalMilliseconds = 0;
+	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 
@@ -147,6 +148,11 @@ void VIPManager::reset()
 	this->logicEnded = false;
 	this->drawingEnded = false;
 	this->totalMilliseconds = 0;
+#ifndef __ENABLE_PROFILER
+	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
+#else
+	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
+#endif
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 }
@@ -231,6 +237,18 @@ void VIPManager::disableInterrupts()
 }
 
 /**
+ * Set multiplexed interrupts
+ */
+void VIPManager::enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts)
+{
+#ifndef __ENABLE_PROFILER
+	this->enabledMultiplexedInterrupts = enabledMultiplexedInterrupts;
+#else
+	this->enabledMultiplexedInterrupts = kVIPNoMultiplexedInterrupts;
+#endif
+}
+
+/**
  * Check if rendering is pending
  *
  * @return						True if XPEND already happened but DRAM writing didn't take place
@@ -256,9 +274,10 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
-#ifndef __ENABLE_PROFILER
-	HardwareManager::enableMultiplexedInterrupts();
-#endif
+	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
+	{
+		HardwareManager::enableMultiplexedInterrupts();
+	}
 
 #ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
 	if(_vipManager->events)
@@ -270,9 +289,10 @@ static void VIPManager::interruptHandler()
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
-#ifndef __ENABLE_PROFILER
-	HardwareManager::disableMultiplexedInterrupts();
-#endif
+	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
+	{
+		HardwareManager::disableMultiplexedInterrupts();
+	}
 
 	// enable interrupts
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
@@ -332,13 +352,12 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 				else
 				{
-#ifndef __ENABLE_PROFILER
 					// Listen for the end of drawing operations
-					if(!(__XPEND & interrupt))
+					if(!(__XPEND & interrupt) && kVIPAllMultiplexedInterrupts == this->enabledMultiplexedInterrupts)
 					{
 						VIPManager::enableInterrupts(this, __XPEND);
 					}
-#endif
+
 					// Process game's logic
 					VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
 					SpriteManager::render(_spriteManager);
@@ -398,16 +417,15 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
 					}
 				}
-#ifndef __ENABLE_PROFILER
 				else
 				{
 					// Allow game start interrupt because the frame buffers can change mid drawing
-					if(!(__GAMESTART & interrupt))
+					if(!(__GAMESTART & interrupt) && kVIPAllMultiplexedInterrupts == this->enabledMultiplexedInterrupts)
 					{
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
 				}
-#endif
+
 				DirectDraw::startDrawing(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);

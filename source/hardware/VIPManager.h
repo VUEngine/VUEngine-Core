@@ -239,6 +239,13 @@ typedef struct PaletteConfig
 
 } PaletteConfig;
 
+enum MultiplexedInterrupts
+{
+	kVIPNoMultiplexedInterrupts = 0,
+	kVIPAllMultiplexedInterrupts,
+	kVIPNonVIPMultiplexedInterrupts
+};
+
 class SpatialObject;
 
 typedef void (*PostProcessingEffect) (uint32, SpatialObject);
@@ -262,6 +269,7 @@ singleton class VIPManager : ListenerObject
 	uint16 currrentInterrupt;
 	uint16 gameFrameDuration;
 	uint8 frameCycle;
+	uint8 enabledMultiplexedInterrupts;
 	bool processingGAMESTART;
 	bool processingXPEND;
 	bool logicEnded;
@@ -279,6 +287,7 @@ singleton class VIPManager : ListenerObject
 	void disableDrawing();
 	void enableInterrupts(uint16 interruptCode);
 	void disableInterrupts();
+	void enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts);
 	void displayOn();
 	void displayOff();
 	void setupPalettes(PaletteConfig* paletteConfig);
@@ -300,7 +309,7 @@ singleton class VIPManager : ListenerObject
 	void registerCurrentDrawingFrameBufferSet();
 	bool isRenderingPending();
 	bool isDrawingAllowed();
-	bool hasFrameStartedDuringXPEND();
+	bool hasFrameStartedDuringXPEND();	
 	uint16 getGameFrameDuration();
 	void wait(uint32 milliSeconds);
 }
