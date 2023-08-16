@@ -97,7 +97,7 @@ void Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncr
 	this->position.y += displacement.y;
 	this->position.z += displacement.z;
 	
-	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, &collisionInformation);
+	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, collisionInformation);
 
 	// restore state
 	this->position = center;
