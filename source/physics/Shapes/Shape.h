@@ -248,7 +248,7 @@ abstract class Shape : ListenerObject
 	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 	virtual Vector3D getNormal();
-a	virtual void testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation) = 0;
+	virtual void testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation) = 0;
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
 }
