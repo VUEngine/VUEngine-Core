@@ -45,7 +45,7 @@ class LineField : Shape
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
 	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement);
+	override void testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	override Vector3D getNormal();
 	override void configureWireframe();
 	override void print(int32 x, int32 y);

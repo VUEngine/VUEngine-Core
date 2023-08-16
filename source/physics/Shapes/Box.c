@@ -438,7 +438,7 @@ void Box::projectOntoItself()
 }
 
 // test if collision with the entity give the displacement
-CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement)
+void Box::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
 {
 	// save position
 	RightBox rightBox = this->rightBox;
@@ -456,14 +456,12 @@ CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, f
 	Box::projectOntoItself(this);
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
+	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, collisionInformation);
 
 	// put back myself
 	this->rightBox = rightBox;
 
 	Box::projectOntoItself(this);
-
-	return collisionInformation;
 }
 
 // configure Polyhedron

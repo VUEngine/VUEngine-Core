@@ -180,12 +180,8 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 	}
 }
 
-CollisionInformation LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)))
+void LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
-	// TODO
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
-
-	return collisionInformation;
 }
 
 // configure Polyhedron

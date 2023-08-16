@@ -292,7 +292,7 @@ CollisionResult Shape::collides(Shape shape)
 	if(NULL == collidingShapeRegistry)
 	{
 		// check for new overlap
-		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
+		CollisionHelper::checkIfOverlap(this, shape, &collisionData.collisionInformation);
 
 		if(NULL != collisionData.collisionInformation.shape && 0 != collisionData.collisionInformation.solutionVector.magnitude)
 		{
@@ -309,7 +309,7 @@ CollisionResult Shape::collides(Shape shape)
 	// to determine if I'm not colliding against them anymore
 	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionData.collisionInformation = Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
 
 		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -327,7 +327,7 @@ CollisionResult Shape::collides(Shape shape)
 	else
 	{
 		// otherwise make a normal collision test
-		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
+		CollisionHelper::checkIfOverlap(this, shape, &collisionData.collisionInformation);
 
 		if(collisionData.collisionInformation.shape == this && 0 != collisionData.collisionInformation.solutionVector.magnitude)
 		{

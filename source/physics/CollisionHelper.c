@@ -656,7 +656,7 @@ static void CollisionHelper::checkIfLineFieldOverlapsLineField(Shape shapeA __at
  * @param shapeA	Shape
  * @param shapeB	Shape
  */
-static CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape shapeB)
+static void CollisionHelper::checkIfOverlap(Shape shapeA, Shape shapeB, CollisionInformation* collisionInformation)
 {
 	NM_ASSERT(!isDeleted(shapeA), "CollisionHelper::checkIfOverlap: deleted shapeA");
 	NM_ASSERT(!isDeleted(shapeB), "CollisionHelper::checkIfOverlap: deleted shapeB");
@@ -664,11 +664,9 @@ static CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape 
 	NM_ASSERT(4 > (unsigned)shapeA->classIndex, "CollisionHelper::checkIfOverlap: wrong shapeA's class index");
 	NM_ASSERT(4 > (unsigned)shapeB->classIndex, "CollisionHelper::checkIfOverlap: wrong shapeB's class index");
 
-	CollisionInformation collisionInformation = (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
-
-	if(isDeleted(shapeA) || isDeleted(shapeB))
+	if(isDeleted(shapeA) || isDeleted(shapeB) || NULL == collisionInformation)
 	{
-		return collisionInformation;
+		return;
 	}
 
 	typedef void (*CollisionHelperFunction)(Shape shapeA, Shape shapeB, CollisionInformation* collisionInformation);
@@ -689,14 +687,14 @@ static CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape 
 
 	CollisionHelperFunction collisionHelperFunction = collisionHelperFunctions[shapeA->classIndex][shapeB->classIndex];
 
-	collisionHelperFunction(shapeA, shapeB, &collisionInformation);
+	collisionInformation->shape = NULL;
+
+	collisionHelperFunction(shapeA, shapeB, collisionInformation);
 
 	// We could have swapped the arguments to the checking methods to avoid code repetition
-	if(NULL != collisionInformation.shape)
+	if(NULL != collisionInformation->shape)
 	{
-		collisionInformation.shape = shapeA;
-		collisionInformation.collidingShape = shapeB;
+		collisionInformation->shape = shapeA;
+		collisionInformation->collidingShape = shapeB;
 	}
-
-	return collisionInformation;
 }

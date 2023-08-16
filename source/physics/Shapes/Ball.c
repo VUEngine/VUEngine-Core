@@ -85,7 +85,7 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 	}
 }
 
-CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement)
+void Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
 {
 	// save state
 	Vector3D center = this->position;
@@ -96,15 +96,12 @@ CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, 
 	this->position.x += displacement.x;
 	this->position.y += displacement.y;
 	this->position.z += displacement.z;
-
-	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape);
+	
+	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, &collisionInformation);
 
 	// restore state
 	this->position = center;
 	this->radius = radius;
-
-	return collisionInformation;
 }
 
 Vector3D Ball::getPosition()

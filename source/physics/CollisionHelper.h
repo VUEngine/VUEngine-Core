@@ -27,7 +27,7 @@
 static class CollisionHelper : ListenerObject
 {
 	/// @publicsection
-	static CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
+	static void checkIfOverlap(Shape shapeA, Shape shapeB, CollisionInformation* collisionInformation);
 }
 
 
