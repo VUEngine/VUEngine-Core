@@ -40,6 +40,8 @@ void Box::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
+	this->classIndex = kShapeBoxIndex;
+
 	this->rotationVertexDisplacement = Vector3D::zero();
 
 	this->normals = NULL;

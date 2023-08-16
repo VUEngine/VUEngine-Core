@@ -172,6 +172,14 @@ enum ShapeTypes
 	kInverseBox,
 };
 
+enum ShapeClassIndexes
+{
+	kShapeBallIndex = 0,
+	kShapeBoxIndex,
+	kShapeInverseBoxIndex,
+	kShapeLineFieldIndex,
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -204,6 +212,9 @@ abstract class Shape : ListenerObject
 	bool registerCollisions;
 	// flag to destroy it
 	bool destroyMe;
+	// class index 
+	uint8 classIndex;
+
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);

@@ -34,6 +34,8 @@ friend class Box;
 void InverseBox::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
+
+	this->classIndex = kShapeInverseBoxIndex;
 }
 
 /**

@@ -37,6 +37,8 @@ void Ball::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
+	this->classIndex = kShapeBallIndex;
+
 	this->radius = 0;
 }
 

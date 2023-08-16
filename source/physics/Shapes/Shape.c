@@ -294,7 +294,7 @@ CollisionResult Shape::collides(Shape shape)
 		// check for new overlap
 		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
 
-		if(collisionData.collisionInformation.shape && collisionData.collisionInformation.solutionVector.magnitude)
+		if(NULL != collisionData.collisionInformation.shape && 0 != collisionData.collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
 			collisionData.result = kEnterCollision;
@@ -329,7 +329,7 @@ CollisionResult Shape::collides(Shape shape)
 		// otherwise make a normal collision test
 		collisionData.collisionInformation = CollisionHelper::checkIfOverlap(this, shape);
 
-		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude)
+		if(collisionData.collisionInformation.shape == this && 0 != collisionData.collisionInformation.solutionVector.magnitude)
 		{
 			collisionData.result = kUpdateCollision;
 		}

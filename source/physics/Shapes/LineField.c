@@ -36,6 +36,8 @@ void LineField::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
+	this->classIndex = kShapeLineFieldIndex;
+
 	this->lineSpec = NULL;
 	this->a = Vector3D::zero();
 	this->b = Vector3D::zero();
