@@ -377,18 +377,10 @@ FontData* Printing::getFontByName(const char* font)
 	}
 	else if(NULL != this->fonts)
 	{
-		if(NULL != this->lastUsedFontData && NULL != font)
-		{
-			if(!strcmp(this->lastUsedFontData->fontSpec->name, font))
-			{
-				return this->lastUsedFontData;
-			}
-		}
-
 		// set first defined font as default
 		result = VirtualList::front(this->fonts);
 
-		if(result)
+		if(NULL != result)
 		{
 			if(NULL != font)
 			{
@@ -416,8 +408,6 @@ FontData* Printing::getFontByName(const char* font)
 			}
 		}
 	}
-
-	this->lastUsedFontData = result;
 	
 	return result;
 }
@@ -784,7 +774,18 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
 	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;	
 
-	FontData* fontData = Printing::getFontByName(this, font);
+	FontData* fontData = this->lastUsedFontData;
+
+	if(NULL == fontData)
+	{
+		fontData = Printing::getFontByName(this, font);
+		this->lastUsedFontData = fontData;
+	}
+	else if(strcmp(fontData->fontSpec->name, font))
+	{
+		fontData = Printing::getFontByName(this, font);
+		this->lastUsedFontData = fontData;
+	}
 
 	if(NULL == fontData || (__PRINTING_MODE_DEBUG != this->mode && isDeleted(fontData->charSet)))
 	{
