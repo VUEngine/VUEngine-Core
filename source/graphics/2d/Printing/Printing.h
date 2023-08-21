@@ -200,6 +200,7 @@ singleton class Printing : ListenerObject
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
 	// Cache the last used font to speed up searchs
+	const char* lastUsedFont;
 	FontData* lastUsedFontData;
 	// Printing mode (Default or Debug)
 	uint8 mode;

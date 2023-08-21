@@ -71,6 +71,7 @@ void Printing::constructor()
 	this->palette = __PRINTING_PALETTE;
 	this->orientation = kPrintingOrientationHorizontal;
 	this->direction = kPrintingDirectionLTR;
+	this->lastUsedFont = NULL;
 	this->lastUsedFontData = NULL;
 	this->activePrintingSprite = NULL;
 	this->printingBgmapSegment = -1;
@@ -364,6 +365,7 @@ void Printing::releaseFonts()
 
 	VirtualList::clear(this->fonts);
 
+	this->lastUsedFont = NULL;
 	this->lastUsedFontData = NULL;
 }
 
@@ -772,19 +774,25 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 	}
 
 	uint32 i = 0, position = 0, startColumn = x, temp = 0;
-	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;	
-
+	uint32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 	FontData* fontData = this->lastUsedFontData;
 
 	if(NULL == fontData)
 	{
 		fontData = Printing::getFontByName(this, font);
 		this->lastUsedFontData = fontData;
+		this->lastUsedFont = font;
 	}
-	else if(strcmp(fontData->fontSpec->name, font))
+	else if(this->lastUsedFont != font && strcmp(fontData->fontSpec->name, font))
 	{
 		fontData = Printing::getFontByName(this, font);
 		this->lastUsedFontData = fontData;
+		this->lastUsedFont = font;
+	}
+	else
+	{
+		this->lastUsedFontData = fontData;
+		this->lastUsedFont = font;
 	}
 
 	if(NULL == fontData || (__PRINTING_MODE_DEBUG != this->mode && isDeleted(fontData->charSet)))
