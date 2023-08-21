@@ -189,13 +189,13 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 	{
 		VirtualNode nextNode = node->next;
 
-		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
+		ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+		NM_ASSERT(!isDeleted(nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data");
+		ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data cast");
 
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
