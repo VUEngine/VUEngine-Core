@@ -239,7 +239,7 @@ void VIPManager::disableInterrupts()
 /**
  * Set multiplexed interrupts
  */
-void VIPManager::enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts)
+void VIPManager::enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts __attribute__((unused)))
 {
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = enabledMultiplexedInterrupts;
