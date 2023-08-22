@@ -264,7 +264,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	CharSetManager::print(this, 1, 10);
 	Printing::text(Printing::getInstance(), "CharSet ", 1, 19, NULL);
 	Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
-	Printing::hex(Printing::getInstance(), (WORD)&charSetSpec, 14, 21, 8, NULL);
+	Printing::hex(Printing::getInstance(), (WORD)charSetSpec, 14, 21, 8, NULL);
 	Printing::text(Printing::getInstance(), "    Size: ", 1, 22, NULL);
 	Printing::int32(Printing::getInstance(), charSetSpec->numberOfChars, 14, 22, NULL);
 
