@@ -168,15 +168,6 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		shape->moved = false;
-
-		// compare only different shapes against each other if
-		// the layers of the shapeToCheck are not excluded by the current shape
-		if(!shape->enabled || !shape->ready)
-		{
-			continue;
-		}
-
 	#ifdef __DRAW_SHAPES
 		if(shape->enabled && shape->ready)
 		{
@@ -188,7 +179,7 @@ uint32 CollisionManager::update(Clock clock)
 		}
 	#endif
 
-		if(!shape->checkForCollisions)
+		if(!(shape->enabled && shape->ready && shape->checkForCollisions))
 		{
 			continue;
 		}

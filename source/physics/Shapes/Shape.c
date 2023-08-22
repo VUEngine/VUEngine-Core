@@ -867,6 +867,8 @@ void Shape::hide()
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}
+
+	this->moved = false;
 }
 
 void Shape::print(int32 x, int32 y)
