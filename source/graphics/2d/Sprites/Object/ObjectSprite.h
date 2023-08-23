@@ -69,6 +69,13 @@ class ObjectSprite : Sprite
 	ObjectSpriteContainer objectSpriteContainer;
 	// number of objects
 	int16 totalObjects;
+	// cache some attributes to speed up rendering
+	uint8 cols;
+	uint8 rows;
+	int8 xDisplacementIncrement;
+	int8 yDisplacementIncrement;
+	int8 xDisplacementDelta;
+	int8 yDisplacementDelta;
 
 	/// @publicsection
 	void constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner);

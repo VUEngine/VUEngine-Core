@@ -59,6 +59,10 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 	this->displacement = objectSpriteSpec->spriteSpec.displacement;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
+	this->xDisplacementIncrement = 8;
+	this->yDisplacementIncrement = 8;
+	this->xDisplacementDelta = 0;
+	this->yDisplacementDelta = 0;
 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
@@ -80,6 +84,9 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 	{
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture spec");
 	}
+
+	this->cols = this->halfWidth >> 2;
+	this->rows = this->halfHeight >> 2;
 }
 
 /**
@@ -135,12 +142,6 @@ void ObjectSprite::rewrite()
 
 	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 
-	int16 halfWidth = this->halfWidth;
-	int16 halfHeight = this->halfHeight;
-
-	int16 cols = halfWidth >> 2;
-	int16 rows = halfHeight >> 2;
-
 	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 
 	int16 jDisplacement = 0;
@@ -149,11 +150,11 @@ void ObjectSprite::rewrite()
 
 	ObjectAttributes* objectPointer = NULL;
 
-	for(int16 i = 0; i < rows; i++, jDisplacement += cols)
+	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
 	{
 		int16 objectIndexStart = this->index + jDisplacement;
 
-		for(int16 j = 0; j < cols; j++)
+		for(int16 j = 0; j < this->cols; j++)
 		{
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
@@ -198,6 +199,31 @@ void ObjectSprite::rotate(const Rotation* rotation)
 	{
 		this->head &= 0xEFFF;
 	}
+
+	this->xDisplacementIncrement = 8;
+	this->yDisplacementIncrement = 8;
+	this->xDisplacementDelta = 0;
+	this->yDisplacementDelta = 0;
+
+	this->halfWidth = this->texture->textureSpec->cols << 2;
+	this->halfHeight = this->texture->textureSpec->rows << 2;
+
+	this->cols = this->halfWidth >> 2;
+	this->rows = this->halfHeight >> 2;
+
+	if(this->head & 0x2000)
+	{
+		this->xDisplacementIncrement = -8;
+		this->halfWidth = -this->halfWidth;
+		this->xDisplacementDelta = __OBJECT_SPRITE_FLIP_X_DISPLACEMENT;
+	}
+
+	if(this->head & 0x1000)
+	{
+		this->yDisplacementIncrement = -8;
+		this->halfHeight = -this->halfHeight;
+		this->yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
+	}
 }
 
 /**
@@ -229,35 +255,8 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
 	int32 charLocation = CharSet::getOffset(this->texture->charSet);
-
-	int16 xDisplacementIncrement = 8;
-	int16 yDisplacementIncrement = 8;
-
-	int16 halfWidth = this->halfWidth;
-	int16 halfHeight = this->halfHeight;
-
-	int16 cols = halfWidth >> 2;
-	int16 rows = halfHeight >> 2;
-
-	int16 xDisplacementDelta = 0;
-	int16 yDisplacementDelta = 0;
-
-	if(this->head & 0x2000)
-	{
-		xDisplacementIncrement = -8;
-		halfWidth = -halfWidth;
-		xDisplacementDelta = __OBJECT_SPRITE_FLIP_X_DISPLACEMENT;
-	}
-
-	if(this->head & 0x1000)
-	{
-		yDisplacementIncrement = -8;
-		halfHeight = -halfHeight;
-		yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
-	}
-
-	int16 x = this->position.x - halfWidth + this->displacement.x - xDisplacementDelta;
-	int16 y = this->position.y - halfHeight + this->displacement.y - yDisplacementDelta;
+	int16 x = this->position.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
+	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
 	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
@@ -270,7 +269,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	ObjectAttributes* objectPointer = NULL;
 
-	for(int16 i = 0; i < rows; i++, jDisplacement += cols, yDisplacement += yDisplacementIncrement)
+	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols, yDisplacement += this->yDisplacementIncrement)
 	{
 		int16 outputY = y + yDisplacement;
 
@@ -279,7 +278,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
 			int16 j = 0;
-			for(; j < cols; j++)
+			for(; j < this->cols; j++)
 			{
 				int16 objectIndex = objectIndexStart + j;
 
@@ -292,7 +291,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 		int16 j = 0;
 		int16 xDisplacement = 0;
 
-		for(; j < cols; j++, xDisplacement += xDisplacementIncrement)
+		for(; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
 		{
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
