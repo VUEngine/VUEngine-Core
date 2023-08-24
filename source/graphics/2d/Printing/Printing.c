@@ -325,6 +325,8 @@ void Printing::setDebugMode()
 {
 	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
+	this->lastUsedFontData = NULL;
+	this->lastUsedFont = NULL;
 }
 
 void Printing::setPalette(uint8 palette)
