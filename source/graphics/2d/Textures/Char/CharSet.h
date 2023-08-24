@@ -100,7 +100,7 @@ class CharSet : ListenerObject
 	// Charset spec
 	CharSetSpec* charSetSpec;
 	// Array spec of the charSet
-	uint32 tilesDisplacement;
+	uint16 tilesDisplacement;
 	// Memory displacement
 	uint16 offset;
 	// How many textures are using me
@@ -111,14 +111,14 @@ class CharSet : ListenerObject
 	void increaseUsageCount();
 	bool decreaseUsageCount();
 	uint8 getAllocationType();
-	uint32 getOffset();
+	uint16 getOffset();
 	void setOffset(uint16 offset);
 	void setCharSetSpec(CharSetSpec* charSetSpec);
 	CharSetSpec* getCharSetSpec();
-	uint32 getNumberOfChars();
+	uint16 getNumberOfChars();
 	void write();
 	void rewrite();
-	void setTilesDisplacement(uint32 tilesDisplacement);
+	void setTilesDisplacement(uint16 tilesDisplacement);
 	void putChar(uint32 charToReplace, uint32* newChar);
 	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 	bool setFrame(uint16 frame);

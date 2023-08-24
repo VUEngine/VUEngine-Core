@@ -140,9 +140,7 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
-	int32 charLocation = CharSet::getOffset(this->texture->charSet);
-
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
 
 	int16 jDisplacement = 0;
 
@@ -159,8 +157,7 @@ void ObjectSprite::rewrite()
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
 
-			uint16 charNumber = charLocation + framePointer[jDisplacement + j];
-			objectPointer->tile = fourthWordValue | charNumber;
+			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
 		}
 	}
 }
@@ -254,12 +251,11 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	int32 charLocation = CharSet::getOffset(this->texture->charSet);
 	int16 x = this->position.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
 	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
@@ -310,8 +306,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 			objectPointer->head = secondWordValue;
 			objectPointer->jy = outputY;
 
-			uint16 charNumber = charLocation + framePointer[jDisplacement + j];
-			objectPointer->tile = fourthWordValue | charNumber;
+			objectPointer->tile = fourthWordValue | framePointer[jDisplacement + j];
 
 			result = index;
 		}

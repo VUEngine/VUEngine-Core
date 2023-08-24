@@ -109,7 +109,7 @@ uint8 CharSet::getAllocationType()
  *
  * @return				Offset within CHAR memory
  */
-uint32 CharSet::getOffset()
+uint16 CharSet::getOffset()
 {
 	return this->offset;
 }
@@ -154,7 +154,7 @@ void CharSet::setCharSetSpec(CharSetSpec* charSetSpec)
  *
  * @return 			Number of CHARS in the spec
  */
-uint32 CharSet::getNumberOfChars()
+uint16 CharSet::getNumberOfChars()
 {
 	return this->charSetSpec->numberOfChars;
 }
@@ -259,7 +259,7 @@ void CharSet::rewrite()
  *
  * @param tilesDisplacement		Displacement
  */
-void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
+void CharSet::setTilesDisplacement(uint16 tilesDisplacement)
 {
 	this->tilesDisplacement = tilesDisplacement;
 }
@@ -340,7 +340,7 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 bool CharSet::setFrame(uint16 frame)
 {
-	uint32 currentTilesDisplacement = this->tilesDisplacement;
+	uint16 currentTilesDisplacement = this->tilesDisplacement;
 
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
