@@ -403,7 +403,10 @@ void Camera::startUIGraphicsSynchronization()
 	{
 		this->positionBackup = this->position;
 		this->rotationBackup = this->rotation;
+#ifndef __LEGACY_COORDINATE_PROJECTION
 		this->opticalBackup = this->optical;
+		this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
+#endif
 
 		this->UISynchronizationInterruptions = 0;
 		this->synchronizingUIGraphics = true;
@@ -412,9 +415,6 @@ void Camera::startUIGraphicsSynchronization()
 		this->rotation = Rotation::zero();
 		this->invertedRotation = Rotation::zero();
 
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
-#endif
 	}
 }
 
@@ -431,7 +431,9 @@ void Camera::stopUIGraphicsSynchronization()
 		this->position = this->positionBackup;
 		this->rotation = this->rotationBackup;
 		this->invertedRotation = Rotation::invert(this->rotation);
+#ifndef __LEGACY_COORDINATE_PROJECTION
 		this->optical = this->opticalBackup;
+#endif
 
 		this->UISynchronizationInterruptions = 0;
 		HardwareManager::resumeInterrupts();
@@ -447,7 +449,9 @@ void Camera::suspendUIGraphicsSynchronization()
 			this->position = this->positionBackup;
 			this->rotation = this->rotationBackup;
 			this->invertedRotation = Rotation::invert(this->rotation);
+#ifndef __LEGACY_COORDINATE_PROJECTION
 			this->optical = this->opticalBackup;
+#endif
 		}
 	}
 }
