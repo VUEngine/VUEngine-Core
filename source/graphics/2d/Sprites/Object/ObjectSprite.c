@@ -306,7 +306,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 			objectPointer->head = secondWordValue;
 			objectPointer->jy = outputY;
 
-			objectPointer->tile = fourthWordValue | framePointer[jDisplacement + j];
+			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
 
 			result = index;
 		}
