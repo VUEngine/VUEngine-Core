@@ -213,6 +213,7 @@ void Profiler::end()
 		}
 
 		Profiler::print(this);
+		this->skipFrames = __ENABLE_PROFILER_SKIP_FRAMES;
 	}
 
 	this->started = false;
