@@ -1023,12 +1023,12 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 inte
 	Entity entity = ((Entity (*)(EntitySpec*, int16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, internalId, name);
 
 	// process extra info
-	if(positionedEntity->extraInfo)
+	if(NULL != positionedEntity->extraInfo)
 	{
 		Entity::setExtraInfo(entity, positionedEntity->extraInfo);
 	}
 
-	if(entitySpec->extraInfo)
+	if(NULL != entitySpec->extraInfo)
 	{
 		Entity::setExtraInfo(entity, entitySpec->extraInfo);
 	}
@@ -1497,9 +1497,6 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 			// must force size calculation now
 			Entity::calculateSize(this);
 		}
-
-		// graphics synchronization calls computeIfInCameraRange, which depends on the size already be calculated
-		Entity::synchronizeGraphics(this);
 	}
 
 	// call base class's transformation method
@@ -1507,6 +1504,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, uint32
 
 	if(createComponents)
 	{
+		Entity::synchronizeGraphics(this);
 		Entity::transformShapes(this);
 	}
 
