@@ -21,6 +21,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												CLASS'S ATTRIBUTES
+//---------------------------------------------------------------------------------------------------------
+
+Printing _printing = NULL;
+
+
+//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -29,6 +36,8 @@
  */
 void Clock::constructor()
 {
+	_printing = Printing::getInstance();
+
 	Base::constructor();
 
 	// initialize time
@@ -250,7 +259,7 @@ static void Clock::printTime(uint32 milliSeconds, int32 col, int32 row, const ch
 	output[3] = secondsString[0];
 	output[4] = secondsString[1];
 
-	Printing::text(Printing::getInstance(), output, col, row, font);
+	Printing::text(_printing, output, col, row, font);
 
 	switch(precision)
 	{
@@ -283,7 +292,7 @@ static void Clock::printDeciseconds(uint32 milliSeconds, int32 col, int32 row, c
 	uint32 deciSeconds = ((milliSeconds + 50) / 100);
 	deciSeconds -= ((deciSeconds / 10) * 10);
 
-	Printing::int32(Printing::getInstance(), deciSeconds, col, row, font);
+	Printing::int32(_printing, deciSeconds, col, row, font);
 }
 
 /**
@@ -300,12 +309,12 @@ static void Clock::printCentiseconds(uint32 milliSeconds, int32 col, int32 row, 
 
 	if(centiSeconds >= 10)
 	{
-		Printing::int32(Printing::getInstance(), centiSeconds, col, row, font);
+		Printing::int32(_printing, centiSeconds, col, row, font);
 	}
 	else
 	{
-		Printing::int32(Printing::getInstance(), 0, col, row, font);
-		Printing::int32(Printing::getInstance(), centiSeconds, col + 1, row, font);
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, centiSeconds, col + 1, row, font);
 	}
 }
 
@@ -322,17 +331,17 @@ static void Clock::printMilliseconds(uint32 milliSeconds, int32 col, int32 row, 
 
 	if(milliSeconds >= 100)
 	{
-		Printing::int32(Printing::getInstance(), milliSeconds, col, row, font);
+		Printing::int32(_printing, milliSeconds, col, row, font);
 	}
 	else if(milliSeconds >= 10)
 	{
-		Printing::int32(Printing::getInstance(), 0, col, row, font);
-		Printing::int32(Printing::getInstance(), milliSeconds, col + 1, row, font);
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, milliSeconds, col + 1, row, font);
 	}
 	else
 	{
-		Printing::int32(Printing::getInstance(), 0, col, row, font);
-		Printing::int32(Printing::getInstance(), 0, col + 1, row, font);
-		Printing::int32(Printing::getInstance(), milliSeconds, col + 2, row, font);
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, 0, col + 1, row, font);
+		Printing::int32(_printing, milliSeconds, col + 2, row, font);
 	}
 }
