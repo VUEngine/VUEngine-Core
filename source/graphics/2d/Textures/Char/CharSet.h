@@ -23,25 +23,31 @@
 //---------------------------------------------------------------------------------------------------------
 
 // non allocation type
-#define __NO_ALLOCATION_TYPE				0x00
+#define __NO_ALLOCATION_TYPE						0x00
 
 // spec of a CharSet for unanimated sprites
-#define __NOT_ANIMATED						0x01
+#define __NOT_ANIMATED								0x01
 
 // spec of a CharSet for animated sprites
-#define __ANIMATED_SINGLE					0x02
+#define __ANIMATED_SINGLE							0x02
 
 // spec of a CharSet for animated sprites
-#define __ANIMATED_SINGLE_OPTIMIZED			0x03
+#define __ANIMATED_SINGLE_OPTIMIZED					0x03
 
 // spec of a CharSet for animated sprites with one char set is shared by all
-#define __ANIMATED_SHARED					0x04
+#define __ANIMATED_SHARED							0x04
+
+// spec of a CharSet for animated sprites with one char set is shared by all
+#define __ANIMATED_SHARED_OPTIMIZED					0x05
 
 // spec of a CharSet for animated sprites with a coordinator that syncs them
-#define __ANIMATED_SHARED_COORDINATED		0x05
+#define __ANIMATED_SHARED_COORDINATED				0x06
+
+// spec of a CharSet for animated sprites with a coordinator that syncs them
+#define __ANIMATED_SHARED_COORDINATED_OPTIMIZED		0x07
 
 // spec of a charset for animated sprites whose all frames are written to memory and shared
-#define __ANIMATED_MULTI					0x06
+#define __ANIMATED_MULTI							0x08
 
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)

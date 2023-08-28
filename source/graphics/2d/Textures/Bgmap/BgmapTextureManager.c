@@ -443,7 +443,6 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 		{
 			case __ANIMATED_SINGLE:
 			case __ANIMATED_SINGLE_OPTIMIZED:
-			case __ANIMATED_SHARED_COORDINATED:
 
 				if(bgmapTextureSpec->recyclable)
 				{
@@ -464,6 +463,9 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 				break;
 
 			case __ANIMATED_SHARED:
+			case __ANIMATED_SHARED_COORDINATED:
+			case __ANIMATED_SHARED_OPTIMIZED:
+			case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 			case __ANIMATED_MULTI:
 			case __NOT_ANIMATED:
 

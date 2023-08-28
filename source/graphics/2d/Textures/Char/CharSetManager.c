@@ -146,7 +146,9 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 			break;
 
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_OPTIMIZED:
 		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 		case __ANIMATED_MULTI:
 		case __NOT_ANIMATED:
 

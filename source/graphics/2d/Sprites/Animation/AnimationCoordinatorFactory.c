@@ -95,6 +95,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 	switch(charSetSpec->allocationType)
 	{
 		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 			{
 				// try to find an already created coordinator
 				for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)

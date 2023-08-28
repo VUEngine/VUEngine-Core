@@ -311,6 +311,8 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 				switch(CharSet::getAllocationType(this->charSet))
 				{
 					case __ANIMATED_SINGLE_OPTIMIZED:
+					case __ANIMATED_SHARED_OPTIMIZED:
+					case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 
 						CharSet::setFrame(this->charSet, this->frame);
 						CharSet::write(this->charSet);
@@ -458,6 +460,8 @@ void Texture::setFrame(uint16 frame)
 			switch(CharSet::getAllocationType(this->charSet))
 			{
 				case __ANIMATED_SINGLE_OPTIMIZED:
+				case __ANIMATED_SHARED_OPTIMIZED:
+				case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 
 					this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 					break;
@@ -505,7 +509,9 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_OPTIMIZED:
 		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 
 			// just return the cols
 			return textureSpec->cols;
@@ -552,7 +558,9 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_OPTIMIZED:
 		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 
 			// just return the cols
 			return textureSpec->rows;

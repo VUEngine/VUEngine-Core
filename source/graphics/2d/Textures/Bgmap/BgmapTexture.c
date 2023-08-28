@@ -137,6 +137,8 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 			break;
 
 		case __ANIMATED_SINGLE_OPTIMIZED:
+		case __ANIMATED_SHARED_OPTIMIZED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
 
 			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTextureFrameChanged >= status);
 			break;
