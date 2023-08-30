@@ -48,7 +48,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->rotation = NULL;
 	this->interlaced = false;
 	this->bufferIndex = 0;
-	this->show = __SHOW;
+	this->show = __HIDE;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
 	this->draw = false;
@@ -110,6 +110,10 @@ void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Ro
 	if(hidden)
 	{
 		Wireframe::hide(this);
+	}
+	else if(NULL != this->position && NULL != this->rotation && NULL != this->scale)
+	{
+		this->show = __SHOW;
 	}
 }
 
