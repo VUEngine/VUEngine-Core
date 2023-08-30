@@ -488,6 +488,18 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 
 			default:
 
+#ifndef __SHIPPING
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::clear(Printing::getInstance());
+				BgmapTextureManager::print(this, 1, 10);
+				Printing::text(Printing::getInstance(), "Texture Spec", 1, 19, NULL);
+				Printing::text(Printing::getInstance(), "    Address: ", 1, 21, NULL);
+				Printing::hex(Printing::getInstance(), (WORD)bgmapTextureSpec, 14, 21, 8, NULL);
+
+				// throw an exception if there is no enough space to allocate the bgmap spec
+				Error::triggerException("BgmapTextureManager::getTexture: not valid allocation type", NULL);		
+#endif
+
 				NM_ASSERT(false, "BgmapTextureManager::getTexture: not valid allocation type");
 				break;
 		}
