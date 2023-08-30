@@ -199,9 +199,12 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	NM_ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
-	BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+	if(!isDeleted(bgmapTexture))
+	{
+		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
-	VirtualList::pushBack(this->textures, bgmapTexture);
+		VirtualList::pushBack(this->textures, bgmapTexture);
+	}
 }
 
 /**
