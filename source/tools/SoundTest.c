@@ -19,6 +19,7 @@
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
+#include <Printing.h>
 #include <SpriteManager.h>
 #include <TimerManager.h>
 #include <Utilities.h>

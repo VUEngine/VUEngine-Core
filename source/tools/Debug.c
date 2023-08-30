@@ -17,9 +17,12 @@
 #include <Debug.h>
 
 #include <Actor.h>
+#include <AnimationController.h>
+#include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
 #include <AnimatedEntity.h>
 #include <Ball.h>
+#include <BgmapAnimatedSprite.h>
 #include <BgmapTextureManager.h>
 #include <Body.h>
 #include <Box.h>
@@ -45,6 +48,8 @@
 #include <Mem.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
+#include <ObjectAnimatedSprite.h>
+#include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <OptionsSelector.h>

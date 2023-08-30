@@ -27,9 +27,12 @@
 #include <Optics.h>
 #include <OptionsSelector.h>
 #include <PhysicalWorld.h>
+#include <Printing.h>
 #include <SpriteManager.h>
 #include <Shape.h>
 #include <Stage.h>
+#include <StateMachine.h>
+#include <VirtualList.h>
 #include <VUEngine.h>
 
 #include <debugUtilities.h>

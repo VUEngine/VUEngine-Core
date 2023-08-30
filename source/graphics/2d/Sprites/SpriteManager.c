@@ -17,6 +17,7 @@
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
 #include <Mem.h>
+#include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTextureManager.h>
 #include <ParamTableManager.h>
