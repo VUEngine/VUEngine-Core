@@ -15,11 +15,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Container.h>
 #include <Behavior.h>
 #include <Body.h>
+#include <CollisionManager.h>
+#include <Container.h>
 #include <Sprite.h>
+#include <SpriteManager.h>
 #include <Wireframe.h>
+#include <WireframeManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -143,9 +146,11 @@ class Entity : Container
 	bool createWireframes();
 	bool createShapes();
 	bool createBehaviors();
+	Sprite addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager);
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
-	void addWireframe(Wireframe wireframe);
+	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
+	Shape addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager);
 	void addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes);
 	void destroySprites();
 	void calculateSize();
@@ -178,7 +183,6 @@ class Entity : Container
 	bool isInCameraRange();
 	VirtualList getShapes();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
-	void addWireframe(Wireframe wireframe);
 	void setSpec(void* entitySpec);
 	void setSize(Size size);
 	void computeIfInCameraRange(int32 pad, bool recursive);

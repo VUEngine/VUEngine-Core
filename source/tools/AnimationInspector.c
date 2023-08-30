@@ -417,7 +417,7 @@ void AnimationInspector::removePreviousSprite()
 {
 	if(!isDeleted(this->animatedSprite))
 	{
-		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->animatedSprite);
+		SpriteManager::destroySprite(SpriteManager::getInstance(), this->animatedSprite);
 		this->animatedSprite = NULL;
 	}
 }

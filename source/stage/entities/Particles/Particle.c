@@ -62,7 +62,7 @@ void Particle::destructor()
 {
 	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
+		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
 		this->sprite = NULL;
 	}
 
@@ -335,7 +335,7 @@ void Particle::suspend()
 {
 	if(!isDeleted(this->sprite))
 	{
-		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
+		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
 
 		this->sprite = NULL;
 	}

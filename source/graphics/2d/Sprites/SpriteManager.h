@@ -97,7 +97,7 @@ singleton class SpriteManager : Object
 	void unregisterSprite(Sprite sprite, bool hasEffects);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
-	void disposeSprite(Sprite sprite);
+	void destroySprite(Sprite sprite);
 	void forceRendering();
 	int8 getFreeLayer();
 	int32 getNumberOfSprites();

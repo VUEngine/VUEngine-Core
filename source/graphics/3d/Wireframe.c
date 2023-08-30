@@ -61,8 +61,6 @@ void Wireframe::destructor()
 {
 	Wireframe::hide(this);
 
-	WireframeManager::remove(WireframeManager::getInstance(), this);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -113,8 +111,6 @@ void Wireframe::setup(const Vector3D* position __attribute__((unused)), const Ro
 	{
 		Wireframe::hide(this);
 	}
-
-	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
 /**

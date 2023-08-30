@@ -105,7 +105,7 @@ void Printing::reset()
 	{
 		for(VirtualNode node = VirtualList::begin(this->printingSprites); NULL != node; node = VirtualNode::getNext(node))
 		{
-			SpriteManager::disposeSprite(SpriteManager::getInstance(), Sprite::safeCast(VirtualNode::getData(node)));
+			SpriteManager::destroySprite(SpriteManager::getInstance(), Sprite::safeCast(VirtualNode::getData(node)));
 		}
 
 		VirtualList::clear(this->printingSprites);

@@ -22,6 +22,7 @@
 #include <Optics.h>
 #include <Printing.h>
 #include <Shape.h>
+#include <SpriteManager.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -297,16 +298,43 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 		this->sprites = new VirtualList();
 	}
 
-	// go through n sprites in entity's spec
+	SpriteManager spriteManager = SpriteManager::getInstance();
+
 	for(int32 i = 0; NULL != spriteSpecs[i] && NULL != spriteSpecs[i]->allocator; i++)
 	{
-		Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpecs[i]->allocator)((SpriteSpec*)spriteSpecs[i], ListenerObject::safeCast(this));
-		VirtualList::pushBack(this->sprites, sprite);
-		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
+		Entity::addSprite(this, (SpriteSpec*)spriteSpecs[i], spriteManager);
+	}
+}
+
+Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
+{
+	if(NULL == spriteSpec)
+	{
+		return NULL;
 	}
 
-	this->synchronizeGraphics = this->synchronizeGraphics || !isDeleted(this->sprites);
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
+	if(NULL == spriteManager)
+	{
+		spriteManager = SpriteManager::getInstance();
+	}
+
+	if(NULL == this->sprites)
+	{
+		this->sprites = new VirtualList();
+	}
+
+	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, ListenerObject::safeCast(this));
+
+	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
+
+	if(!isDeleted(sprite))
+	{
+		VirtualList::pushBack(this->sprites, sprite);
+		this->synchronizeGraphics = true;
+		this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
+	}
+
+	return sprite;
 }
 
 /**
@@ -323,6 +351,8 @@ void Entity::destroySprites()
 
 	if(!isDeleted(this->sprites))
 	{
+		SpriteManager spriteManager = SpriteManager::getInstance();
+		
 		// Must use a temporal list to prevent any race condition
 		VirtualList sprites = this->sprites;
 		this->sprites = NULL;
@@ -345,7 +375,8 @@ void Entity::destroySprites()
 			}
 #endif
 			NM_ASSERT(!isDeleted(Sprite::safeCast(node->data)), "Entity::destroySprites: trying to dispose dead sprite");
-			delete Sprite::safeCast(node->data);
+
+			SpriteManager::destroySprite(spriteManager, Sprite::safeCast(node->data));
 		}
 
 		// delete the sprites
@@ -393,27 +424,30 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 		this->wireframes = new VirtualList();
 	}
 
+	WireframeManager wireframeManager = WireframeManager::getInstance();
+
 	for(int32 i = 0; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
 	{
-		Wireframe wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpecs[i]->allocator)(wireframeSpecs[i]);
-		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
-		VirtualList::pushBack(this->wireframes, wireframe);
+		Entity::addWireframe(this, wireframeSpecs[i], wireframeManager);
 	}
-
-	this->synchronizeGraphics = this->synchronizeGraphics || !isDeleted(this->wireframes);
 }
 
 /**
  * Add a wireframe
  *
  * @private
- * @param wireframeSpecs		List of wireframes
+ * @param wireframeSpec		Wireframe spec
  */
-void Entity::addWireframe(Wireframe wireframe)
+Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager)
 {
-	if(isDeleted(wireframe))
+	if(NULL == wireframeSpec)
 	{
-		return;
+		return NULL;
+	}
+
+	if(NULL == wireframeManager)
+	{
+		wireframeManager = WireframeManager::getInstance();
 	}
 
 	if(NULL == this->wireframes)
@@ -421,8 +455,18 @@ void Entity::addWireframe(Wireframe wireframe)
 		this->wireframes = new VirtualList();
 	}
 
-	Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
-	VirtualList::pushBack(this->wireframes, wireframe);
+	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec);
+
+	NM_ASSERT(!isDeleted(wireframe), "Entity::addWireframe: wireframe not created");
+
+	if(!isDeleted(wireframe))
+	{
+		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
+		VirtualList::pushBack(this->wireframes, wireframe);
+		this->synchronizeGraphics = true;
+	}
+
+	return wireframe;
 }
 
 /**
@@ -432,11 +476,17 @@ void Entity::addWireframe(Wireframe wireframe)
  */
 void Entity::destroyWireframes()
 {
-	if(!isDeleted(this->wireframes))
+	if(NULL != this->wireframes)
 	{
-		ASSERT(!isDeleted(this->wireframes), "Entity::destroyWireframes: dead wireframes");
+		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead shapes");
 
-		VirtualList::deleteData(this->wireframes);
+		WireframeManager wireframeManager = WireframeManager::getInstance();
+
+		for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+		{
+			WireframeManager::destroyWireframe(wireframeManager, Wireframe::safeCast(node->data));
+		}
+
 		delete this->wireframes;
 		this->wireframes = NULL;
 	}
@@ -485,12 +535,44 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 	// go through n sprites in entity's spec
 	for(int32 i = 0; NULL != shapeSpecs[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), &shapeSpecs[i]);
-		ASSERT(shape, "Entity::addShapes: sprite not created");
-		VirtualList::pushBack(this->shapes, shape);
+		Entity::addShape(this, &shapeSpecs[i], collisionManager);
+	}
+}
+
+/**
+ * Add a wireframe
+ *
+ * @private
+ * @param wireframeSpec		Wireframe spec
+ */
+Shape Entity::addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager)
+{
+	if(NULL == shapeSpec)
+	{
+		return NULL;
 	}
 
-	this->transformShapes = !isDeleted(this->shapes);
+	if(NULL == collisionManager)
+	{
+		collisionManager = VUEngine::getCollisionManager(_vuEngine);
+	}
+
+	if(NULL == this->shapes)
+	{
+		this->shapes = new VirtualList();
+	}
+
+	Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), shapeSpec);
+
+	NM_ASSERT(!isDeleted(shape), "Entity::addShape: shape not created");
+
+	if(!isDeleted(shape))
+	{
+		VirtualList::pushBack(this->shapes, shape);
+		this->transformShapes = true;
+	}
+
+	return shape;
 }
 
 /**

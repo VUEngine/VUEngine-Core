@@ -99,38 +99,55 @@ void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
 }
 
 /**
- * Register a Wireframe to be rendered
+ * Create a Wireframe to be rendered
  *
- * @param wireframe	Wireframe to register
+ * @param wireframeSpec	Wireframe spec
  */
-void WireframeManager::register(Wireframe wireframe)
+Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec)
 {
-	ASSERT(wireframe, "WireframeManager::register: null wireframe");
-
-	this->lockWireframeList = true;
-
-	if(!VirtualList::find(this->wireframes, wireframe))
+	if(NULL == wireframeSpec)
 	{
-		VirtualList::pushBack(this->wireframes, wireframe);
+		return NULL;
 	}
 
-	this->lockWireframeList = false;
+	Wireframe wireframe = ((Wireframe (*)(WireframeSpec*))wireframeSpec->allocator)(wireframeSpec);
+
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
+
+	if(!isDeleted(wireframe))
+	{
+		this->lockWireframeList = true;
+
+		VirtualList::pushBack(this->wireframes, wireframe);
+
+		this->lockWireframeList = false;
+	}
+
+	return wireframe;
 }
 
 /**
- * Remove a registered Wireframe
+ * Destroy a Wireframe
  *
  * @param wireframe	Wireframe to remove
  */
-void WireframeManager::remove(Wireframe wireframe)
+void WireframeManager::destroyWireframe(Wireframe wireframe)
 {
-	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWirefram: trying to dispose dead wireframe");
+	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWirefram: trying to dispose non wireframe");
+
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	Wireframe::hide(wireframe);
 
 	this->lockWireframeList = true;
-
 	VirtualList::removeElement(this->wireframes, wireframe);
-
 	this->lockWireframeList = false;
+
+	delete wireframe;
 }
 
 /**

@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -23,7 +24,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 class VirtualList;
-class Wireframe;
 
 /// @ingroup graphics-3d
 
@@ -44,8 +44,8 @@ singleton class WireframeManager : ListenerObject
 	void draw();
 	void render();
 	void print(int32 x, int32 y);
-	void register(Wireframe wireframe);
-	void remove(Wireframe wireframe);
+	Wireframe createWireframe(WireframeSpec* wireframeSpec);
+	void destroyWireframe(Wireframe wireframe);
 	void reset();
 	void enable();
 	void disable();
