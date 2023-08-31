@@ -23,9 +23,12 @@
 #include <KeypadManager.h>
 #include <Optics.h>
 #include <OptionsSelector.h>
+#include <Printing.h>
 #include <Stage.h>
 #include <SpriteManager.h>
 #include <Texture.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 
 #include <string.h>
 
@@ -496,7 +499,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 				this->animationFunction.delay -= 1;
 
-				if(0 > this->animationFunction.delay)
+				if(0 > (signed)this->animationFunction.delay)
 				{
 					this->animationFunction.delay = 0;
 				}
@@ -531,11 +534,6 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 			case kDelay:
 
 				this->animationFunction.delay += 1;
-
-				if(1000 < this->animationFunction.delay)
-				{
-					this->animationFunction.delay = 1000;
-				}
 				break;
 
 			case kLoop:
