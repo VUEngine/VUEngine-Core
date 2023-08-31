@@ -1317,7 +1317,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
  */
 uint32 Entity::areAllChildrenInstantiated()
 {
-	if(this->entityFactory)
+	if(!isDeleted(this->entityFactory))
 	{
 		return __LIST_EMPTY == EntityFactory::instantiateEntities(this->entityFactory);
 	}
@@ -1332,7 +1332,7 @@ uint32 Entity::areAllChildrenInstantiated()
  */
 uint32 Entity::areAllChildrenTransformed()
 {
-	if(this->entityFactory)
+	if(!isDeleted(this->entityFactory))
 	{
 		return __LIST_EMPTY == EntityFactory::transformEntities(this->entityFactory);
 	}

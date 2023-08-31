@@ -101,6 +101,8 @@ void DirectDraw::constructor()
  */
 void DirectDraw::destructor()
 {
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)DirectDraw::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
 	// allow a new construct
 	Base::destructor();
 }
