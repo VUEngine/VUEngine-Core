@@ -699,8 +699,16 @@ void Stage::preloadAssets()
 				continue;
 			}
 			
-			if(__ANIMATED_SINGLE != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType)
+			if
+			(
+				this->stageSpec->assets.textureSpecs[i]->recyclable 
+				|| 
+				(
+					__ANIMATED_SINGLE != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType 
+					&&
+					__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType
+				)
+			)
 			{
 				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs[i], 0, false, __WORLD_1x1);
 
