@@ -19,6 +19,7 @@
 #include <VirtualList.h>
 
 #include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -186,9 +187,9 @@ uint32 EntityFactory::instantiateEntities()
 			NM_ASSERT(NULL != positionedEntityDescription->positionedEntity->entitySpec->allocator, "EntityFactory::spawnEntities: no allocator defined");
 
 			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
-			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
+			NM_ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
-			if(NULL != positionedEntityDescription->callback)
+			if(!isDeleted(positionedEntityDescription->entity) && NULL != positionedEntityDescription->callback)
 			{
 				Entity::addEventListener(positionedEntityDescription->entity, ListenerObject::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
 			}
@@ -434,17 +435,17 @@ int32 EntityFactory::getPhase()
 // Something is not working properly
 void EntityFactory::prepareAllEntities()
 {
-	while(this->entitiesToInstantiate->head)
+	while(!isDeleted(this->entitiesToInstantiate->head))
 	{
 		EntityFactory::instantiateEntities(this);
 	}
 
-	while(this->entitiesToTransform->head)
+	while(!isDeleted(this->entitiesToTransform->head))
 	{
 		EntityFactory::transformEntities(this);
 	}
 
-	while(this->entitiesToMakeReady->head)
+	while(!isDeleted(this->entitiesToMakeReady->head))
 	{
 		EntityFactory::makeReadyEntities(this);
 	}
