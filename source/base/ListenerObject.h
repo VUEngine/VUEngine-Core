@@ -41,7 +41,7 @@ typedef struct Event
 	/// the code of the event to listen to
 	uint16 code;
 	/// flag to prevent race conditions when firing events
-	bool firing;
+	bool remove;
 
 } Event;
 
@@ -56,6 +56,8 @@ abstract class ListenerObject : Object
 {
 	// List of registered events.
 	VirtualList events;
+	// Counter user to prevent race conditions in nested event firings
+	int8 eventFirings;
 
 	/// @publicsection
 	void constructor();

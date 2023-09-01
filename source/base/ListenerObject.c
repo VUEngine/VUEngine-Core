@@ -22,6 +22,7 @@
 #include <VirtualNode.h>
 
 #include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,6 +46,7 @@ extern MemoryPool _memoryPool;
 void ListenerObject::constructor()
 {
 	this->events = NULL;
+	this->eventFirings = 0;
 }
 
 /**
@@ -99,6 +101,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener met
 
 			if(listener == event->listener && method == event->method && eventCode == event->code)
 			{
+				event->remove = false;
 				return;
 			}
 		}
@@ -108,7 +111,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener met
 	event->listener = listener;
 	event->method = method;
 	event->code = eventCode;
-	event->firing = false;
+	event->remove = false;
 
 	VirtualList::pushBack(this->events, event);
 }
@@ -124,17 +127,31 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 {
 	if(NULL != this->events)
 	{
-		for(VirtualNode node = this->events->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
+			nextNode = node->next;
+
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && method == event->method && eventCode == event->code)
+			if(isDeleted(event))
 			{
 				VirtualList::removeNode(this->events, node);
 
 				delete event;
-				break;
+
+				continue;
 			}
+
+			if(listener == event->listener && method == event->method && eventCode == event->code)
+			{
+				event->remove = true;
+			}
+		}
+
+		if(NULL == this->events->head)
+		{
+			delete this->events;
+			this->events = NULL;
 		}
 	}
 }
@@ -155,11 +172,18 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 
 			Event* event = (Event*)node->data;
 
-			if((NULL == method || method == event->method) && eventCode == event->code)
+			if(isDeleted(event))
 			{
 				VirtualList::removeNode(this->events, node);
 
 				delete event;
+
+				continue;
+			}
+
+			if((NULL == method || method == event->method) && eventCode == event->code)
+			{
+				event->remove = true;
 			}
 		}
 
@@ -187,11 +211,18 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && eventCode == event->code)
+			if(isDeleted(event))
 			{
 				VirtualList::removeNode(this->events, node);
 
 				delete event;
+
+				continue;
+			}
+
+			if(listener == event->listener && eventCode == event->code)
+			{
+				event->remove = true;
 			}
 		}
 
@@ -236,10 +267,9 @@ void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
-		HardwareManager::suspendInterrupts();
+		this->eventFirings++;
 
-		// temporary lists to being able to modify the event lists while firing them
-		VirtualList eventsToFire = NULL;
+		HardwareManager::suspendInterrupts();
 
 		for(VirtualNode node = this->events->head, nextNode; NULL != node; node = nextNode)
 		{
@@ -248,50 +278,22 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			Event* event = (Event*)node->data;
 
 			// safety check in case that the there is a stacking up of firings within firings
-			if(isDeleted(event) || isDeleted(event->listener))
+			if(isDeleted(event) || isDeleted(event->listener) || event->remove)
 			{
-				VirtualList::removeNode(this->events, node);
-
-				// safety check in case that the there is a stacking up of firings within firings
-				if(!isDeleted(event))
+				if(1 == this->eventFirings)
 				{
-					delete event;
+					VirtualList::removeNode(this->events, node);
+
+					// safety check in case that the there is a stacking up of firings within firings
+					if(!isDeleted(event))
+					{
+						delete event;
+					}
 				}
 			}
 			else if(eventCode == event->code)
 			{
-				if(NULL == eventsToFire)
-				{
-					eventsToFire = new VirtualList();
-				}
-				
-				VirtualList::pushBack(eventsToFire, event);
-			}
-		}
-		
-		if(NULL == this->events->head)
-		{
-			delete this->events;
-			this->events = NULL;
-		}
-
-		if(NULL != eventsToFire)
-		{
-			for(VirtualNode node = eventsToFire->head; NULL != node; node = node->next)
-			{
-				Event* event = (Event*)node->data;
-
-				// safe check in case that the event have been deleted during the previous call to method
-				if(!isDeleted(event) && eventCode == event->code && !event->firing)
-				{
-					event->firing = true;
-					event->method(event->listener, this);
-
-					if(!isDeleted(event))
-					{
-						event->firing = false;
-					}
-				}
+				event->method(event->listener, this);
 
 				// safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
@@ -310,11 +312,17 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					break;
 				}
 			}
-
-			delete eventsToFire;
+		}
+		
+		if(NULL == this->events->head)
+		{
+			delete this->events;
+			this->events = NULL;
 		}
 
 		HardwareManager::resumeInterrupts();
+
+		this->eventFirings--;
 	}
 }
 
