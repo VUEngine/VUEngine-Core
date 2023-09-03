@@ -65,7 +65,8 @@ singleton class BgmapTextureManager : Object
 
 	/// @publicsection
 	static BgmapTextureManager getInstance();
-	void allocateText(BgmapTexture bgmapTexture);
+	void reset();
+	void loadTextures(const TextureSpec** textureSpecs);
 	void calculateAvailableBgmapSegments();
 	int8 getAvailableBgmapSegmentsForTextures();
 	int8 getPrintingBgmapSegment();
@@ -75,7 +76,6 @@ singleton class BgmapTextureManager : Object
 	void print(int32 x, int32 y);
 	void releaseTexture(BgmapTexture bgmapTexture);
 	void updateTextures(int16 maximumTextureRowsToWrite);
-	void reset();
 	void setDeferTextureUpdate(bool value);
 }
 

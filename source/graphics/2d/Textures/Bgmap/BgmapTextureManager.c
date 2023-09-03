@@ -112,6 +112,95 @@ void BgmapTextureManager::reset()
 	this->deferTextureUpdate = false;
 }
 
+/*
+ * Load charSets from array of CharSetPecs
+ *
+ * @param charSets				NULL terminaed array of pointers to charSetSpec
+*/
+void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
+{
+	// textures
+	if(NULL != textureSpecs)
+	{
+		VirtualList sortedTextureSpecs = new VirtualList();
+		VirtualList recyclableTextures = new VirtualList();
+
+		for(int16 i = 0; NULL != textureSpecs[i]; i++)
+		{
+			if(NULL == textureSpecs[i]->charSetSpec)
+			{
+				continue;
+			}
+			
+			if
+			(
+				textureSpecs[i]->recyclable 
+				|| 
+				(
+					__ANIMATED_SINGLE != textureSpecs[i]->charSetSpec->allocationType 
+					&&
+					__ANIMATED_SINGLE_OPTIMIZED != textureSpecs[i]->charSetSpec->allocationType
+				)
+			)
+			{
+				VirtualNode node = NULL;
+
+				for(node = sortedTextureSpecs->head; NULL != node; node = node->next)
+				{
+					TextureSpec* sortedTextureSpec = (TextureSpec*)node->data;
+
+					if(textureSpecs[i] == sortedTextureSpec)
+					{
+						break;
+					}
+
+					if(textureSpecs[i]->rows < sortedTextureSpec->rows)
+					{
+						continue;
+					}
+
+					VirtualList::insertBefore(sortedTextureSpecs, node, textureSpecs[i]);
+					break;
+				}
+
+				if(NULL == node)
+				{
+					VirtualList::pushBack(sortedTextureSpecs, textureSpecs[i]);
+				}
+			}
+
+			for(VirtualNode node = sortedTextureSpecs->head; NULL != node; node = node->next)
+			{
+				TextureSpec* textureSpec = (TextureSpec*)node->data;
+
+				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
+
+				NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
+
+				if(textureSpec->recyclable)
+				{
+					VirtualList::pushBack(recyclableTextures, bgmapTexture);
+				}
+				else
+				{
+					Texture::write(bgmapTexture, -1);
+					Texture::releaseCharSet(bgmapTexture);
+				}
+			}
+		}
+
+		delete sortedTextureSpecs;
+
+		for(VirtualNode node = VirtualList::begin(recyclableTextures); NULL != node; node = node->next)
+		{
+			BgmapTextureManager::releaseTexture(this, BgmapTexture::safeCast(node->data));
+		}
+
+		delete recyclableTextures;
+	}
+}
+
+
 /**
  * Try to allocate a BGMAP memory space for a new Texture
  *

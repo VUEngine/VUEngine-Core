@@ -666,81 +666,8 @@ void Stage::preloadAssets()
 {
 	// fonts
 	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
-
-	// charsets
-	if(this->stageSpec->assets.charSetSpecs)
-	{
-		int32 i = 0;
-
-		for(; this->stageSpec->assets.charSetSpecs[i]; i++)
-		{
-			if(__ANIMATED_SINGLE != this->stageSpec->assets.charSetSpecs[i]->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.charSetSpecs[i]->allocationType)
-			{
-				CharSetManager::getCharSet(CharSetManager::getInstance(), this->stageSpec->assets.charSetSpecs[i]);
-			}
-			else
-			{
-				ASSERT(this, "Stage::preloadAssets: preloading an animated single char set");
-			}
-		}
-	}
-
-	// textures
-	if(this->stageSpec->assets.textureSpecs)
-	{
-		VirtualList recyclableTextures = new VirtualList();
-		int32 i = 0;
-
-		for(; this->stageSpec->assets.textureSpecs[i]; i++)
-		{
-			if(NULL == this->stageSpec->assets.textureSpecs[i]->charSetSpec)
-			{
-				continue;
-			}
-			
-			if
-			(
-				this->stageSpec->assets.textureSpecs[i]->recyclable 
-				|| 
-				(
-					__ANIMATED_SINGLE != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType 
-					&&
-					__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType
-				)
-			)
-			{
-				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs[i], 0, false, __WORLD_1x1);
-
-				NM_ASSERT(!isDeleted(bgmapTexture), "Stage::preloadAssets: failed to load bgmapTexture");
-
-				if(!isDeleted(bgmapTexture))
-				{
-					if(this->stageSpec->assets.textureSpecs[i]->recyclable)
-					{
-						VirtualList::pushBack(recyclableTextures, bgmapTexture);
-					}
-					else
-					{
-						Texture::write(bgmapTexture, -1);
-						Texture::releaseCharSet(bgmapTexture);
-					}
-				}
-			}
-			else
-			{
-				ASSERT(this, "Stage::preloadAssets: loading an ListenerObject texture");
-			}
-		}
-
-		for(VirtualNode node = VirtualList::begin(recyclableTextures); NULL != node; node = node->next)
-		{
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
-		}
-
-		delete recyclableTextures;
-	}
-
+	CharSetManager::loadCharSets(CharSetManager::getInstance(), this->stageSpec->assets.charSetSpecs);
+	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs);
 	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
 }
 

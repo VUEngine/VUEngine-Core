@@ -96,6 +96,27 @@ void CharSetManager::reset()
 	this->preventDefragmentation = false;
 }
 
+
+/**
+ * Load charSets from array of CharSetPecs
+ *
+ * @param charSets				NULL terminaed array of pointers to charSetSpec
+ */
+void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
+{
+	if(NULL != charSetSpecs)
+	{
+		for(int16 i = 0; charSetSpecs[i]; i++)
+		{
+			if(__ANIMATED_SINGLE != charSetSpecs[i]->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != charSetSpecs[i]->allocationType)
+			{
+				CharSetManager::getCharSet(this, charSetSpecs[i]);
+			}
+		}
+	}
+}
+
 /**
  * Find a previously registered CharSet with the given spec
  *
@@ -432,3 +453,4 @@ void CharSetManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
+

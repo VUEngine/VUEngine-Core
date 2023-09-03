@@ -355,14 +355,17 @@ void Printing::releaseFonts()
 	{
 		FontData* fontData = VirtualNode::getData(node);
 
-		if(!isDeleted(fontData) && !isDeleted(fontData->charSet))
+		if(!isDeleted(fontData))
 		{
-			CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+			if(!isDeleted(fontData->charSet))
+			{
+				CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
 
-			while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
+				while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
+			}
+
+			delete fontData;
 		}
-
-		delete fontData;
 	}
 
 	VirtualList::clear(this->fonts);
