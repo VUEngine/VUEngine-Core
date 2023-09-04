@@ -66,12 +66,12 @@ void UIContainer::addEntities(PositionedEntity* entities)
 // add entity to the stage
 Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntity)
 {
-	if(positionedEntity)
+	if(NULL != positionedEntity)
 	{
 		Entity entity = Entity::loadEntity(positionedEntity, !isDeleted(this->children) ? VirtualList::getSize(this->children) : 0);
 		ASSERT(entity, "UIContainer::doAddChildEntity: entity not loaded");
 
-		if(entity)
+		if(!isDeleted(entity))
 		{
 			// create the entity and add it to the world
 			UIContainer::addChild(this, Container::safeCast(entity));
