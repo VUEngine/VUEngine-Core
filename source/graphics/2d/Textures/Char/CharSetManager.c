@@ -111,7 +111,7 @@ void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 			if(__ANIMATED_SINGLE != charSetSpecs[i]->allocationType &&
 				__ANIMATED_SINGLE_OPTIMIZED != charSetSpecs[i]->allocationType)
 			{
-				CharSetManager::getCharSet(this, charSetSpecs[i]);
+				CharSetManager::getCharSet(this, (CharSetSpec*)charSetSpecs[i]);
 			}
 		}
 	}
