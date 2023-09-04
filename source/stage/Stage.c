@@ -664,10 +664,9 @@ void Stage::removeChildEntity(Entity child)
 // preload fonts, charsets and textures
 void Stage::preloadAssets()
 {
-	// fonts
 	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
-	CharSetManager::loadCharSets(CharSetManager::getInstance(), this->stageSpec->assets.charSetSpecs);
-	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs);
+	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
+	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs);
 	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
 }
 
@@ -1444,3 +1443,4 @@ void Stage::showStreamingProfiling(int32 x, int32 y)
 	entityFactoryHighestTime = 0;
 #endif
 }
+
