@@ -389,7 +389,7 @@ void VUEngine::setNextState(GameState state)
 			this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-			if(this->currentState)
+			if(!isDeleted(this->currentState))
 			{
 				// Discard delayed messages from the current state
 				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));

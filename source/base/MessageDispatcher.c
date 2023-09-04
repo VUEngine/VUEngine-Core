@@ -156,7 +156,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 	delayedMessage->timeOfArrival = Clock::getTime(delayedMessage->clock) + delay;
 	delayedMessage->discarded = false;
 
-	VirtualList::pushFront(this->delayedMessages, delayedMessage);
+	VirtualList::pushBack(this->delayedMessages, delayedMessage);
 }
 
 /**
@@ -223,8 +223,16 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 				void* sender = Telegram::getSender(telegram);
 				void* receiver = Telegram::getReceiver(telegram);
 
+				// check if sender and receiver are still alive
+				if(!isDeleted(sender) && !isDeleted(receiver))
+				{
+					messagesDispatched |= true;
+					HardwareManager::suspendInterrupts();
+					ListenerObject::handleMessage(receiver, telegram);
+					HardwareManager::resumeInterrupts();
+				}
 #ifndef __RELEASE
-				if(isDeleted(sender) || isDeleted(receiver))
+				else if(isDeleted(sender) || isDeleted(receiver))
 				{
 					Printing::setDebugMode(Printing::getInstance());
 					Printing::clear(Printing::getInstance());
@@ -242,22 +250,15 @@ uint32 MessageDispatcher::dispatchDelayedMessages()
 						PRINT_TEXT("Receiver: ", 1, 15);
 						PRINT_TEXT(__GET_CLASS_NAME(receiver), 10, 15);
 					}
-				}
-#endif
 
-				NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
-				NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
-
-				// check if sender and receiver are still alive
-				if(!isDeleted(sender) && !isDeleted(receiver))
-				{
-					messagesDispatched |= true;
-					ListenerObject::handleMessage(receiver, telegram);
+					NM_ASSERT(!isDeleted(receiver), "MessageDispatcher::dispatchDelayedMessages: null receiver");
+					NM_ASSERT(!isDeleted(sender), "MessageDispatcher::dispatchDelayedMessages: null sender");
 				}
+#endif			
 			}
 
 			delayedMessage->discarded = true;
-		}	
+		}
 
 		if(delayedMessage->discarded)
 		{
