@@ -212,29 +212,32 @@ bool ParticleSystem::getLoop()
  */
 void ParticleSystem::processExpiredParticles()
 {
-	if(!isDeleted(this->particles) && !((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
+	if(!((ParticleSystemSpec*)this->entitySpec)->recycleParticles)
 	{
-		VirtualList particles = this->particles;
-		this->particles = NULL;
-
-		for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
+		if(!isDeleted(this->particles))
 		{
-			nextNode = node->next;
+			VirtualList particles = this->particles;
+			this->particles = NULL;
 
-			Particle particle = Particle::safeCast(node->data);
-
-			if(particle->expired)
+			for(VirtualNode node = particles->head, nextNode; NULL != node; node = nextNode)
 			{
-				VirtualList::removeNode(particles, node);
+				nextNode = node->next;
 
-				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+				Particle particle = Particle::safeCast(node->data);
 
-				delete particle;
-				this->particleCount--;
+				if(particle->expired)
+				{
+					VirtualList::removeNode(particles, node);
+
+					NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
+
+					delete particle;
+					this->particleCount--;
+				}
 			}
-		}
 
-		this->particles = particles;
+			this->particles = particles;
+		}
 	}
 }
 
