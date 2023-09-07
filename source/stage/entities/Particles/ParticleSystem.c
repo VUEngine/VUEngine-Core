@@ -332,11 +332,8 @@ void ParticleSystem::update()
 			{
 				if(!ParticleSystem::recycleParticle(this))
 				{
-					if(VirtualList::getSize(this->particles) < this->maximumNumberOfAliveParticles)
-					{
-						VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
-						this->particleCount++;
-					}
+					VirtualList::pushBack(this->particles, ParticleSystem::spawnParticle(this));
+					this->particleCount++;
 				}
 				else
 				{
