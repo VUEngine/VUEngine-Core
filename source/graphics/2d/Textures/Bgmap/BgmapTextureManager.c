@@ -168,24 +168,24 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 					VirtualList::pushBack(sortedTextureSpecs, textureSpecs[i]);
 				}
 			}
+		}
 
-			for(VirtualNode node = sortedTextureSpecs->head; NULL != node; node = node->next)
+		for(VirtualNode node = sortedTextureSpecs->head; NULL != node; node = node->next)
+		{
+			TextureSpec* textureSpec = (TextureSpec*)node->data;
+
+			BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
+
+			NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
+
+			if(textureSpec->recyclable)
 			{
-				TextureSpec* textureSpec = (TextureSpec*)node->data;
-
-				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
-
-				NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
-
-				if(textureSpec->recyclable)
-				{
-					VirtualList::pushBack(recyclableTextures, bgmapTexture);
-				}
-				else
-				{
-					Texture::write(bgmapTexture, -1);
-					Texture::releaseCharSet(bgmapTexture);
-				}
+				VirtualList::pushBack(recyclableTextures, bgmapTexture);
+			}
+			else
+			{
+				Texture::write(bgmapTexture, -1);
+				Texture::releaseCharSet(bgmapTexture);
 			}
 		}
 
