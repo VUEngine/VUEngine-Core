@@ -209,6 +209,9 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		Container::suspend(this->stage);
 	}
 
+	// Make sure that all graphical resources are released.
+	SpriteManager::reset(SpriteManager::getInstance());
+
 #ifdef __DEBUG_TOOLS
 	}
 #endif

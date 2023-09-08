@@ -1211,9 +1211,6 @@ void Stage::suspend()
 
 	delete this->entityFactory;
 	this->entityFactory = NULL;
-
-	// Make sure that all graphical resources are released.
-	SpriteManager::reset(SpriteManager::getInstance());
 }
 
 // resume after pause
