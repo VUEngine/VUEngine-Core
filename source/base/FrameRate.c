@@ -43,10 +43,12 @@ void FrameRate::constructor()
 {
 	Base::constructor();
 
-	this->fps = 0;
-	this->unevenFps = 0;
+	this->FPS = 0;
+	this->unevenFPS = 0;
 	this->gameFrameStarts = 0;
 	this->targetFPS = __TARGET_FPS;
+	this->seconds = 0;
+	this->totalFPS = 0;
 }
 
 /**
@@ -65,18 +67,20 @@ void FrameRate::destructor()
  */
 void FrameRate::reset()
 {
-	this->fps = 0;
-	this->unevenFps = 0;
+	this->FPS = 0;
+	this->unevenFPS = 0;
 	this->gameFrameStarts = 0;
 	this->targetFPS = __TARGET_FPS;
+	this->seconds = 0;
+	this->totalFPS = 0;
 }
 
 /**
  * Retrieve FPS
  */
-uint16 FrameRate::getFps()
+uint16 FrameRate::getFPS()
 {
-	return this->fps;
+	return this->FPS;
 }
 
 void FrameRate::setTarget(uint8 targetFPS)
@@ -94,14 +98,18 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
 	if(!gameCycleEnded)
 	{
-		this->unevenFps++;
+		this->unevenFPS++;
+		this->totalUnevenFPS += this->unevenFPS;
 	}
 
 	this->gameFrameStarts++;
 
 	if(this->targetFPS <= this->gameFrameStarts)
 	{
-		if(this->targetFPS > this->fps)
+		this->seconds++;
+		this->totalFPS += this->FPS;
+
+		if(this->targetFPS > this->FPS)
 		{
 #ifdef __PRINT_FRAMERATE_DIP
 #ifdef __PRINT_FRAMERATE_AT_X
@@ -126,8 +134,8 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 #endif
 #endif
 #endif
-		this->fps = 0;
-		this->unevenFps = 0;
+		this->FPS = 0;
+		this->unevenFPS = 0;
 		this->gameFrameStarts = 0;
 	}
 }
@@ -137,7 +145,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
  */
 void FrameRate::update()
 {
-	this->fps++;
+	this->FPS++;
 }
 
 /**
@@ -150,6 +158,10 @@ void FrameRate::print(int32 col, int32 row)
 {
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS   /   ", col, row, NULL);
-	Printing::int32(printing, this->fps, col + 4, row, NULL);
-	Printing::int32(printing, this->unevenFps, col + 7, row, NULL);
+	Printing::int32(printing, this->FPS, col + 4, row, NULL);
+	Printing::int32(printing, this->unevenFPS, col + 7, row, NULL);
+
+	Printing::text(printing, "AVR   /   ", col + 10, row, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, col + 4l + 10, row, NULL);
+	Printing::int32(printing, this->unevenFPS / this->seconds, col + 7l + 10, row, NULL);
 }

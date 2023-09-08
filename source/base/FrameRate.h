@@ -28,14 +28,17 @@ singleton class FrameRate : ListenerObject
 	// elapsed time in current 50hz cycle
 	float gameFrameTotalTime;
 	// Frames per second
-	uint16 fps;
+	uint32 totalFPS;
+	uint32 totalUnevenFPS;
+	uint16 seconds;
+	uint16 FPS;
 	uint16 gameFrameStarts;
-	uint16 unevenFps;
+	uint16 unevenFPS;
 	uint8 targetFPS;
 
 	/// @publicsection
 	static FrameRate getInstance();
-	uint16 getFps();
+	uint16 getFPS();
 	void setTarget(uint8 targetFPS);
 	void gameFrameStarted(bool gameCycleEnded);
 	void update();

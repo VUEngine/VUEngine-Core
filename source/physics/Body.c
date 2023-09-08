@@ -677,7 +677,7 @@ MovementResult Body::updateMovement()
 	{
 		if(__ABS(this->velocity.x) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
 			{
 				this->position.x += 0 <= this->velocity.x ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}
@@ -700,7 +700,7 @@ MovementResult Body::updateMovement()
 	{
 		if(__ABS(this->velocity.y) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
 			{
 				this->position.y += 0 <= this->velocity.y ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}
@@ -723,7 +723,7 @@ MovementResult Body::updateMovement()
 	{
 		if(__ABS(this->velocity.z) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.z)) && 0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.z)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
 			{
 				this->position.z += 0 <= this->velocity.z ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}
