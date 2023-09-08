@@ -73,6 +73,7 @@ void FrameRate::reset()
 	this->targetFPS = __TARGET_FPS;
 	this->seconds = 0;
 	this->totalFPS = 0;
+	this->totalUnevenFPS = 0;
 }
 
 /**
@@ -99,7 +100,6 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 	if(!gameCycleEnded)
 	{
 		this->unevenFPS++;
-		this->totalUnevenFPS += this->unevenFPS;
 	}
 
 	this->gameFrameStarts++;
@@ -108,6 +108,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 	{
 		this->seconds++;
 		this->totalFPS += this->FPS;
+		this->totalUnevenFPS += this->unevenFPS;
 
 		if(this->targetFPS > this->FPS)
 		{
@@ -162,6 +163,6 @@ void FrameRate::print(int32 col, int32 row)
 	Printing::int32(printing, this->unevenFPS, col + 7, row, NULL);
 
 	Printing::text(printing, "AVR   /   ", col + 10, row, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, col + 4l + 10, row, NULL);
-	Printing::int32(printing, this->unevenFPS / this->seconds, col + 7l + 10, row, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, col + 4 + 10, row, NULL);
+	Printing::int32(printing, this->unevenFPS / this->seconds, col + 7 + 10, row, NULL);
 }
