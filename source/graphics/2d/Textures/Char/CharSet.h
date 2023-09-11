@@ -116,6 +116,7 @@ class CharSet : ListenerObject
 	void constructor(CharSetSpec* charSetSpec, uint16 offset);
 	void increaseUsageCount();
 	bool decreaseUsageCount();
+	uint8 getUsageCount();
 	uint8 getAllocationType();
 	uint16 getOffset();
 	void setOffset(uint16 offset);

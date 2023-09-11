@@ -272,9 +272,10 @@ void CharSet::setTilesDisplacement(uint16 tilesDisplacement)
  */
 void CharSet::putChar(uint32 charToReplace, uint32* newChar)
 {
-	if(newChar && charToReplace < this->charSetSpec->numberOfChars)
+	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
-		Mem::copyWORD(
+		Mem::copyWORD
+		(
 			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
 			(uint32*)newChar,
 			__UINT32S_PER_CHARS(1)
