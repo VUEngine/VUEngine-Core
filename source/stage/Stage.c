@@ -382,11 +382,11 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// apply transformations
-	Stage::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this, &neutralEnvironmentTransformation);
 
 	if(!isDeleted(this->uiContainer))
 	{
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
 	}
 }
 
@@ -456,7 +456,7 @@ void Stage::setupUI()
 		if(!isDeleted(this->uiContainer))
 		{
 			// apply transformations
-			UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+			UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
 		}
 	}
 }
@@ -518,8 +518,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// create the entity and add it to the world
 			Stage::addChild(this, Container::safeCast(entity));
 
-			// apply transformations
-			Entity::initialTransform(entity, &neutralEnvironmentTransformation, true);
+			Entity::initialTransform(entity, &neutralEnvironmentTransformation);
 
 			entity->dontStreamOut = entity->dontStreamOut || permanent;
 			
@@ -1240,7 +1239,7 @@ void Stage::resume()
 	Base::resume(this);
 
 	// apply transformations
-	Stage::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this, &neutralEnvironmentTransformation);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1249,7 +1248,7 @@ void Stage::resume()
 	if(!isDeleted(this->uiContainer))
 	{
 		UIContainer::resume(this->uiContainer);
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
 	}
 
 	this->entityFactory = new EntityFactory();

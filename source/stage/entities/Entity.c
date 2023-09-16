@@ -1180,6 +1180,8 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
+	Entity::createComponents(entity);
+
 	return entity;
 }
 
@@ -1302,7 +1304,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 	// apply transformations
 	Transformation environmentTransform = Entity::getEnvironmentTransform(this);
 	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
-	Entity::initialTransform(childEntity, &environmentTransform, true);
+	Entity::initialTransform(childEntity, &environmentTransform);
 
 	// make ready
 	Entity::ready(childEntity, true);
@@ -1558,37 +1560,39 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 	}
 }
 
+void Entity::createComponents()
+{
+	if(!isDeleted(this->children))
+	{
+		Base::createComponents(this);
+	}
+
+	Entity::createSprites(this);
+	Entity::createWireframes(this);
+	Entity::createShapes(this);
+	Entity::createBehaviors(this);
+
+	// now can calculate the size
+	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
+	{
+		// must force size calculation now
+		Entity::calculateSize(this);
+	}
+}
+
 /**
  * Initial transformation
  *
  * @param environmentTransform
  * @param recursive
  */
-void Entity::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
+void Entity::initialTransform(const Transformation* environmentTransform)
 {
-	if(createComponents)
-	{
-		Entity::createSprites(this);
-		Entity::createWireframes(this);
-		Entity::createShapes(this);
-		Entity::createBehaviors(this);
-
-		// now can calculate the size
-		if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
-		{
-			// must force size calculation now
-			Entity::calculateSize(this);
-		}
-	}
-
 	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform, createComponents);
+	Base::initialTransform(this, environmentTransform);
 
-	if(createComponents)
-	{
-		Entity::synchronizeGraphics(this);
-		Entity::transformShapes(this);
-	}
+	Entity::synchronizeGraphics(this);
+	Entity::transformShapes(this);
 
 	if(this->hidden)
 	{

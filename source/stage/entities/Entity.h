@@ -191,7 +191,8 @@ class Entity : Container
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 
-	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
+	override void createComponents();
+	override void initialTransform(const Transformation* environmentTransform);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setPosition(const Vector3D* position);
 	override void setRotation(const Rotation* rotation);

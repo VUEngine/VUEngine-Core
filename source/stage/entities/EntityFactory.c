@@ -221,7 +221,7 @@ uint32 EntityFactory::transformEntities()
 		if(!positionedEntityDescription->transformed)
 		{
 			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
-			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
+			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
 			positionedEntityDescription->transformed = true;
 
 			return __ENTITY_PENDING_PROCESSING;

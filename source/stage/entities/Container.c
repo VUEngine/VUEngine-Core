@@ -593,12 +593,29 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 }
 
 /**
+ * Propagate call to createComponents
+ *
+ */
+void Container::createComponents()
+{
+	if(!isDeleted(this->children))
+	{
+		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			Container::createComponents(child);
+		}
+	}
+}
+
+/**
  * Initial transformation
  *
  * @param environmentTransform
  * @param recursive
  */
-void Container::initialTransform(const Transformation* environmentTransform, uint32 createComponents)
+void Container::initialTransform(const Transformation* environmentTransform)
 {
 	// concatenate transformation
 	if(__INHERIT_SCALE & this->inheritEnvironment)
@@ -619,7 +636,7 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 	Container::invalidateGlobalTransformation(this);
 
 	// if I have children
-	if(createComponents && this->children)
+	if(!isDeleted(this->children))
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
@@ -627,7 +644,7 @@ void Container::initialTransform(const Transformation* environmentTransform, uin
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
-			Container::initialTransform(child, &this->transformation, true);
+			Container::initialTransform(child, &this->transformation);
 		}
 	}
 

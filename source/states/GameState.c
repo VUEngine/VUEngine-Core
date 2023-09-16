@@ -439,7 +439,7 @@ void GameState::initialTransform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	Stage::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
+	Stage::initialTransform(this->stage, &neutralEnvironmentTransformation);
 }
 
 /**

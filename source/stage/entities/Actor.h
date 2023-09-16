@@ -86,7 +86,7 @@ class Actor : AnimatedEntity
 	virtual fixed_t getMaximumSpeed();
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void initialTransform(const Transformation* environmentTransform, uint32 createComponents);
+	override void initialTransform(const Transformation* environmentTransform);
 	override void resume();
 	override bool handleMessage(Telegram telegram);
 	override void setLocalPosition(const Vector3D* position);
