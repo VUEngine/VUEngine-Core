@@ -126,35 +126,37 @@ static int32 Error::triggerException(char* message __attribute__((unused)), char
 
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), __COLOR_BLACK);
 
+	Printing printing = Printing::getInstance();
+
 	// make sure there are fonts to show the exception
-	Printing::setDebugMode(Printing::getInstance());
+	Printing::setDebugMode(printing);
 
 	//print error message to screen
 	if(0 < y)
 	{
-		Printing::text(Printing::getInstance(), "                                             ", x, y - 1, NULL);
+		Printing::text(printing, "                                             ", x, y - 1, NULL);
 	}
 
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
-	Printing::text(Printing::getInstance(), "                                                " , x, y++, NULL);
-	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
-	Printing::text(Printing::getInstance(), VUEngine::isConstructed() ? VUEngine::getLastProcessName(VUEngine::getInstance()) : "constructor", x + 15, y++, NULL);
-	Printing::text(Printing::getInstance(), " LP:                                  " , x, y, NULL);
-	Printing::hex(Printing::getInstance(), lp, x + 8, y, 8, NULL);
-	Printing::text(Printing::getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), sp, x + 8, y, 8, NULL);
+	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
+	Printing::text(printing, "                                                " , x, y++, NULL);
+	Printing::text(printing, " Last process:                                  ", x, y, NULL);
+	Printing::text(printing, VUEngine::isConstructed() ? VUEngine::getLastProcessName(VUEngine::getInstance()) : "constructor", x + 15, y++, NULL);
+	Printing::text(printing, " LP:                                  " , x, y, NULL);
+	Printing::hex(printing, lp, x + 8, y, 8, NULL);
+	Printing::text(printing, " SP: 		                         " , x, ++y, NULL);
+	Printing::hex(printing, sp, x + 8, y, 8, NULL);
 
-	Printing::text(Printing::getInstance(), " EIPC:                                  " , x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), eipc, x + 8, y, 8, NULL);
-	Printing::text(Printing::getInstance(), " FEPC: 		                         " , x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), fepc, x + 8, y, 8, NULL);
-	Printing::text(Printing::getInstance(), " ECR: 		                         " , x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), ecr, x + 8, y, 8, NULL);
+	Printing::text(printing, " EIPC:                                  " , x, ++y, NULL);
+	Printing::hex(printing, eipc, x + 8, y, 8, NULL);
+	Printing::text(printing, " FEPC: 		                         " , x, ++y, NULL);
+	Printing::hex(printing, fepc, x + 8, y, 8, NULL);
+	Printing::text(printing, " ECR: 		                         " , x, ++y, NULL);
+	Printing::hex(printing, ecr, x + 8, y, 8, NULL);
 
 	if(message)
 	{
-		Printing::text(Printing::getInstance(), "                                                " , x, ++y + 1, NULL);
-		Printing::text(Printing::getInstance(), " Message:                                       " , x, ++y, NULL);
+		Printing::text(printing, "                                                " , x, ++y + 1, NULL);
+		Printing::text(printing, " Message:                                       " , x, ++y, NULL);
 
 		int32 stringMaxLength = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int32 rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
@@ -169,18 +171,18 @@ static int32 Error::triggerException(char* message __attribute__((unused)), char
 
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
-			Printing::text(Printing::getInstance(), "                                                " , x, ++y, NULL);
-			Printing::text(Printing::getInstance(), messageLine, x + 1, y, NULL);
+			Printing::text(printing, "                                                " , x, ++y, NULL);
+			Printing::text(printing, messageLine, x + 1, y, NULL);
 		}
 
 		if(detail)
 		{
-			Printing::text(Printing::getInstance(), detail, x + 1, ++y, NULL);
+			Printing::text(printing, detail, x + 1, ++y, NULL);
 		}
 
 		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
 		{
-			Printing::text(Printing::getInstance(), "                                             ", x, y + 3, NULL);
+			Printing::text(printing, "                                             ", x, y + 3, NULL);
 		}
 	}
 
