@@ -51,7 +51,6 @@ void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAni
 		AnimationCoordinatorFactory::getCoordinator
 		(
 			AnimationCoordinatorFactory::getInstance(),
-			
 			this->animationController, 
 			owner,
 			objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec

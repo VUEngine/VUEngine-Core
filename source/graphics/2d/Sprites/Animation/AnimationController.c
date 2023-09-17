@@ -253,7 +253,7 @@ bool AnimationController::updateAnimation()
 			}
 
 			// the last frame has been reached
-			if(this->animationFunction->onAnimationComplete)
+			if(NULL != this->animationFunction->onAnimationComplete && !isDeleted(this->events))
 			{
 				AnimationController::fireEvent(this, kEventAnimationCompleted);
 				NM_ASSERT(!isDeleted(this), "AnimationController::updateAnimation: deleted this during kEventAnimationCompleted");
@@ -478,7 +478,7 @@ void AnimationController::nextFrame()
 	{
 		this->actualFrame = 0;
 	}
-	else
+	else if(!isDeleted(this->events))
 	{
 		AnimationController::fireEvent(this, kEventAnimationCompleted);
 		NM_ASSERT(!isDeleted(this), "AnimationController::nextFrame: deleted this during kEventAnimationCompleted");
@@ -503,7 +503,7 @@ void AnimationController::previousFrame()
 	{
 		this->actualFrame = (this->animationFunction->numberOfFrames - 1);
 	}
-	else
+	else if(!isDeleted(this->events))
 	{
 		AnimationController::fireEvent(this, kEventAnimationCompleted);
 		NM_ASSERT(!isDeleted(this), "AnimationController::previousFrame: deleted this during kEventAnimationCompleted");
