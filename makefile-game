@@ -57,6 +57,7 @@ printPreBuildingInfo:
 	@echo
 	@echo "Checking dirs..."
 	@echo
+	@rm -f $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/*.a
 
 postDirCleanUp:
 #	@echo "Finding total number of components"
