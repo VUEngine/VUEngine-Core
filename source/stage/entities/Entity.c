@@ -99,7 +99,7 @@ void Entity::destructor()
 {
 	Entity::destroyComponents(this);
 
-	if(this->centerDisplacement)
+	if(NULL != this->centerDisplacement)
 	{
 		delete this->centerDisplacement;
 	}
@@ -755,7 +755,7 @@ void Entity::calculateSize()
 		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
 	};
 
-	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
+	if(0 != (centerDisplacement.x | centerDisplacement.y | centerDisplacement.z))
 	{
 		if(this->centerDisplacement)
 		{
@@ -1866,21 +1866,19 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 	if(NULL != this->sprites && NULL != this->sprites->head)
 	{
-		bool areSpritesVisible = false;
-
-		for(VirtualNode spriteNode = this->sprites->head; !this->inCameraRange && spriteNode; spriteNode = spriteNode->next)
+		for(VirtualNode spriteNode = this->sprites->head; !this->inCameraRange && NULL != spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 
 			if(Sprite::isVisible(sprite))
 			{
-				this->inCameraRange = areSpritesVisible = true;
+				this->inCameraRange = true;
 				break;
 			}
 
 			if(Entity::isSpriteVisible(this, sprite, pad))
 			{
-				this->inCameraRange = areSpritesVisible = true;
+				this->inCameraRange = true;
 				break;
 			}
 		}
@@ -1889,7 +1887,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 	{
 		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
 
-		if(this->centerDisplacement)
+		if(NULL != this->centerDisplacement)
 		{
 			position3D = Vector3D::sum(position3D, *this->centerDisplacement);
 		}

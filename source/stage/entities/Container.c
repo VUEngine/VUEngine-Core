@@ -661,26 +661,26 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(__INHERIT_SCALE & this->inheritEnvironment)
+	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 	{
-		if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
+		if(__INHERIT_SCALE & this->inheritEnvironment)
 		{
 			Container::applyEnvironmentToScale(this, environmentTransform);
 		}
 	}
 
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
+	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 	{
-		if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+		if(__INHERIT_ROTATION & this->inheritEnvironment)
 		{
 			Container::applyEnvironmentToRotation(this, environmentTransform);
 		}
 	}
 
-	if(__INHERIT_POSITION & this->inheritEnvironment)
+	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation)
 	{
 		// apply environment transformation
-		if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation)
+		if(__INHERIT_POSITION & this->inheritEnvironment)
 		{
 			Container::applyEnvironmentToPosition(this, environmentTransform);
 		}
