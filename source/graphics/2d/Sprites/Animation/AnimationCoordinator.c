@@ -70,7 +70,7 @@ const CharSetSpec* AnimationCoordinator::getCharSetSpec()
 
 bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* functionName)
 {
-	if(this->animationControllers->head)
+	if(!isDeleted(this->animationControllers->head))
 	{
 		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
 
