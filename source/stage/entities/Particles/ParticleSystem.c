@@ -360,12 +360,11 @@ bool ParticleSystem::recycleParticle()
 		if(particle->expired)
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-			int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + (((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) : 0);
+			int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + (0 != ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) : 0);
 
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-
 				Particle::setup(particle, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 			}
 			else
@@ -393,17 +392,17 @@ Vector3D ParticleSystem::getParticleSpawnPosition()
 {
 	Vector3D position = this->transformation.globalPosition;
 
-	if(this->spawnPositionDisplacement.x)
+	if(0 != this->spawnPositionDisplacement.x)
 	{
 		position.x += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x));
 	}
 
-	if(this->spawnPositionDisplacement.y)
+	if(0 != this->spawnPositionDisplacement.y)
 	{
 		position.y += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y));
 	}
 
-	if(this->spawnPositionDisplacement.z)
+	if(0 != this->spawnPositionDisplacement.z)
 	{
 		position.z += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z));
 	}
