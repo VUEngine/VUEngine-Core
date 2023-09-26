@@ -274,7 +274,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
  *
  * @param userInput		User input
  */
-void GameState::processUserInput(UserInput userInput __attribute__ ((unused)))
+void GameState::processUserInput(const UserInput* userInput __attribute__ ((unused)))
 {}
 
 /**
@@ -402,6 +402,14 @@ void GameState::streamOutAll()
 }
 
 /**
+ * By default, every state is single player
+ */
+bool GameState::isVersusMode()
+{
+	return false;
+}
+
+/**
  * Start a transformation cycle on the Stage
  */
 void GameState::transform()
@@ -417,15 +425,6 @@ void GameState::transform()
 
 	// then transformation loaded entities
 	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
-	
-}
-
-/**
- * By default, every state is single player
- */
-bool GameState::isVersusMode()
-{
-	return false;
 }
 
 /**

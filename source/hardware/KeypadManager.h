@@ -125,7 +125,7 @@ singleton class KeypadManager : ListenerObject
 	uint16 getReleasedKey();
 	UserInput getUserInput();
 	int32 isEnabled();
-	UserInput captureUserInput();
+	const UserInput* captureUserInput();
 	void registerInput(uint16 inputToRegister);
 	long getAccumulatedUserInput();
 }

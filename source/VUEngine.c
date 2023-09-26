@@ -577,14 +577,14 @@ bool VUEngine::checkIfOpenTool(UserInput userInput)
 
 
 // process input data according to the actual game status
-uint32 VUEngine::processUserInput()
+void VUEngine::processUserInput()
 {
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 #ifdef __ENABLE_PROFILER
 		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
-		return false;
+		return;
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -592,18 +592,18 @@ uint32 VUEngine::processUserInput()
 #endif
 
 	// poll the user's input
-	UserInput userInput = KeypadManager::captureUserInput(this->keypadManager);
+	const UserInput* userInput = KeypadManager::captureUserInput(this->keypadManager);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfOpenTool(this, userInput))
 	{
-		return true;
+		return;
 	}
 #endif
 
 	GameState currentGameState = VUEngine::getCurrentState(this);
 
-	if((userInput.pressedKey || userInput.holdKey || userInput.releasedKey) || GameState::processUserInputRegardlessOfInput(currentGameState))
+	if(0 != (userInput->pressedKey + userInput->holdKey + userInput->releasedKey) || GameState::processUserInputRegardlessOfInput(currentGameState))
 	{
 		GameState::processUserInput(currentGameState, userInput);
 	}
@@ -611,8 +611,6 @@ uint32 VUEngine::processUserInput()
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_INPUT);
 #endif
-
-	return userInput.pressedKey | userInput.releasedKey;
 }
 
 void VUEngine::dispatchDelayedMessages()

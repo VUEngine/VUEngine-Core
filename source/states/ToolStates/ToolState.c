@@ -114,11 +114,11 @@ void ToolState::exit(void* owner __attribute__ ((unused)))
  *
  * @param userInput		User input
  */
-void ToolState::processUserInput(UserInput userInput)
+void ToolState::processUserInput(const UserInput* userInput)
 {
 	if(!isDeleted(this->tool))
 	{
-		Tool::processUserInput(this->tool, userInput.releasedKey);
+		Tool::processUserInput(this->tool, userInput->releasedKey);
 	}
 }
 

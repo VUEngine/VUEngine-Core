@@ -90,7 +90,7 @@ class GameState : State
 	void showEntityWithName(const char* entityName);
 
 	virtual void synchronizeGraphics();
-	virtual void processUserInput(UserInput userInput);
+	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();
 	virtual bool isVersusMode();
