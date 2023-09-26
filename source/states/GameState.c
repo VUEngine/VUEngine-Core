@@ -514,7 +514,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	HardwareManager::suspendInterrupts();
 
 	// make sure no entity is set as focus for the camera
-	Camera::setFocusGameEntity(Camera::getInstance(), NULL);
+	Camera::setFocusEntity(Camera::getInstance(), NULL);
 
 	// construct the stage
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);

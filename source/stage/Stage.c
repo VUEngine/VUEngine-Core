@@ -1200,7 +1200,7 @@ void Stage::suspend()
 		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
 		{
 			// relinquish focus entity
-			Camera::setFocusGameEntity(Camera::getInstance(), NULL);
+			Camera::setFocusEntity(Camera::getInstance(), NULL);
 		}
 	}
 	else
@@ -1233,7 +1233,7 @@ void Stage::resume()
 	if(this->focusEntity)
 	{
 		// recover focus entity
-		Camera::setFocusGameEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
+		Camera::setFocusEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
 	}
 
 	Base::resume(this);
@@ -1357,7 +1357,7 @@ void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unuse
 	{
 		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
 		{
-			Camera::setFocusGameEntity(Camera::getInstance(), NULL);
+			Camera::setFocusEntity(Camera::getInstance(), NULL);
 		}
 	}
 }

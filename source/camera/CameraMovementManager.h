@@ -23,18 +23,26 @@
 //---------------------------------------------------------------------------------------------------------
 
 class Camera;
+class Entity;
 
 /// @ingroup camera
 singleton class CameraMovementManager : ListenerObject
 {
 	Vector3D lastCameraDisplacement;
+	Vector3D focusEntityPositionDisplacement;
+	Entity focusEntity;
+	const Vector3D* focusEntityPosition;
+	const Rotation* focusEntityRotation;
 	
 	/// @publicsection
 	static CameraMovementManager getInstance();
 	void constructor();
-
+	void reset();
+	Entity getFocusEntity();
+	void setFocusEntity(Entity focusEntity);
+	void setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement);
 	Vector3D getLastCameraDisplacement();
-	virtual void focus(Camera camera, uint32 checkIfFocusEntityIsMoving);
+	virtual void focus(Camera camera, bool checkIfFocusEntityIsMoving);
 }
 
 #endif

@@ -66,13 +66,6 @@ void Camera::constructor()
 	// set the default camera effect manager
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
-	this->focusEntityPositionDisplacement = Vector3D::zero();
-
-	// clear focus actor pointer
-	this->focusEntity = NULL;
-	this->focusEntityPosition = NULL;
-	this->focusEntityRotation = NULL;
-
 	this->position = Vector3D::zero();
 	this->positionBackup = Vector3D::zero();
 
@@ -162,7 +155,7 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
  *
  * @param checkIfFocusEntityIsMoving	The CameraEffectManager
  */
-void Camera::focus(uint32 checkIfFocusEntityIsMoving)
+void Camera::focus(bool checkIfFocusEntityIsMoving)
 {
 	static bool takeTransformationFlagsDown = false;
 
@@ -191,19 +184,11 @@ void Camera::focus(uint32 checkIfFocusEntityIsMoving)
  *
  * @param focusEntity	The CameraEffectManager
  */
-void Camera::setFocusGameEntity(Entity focusEntity)
+void Camera::setFocusEntity(Entity focusEntity)
 {
-	this->focusEntity = focusEntity;
-	this->focusEntityPosition = NULL;
-	this->focusEntityRotation = NULL;
-
-	if(focusEntity)
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		this->focusEntityPosition = Entity::getPosition(this->focusEntity);
-		this->focusEntityRotation = Entity::getRotation(this->focusEntity);
-
-		// focus now
-		Camera::focus(this, false);
+		CameraMovementManager::setFocusEntity(this->cameraMovementManager, focusEntity);
 	}
 }
 
@@ -212,7 +197,10 @@ void Camera::setFocusGameEntity(Entity focusEntity)
  */
 void Camera::unsetFocusEntity()
 {
-	this->focusEntity = NULL;
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::setFocusEntity(this->cameraMovementManager, NULL);
+	}
 }
 
 /**
@@ -222,20 +210,12 @@ void Camera::unsetFocusEntity()
  */
 Entity Camera::getFocusEntity()
 {
-	return this->focusEntity;
-}
-
-/**
- * An actor has been deleted
- *
- * @param actor	Entity that has been deleted
- */
-void Camera::onFocusEntityDeleted(Entity actor)
-{
-	if(this->focusEntity == actor)
+	if(!isDeleted(this->cameraMovementManager))
 	{
-		Camera::unsetFocusEntity(this);
+		return CameraMovementManager::getFocusEntity(this->cameraMovementManager);
 	}
+
+	return NULL;
 }
 
 static uint8 Camera::computeTranslationFlags(Vector3D translation)
@@ -516,9 +496,12 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
  *
  * @param focusEntityPositionDisplacement
  */
-void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
+void Camera::setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement)
 {
-	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, focusEntityPositionDisplacement);
+	}
 }
 
 /**
@@ -570,8 +553,6 @@ void Camera::stopEffect(int32 effect)
  */
 void Camera::reset()
 {
-	Camera::setFocusGameEntity(this, NULL);
-
 	this->position = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::zero();
@@ -582,7 +563,15 @@ void Camera::reset()
 
 	Camera::resetCameraFrustum(this);
 
-	CameraEffectManager::reset(this->cameraEffectManager);
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::reset(this->cameraMovementManager);
+	}
+
+	if(!isDeleted(this->cameraEffectManager))
+	{
+		CameraEffectManager::reset(this->cameraEffectManager);
+	}
 }
 
 /**
@@ -647,36 +636,6 @@ CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 CameraFrustum Camera::getCameraFrustum()
 {
 	return this->cameraFrustum;
-}
-
-/**
- * Retrieve focus entity position
- *
- * @return		Focus entity position vector
- */
-Vector3D Camera::getFocusEntityPosition()
-{
-	return NULL != this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
-}
-
-/**
- * Retrieve focus entity position displacement
- *
- * @return		Focus entity position displacement vector
- */
-Vector3D Camera::getFocusEntityPositionDisplacement()
-{
-	return this->focusEntityPositionDisplacement;
-}
-
-/**
- * Retrieve focus entity rotation
- *
- * @return		Focus entity rotation
- */
-Rotation Camera::getFocusEntityRotation()
-{
-	return NULL != this->focusEntityRotation ? *this->focusEntityRotation : Rotation::zero();
 }
 
 /**

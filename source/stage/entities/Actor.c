@@ -61,9 +61,6 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 // class's destructor
 void Actor::destructor()
 {
-	// inform the camera I'm being removed
-	Camera::onFocusEntityDeleted(Camera::getInstance(), Entity::safeCast(this));
-
 	if(!isDeleted(this->body))
 	{
 		// remove a body
