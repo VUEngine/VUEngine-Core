@@ -105,6 +105,12 @@ void CameraMovementManager::onFocusEntityDeleted(ListenerObject eventFirer)
 	}
 }
 
+const Vector3D* CameraMovementManager::getFocusEntityPositionDisplacement()
+{
+	return &this->focusEntityPositionDisplacement;
+}
+
+
 void CameraMovementManager::setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement)
 {
 	if(NULL == focusEntityPositionDisplacement)

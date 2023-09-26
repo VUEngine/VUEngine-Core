@@ -492,15 +492,30 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 }
 
 /**
+ * Get camera's position displacement
+ *
+ * @return focusEntityPositionDisplacement
+ */
+Vector3D Camera::getFocusEntityPositionDisplacement()
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		return *CameraMovementManager::getFocusEntityPositionDisplacement(this->cameraMovementManager);
+	}
+
+	return Vector3D::zero();
+}
+
+/**
  * Set camera's position displacement
  *
  * @param focusEntityPositionDisplacement
  */
-void Camera::setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement)
+void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
 {
 	if(!isDeleted(this->cameraMovementManager))
 	{
-		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, focusEntityPositionDisplacement);
+		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, &focusEntityPositionDisplacement);
 	}
 }
 
