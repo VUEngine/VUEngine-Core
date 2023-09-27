@@ -426,11 +426,11 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 		value = -value;
 
 		Printing::out(this, x++, y, "-", font);
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitsCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
 	}
 	else
 	{
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitsCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
 	}
 }
 

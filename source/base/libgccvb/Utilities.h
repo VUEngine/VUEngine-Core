@@ -123,23 +123,23 @@ static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
 	extern char _itoaArray[];
 	extern char _itoaNumbers[];
 
-	int32 i = 0;
+	int32 i = __CHAR_HOLDER_SIZE - 1;
 
-	for(; i < __CHAR_HOLDER_SIZE - 1; i++)
+	for(; 0 < i;)
 	{
-		_itoaArray[__CHAR_HOLDER_SIZE - 2 - i] = _itoaNumbers[num % base];
+		i--;
+		_itoaArray[i] = _itoaNumbers[num % base];
 		num /= base;
+
+		if(0 == num)
+		{
+			break;
+		}
 	}
 
-	i = 0;
-	while(_itoaArray[i] == '0')
+	while(__CHAR_HOLDER_SIZE - 1 - digits < i)
 	{
-		i++;
-	}
-
-	if(i >= (__CHAR_HOLDER_SIZE - 1 - (int32)digits))
-	{
-		i = __CHAR_HOLDER_SIZE - 1 - (int32)digits;
+		_itoaArray[--i] = '0';
 	}
 
 	_itoaArray[__CHAR_HOLDER_SIZE - 1] = 0;
