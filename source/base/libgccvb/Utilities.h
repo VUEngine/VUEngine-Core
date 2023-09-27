@@ -48,7 +48,7 @@ static class Utilities : Object
 	static inline char* itoa(uint32 num, uint32 base, int32 digits);
 	static inline const char* toUppercase(const char* string);
 	static inline const char* toLowercase(const char* string);
-	static inline int32 equalSign(int32 a, int32 b);
+	static inline int32 haveEqualSign(int32 a, int32 b);
 	static inline int32 getDigitsCount(int32 value);
 	static inline uint32 reverse(uint32 x, int32 bits);
 	static inline float floor(float x);
