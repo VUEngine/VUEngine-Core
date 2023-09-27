@@ -426,11 +426,11 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 		value = -value;
 
 		Printing::out(this, x++, y, "-", font);
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitsCount(value)), font);
 	}
 	else
 	{
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, Utilities::getDigitsCount(value)), font);
 	}
 }
 
@@ -482,7 +482,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 
 	// Get integral part
 	int32 floorValue = ((int32)(value * 10)) / 10;
-	char* integer = Utilities::itoa(floorValue, 10, Utilities::getDigitCount(floorValue));
+	char* integer = Utilities::itoa(floorValue, 10, Utilities::getDigitsCount(floorValue));
 
 	// Save it right away
 	for(int32 j = 0; integer[j];)
@@ -525,7 +525,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 		}
 		else
 		{
-			int32 totalDecimalDigits = Utilities::getDigitCount(roundedDecimalValue);
+			int32 totalDecimalDigits = Utilities::getDigitsCount(roundedDecimalValue);
 
 			char* decimalString = Utilities::itoa((int32)(decimalValue * 10) / 10, 10, totalDecimalDigits);
 

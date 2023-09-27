@@ -156,8 +156,8 @@ void SoundTest::printGUI(bool clearScreen)
 
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
-	int32 selectedSoundDigits = Utilities::getDigitCount(this->selectedSound + 1);
-	int32 totalSoundsDigits = Utilities::getDigitCount(totalSounds);
+	int32 selectedSoundDigits = Utilities::getDigitsCount(this->selectedSound + 1);
+	int32 totalSoundsDigits = Utilities::getDigitsCount(totalSounds);
 	Printing::int32(printing, this->selectedSound + 1, 1 + 1, 2, NULL);
 	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
 	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);

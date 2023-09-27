@@ -31,6 +31,9 @@
 
 friend class Texture;
 
+#ifdef __RELEASE
+friend class AnimationController;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //										CLASS'S METHODS (General)
@@ -658,7 +661,11 @@ bool Sprite::updateAnimation()
 	{
 		// first animate the frame
 		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
+#ifdef __RELEASE
+		stillAnimating |= this->animationController->playing;
+#else
 		stillAnimating |= AnimationController::isPlaying(this->animationController);
+#endif
 	}
 
 	return stillAnimating;
