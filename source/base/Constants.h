@@ -235,7 +235,7 @@ int32 Error_triggerException(char* message, char* detail);
 //#define __PIXELS_TO_METERS(pixels)				(fixed_t)(__I_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
 #define __PIXELS_TO_METERS(pixels)				(fixed_t)((pixels) << (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
 #define __REAL_PIXELS_TO_METERS(pixels)			(fixed_t)(__F_TO_FIXED_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
-#define __METERS_TO_PIXELS(meters)				__FIXED_TO_I(((fixed_ext_t)(meters)) << __PIXELS_PER_METER_2_POWER)
+#define __METERS_TO_PIXELS(meters)				(((fixed_ext_t)(meters)) >> (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
 //#define __METERS_TO_PIXELS(meters)				(__FIXED_INT_PART(__05F_FIXED + ((fixed_ext_t)(meters))) >> (__FIXED_TO_I_BITS - __PIXELS_PER_METER_2_POWER))
 
 #define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
