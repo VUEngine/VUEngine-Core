@@ -154,7 +154,7 @@ void BgmapSprite::releaseTexture()
 	if(!isDeleted(this->texture))
 	{
 		// if affine or bgmap
-		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 		{
 			// free param table space
 			ParamTableManager::free(ParamTableManager::getInstance(), this);

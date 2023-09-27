@@ -271,11 +271,18 @@ void Container::removeChild(Container child, bool deleteChild)
 		return;
 	}
 
-	if(!deleteChild && VirtualList::removeElement(this->children, child))
+	if(!deleteChild)
 	{
-		child->parent = NULL;
+		if(VirtualList::removeElement(this->children, child))
+		{
+			child->parent = NULL;
+		}
 	}
+#ifndef __RELEASE
 	else if(NULL != VirtualList::find(this->children, child))
+#else
+	else
+#endif
 	{
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
@@ -290,9 +297,9 @@ void Container::removeChild(Container child, bool deleteChild)
 	else
 	{
 		Printing::setDebugMode(Printing::getInstance());
-		Printing::text(Printing::getInstance(), "ListenerObject's address: ", 1, 15, NULL);
+		Printing::text(Printing::getInstance(), "Container's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)this, 18, 15, 8, NULL);
-		Printing::text(Printing::getInstance(), "ListenerObject's type: ", 1, 16, NULL);
+		Printing::text(Printing::getInstance(), "Container's type: ", 1, 16, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
 
 		NM_ASSERT(false, "Container::removeChild: not my child");
