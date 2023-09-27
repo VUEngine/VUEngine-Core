@@ -1110,7 +1110,7 @@ bool Stage::streamInAll()
 	this->streamingAmplitude = (uint16)-1;
 
 	// make sure that the entity factory doesn't have any pending operations
-	EntityFactory::prepareAllEntities(this->entityFactory);
+	while(EntityFactory::prepareEntities(this->entityFactory));
 
 	// Force deletion
 	Stage::purgeChildren(this);
@@ -1128,7 +1128,7 @@ bool Stage::streamOutAll()
 	this->streamingHeadNode = NULL;
 
 	// make sure that the entity factory doesn't have any pending operations
-	EntityFactory::prepareAllEntities(this->entityFactory);
+	while(EntityFactory::prepareEntities(this->entityFactory));
 
 	// Force deletion
 	Stage::purgeChildren(this);
