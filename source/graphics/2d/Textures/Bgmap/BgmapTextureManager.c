@@ -180,6 +180,9 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 
 			if(textureSpec->recyclable)
 			{
+#ifndef __RELEASE
+				Texture::write(bgmapTexture, -1);
+#endif
 				VirtualList::pushBack(recyclableTextures, bgmapTexture);
 			}
 			else
@@ -434,7 +437,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 			uint16 cols = this->offset[id][kCols];
 			uint16 rows = this->offset[id][kRows];
 
-			if(textureSpec->cols <= cols && textureSpec->rows <= rows && textureSpec->cols * textureSpec->rows >= ((cols * rows) >> 2))
+			if(textureSpec->cols > (cols >> 2) && textureSpec->cols <= cols && (textureSpec->rows > (rows >> 2)) && textureSpec->rows <= rows)
 			{
 				if(textureSpec->cols == cols && textureSpec->rows == rows)
 				{
