@@ -101,7 +101,7 @@ void AnimationController::setAnimationCoordinator(AnimationCoordinator animation
  */
 int16 AnimationController::getActualFrameIndex()
 {
-	return this->animationFunction ? this->animationFunction->frames[this->actualFrame] : 0;
+	return NULL == this->animationFunction ? 0 : this->animationFunction->frames[this->actualFrame];
 }
 
 /**
