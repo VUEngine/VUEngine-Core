@@ -128,19 +128,9 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	//determine the allocation type
 	switch(allocationType)
 	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
 		case __NOT_ANIMATED:
 
-			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingRewriting == status);
-			break;
-
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-
-			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTextureFrameChanged >= status);
+			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, false);
 			break;
 
 		case __ANIMATED_MULTI:
@@ -148,10 +138,18 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 			// write the spec to graphic memory
 			BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
 			break;
-
+/*
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SINGLE_OPTIMIZED:
+		case __ANIMATED_SHARED_OPTIMIZED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+*/
 		default:
 
-			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
+			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status);
+			break;
 	}
 
 	if(kTexturePendingRewriting == status)
