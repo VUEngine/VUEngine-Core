@@ -332,7 +332,10 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 
 					case __ANIMATED_MULTI:
 
-						Texture::setFrameAnimatedMulti(this, this->frame);
+						if(Texture::overrides(this, setFrameAnimatedMulti))
+						{
+							Texture::setFrameAnimatedMulti(this, this->frame);
+						}
 						this->status = kTextureWritten;
 						break;
 				}
@@ -462,6 +465,7 @@ void Texture::setFrame(uint16 frame)
 				case __ANIMATED_SINGLE_OPTIMIZED:
 				case __ANIMATED_SHARED_OPTIMIZED:
 				case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+				case __ANIMATED_MULTI:
 
 					this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 					break;

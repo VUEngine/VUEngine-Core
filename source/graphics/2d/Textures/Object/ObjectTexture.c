@@ -43,13 +43,3 @@ void ObjectTexture::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Set Texture's frame
- *
- * @param frame	Texture's frame to display
- */
-void ObjectTexture::setFrameAnimatedMulti(uint16 frame)
-{
-	ObjectTexture::setMapDisplacement(this, this->textureSpec->cols * this->textureSpec->rows * frame);
-}

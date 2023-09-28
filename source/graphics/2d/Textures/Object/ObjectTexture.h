@@ -56,8 +56,6 @@ class ObjectTexture : Texture
 
 	/// @publicsection
 	void constructor(ObjectTextureSpec* objectTextureSpec, uint16 id);
-
-	override void setFrameAnimatedMulti(uint16 frame);
 }
 
 
