@@ -26,7 +26,7 @@
 
 #include <debugConfig.h>
 
-#define __ENABLE_PROFILER_SKIP_FRAMES				10
+#define __ENABLE_PROFILER_SKIP_FRAMES				5
 
 
 //---------------------------------------------------------------------------------------------------------
