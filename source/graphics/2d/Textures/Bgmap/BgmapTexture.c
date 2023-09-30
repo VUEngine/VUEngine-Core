@@ -319,6 +319,11 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	int16 cols = this->textureSpec->cols;
 	int16 rows = this->textureSpec->rows;
 
+	// This micromanagemt actually works. Don't remove
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	if(this->horizontalFlip)
 	{
 		if(this->verticalFlip)
