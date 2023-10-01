@@ -320,14 +320,12 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	int16 rows = this->textureSpec->rows;
 
 	// This micromanagemt actually works. Don't remove
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	if(this->horizontalFlip)
 	{
 		if(this->verticalFlip)
 		{
+			CACHE_RESET;
+
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
@@ -341,6 +339,8 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		}
 		else
 		{
+			CACHE_RESET;
+
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
@@ -357,6 +357,8 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	{
 		if(this->verticalFlip)
 		{
+			CACHE_RESET;
+
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
@@ -370,6 +372,8 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		}
 		else
 		{
+			CACHE_RESET;
+
 			//put the map into memory calculating the number of char for each reference
 			for(; counter && remainingRowsToBeWritten--; counter--)
 			{
