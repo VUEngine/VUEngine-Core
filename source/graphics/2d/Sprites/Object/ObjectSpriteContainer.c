@@ -282,7 +282,15 @@ void ObjectSpriteContainer::hideForDebug()
  *
  * @param evenFrame
  */
-int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+int16 ObjectSpriteContainer::doRender(int16 index, bool evenFrame __attribute__((unused)))
+{
+	this->index = index;
+	this->renderFlag = true;
+
+	return index;
+}
+
+void ObjectSpriteContainer::renderSprites(bool evenFrame)
 {
 	// Setup spt
 	this->spt = _spt;
@@ -314,17 +322,16 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 		}
 	}
 
-	bool renderedObjectSprites = true;
-
 	if(this->firstObjectIndex == _objectIndex)
 	{
 		_objectAttributesCache[_objectIndex].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 		_objectIndex--;
-		renderedObjectSprites = false;
+
+		_worldAttributesCache[this->index].head = __WORLD_OFF;
 	}
 	else
 	{
-		_worldAttributesCache[index].head = this->head;
+		_worldAttributesCache[this->index].head = this->head;
 
 		// Make sure that the rest of spt segments only run up to the last
 		// used object index
@@ -335,10 +342,6 @@ int16 ObjectSpriteContainer::doRender(int16 index __attribute__((unused)), bool 
 	}
 
 	this->lastObjectIndex = _objectIndex;
-
-	this->renderFlag = true;
-
-	return !renderedObjectSprites ? __NO_RENDER_INDEX : index;
 }
 
 /**

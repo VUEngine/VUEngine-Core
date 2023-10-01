@@ -637,14 +637,14 @@ void SpriteManager::render()
 		this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
 	}
 
-	ObjectSpriteContainer::prepareForRendering();
-
 	ParamTableManager::defragmentProgressively(this->paramTableManager);
 
 	// switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
+
+	CACHE_RESET;
 
 	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
@@ -667,6 +667,17 @@ void SpriteManager::render()
 	}
 
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
+
+	ObjectSpriteContainer::prepareForRendering();
+
+	CACHE_RESET;
+
+	for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
+	{
+		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+		ObjectSpriteContainer::renderSprites(objectSpriteContainer, this->evenFrame);
+	}
 
 	ObjectSpriteContainer::finishRendering();
 

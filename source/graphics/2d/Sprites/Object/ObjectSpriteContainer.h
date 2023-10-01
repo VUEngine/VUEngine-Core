@@ -66,6 +66,8 @@ class ObjectSpriteContainer : Sprite
 	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);
 	void hideSprites(ObjectSprite spareSprite);
+	void renderSprites(bool evenFrame);
+
 	override void registerWithManager();
 	override void hideForDebug();
 	override void forceShow();
