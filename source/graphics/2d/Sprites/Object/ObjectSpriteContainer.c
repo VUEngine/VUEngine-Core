@@ -489,6 +489,7 @@ static void ObjectSpriteContainer::writeDRAM()
 		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
 	}
 
+	CACHE_RESET;
 	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
 
 #ifdef __SHOW_SPRITES_PROFILING

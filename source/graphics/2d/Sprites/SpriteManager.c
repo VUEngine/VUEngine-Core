@@ -580,6 +580,7 @@ void SpriteManager::applySpecialEffects()
 
 void SpriteManager::writeWORLDAttributesToDRAM()
 {
+	CACHE_RESET;
 	Mem::copyWORD((WORD*)(_worldAttributesBaseAddress + this->freeLayer), (WORD*)(_worldAttributesCache + this->freeLayer), sizeof(WorldAttributes) * (__TOTAL_LAYERS - (this->freeLayer)) >> 2);
 }
 

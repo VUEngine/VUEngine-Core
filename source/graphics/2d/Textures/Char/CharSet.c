@@ -228,12 +228,9 @@ void CharSet::write()
 	_writtenTiles += this->charSetSpec->numberOfChars;
 #endif
 
-
 	if(25 < this->charSetSpec->numberOfChars)
 	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
+		CACHE_RESET;
 	}
 
 	switch(this->charSetSpec->tiles[0])
@@ -244,7 +241,7 @@ void CharSet::write()
 			break;
 
 		default:
-			
+
 			Mem::copyWORD
 			(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
