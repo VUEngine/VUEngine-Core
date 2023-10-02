@@ -414,9 +414,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 		if(25 < numberOfOjects)
 		{
-			CACHE_DISABLE;
-			CACHE_CLEAR;
-			CACHE_ENABLE;
+			CACHE_RESET;
 		}
 
 		do
