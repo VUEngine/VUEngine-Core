@@ -564,12 +564,12 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
 {
 	Vector3D localPosition = this->transformation.localPosition;
 
-	if(environmentTransform->globalRotation.x || environmentTransform->globalRotation.y || environmentTransform->globalRotation.z)
+	if(0 != (environmentTransform->globalRotation.x | environmentTransform->globalRotation.y | environmentTransform->globalRotation.z))
 	{
 		localPosition = Vector3D::rotate(localPosition, environmentTransform->globalRotation);
 	}
 
-	if(environmentTransform->globalScale.x || environmentTransform->globalScale.y || environmentTransform->globalScale.z)
+	if(0 != (environmentTransform->globalScale.x | environmentTransform->globalScale.y | environmentTransform->globalScale.z))
 	{
 		localPosition = Vector3D::scale(localPosition, environmentTransform->globalScale);
 	}
@@ -668,26 +668,26 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 {
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
-	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
+	if(0 != (__INVALIDATE_SCALE & this->invalidateGlobalTransformation))
 	{
-		if(__INHERIT_SCALE & this->inheritEnvironment)
+		if(0 != (__INHERIT_SCALE & this->inheritEnvironment))
 		{
 			Container::applyEnvironmentToScale(this, environmentTransform);
 		}
 	}
 
-	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
+	if(0 != (__INVALIDATE_ROTATION & this->invalidateGlobalTransformation))
 	{
-		if(__INHERIT_ROTATION & this->inheritEnvironment)
+		if(0 != (__INHERIT_ROTATION & this->inheritEnvironment))
 		{
 			Container::applyEnvironmentToRotation(this, environmentTransform);
 		}
 	}
 
-	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation)
+	if(0 != ((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation))
 	{
 		// apply environment transformation
-		if(__INHERIT_POSITION & this->inheritEnvironment)
+		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))
 		{
 			Container::applyEnvironmentToPosition(this, environmentTransform);
 		}

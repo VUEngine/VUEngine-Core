@@ -227,7 +227,7 @@ void PhysicalWorld::update(Clock clock)
 			// check if necessary to apply gravity
 			uint16 movingState = Body::getMovementOnAllAxis(body);
 
-			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+			uint16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) ) | (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
 			if(__NO_AXIS != gravitySensibleAxis)
 			{

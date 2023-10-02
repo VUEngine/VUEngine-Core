@@ -286,7 +286,7 @@ void SoundManager::flushQueuedSounds()
 void SoundManager::tryToPlayQueuedSounds()
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
-	
+
 	for(VirtualNode node = this->queuedSounds->head; NULL != node;)
 	{
 		QueuedSound* queuedSound = (QueuedSound*)node->data;
