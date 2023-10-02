@@ -289,7 +289,6 @@ void ParticleSystem::update()
 
 		if(Particle::update(particle, this->elapsedTime, behavior))
 		{
-			Particle::expire(particle);
 			this->particleCount--;
 		}
 
@@ -313,7 +312,7 @@ void ParticleSystem::update()
 	if(0 > this->nextSpawnTime && this->particleCount < this->maximumNumberOfAliveParticles)
 	{
 		uint16 spawnedParticles = 0;
-		do 
+		do
 		{
 			if(!this->loop && this->totalSpawnedParticles >= this->maximumNumberOfAliveParticles)
 			{
@@ -425,17 +424,17 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 
 	Vector3D force = ((ParticleSystemSpec*)this->entitySpec)->minimumForce;
 
-	if(this->spawnForceDelta.x)
+	if(0 != this->spawnForceDelta.x)
 	{
 		force.x += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.x - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x));
 	}
 
-	if(this->spawnForceDelta.y)
+	if(0 != this->spawnForceDelta.y)
 	{
 		force.y += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.y - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y));
 	}
 
-	if(this->spawnForceDelta.z)
+	if(0 != this->spawnForceDelta.z)
 	{
 		force.z += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.z - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z));
 	}
