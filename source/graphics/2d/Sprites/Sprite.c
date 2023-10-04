@@ -294,12 +294,9 @@ void Sprite::setPosition(const PixelVector* position)
 {
 	this->positioned = 	true;
 
-	if(this->position.x != position->x || this->position.y != position->y || this->position.z != position->z || this->position.parallax != position->parallax)
-	{
-		this->position = *position;
+	this->position = *position;
 
-		this->renderFlag = true;
-	}
+	this->renderFlag = true;
 
 	if(!this->registered)
 	{

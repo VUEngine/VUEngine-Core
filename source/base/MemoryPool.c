@@ -412,11 +412,6 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocation = NULL;
 		bool keepLooking = false;
 
-		if(25 < numberOfOjects)
-		{
-			CACHE_RESET;
-		}
-
 		do
 		{
 			keepLooking = false;

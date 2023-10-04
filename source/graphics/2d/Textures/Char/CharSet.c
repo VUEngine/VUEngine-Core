@@ -228,10 +228,7 @@ void CharSet::write()
 	_writtenTiles += this->charSetSpec->numberOfChars;
 #endif
 
-	if(25 < this->charSetSpec->numberOfChars)
-	{
-		CACHE_RESET;
-	}
+	CACHE_RESET;
 
 	switch(this->charSetSpec->tiles[0])
 	{
