@@ -88,6 +88,7 @@ typedef const TextureSpec TextureROMSpec;
 /// @ingroup graphics-2d-textures
 abstract class Texture : ListenerObject
 {
+	void (*doUpdate)(Texture, int16);
 	// Char group to use int32 this texture
 	CharSet charSet;
 	// Pointer to ROM spec

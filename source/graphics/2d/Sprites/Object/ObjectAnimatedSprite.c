@@ -75,6 +75,13 @@ void ObjectAnimatedSprite::destructor()
  */
 void ObjectAnimatedSprite::writeAnimation()
 {
+	NM_ASSERT(!isDeleted(this->animationController), "ObjectAnimatedSprite::writeAnimation: null animation controller");
+
+	if(isDeleted(this->animationController))
+	{
+		return;
+	}
+
 	this->renderFlag = true;
 	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 }

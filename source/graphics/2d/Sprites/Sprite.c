@@ -156,10 +156,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
-	if(this->writeAnimationFrame)
-	{
-		Sprite::update(this);
-	}
+	Sprite::update(this);
 
 	// Do not remove this check, it prevents sprites from loop
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
@@ -579,14 +576,10 @@ int32 Sprite::getHalfHeight()
  */
 void Sprite::update()
 {
-	if(!isDeleted(this->animationController))
+	if(this->writeAnimationFrame)
 	{
-		// first animate the frame
-		if(this->writeAnimationFrame)
-		{
-			Sprite::writeAnimation(this);
-			this->writeAnimationFrame = false;
-		}
+		Sprite::writeAnimation(this);
+		this->writeAnimationFrame = false;
 	}
 }
 

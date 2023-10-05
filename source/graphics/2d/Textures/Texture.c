@@ -40,6 +40,8 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	// set id
 	this->id = id;
 
+	this->doUpdate = NULL;
+
 	this->mapDisplacement = 0;
 	this->usageCount = 1;
 
@@ -124,16 +126,7 @@ void Texture::loadCharSet()
 
 	this->status = kTexturePendingWriting;
 
-	switch(CharSet::getAllocationType(this->charSet))
-	{
-		case __ANIMATED_MULTI:
-			break;
-
-		default:
-
-			CharSet::setFrame(this->charSet, this->frame);
-			break;
-	}
+	Texture::setupUpdateFunction(this);
 
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
@@ -305,46 +298,45 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 			{
 				Texture::write(this, maximumTextureRowsToWrite);
 			}
-			else
+			else if(NULL != this->doUpdate)
 			{
-				// write according to the allocation type
-				switch(CharSet::getAllocationType(this->charSet))
-				{
-					case __ANIMATED_SINGLE_OPTIMIZED:
-					case __ANIMATED_SHARED_OPTIMIZED:
-					case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-
-						CharSet::setFrame(this->charSet, this->frame);
-						CharSet::write(this->charSet);
-						Texture::write(this, maximumTextureRowsToWrite);
-						break;
-
-					case __NOT_ANIMATED:
-					case __ANIMATED_SINGLE:
-					case __ANIMATED_SHARED:
-					case __ANIMATED_SHARED_COORDINATED:
-
-						CharSet::setFrame(this->charSet, this->frame);
-						CharSet::write(this->charSet);
-						
-						this->status = kTextureWritten;
-						break;
-
-					case __ANIMATED_MULTI:
-
-						if(Texture::overrides(this, setFrameAnimatedMulti))
-						{
-							Texture::setFrameAnimatedMulti(this, this->frame);
-						}
-						this->status = kTextureWritten;
-						break;
-				}
+				this->doUpdate(this, maximumTextureRowsToWrite);
 			}
 
 			break;
 	}
 
 	return kTextureWritten == this->status;
+}
+
+static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsToWrite)
+{
+	if(isDeleted(texture->charSet))
+	{
+		return;
+	}
+
+	CharSet::setFrame(texture->charSet, texture->frame);
+	CharSet::write(texture->charSet);
+	Texture::write(texture, maximumTextureRowsToWrite);
+}
+
+static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
+{
+	if(isDeleted(texture->charSet))
+	{
+		return;
+	}
+
+	CharSet::setFrame(texture->charSet, texture->frame);
+	CharSet::write(texture->charSet);
+	
+	texture->status = kTextureWritten;
+}
+
+static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
+{
+	texture->status = kTextureWritten;
 }
 
 uint8 Texture::getAllocationType()
@@ -639,7 +631,38 @@ void Texture::setCharSet(CharSet charSet)
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
+	Texture::setupUpdateFunction(this);
+
 	Texture::rewrite(this);
+}
+
+void Texture::setupUpdateFunction()
+{
+	// write according to the allocation type
+	switch(CharSet::getAllocationType(this->charSet))
+	{
+		case __ANIMATED_SINGLE_OPTIMIZED:
+		case __ANIMATED_SHARED_OPTIMIZED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+
+			this->doUpdate = Texture::updateOptimized;
+			CharSet::setFrame(this->charSet, this->frame);
+			break;
+
+		case __NOT_ANIMATED:
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
+
+			this->doUpdate = Texture::updateDefault;
+			CharSet::setFrame(this->charSet, this->frame);
+			break;
+
+		case __ANIMATED_MULTI:
+
+			this->doUpdate = Texture::updateMulti;
+			break;
+	}	
 }
 
 /**

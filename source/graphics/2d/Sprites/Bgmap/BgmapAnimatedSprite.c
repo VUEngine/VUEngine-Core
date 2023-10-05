@@ -80,9 +80,10 @@ void BgmapAnimatedSprite::writeAnimation()
 {
 	CharSet charSet = Texture::getCharSet(this->texture, true);
 
-	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");
+	NM_ASSERT(!isDeleted(charSet), "BgmapAnimatedSprite::writeAnimation: deleted charset");
+	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::writeAnimation: null animation controller");
 
-	if(!charSet)
+	if(isDeleted(charSet) || isDeleted(this->animationController))
 	{
 		return;
 	}
