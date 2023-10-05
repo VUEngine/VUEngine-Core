@@ -27,10 +27,8 @@
 
 friend class VirtualNode;
 friend class VirtualList;
-
-#ifndef __RELEASE
 friend class CharSet;
-#endif
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -132,7 +130,7 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
-		if(charSet && CharSet::getCharSetSpec(charSet)->tiles == charSetSpec->tiles && CharSet::getAllocationType(charSet) == charSetSpec->allocationType)
+		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->allocationType == charSetSpec->allocationType)
 		{
 			return charSet;
 		}
@@ -163,33 +161,23 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 		case __ANIMATED_SINGLE_OPTIMIZED:
 
 			// ask for allocation
-			charSet = CharSetManager::allocateCharSet(CharSetManager::getInstance(), charSetSpec);
-			break;
-
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-		case __ANIMATED_MULTI:
-		case __NOT_ANIMATED:
-
-			// first try to find an already created charset
-			charSet = CharSetManager::findCharSet(this, charSetSpec);
-
-			if(charSet)
-			{
-				CharSet::increaseUsageCount(charSet);
-			}
-			else
-			{
-				charSet = CharSetManager::allocateCharSet(this, charSetSpec);
-			}
-
+			charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 			break;
 
 		default:
 
-			ASSERT(false, "CharSet::write: with no allocation type");
+			// first try to find an already created charset
+			charSet = CharSetManager::findCharSet(this, charSetSpec);
+
+			if(NULL == charSet)
+			{
+				charSet = CharSetManager::allocateCharSet(this, charSetSpec);
+			}
+			else
+			{
+				CharSet::increaseUsageCount(charSet);
+			}
+
 			break;
 	}
 

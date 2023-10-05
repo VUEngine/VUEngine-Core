@@ -304,7 +304,7 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
 	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 
-	if((0 > xOffset) | (0 > yOffset))
+	if((0 > xOffset) || (0 > yOffset))
 	{
 		return;
 	}
