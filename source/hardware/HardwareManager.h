@@ -140,6 +140,7 @@ static inline void HardwareManager::enableInterrupts()
  */
 static inline void HardwareManager::disableInterrupts()
 {
+	_enabledInterrupts = false;
 	_suspendInterruptRequest = 0;
 
 	asm("sei");
