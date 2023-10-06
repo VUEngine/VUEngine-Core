@@ -316,8 +316,11 @@ static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsTo
 		return;
 	}
 
-	CharSet::setFrame(texture->charSet, texture->frame);
-	CharSet::write(texture->charSet);
+	if(CharSet::setFrame(texture->charSet, texture->frame))
+	{
+		CharSet::write(texture->charSet);
+	}
+
 	Texture::write(texture, maximumTextureRowsToWrite);
 }
 
@@ -328,9 +331,11 @@ static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWr
 		return;
 	}
 
-	CharSet::setFrame(texture->charSet, texture->frame);
-	CharSet::write(texture->charSet);
-	
+	if(CharSet::setFrame(texture->charSet, texture->frame))
+	{
+		CharSet::write(texture->charSet);
+	}
+
 	texture->status = kTextureWritten;
 }
 
