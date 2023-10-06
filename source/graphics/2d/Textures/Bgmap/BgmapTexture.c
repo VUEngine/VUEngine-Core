@@ -128,17 +128,13 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	//determine the allocation type
 	switch(allocationType)
 	{
-		case __NOT_ANIMATED:
-
-			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, false);
-			break;
-
 		case __ANIMATED_MULTI:
 
 			// write the spec to graphic memory
 			BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
 			break;
 /*
+		case __NOT_ANIMATED:
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
