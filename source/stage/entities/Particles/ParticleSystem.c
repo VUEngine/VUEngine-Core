@@ -631,6 +631,11 @@ void ParticleSystem::synchronizeGraphics()
 		return;
 	}
 
+	if(NULL != this->children || !this->dontStreamOut)
+	{
+		Base::synchronizeGraphics(this);
+	}
+
 	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
 	{
 		Particle particle = Particle::safeCast(node->data);

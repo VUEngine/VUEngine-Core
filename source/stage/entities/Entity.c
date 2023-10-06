@@ -1119,6 +1119,18 @@ static Entity Entity::instantiate(const EntitySpec* const entitySpec, int16 inte
 }
 
 /**
+ * Add a child Container
+ *
+ * @param child	Child Container to add
+ */
+void Entity::addChild(Container child)
+{
+	Base::addChild(this, child);
+
+	Entity::streamOut(child, false);
+}
+
+/**
  * Add children to the instance from the specs array
  *
  * @param childrenSpecs

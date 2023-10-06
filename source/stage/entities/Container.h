@@ -98,6 +98,7 @@ class Container : SpatialObject
 	/// @publicsection
 	void constructor(const char* const name);
 	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
+	void streamOut(bool streamOut);
 	void deleteMyself();
 	void deleteAllChildren();
 	void addBehavior(Behavior behavior);

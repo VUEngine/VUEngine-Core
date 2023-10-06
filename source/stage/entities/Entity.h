@@ -139,7 +139,6 @@ class Entity : Container
 	static void setVisibilityPadding(int16 visibilityPadding);
 
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
-	void streamOut();
 	void addChildEntities(const PositionedEntity* childrenSpecs);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	bool createSprites();
@@ -191,6 +190,7 @@ class Entity : Container
 	virtual void setExtraInfo(void* extraInfo);
 	virtual bool respawn();
 
+	override void addChild(Container child);
 	override void createComponents();
 	override void initialTransform(const Transformation* environmentTransform);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);

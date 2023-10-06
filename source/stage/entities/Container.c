@@ -171,6 +171,11 @@ void Container::deleteMyself()
 	}
 }
 
+void Container::streamOut(bool streamOut)
+{
+	this->dontStreamOut = !streamOut;
+}
+
 void Container::addBehavior(Behavior behavior)
 {
 	if(!isDeleted(behavior))

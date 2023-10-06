@@ -56,7 +56,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 void PhysicalParticle::destructor()
 {
 	// remove a body
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		// remove a body
 		PhysicalWorld::destroyBody(VUEngine::getPhysicalWorld(_vuEngine), this->body);
