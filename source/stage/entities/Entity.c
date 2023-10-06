@@ -1685,17 +1685,19 @@ void Entity::setLocalRotation(const Rotation* rotation)
  */
 void Entity::synchronizeGraphics()
 {
+#ifndef __RELEASE	
 	if(!this->transformed)
 	{
 		return;
 	}
+#endif
 
 	if(NULL != this->children)
 	{
 		Base::synchronizeGraphics(this);
 	}
 
-	if(!isDeleted(this->sprites) && !this->hidden)
+	if(!isDeleted(this->sprites))
 	{
 		Entity::updateSprites(this, this->invalidateGraphics & __INVALIDATE_POSITION, this->invalidateGraphics & __INVALIDATE_SCALE, this->invalidateGraphics & __INVALIDATE_ROTATION, this->invalidateGraphics & __INVALIDATE_PROJECTION);
 	}
@@ -1878,20 +1880,20 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 	if(NULL != this->sprites && NULL != this->sprites->head)
 	{
-		for(VirtualNode spriteNode = this->sprites->head; !this->inCameraRange && NULL != spriteNode; spriteNode = spriteNode->next)
+		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 
 			if(Sprite::isVisible(sprite))
 			{
 				this->inCameraRange = true;
-				break;
+				return;
 			}
 
 			if(Entity::isSpriteVisible(this, sprite, pad))
 			{
 				this->inCameraRange = true;
-				break;
+				return;
 			}
 		}
 	}
