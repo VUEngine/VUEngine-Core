@@ -302,6 +302,10 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 			{
 				this->doUpdate(this, maximumTextureRowsToWrite);
 			}
+			else
+			{
+				this->status = kTextureWritten;
+			}
 
 			break;
 	}
@@ -665,7 +669,8 @@ void Texture::setupUpdateFunction()
 
 		case __ANIMATED_MULTI:
 
-			this->doUpdate = Texture::updateMulti;
+			this->doUpdate = NULL;
+			//this->doUpdate = Texture::updateMulti;
 			break;
 	}	
 }

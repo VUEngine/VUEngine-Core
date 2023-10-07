@@ -126,6 +126,8 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	// try to find a charset with the same char spec
 	VirtualNode node = this->charSets->head;
 
+	CACHE_RESET;
+
 	for(; NULL != node; node = node->next)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
