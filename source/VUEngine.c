@@ -763,17 +763,19 @@ void VUEngine::updateCollisions()
 #endif
 }
 
-void VUEngine::stream()
+bool VUEngine::stream()
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_STREAMING;
 #endif
 
-	GameState::stream(this->currentState);
+	bool result = GameState::stream(this->currentState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
+
+	return result;
 }
 
 void VUEngine::checkForNewState()
@@ -933,17 +935,18 @@ void VUEngine::run()
 	// Synchronize 2D graphics
 	VUEngine::synchronizeGraphics(this);
 
-	// dispatch delayed messages
-	VUEngine::dispatchDelayedMessages(this);
-
 	// update game's logic
 	VUEngine::updateLogic(this);
 
 	// stream after the logic to avoid having a very heady frame
-	VUEngine::stream(this);
+	if(!VUEngine::stream(this))
+	{
+		// dispatch delayed messages
+		VUEngine::dispatchDelayedMessages(this);
 
-	// Update sound related logic
-	VUEngine::updateSound(this);
+		// Update sound related logic
+		VUEngine::updateSound(this);
+	}
 
 #ifdef __ENABLE_PROFILER
 	HardwareManager::enableInterrupts();
