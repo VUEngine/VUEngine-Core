@@ -178,6 +178,8 @@ void CharSet::writeRLE()
 	uint32 uncompressedData = 0;
 	uint32 uncompressedDataSize = 0;
 
+	CACHE_RESET;
+
 	for(uint32 poxel = 0; poxel < totalPoxels; poxel++)
 	{
 		uint32 compressedData = source[poxel];
@@ -223,12 +225,12 @@ void CharSet::write()
 {
 	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
 
+	uint16 tilesToWrite = this->charSetSpec->numberOfChars;
+
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenTiles;
-	_writtenTiles += this->charSetSpec->numberOfChars;
+	_writtenTiles += tilesToWrite;
 #endif
-
-	CACHE_RESET;
 
 	switch(this->charSetSpec->tiles[0])
 	{
@@ -239,11 +241,13 @@ void CharSet::write()
 
 		default:
 
+			CACHE_RESET;
+		
 			Mem::copyWORD
 			(
 				(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4)),
 				&this->charSetSpec->tiles[1] + this->tilesDisplacement,
-				__UINT32S_PER_CHARS(this->charSetSpec->numberOfChars)
+				__UINT32S_PER_CHARS(tilesToWrite)
 			);
 
 			break;

@@ -323,14 +323,17 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 			CACHE_RESET;
 
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && remainingRowsToBeWritten--; counter--)
+			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + ((remainingRowsToBeWritten) << 6) + cols - 1,
-						mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
-						cols,
-						offset,
-						flip,
-						-2);
+				BgmapTexture::addHWORD
+				(
+					(HWORD*)offsetDisplacement + ((remainingRowsToBeWritten) << 6) + cols - 1,
+					mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
+					cols,
+					offset,
+					flip,
+					-2
+				);
 			}
 		}
 		else
@@ -338,14 +341,17 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 			CACHE_RESET;
 
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && remainingRowsToBeWritten--; counter--)
+			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6) + cols - 1,
-						mapDisplacement + ((remainingRowsToBeWritten) * cols),
-						cols,
-						offset,
-						flip,
-						-2);
+				BgmapTexture::addHWORD
+				(
+					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6) + cols - 1,
+					mapDisplacement + ((remainingRowsToBeWritten) * cols),
+					cols,
+					offset,
+					flip,
+					-2
+				);
 			}
 		}
 	}
@@ -356,14 +362,17 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 			CACHE_RESET;
 
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && remainingRowsToBeWritten--; counter--)
+			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
-						mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
-						cols,
-						offset,
-						flip,
-						2);
+				BgmapTexture::addHWORD
+				(
+					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+					mapDisplacement + ((rows - remainingRowsToBeWritten - 1) * cols),
+					cols,
+					offset,
+					flip,
+					2
+				);
 			}
 		}
 		else
@@ -371,14 +380,17 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 			CACHE_RESET;
 
 			//put the map into memory calculating the number of char for each reference
-			for(; counter && remainingRowsToBeWritten--; counter--)
+			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
-				BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
-						mapDisplacement + ((remainingRowsToBeWritten) * cols),
-						cols,
-						offset,
-						flip,
-						2);
+				BgmapTexture::addHWORD
+				(
+					(HWORD*)offsetDisplacement + (remainingRowsToBeWritten << 6),
+					mapDisplacement + ((remainingRowsToBeWritten) * cols),
+					cols,
+					offset,
+					flip,
+					2
+				);
 			}
 		}
 	}
@@ -387,12 +399,15 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 
 	if(0 < this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
 	{
-		BgmapTexture::addHWORD((HWORD*)offsetDisplacement + (rows << 6),
-				(const HWORD*)_emptyTextureRow,
-				cols,
-				0,
-				false,
-				2);
+		BgmapTexture::addHWORD
+		(
+			(HWORD*)offsetDisplacement + (rows << 6),
+			(const HWORD*)_emptyTextureRow,
+			cols,
+			0,
+			false,
+			2
+		);
 	}
 }
 
