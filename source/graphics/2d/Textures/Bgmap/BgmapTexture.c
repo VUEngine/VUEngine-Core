@@ -305,8 +305,7 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		return;
 	}
 
-	int32 bgmapSegment = this->segment;
-	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(bgmapSegment) + xOffset + (yOffset << 6);
+	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(this->segment) + xOffset + (yOffset << 6);
 	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement;
 	uint16 offset = (int32)CharSet::getOffset(this->charSet) | (this->palette << 14);
 	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
@@ -315,7 +314,6 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	int16 cols = this->textureSpec->cols;
 	int16 rows = this->textureSpec->rows;
 
-	// This micromanagemt actually works. Don't remove
 	if(this->horizontalFlip)
 	{
 		if(this->verticalFlip)
