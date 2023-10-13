@@ -203,6 +203,42 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
+	Texture texture = Sprite::getTexture(bgmapSprite);
+
+	if(isDeleted(texture))
+	{
+		return 0;
+	}
+
+	switch(Texture::getAllocationType(texture))
+	{
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_OPTIMIZED:
+		case __ANIMATED_SHARED_COORDINATED:
+		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+		case __ANIMATED_MULTI:
+		case __NOT_ANIMATED:
+			{
+				if(0 != this->paramTableFreeData.param)
+				{
+					for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next)
+					{
+						BgmapSprite bgmapSpriteHelper = BgmapSprite::safeCast(node->data);
+
+						Texture textureHelper = BgmapSprite::getTexture(bgmapSpriteHelper);
+
+						if(!isDeleted(textureHelper) && Texture::getAllocationType(texture) == Texture::getAllocationType(textureHelper))
+						{
+							VirtualList::pushBack(this->bgmapSprites, bgmapSprite);
+
+							return BgmapSprite::getParam(bgmapSpriteHelper);
+						}
+					}
+				}
+			}
+			break;
+	}
+
 	//calculate necessary space to allocate
 	uint32 size = ParamTableManager::calculateSpriteParamTableSize(this, bgmapSprite);
 
@@ -247,6 +283,18 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
 	if(VirtualList::removeElement(this->bgmapSprites, bgmapSprite))
 	{
+		uint32 paramToFree = BgmapSprite::getParam(bgmapSprite);
+		
+		for(VirtualNode node = this->bgmapSprites->head; NULL != node; node = node->next)
+		{
+			BgmapSprite bgmapSpriteHelper = BgmapSprite::safeCast(node->data);
+
+			if(BgmapSprite::getParam(bgmapSpriteHelper) == paramToFree)
+			{
+				return;
+			}
+		}
+
 		if(this->previouslyMovedBgmapSprite == bgmapSprite)
 		{
 			this->previouslyMovedBgmapSprite = NULL;
@@ -273,10 +321,10 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
  */
 bool ParamTableManager::defragmentProgressively()
 {
-	if(this->paramTableFreeData.param)
+	if(0 != this->paramTableFreeData.param)
 	{
 		VirtualNode node = this->bgmapSprites->head;
-
+		
 		for(; NULL != node; node = node->next)
 		{
 			BgmapSprite sprite = BgmapSprite::safeCast(node->data);
