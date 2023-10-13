@@ -97,14 +97,13 @@ class BgmapSprite : Sprite
 
 	/// @publicsection
 	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
+	void setMode(uint16 display, uint16 mode);
 	void invalidateParamTable();
 	int16 getParamTableRow();
 	uint32 getParam();
 	void setParam(uint32 param);
 	void putChar(Point* texturePixel, uint32* newChar);
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-	void processAffineEffects();
-	void processHbiasEffects();
 	void onTextureRewritten(ListenerObject eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
@@ -115,7 +114,6 @@ class BgmapSprite : Sprite
 	override void rotate(const Rotation* rotation);
 	override Scale getScale();
 	override void resize(Scale scale, fixed_t z);
-	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 }
 

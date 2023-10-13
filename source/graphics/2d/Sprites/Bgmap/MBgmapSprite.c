@@ -74,6 +74,11 @@ void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Listene
 	this->textures = NULL;
 	MBgmapSprite::loadTextures(this);
 	MBgmapSprite::calculateSize(this);
+
+	if(0 == (__WORLD_BGMAP & this->head) && 0 == this->param)
+	{
+		MBgmapSprite::setMode(this, mBgmapSpriteSpec->bgmapSpriteSpec.display, mBgmapSpriteSpec->bgmapSpriteSpec.bgmapMode);
+	}
 }
 
 /**
@@ -343,11 +348,6 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
-	if(this->param)
-	{
-		MBgmapSprite::processHbiasEffects(this);
-	}
-
 	return index;
 }
 
@@ -409,20 +409,6 @@ void MBgmapSprite::calculateSize()
 	{
 		this->halfHeight = this->mBgmapSpriteSpec->height >> 1;
 	}
-}
-
-/**
- * Set Sprite's render mode
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @param display	Which displays to show on
- * @param mode		WORLD layer's head mode
- */
-void MBgmapSprite::setMode(uint16 display, uint16 mode __attribute__ ((unused)))
-{
-	this->head = display | __WORLD_BGMAP;
 }
 
 /**

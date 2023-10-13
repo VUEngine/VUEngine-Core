@@ -201,7 +201,6 @@ abstract class Sprite : ListenerObject
 	virtual int16 doRender(int16 index, bool evenFrame) = 0;
 	virtual void resize(Scale scale, fixed_t z);
 	virtual void rotate(const Rotation* rotation);
-	virtual void setMode(uint16 display, uint16 mode) = 0;
 	virtual void writeAnimation();
 	virtual bool writeTextures(int16 maximumTextureRowsToWrite);
 	virtual bool prepareTexture();

@@ -421,46 +421,17 @@ void BgmapSprite::processEffects()
 	// set the world size according to the zoom
 	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{
-		BgmapSprite::processAffineEffects(this);
-		BgmapSprite::processHbiasEffects(this);
-	}
-}
-
-void BgmapSprite::processAffineEffects()
-{
-	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
-	{
-		// provide a little bit of performance gain by only calculation transformation equations
-		// for the visible rows, but causes that some sprites not be rendered completely when the
-		// camera moves vertically
-		// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
-		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
-
-		if(0 <= this->paramTableRow)
+		if(0 != ((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && NULL != this->applyParamTableEffect)
 		{
-			// apply affine transformation
-			this->paramTableRow = this->applyParamTableEffect(this);
-
-			if(0 > this->paramTableRow)
+			if(0 <= this->paramTableRow)
 			{
-				this->paramTableRow = -1;
-			}
-		}
-	}
-}
+				// apply affine transformation
+				this->paramTableRow = this->applyParamTableEffect(this);
 
-void BgmapSprite::processHbiasEffects()
-{
-	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
-	{
-		if(0 <= this->paramTableRow)
-		{
-			// apply hbias effects
-			this->paramTableRow = this->applyParamTableEffect(this);
-
-			if(0 > this->paramTableRow)
-			{
-				this->paramTableRow = -1;
+				if(0 > this->paramTableRow)
+				{
+					this->paramTableRow = -1;
+				}
 			}
 		}
 	}
@@ -487,28 +458,31 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 		this->param = 0;
 	}
 
-	switch(mode)
+	if(0 == this->param && !isDeleted(this->texture))
 	{
-		case __WORLD_BGMAP:
+		switch(mode)
+		{
+			case __WORLD_BGMAP:
 
-			// set map head
-			this->head = display | __WORLD_BGMAP;
-			break;
+				// set map head
+				this->head = display | __WORLD_BGMAP;
+				break;
 
-		case __WORLD_AFFINE:
+			case __WORLD_AFFINE:
 
-			// set map head
-			this->head = display | __WORLD_AFFINE;
-			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-			this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
-			break;
+				// set map head
+				this->head = display | __WORLD_AFFINE;
+				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				break;
 
-		case __WORLD_HBIAS:
+			case __WORLD_HBIAS:
 
-			// set map head
-			this->head = display | __WORLD_HBIAS;
-			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-			break;
+				// set map head
+				this->head = display | __WORLD_HBIAS;
+				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				break;
+		}
 	}
 
 	this->head &= ~__WORLD_END;
@@ -612,6 +586,11 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
 			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
 			// don't do translations
+			// Provide a little bit of performance gain by only calculation transformation equations
+			// for the visible rows, but causes that some sprites not be rendered completely when the
+			// camera moves vertically
+			// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
+			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 			__I_TO_FIXED(bgmapSprite->halfWidth),
 			__I_TO_FIXED(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->textureSource.mx),

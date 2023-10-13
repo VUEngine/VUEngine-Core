@@ -573,7 +573,7 @@ void SpriteManager::applySpecialEffects()
 		{
 			continue;
 		}
-		
+
 		Sprite::processEffects(sprite);
 	}
 }

@@ -419,16 +419,6 @@ int32 ObjectSpriteContainer::getTotalPixels()
 	return 0;
 }
 
-
-/**
- * Set Sprite's render mode
- *
- * @param display	Which displays to show on
- * @param mode		WORLD layer's head mode
- */
-void ObjectSpriteContainer::setMode(uint16 display __attribute__ ((unused)), uint16 mode __attribute__ ((unused)))
-{}
-
 /**
  * Write textures
  *

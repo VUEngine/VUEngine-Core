@@ -85,7 +85,6 @@ class ObjectSprite : Sprite
 
 	override int16 doRender(int16 index, bool evenFrame);
 	override void rotate(const Rotation* rotation);
-	override void setMode(uint16 display, uint16 mode);
 	override void registerWithManager();
 	override void registerWithManager();
 	override void rewrite();

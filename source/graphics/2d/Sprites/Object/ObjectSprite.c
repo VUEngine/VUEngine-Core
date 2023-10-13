@@ -335,18 +335,6 @@ int16 ObjectSprite::getTotalObjects()
 }
 
 /**
- * Set Sprite's render mode
- *
- * @memberof		ObjectSprite
- * @public
- *
- * @param display	Which displays to show on
- * @param mode		WORLD layer's head mode
- */
-void ObjectSprite::setMode(uint16 display __attribute__ ((unused)), uint16 mode __attribute__ ((unused)))
-{}
-
-/**
  * Set ObjectSpriteContainer to NULL
  *
  * @memberof				ObjectSprite
