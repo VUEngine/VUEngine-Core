@@ -348,6 +348,11 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
+	if(0 < this->param)
+	{
+		worldPointer->param = (uint16)((((this->param)) - 0x20000) >> 1) & 0xFFF0;
+	}
+
 	return index;
 }
 

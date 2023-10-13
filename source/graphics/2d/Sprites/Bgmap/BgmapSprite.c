@@ -411,7 +411,11 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-	worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+
+	if(0 < this->param)
+	{
+		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+	}
 
 	return index;
 }
