@@ -227,11 +227,14 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 
 						Texture textureHelper = BgmapSprite::getTexture(bgmapSpriteHelper);
 
-						if(!isDeleted(textureHelper) && Texture::getAllocationType(texture) == Texture::getAllocationType(textureHelper))
+						if(!isDeleted(textureHelper) && Texture::getSpec(texture) == Texture::getSpec(textureHelper))
 						{
-							VirtualList::pushBack(this->bgmapSprites, bgmapSprite);
+							if(!isDeleted(textureHelper) && Texture::getAllocationType(texture) == Texture::getAllocationType(textureHelper))
+							{
+								VirtualList::pushBack(this->bgmapSprites, bgmapSprite);
 
-							return BgmapSprite::getParam(bgmapSpriteHelper);
+								return BgmapSprite::getParam(bgmapSpriteHelper);
+							}
 						}
 					}
 				}
