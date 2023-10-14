@@ -251,9 +251,9 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
-	int16 gx = position.x + this->displacement.x - this->halfWidth;
-	int16 gy = position.y + this->displacement.y - this->halfHeight;
-	int16 gp = position.parallax + this->displacement.parallax;
+	int16 gx = position.x - this->halfWidth;
+	int16 gy = position.y - this->halfHeight;
+	int16 gp = position.parallax;
 
 	int32 mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
@@ -339,9 +339,9 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	worldPointer->gy = gy;
 	worldPointer->gp = gp;
 
-	worldPointer->mx = mx;
-	worldPointer->my = my;
-	worldPointer->mp = mp;
+	worldPointer->mx = mx - this->displacement.x;
+	worldPointer->my = my - this->displacement.y;
+	worldPointer->mp = mp - this->displacement.parallax;
 
 	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
