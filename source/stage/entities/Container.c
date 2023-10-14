@@ -312,20 +312,6 @@ void Container::removeChild(Container child, bool deleteChild)
 #endif
 }
 
-void Container::setupShapes()
-{
-	// if I have children
-	if(NULL != this->children)
-	{
-		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			Container::setupShapes(child);
-		}
-	}
-}
-
 void Container::destroyComponents()
 {
 	if(NULL != this->children)
