@@ -344,20 +344,9 @@ void Body::moveUniformly(Vector3D velocity)
 // clear force
 void Body::clearExternalForce()
 {
-	if(__X_AXIS & this->clearExternalForce)
-	{
-		this->externalForce.x = 0;
-	}
-
-	if(__Y_AXIS & this->clearExternalForce)
-	{
-		this->externalForce.y = 0;
-	}
-
-	if(__Z_AXIS & this->clearExternalForce)
-	{
-		this->externalForce.z = 0;
-	}
+	this->externalForce.x = 0;
+	this->externalForce.y = 0;
+	this->externalForce.z = 0;
 }
 
 // apply force
