@@ -362,7 +362,7 @@ bool ParamTableManager::defragmentProgressively()
 			}
 		}
 
-		if(!node)
+		if(NULL == node)
 		{
 			//recover space
 			this->used -= this->paramTableFreeData.recoveredSize;
