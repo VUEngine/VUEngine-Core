@@ -135,16 +135,6 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
 }
 
 /**
- * Set mass
- *
- * @param mass
- */
-void PhysicalParticle::setMass(fixed_t mass)
-{
-	Body::setMass(this->body, mass);
-}
-
-/**
  * Change mass
  *
  */

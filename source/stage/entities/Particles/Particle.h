@@ -92,8 +92,8 @@ class Particle : SpatialObject
 	virtual void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName);
 	virtual void suspend();
 	virtual void reset();
-	virtual void setMass(fixed_t mass);
 	virtual void changeMass();
+
 	override bool isSubjectToGravity(Vector3D gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
