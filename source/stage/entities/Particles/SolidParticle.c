@@ -104,14 +104,23 @@ void SolidParticle::destructor()
 	Base::destructor();
 }
 
+
 /**
- * Transform
+ * Update
+ *
+ * @param behavior
+ * @return				Boolean that tells whether a body was set active(?)
  */
-void SolidParticle::transform()
+bool SolidParticle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 {
-	Base::transform(this);
+	if(Base::update(this, elapsedTime, behavior))
+	{
+		return true;
+	}
 
 	SolidParticle::transformShape(this);
+
+	return false;
 }
 
 /**

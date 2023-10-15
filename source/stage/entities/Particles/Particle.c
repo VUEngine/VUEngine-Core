@@ -49,7 +49,6 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->position = Vector3D::zero();
 	this->previousZ = 0;
 	this->expired = false;
-	this->transform = Particle::overrides(this, transform);
 
 	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
 	Particle::addWireframe(this, wireframeSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
@@ -310,12 +309,6 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 {
 	return false;
 }
-
-/**
- * Transform
- */
-void Particle::transform()
-{}
 
 /**
  * Resume

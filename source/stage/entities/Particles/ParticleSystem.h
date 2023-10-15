@@ -147,7 +147,6 @@ class ParticleSystem : Entity
 	override void show();
 	override void hide();
 	override void setTransparent(uint8 transparent);
-	virtual void transformParticles();
 	virtual void particleSpawned(Particle particle);
 	virtual void particleRecycled(Particle particle);
 }

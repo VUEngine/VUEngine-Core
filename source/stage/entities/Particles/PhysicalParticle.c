@@ -82,15 +82,9 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
 		return true;
 	}
 
-	return false;
-}
-
-/**
- * Transform
- */
-void PhysicalParticle::transform()
-{
 	this->position = *Body::getPosition(this->body);
+
+	return false;
 }
 
 /**
