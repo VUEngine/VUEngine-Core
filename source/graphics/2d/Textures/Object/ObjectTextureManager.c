@@ -22,10 +22,10 @@
 //												CLASS'S DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
+friend class ObjectTexture;
 friend class Texture;
 friend class VirtualList;
 friend class VirtualNode;
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -94,6 +94,11 @@ ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureS
 	static uint16 textureNextId = 0;
 
 	ObjectTexture objectTexture = new ObjectTexture(objectTextureSpec, textureNextId++);
+
+	if(kTextureWritten != objectTexture->status)
+	{
+		ObjectTexture::prepare(objectTexture);
+	}
 
 	VirtualList::pushBack(this->objectTextures, objectTexture);
 

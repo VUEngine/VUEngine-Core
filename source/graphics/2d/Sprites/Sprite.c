@@ -89,29 +89,6 @@ void Sprite::processEffects()
 {
 }
 
-/**
- * Prepare textures
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @return			true it all textures are written
- */
-bool Sprite::prepareTexture()
-{
-	if(isDeleted(this->texture))
-	{
-		return false;
-	}
-
-	if(kTextureWritten != this->texture->status)
-	{
-		return Texture::prepare(this->texture);
-	}
-
-	return true;
-}
-
 int16 Sprite::render(int16 index, bool evenFrame)
 {
 	int16 previousIndex = this->index;
@@ -141,10 +118,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(kTexturePendingWriting == this->texture->status)
 	{
-		if(!Sprite::prepareTexture(this))
-		{
-			return __NO_RENDER_INDEX;
-		}
+		return __NO_RENDER_INDEX;
 	}
 
 	// If the client code makes these checks before calling this method,

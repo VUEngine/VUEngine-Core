@@ -203,7 +203,6 @@ abstract class Sprite : ListenerObject
 	virtual void rotate(const Rotation* rotation);
 	virtual void writeAnimation();
 	virtual bool writeTextures(int16 maximumTextureRowsToWrite);
-	virtual bool prepareTexture();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels();
 	virtual void registerWithManager() = 0;

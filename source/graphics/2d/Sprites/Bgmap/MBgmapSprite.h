@@ -81,7 +81,6 @@ class MBgmapSprite : BgmapSprite
 	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner);
 	override int16 doRender(int16 index, bool evenFrame);
 	override void resize(Scale scale, fixed_t z);
-	override bool prepareTexture();
 	override bool writeTextures(int16 maximumTextureRowsToWrite);
 }
 

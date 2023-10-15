@@ -444,33 +444,3 @@ bool MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
 	return !node;
 }
 
-/**
- * Prepare textures
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @return			true it all textures are written
- */
-bool MBgmapSprite::prepareTexture()
-{
-	bool allTextureAreWritten = true;
-
-	VirtualNode node = this->textures->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Texture texture = Texture::safeCast(node->data);
-
-		if(kTextureWritten != texture->status)
-		{
-			if(!Texture::prepare(texture))
-			{
-				allTextureAreWritten = false;
-			}
-		}
-	}
-
-	return allTextureAreWritten;
-}
-

@@ -601,6 +601,11 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 		}
 	}
 
+	if(kTextureWritten != bgmapTexture->status)
+	{
+		BgmapTexture::prepare(bgmapTexture);
+	}
+
 	return bgmapTexture;
 }
 
