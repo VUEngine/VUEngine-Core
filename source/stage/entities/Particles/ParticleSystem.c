@@ -577,6 +577,8 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 	{
 		ParticleSystem::resetParticlesPositions(this);
 	}
+
+	ParticleSystem::transformParticles(this);
 }
 
 void ParticleSystem::resetParticlesPositions()
@@ -597,6 +599,26 @@ void ParticleSystem::resetParticlesPositions()
 
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 		Particle::setPosition(particle, &position);
+	}
+}
+
+void ParticleSystem::transformParticles()
+{
+	if(isDeleted(this->particles))
+	{
+		return;
+	}
+
+	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
+	{
+		Particle particle = Particle::safeCast(node->data);
+
+		if(particle->expired || !particle->transform)
+		{
+			continue;
+		}
+
+		Particle::transform(particle);
 	}
 }
 

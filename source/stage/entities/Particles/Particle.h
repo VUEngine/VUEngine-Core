@@ -74,6 +74,7 @@ class Particle : SpatialObject
 	// Particle's life span in milliseconds
 	int16 lifeSpan;
 	bool expired;
+	bool transform;
 
 	/// @publicsection
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
@@ -89,6 +90,7 @@ class Particle : SpatialObject
 	virtual void synchronizeGraphics();
 	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
+	virtual void transform();
 	virtual void reset();
 	virtual void changeMass();
 
