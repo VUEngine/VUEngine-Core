@@ -1195,7 +1195,7 @@ void Stage::suspend()
 	}
 
 	// relinquish camera focus priority
-	if(this->focusEntity && Camera::getFocusEntity(Camera::getInstance()))
+	if(!isDeleted(this->focusEntity))
 	{
 		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
 		{
@@ -1230,7 +1230,7 @@ void Stage::resume()
 
 	Stage::prepareGraphics(this);
 
-	if(this->focusEntity)
+	if(!isDeleted(this->focusEntity))
 	{
 		// recover focus entity
 		Camera::setFocusEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
@@ -1351,27 +1351,27 @@ bool Stage::handlePropagatedString(const char* string)
 
 void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->focusEntity = NULL;
-
-	if(this->focusEntity && Camera::getFocusEntity(Camera::getInstance()))
+	if(!isDeleted(this->focusEntity) && ListenerObject::safeCast(this->focusEntity) == eventFirer)
 	{
 		if(this->focusEntity == Camera::getFocusEntity(Camera::getInstance()))
 		{
 			Camera::setFocusEntity(Camera::getInstance(), NULL);
 		}
 	}
+
+	this->focusEntity = NULL;
 }
 
 void Stage::setFocusEntity(Entity focusEntity)
 {
-	if(this->focusEntity)
+	if(!isDeleted(this->focusEntity))
 	{
 		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
-	if(this->focusEntity)
+	if(!isDeleted(this->focusEntity))
 	{
 		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 

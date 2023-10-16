@@ -152,8 +152,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
-	this->skipCycles 	= 0;
-	this->skipedCycles 	= 0;
+	this->skipCycles 			= 0;
+	this->skipedCycles 			= 0;
 
 	this->internalPosition.x 	= 0;
 	this->internalPosition.y 	= 0;

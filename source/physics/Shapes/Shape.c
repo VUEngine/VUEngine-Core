@@ -85,13 +85,13 @@ void Shape::destructor()
 
 	Shape::hide(this);
 
-	if(this->events)
+	if(NULL != this->events)
 	{
 		Shape::fireEvent(this, kEventShapeDeleted);
 		NM_ASSERT(!isDeleted(this), "Shape::destructor: deleted this during kEventShapeDeleted");
 	}
 
-	if(this->collidingShapes)
+	if(NULL != this->collidingShapes)
 	{
 		VirtualNode node = this->collidingShapes->head;
 
@@ -124,7 +124,7 @@ void Shape::destructor()
  */
 void Shape::reset()
 {
-	if(this->collidingShapes)
+	if(NULL != this->collidingShapes)
 	{
 		VirtualNode node = this->collidingShapes->head;
 

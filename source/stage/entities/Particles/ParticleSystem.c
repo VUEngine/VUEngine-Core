@@ -453,16 +453,22 @@ bool ParticleSystem::appliesForceToParticles()
 		return true;
 	}
 
-	if(0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x ||
-	0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y ||
-	0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z)
+	if
+	(
+		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x ||
+		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y ||
+		0 != ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z
+	)
 	{
 		return true;
 	}
 
-	if(0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.x ||
-	0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.y ||
-	0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.z)
+	if
+	(
+		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.x ||
+		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.y ||
+		0 != ((ParticleSystemSpec*)this->entitySpec)->maximumForce.z
+	)
 	{
 		return true;
 	}
