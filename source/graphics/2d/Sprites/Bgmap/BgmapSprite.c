@@ -125,7 +125,7 @@ void BgmapSprite::destructor()
 
 bool BgmapSprite::hasSpecialEffects()
 {
-	return 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
+	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
 
 /**
@@ -298,7 +298,7 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 			BgmapSprite::computeDimensions(this);
 		}
 
-		if(this->param)
+		if(0 < this->param)
     	{
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
