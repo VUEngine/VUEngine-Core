@@ -3624,48 +3624,16 @@
                             {
                                 "type": "VerticalLayout",
                                 "elements": [
-                                    {
-                                        "type": "Group",
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/sound/properties/leftEarCenter",
-                                                        "label": "Left Ear"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/sound/properties/rightEarCenter",
-                                                        "label": "Right Ear"
-                                                    }
-                                                ]
-                                            }
-                                        ],
-                                        "label": "Center"
-                                    },
-                                    {
-                                        "type": "Group",
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/sound/properties/stereoHorizontalAttenuationFactor",
-                                                        "label": "Horizontal"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/sound/properties/stereoVerticalAttenuationFactor",
-                                                        "label": "Vertical"
-                                                    }
-                                                ]
-                                            }
-                                        ],
-                                        "label": "Stereo Attenuation Factor"
-                                    }
+									{
+										"type": "Control",
+										"scope": "#/properties/sound/properties/earDisplacement",
+										"label": "Ear Displacement"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/sound/properties/stereoAttenuationDistance",
+										"label": "Vertical"
+									}
                                 ]
                             }
                         ]
@@ -3786,10 +3754,6 @@
                         "type": "string",
                         "default": ""
                     },
-                    "class": {
-                        "type": "string",
-                        "default": "Entity"
-                    },
                     "extraInfo": {
                         "type": "string",
                         "default": ""
@@ -3800,15 +3764,18 @@
                         "properties": {
                             "x": {
                                 "type": "number",
-                                "minimum": 0
+                                "minimum": 0,
+                                "default": 0
                             },
                             "y": {
                                 "type": "number",
-                                "minimum": 0
+                                "minimum": 0,
+                                "default": 0
                             },
                             "z": {
                                 "type": "number",
-                                "minimum": 0
+                                "minimum": 0,
+                                "default": 0
                             }
                         }
                     },
@@ -4005,19 +3972,98 @@
                                 "items": {
                                     "type": "object",
                                     "properties": {
-                                        "fromVertex": {
-                                            "type": "string",
-                                            "default": ""
-                                        },
-                                        "toVertex": {
-                                            "type": "string",
-                                            "default": ""
-                                        },
-                                        "bufferIndex": {
-                                            "type": "integer",
-                                            "minimum": 0,
-                                            "maximum": 255
-                                        }
+										"wireframe": {
+											"type": "object",
+                                    		"properties": {
+												"allocator": {
+													"type": "string",
+													"default": ""
+												},
+												"displacement": {
+													"type": "object",
+													"properties": {
+														"x": {
+															"type": "number"
+														},
+														"y": {
+															"type": "number"
+														},
+														"z": {
+															"type": "number"
+														},
+														"parallax": {
+															"type": "number"
+														}
+													}
+												},
+												"color": {
+													"type": "integer",
+													"minimum": 0,
+													"maximum": 3,
+													"default": 3
+												},
+												"transparent": {
+													"type": "integer",
+													"minimum": 0,
+													"maximum": 2,
+													"default": 0
+												},
+												"interlaced": {
+													"type": "boolean",
+													"default": 3
+												}
+											}
+										},
+										"segments": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"fromVertex": {
+														"type": "object",
+														"properties": {
+															"x": {
+																"type": "number",
+																"minimum": 0
+															},
+															"y": {
+																"type": "number",
+																"minimum": 0
+															},
+															"z": {
+																"type": "number",
+																"minimum": 0
+															},
+															"parallax": {
+																"type": "number",
+																"minimum": 0
+															}
+														}
+													},
+													"toVertex": {
+														"type": "object",
+														"properties": {
+															"x": {
+																"type": "number",
+																"minimum": 0
+															},
+															"y": {
+																"type": "number",
+																"minimum": 0
+															},
+															"z": {
+																"type": "number",
+																"minimum": 0
+															},
+															"parallax": {
+																"type": "number",
+																"minimum": 0
+															}
+														}
+													}
+												}
+											}
+										}
                                     }
                                 }
                             }
@@ -4083,7 +4129,7 @@
                                 "type": "boolean",
                                 "default": false
                             },
-                            "items": {
+                            "sprites": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
@@ -4158,20 +4204,16 @@
                                             "type": "object",
                                             "properties": {
                                                 "x": {
-                                                    "type": "number",
-                                                    "minimum": 0
+                                                    "type": "number"
                                                 },
                                                 "y": {
-                                                    "type": "number",
-                                                    "minimum": 0
+                                                    "type": "number"
                                                 },
                                                 "z": {
-                                                    "type": "number",
-                                                    "minimum": 0
+                                                    "type": "number"
                                                 },
                                                 "parallax": {
-                                                    "type": "number",
-                                                    "minimum": 0
+                                                    "type": "number"
                                                 }
                                             }
                                         },
@@ -4278,177 +4320,8 @@
                 ]
             },
             "uiSchema": {
-                "type": "Categorization",
-                "elements": [
-                    {
-                        "type": "Category",
-                        "label": "General",
-                        "elements": [
-                            {
-                                "type": "VerticalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/name"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/class"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "scope": "#/properties/extraInfo"
-                                    },
-                                    {
-                                        "type": "Group",
-                                        "label": "Size (x, y, z)",
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/pixelSize/properties/x"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/pixelSize/properties/y"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "label": false,
-                                                        "scope": "#/properties/pixelSize/properties/z"
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Animations",
-                        "elements": [
-                            {}
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Behaviors",
-                        "elements": [
-                            {}
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Child Entities",
-                        "elements": [
-                            {}
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Collisions",
-                        "elements": [
-                            {}
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Meshes",
-                        "elements": [
-                            {}
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Physics",
-                        "elements": [
-                            {
-                                "type": "VerticalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": "Enable physics",
-                                        "scope": "#/properties/enabled"
-                                    },
-                                    {
-                                        "type": "VerticalLayout",
-                                        "rule": {
-                                            "effect": "HIDE",
-                                            "condition": {
-                                                "scope": "#/properties/enabled",
-                                                "schema": {
-                                                    "const": false
-                                                }
-                                            }
-                                        },
-                                        "elements": [
-                                            {
-                                                "type": "HorizontalLayout",
-                                                "elements": [
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/mass"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/friction"
-                                                    },
-                                                    {
-                                                        "type": "Control",
-                                                        "scope": "#/properties/bounciness"
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "Group",
-                                                "label": "Maximum Velocity (x, y, z)",
-                                                "elements": [
-                                                    {
-                                                        "type": "HorizontalLayout",
-                                                        "elements": [
-                                                            {
-                                                                "type": "Control",
-                                                                "label": false,
-                                                                "scope": "#/properties/maximumVelocity/properties/x"
-                                                            },
-                                                            {
-                                                                "type": "Control",
-                                                                "label": false,
-                                                                "scope": "#/properties/maximumVelocity/properties/y"
-                                                            },
-                                                            {
-                                                                "type": "Control",
-                                                                "label": false,
-                                                                "scope": "#/properties/maximumVelocity/properties/z"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "Control",
-                                                "scope": "#/properties/maximumSpeed"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Category",
-                        "label": "Sprites",
-                        "elements": [
-                            {}
-                        ]
-                    }
-                ]
+                "type": "EntityEditor",
+                "scope": "#"
             },
             "multiple": true,
             "category": "Assets",
