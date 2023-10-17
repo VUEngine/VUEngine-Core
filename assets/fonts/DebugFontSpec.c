@@ -24,7 +24,7 @@ extern uint32 VUEngineDebugFontTiles[];
 CharSetROMSpec DebugFontCharSet =
 {
 	// number of chars
-	43,
+	46,
 
 	// allocation type
 	__NOT_ANIMATED,
@@ -42,13 +42,13 @@ FontROMSpec DebugFont =
 	(CharSetSpec*)&DebugFontCharSet,
 
 	// character number at which the font starts, allows you to skip the control characters for example
-	48,
+	45,
 
 	// number of characters in this font
-	43,
+	46,
 
 	// number of characters per line in charset
-	16,
+	46,
 
 	// size of a single character (in chars) ({width, height})
 	{1, 1},
