@@ -849,6 +849,8 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 	// need a temporary list to remove and delete entities
 	VirtualNode node = this->children->head;
 
+	CACHE_RESET;
+
 	// check which actors must be unloaded
 	for(; NULL != node; node = node->next)
 	{
@@ -863,8 +865,6 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		// if the entity isn't visible inside the view field, unload it
 		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !entity->inCameraRange)
 		{
-			int16 internalId = Entity::getInternalId(entity);
-
 			VirtualNode auxNode = this->stageEntityDescriptions->head;
 			StageEntityDescription* stageEntityDescription = NULL;
 
@@ -872,7 +872,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			{
 				stageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-				if(stageEntityDescription->internalId == internalId)
+				if(stageEntityDescription->internalId == entity->internalId)
 				{
 					break;
 				}
@@ -921,6 +921,8 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
 
+		CACHE_RESET;
+
 		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->previous, counter++)
 		{
 			if(NULL == this->streamingHeadNode)
@@ -965,6 +967,8 @@ bool Stage::loadInRangeEntities(int32 defer)
 		}
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
+
+		CACHE_RESET;
 
 		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
 		{
