@@ -230,12 +230,13 @@ static void Error::zeroDivisionException()
 #ifndef __SHIPPING
 	uint32 eipc = 0;
 	// Save EIPC
-    asm("					\n\t"      \
-		"stsr	eipc, r10	\n\t"      \
+    asm
+	(
+		"stsr	eipc, r10		\n\t"      \
 		"mov	r10, %[eipc]	\n\t"
-    : [eipc] "=r" (eipc)
-    : // No Input
-	: "r10" // regs used
+		: [eipc] "=r" (eipc)
+		: // No Input
+		: "r10" // regs used
     );
 
 	_vuengineEIPC = eipc;
@@ -248,37 +249,49 @@ static void Error::invalidOpcodeException()
 {
 #ifndef __SHIPPING
 
-	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
-	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));
+	asm
+	(
+		"mov	sp, %0"
+		: "=r" (_vuengineStackPointer)
+	);
+
+	asm
+	(
+		"mov lp,%0  "
+		: "=r" (_vuengineLinkPointer)
+	);
 
 	uint32 eipc = 0;
 	// Save EIPC
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	eipc, r10		\n\t"      \
 		"mov	r10, %[eipc]	\n\t"
-    : [eipc] "=r" (eipc)
-    : // No Input
-	: "r10" // regs used
+		: [eipc] "=r" (eipc)
+		: // No Input
+		: "r10" // regs used
     );
 
 	uint32 fepc = 0;
 	// Save FEPC
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	fepc, r11		\n\t"      \
 		"mov	r11, %[fepc]	\n\t"
-    : [fepc] "=r" (fepc)
-    : // No Input
-	: "r11" // regs used
+		: [fepc] "=r" (fepc)
+		: // No Input
+		: "r11" // regs used
     );
 
 	uint32 ecr = 0;
 	// Save ECR
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	ecr, r12		\n\t"      \
 		"mov	r12, %[ecr]		\n\t"
-    : [ecr] "=r" (ecr)
-    : // No Input
-	: "r12" // regs used
+		: [ecr] "=r" (ecr)
+		: // No Input
+		: "r12" // regs used
     );
 
 	_vuengineEIPC = eipc;
@@ -293,37 +306,49 @@ static void Error::floatingPointException()
 {
 #ifndef __SHIPPING
 
-	asm(" mov sp,%0  ": "=r" (_vuengineStackPointer));
-	asm(" mov lp,%0  ": "=r" (_vuengineLinkPointer));
+	asm
+	(
+		"mov sp,%0  "
+		: "=r" (_vuengineStackPointer)
+	);
+
+	asm
+	(
+		"mov lp,%0  "
+		: "=r" (_vuengineLinkPointer)
+	);
 
 	uint32 eipc = 0;
 	// Save EIPC
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	eipc, r10		\n\t"      \
 		"mov	r10, %[eipc]	\n\t"
-    : [eipc] "=r" (eipc)
-    : // No Input
-	: "r10" // regs used
+		: [eipc] "=r" (eipc)
+		: // No Input
+		: "r10" // regs used
     );
 
 	uint32 fepc = 0;
 	// Save FEPC
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	fepc, r11		\n\t"      \
 		"mov	r11, %[fepc]	\n\t"
-    : [fepc] "=r" (fepc)
-    : // No Input
-	: "r11" // regs used
+		: [fepc] "=r" (fepc)
+		: // No Input
+		: "r11" // regs used
     );
 
 	uint32 ecr = 0;
 	// Save ECR
-    asm("						\n\t"      \
+    asm
+	(
 		"stsr	ecr, r12		\n\t"      \
 		"mov	r12, %[ecr]		\n\t"
-    : [ecr] "=r" (ecr)
-    : // No Input
-	: "r12" // regs used
+		: [ecr] "=r" (ecr)
+		: // No Input
+		: "r12" // regs used
     );
 
 	_vuengineEIPC = eipc;

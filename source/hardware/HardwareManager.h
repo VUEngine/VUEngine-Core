@@ -106,20 +106,20 @@ static inline void HardwareManager::halt()
  */
 static inline void HardwareManager::setInterruptLevel(uint8 level)
 {
-	asm(" \n\
-		stsr	sr5,r6 \n\
-		movhi	0xFFF1,r0,r7 \n\
-		movea	0xFFFF,r7,r7 \n\
-		and		r6,r7 \n\
-		mov		%0,r6 \n\
-		andi	0x000F,r6,r6 \n\
-		shl		0x10,r6 \n\
-		or		r7,r6 \n\
-		ldsr	r6,sr5 \n\
-		"
-	: // Output
-	: "r" (level) // Input
-	: "r6", "r7" // Clobber
+	asm
+	(
+		"stsr	sr5, r6			\n\t"	\
+		"movhi	0xFFF1, r0, r7	\n\t"	\
+		"movea	0xFFFF, r7, r7	\n\t"	\
+		"and	r6, r7			\n\t"	\
+		"mov	%0,r6			\n\t"	\
+		"andi	0x000F, r6, r6	\n\t"	\
+		"shl	0x10, r6		\n\t"	\
+		"or		r7, r6			\n\t"	\
+		"ldsr	r6, sr5			\n\t"
+		: // Output
+		: "r" (level) // Input
+		: "r6", "r7" // Clobber
 	);
 }
 
@@ -183,18 +183,18 @@ static inline void HardwareManager::enableMultiplexedInterrupts()
 {
 	uint32 psw;
 
-	asm("			\n\
-		stsr psw,%0	\n\
-		"
+	asm
+	(
+		"stsr	psw, %0"
 		: "=r" (psw) // Output
 	);
 
 	psw &= 0xFFF0BFFF;
 
-	asm(" 			\n\
-		ldsr %0,psw	\n\
-		cli			\n\
-		"
+	asm
+	(
+		"ldsr	%0, psw	\n\t"	\
+		"cli	\n\t"
 		: // Output
 		: "r" (psw) // Input
 		: // Clobber
@@ -206,9 +206,9 @@ static inline void HardwareManager::enableMultiplexedInterrupts()
  */
 static inline void HardwareManager::disableMultiplexedInterrupts()
 {
-	asm(" 			\n\
-		sei			\n\
-		"
+	asm
+	(
+		"sei"
 		: // Output
 		: // Input
 		: // Clobber
@@ -222,10 +222,10 @@ static inline int32 HardwareManager::getStackPointer()
 {
 	int32 sp;
 
-	asm(" 			\n\
-		mov sp,%0	\n\
-		"
-	: "=r" (sp) // Output
+	asm
+	(
+		"mov	sp, %0"
+		: "=r" (sp) // Output
 	);
 
 	return sp;
@@ -238,10 +238,10 @@ static inline int32 HardwareManager::getLinkPointer()
 {
 	int32 lp;
 
-	asm(" 			\n\
-		mov lp,%0	\n\
-		"
-	: "=r" (lp) // Output
+	asm
+	(
+		"mov	lp, %0"
+		: "=r" (lp) // Output
 	);
 
 	return lp;
@@ -255,11 +255,12 @@ static inline int32 HardwareManager::getPSW()
 {
 	int32 psw;
 
-	asm("			\n\
-		stsr psw,%0	\n\
-		"
-	: "=r" (psw) // Output
+	asm
+	(
+		"stsr	psw, %0"
+		: "=r" (psw) // Output
 	);
+
 	return psw;
 }
 

@@ -27,16 +27,16 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
 
-	asm("				\n\t"      \
-		"jr end%=		\n\t"      \
-		"loop%=:		\n\t"      \
-		"ld.w 0[%1],r10	\n\t"      \
-		"st.w r10,0[%0] \n\t"      \
-		"add 4,%0		\n\t"      \
-		"add 4,%1		\n\t"      \
-		"end%=:			\n\t"      \
-		"cmp %1,%2		\n\t"      \
-		"bgt loop%=		\n\t"
+	asm(
+		"jr		end%=		\n\t"      \
+		"loop%=:			\n\t"      \
+		"ld.w	0[%1], r10	\n\t"      \
+		"st.w	r10, 0[%0] 	\n\t"      \
+		"add	4, %0		\n\t"      \
+		"add	4, %1		\n\t"      \
+		"end%=:				\n\t"      \
+		"cmp	%1, %2		\n\t"      \
+		"bgt	loop%=		\n\t"
 		: // No Output
 		: "r" (destination), "r" (source), "r" (finalSource)
 		: "r10" // regs used
@@ -62,20 +62,21 @@ static void Mem::addHWORD(HWORD* destination, const HWORD* source, uint32 number
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 
-    asm("					\n\t"      \
-		"jr end%=			\n\t"      \
-		"loop%=:			\n\t"      \
-		"ld.h 0[%1],r10		\n\t"      \
-		"add %3,r10			\n\t"      \
-		"st.h r10,0[%0]		\n\t"      \
-		"add 2,%0			\n\t"      \
-		"add 2,%1			\n\t"      \
-		"end%=:				\n\t"      \
-		"cmp %1,%2			\n\t"      \
-		"bgt loop%=			\n\t"      \
-    : // No Output
-    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
-	: "r10" // regs used
+    asm
+	(
+		"jr		end%=			\n\t"      \
+		"loop%=:				\n\t"      \
+		"ld.h	0[%1], r10		\n\t"      \
+		"add	%3, r10			\n\t"      \
+		"st.h	r10, 0[%0]		\n\t"      \
+		"add	2, %0			\n\t"      \
+		"add	2, %1			\n\t"      \
+		"end%=:					\n\t"      \
+		"cmp	%1, %2			\n\t"      \
+		"bgt loop%=				\n\t"      \
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
+		: "r10" // regs used
     );
 }
 

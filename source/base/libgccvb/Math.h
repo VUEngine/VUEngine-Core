@@ -40,11 +40,12 @@ inline int32 customAbs(int32 number)
 {
 	int32 result = 0;
 
-	asm("				\n\t"	\
-		"ldsr %1, 31	\n\t"	\
-		"stsr 31, %0	\n\t"	\
-		: "=r" (result)			\
-		: "r" (number)			\
+	asm
+	(
+		"ldsr	%1, 31	\n\t"	\
+		"stsr	31, %0	\n\t"
+		: "=r" (result)
+		: "r" (number)
 		:
 	);
 

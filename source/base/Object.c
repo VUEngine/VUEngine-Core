@@ -73,8 +73,17 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	if(-1 == lp && -1 == sp)
 	{
-		asm(" mov sp,%0  ": "=r" (sp));
-		asm(" mov lp,%0  ": "=r" (lp));
+		asm
+		(
+			"mov	sp, %0"
+			: "=r" (sp)
+		);
+
+		asm
+		(
+			"mov	lp, %0"
+			: "=r" (lp)
+		);
 	}
 
 #ifdef __DEBUG

@@ -199,15 +199,15 @@ int32 HardwareManager::getInterruptLevel()
 {
 	int32 level;
 
-	asm(" \n\
-		stsr	sr5,r6 \n\
-		shr		0x10,r6 \n\
-		andi	0x000F,r6,r6 \n\
-		mov		r6,%0 \n\
-	"
-	: "=r" (level) // Output
-	: // Input
-	: "r6" // Clobber
+	asm
+	(
+		"stsr	sr5, r6			\n\t"      \
+		"shr	0x10, r6		\n\t"      \
+		"andi	0x000F, r6, r6	\n\t"      \
+		"mov	r6, %0			\n\t"
+		: "=r" (level) // Output
+		: // Input
+		: "r6" // Clobber
 	);
 
 	return level;
@@ -420,7 +420,11 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 	Printing::clear(Printing::getInstance());
 	
 	int32 sp;
-	asm(" mov sp,%0  ": "=r" (sp));
+	asm
+	(
+		"mov	sp, %0"
+		: "=r" (sp)
+	);
 
 	int32 room = sp - (int32)&_bssEnd;
 
