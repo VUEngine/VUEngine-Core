@@ -315,7 +315,7 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 							
 							// update the number of chars defined inside the bgmap segment
 							this->numberOfChars[i] += area;
-
+						
 							// if there is a free bgmap segment
 							return i;
 						}
@@ -417,7 +417,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
 	{
 		BgmapTexture allocatedBgmapTexture = BgmapTexture::safeCast(node->data);
-		TextureSpec* allocatedTextureSpec = BgmapTexture::getTextureSpec(allocatedBgmapTexture);
+		TextureSpec* allocatedTextureSpec = allocatedBgmapTexture->textureSpec;
 
 		if(!recyclableOnly && allocatedTextureSpec == textureSpec)
 		{

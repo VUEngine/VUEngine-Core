@@ -644,8 +644,6 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	CACHE_RESET;
-
 	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
@@ -669,8 +667,6 @@ void SpriteManager::render()
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::render: more sprites than WORLDs");
 
 	ObjectSpriteContainer::prepareForRendering();
-
-	CACHE_RESET;
 
 	for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
 	{
