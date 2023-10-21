@@ -53,11 +53,11 @@ void ListenerObject::constructor()
  * Class destructor
  */
 void ListenerObject::destructor()
-{
-	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
-
+{	
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
+	NM_ASSERT(0 == this->eventFirings, "ListenerObject::destructor: called during event firing");
 
+	MessageDispatcher::discardAllDelayedMessages(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 	ListenerObject::removeAllEventListeners(this);
 
 	// must always be called at the end of the destructor
@@ -135,16 +135,26 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 
 			if(isDeleted(event))
 			{
-				VirtualList::removeNode(this->events, node);
+				if(0 == this->eventFirings)
+				{
+					VirtualList::removeNode(this->events, node);
 
-				delete event;
+					continue;
+				}
 
-				continue;
 			}
 
 			if(listener == event->listener && method == event->method && eventCode == event->code)
 			{
-				event->remove = true;
+				if(0 < this->eventFirings)
+				{
+					event->remove = true;
+				}
+				else
+				{
+					VirtualList::removeNode(this->events, node);
+					delete event;
+				}
 			}
 		}
 
@@ -174,16 +184,26 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 
 			if(isDeleted(event))
 			{
-				VirtualList::removeNode(this->events, node);
+				if(0 == this->eventFirings)
+				{
+					VirtualList::removeNode(this->events, node);
 
-				delete event;
+					continue;
+				}
 
-				continue;
 			}
 
 			if((NULL == method || method == event->method) && eventCode == event->code)
 			{
-				event->remove = true;
+				if(0 < this->eventFirings)
+				{
+					event->remove = true;
+				}
+				else
+				{
+					VirtualList::removeNode(this->events, node);
+					delete event;
+				}
 			}
 		}
 
@@ -213,16 +233,25 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 
 			if(isDeleted(event))
 			{
-				VirtualList::removeNode(this->events, node);
-
-				delete event;
+				if(0 == this->eventFirings)
+				{
+					VirtualList::removeNode(this->events, node);
+				}
 
 				continue;
 			}
 
 			if(listener == event->listener && eventCode == event->code)
 			{
-				event->remove = true;
+				if(0 < this->eventFirings)
+				{
+					event->remove = true;
+				}
+				else
+				{
+					VirtualList::removeNode(this->events, node);
+					delete event;
+				}
 			}
 		}
 
@@ -242,9 +271,26 @@ void ListenerObject::removeAllEventListeners()
 {
 	if(NULL != this->events)
 	{
-		VirtualList::deleteData(this->events);
-		delete this->events;
-		this->events = NULL;
+		if(0 == this->eventFirings)
+		{
+			VirtualList::deleteData(this->events);
+			delete this->events;
+			this->events = NULL;
+		}
+		else
+		{
+			for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
+			{
+				nextNode = node->next;
+
+				Event* event = (Event*)node->data;
+
+				if(!isDeleted(event))
+				{
+					event->remove = true;
+				}
+			}			
+		}
 	}
 }
 
@@ -336,7 +382,8 @@ void ListenerObject::fireEvent(uint16 eventCode)
  */
 void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint32 delay, uint32 randomDelay)
 {
-	MessageDispatcher::dispatchMessage(
+	MessageDispatcher::dispatchMessage
+	(
 		delay + (randomDelay ? Utilities::random(Utilities::randomSeed(), randomDelay) : 0), 
 		ListenerObject::safeCast(this), 
 		ListenerObject::safeCast(receiver), 
