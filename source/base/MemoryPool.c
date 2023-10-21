@@ -332,12 +332,12 @@ void MemoryPool::free(BYTE* object)
 
 #ifdef __DEBUG
 	// get the total objects in the pool
-	uint32 numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+	uint32 numberOfBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
 	HardwareManager::suspendInterrupts();
 
 	// search for the pool in which it is allocated
-	for(uint32 i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
+	for(uint32 i = 0, displacement = 0; i < numberOfBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found
 		if(object == &this->poolLocation[pool][displacement])
@@ -383,7 +383,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 #endif
 #endif
 
-	uint16 pool = __MEMORY_POOLS >> 1;
+	static uint16 pool = __MEMORY_POOLS >> 1;
 
 	uint32 blockSize = this->poolSizes[pool][eBlockSize];
 
@@ -398,7 +398,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 	HardwareManager::suspendInterrupts();
 
-	while(pool--)
+	while(0 != pool--)
 	{
 		blockSize = this->poolSizes[pool][eBlockSize];
 
@@ -407,11 +407,10 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			continue;
 		}
 
-		uint32 numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 		BYTE* poolLocationStart = &this->poolLocation[pool][0];
 		BYTE* poolLocationRight = this->poolLastFreeBlock[pool];
 		BYTE* poolLocationLeft = poolLocationRight - blockSize;
-		BYTE* poolLocationEnd = &this->poolLocation[pool][blockSize * (numberOfOjects - 1)];
+		BYTE* poolLocationEnd = poolLocationStart + this->poolSizes[pool][ePoolSize] - blockSize;
 		BYTE* poolLocation = NULL;
 		bool keepLooking = false;
 
