@@ -413,9 +413,7 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocationEnd = poolLocationStart + this->poolSizes[pool][ePoolSize] - blockSize;
 		BYTE* poolLocation = NULL;
 		bool keepLooking = false;
-
-		CACHE_RESET;
-
+		
 		do
 		{
 			keepLooking = false;
