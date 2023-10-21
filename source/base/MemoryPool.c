@@ -309,18 +309,21 @@ void MemoryPool::free(BYTE* object)
 {
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
 
+#ifndef __RELEASE
 	if(NULL == object)
 	{
 		return;
 	}
+#endif
 
-	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
+	int16 pool = __MEMORY_POOLS - 1;
+	for(; object < &this->poolLocation[pool][0] && 0 <= pool; pool--);
+
+	if(0 >= pool)
 	{
 		// Calls to delete non dynamic singletons are intented to fall here.
 		return;
 	}
-
-	uint16 pool = *((uint16*)object + 1);
 
 	// look for the registry in which the object is
 	NM_ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
