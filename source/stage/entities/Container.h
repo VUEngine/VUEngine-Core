@@ -64,6 +64,12 @@ class VirtualList;
 /// @ingroup stage-entities
 class Container : SpatialObject
 {
+	// whether to inherit position, rotation and scale from environment (parents)
+	uint8 inheritEnvironment;
+	// Flag to update graphics' attributes
+	uint8 invalidateGraphics;
+	// Flag to recalculate global transformations
+	uint8 invalidateGlobalTransformation;
 	// 3D transformation
 	Transformation transformation;
 	// Children list
@@ -74,12 +80,6 @@ class Container : SpatialObject
 	Container parent;
 	// Name
 	char* name;
-	// whether to inherit position, rotation and scale from environment (parents)
-	uint8 inheritEnvironment;
-	// Flag to update graphics' attributes
-	uint8 invalidateGraphics;
-	// Flag to recalculate global transformations
-	uint8 invalidateGlobalTransformation;
 	// Flag for parent to know to delete it
 	bool deleteMe;
 	// Flag to hide the entity

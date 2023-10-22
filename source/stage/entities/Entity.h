@@ -107,10 +107,16 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 /// @ingroup stage-entities
 class Entity : Container
 {
-	// Used for collisions and streaming
-	Size size;
+	// Flag used to know if the entity is within the camera reach
+	bool inCameraRange;
+	// Flag to prevent transforming the shapes during the transformation phase
+	bool transformShapes;
+	// Flag to signal if collisions are allowed
+	bool allowCollisions;
 	// Entity's internal id, set by the engine
 	int16 internalId;
+	// Used for collisions and streaming
+	Size size;
 	// Entity factory
 	EntityFactory entityFactory;
 	// sprites list
@@ -123,12 +129,6 @@ class Entity : Container
 	EntitySpec* entitySpec;
 	// Center displacement
 	Vector3D* centerDisplacement;
-	// Flag to prevent transforming the shapes during the transformation phase
-	bool transformShapes;
-	// Flag to signal if collisions are allowed
-	bool allowCollisions;
-	// Flag used to know if the entity is within the camera reach
-	bool inCameraRange;
 
 	/// @publicsection
 	static Entity instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
