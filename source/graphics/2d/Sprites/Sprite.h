@@ -108,6 +108,12 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : ListenerObject
 {
+	// Flag to signal if the sprite has been already registered
+	bool registered;
+	// show flag
+	bool show;
+	// Flag to allow rendering
+	bool positioned;
 	// Projected position based on optics configuration
 	PixelVector position;
 	// Displacement modifier to achieve better control over display
@@ -124,16 +130,10 @@ abstract class Sprite : ListenerObject
 	int16 halfHeight;
 	// World layer where to render the texture
 	int16 index;
-	// show flag
-	bool show;
-	// Update animation
-	bool writeAnimationFrame;
-	// Flag to allow rendering
-	bool positioned;
-	// Flag to signal if the sprite has been already registered
-	bool registered;
 	// Flag for making it transparent
 	uint8 transparent;
+	// Update animation
+	bool writeAnimationFrame;
 	// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
 	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
