@@ -74,8 +74,6 @@ class MBgmapSprite : BgmapSprite
 	uint32 textureXOffset;
 	// to speed up rendering
 	uint32 textureYOffset;
-	// Multiple BGMAP expansion
-	Point sizeMultiplier;
 
 	/// @publicsection
 	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner);

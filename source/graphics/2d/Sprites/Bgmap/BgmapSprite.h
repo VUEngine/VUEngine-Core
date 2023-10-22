@@ -84,6 +84,8 @@ class BgmapSprite : Sprite
 {
 	// bgmap's source coordinates
 	TextureSource textureSource;
+	// param table offset
+	int16 paramTableRow;
 	// angle with respect to each axis (indexes for the _sinLut array)
 	Rotation rotation;
 	// scale
@@ -92,8 +94,6 @@ class BgmapSprite : Sprite
 	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
 	uint32 param;
-	// param table offset
-	int16 paramTableRow;
 
 	/// @publicsection
 	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
