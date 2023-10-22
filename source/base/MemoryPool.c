@@ -319,7 +319,7 @@ void MemoryPool::free(BYTE* object)
 	int16 pool = __MEMORY_POOLS - 1;
 	for(; 0 <= pool && object < &this->poolLocation[pool][0]; pool--);
 
-	if(0 >= pool)
+	if(0 > pool)
 	{
 		// Calls to delete non dynamic singletons are intented to fall here.
 		return;
