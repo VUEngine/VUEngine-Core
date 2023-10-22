@@ -317,7 +317,7 @@ void MemoryPool::free(BYTE* object)
 #endif
 
 	int16 pool = __MEMORY_POOLS - 1;
-	for(; object < &this->poolLocation[pool][0] && 0 <= pool; pool--);
+	for(; 0 <= pool && object < &this->poolLocation[pool][0]; pool--);
 
 	if(0 >= pool)
 	{
