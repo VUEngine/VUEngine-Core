@@ -316,8 +316,7 @@ void MemoryPool::free(BYTE* object)
 	}
 #endif
 
-	int16 pool = __MEMORY_POOLS - 1;
-	for(; 0 <= pool && object < &this->poolLocation[pool][0]; pool--);
+	int16 pool = *((uint16*)object + 1);
 
 	if(0 > pool)
 	{
@@ -419,13 +418,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		{
 			if(poolLocationRight <= poolLocationEnd)
 			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationRight))
 				{
 					poolLocation = poolLocationRight;
 					break;
 				}
 				
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationEnd))
 				{
 					poolLocation = poolLocationEnd;
 					break;
@@ -440,13 +439,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 				while(poolLocationLeft >= poolLocationStart)
 				{
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationLeft))
 					{
 						poolLocation = poolLocationLeft;
 						break;
 					}
 					
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationStart))
 					{
 						poolLocation = poolLocationStart;
 						break;
@@ -461,13 +460,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 			if(poolLocationLeft >= poolLocationStart)
 			{
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationLeft))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationLeft))
 				{
 					poolLocation = poolLocationLeft;
 					break;
 				}
 				
-				if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationStart))
+				if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationStart))
 				{
 					poolLocation = poolLocationStart;
 					break;
@@ -482,13 +481,13 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 
 				while(poolLocationRight <= poolLocationEnd)
 				{
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationRight))
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationRight))
 					{
 						poolLocation = poolLocationRight;
 						break;
 					}
 					
-					if(__MEMORY_FREE_BLOCK_FLAG == *((uint32*)poolLocationEnd))
+					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationEnd))
 					{
 						poolLocation = poolLocationEnd;
 						break;
