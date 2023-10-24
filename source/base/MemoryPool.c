@@ -412,7 +412,10 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 		BYTE* poolLocationEnd = poolLocationStart + this->poolSizes[pool][ePoolSize] - blockSize;
 		BYTE* poolLocation = NULL;
 
-		CACHE_RESET;
+		if(100 < this->poolSizes[pool][ePoolSize] / blockSize)
+		{
+			CACHE_RESET;
+		}
 
 		do
 		{
@@ -435,8 +438,6 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			}
 			else
 			{
-				CACHE_RESET;
-
 				while(poolLocationLeft >= poolLocationStart)
 				{
 					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationLeft))
@@ -477,8 +478,6 @@ BYTE* MemoryPool::allocate(int32 numberOfBytes)
 			}
 			else
 			{
-				CACHE_RESET;
-
 				while(poolLocationRight <= poolLocationEnd)
 				{
 					if(__MEMORY_FREE_BLOCK_FLAG == *((uint16*)poolLocationRight))

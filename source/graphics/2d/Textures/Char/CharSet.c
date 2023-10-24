@@ -215,7 +215,7 @@ void CharSet::writeRLE()
 
 			compressedData <<= 8;
 		}
-	}	
+	}
 }
 
 /**
@@ -241,7 +241,10 @@ void CharSet::write()
 
 		default:
 
-			CACHE_RESET;
+			if(100 < tilesToWrite)
+			{
+				CACHE_RESET;
+			}
 
 #ifndef __RELEASE
 			Mem::copyWORD

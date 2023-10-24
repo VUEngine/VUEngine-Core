@@ -364,26 +364,28 @@ bool CharSetManager::defragmentProgressively()
 		{
 			CharSet charSet = CharSet::safeCast(node->data);
 
-			if(!isDeleted(charSet))
+			if(isDeleted(charSet))
 			{
-				uint32 offset = CharSet::getOffset(charSet);
+				continue;
+			}
 
-				if(this->freedOffset < offset)
-				{
-					VirtualList::removeElement(this->charSetsPendingWriting, charSet);
-					uint16 newOffset = this->freedOffset;
-					this->freedOffset += CharSet::getNumberOfChars(charSet);
-					CharSet::setOffset(charSet, newOffset);
+			uint32 offset = CharSet::getOffset(charSet);
 
-					//write to CHAR memory
-					CharSet::rewrite(charSet);
+			if(this->freedOffset < offset)
+			{
+				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
+				uint16 newOffset = this->freedOffset;
+				this->freedOffset += CharSet::getNumberOfChars(charSet);
+				CharSet::setOffset(charSet, newOffset);
 
-					return true;
-				}
-				else if(this->freedOffset == offset)
-				{
-					this->freedOffset += CharSet::getNumberOfChars(charSet);
-				}
+				//write to CHAR memory
+				CharSet::rewrite(charSet);
+
+				return true;
+			}
+			else if(this->freedOffset == offset)
+			{
+				this->freedOffset += CharSet::getNumberOfChars(charSet);
 			}
 		}
 

@@ -148,8 +148,6 @@ void ObjectSprite::rewrite()
 
 	ObjectAttributes* objectPointer = NULL;
 
-	CACHE_RESET;
-
 	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
 	{
 		int16 objectIndexStart = this->index + jDisplacement;
@@ -267,7 +265,6 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	ObjectAttributes* objectPointer = NULL;
 
-	CACHE_RESET;
 
 	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols, yDisplacement += this->yDisplacementIncrement)
 	{

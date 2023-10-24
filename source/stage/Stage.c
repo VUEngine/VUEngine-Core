@@ -912,6 +912,8 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
+	CACHE_RESET;
+
 	if(this->reverseStreaming)
 	{
 		if(NULL == this->streamingHeadNode)
@@ -920,8 +922,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 		}
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
-
-		CACHE_RESET;
 
 		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->previous, counter++)
 		{
@@ -967,8 +967,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 		}
 
 		bool negativeStreamingAmplitude = 0 > ((int16)this->streamingAmplitude);
-
-		CACHE_RESET;
 
 		for(uint16 counter = 0; counter < this->streamingAmplitude; this->streamingHeadNode = this->streamingHeadNode->next, counter++)
 		{

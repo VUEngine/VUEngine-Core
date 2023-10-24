@@ -316,12 +316,15 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	int16 cols = this->textureSpec->cols;
 	int16 rows = this->textureSpec->rows;
 
+	if(forceFullRewrite)
+	{
+		CACHE_RESET;
+	}
+
 	if(this->horizontalFlip)
 	{
 		if(this->verticalFlip)
 		{
-			CACHE_RESET;
-
 			//put the map into memory calculating the number of char for each reference
 			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
@@ -338,8 +341,6 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		}
 		else
 		{
-			CACHE_RESET;
-
 			//put the map into memory calculating the number of char for each reference
 			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
@@ -359,8 +360,6 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 	{
 		if(this->verticalFlip)
 		{
-			CACHE_RESET;
-
 			//put the map into memory calculating the number of char for each reference
 			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
@@ -377,8 +376,6 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 		}
 		else
 		{
-			CACHE_RESET;
-
 			//put the map into memory calculating the number of char for each reference
 			for(; 0 != counter && 0 != remainingRowsToBeWritten--; counter--)
 			{
