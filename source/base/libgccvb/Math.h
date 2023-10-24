@@ -324,6 +324,7 @@ extern const int16 _sinLut[];
 #endif
 
 #define __FIXED_SQUARE(n)								__FIXED_EXT_MULT(n, n)
+#define __F_SQUARE_ROOT_OF_2							(1.47f)
 
 
 //---------------------------------------------------------------------------------------------------------
