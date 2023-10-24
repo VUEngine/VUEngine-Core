@@ -97,7 +97,7 @@ PixelRightBox Mesh::getPixelRightBox()
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		PixelVector pixelVector = PixelVector::getFromVector3D(vertex->vector, 0);
+		PixelVector pixelVector = PixelVector::getFromVector3D(Vector3D::sum(vertex->vector, this->displacement), 0);
 
 		if(pixelVector.x < pixelRightBox.x0)
 		{
@@ -342,7 +342,7 @@ void Mesh::render()
 	extern Vector3D _previousCameraPosition;
 	extern Rotation _previousCameraInvertedRotation;
 
-	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition);
 	Mesh::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)

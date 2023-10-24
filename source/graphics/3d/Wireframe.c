@@ -52,6 +52,7 @@ void Wireframe::constructor(WireframeSpec* wireframeSpec)
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
 	this->draw = false;
+	this->displacement = Vector3D::zero();
 }
 
 /**
@@ -243,4 +244,12 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	this->squaredDistanceToCamera = distanceToCamera;
 #endif
+}
+
+void Wireframe::setDisplacement(const Vector3D* displacement)
+{
+	if(NULL != displacement)
+	{
+		this->displacement = *displacement;
+	}
 }
