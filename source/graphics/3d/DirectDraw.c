@@ -18,6 +18,7 @@
 #include <VIPManager.h>
 
 #include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,9 +60,6 @@ CustomCameraFrustum _frustumFixedPoint;
 uint16 _frustumWidth = __SCREEN_WIDTH;
 uint16 _frustumHeight = __SCREEN_HEIGHT;
 uint16 _frustumDepth = __SCREEN_DEPTH;
-
-uint16 _frustumWidthExtended = __SCREEN_WIDTH << 2;
-uint16 _frustumHeightExtended = __SCREEN_HEIGHT << 2;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -198,9 +196,6 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	_frustumWidth = _frustum.x1 > _frustum.x0 ? _frustum.x1 - _frustum.x0 : _frustum.x0 - _frustum.x1;
 	_frustumHeight = _frustum.y1 > _frustum.y0 ? _frustum.y1 - _frustum.y0 : _frustum.y0 - _frustum.y1;
 	_frustumDepth = _frustum.z1 > _frustum.z0 ? _frustum.z1 - _frustum.z0 : _frustum.z0 - _frustum.z1;
-
-	_frustumWidthExtended = _frustumWidth << 2;
-	_frustumHeightExtended = _frustumHeight << 2;
 
 	_frustumFixedPoint = (CustomCameraFrustum)
 	{
@@ -487,7 +482,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
 	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
 	// x0 = (y0 - y1) / (dy / dx) + x1
-	// x0 = (y0 - y1) / xySlope + x1
+	// x0 = (y0 - y1) / xySlope + x1	
 	if(_frustumFixedPoint.y0 > y)
 	{
 		y = _frustumFixedPoint.y0;
@@ -510,25 +505,27 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 
 static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
-	uint16 xFromDelta = (unsigned)(fromPoint.x - _frustum.x0);
+	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
+	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
 	uint16 yFromDelta = (unsigned)(fromPoint.y - _frustum.y0);
 
-	uint16 xToDelta = (unsigned)(toPoint.x - _frustum.x0);
+	uint16 xToDeltaLeft = (unsigned)(toPoint.x - toPoint.parallax - _frustum.x0);
+	uint16 xToDeltaRight = (unsigned)(toPoint.x + toPoint.parallax - _frustum.x0);
 	uint16 yToDelta = (unsigned)(toPoint.y - _frustum.y0);
 
-	bool xFromOutside = _frustumWidthExtended < xFromDelta;
-	bool yFromOutside = _frustumHeightExtended < yFromDelta;
+	bool xFromOutside = _frustumWidth < xFromDeltaLeft && _frustumWidth < xFromDeltaRight;
+	bool yFromOutside = _frustumHeight < yFromDelta;
 	bool zFromOutside = _frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
 
-	bool xToOutside = _frustumWidthExtended < xToDelta;
-	bool yToOutside = _frustumHeightExtended < yToDelta;
+	bool xToOutside = _frustumWidth < xToDeltaLeft && _frustumWidth < xToDeltaRight;
+	bool yToOutside = _frustumHeight < yToDelta;
 	bool zToOutside = _frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
 	bool xOutside = (xFromOutside && xToOutside) && (0 <= ((unsigned)fromPoint.x ^ (unsigned)toPoint.x));
 	bool yOutside = (yFromOutside && yToOutside) && (0 <= ((unsigned)fromPoint.y ^ (unsigned)toPoint.y));
 	bool zOutside = (zFromOutside + zToOutside);
 
-	if(xOutside + yOutside + zOutside)
+	if(xOutside || yOutside || zOutside)
 	{
 		return;
 	}
@@ -552,7 +549,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return;
 	}
 
-	if((_frustumWidth < xFromDelta) + (_frustumHeight < yFromDelta))
+	if(_frustumWidth < xFromDeltaLeft || _frustumWidth < xFromDeltaRight || _frustumHeight < yFromDelta)
 	{
 		totalPixelRounding = 0;
 
@@ -565,7 +562,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	if((_frustumWidth < xToDelta) + (_frustumHeight < yToDelta))
+	if(_frustumWidth < xToDeltaLeft || _frustumWidth < xToDeltaRight || _frustumHeight < yToDelta)
 	{
 		totalPixelRounding = 0;
 
