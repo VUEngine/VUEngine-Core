@@ -672,9 +672,9 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 					top = pixelRightBox.y0;
 				}
 
-				if(right < pixelRightBox.y1)
+				if(bottom < pixelRightBox.y1)
 				{
-					top = pixelRightBox.y1;
+					bottom = pixelRightBox.y1;
 				}
 
 				if(front > pixelRightBox.z0)
@@ -699,32 +699,32 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 		front = -back;
 	}
 
-	if((0 == pixelRightBox->x0) | (pixelGlobalPosition.x + left < pixelRightBox->x0))
+	if((0 == pixelRightBox->x0) || (pixelGlobalPosition.x + left < pixelRightBox->x0))
 	{
 		pixelRightBox->x0 = pixelGlobalPosition.x + left;
 	}
 
-	if((0 == pixelRightBox->x1) | (right + pixelGlobalPosition.x > pixelRightBox->x1))
+	if((0 == pixelRightBox->x1) || (right + pixelGlobalPosition.x > pixelRightBox->x1))
 	{
 		pixelRightBox->x1 = right + pixelGlobalPosition.x;
 	}
 
-	if((0 == pixelRightBox->y0) | (pixelGlobalPosition.y + top < pixelRightBox->y0))
+	if((0 == pixelRightBox->y0) || (pixelGlobalPosition.y + top < pixelRightBox->y0))
 	{
 		pixelRightBox->y0 = pixelGlobalPosition.y + top;
 	}
 
-	if((0 == pixelRightBox->y1) | (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
+	if((0 == pixelRightBox->y1) || (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
 	{
 		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
 	}
 
-	if((0 == pixelRightBox->z0) | (pixelGlobalPosition.z + front < pixelRightBox->z0))
+	if((0 == pixelRightBox->z0) || (pixelGlobalPosition.z + front < pixelRightBox->z0))
 	{
 		pixelRightBox->z0 = pixelGlobalPosition.z + front;
 	}
 
-	if((0 == pixelRightBox->z1) | (back + pixelGlobalPosition.z > pixelRightBox->z1))
+	if((0 == pixelRightBox->z1) || (back + pixelGlobalPosition.z > pixelRightBox->z1))
 	{
 		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
@@ -942,9 +942,9 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 						top = pixelRightBox.y0;
 					}
 
-					if(right < pixelRightBox.y1)
+					if(bottom < pixelRightBox.y1)
 					{
-						top = pixelRightBox.y1;
+						bottom = pixelRightBox.y1;
 					}
 
 					if(front > pixelRightBox.z0)
@@ -961,32 +961,32 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
 		}
 	}	
 
-	if((0 == pixelRightBox->x0) | (pixelGlobalPosition.x + left < pixelRightBox->x0))
+	if((0 == pixelRightBox->x0) || (pixelGlobalPosition.x + left < pixelRightBox->x0))
 	{
 		pixelRightBox->x0 = pixelGlobalPosition.x + left;
 	}
 
-	if((0 == pixelRightBox->x1) | (right + pixelGlobalPosition.x > pixelRightBox->x1))
+	if((0 == pixelRightBox->x1) || (right + pixelGlobalPosition.x > pixelRightBox->x1))
 	{
 		pixelRightBox->x1 = right + pixelGlobalPosition.x;
 	}
 
-	if((0 == pixelRightBox->y0) | (pixelGlobalPosition.y + top < pixelRightBox->y0))
+	if((0 == pixelRightBox->y0) || (pixelGlobalPosition.y + top < pixelRightBox->y0))
 	{
 		pixelRightBox->y0 = pixelGlobalPosition.y + top;
 	}
 
-	if((0 == pixelRightBox->y1) | (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
+	if((0 == pixelRightBox->y1) || (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
 	{
 		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
 	}
 
-	if((0 == pixelRightBox->z0) | (pixelGlobalPosition.z + front < pixelRightBox->z0))
+	if((0 == pixelRightBox->z0) || (pixelGlobalPosition.z + front < pixelRightBox->z0))
 	{
 		pixelRightBox->z0 = pixelGlobalPosition.z + front;
 	}
 
-	if((0 == pixelRightBox->z1) | (back + pixelGlobalPosition.z > pixelRightBox->z1))
+	if((0 == pixelRightBox->z1) || (back + pixelGlobalPosition.z > pixelRightBox->z1))
 	{
 		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
