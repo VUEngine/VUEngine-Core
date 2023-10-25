@@ -218,15 +218,6 @@ uint32 EntityFactory::transformEntities()
 
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
-		if(!positionedEntityDescription->transformed)
-		{
-			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
-			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
-			positionedEntityDescription->transformed = true;
-
-			return __ENTITY_PENDING_PROCESSING;
-		}
-
 		if(!positionedEntityDescription->spritesCreated)
 		{
 			bool createdSprites = Entity::createSprites(positionedEntityDescription->entity);
@@ -269,6 +260,15 @@ uint32 EntityFactory::transformEntities()
 			{
 				return __ENTITY_PENDING_PROCESSING;
 			}
+		}
+
+		if(!positionedEntityDescription->transformed)
+		{
+			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
+			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
+			positionedEntityDescription->transformed = true;
+
+			return __ENTITY_PENDING_PROCESSING;
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
