@@ -61,6 +61,7 @@ class Mesh : Wireframe
 
 	/// @publicsection
 	void constructor(MeshSpec* meshSpec);
+	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
 	
 	override PixelRightBox getPixelRightBox();
 	override VirtualList getVertices();

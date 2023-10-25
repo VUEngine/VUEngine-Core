@@ -51,7 +51,7 @@ void Mesh::constructor(MeshSpec* meshSpec)
 
 	if(NULL != this->wireframeSpec)
 	{
-		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments);
+		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments, Vector3D::zero());
 	}
 }
 
@@ -250,18 +250,11 @@ static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
 	return pixelRightBox;
 }
 
-void Mesh::addSegments(PixelVector (*segments)[2])
+void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 {
 	if(NULL == segments)
 	{
 		return;
-	}
-
-	if(NULL != this->segments->head)
-	{
-		Mesh::deleteLists(this);
-
-		this->segments = new VirtualList();
 	}
 
 	bool isEndSegment = false;
@@ -276,7 +269,7 @@ void Mesh::addSegments(PixelVector (*segments)[2])
 
 		if(!isEndSegment)
 		{
-			Mesh::addSegment(this, startVector, endVector);
+			Mesh::addSegment(this, Vector3D::sum(startVector, displacement), Vector3D::sum(endVector, displacement));
 		}
 
 		i++;
