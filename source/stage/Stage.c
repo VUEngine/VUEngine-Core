@@ -285,7 +285,7 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	{
 		if(NULL == pixelRightBox)
 		{
-			int32 pad += this->streaming.loadPadding;
+			pad += this->streaming.loadPadding;
 
 			// check x visibility
 			if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
