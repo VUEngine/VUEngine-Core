@@ -34,6 +34,7 @@
 #include <VUEngine.h>
 
 #include <debugConfig.h>
+#include <debugUtilities.h>
 #include <string.h>
 
 
@@ -256,22 +257,24 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
 	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
 
+	int32 pad = (0 < position2D.z ? position2D.z : 0);
+
 	if(forceNoPopIn)
 	{
 		// check x visibility
-		if(position2D.x + pixelRightBox->x1 < 0 || position2D.x + pixelRightBox->x0 > __SCREEN_WIDTH)
+		if(position2D.x + pixelRightBox->x1 < pad || position2D.x + pixelRightBox->x0 > __SCREEN_WIDTH - pad)
 		{
 			return true;
 		}
 
 		// check y visibility
-		if(position2D.y + pixelRightBox->y1 < 0 || position2D.y + pixelRightBox->y0 > __SCREEN_HEIGHT)
+		if(position2D.y + pixelRightBox->y1 < pad || position2D.y + pixelRightBox->y0 > __SCREEN_HEIGHT - pad)
 		{
 			return true;
 		}
 
 		// check z visibility
-		if(position2D.z + pixelRightBox->z1 < 0 || position2D.z + pixelRightBox->z0 > __SCREEN_DEPTH)
+		if(position2D.z + pixelRightBox->z1 < pad || position2D.z + pixelRightBox->z0 > __SCREEN_DEPTH - pad)
 		{
 			return true;
 		}
@@ -282,7 +285,7 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 	{
 		if(NULL == pixelRightBox)
 		{
-			int32 pad = this->streaming.loadPadding + __ABS(position2D.z);
+			int32 pad += this->streaming.loadPadding;
 
 			// check x visibility
 			if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
@@ -305,19 +308,19 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 		else
 		{
 			// check x visibility
-			if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0 || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1)
+			if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0  - pad || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 + pad)
 			{
 				return false;
 			}
 
 			// check y visibility
-			if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0 || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1)
+			if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0  - pad || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + pad)
 			{
 				return false;
 			}
 
 			// check z visibility
-			if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0 || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1)
+			if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0  - pad || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + pad)
 			{
 				return false;
 			}
@@ -685,12 +688,11 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 
 	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
 
-	int32 pad = this->streaming.loadPadding + __ABS(stageEntityDescription->positionedEntity->onScreenPosition.z);
-
-	stageEntityDescription->pixelRightBox.x0 -= pad;
-	stageEntityDescription->pixelRightBox.x1 += pad;
-	stageEntityDescription->pixelRightBox.y0 -= pad;
-	stageEntityDescription->pixelRightBox.y1 += pad;
+	// Bake the padding in the bounding box to save on performance
+	stageEntityDescription->pixelRightBox.x0 -= this->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.x1 += this->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.y0 -= this->streaming.loadPadding;
+	stageEntityDescription->pixelRightBox.y1 += this->streaming.loadPadding;
 	stageEntityDescription->pixelRightBox.z0 -= this->streaming.loadPadding;
 	stageEntityDescription->pixelRightBox.z1 += this->streaming.loadPadding;
 

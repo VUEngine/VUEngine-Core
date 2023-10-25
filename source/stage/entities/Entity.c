@@ -1918,7 +1918,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 		this->inCameraRange = true;
 
-		int32 helperPad = pad + __ABS(position2D.z);
+		int32 helperPad = pad + (0 < position2D.z ? position2D.z : 0);
 
 		// check x visibility
 		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
