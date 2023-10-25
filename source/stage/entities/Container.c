@@ -718,6 +718,11 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			}
 			*/
 
+			if(child->deleteMe)
+			{
+				continue;
+			}
+
 			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
 			{
 				continue;
@@ -742,7 +747,7 @@ void Container::synchronizeChildrenGraphics()
 		{
 			Container child = Container::safeCast(node->data);
 
-			bool skip = (!child->synchronizeGraphics) + child->hidden + (!child->transformed) + (!child->invalidateGraphics && NULL == child->children);
+			bool skip = (!child->invalidateGraphics && NULL == child->children) || child->deleteMe || !child->synchronizeGraphics || child->hidden || !child->transformed;
 
 			if(skip)
 			{

@@ -29,6 +29,7 @@
 #include <VUEngine.h>
 
 #include <debugConfig.h>
+#include <debugUtilities.h>
 #include <string.h>
 
 
