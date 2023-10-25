@@ -743,8 +743,16 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
  *
  * @private
  */
-void Entity::calculateSize()
+void Entity::calculateSize(bool force)
 {
+	if(!force)
+	{
+		if(0 != this->size.x || 0 != this->size.y || 0 != this->size.z)
+		{
+			return;
+		}
+	}
+
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
 	Entity::calculateSizeFromChildren(this, &pixelRightBox, Vector3D::zero());
@@ -1586,11 +1594,7 @@ void Entity::createComponents()
 	Entity::createBehaviors(this);
 
 	// now can calculate the size
-	if(0 == this->size.x || 0 == this->size.y || 0 == this->size.z)
-	{
-		// must force size calculation now
-		Entity::calculateSize(this);
-	}
+	Entity::calculateSize(this, false);
 }
 
 /**
@@ -1783,7 +1787,7 @@ fixed_t Entity::getWidth()
 {
 	if(0 == this->size.x)
 	{
-		Entity::calculateSize(this);
+		Entity::calculateSize(this, false);
 	}
 
 	// must calculate based on the scale because not affine container must be enlarged
@@ -1799,7 +1803,7 @@ fixed_t Entity::getHeight()
 {
 	if(0 == this->size.y)
 	{
-		Entity::calculateSize(this);
+		Entity::calculateSize(this, false);
 	}
 
 	return this->size.y;
@@ -1814,7 +1818,7 @@ fixed_t Entity::getDepth()
 {
 	if(0 == this->size.z)
 	{
-		Entity::calculateSize(this);
+		Entity::calculateSize(this, false);
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged

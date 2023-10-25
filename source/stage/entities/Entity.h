@@ -152,7 +152,7 @@ class Entity : Container
 	Shape addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager);
 	void addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes);
 	void destroySprites();
-	void calculateSize();
+	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();

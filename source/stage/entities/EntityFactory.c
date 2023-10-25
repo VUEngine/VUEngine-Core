@@ -314,7 +314,7 @@ uint32 EntityFactory::makeReadyEntities()
 	{
 		if(!positionedEntityDescription->graphicsSynchronized)
 		{
-			Entity::calculateSize(positionedEntityDescription->entity);
+			Entity::calculateSize(positionedEntityDescription->entity, false);
 			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 			Entity::synchronizeGraphics(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
