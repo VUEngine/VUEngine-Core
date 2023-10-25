@@ -684,7 +684,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	PixelVector environmentPosition = {0, 0, 0, 0};
-	stageEntityDescription->pixelRightBox = Entity::getTotalSizeFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
+	stageEntityDescription->pixelRightBox = Entity::getBoundingBoxFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
 	stageEntityDescription->validRightBox = (0 != stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) || (0 != stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) || (0 != stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0);
 

@@ -134,7 +134,7 @@ class Entity : Container
 	static Entity instantiate(const EntitySpec* const entitySpec, int16 internalId, const char* const name, const PositionedEntity* const positionedEntity);
 	static Entity loadEntity(const PositionedEntity* const positionedEntity, int16 internalId);
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
-	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
+	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
 	static void setVisibilityPadding(int16 visibilityPadding);
 

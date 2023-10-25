@@ -1017,7 +1017,7 @@ static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, co
  * @param environmentPosition
  * @return						PixelRightBox
  */
-static PixelRightBox Entity::getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
+static PixelRightBox Entity::getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
