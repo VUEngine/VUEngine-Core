@@ -86,7 +86,8 @@ void Line::render()
  */
 void Line::draw()
 {
-	DirectDraw::drawColorLine(
+	DirectDraw::drawColorLine
+	(
 		this->a,
 		this->b,
 		this->color,
@@ -94,7 +95,8 @@ void Line::draw()
 		false
 	);
 /*
-	DirectDraw::drawColorLine(
+	DirectDraw::drawColorLine
+	(
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b)), 0),
 		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b), this->normal)), 0),
 		__COLOR_BRIGHT_RED,
