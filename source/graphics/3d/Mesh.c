@@ -306,7 +306,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	{
 		newMeshSegment->fromVertex = new Vertex;
 		newMeshSegment->fromVertex->vector = startVector;
-		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+		// 1024 because if segments are added after the initial render
+		// there can be graphical glitches
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){1024, 1024, 0, 0};
 
 		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
 	}
@@ -315,7 +317,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	{
 		newMeshSegment->toVertex = new Vertex;
 		newMeshSegment->toVertex->vector = endVector;
-		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+		// 1024 because if segments are added after the initial render
+		// there can be graphical glitches
+		newMeshSegment->toVertex->pixelVector = (PixelVector){1024, 1024, 0, 0};
 
 		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
 	}

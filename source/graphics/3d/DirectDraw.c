@@ -582,8 +582,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	}
 
 /*
-	PixelVector::print(fromPoint, 21, 6);
-	PixelVector::print(toPoint, 31, 6);
+	PixelVector::print(fromPoint, 21, 12);
+	PixelVector::print(toPoint, 31, 12);
 
 	PRINT_INT(__FIXED_EXT_TO_I(fromPointX), 1, 10);
 	PRINT_INT(__FIXED_EXT_TO_I(fromPointY), 1, 11);
