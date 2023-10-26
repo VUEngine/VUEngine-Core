@@ -161,12 +161,12 @@ void DirectDraw::startDrawing()
 
 void DirectDraw::setFrustum(CameraFrustum frustum)
 {
-	if(frustum.x1 > __SCREEN_WIDTH)
+	if(frustum.x1 >= __SCREEN_WIDTH)
 	{
 		frustum.x1 = __SCREEN_WIDTH - 1;
 	}
 
-	if(frustum.y1 > __SCREEN_HEIGHT)
+	if(frustum.y1 >= __SCREEN_HEIGHT)
 	{
 		frustum.y1 = __SCREEN_HEIGHT - 1;
 	}
