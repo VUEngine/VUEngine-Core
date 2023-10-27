@@ -37,7 +37,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-static int16 _visibilityPadding = 0;
+static int16 _visibilityPadding __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
 friend class VirtualNode;
 friend class VirtualList;

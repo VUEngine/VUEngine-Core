@@ -64,9 +64,9 @@ friend class VirtualNode;
 //												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
 
-fix7_9_ext _currentPhysicsElapsedTime = 0;
-static fixed_t _currentWorldFriction = 0;
-static const Vector3D* _currentGravity = 0;
+fix7_9_ext _currentPhysicsElapsedTime __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+static fixed_t _currentWorldFriction __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+static const Vector3D* _currentGravity __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
 static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
 {

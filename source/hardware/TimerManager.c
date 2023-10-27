@@ -34,7 +34,6 @@
 static TimerManager _timerManager;
 static SoundManager _soundManager;
 static StopwatchManager _stopwatchManager;
-static Printing _printing;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,7 +77,6 @@ void TimerManager::constructor()
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
 	_stopwatchManager = StopwatchManager::getInstance();
-	_printing = Printing::getInstance();
 }
 
 /**
