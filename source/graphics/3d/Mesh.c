@@ -352,6 +352,8 @@ void Mesh::render()
 
 	if(!scale && !rotate)
 	{
+		CACHE_RESET;
+
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
 			Vertex* vertex = (Vertex*)node->data;
@@ -363,6 +365,8 @@ void Mesh::render()
 	}
 	else if(scale && rotate)
 	{
+		CACHE_RESET;
+
 		Rotation rotation = *this->rotation;
 		Scale scale = *this->scale;
 
@@ -377,6 +381,8 @@ void Mesh::render()
 	}
 	else if(rotate)
 	{
+		CACHE_RESET;
+
 		Rotation rotation = *this->rotation;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
@@ -390,6 +396,8 @@ void Mesh::render()
 	}
 	else if(scale)
 	{
+		CACHE_RESET;
+
 		Scale scale = *this->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
@@ -411,6 +419,8 @@ void Mesh::draw()
 	NM_ASSERT(NULL != this->position, "Mesh::draw: NULL position");
 	NM_ASSERT(NULL != this->rotation, "Mesh::draw: NULL position");
 	NM_ASSERT(NULL != this->scale, "Mesh::draw: NULL position");
+
+	CACHE_RESET;
 
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
