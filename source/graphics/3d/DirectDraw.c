@@ -25,9 +25,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-extern uint32* _currentDrawingFrameBufferSet;
-DirectDraw _directDraw = NULL;
-
 #define	__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS				10000
 #define	__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS				1000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
@@ -44,7 +41,6 @@ enum DirectDrawLineShrinkingResult
 	kDirectDrawLineShrinkingUnsafe
 };
 
-
 typedef struct CustomCameraFrustum
 {
 	fixed_ext_t x0;
@@ -55,11 +51,12 @@ typedef struct CustomCameraFrustum
 	fixed_ext_t z1;
 } CustomCameraFrustum;
 
-static CameraFrustum _frustum;
-CustomCameraFrustum _frustumFixedPoint;
-uint16 _frustumWidth = __SCREEN_WIDTH;
-uint16 _frustumHeight = __SCREEN_HEIGHT;
-uint16 _frustumDepth = __SCREEN_DEPTH;
+static CameraFrustum _frustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+CustomCameraFrustum _frustumFixedPoint __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+uint16 _frustumWidth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_WIDTH;
+uint16 _frustumHeight __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_HEIGHT;
+uint16 _frustumDepth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_DEPTH;
+DirectDraw _directDraw __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------

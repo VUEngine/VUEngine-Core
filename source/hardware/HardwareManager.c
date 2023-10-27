@@ -44,8 +44,8 @@ extern uint32 _dramDataStart;
 int32 _vuengineLinkPointer = 0;
 int32 _vuengineStackPointer = 0;
 bool _stackHeadroomViolation = false;
-bool _enabledInterrupts = false;
-int16 _suspendInterruptRequest = 0;
+bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = false;
+int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
 typedef const struct ROMInfo
 {

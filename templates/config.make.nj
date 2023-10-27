@@ -32,19 +32,19 @@ USE_PROLOG_FUNCTIONS			= {% if compiler.prologFunctions %}1{% else %}0{% endif %
 # the WORLD attributes start.
 
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-MEMORY_POOL_SECTION			 	= {{ compiler.memoryUsage.memoryPool }}
+MEMORY_POOL_SECTION			 		= {{ compiler.memoryUsage.memoryPool }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-NON_INITIALIZED_DATA_SECTION	= {{ compiler.memoryUsage.uninitializedData }}
+NON_INITIALIZED_GLOBAL_DATA_SECTION	= {{ compiler.memoryUsage.uninitializedData }}
 # valid options are [/.data/.sdata/.dram_data/.sram_data]
-INITIALIZED_DATA_SECTION		= {{ compiler.memoryUsage.initializedData }}
+INITIALIZED_GLOBAL_DATA_SECTION		= {{ compiler.memoryUsage.initializedData }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-STATIC_SINGLETONS_DATA_SECTION	= {{ compiler.memoryUsage.staticSingletons }}
+STATIC_SINGLETONS_DATA_SECTION		= {{ compiler.memoryUsage.staticSingletons }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-VIRTUAL_TABLES_DATA_SECTION		= {{ compiler.memoryUsage.virtualTables }}
+VIRTUAL_TABLES_DATA_SECTION			= {{ compiler.memoryUsage.virtualTables }}
 
 # Size of variables to be loaded in the .sdata section
 # Not working properly because rosdata is used instead of rodata section
-# MSDA_SIZE						= 0
+# MSDA_SIZE							= 0
 
 # Scramble binary
-SCRAMBLE_BINARY					= {% if compiler.scrambleBinary %}1{% else %}0{% endif %}
+SCRAMBLE_BINARY						= {% if compiler.scrambleBinary %}1{% else %}0{% endif %}

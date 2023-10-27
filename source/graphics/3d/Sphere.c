@@ -17,6 +17,7 @@
 #include <DirectDraw.h>
 #include <Math.h>
 #include <Optics.h>
+#include <WireframeManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -105,9 +106,6 @@ void Sphere::setRadiusScale(fixed_t radiusScale)
 void Sphere::render()
 {
 	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
-
-	extern Vector3D _previousCameraPosition;
-	extern Rotation _previousCameraInvertedRotation;
 
 	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
 	Sphere::setupRenderingMode(this, &relativePosition);

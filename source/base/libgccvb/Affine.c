@@ -103,8 +103,6 @@ static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixe
 		fix19_13 topEdgeSizeZ = __FIX19_13_MULT(__FIXED_TO_FIX19_13(halfHeight), __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x))));
 		fix19_13 bottomEdgeSizeZ = -topEdgeSizeZ;
 
-		extern const Optical* _optical;
-
 		fix19_13 scaleXDifference = __FIX19_13_MULT(__I_TO_FIX19_13(1), __FIXED_TO_FIX19_13(__FIXED_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor)));
 		fix19_13 scaleYDifference = __FIX7_9_TO_FIX19_13(__SIN(__FIXED_TO_I(rotation->x)));
 

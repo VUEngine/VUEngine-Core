@@ -21,9 +21,9 @@
 
 Clock _gameClock = NULL;
 KeypadManager _keypadManager = NULL;
-char _itoaArray[__CHAR_HOLDER_SIZE] __attribute__((section(".bss"))) = {0};
-uint32 _seed = 7; /* Seed value */
-char _itoaNumbers[17] = "0123456789ABCDEF";
+char _itoaArray[__CHAR_HOLDER_SIZE] __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0};
+uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 7; /* Seed value */
+const char _itoaNumbers[17] = "0123456789ABCDEF";
 
 static void Utilities::setClock(Clock clock)
 {

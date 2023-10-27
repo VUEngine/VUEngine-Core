@@ -28,12 +28,12 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern const Vector3D* _cameraPosition;
-extern const Vector3D* _cameraPreviousPosition;
-extern const CameraFrustum* _cameraFrustum;
-extern const Rotation* _cameraRotation;
-extern const Rotation* _cameraInvertedRotation;
-extern const Optical* _optical;
+extern const Vector3D* _cameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const Vector3D* _cameraPreviousPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 
 //---------------------------------------------------------------------------------------------------------

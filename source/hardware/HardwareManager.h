@@ -43,8 +43,8 @@ static uint8* const _hardwareRegisters =			(uint8*)0x02000000;
 #define CACHE_CLEAR		asm("mov 1,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 #define CACHE_RESET		CACHE_DISABLE; CACHE_CLEAR; CACHE_ENABLE
 
-extern bool _enabledInterrupts;
-extern int16 _suspendInterruptRequest;
+extern bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 typedef struct ColumnTableSpec ColumnTableSpec;
 

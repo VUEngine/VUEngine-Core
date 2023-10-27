@@ -25,9 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-// to speed things up
-extern MemoryPool _memoryPool;
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -47,7 +44,7 @@ void Object::destructor()
 {
 	// free the memory
 #ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
-	MemoryPool::free(_memoryPool, (void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
+	MemoryPool::free((void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
 #else
 	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
 #endif

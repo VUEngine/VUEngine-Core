@@ -15,12 +15,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Camera.h>
 #include <Math.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 /// @ingroup base-libgccvb
 static class Rotation : Object
@@ -130,8 +133,6 @@ static inline Rotation Rotation::scalarDivision(Rotation rotation, int16 scalar)
 
 static inline Rotation Rotation::getRelativeToCamera(Rotation rotation)
 {
-	extern const Rotation* _cameraRotation;
-
 	return Rotation::clamp(rotation.x - _cameraRotation->x, rotation.y - _cameraRotation->y, rotation.z - _cameraRotation->z);
 }
 

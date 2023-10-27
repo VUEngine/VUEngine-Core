@@ -15,6 +15,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -110,7 +111,6 @@ static inline fixed_t PixelVector::length(PixelVector vector)
 
 static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 {
-	extern const Vector3D* _cameraPosition;
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
 	vector.x -= cameraPosition.x;
@@ -122,8 +122,6 @@ static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
 
 static inline PixelVector PixelVector::project(Vector3D vector3D, int16 parallax)
 {
-	extern const Optical* _optical;
-
 	vector3D.x -= (__FIXED_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumXViewDistancePower);	
 	vector3D.y -= (__FIXED_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumYViewDistancePower);	
 	
@@ -139,9 +137,7 @@ static inline PixelVector PixelVector::project(Vector3D vector3D, int16 parallax
 }
 
 static inline PixelVector PixelVector::getProjectionDisplacementHighPrecision(Vector3D vector3D, int16 parallax)
-{
-	extern const Optical* _optical;
-	
+{	
 	PixelVector projection =
 	{
 		-__METERS_TO_PIXELS(__FIXED_EXT_MULT((fixed_ext_t)vector3D.x - _optical->horizontalViewPointCenter, (fixed_ext_t)vector3D.z) >> (_optical->maximumXViewDistancePower + __PIXELS_PER_METER_2_POWER)),

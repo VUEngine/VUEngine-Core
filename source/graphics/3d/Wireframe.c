@@ -148,8 +148,6 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 	NM_ASSERT(NULL != this->wireframeSpec, "Wireframe::setupRenderingMode: NULL wireframeSpec");
 
-	extern Vector3D _cameraDirection;
-
 	if(0 > Vector3D::dotProduct(*relativePosition, _cameraDirection))
 	{
 		this->interlaced = this->wireframeSpec->interlaced;

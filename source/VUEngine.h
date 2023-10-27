@@ -64,7 +64,7 @@ class WireframeManager;
 class SoundManager;
 class SpatialObject;
 
-extern VUEngine _vuEngine;
+extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 /// @ingroup base
 singleton class VUEngine : ListenerObject
@@ -159,6 +159,6 @@ singleton class VUEngine : ListenerObject
 }
 
 
-extern uint32 _gameRandomSeed;
+extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 #endif

@@ -50,7 +50,7 @@
 
 
 /****** VIP Registers ******/
-extern volatile uint16* _vipRegisters;
+extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 /****** VIP Register Mnemonics ******/
 #define	__INTPND			0x00 // Interrupt Pending
@@ -144,6 +144,8 @@ static ObjectAttributes* const	_objectAttributesBaseAddress	=	(ObjectAttributes*
 
 static uint16* const	_columnTableBaseAddressLeft			 		=	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
 static uint16* const	_columnTableBaseAddressRight				=	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
+
+extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)

@@ -66,13 +66,13 @@ singleton class MemoryPool : Object
 
 	/// @publicsection
 	static MemoryPool getInstance();
+	static BYTE* allocate(int32 numBytes);
+	static void free(BYTE* object);
+	
 	void cleanUp();
-	BYTE* allocate(int32 numBytes);
-	void free(BYTE* object);
 	void printDirectory(int32 x, int32 y, int32 pool);
 	void printDetailedUsage(int32 x, int32 y);
 	void printResumedUsage(int32 x, int32 y);
 }
-
 
 #endif

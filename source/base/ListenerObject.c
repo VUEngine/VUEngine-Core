@@ -32,9 +32,6 @@
 friend class VirtualNode;
 friend class VirtualList;
 
-// to speed things up
-extern MemoryPool _memoryPool;
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

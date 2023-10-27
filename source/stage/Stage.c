@@ -800,7 +800,6 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 // load all visible entities
 void Stage::loadInitialEntities()
 {
-	extern const Vector3D* _cameraPosition;
 	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
 
 	// need a temporary list to remove and delete entities

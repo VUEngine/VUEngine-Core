@@ -20,6 +20,7 @@
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+#include <WireframeManager.h>
 
 #include <debugConfig.h>
 
@@ -335,9 +336,6 @@ void Mesh::render()
 	NM_ASSERT(NULL != this->position, "Mesh::render: NULL position");
 	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL rotation");
 	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL scale");
-
-	extern Vector3D _previousCameraPosition;
-	extern Rotation _previousCameraInvertedRotation;
 
 	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition);
 	Mesh::setupRenderingMode(this, &relativePosition);

@@ -33,7 +33,7 @@
 //											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-//volatile uint16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)_hardwareRegisters;
+//volatile uint16* _communicationRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)_hardwareRegisters;
 static volatile BYTE* _communicationRegisters =			(uint8*)0x02000000;
 
 
@@ -784,7 +784,7 @@ bool CommunicationManager::sendDataAsync(BYTE* data, int32 numberOfBytes, EventL
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(!isDeleted(this->receivedData))
@@ -841,12 +841,12 @@ bool CommunicationManager::startBidirectionalDataTransmission(WORD message, BYTE
 
 	if(isDeleted(this->sentData))
 	{
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->asyncSentByte = this->asyncReceivedByte = NULL;
@@ -908,12 +908,12 @@ bool CommunicationManager::startBidirectionalDataTransmissionAsync(WORD message,
 	if(isDeleted(this->sentData))
 	{
 		// Allocate memory to hold both the message and the data
-		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->sentData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	if(isDeleted(this->receivedData))
 	{
-		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
+		this->receivedData = (BYTE*)((uint32)MemoryPool::allocate(numberOfBytes + __DYNAMIC_STRUCT_PAD + __MESSAGE_SIZE) + __DYNAMIC_STRUCT_PAD);
 	}
 
 	this->syncSentByte = this->syncReceivedByte = NULL;

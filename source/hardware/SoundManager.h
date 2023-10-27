@@ -135,5 +135,6 @@ singleton class SoundManager : ListenerObject
 	void printPlaybackTime();
 }
 
+extern SoundRegistry* const _soundRegistries;
 
 #endif

@@ -77,9 +77,9 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-VUEngine _vuEngine = NULL;
+VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
-uint32 _gameRandomSeed = 0;
+uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
 #ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 static char* _processNameDuringGAMESTART = NULL;

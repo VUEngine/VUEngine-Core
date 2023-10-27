@@ -40,8 +40,8 @@
 WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
 ObjectAttributes _objectAttributesCache[1024] __attribute__((section(".dram_bss")));
 
-volatile uint16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
-uint32* _currentDrawingFrameBufferSet = NULL;
+volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
+uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 static VIPManager _vipManager = NULL;
 static WireframeManager _wireframeManager = NULL;

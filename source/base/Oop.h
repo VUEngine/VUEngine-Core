@@ -49,11 +49,8 @@
 			/* make sure that the class is properly set */												\
 			__CALL_CHECK_VTABLE(ClassName);																\
 																										\
-			/* to speed things up */																	\
-			extern MemoryPool _memoryPool;																\
-																										\
 			/* allocate object */																		\
-			uint16* memoryBlock = (uint16*)MemoryPool_allocate(_memoryPool, 							\
+			uint16* memoryBlock = (uint16*)MemoryPool_allocate(				 							\
 							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
 																										\
 			/* mark memory block as used by an object */												\
@@ -97,7 +94,7 @@
 #define __NEW_BASIC(ClassName)																			\
 																										\
 		/* allocate data */																				\
-		(ClassName*)((uint32)MemoryPool_allocate(MemoryPool_getInstance(),								\
+		(ClassName*)((uint32)MemoryPool_allocate(														\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
@@ -116,8 +113,7 @@
 		{																								\
 			ASSERT(object && *(uint32*)((uint32)object - __DYNAMIC_STRUCT_PAD), 						\
 				"Oop: deleting null basic object");														\
-			extern MemoryPool _memoryPool;																\
-			MemoryPool_free(_memoryPool, (BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));				\
+			MemoryPool_free((BYTE*)((uint32)object - __DYNAMIC_STRUCT_PAD));							\
 		}																								\
 		else 																							\
 		{																								\
@@ -126,7 +122,7 @@
 																										\
 	}
 #else
-#define __DELETE(objectToDelete)																				\
+#define __DELETE(objectToDelete)																		\
 	{																									\
 		void* object = (void*)objectToDelete;															\
 																										\
@@ -473,7 +469,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;												\
 																										\
 		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE							\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\
@@ -534,14 +530,14 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_DYNAMIC(ClassName)																	\
 																										\
 		/* declare the static pointer to instance */													\
-		static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;				\
+		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;				\
 																										\
 		/* define allocator */																			\
 		__CLASS_NEW_DEFINITION(ClassName)																\
 		__CLASS_NEW_END(ClassName);																		\
 																										\
 		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE							\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\

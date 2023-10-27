@@ -30,7 +30,10 @@
 #define TOGGLE_BIT(var,bit) (var ^= (0x01 << bit))
 #define GET_BIT(var,bit) 	(0x01 & (var >> bit))
 
-extern uint32 _seed;
+extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern char _itoaArray[] __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern const char _itoaNumbers[];
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -119,9 +122,6 @@ static inline int32 Utilities::getDigitsCount(int32 value)
 static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
-	
-	extern char _itoaArray[];
-	extern char _itoaNumbers[];
 
 	int32 i = __CHAR_HOLDER_SIZE - 1;
 

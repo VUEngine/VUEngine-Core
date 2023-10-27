@@ -41,11 +41,11 @@
 				__MEMORY_POOL_SECTION_ATTRIBUTE;														\
 																										\
 		/* global pointer to speed up allocation and free */											\
-		ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = 									\
+		ClassName _memoryPool __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 							\
 			&_singletonWrapper ## ClassName.instance;													\
 																										\
 		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\
@@ -103,6 +103,8 @@ void MemoryPool::constructor()
 
 	MemoryPool::reset(this);
 	MemoryPool::cleanUp(this);
+
+	_memoryPool = this;
 }
 
 /**
@@ -305,8 +307,10 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
  *
  * @param object	Pointer to the memory pool entry to free
  */
-void MemoryPool::free(BYTE* object)
+static void MemoryPool::free(BYTE* object)
 {
+	MemoryPool this = _memoryPool;
+
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
 
 #ifndef __RELEASE
@@ -372,8 +376,10 @@ void MemoryPool::free(BYTE* object)
  * @param numberOfBytes		Number of bytes to allocate
  * @return					Pointer to the memory pool entry allocated
  */
-BYTE* MemoryPool::allocate(int32 numberOfBytes)
+static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
+	MemoryPool this = _memoryPool;
+
 	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
 
 #ifndef __SHIPPING

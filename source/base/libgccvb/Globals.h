@@ -20,11 +20,5 @@ extern int32 _vuengineLinkPointer;
 extern int32 _vuengineStackPointer;
 extern bool _triggeringException;
 extern uint32 _bssEnd;
-extern const Vector3D* _cameraPosition;
-extern const Vector3D* _cameraPreviousPosition;
-extern const CameraFrustum* _cameraFrustum;
-extern const Rotation* _cameraRotation;
-extern const Rotation* _cameraInvertedRotation;
-extern const Optical* _optical;
 
 #endif

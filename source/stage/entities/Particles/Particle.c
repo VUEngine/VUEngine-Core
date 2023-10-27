@@ -434,8 +434,6 @@ bool Particle::isVisible()
 		pixelVector = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 	}
 
-	extern const CameraFrustum* _cameraFrustum;
-
 	// check x visibility
 	if(pixelVector.x + halfWidth < _cameraFrustum->x0 || pixelVector.x - halfWidth > _cameraFrustum->x1)
 	{

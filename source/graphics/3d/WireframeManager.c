@@ -33,12 +33,12 @@ friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
 
+Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
+Vector3D _previousCameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
+Vector3D _previousCameraPositionBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
+Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
+Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 
-Vector3D _cameraDirection = {0, 0, 0};
-Vector3D _previousCameraPosition = {0, 0, 0};
-Vector3D _previousCameraPositionBuffer = {0, 0, 0};
-Rotation _previousCameraInvertedRotation = {0, 0, 0};
-Rotation _previousCameraInvertedRotationBuffer = {0, 0, 0};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

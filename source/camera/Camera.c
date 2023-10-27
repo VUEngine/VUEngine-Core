@@ -28,11 +28,11 @@
 //												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-const Optical* _optical = NULL;
-const Vector3D* _cameraPosition = NULL;
-const Rotation* _cameraRotation = NULL;
-const Rotation* _cameraInvertedRotation = NULL;
-const CameraFrustum* _cameraFrustum = NULL;
+const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
+const Vector3D* _cameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
+const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
+const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
+const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------

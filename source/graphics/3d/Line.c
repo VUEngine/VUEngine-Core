@@ -17,6 +17,7 @@
 #include <DirectDraw.h>
 #include <Math.h>
 #include <Optics.h>
+#include <WireframeManager.h>
 
 #include <debugUtilities.h>
 
@@ -57,9 +58,6 @@ void Line::destructor()
  */
 void Line::render()
 {
-	extern Vector3D _previousCameraPosition;
-	extern Rotation _previousCameraInvertedRotation;
-
 	Vector3D position = Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b);
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
