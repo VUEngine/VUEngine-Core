@@ -126,8 +126,8 @@ end_init_data:
 /* initiallize .dram_data section */
 	movhi	hi(__dramDataStart), r0, r7
 	movea	lo(__dramDataStart), r7, r7
-	movhi	hi(__dram_dataEnd),   r0, r8
-	movea	lo(__dram_dataEnd),   r8, r8
+	movhi	hi(__dramDataEnd),   r0, r8
+	movea	lo(__dramDataEnd),   r8, r8
 	jr	    end_init_dram_data
 
 top_init_dram_data:

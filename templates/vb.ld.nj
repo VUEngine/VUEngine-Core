@@ -59,26 +59,26 @@ SECTIONS
 
 	/* Ram memory */
 	__dataLma = .;
-	.data __dataVma : AT(__dataLma)
+	.sdata __dataVma : AT(__dataLma)
 	{
 		PROVIDE (__dataStart = .);
-		*(.data*)
-	} >wram = 0xFF
-
-	.sdata ALIGN(2):
-	{
 		PROVIDE (__gp = . + 0x8000);
 		*(.sdata*)
+	} >wram = 0xFF
+
+	.data ALIGN(2):
+	{
+		*(.data*)
 		PROVIDE (__dataEnd = .);
 	} >wram = 0xFF
 
 	.dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
 	{
-		PROVIDE (__dram_dirty_start = .);
+		PROVIDE (__dramDirtyStart = .);
 		*(.dram_dirty*)
 		PROVIDE (__dramDataStart = .);
 		*(.dram_data*)
-		PROVIDE (__dram_dataEnd = .);
+		PROVIDE (__dramDataEnd = .);
 	} >dram = 0xFF
 
 	.sram_data __sramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.dram_data)) SUBALIGN(2)
@@ -102,7 +102,7 @@ SECTIONS
 		PROVIDE (__bssEnd = .);
 	} >wram = 0xFF
 
-	.dram_bss (NOLOAD): AT(__dram_dataEnd)
+	.dram_bss (NOLOAD): AT(__dramDataEnd)
 	{
 		PROVIDE(__dramBssStart = .);
 		*(.dram_bss*)

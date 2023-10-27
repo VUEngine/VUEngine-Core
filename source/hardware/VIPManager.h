@@ -174,8 +174,8 @@ extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_A
 #define	__WORLD_END				0x0040
 
 // param table for affine and hbias render
-extern uint32 _dram_dirty_start;
-#define __PARAM_TABLE_END 		((uint32)&_dram_dirty_start)
+extern uint32 _dramDirtyStart;
+#define __PARAM_TABLE_END 		((uint32)&_dramDirtyStart)
 
 
 //---------------------------------------------------------------------------------------------------------
