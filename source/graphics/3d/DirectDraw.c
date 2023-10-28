@@ -659,13 +659,13 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		for(; 1 < totalPixels; totalPixels -=2)
 		{
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX + __05F_FIXED), __FIXED_EXT_TO_I(fromPointY + __05F_FIXED), __FIXED_EXT_TO_I(parallaxStart + __05F_FIXED), color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
 			parallaxStart += parallaxStep;
 
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX + __05F_FIXED), __FIXED_EXT_TO_I(fromPointY + __05F_FIXED), -__FIXED_EXT_TO_I(parallaxStart + __05F_FIXED), color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
@@ -681,7 +681,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		for(; 0 < totalPixels; totalPixels -=1)
 		{
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX + __05F_FIXED), __FIXED_EXT_TO_I(fromPointY + __05F_FIXED), __FIXED_EXT_TO_I(parallaxStart + __05F_FIXED), color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
 
 			fromPointX += xStep;
 			fromPointY += yStep;
