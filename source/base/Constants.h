@@ -260,5 +260,9 @@ int32 Error_triggerException(char* message, char* detail);
 
 #define __STRINGIFY(a)							__MAKE_STRING(a)
 
+// Optimizations
+#define __LIKELY(expression)					(__builtin_expect(!!(expression), 1))
+#define __UNLIKELY(expression)					(__builtin_expect(!!(expression), 0))
+
 
 #endif
