@@ -248,14 +248,14 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
 
-	if(__builtin_expect(__FRAME_BUFFERS_SIZE > displacement, 1))
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
 		leftBuffer[displacement] |= pixel;
 	}
 
 	displacement += (parallax << 6);
 
-	if(__builtin_expect(__FRAME_BUFFERS_SIZE > displacement, 1))
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
 		rightBuffer[displacement] |= pixel;
 	}
@@ -267,7 +267,7 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	uint16 displacement = ((x - parallax) << 6) + (y >> 2);
 
-	if(__builtin_expect(__FRAME_BUFFERS_SIZE <= displacement, 0))
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
 		return;
 	}
