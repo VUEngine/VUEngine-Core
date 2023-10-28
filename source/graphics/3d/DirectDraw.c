@@ -255,12 +255,10 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 
 	displacement += (parallax << 6);
 
-	if(__FRAME_BUFFERS_SIZE <= displacement)
+	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
-		return;
+		rightBuffer[displacement] |= pixel;
 	}
-
-	rightBuffer[displacement] |= pixel;
 }
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
