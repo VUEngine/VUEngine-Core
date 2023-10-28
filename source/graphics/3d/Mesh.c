@@ -261,6 +261,10 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	bool isEndSegment = false;
 	uint16 i = 0;
 
+	// Prevent rendering when modifying the mesh because if segments are added after the initial render
+	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
+	this->draw = false;
+
 	do
 	{
 		Vector3D startVector = Vector3D::getFromPixelVector(segments[i][0]);
@@ -307,9 +311,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	{
 		newMeshSegment->fromVertex = new Vertex;
 		newMeshSegment->fromVertex->vector = startVector;
-		// 1024 because if segments are added after the initial render
-		// there can be graphical glitches
-		newMeshSegment->fromVertex->pixelVector = (PixelVector){1024, 1024, 0, 0};
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
 
 		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
 	}
@@ -318,9 +320,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	{
 		newMeshSegment->toVertex = new Vertex;
 		newMeshSegment->toVertex->vector = endVector;
-		// 1024 because if segments are added after the initial render
-		// there can be graphical glitches
-		newMeshSegment->toVertex->pixelVector = (PixelVector){1024, 1024, 0, 0};
+		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
 
 		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
 	}
