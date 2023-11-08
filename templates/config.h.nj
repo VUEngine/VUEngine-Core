@@ -242,14 +242,14 @@
 {% for pool in config.memoryPools.pools %}
 	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ pool.size ~ ', ' ~  pool.objects ~') \\\n' ~ poolBlockDefinitions -%}
 {% endfor %}
-{{ poolBlockDefinitions }}
+{{ poolBlockDefinitions | safe }}
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS \
 {%- set poolArrayDefinitions = '' -%}
 {% for pool in config.memoryPools.pools -%}
 	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ pool.size ~ ') \\\n' ~ poolArrayDefinitions -%}
 {% endfor %}
-{{ poolArrayDefinitions }}
+{{ poolArrayDefinitions | safe }}
 // percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD								{{ config.memoryPools.warningThreshold }}
 
