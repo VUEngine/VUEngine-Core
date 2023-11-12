@@ -1,10 +1,18 @@
 #!/bin/bash
 #
-
-function waitRandom()
+function waitRandomShort()
 {
-	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
-	sleep $delay
+#	PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=0.000
+#	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
+#	sleep $delay
+	sleep 0.001
+}
+
+function waitRandomLong()
+{
+#	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
+#	sleep $delay
+	sleep 0.01
 }
 
 function waitForLockToRelease()
@@ -23,7 +31,7 @@ function waitForLockToRelease()
 			sed -e 's#.*\(/[A-z][A-z0-9]*\.*\)#		\1#g' <<< $lockFolder  >> $CLASS_LOG_FILE
 		fi
 
-		waitRandom
+		waitRandomShort
 	done
 }
 
@@ -38,7 +46,7 @@ function tryToLock()
 		lockFolder=$1".lock"
 		lockFile=$lockFolder/stamp.txt
 
-		waitRandom
+		waitRandomShort
 
 		echo "Trying to lock on $file on caller $CALLER" >> $CLASS_LOG_FILE
 		mkdir $lockFolder 2>/dev/null ||
@@ -50,7 +58,7 @@ function tryToLock()
 				echo "Removing stale lock of nonexistent PID ${PID} for $file" >> $CLASS_LOG_FILE
 #				echo "Removing stale lock of nonexistent PID ${PID} for $file"
 				rm -f $lockFile
-				waitRandom
+				waitRandomShort
 				rm -Rf $lockFolder
 
 				tryToLock $file
@@ -115,7 +123,7 @@ function releaseLock()
 			fi
 
 			rm -f $lockFile
-			waitRandom
+			waitRandomShort
 			rm -Rf $lockFolder
 			echo "Released lock $file on caller $CALLER" >> $CLASS_LOG_FILE
 		else
@@ -142,14 +150,15 @@ WORKING_FOLDER=
 PRINT_DEBUG_OUTPUT=
 CLASSES_HIERARCHY_FILE=
 HEADERS_FOLDER=
-LIBRARY_NAME=
+PLUGINS_NAME=
 PLUGINS=
 LIBRARIES_PAHT=
-LIBRARIES_ARGUMENT=
+PLUGINS_ARGUMENT=
 
 while [ $# -gt 1 ]
 do
 	key="$1"
+
 	case $key in
 		-e)
 		ENGINE_HOME="$2"
@@ -183,20 +192,20 @@ do
 		shift # past argument
 		;;
 		-n)
-		LIBRARY_NAME="$2"
+		PLUGINS_NAME="$2"
 		shift # past argument
 		;;
 		-p)
-		LIBRARIES_PATH="$2"
+		PLUGINS_FOLDER="$2"
 		shift # past argument
 		;;
 		-u)
-		USER_LIBRARIES_PATH="$2"
+		USER_PLUGINS_FOLDER="$2"
 		shift # past argument
 		;;
 		-l)
-		PLUGINS=`sed -e 's/:/ /g' <<< "$2"`
-		LIBRARIES_ARGUMENT="$2"
+		PLUGINS="$PLUGINS $2"
+		PLUGINS_ARGUMENT="$PLUGINS_ARGUMENT -l $2"
 		shift # past argument
 		;;
 		-t)
@@ -269,7 +278,7 @@ echo "Got lock on calling from $CALLER" > $CLASS_LOG_FILE
 echo "INPUT_FILE $INPUT_FILE" >> $CLASS_LOG_FILE
 echo "OUTPUT_FILE $OUTPUT_FILE" >> $CLASS_LOG_FILE
 
-DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
+DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$PLUGINS_NAME/$className".d"
 if [ -f "$DEPENDENCIES_FILE" ];
 then
 	DEPENDENCIES=`cat $DEPENDENCIES_FILE | sed -e 's/[\\:]//g' | tail -n +2 `
@@ -302,7 +311,7 @@ baseClassFile=
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
-	processedBaseClassFile=`sed -e 's#.*/source/#'"$WORKING_FOLDER"'/headers/'"$LIBRARY_NAME"'/source/#g' <<< "$baseClassFile"`
+	processedBaseClassFile=`sed -e 's#.*/source/#'"$WORKING_FOLDER"'/headers/'"$PLUGINS_NAME"'/source/#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
@@ -320,10 +329,11 @@ then
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
 #				echo "$baseClassName needs preprocessing, calling it"
+#				echo "wih plugins $PLUGINS"
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -u $USER_LIBRARIES_PATH -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR -l "$LIBRARIES_ARGUMENT"
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
 			else
 				mustBeReprocessed=true
 			fi
@@ -357,10 +367,10 @@ then
 fi
 
 # Then continue
-#echo "Preprocessing class: $className"
+#echo "Preprocessing class: $className from caller $CALLER"
 #echo
 #echo "$className PLUGINS $PLUGINS"
-#echo "$className LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT"
+#echo "$className PLUGINS_ARGUMENT $PLUGINS_ARGUMENT"
 echo "Starting preprocessing" >> $CLASS_LOG_FILE
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
@@ -390,7 +400,7 @@ then
 				counter=0
 				echo "Waiting for $baseClassName during computation of whole hierarchy"  >> $CLASS_LOG_FILE
 			fi
-			waitRandom
+			waitRandomLong
 			processedBaseClassFile=`find $WORKING_FOLDER/headers -name "$baseClassName.h" -print -quit`
 
 			counter=$((counter + 1))
@@ -523,7 +533,7 @@ CLASS_VIRTUAL_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className
 rm -f $CLASS_VIRTUAL_METHODS_DICTIONARY
 touch $CLASS_VIRTUAL_METHODS_DICTIONARY
 
-CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
+CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$PLUGINS_NAME/$className".d"
 #echo "$OUTPUT_FILE:" | sed -e 's@'"$WORKING_FOLDER"'/@@g' > $CLASS_DEPENDENCIES_FILE
 
 # Build headers search path
@@ -532,11 +542,11 @@ for plugin in $PLUGINS;
 do
 	plugin=`echo $plugin | sed -r "s@(user//|vuengine//)@/@"`
 
-	if [ -d "$LIBRARIES_PATH/$plugin" ]; 
+	if [ -d "$PLUGINS_FOLDER/$plugin" ]; 
 	then
-		searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
+		searchPaths=$searchPaths" $PLUGINS_FOLDER/$plugin/source"
 	else
-		searchPaths=$searchPaths" $USER_LIBRARIES_PATH/$plugin/source"
+		searchPaths=$searchPaths" $USER_PLUGINS_FOLDER/$plugin/source"
 	fi
 done
 
@@ -567,7 +577,7 @@ do
 				counter=0
 				echo "$className waiting (2) for $baseClassName"  >> $CLASS_LOG_FILE
 			fi
-			waitRandom
+			waitRandomShort
 		done
 	fi
 
@@ -580,8 +590,8 @@ do
 	then
 		# It needs to depend on both the original and the preprocessed base class header file
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
-#		echo " $headerFile \\" | sed -e 's@'"$LIBRARIES_PATH"'@'"$WORKING_FOLDER"'/headers@g' >> $CLASS_DEPENDENCIES_FILE
-		echo " $headerFile \\" | sed -e 's@'"$LIBRARIES_PATH"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_LIBRARIES_PATH"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g' >> $CLASS_DEPENDENCIES_FILE
+#		echo " $headerFile \\" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers@g' >> $CLASS_DEPENDENCIES_FILE
+		echo " $headerFile \\" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g' >> $CLASS_DEPENDENCIES_FILE
 	else
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
