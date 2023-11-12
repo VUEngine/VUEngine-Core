@@ -5,14 +5,14 @@ function waitRandomShort()
 #	PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=0.000
 #	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
 #	sleep $delay
-	sleep 0.001
+	sleep 0.0001
 }
 
 function waitRandomLong()
 {
 #	delay=$PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR$(( ( ( RANDOM % 900 ) + 10 ) ))
 #	sleep $delay
-	sleep 0.01
+	sleep 0.001
 }
 
 function waitForLockToRelease()
@@ -395,7 +395,7 @@ then
 
 		while [ -z "$processedBaseClassFile" ] || [ ! -f "$processedBaseClassFile" ] || [ -d "$baseClassLock" ];
 		do
-			if [ "$counter" -gt 200 ];
+			if [ "$counter" -gt 2000 ];
 			then
 				counter=0
 				echo "Waiting for $baseClassName during computation of whole hierarchy"  >> $CLASS_LOG_FILE
@@ -405,7 +405,7 @@ then
 
 			counter=$((counter + 1))
 
-			if [ "$counter" -gt 199 ];
+			if [ "$counter" -gt 1999 ];
 			then
 				echo "Error processing $className while computing hierarchy on $baseClassName with file $processedBaseClassFile not found"  >> $CLASS_LOG_FILE
 				echo "$className: base class $baseClassName not found"
