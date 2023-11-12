@@ -52,18 +52,11 @@ printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-ifeq ($(SCRAMBLE_BINARY),1)
-$(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
-	@$(eval OBJECT_FILES=$(shell find  $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes -name "*.o" | sort -R))
-	@echo 
-	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(OBJECT_FILES) $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
-else
 $(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(ASSETS_OBJECTS) $(BINARY_ASSETS) 
-endif
+	@touch $(WORKING_FOLDER)/assets/$(NAME)/hashes/dummy.o	
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(WORKING_FOLDER)/assets/$(NAME)/hashes/*.o $(BINARY_ASSETS) 
 
 $(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a

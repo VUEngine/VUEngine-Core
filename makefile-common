@@ -71,16 +71,13 @@ BINARY_ASSETS := $(shell echo $(BINARY_ASSETS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@
 
 # Makes a list of the binary files that will have to be created.
 ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/assets/$(NAME)/, $(ASSETS_SOURCES:.c=.o))
-ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS_TEMP := $(C_OBJECTS_TEMP) $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
-C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
-ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Override make's default call to GCC
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o:
@@ -108,7 +105,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(FINAL_SETUP_CLASSES)
 
-preprocessClasses: dirs $(PREPROCESS_ENGINE) preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
+preprocessClasses: dirs objectsFiles $(PREPROCESS_ENGINE) preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
 	@touch $(CLASSES_HIERARCHY_FILE)
 #	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 #	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
@@ -225,9 +222,7 @@ compile:
 		-e PLUGINS="$(PLUGINS)"																														\
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e DEBUG_CONFIG_FILE=$(DEBUG_CONFIG_FILE) 																									\
-		-e COMPONENTS=$(COMPONENTS)																													\
-		-e C_OBJECTS="$(C_OBJECTS)"																													\
-		-e ASSETS_OBJECTS="$(ASSETS_OBJECTS)"
+		-e COMPONENTS=$(COMPONENTS)																													
 		
 engine: deleteLibraries
 	@$(MAKE) --no-print-directory	 																												\
@@ -281,7 +276,7 @@ DIRS_HELPER_FILE = $(WORKING_FOLDER)/traces/$(BUILD_MODE)/$(BUILD_MODE)/.tmp.txt
 # Which directories contain source files
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME) ] && echo 1 || echo 0 )
-DIRS_HELPER_FILE_IS_TOO_OLD=$(shell test `find $(DIRS_HELPER_FILE) -mmin +1` && echo 1 || echo 0 )
+DIRS_HELPER_FILE_IS_TOO_OLD=$(shell test `find $(DIRS_HELPER_FILE) -mmin +1 2>>/dev/null` && echo 1 || echo 0 )
 
 ifeq ($(DIRS_HELPER_FILE_IS_TOO_OLD), 1)
 	SOURCES_DIRS_HELPER = $(SOURCES_DIRS)
@@ -312,7 +307,7 @@ dirs:
 	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)
-	@mkdir -p $(WORKING_FOLDER)/assets/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/assets/$(NAME)/hashes
 	@rm -Rf $(WORKING_FOLDER)/classes/locks
 	@echo "$(OBJECTS_DIRS)" > $(DIRS_HELPER_FILE)
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
@@ -320,6 +315,15 @@ dirs:
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
 	@echo "$(HEADERS_DIRS)" > $(DIRS_HELPER_FILE)
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
+
+objectsFiles:
+	$(file > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSETS_OBJECTS.txt, $(ASSETS_OBJECTS_TEMP))
+	$(shell sed -i -e 's@'"$(MY_HOME)"/'@@g' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSETS_OBJECTS.txt)
+	$(file > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/C_OBJECTS.txt, $(C_OBJECTS_TEMP))
+	$(shell sed -i -e 's@'"$(MY_HOME)"/'@@g' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/C_OBJECTS.txt)
+	$(file > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt, $(ASSEMBLY_OBJECTS_TEMP))
+	$(shell sed -i -e 's@'"$(MY_HOME)"/'@@g' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt)
+
 
 phony:
 	@echo > /dev/null
