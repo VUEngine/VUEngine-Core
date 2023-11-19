@@ -331,7 +331,7 @@ void Printing::setDebugMode()
 
 void Printing::setPalette(uint8 palette)
 {
-	if(palette < 4)
+	if(4 > palette)
 	{
 		this->palette = palette;
 	}
