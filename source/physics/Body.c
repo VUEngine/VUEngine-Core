@@ -316,25 +316,30 @@ void Body::moveUniformly(Vector3D velocity)
 {
 	uint16 axisOfUniformMovement = 0;
 
-	if(velocity.x)
+	if(0 != velocity.x)
 	{
 		axisOfUniformMovement |= __X_AXIS;
 		this->velocity.x = velocity.x;
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
 	}
 
-	if(velocity.y)
+	if(0 != velocity.y)
 	{
 		axisOfUniformMovement |= __Y_AXIS;
 		this->velocity.y = velocity.y;
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
 	}
 
-	if(velocity.z)
+	if(0 != velocity.z)
 	{
 		axisOfUniformMovement |= __Z_AXIS;
 		this->velocity.z = velocity.z;
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
 	}
 
-	if(axisOfUniformMovement)
+	Body::clampVelocity(this, false);
+
+	if(0 != axisOfUniformMovement)
 	{
 		Body::setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
 		Body::awake(this, axisOfUniformMovement);
@@ -662,20 +667,6 @@ MovementResult Body::updateMovement()
 		this->internalVelocity.x += instantaneousSpeed;
 		this->velocity.x = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.x);
 	}
-	else if(__UNIFORM_MOVEMENT == this->movementType.x)
-	{
-		if(__ABS(this->velocity.x) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
-		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
-			{
-				this->position.x += 0 <= this->velocity.x ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
-			}
-		}
-		else
-		{
-			this->position.x += __FIXED_MULT(this->velocity.x, _currentPhysicsElapsedTime);
-		}
-	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
@@ -684,20 +675,6 @@ MovementResult Body::updateMovement()
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
 		this->velocity.y = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.y);
-	}
-	else if(__UNIFORM_MOVEMENT == this->movementType.y)
-	{
-		if(__ABS(this->velocity.y) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
-		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
-			{
-				this->position.y += 0 <= this->velocity.y ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
-			}
-		}
-		else
-		{
-			this->position.y += __FIXED_MULT(this->velocity.y, _currentPhysicsElapsedTime);
-		}
 	}
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
@@ -708,9 +685,47 @@ MovementResult Body::updateMovement()
 		this->internalVelocity.z += instantaneousSpeed;
 		this->velocity.z = __FIX7_9_EXT_TO_FIXED(this->internalVelocity.z);
 	}
-	else if(__UNIFORM_MOVEMENT == this->movementType.z)
+
+	if(previousVelocity.x != this->velocity.x || previousVelocity.y != this->velocity.y || previousVelocity.z != this->velocity.z)
 	{
-		if(__ABS(this->velocity.z) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
+		Body::clampVelocity(this, 0 == previousVelocity.x && 0 == previousVelocity.y && 0 == previousVelocity.z);
+	}	
+
+	if(__NO_MOVEMENT != this->movementType.x)
+	{
+		if((__UNIFORM_MOVEMENT == this->movementType.x) && (__ABS(this->velocity.x) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
+		{
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
+			{
+				this->position.x += 0 <= this->velocity.x ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
+			}
+		}
+		else
+		{
+			this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, _currentPhysicsElapsedTime);
+			this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
+		}
+	}
+
+	if(__NO_MOVEMENT != this->movementType.y)
+	{
+		if((__UNIFORM_MOVEMENT == this->movementType.y) && (__ABS(this->velocity.y) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
+		{
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
+			{
+				this->position.y += 0 <= this->velocity.y ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
+			}
+		}
+		else
+		{
+			this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, _currentPhysicsElapsedTime);
+			this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
+		}
+	}
+
+	if(__NO_MOVEMENT != this->movementType.z)
+	{
+		if((__UNIFORM_MOVEMENT == this->movementType.z) && (__ABS(this->velocity.z) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
 		{
 			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.z)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
 			{
@@ -719,28 +734,9 @@ MovementResult Body::updateMovement()
 		}
 		else
 		{
-			this->position.z += __FIXED_MULT(this->velocity.z, _currentPhysicsElapsedTime);
+			this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, _currentPhysicsElapsedTime);
+			this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 		}
-	}
-
-	Body::clampVelocity(this, 0 == previousVelocity.x && 0 == previousVelocity.y && 0 == previousVelocity.z);
-
-	if(__ACCELERATED_MOVEMENT == this->movementType.x)
-	{
-		this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, _currentPhysicsElapsedTime);
-		this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
-	}
-
-	if(__ACCELERATED_MOVEMENT == this->movementType.y)
-	{
-		this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, _currentPhysicsElapsedTime);
-		this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
-	}
-
-	if(__ACCELERATED_MOVEMENT == this->movementType.z)
-	{
-		this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, _currentPhysicsElapsedTime);
-		this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 	}
 
 	return Body::getMovementResult(this, previousVelocity);
