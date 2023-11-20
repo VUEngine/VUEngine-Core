@@ -202,8 +202,6 @@ abstract class Shape : ListenerObject
 	Wireframe wireframe;
 	// flag to know if setup is needed
 	uint8 ready;
-	// flag to know if has moved
-	uint8 moved;
 	// flag to know if shape is reacting to collisions
 	uint8 enabled;
 	// flag to check against other shapes

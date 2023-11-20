@@ -19,6 +19,7 @@
 #include <Optics.h>
 #include <WireframeManager.h>
 
+#include <debugUtilities.h>
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -35,9 +36,19 @@ void Sphere::constructor(SphereSpec* sphereSpec)
 	Base::constructor(&sphereSpec->wireframeSpec);
 
 	this->center = PixelVector::zero();
-	this->radius = __ABS(sphereSpec->radius);
-	this->scaledRadius = this->radius;
-	this->drawCenter = sphereSpec->drawCenter;
+
+	if(NULL == sphereSpec)
+	{		
+		this->radius = __PIXELS_TO_METERS(8);
+		this->drawCenter = false;
+	}
+	else
+	{
+		this->radius = __ABS(sphereSpec->radius);
+		this->drawCenter = sphereSpec->drawCenter;
+	}
+
+	this->scaledRadius = __METERS_TO_PIXELS(this->radius);
 }
 
 /**
@@ -117,7 +128,9 @@ void Sphere::render()
 
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
+	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, __1I_FIXED));
 }
 
 /**

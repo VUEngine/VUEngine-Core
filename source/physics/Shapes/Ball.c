@@ -119,8 +119,12 @@ void Ball::configureWireframe()
 
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Sphere(NULL));
-	Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
-	Sphere::setRadius(this->wireframe, this->radius);
+
+	if(!isDeleted(this->wireframe))
+	{		
+		Sphere::setup(this->wireframe, &this->position, NULL, NULL, false);
+		Sphere::setRadius(this->wireframe, this->radius);
+	}
 }
 
 // print debug data

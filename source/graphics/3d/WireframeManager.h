@@ -46,6 +46,8 @@ singleton class WireframeManager : ListenerObject
 	void print(int32 x, int32 y);
 	Wireframe createWireframe(WireframeSpec* wireframeSpec);
 	void destroyWireframe(Wireframe wireframe);
+	Wireframe registerWireframe(Wireframe wireframe);
+	Wireframe unregisterWireframe(Wireframe wireframe);
 	void reset();
 	void enable();
 	void disable();

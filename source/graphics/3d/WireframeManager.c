@@ -112,18 +112,42 @@ Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec)
 
 	Wireframe wireframe = ((Wireframe (*)(WireframeSpec*))wireframeSpec->allocator)(wireframeSpec);
 
+	if(WireframeManager::registerWireframe(this, wireframe) == wireframe)
+	{
+		return wireframe;
+	}
+
+	delete wireframe;
+
+	return NULL;
+}
+
+/**
+ * Register a Wireframe to be rendered
+ *
+ * @param wireframeSpec	Wireframe spec
+ */
+Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
+{
 	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
 
-	if(!isDeleted(wireframe))
+	if(isDeleted(wireframe))
+	{
+		return NULL;
+	}
+
+	if(!VirtualList::find(this->wireframes, wireframe))
 	{
 		this->lockWireframeList = true;
 
 		VirtualList::pushBack(this->wireframes, wireframe);
 
 		this->lockWireframeList = false;
+
+		return wireframe;
 	}
 
-	return wireframe;
+	return NULL;
 }
 
 /**
@@ -143,11 +167,31 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 
 	Wireframe::hide(wireframe);
 
+	if(wireframe == WireframeManager::unregisterWireframe(this, wireframe))
+	{
+		delete wireframe;
+	}
+}
+
+/**
+ * Register a Wireframe to be rendered
+ *
+ * @param wireframeSpec	Wireframe spec
+ */
+Wireframe WireframeManager::unregisterWireframe(Wireframe wireframe)
+{
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
+
+	if(isDeleted(wireframe))
+	{
+		return NULL;
+	}
+
 	this->lockWireframeList = true;
-	VirtualList::removeElement(this->wireframes, wireframe);
+	bool result = VirtualList::removeElement(this->wireframes, wireframe);
 	this->lockWireframeList = false;
 
-	delete wireframe;
+	return result ? wireframe : NULL;
 }
 
 /**

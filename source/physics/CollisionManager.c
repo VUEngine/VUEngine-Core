@@ -274,8 +274,7 @@ void CollisionManager::showShapes()
 
 // free memory by deleting direct draw Polyhedrons
 void CollisionManager::hideShapes()
-{//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
-
+{
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
 

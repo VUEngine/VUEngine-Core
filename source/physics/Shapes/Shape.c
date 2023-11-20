@@ -21,6 +21,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include <debugConfig.h>
 
@@ -69,7 +70,6 @@ void Shape::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
 	this->layers = shapeSpec->layers;
 	this->layersToIgnore = shapeSpec->layersToIgnore;
 	this->collidingShapes = NULL;
-	this->moved = false;
 	this->registerCollisions = shapeSpec->checkForCollisions;
 
 	this->position = Vector3D::zero();
@@ -193,7 +193,6 @@ void Shape::transform(const Vector3D* position __attribute__ ((unused)), const R
 	}
 
 	this->ready = true;
-	this->moved = true;
 
 	// TODO: must update the rightbox
 	this->position = *position;
@@ -465,8 +464,6 @@ Vector3D Shape::getPosition()
  */
 void Shape::setPosition(const Vector3D* position)
 {
-	this->moved = true;
-
 	// TODO: must update the rightbox
 	this->position = *position;
 }
@@ -847,28 +844,31 @@ void Shape::registerCollisions(bool value)
 // show me
 void Shape::show()
 {
-	if(this->moved)
+	if(isDeleted(this->wireframe))
 	{
-		Shape::hide(this);
+		Shape::configureWireframe(this);
+
+		if(!isDeleted(this->wireframe))
+		{
+			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
+
+			Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
+			Wireframe::show(this->wireframe);
+		}
 	}
-
-	Shape::configureWireframe(this);
-
-	// show the wireframe
-	Wireframe::show(this->wireframe);
 }
 
 // hide polyhedron
 void Shape::hide()
 {
-	if(this->wireframe)
+	if(!isDeleted(this->wireframe))
 	{
+		WireframeManager::unregisterWireframe(WireframeManager::getInstance(), this->wireframe);
+
 		// delete the Polyhedron
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}
-
-	this->moved = false;
 }
 
 void Shape::print(int32 x, int32 y)
