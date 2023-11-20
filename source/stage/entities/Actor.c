@@ -262,7 +262,7 @@ void Actor::syncRotationWithBody()
 
 void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __attribute__((unused)))
 {
-	Actor::doSyncRotationWithBody(this);
+	Actor::syncRotationWithBody(this);
 }
 
 // updates the animation attributes
