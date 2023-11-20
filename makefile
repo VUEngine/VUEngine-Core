@@ -56,7 +56,7 @@ $(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT)
 	@echo 
 	@echo "Linking $(TARGET_FILE)-$(TYPE)"
 	@touch $(WORKING_FOLDER)/assets/$(NAME)/hashes/dummy.o	
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(WORKING_FOLDER)/assets/$(NAME)/hashes/*.o $(BINARY_ASSETS) 
+	@$(AR) rcsT $@ $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/*.o $(WORKING_FOLDER)/assets/$(NAME)/hashes/*.o $(BINARY_ASSETS) $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) 
 
 $(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
