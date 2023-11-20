@@ -188,7 +188,7 @@ void BgmapTexture::writeAnimatedMulti(int16 maximumTextureRowsToWrite)
 	int32 counter = maximumTextureRowsToWrite;
 
 	// put the map into memory calculating the number of char for each reference
-	for(; 0 != counter && this->remainingRowsToBeWritten--; counter--)
+	for(; 0 != counter && 0 != this->remainingRowsToBeWritten--; counter--)
 	{
 		int32 j = 1;
 		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec

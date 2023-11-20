@@ -525,8 +525,14 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				int32 totalCols = textureSpec->numberOfFrames * textureSpec->cols;
-				return 64 >= totalCols ? totalCols : 64;
+				uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
+
+				if(maximumNumberOfFrames > textureSpec->numberOfFrames)
+				{
+					return textureSpec->numberOfFrames * textureSpec->cols;
+				}
+				
+				return maximumNumberOfFrames * textureSpec->cols;
 			}
 			break;
 
@@ -573,8 +579,11 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 
 		case __ANIMATED_MULTI:
 			{
+				uint32 allocableCols = Texture::getTotalCols(textureSpec);
+				int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
+				
 				// return the total number of chars
-				return textureSpec->rows + textureSpec->rows * (Texture::getTotalCols(textureSpec) >> 6);
+				return textureSpec->rows + textureSpec->rows * (remainingCols / 64);
 			}
 			break;
 

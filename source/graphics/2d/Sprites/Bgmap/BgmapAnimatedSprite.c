@@ -105,10 +105,8 @@ void BgmapAnimatedSprite::writeAnimation()
 
 void BgmapAnimatedSprite::setFrameAnimatedMulti(uint16 frame)
 {
-	int16 mx = BgmapTexture::getXOffset(this->texture);
-	int16 my = BgmapTexture::getYOffset(this->texture);
-	int32 totalColumns = 64 - mx;
-	int32 frameColumn = Texture::getCols(this->texture) * frame;
-	this->textureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
-	this->textureSource.my = (my + (frameColumn % totalColumns)) << 3;;
+	int16 mx = BgmapTexture::getXOffset(this->texture) + Texture::getCols(this->texture) * frame;
+	int16 my = BgmapTexture::getYOffset(this->texture) + Texture::getRows(this->texture) * (mx / 64);
+	this->textureSource.mx = __MODULO(mx, 64) << 3;
+	this->textureSource.my = my << 3;
 }
