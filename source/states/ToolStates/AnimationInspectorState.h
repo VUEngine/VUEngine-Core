@@ -28,7 +28,7 @@ singleton class AnimationInspectorState : ToolState
 	/// @publicsection
 	static AnimationInspectorState getInstance();
 
-	override bool isKeyCombination(UserInput userInput);
+	override bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

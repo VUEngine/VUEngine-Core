@@ -64,9 +64,9 @@ void DebugState::destructor()
  *
  * @return bool
  */
-bool DebugState::isKeyCombination(UserInput userInput)
+bool DebugState::isKeyCombination(const UserInput* userInput)
 {
-	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RU));
+	return ((userInput->holdKey & K_LT) && (userInput->holdKey & K_RT) && (userInput->releasedKey & K_RU));
 }
 
 #endif

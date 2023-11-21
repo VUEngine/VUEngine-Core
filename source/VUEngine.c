@@ -498,7 +498,7 @@ void VUEngine::openTool(ToolState toolState)
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 }
 
-bool VUEngine::checkIfOpenTool(UserInput userInput)
+bool VUEngine::checkIfOpenTool(const UserInput* userInput)
 {
 	ToolState engineToolStates[] =
 	{

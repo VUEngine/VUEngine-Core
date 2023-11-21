@@ -80,9 +80,9 @@ void SoundTestState::enter(void* owner __attribute__ ((unused)))
  *
  * @return bool
  */
-bool SoundTestState::isKeyCombination(UserInput userInput)
+bool SoundTestState::isKeyCombination(const UserInput* userInput)
 {
-	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RD));
+	return ((userInput->holdKey & K_LT) && (userInput->holdKey & K_RT) && (userInput->releasedKey & K_RD));
 }
 
 #endif

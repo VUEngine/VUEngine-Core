@@ -28,7 +28,7 @@ singleton class StageEditorState : ToolState
 	/// @publicsection
 	static StageEditorState getInstance();
 
-	override bool isKeyCombination(UserInput userInput);
+	override bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

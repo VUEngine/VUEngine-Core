@@ -28,7 +28,7 @@ singleton class DebugState : ToolState
 	/// @publicsection
 	static DebugState getInstance();
 
-	override bool isKeyCombination(UserInput userInput);
+	override bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

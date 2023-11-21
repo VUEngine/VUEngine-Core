@@ -33,7 +33,7 @@ singleton class SoundTestState : ToolState
 	static SoundTestState getInstance();
 
 	override void enter(void* owner);
-	override bool isKeyCombination(UserInput userInput);
+	override bool isKeyCombination(const UserInput* userInput);
 }
 
 #endif

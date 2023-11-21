@@ -32,7 +32,7 @@ abstract class ToolState : GameState
 	/// @publicsection
 	void constructor();
 
-	virtual bool isKeyCombination(UserInput userInput) = 0;
+	virtual bool isKeyCombination(const UserInput* userInput) = 0;
 
 	override void enter(void* owner);
 	override void execute(void* owner);
