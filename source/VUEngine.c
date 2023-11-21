@@ -427,17 +427,6 @@ void VUEngine::changedState(ListenerObject eventFirer)
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
-/*
-	if(this->isPaused)
-	{
-		VUEngine::fireEvent(this, kEventGameUnpaused);
-	}
-	this->isPaused = false;
-
-	if(this->isPaused)
-	VUEngine::fireEvent(this, kEventGamePaused);
-	*/
-
 }
 
 // erase engine's current status
@@ -1151,6 +1140,7 @@ void VUEngine::pause(GameState pauseState)
 	{
 		VUEngine::addState(this, pauseState);
 		this->isPaused = true;
+		// VUEngine::fireEvent(this, kEventGamePaused);
 	}
 }
 
@@ -1166,6 +1156,8 @@ void VUEngine::unpause(GameState pauseState)
 	if(NULL != pauseState && currentGameState == pauseState)
 	{
 		VUEngine::removeState(this, pauseState);
+		this->isPaused = false;
+		// VUEngine::fireEvent(this, kEventGameUnpaused);
 	}
 }
 
