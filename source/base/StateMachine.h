@@ -22,6 +22,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+enum StateOperations
+{
+	kStateMachineIdle = 0,
+	kStateMachineSwapState,
+	kStateMachineCleanStack,
+	kStateMachinePushState,
+	kStateMachinePopState
+};
+
 class Telegram;
 class State;
 class VirtualList;
@@ -31,16 +40,21 @@ class StateMachine : ListenerObject
 {
 	// ListenerObject which owns this instance
 	void* owner;
+	// Stack of states
+	VirtualList stateStack;
 	// Pointer to the current state
 	State currentState;
 	// Pointer to the previous state
 	State previousState;
-	// Stack of states
-	VirtualList stateStack;
-
+	// game's next state
+	State nextState;
+	// game's next state operation
+	int16 transition;
+	
 	/// @publicsection
 	void constructor(void* owner);
 	void update();
+	bool prepareTransition(State state, int16 command);
 	void swapState(State newState);
 	uint32 pushState(State newState);
 	uint32 popState();

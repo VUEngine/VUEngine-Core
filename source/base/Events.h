@@ -71,6 +71,15 @@ enum Events
 
 	kEventKeypadManagerRaisedPowerFlag,
 
+	kEventStateMachineWillCleanStack,
+	kEventStateMachineCleanedStack,
+	kEventStateMachineWillSwapState,
+	kEventStateMachineSwapedState,
+	kEventStateMachineWillPushState,
+	kEventStateMachinePushedState,
+	kEventStateMachineWillPopState,
+	kEventStateMachinePoppedState,
+	
 	// do not remove me
 	kEventEngineLast
 };

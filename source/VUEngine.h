@@ -71,8 +71,6 @@ singleton class VUEngine : ListenerObject
 {
 	// game's state machine
 	StateMachine stateMachine;
-	// game's current state
-	GameState currentState;
 	// engine's global timer
 	Clock clock;
 	// managers
@@ -88,10 +86,6 @@ singleton class VUEngine : ListenerObject
 	Camera camera;
 	// current save data manager
 	ListenerObject saveDataManager;
-	// game's next state
-	GameState nextState;
-	// game's next state operation
-	int32 nextStateOperation;
 	// last process' name
 	char* lastProcessName;
 	// frame flags
@@ -108,7 +102,7 @@ singleton class VUEngine : ListenerObject
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void addState(GameState state);
 	void changeState(GameState state);
-	void cleanAndChangeState(GameState state);
+	void setState(GameState state);
 	void disableKeypad();
 	void enableKeypad();
 	void resetClock();

@@ -45,6 +45,7 @@ void StateMachine::constructor(void* owner)
 	this->owner = owner;
 	this->currentState = NULL;
 	this->previousState = NULL;
+	this->nextState = NULL;
 	this->stateStack = new VirtualList();
 }
 
@@ -61,6 +62,9 @@ void StateMachine::destructor()
 	this->owner = NULL;
 	this->currentState = NULL;
 	this->previousState = NULL;
+	this->nextState = NULL;
+
+	this->transition = kStateMachineIdle;
 
 	// free processor memory
 	// must always be called at the end of the destructor
@@ -68,11 +72,120 @@ void StateMachine::destructor()
 }
 
 /**
+ * Operation to take place on the next update cycle
+ *
+ * @param state	State to switch to
+ */
+bool StateMachine::prepareTransition(State state, int16 transition)
+{
+	if(kStateMachineIdle != this->transition || NULL == state || kStateMachineIdle == transition)
+	{
+		return false;
+	}
+
+	this->nextState = state;
+	this->transition = transition;
+
+	if(NULL == this->currentState && NULL != this->nextState)
+	{
+		StateMachine::applyTransition(this);
+	}
+
+	return true;
+}
+
+/**
+ * Method to initiate a change in the state machine
+ */
+void StateMachine::applyTransition()
+{
+	if(kStateMachineIdle != this->transition)
+	{
+		switch(this->transition)
+		{
+			case kStateMachineCleanStack:
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineWillCleanStack);
+				}
+
+				StateMachine::popAllStates(this);
+
+				if(NULL != this->nextState)
+				{
+					StateMachine::pushState(this, this->nextState);
+				}
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineCleanedStack);
+				}
+				break;
+
+			case kStateMachineSwapState:
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineWillSwapState);
+				}
+
+				StateMachine::swapState(this, this->nextState);
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineSwapedState);
+				}
+
+				break;
+
+			case kStateMachinePushState:
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineWillPushState);
+				}
+
+				StateMachine::pushState(this, this->nextState);
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachinePushedState);
+				}
+
+				break;
+
+			case kStateMachinePopState:
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachineWillPopState);
+				}
+
+				StateMachine::popState(this);
+
+				if(NULL != this->events)
+				{
+					StateMachine::fireEvent(this, kEventStateMachinePoppedState);
+				}
+				break;
+		}
+
+		this->nextState = NULL;
+		this->transition = kStateMachineIdle;
+	}
+}
+
+/**
  * Method to propagate the update process to the current state
  */
 void StateMachine::update()
 {
-	if(!isDeleted(this->currentState))
+	if(kStateMachineIdle != this->transition)
+	{
+		StateMachine::applyTransition(this);
+	}
+	else if(!isDeleted(this->currentState))
 	{
 		State::execute(this->currentState, this->owner);
 	}

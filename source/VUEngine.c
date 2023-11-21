@@ -64,14 +64,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-enum StateOperations
-{
-	kSwapState = 0,
-	kCleanAndSwapState,
-	kPushState,
-	kPopState
-};
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -119,9 +111,7 @@ void VUEngine::constructor()
 	// construct the game's state machine
 	this->stateMachine = new StateMachine(this);
 
-	this->currentState = NULL;
 	this->saveDataManager = NULL;
-	this->nextState = NULL;
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
@@ -153,8 +143,6 @@ void VUEngine::constructor()
 
 	// to make debugging easier
 	this->lastProcessName = PROCESS_NAME_START_UP;
-
-	this->nextStateOperation = kSwapState;
 
 	// setup engine parameters
 	VUEngine::initialize(this);
@@ -236,25 +224,23 @@ void VUEngine::debug()
 }
 
 // set game's initial state
-void VUEngine::start(GameState state)
+void VUEngine::start(GameState currentGameState)
 {
 	ASSERT(state, "VUEngine::start: initial state is NULL");
 
 	// Initialize VPU and turn off the brightness
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
 
-	if(!StateMachine::getCurrentState(this->stateMachine))
+	if(NULL == StateMachine::getCurrentState(this->stateMachine))
 	{
 		// Set state
-		VUEngine::setNextState(this, state);
+		VUEngine::setState(this, currentGameState);
 
-		while(true)
+		while(NULL != currentGameState)
 		{
-			VUEngine::checkForNewState(this);
-
 			VUEngine::currentFrameStarted(this);
 
-			VUEngine::run(this);
+			VUEngine::run(this, currentGameState);
 
 			VUEngine::currentGameCycleEnded(this);
 
@@ -274,6 +260,8 @@ void VUEngine::start(GameState state)
 #endif
 				}
 			}
+
+			currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 		}
 	}
 	else
@@ -282,123 +270,148 @@ void VUEngine::start(GameState state)
 	}
 }
 
-// Set game's state
-void VUEngine::changeState(GameState state)
+void VUEngine::setState(GameState gameState)
 {
-	// State changing must be done when no other process
-	// may be affecting the game's general state
-	this->nextState = state;
-	this->nextStateOperation = kSwapState;
+	StateMachine::removeAllEventListeners(this->stateMachine);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
+	StateMachine::prepareTransition(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
 }
 
-// Set game's state after cleaning the stack
-void VUEngine::cleanAndChangeState(GameState state)
+void VUEngine::changeState(GameState gameState)
 {
-	// state changing must be done when no other process
-	// may be affecting the game's general state
-	this->nextState = state;
-	this->nextStateOperation = kCleanAndSwapState;
+	StateMachine::removeAllEventListeners(this->stateMachine);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, kEventStateMachineWillSwapState);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineSwapedState);
+	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
 }
 
-// Add a state to the game's state machine's stack
-void VUEngine::addState(GameState state)
+void VUEngine::addState(GameState gameState)
 {
-	// State changing must be done when no other process
-	// may be affecting the game's general state
-	this->nextState = state;
-	this->nextStateOperation = kPushState;
+	StateMachine::removeAllEventListeners(this->stateMachine);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, kEventStateMachineWillPushState);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePushedState);
+	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachinePushState);
 }
 
-// set game's state
-void VUEngine::setNextState(GameState state)
+void VUEngine::removeState(GameState gameState)
 {
-	ASSERT(state, "VUEngine::setState: setting NULL state");
+	StateMachine::removeAllEventListeners(this->stateMachine);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState);
+	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState);
+	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
+}
+
+void VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return;
+	}
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+#endif
 
 	HardwareManager::displayOff(HardwareManager::getInstance());
 	HardwareManager::disableRendering(HardwareManager::getInstance());
 
-	switch(this->nextStateOperation)
+	// Clean the game's stack
+	// pop states until the stack is empty
+	VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
+
+	// Cancel all messages
+	VirtualNode node = VirtualList::begin(stateMachineStack);
+
+	for(; NULL != node; node = VirtualNode::getNext(node))
 	{
-		case kCleanAndSwapState:
-			{
-				// Clean the game's stack
-				// pop states until the stack is empty
-				VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
+		GameState gameState = GameState::safeCast(VirtualNode::getData(node));
 
-				// Cancel all messages
-				VirtualNode node = VirtualList::begin(stateMachineStack);
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+	}
+}
 
-				for(; NULL != node; node = VirtualNode::getNext(node))
-				{
-					GameState gameState = GameState::safeCast(VirtualNode::getData(node));
-
-					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
-					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
-
-				}
-
-				StateMachine::popAllStates(this->stateMachine);
-			}
-
-			// Setup new state
-			StateMachine::pushState(this->stateMachine, (State)state);
-			break;
-
-		case kSwapState:
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = PROCESS_NAME_STATE_SWAP;
-#endif
-
-			if(!isDeleted(this->currentState))
-			{
-				// Discard delayed messages from the current state
-				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));
-				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
-			}
-
-			// Setup new state
-			StateMachine::swapState(this->stateMachine, (State)state);
-			break;
-
-		case kPushState:
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = PROCESS_NAME_STATE_PUSH;
-#endif
-			// Setup new state
-			StateMachine::pushState(this->stateMachine, (State)state);
-			break;
-
-		case kPopState:
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = PROCESS_NAME_STATE_POP;
-#endif
-
-			if(this->currentState)
-			{
-				// discard delayed messages from the current state
-				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));
-				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
-			}
-
-			// setup new state
-			StateMachine::popState(this->stateMachine);
-			break;
+void VUEngine::pushingState(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return;
 	}
 
-	// No next state now
-	this->nextState = NULL;
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+#endif
+
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+}
+
+void VUEngine::swappingState(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return;
+	}
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+#endif
+
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+
+	if(!isDeleted(currentGameState))
+	{
+		// Discard delayed messages from the current state
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+	}
+}
+
+void VUEngine::poppingState(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return;
+	}
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+#endif
+
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+
+	if(!isDeleted(currentGameState))
+	{
+		// Discard delayed messages from the current state
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+	}
+}
+
+void VUEngine::changedState(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return;
+	}
+
+	StateMachine::removeAllEventListeners(this->stateMachine);
 
 	// Reset flags
 	this->currentGameCycleEnded = true;
 	this->nextGameCycleStarted = false;
 
 	// Save current state
-	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
-	if(GameState::isVersusMode(this->currentState))
+	if(GameState::isVersusMode(currentGameState))
 	{
 		CommunicationManager::startSyncCycle(this->communicationManager);
 	}
@@ -414,6 +427,17 @@ void VUEngine::setNextState(GameState state)
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
+/*
+	if(this->isPaused)
+	{
+		VUEngine::fireEvent(this, kEventGameUnpaused);
+	}
+	this->isPaused = false;
+
+	if(this->isPaused)
+	VUEngine::fireEvent(this, kEventGamePaused);
+	*/
+
 }
 
 // erase engine's current status
@@ -482,8 +506,6 @@ void VUEngine::openTool(ToolState toolState)
 		StateMachine::pushState(this->stateMachine, (State)this->nextState);
 		this->nextState = NULL;
 	}
-
-	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 }
 
 bool VUEngine::checkIfOpenTool(const UserInput* userInput)
@@ -538,7 +560,7 @@ bool VUEngine::checkIfOpenTool(const UserInput* userInput)
 
 
 // process input data according to the actual game status
-void VUEngine::processUserInput()
+void VUEngine::processUserInput(GameState currentGameState)
 {
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
@@ -561,8 +583,6 @@ void VUEngine::processUserInput()
 		return;
 	}
 #endif
-
-	GameState currentGameState = VUEngine::getCurrentState(this);
 
 	if(0 != (userInput->pressedKey + userInput->holdKey + userInput->releasedKey) || GameState::processUserInputRegardlessOfInput(currentGameState))
 	{
@@ -637,7 +657,7 @@ void VUEngine::updateSound()
 }
 
 // update game's rendering subsystem
-void VUEngine::synchronizeGraphics()
+void VUEngine::synchronizeGraphics(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_GRAPHICS;
@@ -651,7 +671,7 @@ void VUEngine::synchronizeGraphics()
 #endif
 
 	// apply transformations to graphics
-	GameState::synchronizeGraphics(this->currentState);
+	GameState::synchronizeGraphics(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_GRAPHICS);
@@ -659,14 +679,14 @@ void VUEngine::synchronizeGraphics()
 }
 
 // update game's physics subsystem
-void VUEngine::updatePhysics()
+void VUEngine::updatePhysics(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_PHYSICS;
 #endif
 
 	// simulate physics
-	GameState::updatePhysics(this->currentState);
+	GameState::updatePhysics(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_PHYSICS);
@@ -695,21 +715,21 @@ void VUEngine::focusCamera()
 
 }
 
-void VUEngine::updateTransformations()
+void VUEngine::updateTransformations(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_TRANSFORMS;
 #endif
 
 	// apply world transformations
-	GameState::transform(this->currentState);
+	GameState::transform(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_TRANSFORMS);
 #endif
 }
 
-void VUEngine::updateCollisions()
+void VUEngine::updateCollisions(GameState gameState)
 {
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -717,52 +737,26 @@ void VUEngine::updateCollisions()
 #endif
 
 	// process collisions
-	GameState::processCollisions(this->currentState);
+	GameState::processCollisions(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_COLLISIONS);
 #endif
 }
 
-bool VUEngine::stream()
+bool VUEngine::stream(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_STREAMING;
 #endif
 
-	bool result = GameState::stream(this->currentState);
+	bool result = GameState::stream(gameState);
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 
 	return result;
-}
-
-void VUEngine::checkForNewState()
-{
-	if(this->nextState)
-	{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = PROCESS_NAME_NEW_STATE;
-#endif
-		VUEngine::setNextState(this, this->nextState);
-
-#undef __DIMM_FOR_PROFILING
-#ifdef __DIMM_FOR_PROFILING
-
-		_vipRegisters[__GPLT0] = 0x50;
-		_vipRegisters[__GPLT1] = 0x50;
-		_vipRegisters[__GPLT2] = 0x54;
-		_vipRegisters[__GPLT3] = 0x54;
-		_vipRegisters[__JPLT0] = 0x54;
-		_vipRegisters[__JPLT1] = 0x54;
-		_vipRegisters[__JPLT2] = 0x54;
-		_vipRegisters[__JPLT3] = 0x54;
-
-		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-#endif
-	}
 }
 
 void VUEngine::updateFrameRate()
@@ -875,7 +869,7 @@ bool VUEngine::hasCurrentFrameEnded()
 	return this->currentGameCycleEnded;
 }
 
-void VUEngine::run()
+void VUEngine::run(GameState currentGameState)
 {
 	// Generate random seed
 	_gameRandomSeed = Utilities::randomSeed();
@@ -886,28 +880,25 @@ void VUEngine::run()
 #endif
 
 	// process user's input
-	VUEngine::processUserInput(this);
+	VUEngine::processUserInput(this, currentGameState);
 
 	// simulate physics
-	VUEngine::updatePhysics(this);
+	VUEngine::updatePhysics(this, currentGameState);
 
 	// apply transformations
-	VUEngine::updateTransformations(this);
+	VUEngine::updateTransformations(this, currentGameState);
 
 	// process collisions
-	VUEngine::updateCollisions(this);
+	VUEngine::updateCollisions(this, currentGameState);
 
 	// focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
 
 	// Synchronize 2D graphics
-	VUEngine::synchronizeGraphics(this);
-
-	// update game's logic
-	VUEngine::updateLogic(this);
+	VUEngine::synchronizeGraphics(this, currentGameState);
 
 	// stream after the logic to avoid having a very heady frame
-	if(!VUEngine::stream(this))
+	if(!VUEngine::stream(this, currentGameState))
 	{
 		// dispatch delayed messages
 		VUEngine::dispatchDelayedMessages(this);
@@ -915,6 +906,9 @@ void VUEngine::run()
 		// Update sound related logic
 		VUEngine::updateSound(this);
 	}
+
+	// update game's logic
+	VUEngine::updateLogic(this);
 
 #ifdef __ENABLE_PROFILER
 	HardwareManager::enableInterrupts();
@@ -1155,10 +1149,8 @@ void VUEngine::pause(GameState pauseState)
 
 	if(pauseState)
 	{
-		this->nextState = pauseState;
-		this->nextStateOperation = kPushState;
+		VUEngine::addState(this, pauseState);
 		this->isPaused = true;
-		VUEngine::fireEvent(this, kEventGamePaused);
 	}
 }
 
@@ -1166,14 +1158,14 @@ void VUEngine::pause(GameState pauseState)
 void VUEngine::unpause(GameState pauseState)
 {
 	ASSERT(pauseState, "VUEngine::unpause: null pauseState");
-	ASSERT(pauseState == this->currentState, "VUEngine::unpause: pauseState sent is not the current one");
 
-	if(pauseState && this->currentState == pauseState)
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+
+	ASSERT(pauseState == currentGameState, "VUEngine::unpause: pauseState sent is not the current one");
+
+	if(NULL != pauseState && currentGameState == pauseState)
 	{
-		this->nextState = pauseState;
-		this->nextStateOperation = kPopState;
-		this->isPaused = false;
-		VUEngine::fireEvent(this, kEventGameUnpaused);
+		VUEngine::removeState(this, pauseState);
 	}
 }
 
