@@ -296,7 +296,7 @@ void CharSet::rewrite()
  *
  * @param tilesDisplacement		Displacement
  */
-void CharSet::setTilesDisplacement(uint16 tilesDisplacement)
+void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 {
 	this->tilesDisplacement = tilesDisplacement;
 }
@@ -379,7 +379,7 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 bool CharSet::setFrame(uint16 frame)
 {
-	uint16 currentTilesDisplacement = this->tilesDisplacement;
+	uint32 currentTilesDisplacement = this->tilesDisplacement;
 
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
