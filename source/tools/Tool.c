@@ -57,10 +57,6 @@ void Tool::destructor()
 	Base::destructor();
 }
 
-void Tool::render()
-{
-}
-
 void Tool::setGameState(GameState gameState)
 {
 	this->gameState = gameState;

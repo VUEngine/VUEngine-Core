@@ -320,6 +320,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 		{
 			case __FRAMESTART:
 
+#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
+				PRINT_TEXT("F START:            ", 0, 27);
+				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 27);
+#endif
+
 				this->totalMilliseconds += __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
 				this->frameStartedDuringXPEND = this->processingXPEND;
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
@@ -331,8 +336,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-				VUEngine::saveProcessNameDuringGAMESTART(_vuEngine);
+#ifdef __SHOW_PROCESS_NAME_DURING_GAMESTART
+				PRINT_TEXT("G START:           ", 0, 26);
+				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 26);
 #endif
 
 				this->drawingEnded = false;
@@ -386,13 +392,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __SHOW_VIP_STATUS
 				VIPManager::print(this, 1, 2);
 #endif
-
-#ifdef __DEBUG_TOOLS
-				if(VUEngine::isInDebugMode(_vuEngine))
-				{
-					Debug::render(Debug::getInstance());
-				}
-#endif
 				break;
 
 			case __XPEND:
@@ -407,8 +406,9 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeStartInterrupt, NULL);
 #endif
 
-#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-				VUEngine::saveProcessNameDuringXPEND(_vuEngine);
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+				PRINT_TEXT("XPEND:            ", 0, 27);
+				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 27);
 #endif
 
 				this->logicEnded = false;

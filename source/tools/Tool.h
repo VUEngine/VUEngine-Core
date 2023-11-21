@@ -41,7 +41,6 @@ abstract class Tool : Object
 	void setGameState(GameState gameState);
 
 	virtual void update() = 0;
-	virtual void render();
 	virtual void show() = 0;
 	virtual void hide() = 0;
 	virtual void processUserInput(uint16 pressedKey) = 0;

@@ -185,13 +185,7 @@ void Debug::update()
 	{
 		((void (*)(Debug))this->update)(this);
 	}
-}
 
-/**
- * Render
- */
-void Debug::render()
-{
 	if(this->currentPage->data == &Debug_texturesPage && 0 <= this->bgmapSegment)
 	{
 		Debug::showBgmapSegment(this);

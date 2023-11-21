@@ -113,19 +113,19 @@ singleton class VUEngine : ListenerObject
 	void cleanAndChangeState(GameState state);
 	void disableKeypad();
 	void enableKeypad();
-	Clock getClock();
 	void resetClock();
+	Clock getClock();
+	Clock getUpdateClock();
+	Clock getMessagingClock();
+	Clock getPhysicsClock();
 	CollisionManager getCollisionManager();
 	char* getLastProcessName();
-	Clock getMessagingClock();
-	Optical getOptical();
-	Clock getPhysicsClock();
+	void setLastProcessName(char* processName);
 	PhysicalWorld getPhysicalWorld();
 	uint32 getTime();
 	StateMachine getStateMachine();
 	Stage getStage();
 	GameState getCurrentState();
-	Clock getUpdateClock();
 	uint16 getGameFrameDuration();
 	void setGameFrameRate(uint16 gameFrameRate);
 	bool isEnteringSpecialMode();
@@ -135,27 +135,19 @@ singleton class VUEngine : ListenerObject
 	void pause(GameState pauseState);
 	void printClassSizes(int32 x, int32 y);
 	void reset(bool resetSounds);
-	void resetProfiling();
-	void setOptical(Optical optical);
 	void start(GameState state);
 	void unpause(GameState pauseState);
 	void wait(uint32 milliSeconds);
-	void setLastProcessName(char* processName);
-	bool isInDebugMode();
-	bool isInStageEditor();
-	bool isInAnimationInspector();
-	bool isInSoundTest();
+	void startProfiling();
+	void resetProfiling();
 	void openTool(ToolState toolState);
 	void nextFrameStarted(uint16 gameFrameDuration);
 	void nextGameCycleStarted(uint16 gameFrameDuration);
-	bool hasCurrentFrameEnded();
-	void saveProcessNameDuringGAMESTART();
-	void saveProcessNameDuringXPEND();
-	override bool handleMessage(Telegram telegram);
-	void registerSaveDataManager(ListenerObject saveDataManager);
 	ListenerObject getSaveDataManager();
+	void setSaveDataManager(ListenerObject saveDataManager);
 	long getRandomSeed();
-	void startProfiling();
+	
+	override bool handleMessage(Telegram telegram);
 }
 
 

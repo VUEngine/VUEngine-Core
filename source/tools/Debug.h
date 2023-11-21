@@ -70,7 +70,6 @@ singleton class Debug : Tool
 	/// @publicsection
 	static Debug getInstance();
 	override void update();
-	override void render();
 	override void show();
 	override void hide();
 	override void processUserInput(uint16 pressedKey);

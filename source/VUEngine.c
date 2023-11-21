@@ -81,14 +81,6 @@ VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
-#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-static char* _processNameDuringGAMESTART = NULL;
-#endif
-
-#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-static char* _processNameDuringXPEND = NULL;
-#endif
-
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 uint32 _dispatchCycle = 0;
 #endif
@@ -859,6 +851,13 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 		}
 #endif
 	}
+
+#ifdef __SOUND_TEST
+	if(VUEngine::isInSoundTest(this))
+	{
+		SoundManager::printPlaybackTime(this->soundManager);
+	}
+#endif
 }
 
 void VUEngine::currentFrameStarted()
@@ -1220,54 +1219,12 @@ void VUEngine::wait(uint32 milliSeconds)
 	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
-#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
-void VUEngine::saveProcessNameDuringGAMESTART()
-{
-	ASSERT(this, "VUEngine::saveProcessNameDuringGAMESTART: this null");
-
-	_processNameDuringGAMESTART = this->lastProcessName;
-
-#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
-	PRINT_TEXT("F START:           ", 0, 26);
-	PRINT_TEXT(_processNameDuringGAMESTART, 9, 26);
-
-	if(strcmp("end frame", _processNameDuringGAMESTART))
-	{
-		PRINT_TEXT(_processNameDuringGAMESTART, 25, 26);
-		PRINT_TEXT("    ", 44, 26);
-		PRINT_INT(TimerManager::getMillisecondsElapsed(this->timerManager), 44, 26);
-	}
-#endif
-}
-#endif
-
-#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
-void VUEngine::saveProcessNameDuringXPEND()
-{
-	ASSERT(this, "VUEngine::saveProcessNameDuringXPEND: this null");
-
-	_processNameDuringXPEND = this->lastProcessName;
-
-#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
-	PRINT_TEXT("XPEND:            ", 0, 27);
-	PRINT_TEXT(_processNameDuringXPEND, 9, 27);
-
-	if(strcmp("end frame", _processNameDuringXPEND))
-	{
-		PRINT_TEXT(_processNameDuringXPEND, 25, 27);
-		PRINT_TEXT("    ", 44, 27);
-		PRINT_INT(TimerManager::getMillisecondsElapsed(this->timerManager), 44, 27);
-	}
-#endif
-}
-#endif
-
 /**
  * Register the current save data manager. Use NULL if none.
  *
  * @param saveDataManager
  */
-void VUEngine::registerSaveDataManager(ListenerObject saveDataManager)
+void VUEngine::setSaveDataManager(ListenerObject saveDataManager)
 {
 	this->saveDataManager = saveDataManager;
 }

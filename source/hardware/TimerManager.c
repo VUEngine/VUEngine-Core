@@ -514,13 +514,6 @@ static void TimerManager::interruptHandler()
 		_timerManager->milliseconds += elapsedMilliseconds;
 
 		_timerManager->totalMilliseconds += elapsedMilliseconds;
-
-#ifdef __SOUND_TEST
-		if(VUEngine::isInSoundTest(VUEngine::getInstance()))
-		{
-			SoundManager::printPlaybackTime(SoundManager::getInstance());
-		}
-#endif
 	}
 
 	// update sounds
