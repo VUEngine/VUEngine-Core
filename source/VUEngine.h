@@ -97,8 +97,6 @@ singleton class VUEngine : ListenerObject
 	// frame flags
 	volatile bool currentGameCycleEnded;
 	volatile bool nextGameCycleStarted;
-	// random seed
-	uint32 randomSeed;
 	// game paused flag
 	bool isPaused;
 
@@ -145,12 +143,9 @@ singleton class VUEngine : ListenerObject
 	void nextGameCycleStarted(uint16 gameFrameDuration);
 	ListenerObject getSaveDataManager();
 	void setSaveDataManager(ListenerObject saveDataManager);
-	long getRandomSeed();
 	
 	override bool handleMessage(Telegram telegram);
 }
 
-
-extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 #endif

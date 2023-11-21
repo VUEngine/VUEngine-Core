@@ -79,8 +79,6 @@ enum StateOperations
 
 VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
-uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 uint32 _dispatchCycle = 0;
 #endif
@@ -111,8 +109,6 @@ void VUEngine::constructor()
 
 	// make sure the memory pool is initialized now
 	MemoryPool::getInstance();
-
-	this->randomSeed = 0;
 
 	// force construction now
 	this->clockManager = ClockManager::getInstance();
@@ -882,7 +878,7 @@ bool VUEngine::hasCurrentFrameEnded()
 void VUEngine::run()
 {
 	// Generate random seed
-	_gameRandomSeed = this->randomSeed = Utilities::randomSeed();
+	_gameRandomSeed = Utilities::randomSeed();
 
 #ifdef __ENABLE_PROFILER
 	HardwareManager::disableInterrupts();
@@ -1232,11 +1228,6 @@ void VUEngine::setSaveDataManager(ListenerObject saveDataManager)
 ListenerObject VUEngine::getSaveDataManager()
 {
 	return this->saveDataManager;
-}
-
-long VUEngine::getRandomSeed()
-{
-	return this->randomSeed;
 }
 
 #ifdef __ENABLE_PROFILER

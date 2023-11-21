@@ -33,6 +33,7 @@
 extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern char _itoaArray[] __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern const char _itoaNumbers[];
+extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 
 //---------------------------------------------------------------------------------------------------------
