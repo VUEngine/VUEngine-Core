@@ -111,12 +111,12 @@ void VUEngine::constructor()
 	// construct the game's state machine
 	this->stateMachine = new StateMachine(this);
 
-	this->saveDataManager = NULL;
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
 
 	// make sure all managers are initialized now
+	this->saveDataManager = NULL;
 	this->camera = NULL;
 	this->keypadManager = NULL;
 	this->vipManager = NULL;
@@ -240,7 +240,16 @@ void VUEngine::start(GameState currentGameState)
 		{
 			VUEngine::currentFrameStarted(this);
 
-			VUEngine::run(this, currentGameState);
+#ifdef __ENABLE_PROFILER
+			HardwareManager::disableInterrupts();
+			Profiler::start(Profiler::getInstance());
+#endif
+
+			currentGameState = VUEngine::run(this, currentGameState);
+
+#ifdef __ENABLE_PROFILER
+			HardwareManager::enableInterrupts();
+#endif
 
 			VUEngine::currentGameCycleEnded(this);
 
@@ -260,8 +269,6 @@ void VUEngine::start(GameState currentGameState)
 #endif
 				}
 			}
-
-			currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 		}
 	}
 	else
@@ -607,7 +614,7 @@ void VUEngine::dispatchDelayedMessages()
 }
 
 // update game's logic subsystem
-void VUEngine::updateLogic()
+GameState VUEngine::updateLogic(GameState currentGameState)
 {
 #ifdef __TOOLS
 	if(!VUEngine::isInSpecialMode(this))
@@ -624,11 +631,13 @@ void VUEngine::updateLogic()
 #endif
 
 	// update the game's logic
-	StateMachine::update(this->stateMachine);
+	currentGameState = GameState::safeCast(StateMachine::update(this->stateMachine));
 
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_LOGIC);
 #endif
+
+	return currentGameState;
 }
 
 	// Update sound related logic
@@ -858,15 +867,10 @@ bool VUEngine::hasCurrentFrameEnded()
 	return this->currentGameCycleEnded;
 }
 
-void VUEngine::run(GameState currentGameState)
+GameState VUEngine::run(GameState currentGameState)
 {
 	// Generate random seed
 	_gameRandomSeed = Utilities::randomSeed();
-
-#ifdef __ENABLE_PROFILER
-	HardwareManager::disableInterrupts();
-	Profiler::start(Profiler::getInstance());
-#endif
 
 	// process user's input
 	VUEngine::processUserInput(this, currentGameState);
@@ -897,11 +901,7 @@ void VUEngine::run(GameState currentGameState)
 	}
 
 	// update game's logic
-	VUEngine::updateLogic(this);
-
-#ifdef __ENABLE_PROFILER
-	HardwareManager::enableInterrupts();
-#endif
+	return VUEngine::updateLogic(this, currentGameState);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

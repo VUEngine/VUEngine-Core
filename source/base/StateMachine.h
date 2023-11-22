@@ -53,7 +53,7 @@ class StateMachine : ListenerObject
 	
 	/// @publicsection
 	void constructor(void* owner);
-	void update();
+	State update();
 	bool prepareTransition(State state, int16 command);
 	void swapState(State newState);
 	uint32 pushState(State newState);

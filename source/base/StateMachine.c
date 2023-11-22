@@ -179,7 +179,7 @@ void StateMachine::applyTransition()
 /**
  * Method to propagate the update process to the current state
  */
-void StateMachine::update()
+State StateMachine::update()
 {
 	if(kStateMachineIdle != this->transition)
 	{
@@ -189,6 +189,8 @@ void StateMachine::update()
 	{
 		State::execute(this->currentState, this->owner);
 	}
+
+	return this->currentState;
 }
 
 /**
