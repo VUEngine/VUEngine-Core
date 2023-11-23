@@ -283,7 +283,7 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 
 		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(z, true));
 
-		ratio = 0 > ratio? __1I_FIXED : ratio;
+		ratio = 0 > ratio? __1I_FIX7_9 : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
 		this->scale.x = __FIX7_9_MULT(scale.x, ratio);
@@ -302,6 +302,10 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
     	{
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
+	}
+	else
+	{
+		Base::resize(this, scale, z);
 	}
 }
 

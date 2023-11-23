@@ -85,7 +85,7 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 	// farRatio2Near = // (2 * far * near) / (near - far)
 	result.farRatio2Near = __FIXED_EXT_DIV(__FIXED_EXT_MULT(cameraFrustum.z1, cameraFrustum.z0) << 1, cameraFrustum.z0 - cameraFrustum.z1);
 	result.projectionMultiplierHelper = __FIXED_EXT_MULT(result.halfWidth, result.aspectRatioXfov) << __PROJECTION_PRECISION_INCREMENT;
-	result.scalingMultiplier = __FIXED_EXT_MULT(result.projectionMultiplierHelper, result.scalingFactor);
+	result.scalingMultiplier = __FIXED_EXT_MULT(__FIXED_EXT_MULT(result.halfWidth, result.aspectRatioXfov), result.scalingFactor);
 
 	if(0 == result.cameraNearPlane)
 	{
