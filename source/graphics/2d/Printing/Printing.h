@@ -323,6 +323,11 @@ singleton class Printing : ListenerObject
 	bool setActiveSprite(uint16 printingSpriteIndex);
 
 	/**
+	* Print active printing sprite's info
+	*/
+	void printSprite();
+
+	/**
      * Sets the orientation for the following call to print.
 	 * Resets its self automatically to horizonal.
      */

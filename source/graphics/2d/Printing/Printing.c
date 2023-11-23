@@ -203,6 +203,17 @@ bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 	return result;
 }
 
+/**
+* Print active printing sprite's info
+*/
+void Printing::printSprite()
+{
+	if(!isDeleted(this->activePrintingSprite))
+	{
+		PrintingSprite::print(this->activePrintingSprite, 1, 3);
+	}
+}
+
 void Printing::setOrientation(uint8 value)
 {
 	this->orientation = value;

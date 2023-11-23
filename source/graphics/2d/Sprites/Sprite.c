@@ -992,25 +992,28 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
-	y++;
-	Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
-	y++;
-	Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
-	Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
-
-	if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
+	if(NULL != Sprite::getTexture(this))
 	{
-		BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite::getTexture(this));
+		y++;
+		Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
+		y++;
+		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
+		Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
+		Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);
 
-		Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
-		Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
-		Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
-		Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+		if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
+		{
+			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite::getTexture(this));
+
+			Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
+			Printing::int32(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
+			Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
+			Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
+			Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);
+			Printing::int32(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 18, y, NULL);
+		}
 	}
 
 	this->transparent = transparent;
