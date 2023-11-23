@@ -921,7 +921,7 @@ bool Sprite::isBgmap()
  */
 bool Sprite::isObject()
 {
-	return __GET_CAST(ObjectSprite, this);
+	return NULL != __GET_CAST(ObjectSprite, this);
 }
 
 /**
