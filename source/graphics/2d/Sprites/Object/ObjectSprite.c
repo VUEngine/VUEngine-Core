@@ -272,7 +272,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 		int16 objectIndexStart = index + jDisplacement;
 
-		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
+		if((unsigned)(outputY - _cameraFrustum->y0 + 8) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 + 8))
 		{
 			int16 j = 0;
 			for(; j < this->cols; j++)
@@ -297,7 +297,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
-			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 + 4))
 			{
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 				continue;
