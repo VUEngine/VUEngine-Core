@@ -981,7 +981,7 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "G (x,y,p):                           ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveX(this), x + 18, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getEffectiveX(this), x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getEffectiveP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "M (x,y,p):                           ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getWorldMX(this), x + 18, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getWorldMY(this), x + 24, y, NULL);
