@@ -340,6 +340,11 @@ void Stage::setupPalettes()
 	VIPManager::setupPalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
 
+PaletteConfig Stage::getPaletteConfig()
+{
+	return this->stageSpec->rendering.paletteConfig;
+}
+
 // load stage's entites
 void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
@@ -1065,6 +1070,11 @@ bool Stage::stream()
 		EntityFactory::showStatus(this->entityFactory, 25, 3);
 	}
 #endif
+
+	if(NULL == this->stageEntityDescriptions->head)
+	{
+		return false;
+	}
 
 	if(Stage::updateEntityFactory(this))
 	{

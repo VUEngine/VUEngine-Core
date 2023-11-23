@@ -231,7 +231,7 @@ typedef struct PaletteConfig
 		uint8 gplt3;
 	} bgmap;
 
-	struct ListenerObject
+	struct Object
 	{
 		uint8 jplt0;
 		uint8 jplt1;

@@ -19,7 +19,7 @@
 
 #define __BASE	((void*)this)
 
-#ifdef __RELEASE
+#ifdef __SHIPPING
 #define __OBFUSCATE_NAME(value)			("ClassName")
 #else
 #define __OBFUSCATE_NAME(value)			(#value)

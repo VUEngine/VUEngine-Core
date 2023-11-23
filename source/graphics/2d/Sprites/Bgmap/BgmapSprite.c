@@ -586,7 +586,7 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
-	if(bgmapSprite->param)
+	if(0 < bgmapSprite->param)
 	{
 		return Affine::applyAll(
 			bgmapSprite->param,

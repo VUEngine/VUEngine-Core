@@ -215,6 +215,7 @@ class Stage : Container
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);
 	void setupPalettes();
+	PaletteConfig getPaletteConfig();
 	void loadPostProcessingEffects();
 	void setupTimer();
 	Size getSize();
