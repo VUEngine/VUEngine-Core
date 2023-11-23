@@ -937,12 +937,8 @@ void Sprite::print(int32 x, int32 y)
 	this->transparent = __TRANSPARENCY_NONE;
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
 	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
 
 	if(Sprite::isObject(this))
@@ -962,6 +958,10 @@ void Sprite::print(int32 x, int32 y)
 		Printing::text(Printing::getInstance(), "BGMAP    ", x + 18, y, NULL);
 	}
 
+	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), Sprite::getEffectiveHead(this), x + 18, y, 8, NULL);
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
