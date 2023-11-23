@@ -325,7 +325,7 @@ singleton class Printing : ListenerObject
 	/**
 	* Print active printing sprite's info
 	*/
-	void printSprite();
+	void printSprite(int16 x, int16 y);
 
 	/**
      * Sets the orientation for the following call to print.

@@ -206,11 +206,11 @@ bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 /**
 * Print active printing sprite's info
 */
-void Printing::printSprite()
+void Printing::printSprite(int16 x, int16 y)
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::print(this->activePrintingSprite, 1, 3);
+		PrintingSprite::print(this->activePrintingSprite, x, y);
 	}
 }
 
