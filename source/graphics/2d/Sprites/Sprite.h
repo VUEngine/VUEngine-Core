@@ -204,7 +204,7 @@ abstract class Sprite : ListenerObject
 	virtual void writeAnimation();
 	virtual bool writeTextures(int16 maximumTextureRowsToWrite);
 	virtual void print(int32 x, int32 y);
-	virtual int32 getTotalPixels();
+	virtual int32 getTotalPixels() = 0;
 	virtual void registerWithManager() = 0;
 	virtual void invalidateRenderFlag();
 }

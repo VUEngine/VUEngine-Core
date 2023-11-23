@@ -88,6 +88,7 @@ class ObjectSprite : Sprite
 	override void registerWithManager();
 	override void registerWithManager();
 	override void rewrite();
+	override int32 getTotalPixels();
 }
 
 

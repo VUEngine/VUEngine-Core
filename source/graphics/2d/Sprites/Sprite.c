@@ -16,6 +16,7 @@
 
 #include <AnimationController.h>
 #include <BgmapTexture.h>
+#include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>
 #include <SpriteManager.h>
@@ -863,9 +864,19 @@ bool Sprite::isHBias()
  *
  * @return		True if it does
  */
+bool Sprite::isBgmap()
+{
+	return (__WORLD_BGMAP == (this->head & __WORLD_BGMAP)) || Sprite::isAffine(this) || Sprite::isHBias(this);
+}
+
+/**
+ * Check if uses OBJECT mode
+ *
+ * @return		True if it does
+ */
 bool Sprite::isObject()
 {
-	return __WORLD_OBJECT == (this->head & __WORLD_OBJECT);
+	return __GET_CAST(ObjectSprite, this);
 }
 
 /**
@@ -882,11 +893,11 @@ void Sprite::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), Sprite::getWorldHead(this), x + 18, y, 8, NULL);
+	Printing::hex(Printing::getInstance(), this->head, x + 18, y, 8, NULL);
 	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
 
 	if(Sprite::isObject(this))
@@ -901,7 +912,7 @@ void Sprite::print(int32 x, int32 y)
 	{
 		Printing::text(Printing::getInstance(), "H-BIAS   ", x + 18, y, NULL);
 	}
-	else
+	else if(Sprite::isBgmap(this))
 	{
 		Printing::text(Printing::getInstance(), "BGMAP    ", x + 18, y, NULL);
 	}
@@ -909,7 +920,7 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Transparent:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (transparent > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), (transparent == 1) ? "(Even)" : (transparent == 2) ? "(Odd)" : "", x + 20, y, NULL);
-	Printing::text(Printing::getInstance(), "show:                         ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Shown:                         ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
@@ -931,8 +942,8 @@ void Sprite::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), Sprite::getWorldMY(this), x + 24, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getWorldMP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getWorldWidth(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getWorldHeight(this), x + 24, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->halfWidth, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->halfHeight, x + 24, y++, NULL);
 	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
@@ -994,21 +1005,6 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
 	}
 
 	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
-}
-
-/**
- * Get the total amount of pixels displayed by the sprite
- *
- * @return		Total pixels
- */
-int32 Sprite::getTotalPixels()
-{
-	if(__NO_RENDER_INDEX != this->index)
-	{
-		return Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this);
-	}
-
-	return 0;
 }
 
 /**

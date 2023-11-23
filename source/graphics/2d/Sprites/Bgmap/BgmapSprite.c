@@ -570,6 +570,20 @@ int16 BgmapSprite::getParamTableRow()
 	return this->paramTableRow;
 }
 
+/**
+ * Get the total amount of pixels displayed by the sprite
+ *
+ * @return		Total pixels
+ */
+int32 BgmapSprite::getTotalPixels()
+{
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		return Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this);
+	}
+
+	return 0;
+}
 
 //---------------------------------------------------------------------------------------------------------
 //										MAP FXs

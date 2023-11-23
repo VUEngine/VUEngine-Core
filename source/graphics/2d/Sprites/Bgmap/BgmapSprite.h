@@ -115,6 +115,7 @@ class BgmapSprite : Sprite
 	override Scale getScale();
 	override void resize(Scale scale, fixed_t z);
 	override void registerWithManager();
+	override int32 getTotalPixels();
 }
 
 

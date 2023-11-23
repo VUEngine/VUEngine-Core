@@ -353,3 +353,17 @@ void ObjectSprite::invalidateObjectSpriteContainer()
 	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
 }
 
+/**
+ * Get the total amount of pixels displayed by the sprite
+ *
+ * @return		Total pixels
+ */
+int32 ObjectSprite::getTotalPixels()
+{
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		return ObjectSprite::getTotalObjects(this) * 64;
+	}
+
+	return 0;
+}
