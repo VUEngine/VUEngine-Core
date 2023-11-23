@@ -146,12 +146,12 @@ abstract class Sprite : ListenerObject
 	uint16 getMode();
 	Texture getTexture();
 	uint8 getTransparent();
-	uint32 getWorldHead();
-	uint16 getWorldHeight();
-	uint16 getWorldWidth();
-	int16 getWorldGP();
-	int16 getWorldGX();
-	int16 getWorldGY();
+	uint32 getEffectiveHead();
+	uint16 getEffectiveHeight();
+	uint16 getEffectiveWidth();
+	int16 getEffectiveP();
+	int16 getEffectiveX();
+	int16 getEffectiveY();
 	int16 getWorldMP();
 	int16 getWorldMX();
 	int16 getWorldMY();
@@ -163,6 +163,7 @@ abstract class Sprite : ListenerObject
 	uint8 getFrameDuration();
 	int32 getHalfHeight();
 	int32 getHalfWidth();
+	bool isBgmap();
 	bool isAffine();
 	bool isHBias();
 	bool isObject();

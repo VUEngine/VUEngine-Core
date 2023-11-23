@@ -579,7 +579,7 @@ int32 BgmapSprite::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
 	{
-		return Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this);
+		return Sprite::getEffectiveWidth(this) * Sprite::getEffectiveHeight(this);
 	}
 
 	return 0;
