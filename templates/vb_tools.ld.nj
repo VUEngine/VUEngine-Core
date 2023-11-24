@@ -1,4 +1,4 @@
-{%- set compiler = project.items.Compiler | values | first -%}
+{%- set compiler = project.combined.items.Compiler | values | last -%}
 {% include('templates/partials/fileHeader.ld.nj') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")

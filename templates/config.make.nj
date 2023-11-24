@@ -1,8 +1,8 @@
-{%- set compiler = project.items.Compiler | values | first -%}
+{%- set compiler = project.combined.items.Compiler | values | last -%}
 {% include('templates/partials/fileHeader.make.nj') %}
 
 # VUEngine based plugins that the project uses
-PLUGINS 						= {% if project.plugins is iterable %}{{ project.plugins | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') }}{% endif %}
+PLUGINS 						= {% if project.plugins is iterable %}{{ project.plugins | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}{% endif %}
 
 # Compiler's output
 COMPILER_OUTPUT					= {{ compiler.output }}

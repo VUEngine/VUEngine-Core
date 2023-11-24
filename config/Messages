@@ -1,0 +1,15 @@
+{
+    "messages": [
+		"BodyBounced",
+		"BodyChangedDirection",
+		"BodyStartedMoving",
+		"BodyStopped",
+		"CheckIfRemoteIsReady",
+		"EntityRemoved",
+		"HighFps",
+		"KeyHold",
+		"KeyPressed",
+		"KeyReleased",
+		"LastCommunicationMessage"
+	]
+}

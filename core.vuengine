@@ -1,1831 +1,31 @@
 {
+	"name": "VUEngine Core",
     "folders": [
         {
             "path": "."
         }
     ],
-    "items": {
-        "BrightnessRepeat": {
-            "HJzLvhLSpJs16gla": {
-                "description": "The default brightness repeat configuration as provided by Nintendo",
-                "mirror": true,
-                "name": "Default",
-                "values": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ]
-            }
-        },
-        "ColumnTable": {
-            "8pDwzeqM8YmSep1h": {
-                "description": "The default column table as provided by Nintendo",
-                "mirror": false,
-                "name": "Default",
-                "values": [
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 14,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 11,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 10,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 9,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 8,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 8,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 7,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 7,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 3,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 4,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 8
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 5,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 6,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 7,
-                        "time": 4
-                    },
-                    {
-                        "repeat": 7,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 8,
-                        "time": 2
-                    },
-                    {
-                        "repeat": 8,
-                        "time": 10
-                    },
-                    {
-                        "repeat": 9,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 10,
-                        "time": 6
-                    },
-                    {
-                        "repeat": 11,
-                        "time": 12
-                    },
-                    {
-                        "repeat": 14,
-                        "time": 0
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    },
-                    {
-                        "repeat": 15,
-                        "time": 14
-                    }
-                ]
-            }
-        },
-        "Events": {
-            "OiTWgTHoMOJYsmT7": {
-                "events": [
-                    "ActorBounced",
-                    "AnimationCompleted",
-                    "CharSetDeleted",
-                    "CharSetRewritten",
-                    "CommunicationsConnected",
-                    "CommunicationsTransmissionCompleted",
-                    "ContainerDeleted",
-                    "EffectFadeComplete",
-                    "EffectFadeStart",
-                    "EffectFadeStop",
-                    "EntityLoaded",
-                    "GamePaused",
-                    "GameUnpaused",
-                    "MinuteChanged",
-                    "NextStateSet",
-                    "SecondChanged",
-                    "ShapeChanged",
-                    "ShapeDeleted",
-                    "SoundFinished",
-                    "SoundReleased",
-                    "SpatialObjectDeleted",
-                    "StageChildStreamedOut",
-                    "TextureRewritten"
-                ]
-            }
-        },
-        "Font": {
-            "rxSiRnmucUqeJJNE": {
-                "name": "Default",
-                "tiles": "VUEngineFontTiles",
-                "type": "bgmap",
-                "offset": 0,
-                "characterCount": 256,
-                "charactersPerLine": 32,
-                "size": {
-                    "x": 1,
-                    "y": 1
-                }
-            },
-            "rBCHVLXzP43ZqXCR": {
-                "name": "Profiler",
-                "tiles": "VUEngineProfilerFontTiles",
-                "type": "bgmap",
-                "offset": 46,
-                "characterCount": 45,
-                "charactersPerLine": 45,
-                "size": {
-                    "x": 1,
-                    "y": 1
-                }
-            }
-        },
-        "Image": {
-            "bfdJ9utLumjCiFwm": {
-                "folder": "assets/images/VUEngineFont",
-                "name": "VUEngineFont",
-                "section": "rom",
-                "tileset": {
-                    "shared": false,
-                    "reduce": false,
-                    "compress": false
-                },
-                "map": {
-                    "generate": false,
-                    "reduce": {
-                        "flipped": false,
-                        "unique": false
-                    },
-                    "compress": false
-                },
-                "animation": {
-                    "isAnimation": false,
-                    "individualFiles": false,
-                    "frameWidth": 0,
-                    "frameHeight": 0
-                },
-                "_converted": [
-                    {
-                        "image": "VUEngineFont.png",
-                        "timestamp": 123456,
-                        "name": "VUEngineFont",
-                        "tiles": 256
-                    }
-                ]
-            },
-            "S1RY2aSY9ZkLikuh": {
-                "images": "assets/images/VUEngineProfilerFont",
-                "name": "VUEngineProfilerFont",
-                "section": "rom",
-                "tileset": {
-                    "shared": false,
-                    "reduce": false,
-                    "compress": false
-                },
-                "map": {
-                    "generate": false,
-                    "reduce": {
-                        "flipped": false,
-                        "unique": false
-                    },
-                    "compress": false
-                },
-                "animation": {
-                    "isAnimation": false,
-                    "individualFiles": false,
-                    "frameWidth": 0,
-                    "frameHeight": 0
-                },
-                "_converted": [
-                    {
-                        "image": "VUEngineProfilerFont.png",
-                        "timestamp": 123456,
-                        "name": "VUEngineProfilerFont",
-                        "tiles": 45
-                    }
-                ]
-            }
-        },
-        "Messages": {
-            "c5aiN73gemaLA48M": {
-                "messages": [
-                    "BodyBounced",
-                    "BodyChangedDirection",
-                    "BodyStartedMoving",
-                    "BodyStopped",
-                    "CheckIfRemoteIsReady",
-                    "EntityRemoved",
-                    "HighFps",
-                    "KeyHold",
-                    "KeyPressed",
-                    "KeyReleased",
-                    "LastCommunicationMessage"
-                ]
-            }
-        },
-        "Project": {
-            "imJC2R0U57vyVVY9": {
-                "name": "VUEngine Core",
-                "author": "Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>",
-                "description": "Core VUEngine library"
-            }
-        },
-        "WaveForm": {
-            "zWndaKELk5FT82xf": {
-                "name": "Glocken",
-                "values": [
-                    26,
-                    53,
-                    38,
-                    45,
-                    50,
-                    25,
-                    29,
-                    42,
-                    36,
-                    48,
-                    62,
-                    46,
-                    37,
-                    33,
-                    3,
-                    24,
-                    26,
-                    40,
-                    41,
-                    31,
-                    28,
-                    18,
-                    2,
-                    16,
-                    28,
-                    22,
-                    35,
-                    39,
-                    15,
-                    19,
-                    26,
-                    11
-                ]
-            },
-            "GefMmqceDVD6Xk11": {
-                "name": "Linear",
-                "values": [
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12,
-                    12
-                ]
-            },
-            "BwHW7JNrex6wMinO": {
-                "name": "Organ",
-                "values": [
-                    26,
-                    63,
-                    56,
-                    56,
-                    39,
-                    35,
-                    39,
-                    17,
-                    19,
-                    38,
-                    12,
-                    38,
-                    35,
-                    34,
-                    30,
-                    0,
-                    26,
-                    63,
-                    35,
-                    30,
-                    30,
-                    26,
-                    53,
-                    26,
-                    44,
-                    47,
-                    26,
-                    29,
-                    26,
-                    8,
-                    9,
-                    0
-                ]
-            },
-            "YLi4OpkvXcUU4BDN": {
-                "name": "PCM",
-                "values": [
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63
-                ]
-            },
-            "h6pHqEdKMGJU4HHl": {
-                "name": "Piano",
-                "values": [
-                    31,
-                    28,
-                    30,
-                    45,
-                    49,
-                    34,
-                    27,
-                    28,
-                    27,
-                    25,
-                    27,
-                    41,
-                    44,
-                    46,
-                    50,
-                    47,
-                    57,
-                    61,
-                    50,
-                    43,
-                    33,
-                    36,
-                    33,
-                    24,
-                    20,
-                    32,
-                    33,
-                    19,
-                    26,
-                    21,
-                    20,
-                    29
-                ]
-            },
-            "sxbCyI9EXlWeEmmD": {
-                "name": "SawSquare",
-                "values": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    8,
-                    16,
-                    24,
-                    26,
-                    40,
-                    48,
-                    56,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63
-                ]
-            },
-            "S17ifoKaHu4DdzeZ": {
-                "name": "Sawtooth",
-                "values": [
-                    0,
-                    2,
-                    4,
-                    6,
-                    8,
-                    10,
-                    12,
-                    14,
-                    16,
-                    18,
-                    20,
-                    22,
-                    24,
-                    26,
-                    28,
-                    30,
-                    32,
-                    34,
-                    36,
-                    38,
-                    40,
-                    42,
-                    44,
-                    46,
-                    48,
-                    50,
-                    52,
-                    54,
-                    56,
-                    58,
-                    60,
-                    62
-                ]
-            },
-            "6QP1zxkpXVn9SMlC": {
-                "name": "Sine",
-                "values": [
-                    31,
-                    37,
-                    43,
-                    48,
-                    53,
-                    57,
-                    60,
-                    62,
-                    62,
-                    62,
-                    60,
-                    57,
-                    53,
-                    48,
-                    43,
-                    37,
-                    31,
-                    25,
-                    19,
-                    14,
-                    9,
-                    5,
-                    2,
-                    0,
-                    0,
-                    0,
-                    2,
-                    5,
-                    9,
-                    14,
-                    19,
-                    25
-                ]
-            },
-            "2v98yCQLE9E9Tkok": {
-                "name": "SinePlusAlpha",
-                "values": [
-                    26,
-                    41,
-                    48,
-                    51,
-                    51,
-                    31,
-                    31,
-                    53,
-                    57,
-                    62,
-                    46,
-                    46,
-                    51,
-                    42,
-                    35,
-                    26,
-                    26,
-                    26,
-                    29,
-                    22,
-                    14,
-                    6,
-                    2,
-                    2,
-                    6,
-                    11,
-                    15,
-                    15,
-                    14,
-                    13,
-                    16,
-                    3
-                ]
-            },
-            "DyL0pycvSqXcRbj8": {
-                "name": "Square",
-                "values": [
-                    38,
-                    25,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    27,
-                    42,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63
-                ]
-            },
-            "HhyDChu5lbaTA9YF": {
-                "name": "SquareDuty75",
-                "values": [
-                    38,
-                    25,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    27,
-                    42,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63,
-                    63
-                ]
-            },
-            "XpMdT55BQzCPKlVX": {
-                "name": "Triangle",
-                "values": [
-                    0,
-                    4,
-                    8,
-                    12,
-                    16,
-                    20,
-                    24,
-                    28,
-                    31,
-                    35,
-                    39,
-                    43,
-                    47,
-                    51,
-                    55,
-                    59,
-                    62,
-                    58,
-                    54,
-                    50,
-                    46,
-                    42,
-                    38,
-                    34,
-                    31,
-                    27,
-                    23,
-                    19,
-                    15,
-                    11,
-                    7,
-                    3
-                ]
-            },
-            "D28pZWSn7EQDMtgR": {
-                "name": "Trumpet",
-                "values": [
-                    38,
-                    37,
-                    35,
-                    32,
-                    32,
-                    35,
-                    35,
-                    33,
-                    30,
-                    34,
-                    38,
-                    39,
-                    38,
-                    34,
-                    32,
-                    39,
-                    37,
-                    16,
-                    0,
-                    40,
-                    42,
-                    35,
-                    31,
-                    30,
-                    30,
-                    33,
-                    37,
-                    34,
-                    32,
-                    34,
-                    37,
-                    39
-                ]
-            },
-            "51fdDnFQlDtpmU6W": {
-                "name": "Violin",
-                "values": [
-                    1,
-                    18,
-                    37,
-                    38,
-                    19,
-                    26,
-                    28,
-                    29,
-                    4,
-                    0,
-                    19,
-                    1,
-                    23,
-                    26,
-                    16,
-                    48,
-                    49,
-                    50,
-                    61,
-                    49,
-                    54,
-                    59,
-                    38,
-                    32,
-                    30,
-                    51,
-                    62,
-                    51,
-                    55,
-                    54,
-                    41,
-                    15
-                ]
-            }
-        }
-    },
     "templates": {
         "BrightnessRepeatSpec.c": {
-            "target": "assets/BrightnessRepeat/${_id}.c",
+            "target": "Converted/${_filename}BrightnessRepeatSpec.c",
+			"targetRoot": "file",
             "template": "templates/BrightnessRepeatSpec.c.nj",
             "itemSpecific": "BrightnessRepeat"
         },
         "ColumnTableSpec.c": {
-            "target": "assets/ColumnTable/${_id}.c",
+            "target": "Converted/${_filename}ColumnTableSpec.c",
+			"targetRoot": "file",
             "template": "templates/ColumnTableSpec.c.nj",
             "itemSpecific": "ColumnTable"
         },
         "config.h": {
             "target": "source/config.h",
+			"targetRoot": "project",
             "template": "templates/config.h.nj"
         },
         "config.make": {
             "target": "config.make",
+			"targetRoot": "project",
             "template": "templates/config.make.nj",
             "events": [
                 {
@@ -1835,10 +35,12 @@
         },
         "debugConfig.h": {
             "target": "source/debugConfig.h",
+			"targetRoot": "project",
             "template": "templates/debugConfig.h.nj"
         },
         "Fonts.c": {
-            "target": "assets/Font/Fonts.c",
+            "target": "assets/Fonts.c",
+			"targetRoot": "project",
             "template": "templates/Fonts.c.nj",
             "events": [
                 {
@@ -1852,6 +54,7 @@
         },
         "Fonts.h": {
             "target": "source/assets/Fonts.h",
+			"targetRoot": "project",
             "template": "templates/Fonts.h.nj",
             "events": [
                 {
@@ -1864,51 +67,56 @@
             ]
         },
         "FontSpec.c": {
-            "target": "assets/Font/${_id}.c",
+            "target": "Converted/${_filename}FontSpec.c",
+			"targetRoot": "file",
             "template": "templates/FontSpec.c.nj",
             "itemSpecific": "Font"
         },
         "GameEvents.h": {
             "target": "source/GameEvents.h",
+			"targetRoot": "project",
             "template": "templates/GameEvents.h.nj"
         },
-        "romHeader.h": {
-            "target": "source/romHeader.h",
-            "template": "templates/romHeader.h.nj",
-            "encoding": "shift_jis"
-        },
         "PCMSpec.c": {
-            "target": "assets/PCM/${_id}Spec.c",
+            "target": "Converted/${_filename}PCMSpec.c",
+			"targetRoot": "file",
             "template": "templates/PCMSpec.c.nj",
             "itemSpecific": "PCM"
         },
         "RumbleEffectSpec.c": {
-            "target": "assets/RumbleEffect/${_id}.c",
+            "target": "Converted/${_filename}RumbleEffectSpec.c",
+			"targetRoot": "file",
             "template": "templates/RumbleEffectSpec.c.nj",
             "itemSpecific": "RumbleEffect"
         },
         "RumbleEffects.h": {
             "target": "source/assets/RumbleEffects.h",
+			"targetRoot": "project",
             "template": "templates/RumbleEffects.h.nj"
         },
         "vb_release.ld": {
             "target": "lib/compiler/linker/vb_release.ld",
+			"targetRoot": "project",
             "template": "templates/vb.ld.nj"
         },
         "vb_beta.ld": {
             "target": "lib/compiler/linker/vb_beta.ld",
+			"targetRoot": "project",
             "template": "templates/vb.ld.nj"
         },
         "vb_tools.ld": {
             "target": "lib/compiler/linker/vb_tools.ld",
+			"targetRoot": "project",
             "template": "templates/vb_tools.ld.nj"
         },
         "vb_debug.ld": {
             "target": "lib/compiler/linker/vb_debug.ld",
+			"targetRoot": "project",
             "template": "templates/vb_tools.ld.nj"
         },
         "WaveForms.h": {
             "target": "source/assets/WaveForms.h",
+			"targetRoot": "project",
             "template": "templates/WaveForms.h.nj",
             "events": [
                 {
@@ -1917,13 +125,15 @@
             ]
         },
         "WaveFormSpec.c": {
-            "target": "assets/WaveForm/${_id}.c",
+            "target": "Converted/${_filename}WaveFormSpec.c",
+			"targetRoot": "file",
             "template": "templates/WaveForm.c.nj",
             "itemSpecific": "WaveForm"
         }
     },
     "types": {
         "BrightnessRepeat": {
+			"file": ".brightness",
             "schema": {
                 "title": "Brightness Repeat",
                 "properties": {
@@ -1957,14 +167,13 @@
                 "type": "BrightnessRepeatEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Effects",
             "icon": "fa fa-sun-o",
             "templates": [
                 "BrightnessRepeatSpec.c"
             ]
         },
         "ColumnTable": {
+			"file": ".ctable",
             "schema": {
                 "title": "Column Table",
                 "properties": {
@@ -2010,14 +219,13 @@
                 "type": "ColumnTableEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Effects",
             "icon": "fa fa-table",
             "templates": [
                 "ColumnTableSpec.c"
             ]
         },
         "Compiler": {
+			"file": "CompilerConfig",
             "schema": {
                 "title": "Compiler Config",
                 "properties": {
@@ -2461,11 +669,9 @@
                 ]
             },
             "icon": "fa fa-cogs",
-            "multiple": false,
-            "category": "Configuration",
             "templates": [
                 "config.make",
-                "vb_release.ld",
+				"vb_release.ld",
                 "vb_beta.ld",
                 "vb_tools.ld",
                 "vb_debug.ld",
@@ -2473,6 +679,7 @@
             ]
         },
         "DebugMacros": {
+			"file": "DebugMacros",
             "schema": {
                 "title": "Debug Macros",
                 "properties": {
@@ -2507,13 +714,12 @@
                 "required": []
             },
             "icon": "fa fa-bug",
-            "multiple": false,
-            "category": "Configuration",
             "templates": [
                 "debugConfig.h"
             ]
         },
         "EngineConfig": {
+			"file": "EngineConfig",
             "schema": {
                 "title": "Engine Config",
                 "properties": {
@@ -2970,7 +1176,7 @@
                                 "description": "The maximum allowed friction coefficient.",
                                 "default": 1,
                                 "minimum": 0,
-                                "minimum": 256
+                                "maximum": 256
                             },							
                             "stopBouncingVelocityThreshold": {
                                 "type": "integer",
@@ -3099,9 +1305,8 @@
                                 "default": true
                             },
                             "interlacedThreshold": {
-                                "type": "object",
-                                "description": "The distance to start interlacing wireframe graphics.",
 								"type": "integer",
+                                "description": "The distance to start interlacing wireframe graphics.",
 								"default": 4096,
 								"maximum": 8191,
 								"minimum": 512
@@ -3731,13 +1936,12 @@
                 ]
             },
             "icon": "fa fa-sliders",
-            "multiple": false,
-            "category": "Configuration",
             "templates": [
                 "config.h"
             ]
         },
         "Entity": {
+			"file": ".entity",
             "schema": {
                 "title": "Entity",
                 "properties": {
@@ -4314,11 +2518,10 @@
                 "type": "EntityEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Assets",
             "icon": "fa fa-id-card-o"
         },
         "Events": {
+			"file": "Events",
             "schema": {
                 "title": "Events",
                 "properties": {
@@ -4333,13 +2536,12 @@
                 "required": []
             },
             "icon": "fa fa-bullhorn",
-            "multiple": false,
-            "category": "Logic",
             "templates": [
                 "GameEvents.h"
             ]
         },
         "Font": {
+			"file": ".font",
             "schema": {
                 "title": "Font",
                 "properties": {
@@ -4452,8 +2654,6 @@
                 "type": "FontEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Assets",
             "icon": "fa fa-font",
             "templates": [
                 "Fonts.c",
@@ -4461,286 +2661,8 @@
                 "FontSpec.c"
             ]
         },
-        "Image": {
-            "schema": {
-                "title": "Image",
-                "properties": {
-                    "folder": {
-                        "type": "string",
-                        "default": ""
-                    },
-                    "name": {
-                        "type": "string",
-                        "default": ""
-                    },
-                    "section": {
-                        "type": "string",
-                        "oneOf": [
-                            {
-                                "const": "rom",
-                                "title": "ROM Space"
-                            },
-                            {
-                                "const": "exp",
-                                "title": "Expansion Space"
-                            }
-                        ],
-                        "default": "rom"
-                    },
-                    "tileset": {
-                        "type": "object",
-                        "properties": {
-                            "shared": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "reduce": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "compress": {
-                                "type": "string",
-                                "oneOf": [
-                                    {
-                                        "const": "off",
-                                        "title": "No compression"
-                                    },
-                                    {
-                                        "const": "rle",
-                                        "title": "Run Length Encoding (RLE)"
-                                    }
-                                ],
-                                "default": "off"
-                            }
-                        }
-                    },
-                    "map": {
-                        "type": "object",
-                        "properties": {
-                            "generate": {
-                                "type": "boolean",
-                                "default": true
-                            },
-                            "reduce": {
-                                "type": "object",
-                                "properties": {
-                                    "flipped": {
-                                        "type": "boolean",
-                                        "default": false
-                                    },
-                                    "unique": {
-                                        "type": "boolean",
-                                        "default": false
-                                    }
-                                }
-                            },
-                            "compress": {
-                                "type": "string",
-                                "oneOf": [
-                                    {
-                                        "const": "off",
-                                        "title": "No compression"
-                                    },
-                                    {
-                                        "const": "rle",
-                                        "title": "Run Length Encoding (RLE)"
-                                    }
-                                ],
-                                "default": "off"
-                            }
-                        }
-                    },
-                    "animation": {
-                        "type": "object",
-                        "properties": {
-                            "isAnimation": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "individualFiles": {
-                                "type": "boolean",
-                                "default": false
-                            },
-                            "frameWidth": {
-                                "type": "integer",
-                                "default": 0
-                            },
-                            "frameHeight": {
-                                "type": "integer",
-                                "default": 0
-                            }
-                        }
-                    },
-                    "_converted": {
-                        "type": "array",
-                        "items": {
-                            "image": {
-                                "type": "string",
-                                "default": ""
-                            },
-                            "timestamp": {
-                                "type": "integer"
-                            },
-                            "name": {
-                                "type": "string",
-                                "default": ""
-                            },
-                            "tiles": {
-                                "type": "integer"
-                            }
-                        }
-                    }
-                },
-                "required": [
-                    "images",
-                    "section"
-                ]
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "label": "Images",
-                        "scope": "#/properties/_converted"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Folder",
-                        "scope": "#/properties/folder"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Name",
-                        "scope": "#/properties/name"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Store in",
-                        "scope": "#/properties/section"
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Charset",
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": "Shared",
-                                        "scope": "#/properties/tileset/properties/shared"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": "Reduction",
-                                        "scope": "#/properties/tileset/properties/reduce"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": "Compression",
-                                        "scope": "#/properties/tileset/properties/compress"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Map",
-                        "elements": [
-                            {
-                                "type": "Control",
-                                "label": "Generate",
-                                "scope": "#/properties/map/properties/generate"
-                            },
-                            {
-                                "type": "HorizontalLayout",
-                                "rule": {
-                                    "effect": "HIDE",
-                                    "condition": {
-                                        "scope": "#/properties/map/properties/generate",
-                                        "schema": {
-                                            "const": false
-                                        }
-                                    }
-                                },
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": "Reduce Flipped",
-                                        "scope": "#/properties/map/properties/reduce/properties/flipped"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": "Reduce Unique",
-                                        "scope": "#/properties/map/properties/reduce/properties/unique"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Animation",
-                        "elements": [
-                            {
-                                "type": "Control",
-                                "label": "Is Animation",
-                                "scope": "#/properties/animation/properties/isAnimation"
-                            },
-                            {
-                                "type": "VerticalLayout",
-                                "rule": {
-                                    "effect": "HIDE",
-                                    "condition": {
-                                        "scope": "#/properties/animation/properties/isAnimation",
-                                        "schema": {
-                                            "const": false
-                                        }
-                                    }
-                                },
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": "Frames are individual images",
-                                        "scope": "#/properties/animation/properties/individualFiles"
-                                    },
-                                    {
-                                        "type": "HorizontalLayout",
-                                        "rule": {
-                                            "effect": "HIDE",
-                                            "condition": {
-                                                "scope": "#/properties/animation/properties/individualFiles",
-                                                "schema": {
-                                                    "const": true
-                                                }
-                                            }
-                                        },
-                                        "elements": [
-                                            {
-                                                "type": "Control",
-                                                "label": "Width",
-                                                "scope": "#/properties/animation/properties/frameWidth"
-                                            },
-                                            {
-                                                "type": "Control",
-                                                "label": "Height",
-                                                "scope": "#/properties/animation/properties/frameHeight"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            "multiple": true,
-            "category": "Assets",
-            "icon": "fa fa-image"
-        },
         "Messages": {
+			"file": "Messages",
             "schema": {
                 "title": "Messages",
                 "properties": {
@@ -4754,11 +2676,10 @@
                 },
                 "required": []
             },
-            "icon": "fa fa-commenting-o",
-            "multiple": false,
-            "category": "Logic"
+            "icon": "fa fa-commenting-o"
         },
         "PCM": {
+			"file": ".pcm",
             "schema": {
                 "title": "PCM",
                 "properties": {
@@ -4801,171 +2722,13 @@
                 "type": "PCMEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Assets",
             "icon": "fa fa-music",
             "templates": [
                 "PCMSpec.c"
             ]
         },
-        "Project": {
-            "schema": {
-                "title": "Project",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "default": ""
-                    },
-                    "author": {
-                        "type": "string",
-                        "default": ""
-                    },
-                    "description": {
-                        "type": "string",
-                        "default": ""
-                    }
-                },
-                "required": [
-                    "name"
-                ]
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "label": "Project Name",
-                        "scope": "#/properties/name"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Author(s)",
-                        "scope": "#/properties/author"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Description",
-                        "scope": "#/properties/description"
-                    }
-                ]
-            },
-            "icon": "fa fa-cog",
-            "multiple": false,
-            "category": "Configuration"
-        },
-        "RomHeader": {
-            "schema": {
-                "title": "ROM Header",
-                "properties": {
-                    "gameTitle": {
-                        "type": "string",
-                        "description": "The game's title",
-                        "minLength": 0,
-                        "maxLength": 20,
-                        "default": "VUENGINE PROJECT"
-                    },
-                    "gameCodeSystem": {
-                        "type": "string",
-                        "description": "Always \"V\" for \"VUE\"",
-                        "minLength": 1,
-                        "maxLength": 1,
-                        "default": "V"
-                    },
-                    "gameCodeId": {
-                        "type": "string",
-                        "description": "Unique game identifier",
-                        "minLength": 2,
-                        "maxLength": 2,
-                        "default": "VU"
-                    },
-                    "gameCodeLanguage": {
-                        "type": "string",
-                        "description": "In-game language",
-                        "minLength": 1,
-                        "maxLength": 1,
-                        "default": "E"
-                    },
-                    "makerCode": {
-                        "type": "string",
-                        "description": "Unique identifier of the game's developer",
-                        "minLength": 2,
-                        "maxLength": 2,
-                        "default": ""
-                    },
-                    "revision": {
-                        "type": "integer",
-                        "description": "Version of the game, should be counted up with every release",
-                        "minimum": 0,
-                        "maximum": 9,
-                        "default": 0
-                    }
-                },
-                "required": [
-                    "gameTitle",
-                    "gameCodeSystem",
-                    "gameCodeId",
-                    "gameCodeLanguage",
-                    "makerCode",
-                    "revision"
-                ]
-            },
-            "uiSchema": {
-                "type": "VerticalLayout",
-                "elements": [
-                    {
-                        "type": "Control",
-                        "label": "Game Title",
-                        "scope": "#/properties/gameTitle"
-                    },
-                    {
-                        "type": "Group",
-                        "label": "Game Code",
-                        "elements": [
-                            {
-                                "type": "HorizontalLayout",
-                                "elements": [
-                                    {
-                                        "type": "Control",
-                                        "label": "System",
-                                        "scope": "#/properties/gameCodeSystem"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": "ID",
-                                        "scope": "#/properties/gameCodeId"
-                                    },
-                                    {
-                                        "type": "Control",
-                                        "label": "Language",
-                                        "scope": "#/properties/gameCodeLanguage"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Maker Code",
-                        "scope": "#/properties/makerCode"
-                    },
-                    {
-                        "type": "Control",
-                        "label": "Revision",
-                        "scope": "#/properties/revision",
-                        "options": {
-                            "inputPrefix": "1."
-                        }
-                    }
-                ]
-            },
-            "icon": "fa fa-microchip",
-            "multiple": false,
-            "category": "Configuration",
-            "templates": [
-                "romHeader.h"
-            ]
-        },
         "RumbleEffect": {
+			"file": ".rumble",
             "schema": {
                 "title": "Rumble Effect",
                 "properties": {
@@ -5018,8 +2781,6 @@
                 "type": "RumbleEffectEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Effects",
             "icon": "codicon codicon-screen-full codicon-rotate-90",
             "templates": [
                 "RumbleEffectSpec.c",
@@ -5027,6 +2788,7 @@
             ]
         },
         "Song": {
+			"file": ".song",
             "schema": {
                 "title": "Song",
                 "properties": {
@@ -5227,11 +2989,10 @@
                 "type": "MusicEditor",
                 "scope": "#"
             },
-            "multiple": true,
-            "category": "Assets",
             "icon": "fa fa-music"
         },
         "WaveForm": {
+			"file": ".waveform",
             "schema": {
                 "title": "WaveForm",
                 "properties": {
@@ -5252,8 +3013,6 @@
                 },
                 "required": []
             },
-            "multiple": true,
-            "category": "Assets",
             "icon": "fa fa-bar-chart-o",
             "templates": [
                 "WaveFormSpec.c",

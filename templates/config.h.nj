@@ -1,5 +1,5 @@
-{%- set config = project.items.EngineConfig | values | first -%}
-{%- set compiler = project.items.Compiler | values | first -%}
+{%- set config = project.combined.items.EngineConfig | values | last -%}
+{%- set compiler = project.combined.items.Compiler | values | last -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}
 
