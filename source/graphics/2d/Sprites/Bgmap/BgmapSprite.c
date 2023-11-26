@@ -60,7 +60,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 
 	if(!isDeleted(this->texture))
 	{
-		if(kCharSetSharedMulti == Texture::getSharingScheme(this->texture))
+		if(1 < Texture::getNumberOfFrames(this->texture))
 		{
 			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureSetFrame, kEventTextureSetFrame);
 		}

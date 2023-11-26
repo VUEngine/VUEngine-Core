@@ -77,8 +77,11 @@ CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 	// number of chars
 	{{ item.characterCount * item.size.x * item.size.y }},
 
-	// sharing scheme
-	kCharSetShared,
+	// whether it is shared or not
+	true,
+
+	// whether the tiles are optimized or not
+	false,
 
 	// char data
 	(uint32*){{ sanitizedSpecName }}FontTiles,

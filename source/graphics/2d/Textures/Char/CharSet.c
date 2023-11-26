@@ -101,24 +101,13 @@ uint8 CharSet::getUsageCount()
 }
 
 /**
- * Return sharing scheme
- *
- * @return				Uint16
- */
-uint16 CharSet::getSharingScheme()
-{
-	return this->charSetSpec->sharingScheme;
-}
-
-
-/**
  * Return if shared or not
  *
  * @return				Boolean
  */
 bool CharSet::isShared()
 {
-	return kCharSetNotShared != this->charSetSpec->sharingScheme;
+	return this->charSetSpec->shared;
 }
 
 /**
@@ -128,7 +117,7 @@ bool CharSet::isShared()
  */
 bool CharSet::isOptimized()
 {
-	return NULL != this->charSetSpec->frameOffsets;
+	return this->charSetSpec->optimized;
 }
 
 /**

@@ -80,18 +80,19 @@ AnimationFunctionROMSpec* const {{ entityName }}Animations =
 
 CharSetROMSpec {{ spriteName }}Charset =
 {
-	// number of chars, depending on sharing scheme:
-	// kCharSetNotShared, kCharSetShared: number of chars of a single animation frame (cols * rows)
-	// kCharSetSharedMulti: sum of all chars
+	// number of chars in function of the number of frames to load at the same time
+
 	{% if sprite.texture.charset.type == 'animatedMulti' or sprite.texture.charset.type == 'notAnimated' -%}
 	{{ sprite.texture.image.chars }},
 	{%- else -%}
 	{{ sprite.texture.size.x * sprite.texture.size.y }},
 	{%- endif %}
 
-	// sharing scheme
-	// [kCharSetNotShared, kCharSetShared, kCharSetSharedMulti]
-	__{{ sprite.texture.charset.type | toUpperSnakeCase }},
+	// whether it is shared or not
+	__{{ sprite.texture.charset.shared}},
+
+	// whether the tiles are optimized or not
+	__{{ sprite.texture.charset.optimized}},
 
 	// char spec
 	{{ sprite.texture.image.name | sanitizeSpecName }}Tiles,
@@ -120,9 +121,7 @@ TextureROMSpec {{ spriteName }}Texture =
 		{{ sprite.texture.padding.y }}, // rows
 	},
 
-	// number of frames, depending on charset's sharing scheme:
-	// kCharSetNotShared, kCharSetShared: 1
-	// kCharSetSharedMulti: total number of frames
+	// number of frames
 	{% if sprite.texture.charset.type == 'animatedMulti' and entity.animations.definitions.length -%}
 	{{ entity.animations.definitions.length }}
 	{%- else -%}

@@ -137,7 +137,7 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 				textureSpecs[i]->recyclable 
 				|| 
 				(
-					kCharSetNotShared != textureSpecs[i]->charSetSpec->sharingScheme
+					textureSpecs[i]->charSetSpec->shared
 				)
 			)
 			{
@@ -419,7 +419,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
 
 		if(!recyclableOnly && allocatedTextureSpec == textureSpec)
 		{
-			if((NULL == allocatedBgmapTexture->charSet || allocatedTextureSpec->charSetSpec->sharingScheme == bgmapTextureSpec->charSetSpec->sharingScheme) &&
+			if((NULL == allocatedBgmapTexture->charSet || allocatedTextureSpec->charSetSpec->shared == bgmapTextureSpec->charSetSpec->shared) &&
 				(allocatedTextureSpec->padding.cols == bgmapTextureSpec->padding.cols && allocatedTextureSpec->padding.rows == bgmapTextureSpec->padding.rows)
 			)
 			{
@@ -532,7 +532,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureSpec* bgmapTextureSpec,
 	}
 	else
 	{
-		if(kCharSetNotShared == bgmapTextureSpec->charSetSpec->sharingScheme)
+		if(!bgmapTextureSpec->charSetSpec->shared)
 		{
 			if(bgmapTextureSpec->recyclable)
 			{

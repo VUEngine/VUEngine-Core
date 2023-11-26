@@ -210,7 +210,7 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 		return 0;
 	}
 
-	if(kCharSetNotShared != Texture::getSharingScheme(texture))
+	if(Texture::isShared(texture))
 	{
 		if(0 != this->paramTableFreeData.param)
 		{
@@ -222,7 +222,7 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 
 				if(!isDeleted(textureHelper) && Texture::getSpec(texture) == Texture::getSpec(textureHelper))
 				{
-					if(!isDeleted(textureHelper) && Texture::getSharingScheme(texture) == Texture::getSharingScheme(textureHelper))
+					if(!isDeleted(textureHelper) && Texture::isShared(texture) == Texture::isShared(textureHelper))
 					{
 						VirtualList::pushBack(this->bgmapSprites, bgmapSprite);
 

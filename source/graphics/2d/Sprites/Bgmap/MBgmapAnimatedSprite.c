@@ -72,7 +72,7 @@ void MBgmapAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	if(kCharSetSharedMulti == CharSet::getSharingScheme(charSet))
+	if(1 < Texture::getNumberOfFrames(this->texture))
 	{
 		MBgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
 		MBgmapAnimatedSprite::invalidateParamTable(this);

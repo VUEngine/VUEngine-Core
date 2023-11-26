@@ -109,23 +109,8 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
-	
-	uint16 sharingScheme = 0;
 
-	if(!isDeleted(this->charSet))
-	{
-		sharingScheme = CharSet::getSharingScheme(this->charSet);
-	}
-	else if(NULL != this->textureSpec->charSetSpec)
-	{
-		sharingScheme = this->textureSpec->charSetSpec->sharingScheme;
-	}
-	else
-	{
-		return false;
-	}
-
-	if(kCharSetSharedMulti == sharingScheme)
+	if(1 < this->textureSpec->numberOfFrames)
 	{
 		BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
 	}
@@ -147,7 +132,7 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 }
 
 /**
- * Write __ANIMATED_MULTI Texture to DRAM
+ * Write multi frame Texture to DRAM
  *
  * @private
  */

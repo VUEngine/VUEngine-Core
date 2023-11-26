@@ -348,19 +348,19 @@ static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrit
 	texture->status = kTextureWritten;
 }
 
-uint16 Texture::getSharingScheme()
+bool Texture::isShared()
 {
 	if(!isDeleted(this->charSet))
 	{
-		return CharSet::getSharingScheme(this->charSet);
+		return CharSet::isShared(this->charSet);
 	}
 
 	if(NULL != this->textureSpec->charSetSpec)
 	{
-		return this->textureSpec->charSetSpec->sharingScheme;
+		return this->textureSpec->charSetSpec->shared;
 	}
 
-	return kCharSetShared;
+	return true;
 }
 
 /**
@@ -460,7 +460,7 @@ void Texture::setFrame(uint16 frame)
 	{
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			if(kCharSetSharedMulti == CharSet::getSharingScheme(this->charSet))
+			if(1 < this->textureSpec->numberOfFrames)
 			{
 				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 			}
@@ -505,7 +505,7 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	if(kCharSetSharedMulti == textureSpec->charSetSpec->sharingScheme)
+	if(1 < textureSpec->numberOfFrames)
 	{
 		uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
 
@@ -532,7 +532,7 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	if(kCharSetSharedMulti == textureSpec->charSetSpec->sharingScheme)
+	if(1 < textureSpec->numberOfFrames)
 	{
 		uint32 allocableCols = Texture::getTotalCols(textureSpec);
 		int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
@@ -598,24 +598,21 @@ void Texture::setCharSet(CharSet charSet)
 
 void Texture::setupUpdateFunction()
 {
-	if(CharSet::isOptimized(this->charSet))
+	if(1 < this->textureSpec->numberOfFrames)
+	{
+		this->doUpdate = NULL;
+		//this->doUpdate = Texture::updateMulti;
+	}
+	else if(CharSet::isOptimized(this->charSet))
 	{
 		this->doUpdate = Texture::updateOptimized;
 		CharSet::setFrame(this->charSet, this->frame);
 	}
 	else
-	{
-		if(kCharSetSharedMulti == CharSet::getSharingScheme(this->charSet))
-		{
-			this->doUpdate = NULL;
-			//this->doUpdate = Texture::updateMulti;
-		}
-		else
-		{			
-			this->doUpdate = Texture::updateDefault;
-			CharSet::setFrame(this->charSet, this->frame);
-		}		
-	}
+	{			
+		this->doUpdate = Texture::updateDefault;
+		CharSet::setFrame(this->charSet, this->frame);
+	}		
 }
 
 /**

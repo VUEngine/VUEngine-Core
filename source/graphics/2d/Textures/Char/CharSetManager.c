@@ -106,7 +106,7 @@ void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 	{
 		for(int16 i = 0; charSetSpecs[i]; i++)
 		{
-			if(kCharSetNotShared != charSetSpecs[i]->sharingScheme)
+			if(charSetSpecs[i]->shared)
 			{
 				CharSetManager::getCharSet(this, (CharSetSpec*)charSetSpecs[i]);
 			}
@@ -131,7 +131,7 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
-		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->sharingScheme == charSetSpec->sharingScheme)
+		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->shared == charSetSpec->shared)
 		{
 			return charSet;
 		}
@@ -156,7 +156,7 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 
 	CharSet charSet = NULL;
 
-	if(kCharSetNotShared == charSetSpec->sharingScheme)
+	if(!charSetSpec->shared)
 	{
 		// ask for allocation
 		charSet = CharSetManager::allocateCharSet(this, charSetSpec);

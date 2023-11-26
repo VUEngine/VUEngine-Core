@@ -22,13 +22,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-enum CharSetSharingScheme
-{
-	kCharSetNotShared = 0,
-	kCharSetShared,
-	kCharSetSharedMulti
-};
-
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
@@ -49,13 +42,14 @@ enum CharSetSharingScheme
  */
 typedef struct CharSetSpec
 {
-	// number of chars, depending on sharing scheme:
-	// kCharSetNotShared, kCharSetShared: number of chars of a single animation frame (cols * rows)
-	// kCharSetSharedMulti: sum of all chars
+	/// number of chars in function of the number of frames to load at the same time
 	uint16 numberOfChars;
 
 	/// whether it is shared or not
-	uint16 sharingScheme;
+	bool shared;
+
+	/// whether the tiles are optimized or not
+	bool optimized;
 
 	/// pointer to the char spec in ROM
 	uint32* tiles;
@@ -94,7 +88,6 @@ class CharSet : ListenerObject
 	void increaseUsageCount();
 	bool decreaseUsageCount();
 	uint8 getUsageCount();
-	uint16 getSharingScheme();
 	bool isShared();
 	bool isOptimized();
 	uint16 getOffset();

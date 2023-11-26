@@ -78,17 +78,14 @@ void BgmapAnimatedSprite::destructor()
  */
 void BgmapAnimatedSprite::writeAnimation()
 {
-	CharSet charSet = Texture::getCharSet(this->texture, true);
-
-	NM_ASSERT(!isDeleted(charSet), "BgmapAnimatedSprite::writeAnimation: deleted charset");
 	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::writeAnimation: null animation controller");
 
-	if(isDeleted(charSet) || isDeleted(this->animationController))
+	if(isDeleted(this->animationController))
 	{
 		return;
 	}
 
-	if(kCharSetSharedMulti == CharSet::getSharingScheme(charSet))
+	if(1 < Texture::getNumberOfFrames(this->texture))
 	{
 		BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
 		BgmapAnimatedSprite::invalidateParamTable(this);

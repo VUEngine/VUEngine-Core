@@ -26,8 +26,11 @@ CharSetROMSpec ProfilerFontCharSet =
 	// number of chars
 	45,
 
-	// sharing scheme
-	kCharSetShared,
+	// whether it is shared or not
+	true,
+
+	// whether the tiles are optimized or not
+	false,	
 
 	// char spec
 	VUEngineProfilerFontTiles,

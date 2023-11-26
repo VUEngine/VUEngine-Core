@@ -55,9 +55,7 @@ typedef struct TextureSpec
 	/// padding for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
-	/// number of frames, depending on charset's sharing scheme:
-	/// kCharSetNotShared, kCharSetShared: 1
-	/// kCharSetSharedMulti: total number of frames
+	/// number of frames
 	uint8 numberOfFrames;
 
 	/// palette index to use
@@ -141,7 +139,6 @@ abstract class Texture : ListenerObject
 	bool prepare();
 	bool update(int16 maximumTextureRowsToWrite);
 	bool isShared();
-	uint16 getSharingScheme();
 
 	virtual bool write(int16 maximumTextureRowsToWrite);
 	virtual void rewrite();

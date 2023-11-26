@@ -602,7 +602,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 					TextureSpec* textureSpec = Texture::getTextureSpec(texture);
 					NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
 
-					if(++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames && kCharSetSharedMulti == textureSpec->charSetSpec->sharingScheme)
+					if(++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames && 1 < textureSpec->numberOfFrames)
 					{
 						this->animationFunction.frames[selectedFrame] = textureSpec->numberOfFrames - 1;
 					}

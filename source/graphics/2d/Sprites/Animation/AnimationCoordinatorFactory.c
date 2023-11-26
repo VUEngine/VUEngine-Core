@@ -92,7 +92,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 {
 	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
-	if(kCharSetShared == charSetSpec->sharingScheme)
+	if(charSetSpec->shared)
 	{
 		// try to find an already created coordinator
 		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
