@@ -32,19 +32,7 @@ void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAni
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController();
-
-	AnimationController::setAnimationCoordinator
-	(
-		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator
-		(
-			AnimationCoordinatorFactory::getInstance(),
-			this->animationController, 
-			owner, 
-			mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec
-		)
-	);
+	MBgmapAnimatedSprite::createAnimationController(this, mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec, owner);
 }
 
 void MBgmapAnimatedSprite::destructor()

@@ -139,6 +139,7 @@ abstract class Texture : ListenerObject
 	bool prepare();
 	bool update(int16 maximumTextureRowsToWrite);
 	bool isShared();
+	bool isSingleFrame();
 
 	virtual bool write(int16 maximumTextureRowsToWrite);
 	virtual void rewrite();

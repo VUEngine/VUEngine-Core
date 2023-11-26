@@ -15,6 +15,7 @@
 #include <Sprite.h>
 
 #include <AnimationController.h>
+#include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
@@ -84,6 +85,30 @@ void Sprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject owner)
+{
+    this->animationController = new AnimationController();
+
+	if(isDeleted(this->animationController))
+	{
+		this->animationController = NULL;
+		return;
+	}
+
+	AnimationCoordinator animationCoordinator = NULL;
+	
+	if(isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
+	{
+		animationCoordinator = AnimationCoordinatorFactory::getCoordinator
+		(
+			AnimationCoordinatorFactory::getInstance(),
+			this->animationController, 
+			owner, 
+			charSetSpec
+		);
+	}
 }
 
 void Sprite::processEffects()

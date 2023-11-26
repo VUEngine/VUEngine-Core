@@ -363,6 +363,11 @@ bool Texture::isShared()
 	return true;
 }
 
+bool Texture::isSingleFrame()
+{
+	return 1 == this->textureSpec->numberOfFrames;
+}
+
 /**
  * Rewrite the map to DRAM
  */

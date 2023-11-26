@@ -15,7 +15,6 @@
 #include <ObjectAnimatedSprite.h>
 
 #include <AnimationController.h>
-#include <AnimationCoordinatorFactory.h>
 #include <ObjectSpriteContainer.h>
 
 #include <string.h>
@@ -43,19 +42,7 @@ void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAni
 	// construct base object
 	Base::constructor(&objectAnimatedSpriteSpec->objectSpriteSpec, owner);
 
-	this->animationController = new AnimationController();
-
-	AnimationController::setAnimationCoordinator
-	(
-		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator
-		(
-			AnimationCoordinatorFactory::getInstance(),
-			this->animationController, 
-			owner,
-			objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec
-		)
-	);
+	ObjectAnimatedSprite::createAnimationController(this, objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec, owner);
 }
 
 /**

@@ -15,7 +15,6 @@
 #include <BgmapAnimatedSprite.h>
 
 #include <AnimationController.h>
-#include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
 #include <Texture.h>
 #include <VIPManager.h>
@@ -48,19 +47,7 @@ void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimat
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController();
-
-	AnimationController::setAnimationCoordinator
-	(
-		this->animationController, 
-		AnimationCoordinatorFactory::getCoordinator
-		(
-			AnimationCoordinatorFactory::getInstance(),
-			this->animationController, 
-			owner, 
-			bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec
-		)
-	);
+	BgmapAnimatedSprite::createAnimationController(this, bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec, owner);
 }
 
 /**

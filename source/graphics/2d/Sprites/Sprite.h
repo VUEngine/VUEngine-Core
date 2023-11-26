@@ -136,6 +136,7 @@ abstract class Sprite : ListenerObject
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);
+	void createAnimationController(CharSetSpec* charSetSpec, ListenerObject owner);
 	const PixelVector* getPosition();
 	uint16 getHead();
 	uint16 getMode();
@@ -204,6 +205,5 @@ abstract class Sprite : ListenerObject
 	virtual void registerWithManager() = 0;
 	virtual void invalidateRenderFlag();
 }
-
 
 #endif
