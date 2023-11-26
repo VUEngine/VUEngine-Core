@@ -97,7 +97,7 @@ void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject 
 		return;
 	}
 	
-	if(isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
+	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
 	{
 		AnimationController::setAnimationCoordinator(this->animationController,
 			AnimationCoordinatorFactory::getCoordinator
