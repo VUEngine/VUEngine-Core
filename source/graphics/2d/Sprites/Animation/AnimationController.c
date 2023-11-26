@@ -51,6 +51,7 @@ void AnimationController::constructor()
 
 	// initialize animation function
 	this->animationFunction = NULL;
+	this->animationCoordinator = NULL;
 
 	// not playing anything yet
 	this->playing = false;
@@ -61,7 +62,7 @@ void AnimationController::constructor()
  */
 void AnimationController::destructor()
 {
-	if(this->animationCoordinator)
+	if(!isDeleted(this->animationCoordinator))
 	{
 		AnimationCoordinator::removeAnimationController(this->animationCoordinator, this);
 		this->animationCoordinator = NULL;
