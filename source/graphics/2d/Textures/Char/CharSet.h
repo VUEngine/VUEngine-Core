@@ -49,12 +49,9 @@ enum CharSetSharingScheme
  */
 typedef struct CharSetSpec
 {
-	/// number of chars, depending on allocation type:
-	/// __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows)
-	/// __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows)
-	/// __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
-	/// __ANIMATED_MULTI: sum of chars of all animation frames
-	/// __NOT_ANIMATED: number of chars of whole image
+	// number of chars, depending on sharing scheme:
+	// kCharSetNotShared, kCharSetShared: number of chars of a single animation frame (cols * rows)
+	// kCharSetSharedMulti: sum of all chars
 	uint16 numberOfChars;
 
 	/// whether it is shared or not

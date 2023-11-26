@@ -80,7 +80,7 @@ AnimationFunctionROMSpec* const {{ entityName }}Animations =
 
 CharSetROMSpec {{ spriteName }}Charset =
 {
-	// number of chars, depending on allocation type:
+	// number of chars, depending on sharing scheme:
 	// kCharSetNotShared, kCharSetShared: number of chars of a single animation frame (cols * rows)
 	// kCharSetSharedMulti: sum of all chars
 	{% if sprite.texture.charset.type == 'animatedMulti' or sprite.texture.charset.type == 'notAnimated' -%}
@@ -120,7 +120,7 @@ TextureROMSpec {{ spriteName }}Texture =
 		{{ sprite.texture.padding.y }}, // rows
 	},
 
-	// number of frames, depending on charset's allocation type:
+	// number of frames, depending on charset's sharing scheme:
 	// kCharSetNotShared, kCharSetShared: 1
 	// kCharSetSharedMulti: total number of frames
 	{% if sprite.texture.charset.type == 'animatedMulti' and entity.animations.definitions.length -%}

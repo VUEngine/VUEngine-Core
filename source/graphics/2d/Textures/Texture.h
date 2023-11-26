@@ -55,7 +55,9 @@ typedef struct TextureSpec
 	/// padding for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
-	/// number of frames
+	/// number of frames, depending on charset's sharing scheme:
+	/// kCharSetNotShared, kCharSetShared: 1
+	/// kCharSetSharedMulti: total number of frames
 	uint8 numberOfFrames;
 
 	/// palette index to use
