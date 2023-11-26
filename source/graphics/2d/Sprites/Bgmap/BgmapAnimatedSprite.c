@@ -88,18 +88,14 @@ void BgmapAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	switch(CharSet::getAllocationType(charSet))
+	if(kCharSetSharedMulti == CharSet::getSharingScheme(charSet))
 	{
-		case __ANIMATED_MULTI:
-
-			BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
-			BgmapAnimatedSprite::invalidateParamTable(this);
-			break;
-
-		default:
-
-			Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
-			break;
+		BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
+		BgmapAnimatedSprite::invalidateParamTable(this);
+	}
+	else
+	{
+		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 	}
 }
 

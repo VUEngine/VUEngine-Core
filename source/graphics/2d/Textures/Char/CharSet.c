@@ -101,13 +101,34 @@ uint8 CharSet::getUsageCount()
 }
 
 /**
- * Retrieve allocation type
+ * Return sharing scheme
  *
- * @return				Allocation type
+ * @return				Uint16
  */
-uint8 CharSet::getAllocationType()
+uint16 CharSet::getSharingScheme()
 {
-	return this->charSetSpec->allocationType;
+	return this->charSetSpec->sharingScheme;
+}
+
+
+/**
+ * Return if shared or not
+ *
+ * @return				Boolean
+ */
+bool CharSet::isShared()
+{
+	return kCharSetNotShared != this->charSetSpec->sharingScheme;
+}
+
+/**
+ * Return if optimized or not
+ *
+ * @return				Boolean
+ */
+bool CharSet::isOptimized()
+{
+	return NULL != this->charSetSpec->frameOffsets;
 }
 
 /**

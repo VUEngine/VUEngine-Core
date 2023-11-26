@@ -60,12 +60,9 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 
 	if(!isDeleted(this->texture))
 	{
-		switch(Texture::getAllocationType(this->texture))
+		if(kCharSetSharedMulti == Texture::getSharingScheme(this->texture))
 		{
-			case __ANIMATED_MULTI:
-		
-				Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureSetFrame, kEventTextureSetFrame);
-				break;
+			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureSetFrame, kEventTextureSetFrame);
 		}
 
 		// set texture position

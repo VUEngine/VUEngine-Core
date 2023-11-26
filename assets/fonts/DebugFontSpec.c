@@ -26,8 +26,8 @@ CharSetROMSpec DebugFontCharSet =
 	// number of chars
 	46,
 
-	// allocation type
-	__NOT_ANIMATED,
+	// sharing scheme
+	kCharSetShared,
 
 	// char spec
 	VUEngineDebugFontTiles,

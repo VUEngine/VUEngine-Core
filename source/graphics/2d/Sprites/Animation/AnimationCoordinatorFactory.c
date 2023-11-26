@@ -92,33 +92,28 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 {
 	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
-	switch(charSetSpec->allocationType)
+	if(kCharSetShared == charSetSpec->sharingScheme)
 	{
-		case __ANIMATED_SHARED_COORDINATED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+		// try to find an already created coordinator
+		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
+		{
+			AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
+
+			if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
 			{
-				// try to find an already created coordinator
-				for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
-				{
-					AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
-
-					if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
-					{
-						AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
-						return animationCoordinator;
-					}
-				}
-
-				AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
-
-				// create a new coordinator
 				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
-
-				VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
-
 				return animationCoordinator;
 			}
-			break;
+		}
+
+		AnimationCoordinator animationCoordinator = new AnimationCoordinator(charSetSpec, scope);
+
+		// create a new coordinator
+		AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
+
+		VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
+
+		return animationCoordinator;
 	}
 
 	return NULL;

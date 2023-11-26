@@ -26,8 +26,8 @@ CharSetROMSpec DefaultFontCharSet =
 	// number of chars
 	256,
 
-	// allocation type
-	__NOT_ANIMATED,
+	// sharing scheme
+	kCharSetShared,
 
 	// char spec
 	VUEngineFontTiles,

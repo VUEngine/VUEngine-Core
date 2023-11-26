@@ -348,19 +348,19 @@ static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrit
 	texture->status = kTextureWritten;
 }
 
-uint8 Texture::getAllocationType()
+uint16 Texture::getSharingScheme()
 {
 	if(!isDeleted(this->charSet))
 	{
-		return CharSet::getAllocationType(this->charSet);
+		return CharSet::getSharingScheme(this->charSet);
 	}
 
 	if(NULL != this->textureSpec->charSetSpec)
 	{
-		return this->textureSpec->charSetSpec->allocationType;
+		return this->textureSpec->charSetSpec->sharingScheme;
 	}
 
-	return __NO_ALLOCATION_TYPE;
+	return kCharSetShared;
 }
 
 /**
@@ -460,16 +460,13 @@ void Texture::setFrame(uint16 frame)
 	{
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			// write according to the allocation type
-			switch(CharSet::getAllocationType(this->charSet))
+			if(kCharSetSharedMulti == CharSet::getSharingScheme(this->charSet))
 			{
-				case __ANIMATED_SINGLE_OPTIMIZED:
-				case __ANIMATED_SHARED_OPTIMIZED:
-				case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-				case __ANIMATED_MULTI:
-
-					this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-					break;
+				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+			}
+			else if(CharSet::isOptimized(this->charSet))
+			{
+				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 			}
 
 			Texture::prepare(this);
@@ -508,47 +505,19 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	// determine the allocation type
-	switch(textureSpec->charSetSpec->allocationType)
+	if(kCharSetSharedMulti == textureSpec->charSetSpec->sharingScheme)
 	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
+		uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
 
-			// just return the cols
-			return textureSpec->cols;
-			break;
-
-		case __ANIMATED_MULTI:
-			{
-				// return the total number of chars
-				uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
-
-				if(maximumNumberOfFrames > textureSpec->numberOfFrames)
-				{
-					return textureSpec->numberOfFrames * textureSpec->cols;
-				}
-				
-				return maximumNumberOfFrames * textureSpec->cols;
-			}
-			break;
-
-		case __NOT_ANIMATED:
-
-			// just return the cols
-			return textureSpec->cols;
-			break;
-
-		default:
-
-			NM_ASSERT(false, "Texture::getTotalRows: animation scheme not handled");
-			break;
+		if(maximumNumberOfFrames > textureSpec->numberOfFrames)
+		{
+			return textureSpec->numberOfFrames * textureSpec->cols;
+		}
+		
+		return maximumNumberOfFrames * textureSpec->cols;	
 	}
 
-	return 0;
+	return textureSpec->cols;
 }
 
 /**
@@ -563,43 +532,16 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	// determine the allocation type
-	switch(textureSpec->charSetSpec->allocationType)
+	if(kCharSetSharedMulti == textureSpec->charSetSpec->sharingScheme)
 	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-
-			// just return the cols
-			return textureSpec->rows;
-			break;
-
-		case __ANIMATED_MULTI:
-			{
-				uint32 allocableCols = Texture::getTotalCols(textureSpec);
-				int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
-				
-				// return the total number of chars
-				return textureSpec->rows + textureSpec->rows * (remainingCols / 64);
-			}
-			break;
-
-		case __NOT_ANIMATED:
-
-			// just return the cols
-			return textureSpec->rows;
-			break;
-
-		default:
-
-			NM_ASSERT(false, "Texture::getTotalRows: animation scheme not handled");
-			break;
+		uint32 allocableCols = Texture::getTotalCols(textureSpec);
+		int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
+		
+		// return the total number of chars
+		return textureSpec->rows + textureSpec->rows * (remainingCols / 64);
 	}
 
-	return 0;
+	return textureSpec->rows;
 }
 
 /**
@@ -656,32 +598,24 @@ void Texture::setCharSet(CharSet charSet)
 
 void Texture::setupUpdateFunction()
 {
-	// write according to the allocation type
-	switch(CharSet::getAllocationType(this->charSet))
+	if(CharSet::isOptimized(this->charSet))
 	{
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-
-			this->doUpdate = Texture::updateOptimized;
-			CharSet::setFrame(this->charSet, this->frame);
-			break;
-
-		case __NOT_ANIMATED:
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-
-			this->doUpdate = Texture::updateDefault;
-			CharSet::setFrame(this->charSet, this->frame);
-			break;
-
-		case __ANIMATED_MULTI:
-
+		this->doUpdate = Texture::updateOptimized;
+		CharSet::setFrame(this->charSet, this->frame);
+	}
+	else
+	{
+		if(kCharSetSharedMulti == CharSet::getSharingScheme(this->charSet))
+		{
 			this->doUpdate = NULL;
 			//this->doUpdate = Texture::updateMulti;
-			break;
-	}	
+		}
+		else
+		{			
+			this->doUpdate = Texture::updateDefault;
+			CharSet::setFrame(this->charSet, this->frame);
+		}		
+	}
 }
 
 /**

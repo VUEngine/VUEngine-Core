@@ -77,8 +77,8 @@ CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 	// number of chars
 	{{ item.characterCount * item.size.x * item.size.y }},
 
-	// allocation type
-	__NOT_ANIMATED,
+	// sharing scheme
+	kCharSetShared,
 
 	// char data
 	(uint32*){{ sanitizedSpecName }}FontTiles,

@@ -81,16 +81,16 @@ AnimationFunctionROMSpec* const {{ entityName }}Animations =
 CharSetROMSpec {{ spriteName }}Charset =
 {
 	// number of chars, depending on allocation type:
-	// __ANIMATED_SINGLE*, __ANIMATED_SHARED*: number of chars of a single animation frame (cols * rows)
-	// __ANIMATED_MULTI, __NOT_ANIMATED: sum of all chars
+	// kCharSetNotShared, kCharSetShared: number of chars of a single animation frame (cols * rows)
+	// kCharSetSharedMulti: sum of all chars
 	{% if sprite.texture.charset.type == 'animatedMulti' or sprite.texture.charset.type == 'notAnimated' -%}
 	{{ sprite.texture.image.chars }},
 	{%- else -%}
 	{{ sprite.texture.size.x * sprite.texture.size.y }},
 	{%- endif %}
 
-	// allocation type
-	// (__ANIMATED_SINGLE, __ANIMATED_SINGLE_OPTIMIZED, __ANIMATED_SHARED, __ANIMATED_SHARED_COORDINATED, __ANIMATED_MULTI or __NOT_ANIMATED)
+	// sharing scheme
+	// [kCharSetNotShared, kCharSetShared, kCharSetSharedMulti]
 	__{{ sprite.texture.charset.type | toUpperSnakeCase }},
 
 	// char spec
@@ -121,8 +121,8 @@ TextureROMSpec {{ spriteName }}Texture =
 	},
 
 	// number of frames, depending on charset's allocation type:
-	// __ANIMATED_SINGLE*, __ANIMATED_SHARED*, __NOT_ANIMATED: 1
-	// __ANIMATED_MULTI: total number of frames
+	// kCharSetNotShared, kCharSetShared: 1
+	// kCharSetSharedMulti: total number of frames
 	{% if sprite.texture.charset.type == 'animatedMulti' and entity.animations.definitions.length -%}
 	{{ entity.animations.definitions.length }}
 	{%- else -%}

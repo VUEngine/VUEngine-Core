@@ -138,7 +138,9 @@ abstract class Texture : ListenerObject
 	uint16 getFrame();
 	bool prepare();
 	bool update(int16 maximumTextureRowsToWrite);
-	uint8 getAllocationType();
+	bool isShared();
+	uint16 getSharingScheme();
+
 	virtual bool write(int16 maximumTextureRowsToWrite);
 	virtual void rewrite();
 	virtual void setFrameAnimatedMulti(uint16 frame);

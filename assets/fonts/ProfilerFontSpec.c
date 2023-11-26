@@ -26,8 +26,8 @@ CharSetROMSpec ProfilerFontCharSet =
 	// number of chars
 	45,
 
-	// allocation type
-	__NOT_ANIMATED,
+	// sharing scheme
+	kCharSetShared,
 
 	// char spec
 	VUEngineProfilerFontTiles,

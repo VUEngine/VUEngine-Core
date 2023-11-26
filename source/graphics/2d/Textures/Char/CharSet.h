@@ -22,32 +22,12 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// non allocation type
-#define __NO_ALLOCATION_TYPE						0x00
-
-// spec of a CharSet for unanimated sprites
-#define __NOT_ANIMATED								0x01
-
-// spec of a CharSet for animated sprites
-#define __ANIMATED_SINGLE							0x02
-
-// spec of a CharSet for animated sprites
-#define __ANIMATED_SINGLE_OPTIMIZED					0x03
-
-// spec of a CharSet for animated sprites with one char set is shared by all
-#define __ANIMATED_SHARED							0x04
-
-// spec of a CharSet for animated sprites with one char set is shared by all
-#define __ANIMATED_SHARED_OPTIMIZED					0x05
-
-// spec of a CharSet for animated sprites with a coordinator that syncs them
-#define __ANIMATED_SHARED_COORDINATED				0x06
-
-// spec of a CharSet for animated sprites with a coordinator that syncs them
-#define __ANIMATED_SHARED_COORDINATED_OPTIMIZED		0x07
-
-// spec of a charset for animated sprites whose all frames are written to memory and shared
-#define __ANIMATED_MULTI							0x08
+enum CharSetSharingScheme
+{
+	kCharSetNotShared = 0,
+	kCharSetShared,
+	kCharSetSharedMulti
+};
 
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
@@ -77,8 +57,8 @@ typedef struct CharSetSpec
 	/// __NOT_ANIMATED: number of chars of whole image
 	uint16 numberOfChars;
 
-	/// the way its chars and bgtexture will be allocated in graphic memory
-	uint8 allocationType;
+	/// whether it is shared or not
+	uint16 sharingScheme;
 
 	/// pointer to the char spec in ROM
 	uint32* tiles;
@@ -117,7 +97,9 @@ class CharSet : ListenerObject
 	void increaseUsageCount();
 	bool decreaseUsageCount();
 	uint8 getUsageCount();
-	uint8 getAllocationType();
+	uint16 getSharingScheme();
+	bool isShared();
+	bool isOptimized();
 	uint16 getOffset();
 	void setOffset(uint16 offset);
 	void setCharSetSpec(CharSetSpec* charSetSpec);

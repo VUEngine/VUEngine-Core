@@ -106,8 +106,7 @@ void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 	{
 		for(int16 i = 0; charSetSpecs[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != charSetSpecs[i]->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != charSetSpecs[i]->allocationType)
+			if(kCharSetNotShared != charSetSpecs[i]->sharingScheme)
 			{
 				CharSetManager::getCharSet(this, (CharSetSpec*)charSetSpecs[i]);
 			}
@@ -132,7 +131,7 @@ CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
-		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->allocationType == charSetSpec->allocationType)
+		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->sharingScheme == charSetSpec->sharingScheme)
 		{
 			return charSet;
 		}
@@ -157,30 +156,24 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 
 	CharSet charSet = NULL;
 
-	switch(charSetSpec->allocationType)
+	if(kCharSetNotShared == charSetSpec->sharingScheme)
 	{
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SINGLE_OPTIMIZED:
+		// ask for allocation
+		charSet = CharSetManager::allocateCharSet(this, charSetSpec);
+	}
+	else
+	{
+		// first try to find an already created charset
+		charSet = CharSetManager::findCharSet(this, charSetSpec);
 
-			// ask for allocation
+		if(NULL == charSet)
+		{
 			charSet = CharSetManager::allocateCharSet(this, charSetSpec);
-			break;
-
-		default:
-
-			// first try to find an already created charset
-			charSet = CharSetManager::findCharSet(this, charSetSpec);
-
-			if(NULL == charSet)
-			{
-				charSet = CharSetManager::allocateCharSet(this, charSetSpec);
-			}
-			else
-			{
-				CharSet::increaseUsageCount(charSet);
-			}
-
-			break;
+		}
+		else
+		{
+			CharSet::increaseUsageCount(charSet);
+		}
 	}
 
 	return charSet;

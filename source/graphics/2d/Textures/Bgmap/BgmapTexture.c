@@ -110,42 +110,28 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 	
-	uint8 allocationType = __NO_ALLOCATION_TYPE;
+	uint16 sharingScheme = 0;
 
 	if(!isDeleted(this->charSet))
 	{
-		allocationType = CharSet::getAllocationType(this->charSet);
+		sharingScheme = CharSet::getSharingScheme(this->charSet);
 	}
 	else if(NULL != this->textureSpec->charSetSpec)
 	{
-		allocationType = this->textureSpec->charSetSpec->allocationType;
+		sharingScheme = this->textureSpec->charSetSpec->sharingScheme;
 	}
 	else
 	{
 		return false;
 	}
 
-	//determine the allocation type
-	switch(allocationType)
+	if(kCharSetSharedMulti == sharingScheme)
 	{
-		case __ANIMATED_MULTI:
-
-			// write the spec to graphic memory
-			BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
-			break;
-/*
-		case __NOT_ANIMATED:
-		case __ANIMATED_SINGLE:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
-		case __ANIMATED_SINGLE_OPTIMIZED:
-		case __ANIMATED_SHARED_OPTIMIZED:
-		case __ANIMATED_SHARED_COORDINATED_OPTIMIZED:
-*/
-		default:
-
-			BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status);
-			break;
+		BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
+	}
+	else
+	{
+		BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status);
 	}
 
 	if(kTexturePendingRewriting == status)
