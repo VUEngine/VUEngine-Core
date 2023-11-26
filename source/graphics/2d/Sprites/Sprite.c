@@ -96,17 +96,17 @@ void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject 
 		this->animationController = NULL;
 		return;
 	}
-
-	AnimationCoordinator animationCoordinator = NULL;
 	
 	if(isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
 	{
-		animationCoordinator = AnimationCoordinatorFactory::getCoordinator
-		(
-			AnimationCoordinatorFactory::getInstance(),
-			this->animationController, 
-			owner, 
-			charSetSpec
+		AnimationController::setAnimationCoordinator(this->animationController,
+			AnimationCoordinatorFactory::getCoordinator
+			(
+				AnimationCoordinatorFactory::getInstance(),
+				this->animationController, 
+				owner, 
+				charSetSpec
+			)
 		);
 	}
 }
