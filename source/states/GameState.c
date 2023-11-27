@@ -182,45 +182,27 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 {
 	Clock::pause(this->messagingClock, true);
 
-#ifdef __DEBUG_TOOLS
-	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
+#ifdef __TOOLS
+	if(!VUEngine::isEnteringToolState(VUEngine::getInstance()))
+#endif
 	{
-#endif
-#ifdef __STAGE_EDITOR
-	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
-	{
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	if(!VUEngine::isEnteringSpecialMode(VUEngine::getInstance()))
-	{
-#endif
+		// Save the camera position for resume reconfiguration
+		this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
-	// Save the camera position for resume reconfiguration
-	this->cameraPosition = Camera::getPosition(Camera::getInstance());
+		// Make sure collision shapes are not drawn while suspended
+		if(this->collisionManager)
+		{
+			CollisionManager::hideShapes(this->collisionManager);
+		}
 
-	// Make sure collision shapes are not drawn while suspended
-	if(this->collisionManager)
-	{
-		CollisionManager::hideShapes(this->collisionManager);
-	}
+		if(this->stage)
+		{
+			Container::suspend(this->stage);
+		}
 
-	if(this->stage)
-	{
-		Container::suspend(this->stage);
+		// Make sure that all graphical resources are released.
+		SpriteManager::reset(SpriteManager::getInstance());
 	}
-
-	// Make sure that all graphical resources are released.
-	SpriteManager::reset(SpriteManager::getInstance());
-
-#ifdef __DEBUG_TOOLS
-	}
-#endif
-#ifdef __STAGE_EDITOR
-	}
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	}
-#endif
 }
 
 /**
@@ -234,7 +216,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	HardwareManager::suspendInterrupts();
 
-	if(!VUEngine::isExitingSpecialMode(VUEngine::getInstance()))
+	if(!VUEngine::isExitingToolState(VUEngine::getInstance()))
 	{
 		// Set camera to its previous position
 		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));

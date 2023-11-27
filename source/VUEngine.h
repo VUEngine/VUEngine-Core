@@ -93,6 +93,7 @@ singleton class VUEngine : ListenerObject
 	volatile bool nextGameCycleStarted;
 	// game paused flag
 	bool isPaused;
+	bool isToolStateTransition;
 
 	/// @publicsection
 	static VUEngine getInstance();
@@ -120,8 +121,8 @@ singleton class VUEngine : ListenerObject
 	GameState getCurrentState();
 	uint16 getGameFrameDuration();
 	void setGameFrameRate(uint16 gameFrameRate);
-	bool isEnteringSpecialMode();
-	bool isExitingSpecialMode();
+	bool isEnteringToolState();
+	bool isExitingToolState();
 	bool isPaused();
 	bool isInSpecialMode();
 	void pause(GameState pauseState);

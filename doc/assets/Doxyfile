@@ -2066,7 +2066,7 @@ PREDEFINED             = __attribute__(x)= 								\
 						__ANIMATION_INSPECTOR							\
 						__SOUND_TEST									\
 						__DEBUG											\
-						__DEBUG_TOOLS									\
+						__DEBUG_TOOL									\
 						__SHOW_DETAILED_MEMORY_POOL_STATUS				\
 						__PRINT_FRAMERATE								\
 						__SHOW_MEMORY_POOL_STATUS						\

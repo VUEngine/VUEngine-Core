@@ -114,6 +114,7 @@ void VUEngine::constructor()
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
 	this->isPaused = false;
+	this->isToolStateTransition = false;
 
 	// make sure all managers are initialized now
 	this->saveDataManager = NULL;
@@ -128,16 +129,10 @@ void VUEngine::constructor()
 	Utilities::setClock(this->clock);
 	Utilities::setKeypadManager(this->keypadManager);
 
-#ifdef __DEBUG_TOOLS
+#ifdef __TOOLS
 	DebugState::getInstance();
-#endif
-#ifdef __STAGE_EDITOR
 	StageEditorState::getInstance();
-#endif
-#ifdef __ANIMATION_INSPECTOR
 	AnimationInspectorState::getInstance();
-#endif
-#ifdef __SOUND_TEST
 	SoundTestState::getInstance();
 #endif
 
@@ -485,22 +480,22 @@ void VUEngine::openTool(ToolState toolState)
 {
 	if(VUEngine::isInToolState(this, toolState))
 	{
-		this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+		this->isToolStateTransition = true;
 		StateMachine::popState(this->stateMachine);
-		this->nextState = NULL;
+		this->isToolStateTransition = false;
 	}
 	else
 	{
 		if(VUEngine::isInSpecialMode(this))
 		{
-			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+			this->isToolStateTransition = true;
 			StateMachine::popState(this->stateMachine);
-			this->nextState = NULL;
+			this->isToolStateTransition = false;
 		}
 
-		this->nextState = GameState::safeCast(toolState);
-		StateMachine::pushState(this->stateMachine, (State)this->nextState);
-		this->nextState = NULL;
+		this->isToolStateTransition = true;
+		StateMachine::pushState(this->stateMachine, State::safeCast(toolState));
+		this->isToolStateTransition = false;
 	}
 }
 
@@ -508,16 +503,10 @@ bool VUEngine::checkIfOpenTool(const UserInput* userInput)
 {
 	ToolState engineToolStates[] =
 	{
-#ifdef __DEBUG_TOOLS
+#ifdef __TOOLS
 		ToolState::safeCast(DebugState::getInstance()),
-#endif
-#ifdef __STAGE_EDITOR
 		ToolState::safeCast(StageEditorState::getInstance()),
-#endif
-#ifdef __ANIMATION_INSPECTOR
 		ToolState::safeCast(AnimationInspectorState::getInstance()),
-#endif
-#ifdef __SOUND_TEST
 		ToolState::safeCast(SoundTestState::getInstance()),
 #endif
 		NULL
@@ -984,30 +973,22 @@ bool VUEngine::isInToolState(ToolState toolState)
 {
 	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(toolState);
 }
-#endif
 
-#ifdef __DEBUG_TOOLS
 bool VUEngine::isInDebugMode()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)DebugState::getInstance();
 }
-#endif
 
-#ifdef __STAGE_EDITOR
 bool VUEngine::isInStageEditor()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)StageEditorState::getInstance();
 }
-#endif
 
-#ifdef __ANIMATION_INSPECTOR
 bool VUEngine::isInAnimationInspector()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)AnimationInspectorState::getInstance();
 }
-#endif
 
-#ifdef __SOUND_TEST
 bool VUEngine::isInSoundTest()
 {
 	return StateMachine::getCurrentState(this->stateMachine) == (State)SoundTestState::getInstance();
@@ -1020,16 +1001,10 @@ bool VUEngine::isInSpecialMode()
 {
 	int32 isInSpecialMode = false;
 
-#ifdef __DEBUG_TOOLS
+#ifdef __TOOLS
 	isInSpecialMode |= VUEngine::isInDebugMode(this);
-#endif
-#ifdef __STAGE_EDITOR
 	isInSpecialMode |= VUEngine::isInStageEditor(this);
-#endif
-#ifdef __ANIMATION_INSPECTOR
 	isInSpecialMode |= VUEngine::isInAnimationInspector(this);
-#endif
-#ifdef __SOUND_TEST
 	isInSpecialMode |= VUEngine::isInSoundTest(this);
 #endif
 
@@ -1037,43 +1012,15 @@ bool VUEngine::isInSpecialMode()
 }
 
 // whether if a special mode is being started
-bool VUEngine::isEnteringSpecialMode()
+bool VUEngine::isEnteringToolState()
 {
-	int32 isEnteringSpecialMode = false;
-#ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
-#endif
-#ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
-#endif
-#ifdef __SOUND_TEST
-	isEnteringSpecialMode |= GameState::safeCast(SoundTestState::getInstance()) == this->nextState;
-#endif
-
-	return isEnteringSpecialMode;
+	return this->isToolStateTransition;
 }
 
 // whether if a special mode is being started
-bool VUEngine::isExitingSpecialMode()
+bool VUEngine::isExitingToolState()
 {
-	int32 isExitingSpecialMode = false;
-#ifdef __DEBUG_TOOLS
-	isExitingSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
-#endif
-#ifdef __STAGE_EDITOR
-	isExitingSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	isExitingSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
-#endif
-#ifdef __SOUND_TEST
-	isExitingSpecialMode |= GameState::safeCast(SoundTestState::getInstance()) == this->nextState;
-#endif
-
-	return isExitingSpecialMode;
+	return this->isToolStateTransition;
 }
 
 // retrieve state machine, use with caution!!!

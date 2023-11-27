@@ -15,7 +15,7 @@
 #include <RumbleManager.h>
 
 #include <CommunicationManager.h>
-#ifdef __DEBUG_TOOLS
+#ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
 

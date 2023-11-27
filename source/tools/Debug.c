@@ -98,7 +98,7 @@
 friend class VirtualNode;
 friend class VirtualList;
 
-#ifdef __DEBUG_TOOLS
+#ifdef __DEBUG_TOOL
 extern ClassSizeData _userClassesSizeData[];
 #endif
 
@@ -524,7 +524,7 @@ void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x _
 {
 	Debug::removeSubPages(this);
 
-#ifdef __DEBUG_TOOLS
+#ifdef __DEBUG_TOOL
 
 	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowZeroPage);
 	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
@@ -543,7 +543,7 @@ void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x _
 	Debug::showSubPage(this, 0);
 }
 
-#ifdef __DEBUG_TOOLS
+#ifdef __DEBUG_TOOL
 
 /**
  * Show classes' memory footprint

@@ -14,7 +14,7 @@
 
 #include <VIPManager.h>
 
-#ifdef __DEBUG_TOOLS
+#ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
 #include <DirectDraw.h>
