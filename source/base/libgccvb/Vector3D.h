@@ -301,7 +301,7 @@ static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 			return __1I_FIXED;
 		}
 
-		fixed_ext_t halfWith = __FIXED_EXT_MULT(_optical->halfWidth, applyScalingMultiplier ? _optical->scalingMultiplier : _optical->projectionMultiplierHelper);
+		fixed_ext_t halfWith = __FIXED_EXT_MULT(_optical->halfWidth, _optical->projectionMultiplierHelper);
 		fixed_ext_t projectedWidth = __FIXED_EXT_DIV(halfWith, z + _optical->cameraNearPlane) >> __PROJECTION_PRECISION_INCREMENT;
 		
 		return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
