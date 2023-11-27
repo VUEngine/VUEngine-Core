@@ -499,7 +499,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 
 				this->animationFunction.delay -= 1;
 
-				if(0 > (signed)this->animationFunction.delay)
+				if(0 > (int8)this->animationFunction.delay)
 				{
 					this->animationFunction.delay = 0;
 				}
