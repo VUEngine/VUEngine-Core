@@ -879,12 +879,12 @@ GameState VUEngine::run(GameState currentGameState)
 	// Synchronize 2D graphics
 	VUEngine::synchronizeGraphics(this, currentGameState);
 
+	// dispatch delayed messages
+	VUEngine::dispatchDelayedMessages(this);
+
 	// stream after the logic to avoid having a very heady frame
 	if(!VUEngine::stream(this, currentGameState))
 	{
-		// dispatch delayed messages
-		VUEngine::dispatchDelayedMessages(this);
-
 		// Update sound related logic
 		VUEngine::updateSound(this);
 	}
