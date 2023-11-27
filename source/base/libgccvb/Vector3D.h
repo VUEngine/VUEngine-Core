@@ -277,15 +277,35 @@ static inline fixed_t Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB
 
 static inline fixed_t Vector3D::getScale(fixed_t z, bool applyScalingMultiplier)
 {
-	if(0 == _optical->halfWidth || 0 == z + _optical->cameraNearPlane)
+	if(0 == _optical->halfWidth)
 	{
 		return __1I_FIXED;
 	}
 
-	fixed_ext_t halfWith = __FIXED_EXT_MULT(_optical->halfWidth, applyScalingMultiplier ? _optical->scalingMultiplier : _optical->projectionMultiplierHelper);
-	fixed_ext_t projectedWidth = __FIXED_EXT_DIV(halfWith, z + _optical->cameraNearPlane) >> __PROJECTION_PRECISION_INCREMENT;
+	if(applyScalingMultiplier)
+	{
+		if(0 == z + _optical->halfWidth)
+		{
+			return __1I_FIXED;
+		}
 
-	return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
+		fixed_ext_t halfWith = __FIXED_EXT_MULT(_optical->halfWidth, _optical->scalingMultiplier);
+		fixed_ext_t projectedWidth = __FIXED_EXT_DIV(halfWith, z + _optical->halfWidth);
+
+		return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);		
+	}
+	else
+	{
+		if(0 == z + _optical->cameraNearPlane)
+		{
+			return __1I_FIXED;
+		}
+
+		fixed_ext_t halfWith = __FIXED_EXT_MULT(_optical->halfWidth, applyScalingMultiplier ? _optical->scalingMultiplier : _optical->projectionMultiplierHelper);
+		fixed_ext_t projectedWidth = __FIXED_EXT_DIV(halfWith, z + _optical->cameraNearPlane) >> __PROJECTION_PRECISION_INCREMENT;
+		
+		return __FIXED_EXT_DIV(projectedWidth, _optical->halfWidth);
+	}
 }
 
 static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
