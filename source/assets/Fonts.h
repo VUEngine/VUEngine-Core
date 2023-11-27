@@ -18,6 +18,7 @@
 //                                              DECLARATIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
+extern FontSpec DebugFont;
 extern FontSpec DefaultFont;
 extern FontSpec ProfilerFont;
 
