@@ -224,7 +224,7 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 
-	TextureSource textureSource = this->textureSource;
+	BgmapTextureSource textureSource = this->textureSource;
 
 	PixelVector position = this->position;
 

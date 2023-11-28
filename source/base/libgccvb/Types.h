@@ -243,13 +243,19 @@ typedef struct Scale
 } Scale;
 
 // used to represent the m coordinates of the bgmaps
-typedef struct TextureSource
+typedef struct BgmapTextureSource
 {
 	int16 mx;
 	int16 mp;
 	int16 my;
 
-} TextureSource;
+} BgmapTextureSource;
+
+typedef struct ObjectTextureSource
+{
+	int32 displacement;
+
+} ObjectTextureSource;
 
 
 typedef struct TexturePadding

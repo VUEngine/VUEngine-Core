@@ -69,6 +69,12 @@ void ObjectAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	this->renderFlag = true;
-	Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	if(Texture::isMultiframe(this->texture))
+	{
+		this->objectTextureSource.displacement = AnimationController::getActualFrameIndex(this->animationController) * this->rows * this->cols;
+	}
+	else
+	{
+		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
+	}
 }

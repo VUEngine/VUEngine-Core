@@ -77,7 +77,7 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 class BgmapSprite : Sprite
 {
 	// bgmap's source coordinates
-	TextureSource textureSource;
+	BgmapTextureSource textureSource;
 	// param table offset
 	int16 paramTableRow;
 	// angle with respect to each axis (indexes for the _sinLut array)

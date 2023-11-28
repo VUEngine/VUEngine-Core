@@ -64,6 +64,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 	this->xDisplacementDelta = 0;
 	this->yDisplacementDelta = 0;
 
+	this->objectTextureSource.displacement = 0;
+
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
 	if(objectSpriteSpec->spriteSpec.textureSpec)
@@ -144,7 +146,7 @@ void ObjectSprite::rewrite()
 
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
+	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 
 	ObjectAttributes* objectPointer = NULL;
 
@@ -260,7 +262,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
 
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement);
+	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;

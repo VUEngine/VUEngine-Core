@@ -67,6 +67,8 @@ class ObjectSprite : Sprite
 {
 	// parent sprite
 	ObjectSpriteContainer objectSpriteContainer;
+	ObjectTextureSource objectTextureSource;
+
 	// number of objects
 	int16 totalObjects;
 	// cache some attributes to speed up rendering
