@@ -110,7 +110,7 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
-	if(1 < this->textureSpec->numberOfFrames)
+	if(!BgmapTexture::isMultiframe(this))
 	{
 		BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
 	}

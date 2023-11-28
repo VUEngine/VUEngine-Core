@@ -363,9 +363,24 @@ bool Texture::isShared()
 	return true;
 }
 
+static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
+{
+	if(NULL == textureSpec)
+	{
+		return false;		
+	}
+
+	return 1 == textureSpec->numberOfFrames;
+}
+
 bool Texture::isSingleFrame()
 {
-	return 1 == this->textureSpec->numberOfFrames;
+	return Texture::isSpecSingleFrame(this->textureSpec);
+}
+
+bool Texture::isMultiframe()
+{
+	return !Texture::isSpecSingleFrame(this->textureSpec);
 }
 
 /**
@@ -465,7 +480,7 @@ void Texture::setFrame(uint16 frame)
 	{
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			if(1 < this->textureSpec->numberOfFrames)
+			if(Texture::isMultiframe(this))
 			{
 				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 			}
@@ -510,7 +525,7 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	if(1 < textureSpec->numberOfFrames)
+	if(!Texture::isSpecSingleFrame(textureSpec))
 	{
 		uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
 
@@ -537,7 +552,7 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 		return 0;
 	}
 
-	if(1 < textureSpec->numberOfFrames)
+	if(!Texture::isSpecSingleFrame(textureSpec))
 	{
 		uint32 allocableCols = Texture::getTotalCols(textureSpec);
 		int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
@@ -603,7 +618,7 @@ void Texture::setCharSet(CharSet charSet)
 
 void Texture::setupUpdateFunction()
 {
-	if(1 < this->textureSpec->numberOfFrames)
+	if(Texture::isMultiframe(this))
 	{
 		this->doUpdate = NULL;
 		//this->doUpdate = Texture::updateMulti;
