@@ -60,11 +60,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 
 	if(!isDeleted(this->texture))
 	{
-		if(Texture::isMultiframe(this->texture))
-		{
-			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureSetFrame, kEventTextureSetFrame);
-		}
-
 		// set texture position
 		this->textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
 		this->textureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
@@ -133,16 +128,6 @@ bool BgmapSprite::hasSpecialEffects()
 void BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
-}
-
-/**
- * Process event
- *
- * @param eventFirer
- */
-void BgmapSprite::onTextureSetFrame(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->renderFlag = true;
 }
 
 void BgmapSprite::releaseTexture()

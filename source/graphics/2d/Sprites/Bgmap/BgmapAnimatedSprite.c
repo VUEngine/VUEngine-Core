@@ -74,7 +74,7 @@ void BgmapAnimatedSprite::writeAnimation()
 
 	if(Texture::isMultiframe(this->texture))
 	{
-		BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
+		BgmapAnimatedSprite::setFrame(this, AnimationController::getActualFrameIndex(this->animationController));
 		BgmapAnimatedSprite::invalidateParamTable(this);
 	}
 	else
@@ -83,7 +83,7 @@ void BgmapAnimatedSprite::writeAnimation()
 	}
 }
 
-void BgmapAnimatedSprite::setFrameAnimatedMulti(uint16 frame)
+void BgmapAnimatedSprite::setFrame(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture) + Texture::getCols(this->texture) * frame;
 	int16 my = BgmapTexture::getYOffset(this->texture) + Texture::getRows(this->texture) * (mx / 64);
