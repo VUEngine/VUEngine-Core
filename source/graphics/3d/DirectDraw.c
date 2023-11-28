@@ -129,9 +129,9 @@ void DirectDraw::print(int16 x, int16 y)
 {
 	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Drawn pixels:    ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Drawn pixels:      ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->drawPixels, x + 14, y++, NULL);
-	Printing::text(Printing::getInstance(), "Max. pixels:     ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Max. pixels:       ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->maximuDrawPixels, x + 14, y++, NULL);
 }
 
