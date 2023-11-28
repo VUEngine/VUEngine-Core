@@ -161,17 +161,17 @@ void Debug::destructor()
 // setup pages
 void Debug::setupPages()
 {
-	VirtualList::pushBack(this->pages, &Debug_generalStatusPage);
-	VirtualList::pushBack(this->pages, &Debug_memoryStatusPage);
-	VirtualList::pushBack(this->pages, &Debug_gameProfilingPage);
-	VirtualList::pushBack(this->pages, &Debug_streamingPage);
-	VirtualList::pushBack(this->pages, &Debug_spritesPage);
-	VirtualList::pushBack(this->pages, &Debug_texturesPage);
-	VirtualList::pushBack(this->pages, &Debug_objectsPage);
-	VirtualList::pushBack(this->pages, &Debug_charMemoryPage);
-	VirtualList::pushBack(this->pages, &Debug_physicsPage);
-	VirtualList::pushBack(this->pages, &Debug_hardwareRegistersPage);
-	VirtualList::pushBack(this->pages, &Debug_sramPage);
+	VirtualList::pushBack(this->pages, &Debug::generalStatusPage);
+	VirtualList::pushBack(this->pages, &Debug::memoryStatusPage);
+	VirtualList::pushBack(this->pages, &Debug::gameProfilingPage);
+	VirtualList::pushBack(this->pages, &Debug::streamingPage);
+	VirtualList::pushBack(this->pages, &Debug::spritesPage);
+	VirtualList::pushBack(this->pages, &Debug::texturesPage);
+	VirtualList::pushBack(this->pages, &Debug::objectsPage);
+	VirtualList::pushBack(this->pages, &Debug::charMemoryPage);
+	VirtualList::pushBack(this->pages, &Debug::physicsPage);
+	VirtualList::pushBack(this->pages, &Debug::hardwareRegistersPage);
+	VirtualList::pushBack(this->pages, &Debug::sramPage);
 
 	this->currentPage = this->pages->head;
 }
@@ -186,7 +186,7 @@ void Debug::update()
 		((void (*)(Debug))this->update)(this);
 	}
 
-	if(this->currentPage->data == &Debug_texturesPage && 0 <= this->bgmapSegment)
+	if(this->currentPage->data == &Debug::texturesPage && 0 <= this->bgmapSegment)
 	{
 		Debug::showBgmapSegment(this);
 	}
@@ -526,15 +526,15 @@ void Debug::memoryStatusPage(int32 increment __attribute__ ((unused)), int32 x _
 
 #ifdef __DEBUG_TOOL
 
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowZeroPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowThirdPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowFourthPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowFifthPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowSixthPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowSeventhPage);
-	VirtualList::pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowZeroPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowFirstPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowSecondPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowThirdPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowFourthPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowFifthPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowSixthPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowSeventhPage);
+	VirtualList::pushBack(this->subPages, &Debug::memoryStatusShowUserDefinedClassesSizes);
 
 #endif
 
@@ -760,12 +760,12 @@ void Debug::memoryStatusShowSeventhPage(int32 increment __attribute__ ((unused))
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&DebugState_getObjectSize,			"DebugState"},
-		{&GameState_getObjectSize,			"GameState"},
-		{&StageEditorState_getObjectSize,	"StageEditorState"},
-		{&Debug_getObjectSize,				"Debug"},
-		{&OptionsSelector_getObjectSize,	"OptionsSelector"},
-		{&StageEditor_getObjectSize,		"StageEditor"},
+		{&DebugState::getObjectSize,			"DebugState"},
+		{&GameState::getObjectSize,			"GameState"},
+		{&StageEditorState::getObjectSize,	"StageEditorState"},
+		{&Debug::getObjectSize,				"Debug"},
+		{&OptionsSelector::getObjectSize,	"OptionsSelector"},
+		{&StageEditor::getObjectSize,		"StageEditor"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -847,7 +847,7 @@ void Debug::streamingPage(int32 increment __attribute__ ((unused)), int32 x __at
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_streamingShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::streamingShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	Debug::showSubPage(this, 0);
@@ -878,8 +878,8 @@ void Debug::charMemoryPage(int32 increment __attribute__ ((unused)), int32 x __a
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_charMemoryShowStatus);
-	VirtualList::pushBack(this->subPages, &Debug_charMemoryShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::charMemoryShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::charMemoryShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	this->charSegment = -1;
@@ -997,8 +997,8 @@ void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __att
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_texturesShowStatus);
-	VirtualList::pushBack(this->subPages, &Debug_texturesShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::texturesShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::texturesShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
@@ -1014,7 +1014,7 @@ void Debug::texturesPage(int32 increment __attribute__ ((unused)), int32 x __att
  */
 void Debug::showDebugBgmap()
 {
-	if(this->currentPage->data != &Debug_texturesPage ||
+	if(this->currentPage->data != &Debug::texturesPage ||
 		0 > this->bgmapSegment
 	)
 	{
@@ -1233,8 +1233,8 @@ void Debug::objectsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_objectsShowStatus);
-	VirtualList::pushBack(this->subPages, &Debug_objectsShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::objectsShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::objectsShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	this->objectSegment = -1;
@@ -1314,8 +1314,8 @@ void Debug::spritesPage(int32 increment __attribute__ ((unused)), int32 x __attr
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_spritesShowStatus);
-	VirtualList::pushBack(this->subPages, &Debug_spritesShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::spritesShowStatus);
+	VirtualList::pushBack(this->subPages, &Debug::spritesShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	this->currentSprite = -1;
@@ -1378,8 +1378,8 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_physicStatusShowStatistics);
-	VirtualList::pushBack(this->subPages, &Debug_physicStatusShowShapes);
+	VirtualList::pushBack(this->subPages, &Debug::physicStatusShowStatistics);
+	VirtualList::pushBack(this->subPages, &Debug::physicStatusShowShapes);
 	this->currentSubPage = this->subPages->head;
 
 	Debug::showSubPage(this, 0);
@@ -1413,7 +1413,7 @@ void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)),
 void Debug::physicStatusShowShapes(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
-	this->update = (void (*)(void *))&Debug_showCollisionShapes;
+	this->update = (void (*)(void *))&Debug::showCollisionShapes;
 
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
@@ -1456,8 +1456,8 @@ void Debug::sramPage(int32 increment __attribute__ ((unused)), int32 x __attribu
 {
 	Debug::removeSubPages(this);
 
-	VirtualList::pushBack(this->subPages, &Debug_showSramPage);
-	VirtualList::pushBack(this->subPages, &Debug_showSramPage);
+	VirtualList::pushBack(this->subPages, &Debug::showSramPage);
+	VirtualList::pushBack(this->subPages, &Debug::showSramPage);
 	this->currentSubPage = this->subPages->head;
 
 	this->sramPage = 0;
