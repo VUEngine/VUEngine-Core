@@ -72,7 +72,7 @@ void BgmapAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	if(1 < Texture::getNumberOfFrames(this->texture))
+	if(Texture::isMultiframe(this->texture))
 	{
 		BgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
 		BgmapAnimatedSprite::invalidateParamTable(this);

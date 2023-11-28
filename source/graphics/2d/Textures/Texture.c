@@ -501,15 +501,6 @@ uint16 Texture::getFrame()
 }
 
 /**
- * Set Texture's frame
- *
- * @param frame	Texture's frame to display
- */
-void Texture::setFrameAnimatedMulti(uint16 frame __attribute__ ((unused)))
-{
-}
-
-/**
  * Retrieve map's total column size, accounting for the total frames of animation
  *
  * @return	Number of total columns

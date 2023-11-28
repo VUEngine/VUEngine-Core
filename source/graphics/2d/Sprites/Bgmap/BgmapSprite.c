@@ -60,7 +60,7 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 
 	if(!isDeleted(this->texture))
 	{
-		if(1 < Texture::getNumberOfFrames(this->texture))
+		if(Texture::isMultiframe(this->texture))
 		{
 			Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureSetFrame, kEventTextureSetFrame);
 		}

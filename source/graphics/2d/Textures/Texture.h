@@ -144,7 +144,6 @@ abstract class Texture : ListenerObject
 
 	virtual bool write(int16 maximumTextureRowsToWrite);
 	virtual void rewrite();
-	virtual void setFrameAnimatedMulti(uint16 frame);
 }
 
 

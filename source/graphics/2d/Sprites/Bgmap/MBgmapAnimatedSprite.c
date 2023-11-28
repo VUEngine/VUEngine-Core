@@ -60,7 +60,7 @@ void MBgmapAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	if(1 < Texture::getNumberOfFrames(this->texture))
+	if(Texture::isMultiframe(this->texture))
 	{
 		MBgmapAnimatedSprite::setFrameAnimatedMulti(this, AnimationController::getActualFrameIndex(this->animationController));
 		MBgmapAnimatedSprite::invalidateParamTable(this);
@@ -78,5 +78,6 @@ void MBgmapAnimatedSprite::setFrameAnimatedMulti(uint16 frame)
 	int32 totalColumns = 64 - mx;
 	int32 frameColumn = Texture::getCols(this->texture) * frame;
 	this->textureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
-	this->textureSource.my = (my + (frameColumn % totalColumns)) << 3;;
+	this->textureSource.my = (my + (frameColumn % totalColumns)) << 3;
+	this->renderFlag = true;
 }
