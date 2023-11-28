@@ -83,7 +83,7 @@ void DirectDraw::constructor()
 
 	Base::constructor();
 
-	this->totalDrawPixels = 0;
+	this->drawPixels = 0;
 	this->maximuDrawPixels = 0;
 
 	DirectDraw::reset(this);
@@ -104,7 +104,7 @@ void DirectDraw::destructor()
 
 void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	this->maximuDrawPixels = this->totalDrawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
+	this->maximuDrawPixels = this->drawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
 
 	if(__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS > this->maximuDrawPixels)
 	{
@@ -125,25 +125,33 @@ void DirectDraw::reset()
 	});
 }
 
+void DirectDraw::print(int16 x, int16 y)
+{
+	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
+	y++;
+	Printing::text(Printing::getInstance(), "Drawn pixels:    ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->drawPixels, x + 14, y++, NULL);
+	Printing::text(Printing::getInstance(), "Max. pixels:     ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->maximuDrawPixels, x + 14, y++, NULL);
+}
+
 /**
  * Reset
  */
 void DirectDraw::startDrawing()
 {
 
-#ifdef __PROFILE_DIRECT_DRAWING
+#ifdef __SHOW_DIRECT_DRAWING_PROFILING
 	static int counter = 0;
 
 	if(__TARGET_FPS <= counter++)
 	{
-		PRINT_TEXT("Total pixels:    /      ", 1, 1);
-		PRINT_INT(this->totalDrawPixels, 14, 1);
-		PRINT_INT(this->maximuDrawPixels, 19, 1);
+		DirectDraw::print(this, 1, 1);
 		counter = 0;
 	}
 #endif
 
-	if(this->totalDrawPixels <= _directDraw->maximuDrawPixels)
+	if(this->drawPixels <= _directDraw->maximuDrawPixels)
 	{
 		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 
@@ -153,7 +161,7 @@ void DirectDraw::startDrawing()
 		}
 	}
 
-	this->totalDrawPixels = 0;
+	this->drawPixels = 0;
 }
 
 void DirectDraw::setFrustum(CameraFrustum frustum)
@@ -316,7 +324,7 @@ static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 		rightBuffer[displacement] &= pixel;
 	}
 
-	_directDraw->totalDrawPixels++;
+	_directDraw->drawPixels++;
 }
 
 /**
@@ -639,9 +647,9 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		totalPixels = __FIXED_EXT_TO_I(toPointY - fromPointY) + totalPixelRounding;
 	}
 
-	_directDraw->totalDrawPixels += totalPixels;
+	_directDraw->drawPixels += totalPixels;
 
-	if(_directDraw->totalDrawPixels > _directDraw->maximuDrawPixels)
+	if(_directDraw->drawPixels > _directDraw->maximuDrawPixels)
 	{
 		return;
 	}

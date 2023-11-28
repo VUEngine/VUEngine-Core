@@ -32,7 +32,7 @@
 /// @ingroup graphics-3d
 singleton class DirectDraw : Object
 {
-	uint16 totalDrawPixels;
+	uint16 drawPixels;
 	uint16 maximuDrawPixels;
 
 	/// @publicsection
@@ -49,6 +49,7 @@ singleton class DirectDraw : Object
 	static bool isPointInsideFrustum(PixelVector point);
 
 	void reset();
+	void print(int16 x, int16 y);
 	void startDrawing();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int32 color);
 	void drawPoint(PixelVector point, int32 color);

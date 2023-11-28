@@ -69,6 +69,8 @@ void WireframeManager::constructor()
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
 	this->lockWireframeList = false;
+	this->renderedWireframes = 0;
+	this->drawnWireframes = 00;
 
 	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
 }
@@ -278,17 +280,12 @@ void WireframeManager::render()
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
 #ifdef __PROFILE_WIREFRAMES
-	uint16 wireframes = 0;
-	uint16 renderedWireframes = 0;
+	this->renderedWireframes = 0;
 #endif
 
 	// check the shapes
 	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
 	{
-#ifdef __PROFILE_WIREFRAMES
-		wireframes++;
-#endif
-
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
 		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame))
@@ -306,16 +303,13 @@ void WireframeManager::render()
 #ifdef __PROFILE_WIREFRAMES
 		if(__COLOR_BLACK != wireframe->color)
 		{
-			renderedWireframes++;
+			this->renderedWireframes++;
 		}
 #endif
 	}
 
-#ifdef __PROFILE_WIREFRAMES
-	PRINT_TEXT("Wireframes: ", 1, 5);
-	PRINT_TEXT("Rendered: ", 1, 6);
-	PRINT_INT(wireframes, 15, 5);
-	PRINT_INT(renderedWireframes, 15, 6);
+#ifdef __SHOW_WIREFRAMES_PROFILING
+	WireframeManager::print(this, 1, 1);
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
@@ -348,7 +342,7 @@ void WireframeManager::draw()
 	this->stopDrawing = false;
 
 #ifdef __PROFILE_WIREFRAMES
-	uint16 drawnWireframes = 0;
+	this->drawnWireframes = 0;
 #endif
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
@@ -371,14 +365,9 @@ void WireframeManager::draw()
 		Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
-		drawnWireframes++;
+		this->drawnWireframes++;
 #endif
 	}
-
-#ifdef __PROFILE_WIREFRAMES
-	PRINT_TEXT("Drawn: ", 1, 7);
-	PRINT_INT(drawnWireframes, 15, 7);
-#endif
 }
 
 void WireframeManager::enable()
@@ -399,10 +388,14 @@ void WireframeManager::disable()
  */
 void WireframeManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "WireframeManager's status", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
 	y++;
-	Printing::text(Printing::getInstance(), "Entries: ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Wireframes: ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->wireframes), x + 17, y++, NULL);
+	Printing::text(Printing::getInstance(), "Rendered: ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->renderedWireframes, x + 17, y++, NULL);
+	Printing::text(Printing::getInstance(), "Drawn: ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 17, y++, NULL);
 }
 
 void WireframeManager::hideWireframes()

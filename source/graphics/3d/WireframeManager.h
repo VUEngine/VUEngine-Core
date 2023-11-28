@@ -34,7 +34,9 @@ singleton class WireframeManager : ListenerObject
 	bool evenFrame;
 	bool disabled;
 	bool lockWireframeList;
-		
+	uint8 renderedWireframes;
+	uint8 drawnWireframes;
+	
 	// Wireframes
 	VirtualList wireframes;
 
