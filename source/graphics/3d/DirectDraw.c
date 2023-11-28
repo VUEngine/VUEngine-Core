@@ -659,6 +659,8 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
+		parallaxStep <<= 1;
+
 		if(0 != bufferIndex)
 		{
 			parallaxStart = -parallaxStart;
@@ -670,7 +672,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 				fromPointX += xStep;
 				fromPointY += yStep;
-				parallaxStart += parallaxStep;
 
 				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
 
@@ -687,7 +688,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 				fromPointX += xStep;
 				fromPointY += yStep;
-				parallaxStart += parallaxStep;
 
 				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 0, color);
 
