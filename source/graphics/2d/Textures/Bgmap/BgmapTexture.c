@@ -110,13 +110,17 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
-	if(!BgmapTexture::isMultiframe(this))
+	int16 xOffset = (int16)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	int16 yOffset = (int16)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
+	uint16 charSetOffset = (uint16)CharSet::getOffset(this->charSet);
+	
+	if(BgmapTexture::isMultiframe(this))
 	{
-		BgmapTexture::writeAnimatedMulti(this, maximumTextureRowsToWrite);
+		BgmapTexture::writeAllFrames(this, maximumTextureRowsToWrite, xOffset, yOffset, charSetOffset);
 	}
 	else
 	{
-		BgmapTexture::doWrite(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status);
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, xOffset, yOffset, charSetOffset);
 	}
 
 	if(kTexturePendingRewriting == status)
@@ -136,78 +140,40 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
  *
  * @private
  */
-void BgmapTexture::writeAnimatedMulti(int16 maximumTextureRowsToWrite)
+void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset, int16 yOffset, uint16 charSetOffset)
 {
-	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
-	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
-
 	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
 
-	int32 bgmapSegment = this->segment;
-	int32 offsetDisplacement = xOffset + (yOffset << 6);
-	int32 palette = this->palette << 14;
+	int16 currentXOffset = xOffset;
+	int16 currentYOffset = yOffset;
 
-	// determine the number of frames the map had
-	int32 area = (this->textureSpec->cols * this->textureSpec->rows);
-	int32 charLocation = (int32)CharSet::getOffset(this->charSet);
-	int32 frames = CharSet::getNumberOfChars(this->charSet) / area;
-	uint32 mapDisplacement = this->mapDisplacement;
+	this->mapDisplacement = 0;
 
-	int32 counter = maximumTextureRowsToWrite;
-
-	// put the map into memory calculating the number of char for each reference
-	for(; 0 != counter && 0 != this->remainingRowsToBeWritten--; counter--)
+	for(int16 frame = 0; frame < this->textureSpec->numberOfFrames; frame++)
 	{
-		int32 j = 1;
-		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
-		// specifying the char displacement inside the char mem
-		for(; j <= frames; j++)
-		{
-			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureSpec->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
-				(const HWORD*)this->textureSpec->map + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
-				this->textureSpec->cols,
-				(palette) | (charLocation + area * (j - 1)));
+		this->remainingRowsToBeWritten = this->textureSpec->rows;
 
-#ifdef __SHOW_SPRITES_PROFILING
-				extern int32 _writtenTextureTiles;
-				_writtenTextureTiles += this->textureSpec->cols;
-#endif
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset);
+
+		charSetOffset += this->textureSpec->cols * this->textureSpec->rows;
+
+		currentXOffset += this->textureSpec->cols;
+
+		if(64 <= currentXOffset)
+		{
+			currentXOffset = xOffset;
+			currentYOffset += this->textureSpec->rows;
+
+			if(64 <= currentYOffset)
+			{
+				NM_ASSERT(false, "BgmapTexture::writeAllFrames: no more space");
+				return;
+			}
 		}
 	}
-
-	if(this->textureSpec->padding.rows && -1 == this->remainingRowsToBeWritten)
-	{
-		int32 j = 1;
-		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
-		// specifying the char displacement inside the char mem
-		for(; j <= frames; j++)
-		{
-			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureSpec->cols * (j - 1)) + (this->textureSpec->rows << 6)),
-				(const HWORD*)_emptyTextureRow,
-				this->textureSpec->cols,
-				0
-			);
-
-#ifdef __SHOW_SPRITES_PROFILING
-			extern int32 _writtenTextureTiles;
-			_writtenTextureTiles += this->textureSpec->cols;
-#endif
-		}
-	}
-}
-
-/**
- * Set Texture's frame
- *
- * @param frame	Texture's frame to display
- */
-void BgmapTexture::setFrameAnimatedMulti(uint16 frame __attribute__((unused)))
-{
-	BgmapTexture::fireEvent(this, kEventTextureSetFrame);
-	NM_ASSERT(!isDeleted(this), "BgmapTexture::setFrameAnimatedMulti: deleted this during kEventTextureSetFrame");
 }
 
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
@@ -268,11 +234,8 @@ static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HW
  *
  * @private
  */
-void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrite)
+void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset)
 {
-	int32 xOffset = (int32)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
-	int32 yOffset = (int32)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
-
 	if((0 > xOffset) || (0 > yOffset))
 	{
 		return;
@@ -280,12 +243,12 @@ void BgmapTexture::doWrite(int16 maximumTextureRowsToWrite, bool forceFullRewrit
 
 	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(this->segment) + xOffset + (yOffset << 6);
 	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement;
-	uint16 offset = (int32)CharSet::getOffset(this->charSet) | (this->palette << 14);
 	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
 	uint16 flip = ((this->horizontalFlip << 1) | this->verticalFlip) << 12;
 	int8 remainingRowsToBeWritten = this->remainingRowsToBeWritten;
 	int16 cols = this->textureSpec->cols;
 	int16 rows = this->textureSpec->rows;
+	uint16 offset = charSetOffset | (this->palette << 14);
 
 	if(forceFullRewrite)
 	{

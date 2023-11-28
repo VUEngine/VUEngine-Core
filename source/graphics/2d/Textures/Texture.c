@@ -480,11 +480,7 @@ void Texture::setFrame(uint16 frame)
 	{
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			if(Texture::isMultiframe(this))
-			{
-				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-			}
-			else if(CharSet::isOptimized(this->charSet))
+			if(CharSet::isOptimized(this->charSet))
 			{
 				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
 			}
