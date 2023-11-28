@@ -87,7 +87,7 @@ void BgmapAnimatedSprite::setFrame(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture) + Texture::getCols(this->texture) * frame;
 	int16 my = BgmapTexture::getYOffset(this->texture) + Texture::getRows(this->texture) * (mx / 64);
-	this->textureSource.mx = __MODULO(mx, 64) << 3;
-	this->textureSource.my = my << 3;
+	this->bgmapTextureSource.mx = __MODULO(mx, 64) << 3;
+	this->bgmapTextureSource.my = my << 3;
 	this->renderFlag = true;
 }

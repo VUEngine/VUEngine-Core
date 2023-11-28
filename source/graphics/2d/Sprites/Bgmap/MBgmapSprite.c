@@ -224,28 +224,28 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 
-	BgmapTextureSource textureSource = this->textureSource;
+	BgmapTextureSource bgmapTextureSource = this->bgmapTextureSource;
 
 	PixelVector position = this->position;
 
 	if(this->mBgmapSpriteSpec->xLoop)
 	{
-		textureSource.mx = -this->position.x;
+		bgmapTextureSource.mx = -this->position.x;
 		position.x = 0;
 	}
 	else
  	{
- 		textureSource.mx = this->textureXOffset;
+ 		bgmapTextureSource.mx = this->textureXOffset;
 	}
 
 	if(this->mBgmapSpriteSpec->yLoop)
 	{
-		textureSource.my = -this->position.y;
+		bgmapTextureSource.my = -this->position.y;
 		position.y = 0;
 	}
 	else
  	{
- 		textureSource.my = this->textureYOffset;
+ 		bgmapTextureSource.my = this->textureYOffset;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
@@ -269,9 +269,9 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 		gy = _cameraFrustum->y0;
 	}
 
-	int16 mx = textureSource.mx + mxDisplacement;
-	int16 my = textureSource.my + myDisplacement;
-	int16 mp = textureSource.mp;
+	int16 mx = bgmapTextureSource.mx + mxDisplacement;
+	int16 my = bgmapTextureSource.my + myDisplacement;
+	int16 mp = bgmapTextureSource.mp;
 
 	int16 w = 0;
 	int16 h = 0;

@@ -61,18 +61,18 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 	if(!isDeleted(this->texture))
 	{
 		// set texture position
-		this->textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
-		this->textureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
-		this->textureSource.mp = 0;
+		this->bgmapTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->bgmapTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
+		this->bgmapTextureSource.mp = 0;
 
 		this->halfWidth = Texture::getCols(this->texture) << 2;
 		this->halfHeight = Texture::getRows(this->texture) << 2;
 	}
 	else
 	{
-		this->textureSource.mx = 0;
-		this->textureSource.my = 0;
-		this->textureSource.mp = 0;
+		this->bgmapTextureSource.mx = 0;
+		this->bgmapTextureSource.my = 0;
+		this->bgmapTextureSource.mp = 0;
 	}
 
 	this->rotation = Rotation::zero();
@@ -317,9 +317,9 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	int16 h = this->halfHeight << 1;
 
 	// set the head
-	int32 mx = this->textureSource.mx;
-	int32 my = this->textureSource.my;
-	int32 mp = this->textureSource.mp;
+	int32 mx = this->bgmapTextureSource.mx;
+	int32 my = this->bgmapTextureSource.my;
+	int32 mp = this->bgmapTextureSource.mp;
 
 	// cap coordinates to camera space
 	if(_cameraFrustum->x0 - auxGp > gx)
@@ -602,8 +602,8 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 			__I_TO_FIXED(bgmapSprite->halfWidth),
 			__I_TO_FIXED(bgmapSprite->halfHeight),
-			__I_TO_FIX13_3(bgmapSprite->textureSource.mx),
-			__I_TO_FIX13_3(bgmapSprite->textureSource.my),
+			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.mx),
+			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
 			&bgmapSprite->scale,
