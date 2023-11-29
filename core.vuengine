@@ -2681,7 +2681,7 @@
         "PCM": {
 			"file": ".pcm",
             "schema": {
-                "title": "PCM",
+                "title": "PCM Conversion",
                 "properties": {
                     "name": {
                         "type": "string",
@@ -2725,6 +2725,9 @@
             "icon": "fa fa-music",
             "templates": [
                 "PCMSpec.c"
+            ],
+            "forFiles": [
+                ".wav"
             ]
         },
         "RumbleEffect": {
