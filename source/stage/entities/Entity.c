@@ -1536,7 +1536,7 @@ void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 		if(updateRotation)
 		{
 			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.localRotation);
+			Sprite::rotate(sprite, &this->transformation.globalRotation);
 		}
 		
 		if(updateScale)
@@ -1570,7 +1570,7 @@ void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, u
 		if(updateRotation)
 		{
 			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.localRotation);
+			Sprite::rotate(sprite, &this->transformation.globalRotation);
 		}
 
 		if(updateScale)
