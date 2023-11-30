@@ -687,25 +687,21 @@ uint8 Camera::getTransformationFlags()
  */
 void Camera::print(int32 x, int32 y, bool inPixels)
 {
-	uint8 controlsXPos = 38;
-	uint8 controlsYPos = 2;
-	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
-	controlsYPos++;
-	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
-	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing printing = Printing::getInstance();
+	
+	Printing::text(printing, "CAMERA ", x, y++, NULL);
+	Printing::text(printing, "Position: ", x, ++y, NULL);
 
-	Printing::text(Printing::getInstance(), "MOVE CAMERA", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "              X    Y    Z    ", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), "Stage's size:                   ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIXED_TO_I(this->stageSize.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIXED_TO_I(this->stageSize.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIXED_TO_I(this->stageSize.z), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Position:                       ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIXED_TO_I(this->position.x), x + 14, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIXED_TO_I(this->position.y), x + 19, y, NULL);
-	Printing::int32(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIXED_TO_I(this->position.z), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Rotation:                       ", x, ++y, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.x), x + 14, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.y), x + 19, y, 2, NULL);
-	Printing::float(Printing::getInstance(), __FIXED_TO_F(this->rotation.z), x + 24, y, 2, NULL);
+	if(inPixels)
+	{
+		PixelVector::print(PixelVector::getFromVector3D(Camera::getPosition(Camera::getInstance()), 0), x, ++y);
+	}
+	else
+	{
+		Vector3D::print(Camera::getPosition(Camera::getInstance()), x, ++y);
+	}
+
+	y += 3;
+	Printing::text(printing, "Rotation: ", x, ++y, NULL);
+	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
 }
