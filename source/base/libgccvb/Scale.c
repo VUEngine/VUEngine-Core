@@ -23,11 +23,11 @@
 
 static inline void Scale::print(Scale scale, int32 x, int32 y)
 {
-	PRINT_TEXT("x:    ", x, y);
-	PRINT_TEXT("y:    ", x, y + 1);
-	PRINT_TEXT("z:    ", x, y + 2);
+	PRINT_TEXT("x:     ", x, y);
+	PRINT_TEXT("y:     ", x, y + 1);
+	PRINT_TEXT("z:     ", x, y + 2);
 
-	PRINT_INT(scale.x, x + 2, y);
-	PRINT_INT(scale.y, x + 2, y + 1);
-	PRINT_INT(scale.z, x + 2, y + 2);
+	PRINT_FLOAT(__FIX7_9_TO_F(scale.x), x + 2, y);
+	PRINT_FLOAT(__FIX7_9_TO_F(scale.y), x + 2, y + 1);
+	PRINT_FLOAT(__FIX7_9_TO_F(scale.z), x + 2, y + 2);
 }
