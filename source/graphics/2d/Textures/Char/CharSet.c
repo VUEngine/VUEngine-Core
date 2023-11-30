@@ -117,8 +117,7 @@ bool CharSet::isShared()
  */
 bool CharSet::isOptimized()
 {
-	NM_ASSERT(!this->charSetSpec->optimized || NULL != this->charSetSpec->frameOffsets, "CharSet::isOptimized: NULL frameOffsets in spec");
-	return this->charSetSpec->optimized && NULL != this->charSetSpec->frameOffsets;
+	return this->charSetSpec->optimized;
 }
 
 /**
