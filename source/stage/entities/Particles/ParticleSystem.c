@@ -579,6 +579,8 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
+	this->transformed = true;
+
 	if(!transformed)
 	{
 		ParticleSystem::resetParticlesPositions(this);
