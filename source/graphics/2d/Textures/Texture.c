@@ -176,6 +176,9 @@ TextureSpec* Texture::getSpec()
  */
 void Texture::releaseCharSet()
 {
+	this->update = false;
+	this->status = kTexturePendingWriting;
+
 	if(!isDeleted(this->charSet))
 	{
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
@@ -186,8 +189,6 @@ void Texture::releaseCharSet()
 		this->charSet = NULL;
 	}
 
-	this->status = kTexturePendingWriting;
-	this->update = false;
 	this->frame = 0;
 	this->mapDisplacement = 0;
 	this->palette = this->textureSpec->palette;

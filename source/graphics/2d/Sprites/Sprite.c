@@ -126,7 +126,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 /*
 	if(__HIDE == this->show || !this->positioned)
 	{
-		return this->index;
+		return __NO_RENDER_INDEX;
 	}
 */
 
