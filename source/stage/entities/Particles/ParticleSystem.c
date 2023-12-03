@@ -89,7 +89,7 @@ void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpe
 		ParticleSystem::reset(this);
 		ParticleSystem::setup(this, particleSystemSpec);
 	}
-	else if(particleSystemSpec && particleSystemSpec != (ParticleSystemSpec*)this->entitySpec)
+	else if(NULL != particleSystemSpec && particleSystemSpec != (ParticleSystemSpec*)this->entitySpec)
 	{
 		this->animationChanged = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation != particleSystemSpec->particleSpec->initialAnimation;
 		ParticleSystem::setSpec(this, (EntitySpec*)particleSystemSpec);
