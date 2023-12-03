@@ -316,7 +316,11 @@ bool CharSetManager::writeCharSetsProgressively()
 
 	if(!isDeleted(charSet))
 	{
-		CharSet::write(charSet);
+		if(kCharSetWritten != charSet->status)
+		{
+			CharSet::write(charSet);
+		}
+
 		VirtualList::popFront(this->charSetsPendingWriting);
 		return true;
 	}
@@ -325,7 +329,6 @@ bool CharSetManager::writeCharSetsProgressively()
 		NM_ASSERT(0 == VirtualList::front(this->charSetsPendingWriting), "CharSetManager::writeCharSetsProgressively: null charset in list");
 	}
 
-	// do some defragmenting
     return CharSetManager::defragmentProgressively(this);
 }
 
@@ -366,12 +369,15 @@ bool CharSetManager::defragmentProgressively()
 
 			if(this->freedOffset < offset)
 			{
-				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 				uint16 newOffset = this->freedOffset;
 				this->freedOffset += CharSet::getNumberOfChars(charSet);
 				CharSet::setOffset(charSet, newOffset);
 
-				//write to CHAR memory
+				if(!VirtualList::find(this->charSetsPendingWriting, charSet))
+				{
+					VirtualList::pushBack(this->charSetsPendingWriting, charSet);
+				}
+
 				CharSet::rewrite(charSet);
 
 				return true;

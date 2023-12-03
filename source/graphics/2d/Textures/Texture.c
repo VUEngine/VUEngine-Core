@@ -25,6 +25,9 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+friend class CharSet;
+
+
 /**
  * Class constructor
  *
@@ -211,6 +214,11 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	{
 		this->status = kTextureInvalid;
 		return false;
+	}
+
+	if(kCharSetWritten != this->charSet->status)
+	{
+		CharSet::write(this->charSet);
 	}
 
 	this->status = kTextureWritten;

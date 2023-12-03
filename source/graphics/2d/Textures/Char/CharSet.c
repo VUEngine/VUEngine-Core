@@ -49,6 +49,7 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 	// set the offset
 	this->offset = offset;
 	this->usageCount = 1;
+	this->status = kCharSetNotWritten;
 }
 
 /**
@@ -287,6 +288,20 @@ void CharSet::write()
 #endif
 			break;
 	}
+
+	if(kCharSetPendingRewritting == this->status)
+	{
+		this->status = kCharSetWritten;
+
+		// propagate event
+		CharSet::fireEvent(this, kEventCharSetRewritten);
+		NM_ASSERT(!isDeleted(this), "CharSet::rewrite: deleted this during kEventCharSetRewritten");
+
+	}
+	else
+	{
+		this->status = kCharSetWritten;
+	}
 }
 
 /**
@@ -294,11 +309,7 @@ void CharSet::write()
  */
 void CharSet::rewrite()
 {
-	CharSet::write(this);
-
-	// propagate event
-	CharSet::fireEvent(this, kEventCharSetRewritten);
-	NM_ASSERT(!isDeleted(this), "CharSet::rewrite: deleted this during kEventCharSetRewritten");
+	this->status = kCharSetPendingRewritting;
 }
 
 /**

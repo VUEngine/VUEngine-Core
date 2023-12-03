@@ -71,6 +71,13 @@ typedef const CharSetSpec CharSetROMSpec;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+enum CharSetStatus
+{
+	kCharSetNotWritten = 0,
+	kCharSetPendingRewritting,
+	kCharSetWritten
+};
+
 /// @ingroup graphics-2d-textures-char
 class CharSet : ListenerObject
 {
@@ -80,6 +87,8 @@ class CharSet : ListenerObject
 	uint32 tilesDisplacement;
 	// Memory displacement
 	uint16 offset;
+	// Written flag
+	uint16 status;
 	// How many textures are using me
 	uint8 usageCount;
 
