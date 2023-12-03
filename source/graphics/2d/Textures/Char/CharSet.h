@@ -88,7 +88,7 @@ class CharSet : ListenerObject
 	// Memory displacement
 	uint16 offset;
 	// Written flag
-	uint16 status;
+	uint8 status;
 	// How many textures are using me
 	uint8 usageCount;
 
