@@ -359,7 +359,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 	// if no one is using the texture anymore
 	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
-		Texture::releaseCharSet(bgmapTexture);
+		BgmapTexture::releaseCharSet(bgmapTexture);
 	}
 }
 
