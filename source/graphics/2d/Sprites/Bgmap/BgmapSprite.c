@@ -101,6 +101,8 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
  */
 void BgmapSprite::destructor()
 {
+	BgmapSprite::removeFromCache(this);
+	
 	if(this->registered)
 	{
 		SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
@@ -113,6 +115,15 @@ void BgmapSprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void BgmapSprite::removeFromCache()
+{	
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+		worldPointer->head = __WORLD_OFF;
+	}
 }
 
 bool BgmapSprite::hasSpecialEffects()

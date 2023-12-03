@@ -99,6 +99,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
  */
 void ObjectSprite::destructor()
 {
+	ObjectSprite::removeFromCache(this);
+
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
 	if(this->registered && this->objectSpriteContainer)
@@ -116,6 +118,26 @@ void ObjectSprite::destructor()
 	Base::destructor();
 }
 
+void ObjectSprite::removeFromCache()
+{
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		int16 jDisplacement = 0;
+		ObjectAttributes* objectPointer = NULL;
+
+		for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
+		{
+			int16 objectIndexStart = this->index + jDisplacement;
+
+			for(int16 j = 0; j < this->cols; j++)
+			{
+				int16 objectIndex = objectIndexStart + j;
+				objectPointer = &_objectAttributesCache[objectIndex];
+				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+			}
+		}
+	}
+}
 
 /**
  * Process event
@@ -266,7 +288,6 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	uint16 result = index;
 
 	ObjectAttributes* objectPointer = NULL;
-
 
 	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols, yDisplacement += this->yDisplacementIncrement)
 	{
