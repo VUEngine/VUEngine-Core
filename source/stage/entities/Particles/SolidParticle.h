@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <PhysicalParticle.h>
+#include <ParticleSystem.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,6 +56,9 @@ typedef struct SolidParticleSpec
 	/// disable collision detection when the particle stops
 	bool disableCollisionOnStop;
 
+	/// animation to play upon collision
+	const char* onCollisionAnimation;
+
 } SolidParticleSpec;
 
 /**
@@ -72,13 +76,14 @@ typedef const SolidParticleSpec SolidParticleROMSpec;
 /// @ingroup stage-entities-particles
 class SolidParticle : PhysicalParticle
 {
+	ParticleSystem creator;
 	// Particle's shape for collision detection
 	Shape shape;
 	//
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
+	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator);
 	Shape getShape();
 	VirtualList getShapes();
 	override fixed_t getWidth();

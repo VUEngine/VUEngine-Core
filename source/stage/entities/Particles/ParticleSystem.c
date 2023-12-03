@@ -547,7 +547,7 @@ Particle ParticleSystem::spawnParticle()
 	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, this);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 	Particle::setPosition(particle, &position);
 
@@ -839,6 +839,11 @@ void ParticleSystem::unpause()
 bool ParticleSystem::isPaused()
 {
 	return this->paused && 0 == this->particleCount;
+}
+
+const AnimationFunction** ParticleSystem::getAnimationFunctions()
+{
+	return ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions;
 }
 
 void ParticleSystem::print(int16 x, int16 y)

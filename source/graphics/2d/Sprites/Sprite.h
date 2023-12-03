@@ -113,7 +113,7 @@ abstract class Sprite : ListenerObject
 	PixelVector position;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
-	// AnimationController
+	// Animation Controller
 	AnimationController animationController;
 	// Our texture
 	Texture texture;

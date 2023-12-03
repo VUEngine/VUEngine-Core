@@ -47,11 +47,12 @@ friend class VirtualNode;
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
 {
 	// construct base Container
-	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, wireframeSpec, lifeSpan);
+	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, wireframeSpec, lifeSpan, creator);
 
+	this->creator = creator;
 	this->solidParticleSpec = solidParticleSpec;
 
 	ShapeSpec shapeSpec =
@@ -195,6 +196,11 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 
 			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
+		}
+
+		if(NULL != this->solidParticleSpec->onCollisionAnimation && !isDeleted(this->creator))
+		{
+			Sprite::play(this->sprite, ParticleSystem::getAnimationFunctions(this->creator), this->solidParticleSpec->onCollisionAnimation, ListenerObject::safeCast(this));
 		}
 	}
 

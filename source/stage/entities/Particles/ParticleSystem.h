@@ -139,6 +139,8 @@ class ParticleSystem : Entity
 	void setMaximumNumberOfAliveParticles(uint8 maximumNumberOfAliveParticles);
 	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
 	void setElapsedTime(uint32 elapsedTime);
+	const AnimationFunction** getAnimationFunctions();
+	
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();

@@ -16,6 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SpatialObject.h>
+
 #include <Sprite.h>
 
 
@@ -24,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 class Particle;
+class ParticleSystem;
 class Wireframe;
 
 typedef struct ParticleSpec
@@ -77,7 +79,7 @@ class Particle : SpatialObject
 	bool transform;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
 	void setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);

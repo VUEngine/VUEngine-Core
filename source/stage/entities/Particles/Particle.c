@@ -14,6 +14,7 @@
 
 #include <Particle.h>
 
+#include <ParticleSystem.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <Wireframe.h>
@@ -38,7 +39,7 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
 {
 	// construct base Container
 	Base::constructor();
@@ -97,7 +98,6 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
 	}
 }
-
 
 /**
  * Add wireframe
@@ -400,7 +400,6 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		}
 	}
 
-//	Particle::synchronizeGraphics(this);
 	Particle::show(this);
 }
 
