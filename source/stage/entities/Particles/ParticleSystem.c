@@ -848,7 +848,12 @@ const AnimationFunction** ParticleSystem::getAnimationFunctions()
 
 void ParticleSystem::print(int16 x, int16 y)
 {
-	PRINT_INT(this->maximumNumberOfAliveParticles, x, y);
-	PRINT_INT(this->particleCount, x, ++y);
-	PRINT_INT(VirtualList::getSize(this->particles), x, ++y);
+	Printing::text(Printing::getInstance(), "PARTICLE SYSTEM ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Particles", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->particles), x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
+	Printing::int32(Printing::getInstance(), this->particleCount, x + 10, y, NULL);
 }
