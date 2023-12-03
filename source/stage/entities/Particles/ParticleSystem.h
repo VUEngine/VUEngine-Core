@@ -140,7 +140,8 @@ class ParticleSystem : Entity
 	void setSelfDestroyWhenDone(bool selfDestroyWhenDone);
 	void setElapsedTime(uint32 elapsedTime);
 	const AnimationFunction** getAnimationFunctions();
-	
+	void print(int16 x, int16 y);
+
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void synchronizeGraphics();
