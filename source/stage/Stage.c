@@ -366,6 +366,11 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// set optical values
 	Camera::setup(Camera::getInstance(), this->stageSpec->rendering.pixelOptical, this->stageSpec->level.cameraFrustum);
 
+	// set physics
+	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
+
+	// preload graphics
 	Stage::prepareGraphics(this);
 
 	// setup ui
@@ -379,10 +384,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 	// retrieve focus entity for streaming
 	Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
-
-	// set physics
-	PhysicalWorld::setFrictionCoefficient(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(VUEngine::getPhysicalWorld(_vuEngine), this->stageSpec->physics.gravity);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
