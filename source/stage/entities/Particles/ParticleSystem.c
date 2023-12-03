@@ -64,7 +64,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
 
 	ParticleSystem::setup(this, particleSystemSpec);
-	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
 }
 
 /**
@@ -125,6 +124,7 @@ void ParticleSystem::setup(const ParticleSystemSpec* particleSystemSpec)
 	ParticleSystem::configure(this);
 
 	this->update = ((ParticleSystemSpec*)this->entitySpec)->autoStart;
+	this->applyForceToParticles = ParticleSystem::appliesForceToParticles(this);
 }
 
 void ParticleSystem::configure()
