@@ -89,6 +89,7 @@ void SoundTest::update()
 		if(delay++ > __TARGET_FPS)
 		{
 			SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
+			SoundWrapper::printPlaybackTime(this->soundWrapper, 24, 8);
 			delay = 0;
 		}
 		else
@@ -172,7 +173,7 @@ void SoundTest::printGUI(bool clearScreen)
 	int32 yControls = 4;
 
 	// Controls
-	if(SoundWrapper::isPaused(this->soundWrapper))
+	if(!SoundWrapper::isTurnedOn(this->soundWrapper) || SoundWrapper::isPaused(this->soundWrapper))
 	{
 		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
 	}
@@ -217,13 +218,16 @@ void SoundTest::processUserInput(uint16 pressedKey)
 			SoundTest::loadSound(this);
 		}
 
-		if(SoundWrapper::isPaused(this->soundWrapper))
+		if(!isDeleted(this->soundWrapper))
 		{
-			SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackNormal);
-		}
-		else
-		{
-			SoundWrapper::pause(this->soundWrapper);
+			if(!SoundWrapper::isTurnedOn(this->soundWrapper) || SoundWrapper::isPaused(this->soundWrapper))
+			{
+				SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackNormal);
+			}
+			else
+			{
+				SoundWrapper::pause(this->soundWrapper);
+			}
 		}
 	}
 	else if(K_B & pressedKey)

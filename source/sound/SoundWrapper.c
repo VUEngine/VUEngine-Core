@@ -968,7 +968,7 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	bool finished = elapsedMicroseconds ? true : false;
 
-	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds)));
+	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds / __MILLISECONDS_PER_SECOND))) * __MILLISECONDS_PER_SECOND;
 
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
@@ -1244,9 +1244,19 @@ void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 {
 	uint32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
 
+	if(elapsedMilliseconds > this->totalPlaybackMilliseconds)
+	{
+		elapsedMilliseconds = this->totalPlaybackMilliseconds;
+	}
+
 	static uint16 previousPosition = 0;
 
-	uint16 position = (elapsedMilliseconds << 5) / this->totalPlaybackMilliseconds;
+	uint16 position = (elapsedMilliseconds * 32) / this->totalPlaybackMilliseconds;
+
+	if(32 < previousPosition)
+	{
+		previousPosition = 32;
+	}
 
 	if(0 == position)
 	{
@@ -1259,7 +1269,7 @@ void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 	}
 	else if(previousPosition < position)
 	{
-		for(uint8 i = previousPosition; i < position; i++)
+		for(uint16 i = previousPosition; i < position; i++)
 		{
 			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + i, y);
 		}
@@ -1273,7 +1283,7 @@ void SoundWrapper::printTiming(uint32 seconds, int32 x, int32 y)
 	uint32 minutes = seconds / 60;
 	seconds = seconds - minutes * 60;
 
-	int32 minutesDigits = 1;//Utilities::getDigitsCount(minutes);
+	int32 minutesDigits = Utilities::getDigitsCount(minutes);
 
 	PRINT_INT(minutes, x, y);
 	PRINT_TEXT(":", x + minutesDigits, y);
@@ -1296,7 +1306,15 @@ void SoundWrapper::printTiming(uint32 seconds, int32 x, int32 y)
 void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 {
 	static uint32 previousSecond = 0;
-	uint32 currentSecond = SoundWrapper::getElapsedMilliseconds(this) / __MILLISECONDS_PER_SECOND;
+
+	uint32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
+
+	if(elapsedMilliseconds > this->totalPlaybackMilliseconds)
+	{
+		elapsedMilliseconds = this->totalPlaybackMilliseconds;
+	}
+
+	uint32 currentSecond = elapsedMilliseconds/ __MILLISECONDS_PER_SECOND;
 
 	if(previousSecond > currentSecond)
 	{
@@ -1360,7 +1378,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 {
 	if(this->hasPCMTracks)
 	{
-	//	return;
+		return;
 	}
 
 	VirtualNode node = this->channels->head;
@@ -1442,10 +1460,6 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 				break;
 		}
 
-		PRINT_INT(leftVolume, x + 33, y);
-		PRINT_INT(rightVolume, x + 38, y);
-		PRINT_INT(channel->soundTrack.dataPCM[channel->cursor], x + 43, y);
-
 		for(i = 0; i < leftValue; i++)
 		{
 			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 0, y);
@@ -1468,7 +1482,4 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 		y++;
 	}
-
-	PRINT_INT(totalVolume, x + 16+ 8 + 12, ++y);
-
 }
