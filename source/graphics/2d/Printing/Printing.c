@@ -435,14 +435,10 @@ void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
 	if(value < 0)
 	{
 		value = -value;
-
 		Printing::out(this, x++, y, "-", font);
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
 	}
-	else
-	{
-		Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
-	}
+
+	Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
 }
 
 void Printing::int32(int32 value, uint8 x, uint8 y, const char* font)
@@ -696,7 +692,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 	fontSize.y = fontData->fontSpec->fontSize.y;
 
-	while(string[i])
+	while('\0' != string[i])
 	{
 		switch(string[i])
 		{
@@ -820,7 +816,7 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 	uint32 offset = __PRINTING_MODE_DEBUG == this->mode ? VUENGINE_DEBUG_FONT_CHARSET_OFFSET : CharSet::getOffset(fontData->charSet);
 
 	// print text
-	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
+	while('\0' != string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
 		// do not allow printing outside of the visible area, since that would corrupt the param table
 		if(y > 27/* || y < 0*/)

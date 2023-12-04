@@ -81,7 +81,10 @@ void Tool::dimmGame()
 
 void Tool::lightUpGame()
 {
-	Stage::setupPalettes(GameState::getStage(this->gameState));
+	if(!isDeleted(this->gameState))
+	{
+		Stage::setupPalettes(GameState::getStage(this->gameState));
+	}
 }
 
 #ifndef __TOOLS

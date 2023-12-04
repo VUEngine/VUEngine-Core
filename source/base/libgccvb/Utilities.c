@@ -21,7 +21,7 @@
 
 Clock _gameClock = NULL;
 KeypadManager _keypadManager = NULL;
-char _itoaArray[__CHAR_HOLDER_SIZE] __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0};
+char _itoaArray[__ITOA_ARRAY_SIZE] = {'\0'};
 uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 28437657; /* Seed value */
 const char _itoaNumbers[17] = "0123456789ABCDEF";
 uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;

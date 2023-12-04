@@ -25,13 +25,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 // macros for bitmask operations
-#define SET_BIT(var,bit) 	(var |= (0x01 << bit))
-#define CLEAR_BIT(var,bit) 	(var &= (~(0x01 << bit)))
-#define TOGGLE_BIT(var,bit) (var ^= (0x01 << bit))
-#define GET_BIT(var,bit) 	(0x01 & (var >> bit))
+#define SET_BIT(var,bit) 		(var |= (0x01 << bit))
+#define CLEAR_BIT(var,bit) 		(var &= (~(0x01 << bit)))
+#define TOGGLE_BIT(var,bit)		 (var ^= (0x01 << bit))
+#define GET_BIT(var,bit) 		(0x01 & (var >> bit))
+#define __ITOA_ARRAY_SIZE		4
 
 extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-extern char _itoaArray[] __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern char _itoaArray[];
 extern const char _itoaNumbers[];
 extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
@@ -122,9 +123,7 @@ static inline int32 Utilities::getDigitsCount(int32 value)
 
 static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
 {
-#define __CHAR_HOLDER_SIZE		11
-
-	int32 i = __CHAR_HOLDER_SIZE - 1;
+	int32 i = __ITOA_ARRAY_SIZE - 1;
 
 	for(; 0 < i;)
 	{
@@ -138,12 +137,13 @@ static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
 		}
 	}
 
-	while(__CHAR_HOLDER_SIZE - 1 - digits < i)
+	while(__ITOA_ARRAY_SIZE - 1 - digits < i)
 	{
 		_itoaArray[--i] = '0';
 	}
 
-	_itoaArray[__CHAR_HOLDER_SIZE - 1] = 0;
+	_itoaArray[__ITOA_ARRAY_SIZE - 1] = '\0';
+
 	return _itoaArray + i;
 }
 
