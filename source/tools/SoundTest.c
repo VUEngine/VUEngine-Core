@@ -244,7 +244,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX17_15(0.01f));
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX7_9(0.01f));
 	}
 	else if(K_LU & pressedKey)
 	{
@@ -253,7 +253,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX17_15(0.01f));
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX7_9(0.01f));
 	}
 	// Timer controls
 	else if(K_RU & pressedKey)
