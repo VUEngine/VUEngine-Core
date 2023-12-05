@@ -22,7 +22,7 @@
 #include <Utilities.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -1331,6 +1331,7 @@ void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 
 void SoundWrapper::printMetadata(int32 x, int32 y)
 {
+	PRINT_TEXT("                                  ", x, y);
 	PRINT_TEXT(this->sound->name, x, y++);
 	y++;
 
@@ -1421,18 +1422,18 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		uint8 volume = channel->soundChannelConfiguration.SxLRV;
+		uint16 volume = channel->soundChannelConfiguration.SxLRV;
 
 		totalVolume += volume;
 
-		uint8 leftVolume = (volume) >> 4;
-		uint8 rightVolume = (volume & 0x0F);
-		uint8 i;
+		uint16 leftVolume = (volume) >> 4;
+		uint16 rightVolume = (volume & 0x0F);
+		uint16 i;
 
-		uint8 frequency = (channel->soundChannelConfiguration.SxFQH << 4) | channel->soundChannelConfiguration.SxFQL;
+		uint16 frequency = (channel->soundChannelConfiguration.SxFQH << 4) | channel->soundChannelConfiguration.SxFQL;
 
-		uint8 leftValue = 0;
-		uint8 rightValue = 0;
+		uint16 leftValue = 0;
+		uint16 rightValue = 0;
 
 		switch(channel->soundChannelConfiguration.trackType)
 		{
