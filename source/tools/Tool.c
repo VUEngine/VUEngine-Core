@@ -89,7 +89,6 @@ void Tool::lightUpGame()
 
 #ifndef __TOOLS
 
-void SoundTest::setVTable(){}
 void StageEditor::setVTable(){}
 void AnimationInspector::setVTable(){}
 void Debug::setVTable(){}

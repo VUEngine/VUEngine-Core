@@ -7,8 +7,6 @@
  * that was distributed with this source code.
  */
 
-#ifdef __TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -475,5 +473,3 @@ void SoundTest::applyTimerSettings()
 
 	SoundTest::printTimer(this);
 }
-
-#endif

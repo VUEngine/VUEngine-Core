@@ -220,7 +220,6 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 	return swapped;
 }
 
-#ifdef __TOOLS
 void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
 {
 	ObjectSpriteContainer::hideForDebug(this);
@@ -260,7 +259,6 @@ void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
 		ObjectSprite::forceShow(objectSprite);
 	}
 }
-#endif
 
 void ObjectSpriteContainer::forceShow()
 {

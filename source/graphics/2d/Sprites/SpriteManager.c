@@ -714,7 +714,6 @@ int8 SpriteManager::getFreeLayer()
  *
  * @param layer		WORLD layer to show
  */
-#ifdef __TOOLS
 void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 {
 	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
@@ -801,7 +800,6 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 	SpriteManager::stopRendering(this);
 }
-#endif
 
 /**
  * Retrieve the Sprite assigned to the given WORLD
