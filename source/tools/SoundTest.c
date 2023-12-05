@@ -84,7 +84,7 @@ void SoundTest::update()
 	{
 		static uint16 delay = 0;
 
-		if(delay++ > __TARGET_FPS)
+		if(delay++ >= __TARGET_FPS)
 		{
 			SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
 			SoundWrapper::printPlaybackTime(this->soundWrapper, 24, 8);
@@ -411,6 +411,11 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
+	TimerManager::reset(TimerManager::getInstance());
+	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_20US);
+	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kUS);
+	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->selectedSound]->targetTimerResolutionUS);
+
 	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, ListenerObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
@@ -418,14 +423,7 @@ void SoundTest::loadSound()
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::addEventListener(this->soundWrapper, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
-
-		TimerManager::reset(TimerManager::getInstance());
-		TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
-		TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
-
 		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
-
 		SoundTest::applyTimerSettings(this);
 
 #ifdef __SOUND_TEST
