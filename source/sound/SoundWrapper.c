@@ -691,7 +691,9 @@ void SoundWrapper::setupChannels(int8* waves)
 		}
 	}
 
+#ifdef __SOUND_TEST
 	this->totalPlaybackMilliseconds = SoundWrapper::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
+#endif
 
 	this->volumeReductionMultiplier = this->hasPCMTracks ? VirtualList::getSize(this->channels) : 1;
 }
@@ -966,9 +968,11 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 	NM_ASSERT(NULL != this->channels, "SoundWrapper::updateMIDIPlayback: invalid channels list");
 
-	bool finished = elapsedMicroseconds ? true : false;
+	bool finished = true;
 
-	this->elapsedMicroseconds += __FIX7_9_EXT_TO_I(__FIX7_9_EXT_MULT(this->speed, __I_TO_FIX7_9_EXT(elapsedMicroseconds / __MILLISECONDS_PER_SECOND))) * __MILLISECONDS_PER_SECOND;
+#ifdef __SOUND_TEST
+	this->elapsedMicroseconds += __FIX7_9_EXT_TO_F(this->speed) * elapsedMicroseconds;
+#endif
 
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
@@ -1201,13 +1205,25 @@ uint32 SoundWrapper::getTotalPlaybackMilliseconds(Channel* channel)
 	{
 		case kMIDI:
 			{
-				uint32 totalNotesTiming = 0;
+				uint32 totalSoundTicks = 0;
 
-				uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
+				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
+				{
+					uint32 totalChannelTicks = 0;
+					Channel* channel = (Channel*)node->data;
 
-				for(uint32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
+					uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
 
-				return (uint32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
+					for(uint32 i = 0; i < channel->length; i++, totalChannelTicks += soundTrackData[channel->length + i]);
+
+
+					if(totalSoundTicks < totalChannelTicks)
+					{
+						totalSoundTicks = totalChannelTicks;
+					}
+				}
+
+				return (uint32)((long)totalSoundTicks * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
 			}
 			break;
 
