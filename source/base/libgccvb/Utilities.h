@@ -29,7 +29,7 @@
 #define CLEAR_BIT(var,bit) 		(var &= (~(0x01 << bit)))
 #define TOGGLE_BIT(var,bit)		 (var ^= (0x01 << bit))
 #define GET_BIT(var,bit) 		(0x01 & (var >> bit))
-#define __ITOA_ARRAY_SIZE		4
+#define __ITOA_ARRAY_SIZE		11
 
 extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern char _itoaArray[];
