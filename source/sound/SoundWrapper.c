@@ -810,12 +810,6 @@ inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 
 void SoundWrapper::completedPlayback()
 {
-	if(!isDeleted(this->events))
-	{
-		SoundWrapper::fireEvent(this, kEventSoundFinished);
-		NM_ASSERT(!isDeleted(this), "SoundWrapper::completedPlayback: deleted this during kEventSoundFinished");
-	}
-
 	if(!this->sound->loop)
 	{
 		if(this->autoReleaseOnFinish)
@@ -830,6 +824,12 @@ void SoundWrapper::completedPlayback()
 	else
 	{
 		SoundWrapper::rewind(this);
+	}
+
+	if(!isDeleted(this->events))
+	{
+		SoundWrapper::fireEvent(this, kEventSoundFinished);
+		NM_ASSERT(!isDeleted(this), "SoundWrapper::completedPlayback: deleted this during kEventSoundFinished");
 	}
 }
 
