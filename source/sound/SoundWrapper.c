@@ -152,7 +152,7 @@ void SoundWrapper::computeTimerResolutionFactor()
 	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt), __I_TO_FIX7_9_EXT(timerUsPerInterrupt));
 
 	// Compensate for the difference in speed between 20US and 100US timer resolution
-	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerResolutionUS), __I_TO_FIX7_9_EXT(100));
+	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerResolutionUS), __I_TO_FIX7_9_EXT(20));
 
 	if(0 != timerResolutionRatioReduction)
 	{
@@ -1477,25 +1477,34 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 				break;
 		}
 
-		for(i = 0; i < leftValue; i++)
+// Must redefine these because they are defined as strings
+#undef __CHAR_DARK_RED_BOX
+#define __CHAR_DARK_RED_BOX			'\x0E'
+#undef __CHAR_BRIGHT_RED_BOX
+#define __CHAR_BRIGHT_RED_BOX		'\x10'
+
+		char boxesArray[] = 
 		{
-			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 0, y);
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+			'C', '0' + channel->number,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+		};
+
+		for(i = 0; i < leftValue && 15 >= i; i++)
+		{
+			boxesArray[15 - i - 2] = __CHAR_BRIGHT_RED_BOX;
 		}
 
-		for(; i < 15; i++)
+		for(i = 0; i < rightValue && 15 > i; i++)
 		{
-			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y);
+			boxesArray[15 + i + 2] = __CHAR_BRIGHT_RED_BOX;
 		}
 
-		for(i = 0; i < rightValue; i++)
-		{
-			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 17 + i - 0, y);
-		}
-
-		for(; i < 15; i++)
-		{
-			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y);
-		}
+		PRINT_TEXT(boxesArray, x, y);
 
 		y++;
 	}
