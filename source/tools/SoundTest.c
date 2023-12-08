@@ -188,7 +188,7 @@ void SoundTest::printGUI(bool clearScreen)
 	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
-	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
+	SoundWrapper::printMetadata(this->soundWrapper, 1, 4, true);
 }
 
 void SoundTest::processUserInput(uint16 pressedKey)
@@ -350,7 +350,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 4, true);
 	}
 }
 

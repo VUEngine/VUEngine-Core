@@ -1345,7 +1345,7 @@ void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 	}
 }
 
-void SoundWrapper::printMetadata(int32 x, int32 y)
+void SoundWrapper::printMetadata(int32 x, int32 y, bool printDetails)
 {
 	PRINT_TEXT("                                  ", x, y);
 	PRINT_TEXT(this->sound->name, x, y++);
@@ -1369,6 +1369,11 @@ void SoundWrapper::printMetadata(int32 x, int32 y)
 		PRINT_TEXT("    ", x + 6, y);
 		PRINT_INT(speed, x + 6, y);
 		PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
+	}
+
+	if(!printDetails)
+	{
+		return;
 	}
 
 	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y++);

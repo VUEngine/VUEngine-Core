@@ -273,7 +273,7 @@ class SoundWrapper : ListenerObject
 	void setFrequencyModifier(uint16 frequencyModifier);
 	uint16 getFrequencyModifier();
 	void print(int32 x, int32 y);
-	void printMetadata(int32 x, int32 y);
+	void printMetadata(int32 x, int32 y, bool printDetails);
 	void printVolume(int32 x, int32 y, bool printHeader);
 	void printPlaybackTime(int32 x, int32 y);
 	void printPlaybackProgress(int32 x, int32 y);
