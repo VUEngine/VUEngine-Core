@@ -104,6 +104,7 @@ singleton class TimerManager : Object
 	void wait(uint32 milliSeconds);
 	void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
 	void print(int32 x, int32 y);
+	void printStatus(int32 x, int32 y);
 }
 
 
