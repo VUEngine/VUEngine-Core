@@ -30,6 +30,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 
+// Must redefine these because they are defined as strings
+#undef __CHAR_DARK_RED_BOX
+#define __CHAR_DARK_RED_BOX			'\x0E'
+#undef __CHAR_BRIGHT_RED_BOX
+#define __CHAR_BRIGHT_RED_BOX		'\x10'
+
+
+
 //---------------------------------------------------------------------------------------------------------
 //												 FRIENDS
 //---------------------------------------------------------------------------------------------------------
@@ -1265,33 +1273,22 @@ void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 		elapsedMilliseconds = this->totalPlaybackMilliseconds;
 	}
 
-	static uint16 previousPosition = 0;
-
 	uint16 position = (elapsedMilliseconds * 32) / this->totalPlaybackMilliseconds;
 
-	if(32 < previousPosition)
+	char boxesArray[33] = 
 	{
-		previousPosition = 32;
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+		__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+	};
+
+	for(uint16 i = 0; i < position && 32 >= i; i++)
+	{
+		boxesArray[i] = __CHAR_BRIGHT_RED_BOX;
 	}
 
-	if(0 == position)
-	{
-		previousPosition = 0;
-
-		for(uint8 i = 0; i < 32; i++)
-		{
-			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + i, y);
-		}
-	}
-	else if(previousPosition < position)
-	{
-		for(uint16 i = previousPosition; i < position; i++)
-		{
-			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + i, y);
-		}
-
-		previousPosition = position;
-	}
+	PRINT_TEXT(boxesArray, x, y);
 }
 
 void SoundWrapper::printTiming(uint32 seconds, int32 x, int32 y)
@@ -1414,22 +1411,6 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 		++y;
 
 		int32 yDisplacement = 0;
-
-		for(node = this->channels->head; NULL != node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-
-			PRINT_TEXT("C", x + 15 - 0, y + yDisplacement);
-			PRINT_INT(channel->number, x + 16 - 0, y + yDisplacement);
-
-			for(int32 i = 0; i < 15; i++)
-			{
-				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y + yDisplacement);
-				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y + yDisplacement);
-			}
-
-			yDisplacement++;
-		}
 	}
 	else
 	{
@@ -1437,6 +1418,8 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 		++y;
 		++y;
 	}
+
+	++x;
 
 	uint16 totalVolume = 0;
 
@@ -1483,12 +1466,6 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 				break;
 		}
 
-// Must redefine these because they are defined as strings
-#undef __CHAR_DARK_RED_BOX
-#define __CHAR_DARK_RED_BOX			'\x0E'
-#undef __CHAR_BRIGHT_RED_BOX
-#define __CHAR_BRIGHT_RED_BOX		'\x10'
-
 		char boxesArray[] = 
 		{
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
@@ -1507,7 +1484,7 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 		for(i = 0; i < rightValue && 15 > i; i++)
 		{
-			boxesArray[15 + i + 2] = __CHAR_BRIGHT_RED_BOX;
+			boxesArray[15 + i + 1] = __CHAR_BRIGHT_RED_BOX;
 		}
 
 		PRINT_TEXT(boxesArray, x, y);
