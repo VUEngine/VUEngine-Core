@@ -776,7 +776,12 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 
 	if(__MILLISECONDS_PER_SECOND <= totalTime)
 	{
+		if(NULL != this->events)
+		{
+			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
+		}
 #ifdef __SHOW_TIMER_MANAGER_STATUS
+		TimerManager::printStatus(this->timerManager, 1, 10);
 		TimerManager::nextSecondStarted(this->timerManager);
 #endif
 		SoundManager::updateFrameRate(this->soundManager);

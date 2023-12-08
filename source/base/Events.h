@@ -79,7 +79,9 @@ enum Events
 	kEventStateMachinePushedState,
 	kEventStateMachineWillPopState,
 	kEventStateMachinePoppedState,
-	
+
+	kEventVUEngineNextSecondStarted,
+
 	// do not remove me
 	kEventEngineLast
 };
