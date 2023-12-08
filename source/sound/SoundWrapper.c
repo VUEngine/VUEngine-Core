@@ -1409,8 +1409,6 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 
 		++y;
 		++y;
-
-		int32 yDisplacement = 0;
 	}
 	else
 	{
