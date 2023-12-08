@@ -7,126 +7,153 @@
     ],
     "templates": {
         "BrightnessRepeatSpec.c": {
-            "target": "Converted/${_filename}BrightnessRepeatSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}BrightnessRepeatSpec.c",
+				"root": "file"
+			}],
             "template": "templates/BrightnessRepeatSpec.c.nj",
             "itemSpecific": "BrightnessRepeat"
         },
         "ColumnTableSpec.c": {
-            "target": "Converted/${_filename}ColumnTableSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}ColumnTableSpec.c",
+				"root": "file"
+			}],
             "template": "templates/ColumnTableSpec.c.nj",
             "itemSpecific": "ColumnTable"
         },
         "config.h": {
-            "target": "source/config.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/config.h",
+				"root": "project"
+			}],
             "template": "templates/config.h.nj"
         },
         "config.make": {
-            "target": "config.make",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "config.make",
+				"root": "project"
+			}],
             "template": "templates/config.make.nj",
-            "events": [
-                {
-                    "type": "installedPluginsChanged"
-                }
-            ]
+            "events": [{
+				"type": "installedPluginsChanged"
+            }]
         },
         "debugConfig.h": {
-            "target": "source/debugConfig.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/debugConfig.h",
+				"root": "project"
+			}],
             "template": "templates/debugConfig.h.nj"
         },
         "Fonts.c": {
-            "target": "assets/Fonts.c",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "assets/Fonts.c",
+				"root": "project"
+			}],
             "template": "templates/Fonts.c.nj",
-            "events": [
-                {
-                    "type": "installedPluginsChanged"
-                },
-                {
-                    "type": "itemOfTypeGotDeleted",
-                    "value": "Font"
-                }
-            ]
+            "events": [{
+				"type": "installedPluginsChanged"
+			}, {
+				"type": "itemOfTypeGotDeleted",
+				"value": "Font"
+            }]
         },
         "Fonts.h": {
-            "target": "source/assets/Fonts.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/assets/Fonts.h",
+				"root": "project"
+			}],
             "template": "templates/Fonts.h.nj",
-            "events": [
-                {
-                    "type": "installedPluginsChanged"
+            "events": [{
+				"type": "installedPluginsChanged"
                 },
                 {
                     "type": "itemOfTypeGotDeleted",
                     "value": "Font"
-                }
-            ]
+            }]
         },
         "FontSpec.c": {
-            "target": "Converted/${_filename}FontSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}FontSpec.c",
+				"root": "file"
+			}],
             "template": "templates/FontSpec.c.nj",
             "itemSpecific": "Font"
         },
         "GameEvents.h": {
-            "target": "source/GameEvents.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/GameEvents.h",
+				"root": "project"
+			}],
             "template": "templates/GameEvents.h.nj"
         },
         "PCMSpec.c": {
-            "target": "Converted/${_filename}PCMSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}PCMSpec.c",
+				"root": "file"
+			}],
             "template": "templates/PCMSpec.c.nj",
             "itemSpecific": "PCM"
         },
         "RumbleEffectSpec.c": {
-            "target": "Converted/${_filename}RumbleEffectSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}RumbleEffectSpec.c",
+				"root": "file"
+			}],
             "template": "templates/RumbleEffectSpec.c.nj",
             "itemSpecific": "RumbleEffect"
         },
         "RumbleEffects.h": {
-            "target": "source/assets/RumbleEffects.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/assets/RumbleEffects.h",
+				"root": "project"
+			}],
             "template": "templates/RumbleEffects.h.nj"
         },
         "vb_release.ld": {
-            "target": "lib/compiler/linker/vb_release.ld",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "lib/compiler/linker/vb_release.ld",
+				"root": "project"
+			}],
             "template": "templates/vb.ld.nj"
         },
         "vb_beta.ld": {
-            "target": "lib/compiler/linker/vb_beta.ld",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "lib/compiler/linker/vb_beta.ld",
+				"root": "project"
+			}],
             "template": "templates/vb.ld.nj"
         },
         "vb_tools.ld": {
-            "target": "lib/compiler/linker/vb_tools.ld",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "lib/compiler/linker/vb_tools.ld",
+				"root": "project"
+			}],
             "template": "templates/vb_tools.ld.nj"
         },
         "vb_debug.ld": {
-            "target": "lib/compiler/linker/vb_debug.ld",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "lib/compiler/linker/vb_debug.ld",
+				"root": "project"
+			}],
             "template": "templates/vb_tools.ld.nj"
         },
         "WaveForms.h": {
-            "target": "source/assets/WaveForms.h",
-			"targetRoot": "project",
+            "targets": [{
+				"path": "source/assets/WaveForms.h",
+				"root": "project"
+			}],
             "template": "templates/WaveForms.h.nj",
-            "events": [
-                {
-                    "type": "installedPluginsChanged"
-                }
-            ]
+            "events": [{
+				"type": "installedPluginsChanged"
+            }]
         },
         "WaveFormSpec.c": {
-            "target": "Converted/${_filename}WaveFormSpec.c",
-			"targetRoot": "file",
+            "targets": [{
+				"path": "Converted/${_filename}WaveFormSpec.c",
+				"root": "file"
+			}],
             "template": "templates/WaveForm.c.nj",
             "itemSpecific": "WaveForm"
         }
