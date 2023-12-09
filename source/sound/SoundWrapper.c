@@ -154,13 +154,13 @@ void SoundWrapper::computeTimerResolutionFactor()
 {
 	uint16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
 	uint16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
-	uint16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
-	uint16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK * (timerResolutionUS / 20);
+	uint16 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
+	uint16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
 
-	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt), __I_TO_FIX7_9_EXT(timerUsPerInterrupt));
+	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
 
 	// Compensate for the difference in speed between 20US and 100US timer resolution
-	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerResolutionUS), __I_TO_FIX7_9_EXT(20));
+	fix7_9_ext timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS));
 
 	if(0 != timerResolutionRatioReduction)
 	{
@@ -760,20 +760,7 @@ static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_e
 	channel->ticks = residue;
 	channel->ticksPerNote = __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 	channel->ticksPerNote = __FIX7_9_EXT_DIV(channel->ticksPerNote, speed);
-
-	if(0 < channel->ticksPerNote)
-	{
-		channel->tickStep = __FIX7_9_EXT_DIV(channel->ticksPerNote, __FIX7_9_EXT_MULT(targetTimerResolutionFactor, channel->ticksPerNote));
-
-		if(0 > channel->tickStep)
-		{
-			channel->tickStep = __I_TO_FIX7_9_EXT(1);
-		}
-	}
-	else
-	{
-		channel->tickStep = __I_TO_FIX7_9_EXT(1);
-	}
+	channel->tickStep = targetTimerResolutionFactor;
 }
 
 static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix7_9_ext residue __attribute__((unused)), fix7_9_ext speed __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)))

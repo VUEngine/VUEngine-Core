@@ -22,7 +22,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TIMER_COUNTER_DELTA		0
+#define __TIMER_COUNTER_DELTA		1
 
 //use with 20us timer (range = 0 to 1300)
 #define __TIME_US(n)				(((n) / TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
