@@ -195,7 +195,7 @@ void SoundManager::reset()
 		this->channels[i].cursor = 0;
 		this->channels[i].ticks = 0;
 		this->channels[i].elapsedTicks = 0;
-		this->channels[i].ticksPerNote = 0;
+		this->channels[i].nextElapsedTicksTarget = 0;
 		this->channels[i].soundChannel = 0;
 
 		this->channels[i].soundChannelConfiguration.trackType = kUnknownType;

@@ -507,28 +507,8 @@ void SoundWrapper::rewind()
 		channel->finished = false;
 		channel->cursor = 0;
 		channel->elapsedTicks = 0;
-
-		switch(channel->soundChannelConfiguration.trackType)
-		{
-			case kMIDI:
-
-				SoundWrapper::computeMIDIDummyTicksPerNote(channel);
-				break;
-
-			case kPCM:
-				break;
-
-#ifndef __RELEASE
-			case kUnknownType:
-
-				NM_ASSERT(false, "SoundWrapper::rewind: unknown track type");
-				break;
-#endif
-			default:
-
-				NM_ASSERT(false, "SoundWrapper::rewind: invalid channel");
-				break;
-		}
+		channel->nextElapsedTicksTarget = 0;
+		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 	}
 }
 
@@ -557,6 +537,8 @@ void SoundWrapper::stop()
 		Channel* channel = (Channel*)node->data;
 
 		channel->cursor = 0;
+		channel->elapsedTicks = 0;
+		channel->nextElapsedTicksTarget = 0;
 
 		// If turned of right away, pops and cracks are perceptible
 		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
@@ -650,6 +632,9 @@ void SoundWrapper::setupChannels(int8* waves)
 		channel->soundChannel = i;
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
+		channel->ticks = 0;
+		channel->nextElapsedTicksTarget = 0;
+		channel->tickStep = __FIX7_9_EXT_MULT(this->speed, this->targetTimerResolutionFactor);
 
 		switch(channel->soundChannelConfiguration.trackType)
 		{
@@ -657,16 +642,14 @@ void SoundWrapper::setupChannels(int8* waves)
 
 				this->hasMIDITracks = true;
 				channel->soundTrack.dataMIDI = (uint16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
-				channel->samples = SoundWrapper::computeMIDITrackSamples((uint16*)channel->soundTrack.dataMIDI);
-				SoundWrapper::computeMIDIDummyTicksPerNote(channel);
+				SoundWrapper::computeMIDITrackSamples(channel);
 				break;
 
 			case kPCM:
 
 				this->hasPCMTracks = true;
 				channel->soundTrack.dataPCM = (uint8*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
-				channel->samples = this->sound->soundChannels[channel->soundChannel]->samples;
-				SoundWrapper::computePCMNextTicksPerNote(channel, this->speed, this->targetTimerResolutionFactor);
+				channel->ticks = channel->samples = this->sound->soundChannels[channel->soundChannel]->samples;
 				break;
 
 #ifndef __RELEASE
@@ -739,35 +722,16 @@ void SoundWrapper::configureSoundRegistries()
 	}
 }
 
-static uint16 SoundWrapper::computeMIDITrackSamples(uint16* soundTrackData)
+static void SoundWrapper::computeMIDITrackSamples(Channel* channel)
 {
-	uint16 i = 0;
+	uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
 
 	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackSamples: null soundTrack");
 
-	for(; soundTrackData[i] != ENDSOUND && soundTrackData[i] != LOOPSOUND; i++);
+	for(channel->samples = 0; soundTrackData[channel->samples] != ENDSOUND && soundTrackData[channel->samples] != LOOPSOUND; channel->samples++);
 
-	return i;
-}
+	for(uint16 sample = 0; sample < channel->samples; sample++, channel->ticks += soundTrackData[channel->samples + sample]);
 
-static void SoundWrapper::computeMIDIDummyTicksPerNote(Channel* channel)
-{
-	channel->elapsedTicks = 0;
-	channel->ticksPerNote = 0;
-	channel->tickStep = __I_TO_FIX7_9_EXT(1);
-}
-
-static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_ext speed, fix7_9_ext targetTimerResolutionFactor)
-{
-	channel->ticksPerNote += __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]), speed);
-	channel->tickStep = targetTimerResolutionFactor;
-}
-
-static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix7_9_ext speed __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)))
-{
-	channel->ticksPerNote = 0;
-	channel->tickStep = __I_TO_FIX7_9_EXT(1);
-	channel->elapsedTicks = 0;
 }
 
 static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
@@ -786,7 +750,7 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 
 inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
-	if(channel->cursor >= channel->samples)
+	if(channel->cursor > channel->samples)
 	{
 		channel->finished = true;
 		return true;
@@ -988,13 +952,12 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 		channel->elapsedTicks += channel->tickStep;
 
-		if(channel->elapsedTicks >= channel->ticksPerNote || 0 == elapsedMicroseconds)
+		if(channel->elapsedTicks >= channel->nextElapsedTicksTarget || 0 == elapsedMicroseconds)
 		{
 			if(0 != elapsedMicroseconds)
 			{
 				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
-
-				SoundWrapper::computeMIDINextTicksPerNote(channel, this->speed, this->targetTimerResolutionFactor);
+				channel->nextElapsedTicksTarget += __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]);
 			}
 
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
@@ -1057,7 +1020,7 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 		return;
 	}
 
-	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
+	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
 	this->mainChannel->elapsedTicks += elapsedMicroseconds;
 
 	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
@@ -1201,11 +1164,6 @@ uint32 SoundWrapper::getTotalPlaybackMilliseconds(Channel* channel)
 				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 				{
 					Channel* channel = (Channel*)node->data;
-					channel->ticks = 0;
-
-					uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
-
-					for(uint32 i = 0; i < channel->samples; i++, channel->ticks += soundTrackData[channel->samples + i]);
 
 					if(totalTicks < channel->ticks)
 					{
