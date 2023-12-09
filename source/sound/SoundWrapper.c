@@ -1191,7 +1191,17 @@ void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	float elapsedTicksProportion = 0;
+	
+	if(this->hasPCMTracks)
+	{
+		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
+	}
+	else
+	{
+		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	}
+
 	uint32 position = elapsedTicksProportion * 32;
 
 	char boxesArray[33] = 
@@ -1244,7 +1254,16 @@ void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 		return;
 	}
 
-	float elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	float elapsedTicksProportion = 0;
+	
+	if(this->hasPCMTracks)
+	{
+		elapsedTicksProportion = (float)this->mainChannel->cursor / this->mainChannel->samples;
+	}
+	else
+	{
+		elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	}
 
 	uint32 currentSecond = elapsedTicksProportion * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
 

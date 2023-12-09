@@ -72,7 +72,7 @@ SoundChannelROM {{ sanitizedSpecName }}SoundChannel =
 	// Configuration
 	(SoundChannelConfiguration*) &{{ sanitizedSpecName }}SoundChannelConfiguration,
 
-	// Length (PCM)
+	/// Total number of samples
 	{{ sanitizedSpecName }}SoundTrackLength,
 
 	// Sound track

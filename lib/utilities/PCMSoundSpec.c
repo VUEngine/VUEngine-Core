@@ -84,7 +84,7 @@ SoundChannelROM PCMSoundChannel =
 	/// Configuration
 	(SoundChannelConfiguration*) &PCMSoundChannelConfiguration,
 
-	/// Length (PCM)
+	//// Total number of samples
 	PCMSoundTrackLength,
 
 	/// Sound track
