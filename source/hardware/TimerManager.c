@@ -375,7 +375,7 @@ uint16 TimerManager::computeTimerCounter()
 		case kUS:
 
 			// Not sure anymore why it is necessary to reduce the counter in 1 when using 20us
-			// timerCounter = __TIME_US(this->timePerInterrupt);// - (__TIMER_20US == this->resolution ? 1 : 1);
+			//timerCounter = __TIME_US(this->timePerInterrupt) - (__TIMER_20US == this->resolution ? 1 : 0);
 			timerCounter = __TIME_US(this->timePerInterrupt);
 			break;
 
@@ -449,7 +449,7 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 	// reset timer
 	TimerManager::resetMilliseconds(this);
 
-	if(true || 0 >= this->interruptsPerGameFrame)
+	if(0 >= this->interruptsPerGameFrame)
 	{
 		this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 	}

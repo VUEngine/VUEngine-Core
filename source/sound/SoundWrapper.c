@@ -1298,13 +1298,10 @@ void SoundWrapper::printMetadata(int32 x, int32 y, bool printDetails)
 	PRINT_TEXT("/", x + 27, y);
 	SoundWrapper::printTiming(this, this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND, x + 28, y);
 
-	if(!this->hasPCMTracks)
-	{
-		PRINT_TEXT("Speed", x, y);
-		PRINT_TEXT("    ", x + 6, y);
-		PRINT_INT(speed, x + 6, y);
-		PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
-	}
+	PRINT_TEXT("Speed", x, y);
+	PRINT_TEXT("    ", x + 6, y);
+	PRINT_INT(speed, x + 6, y);
+	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
 
 	PRINT_TEXT(this->paused ? " \x0B " : "\x07\x07", x + 15, y++);
 
