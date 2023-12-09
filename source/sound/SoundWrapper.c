@@ -154,7 +154,11 @@ void SoundWrapper::computeTimerResolutionFactor()
 	uint16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
 	uint16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + __TIMER_COUNTER_DELTA;
 	uint16 timerUsPerInterrupt = timerCounter * __SOUND_TARGET_US_PER_TICK;
-	uint16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
+	uint16 targetTimerResolutionUS = 0 != this->sound->targetTimerResolutionUS ? this->sound->targetTimerResolutionUS : 1000;
+	uint16 soundTargetUsPerInterrupt = (__TIME_US(targetTimerResolutionUS) + __TIMER_COUNTER_DELTA) * __SOUND_TARGET_US_PER_TICK;
+
+	NM_ASSERT(0 < timerResolutionUS, "SoundWrapper::computeTimerResolutionFactor: zero timerResolutionUS");
+	NM_ASSERT(0 < soundTargetUsPerInterrupt, "SoundWrapper::computeTimerResolutionFactor: zero soundTargetUsPerInterrupt");
 
 	this->targetTimerResolutionFactor = __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(timerUsPerInterrupt), __I_TO_FIX7_9_EXT(soundTargetUsPerInterrupt));
 
@@ -1413,21 +1417,22 @@ void SoundWrapper::printVolume(int32 x, int32 y, bool printHeader)
 		{
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, 
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			'C', '0' + channel->number,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, '\0'
+			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
+			'\0'
 		};
 
-		for(i = 0; i < leftValue && 15 >= i; i++)
+		for(i = 0; i < leftValue && 15 > i; i++)
 		{
-			boxesArray[15 - i - 2] = __CHAR_BRIGHT_RED_BOX;
+			boxesArray[15 - i - 1] = __CHAR_BRIGHT_RED_BOX;
 		}
 
 		for(i = 0; i < rightValue && 15 > i; i++)
 		{
-			boxesArray[15 + i + 1] = __CHAR_BRIGHT_RED_BOX;
+			boxesArray[15 + 2 + i] = __CHAR_BRIGHT_RED_BOX;
 		}
 
 		PRINT_TEXT(boxesArray, x, y);
