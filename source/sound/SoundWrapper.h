@@ -101,8 +101,8 @@ typedef struct SoundChannel
 	/// Configuration
 	SoundChannelConfiguration* soundChannelConfiguration;
 
-	/// Length
-	uint32 length;
+	/// Total number of samples
+	uint32 samples;
 
 	/// Sound track
 	union SoundTrack
@@ -156,7 +156,7 @@ typedef struct Channel
 	const Sound* sound;
 
 	/// Channel's effective length
-	uint32 length;
+	uint32 samples;
 
 	/// Position within the sound track
 	uint32 cursor;
@@ -164,8 +164,11 @@ typedef struct Channel
 	/// Ticks before moving the cursor
 	fix7_9_ext ticksPerNote;
 
+	/// Total number of ticks
+	uint32 ticks;
+
 	/// Ticks before moving the cursor
-	fix7_9_ext ticks;
+	fix7_9_ext elapsedTicks;
 
 	/// Tick step per timer interrupt
 	fix7_9_ext tickStep;
@@ -224,8 +227,7 @@ class SoundWrapper : ListenerObject
 	Channel* mainChannel;
 	fix7_9_ext speed;
 	fix7_9_ext targetTimerResolutionFactor;
-	uint32 elapsedMicroseconds;
-	uint32 previouslyElapsedMicroseconds;
+	uint32 previouslyElapsedTicks;
 	uint32 totalPlaybackMilliseconds;
 	uint16 pcmTargetPlaybackFrameRate;
 	uint16 frequencyModifier;

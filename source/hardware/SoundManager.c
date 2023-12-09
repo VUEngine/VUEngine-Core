@@ -194,6 +194,7 @@ void SoundManager::reset()
 		this->channels[i].sound = NULL;
 		this->channels[i].cursor = 0;
 		this->channels[i].ticks = 0;
+		this->channels[i].elapsedTicks = 0;
 		this->channels[i].ticksPerNote = 0;
 		this->channels[i].soundChannel = 0;
 
@@ -1110,8 +1111,8 @@ void SoundManager::print()
 		PRINT_TEXT("Loop   :      ", x, ++y);
 		PRINT_TEXT(this->channels[i].sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-		PRINT_TEXT("Length :      ", x, ++y);
-		PRINT_INT(this->channels[i].length, x + xDisplacement, y);
+		PRINT_TEXT("Samples :      ", x, ++y);
+		PRINT_INT(this->channels[i].samples, x + xDisplacement, y);
 
 		PRINT_TEXT("Note   :     ", x, ++y);
 		switch(this->channels[i].soundChannelConfiguration.trackType)

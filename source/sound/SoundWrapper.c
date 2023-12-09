@@ -67,8 +67,7 @@ void SoundWrapper::constructor(const Sound* sound, VirtualList channels, int8* w
 	this->hasPCMTracks = false;
 	this->speed = __I_TO_FIX7_9_EXT(1);
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
-	this->elapsedMicroseconds = 0;
-	this->previouslyElapsedMicroseconds = 0;
+	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
 	this->playbackType = kSoundWrapperPlaybackNormal;
@@ -342,7 +341,7 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 
 					if(!wasPaused)
 					{
-						channel->ticks = 0;
+						channel->elapsedTicks = 0;
 						channel->cursor = 0;
 					}
 
@@ -354,8 +353,7 @@ void SoundWrapper::play(const Vector3D* position, uint32 playbackType)
 
 				if(!wasPaused)
 				{
-					this->elapsedMicroseconds = 0;
-					this->previouslyElapsedMicroseconds = 0;
+					this->previouslyElapsedTicks = 0;
 					
 					if(this->hasPCMTracks)
 					{
@@ -499,8 +497,7 @@ void SoundWrapper::rewind()
 		return;
 	}
 
-	this->elapsedMicroseconds = 0;
-	this->previouslyElapsedMicroseconds = 0;
+	this->previouslyElapsedTicks = 0;
 	this->volumeReduction = 0;
 	this->playbackType = kSoundWrapperPlaybackNormal;
 
@@ -509,6 +506,7 @@ void SoundWrapper::rewind()
 		Channel* channel = (Channel*)node->data;
 		channel->finished = false;
 		channel->cursor = 0;
+		channel->elapsedTicks = 0;
 
 		switch(channel->soundChannelConfiguration.trackType)
 		{
@@ -659,7 +657,7 @@ void SoundWrapper::setupChannels(int8* waves)
 
 				this->hasMIDITracks = true;
 				channel->soundTrack.dataMIDI = (uint16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
-				channel->length = SoundWrapper::computeMIDITrackLength((uint16*)channel->soundTrack.dataMIDI);
+				channel->samples = SoundWrapper::computeMIDITrackSamples((uint16*)channel->soundTrack.dataMIDI);
 				SoundWrapper::computeMIDIDummyTicksPerNote(channel);
 				break;
 
@@ -667,8 +665,8 @@ void SoundWrapper::setupChannels(int8* waves)
 
 				this->hasPCMTracks = true;
 				channel->soundTrack.dataPCM = (uint8*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
-				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
-				SoundWrapper::computePCMNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
+				channel->samples = this->sound->soundChannels[channel->soundChannel]->samples;
+				SoundWrapper::computePCMNextTicksPerNote(channel, this->speed, this->targetTimerResolutionFactor);
 				break;
 
 #ifndef __RELEASE
@@ -683,7 +681,7 @@ void SoundWrapper::setupChannels(int8* waves)
 				break;
 		}
 
-		channel->ticks = 0;
+		channel->elapsedTicks = 0;
 	}
 
 	node = this->channels->head;
@@ -695,11 +693,13 @@ void SoundWrapper::setupChannels(int8* waves)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		if(channelWithLongestTrack->length < channel->length)
+		if(channelWithLongestTrack->ticks < channel->ticks)
 		{
 			channelWithLongestTrack = channel;
 		}
 	}
+
+	this->mainChannel = channelWithLongestTrack;
 
 #ifdef __SOUND_TEST
 	this->totalPlaybackMilliseconds = SoundWrapper::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
@@ -739,11 +739,11 @@ void SoundWrapper::configureSoundRegistries()
 	}
 }
 
-static uint16 SoundWrapper::computeMIDITrackLength(uint16* soundTrackData)
+static uint16 SoundWrapper::computeMIDITrackSamples(uint16* soundTrackData)
 {
 	uint16 i = 0;
 
-	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackLength: null soundTrack");
+	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackSamples: null soundTrack");
 
 	for(; soundTrackData[i] != ENDSOUND && soundTrackData[i] != LOOPSOUND; i++);
 
@@ -752,24 +752,22 @@ static uint16 SoundWrapper::computeMIDITrackLength(uint16* soundTrackData)
 
 static void SoundWrapper::computeMIDIDummyTicksPerNote(Channel* channel)
 {
-	channel->ticks = 0;
+	channel->elapsedTicks = 0;
 	channel->ticksPerNote = 0;
 	channel->tickStep = __I_TO_FIX7_9_EXT(1);
 }
 
-static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_ext residue, fix7_9_ext speed, fix7_9_ext targetTimerResolutionFactor)
+static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix7_9_ext speed, fix7_9_ext targetTimerResolutionFactor)
 {
-	channel->ticks = residue;
-	channel->ticksPerNote = __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
-	channel->ticksPerNote = __FIX7_9_EXT_DIV(channel->ticksPerNote, speed);
+	channel->ticksPerNote += __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]), speed);
 	channel->tickStep = targetTimerResolutionFactor;
 }
 
-static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix7_9_ext residue __attribute__((unused)), fix7_9_ext speed __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)))
+static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix7_9_ext speed __attribute__((unused)), fix7_9_ext targetTimerResolutionFactor __attribute__((unused)))
 {
 	channel->ticksPerNote = 0;
 	channel->tickStep = __I_TO_FIX7_9_EXT(1);
-	channel->ticks = 0;
+	channel->elapsedTicks = 0;
 }
 
 static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
@@ -788,7 +786,7 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 
 inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
-	if(channel->cursor >= channel->length)
+	if(channel->cursor >= channel->samples)
 	{
 		channel->finished = true;
 		return true;
@@ -825,7 +823,7 @@ void SoundWrapper::completedPlayback()
 void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
 {
 	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
-	uint8 volume = (SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction)) & this->unmute;
+	uint8 volume = (SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->samples << 1) + 1 + channel->cursor] - this->volumeReduction)) & this->unmute;
 
 	int16 leftVolume = volume;
 	int16 rightVolume = volume;
@@ -890,7 +888,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 
 			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
 			{
-				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->length * 3) + 1 + channel->cursor];
+				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->samples * 3) + 1 + channel->cursor];
 				_soundRegistries[channel->number].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
 			}
 			else
@@ -906,7 +904,7 @@ void SoundWrapper::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixe
 __attribute__((noinline)) 
 void SoundWrapper::updateVolumeReduction()
 {
-	uint32 elapsedMilliseconds = (this->elapsedMicroseconds - this->previouslyElapsedMicroseconds) / __MICROSECONDS_PER_MILLISECOND;
+	uint32 elapsedMilliseconds = this->sound->targetTimerResolutionUS * (this->mainChannel->elapsedTicks - this->previouslyElapsedTicks) / __MICROSECONDS_PER_MILLISECOND;
 
 	if(VUEngine::getGameFrameDuration(_vuEngine) <= elapsedMilliseconds)
 	{
@@ -951,7 +949,7 @@ void SoundWrapper::updateVolumeReduction()
 				break;
 		}
 
-		this->previouslyElapsedMicroseconds = this->elapsedMicroseconds;
+		this->previouslyElapsedTicks = this->mainChannel->elapsedTicks;
 	}
 }
 
@@ -966,10 +964,6 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 	NM_ASSERT(NULL != this->channels, "SoundWrapper::updateMIDIPlayback: invalid channels list");
 
 	bool finished = true;
-
-#ifdef __SOUND_TEST
-	this->elapsedMicroseconds += __FIX7_9_EXT_TO_F(this->speed) * elapsedMicroseconds;
-#endif
 
 	fixed_t leftVolumeFactor = -1;
 	fixed_t rightVolumeFactor = -1;
@@ -992,15 +986,15 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 			continue;
 		}
 
-		channel->ticks += channel->tickStep;
+		channel->elapsedTicks += channel->tickStep;
 
-		if(channel->ticks >= channel->ticksPerNote || 0 == elapsedMicroseconds)
+		if(channel->elapsedTicks >= channel->ticksPerNote || 0 == elapsedMicroseconds)
 		{
-			if(elapsedMicroseconds)
+			if(0 != elapsedMicroseconds)
 			{
 				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
 
-				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
+				SoundWrapper::computeMIDINextTicksPerNote(channel, this->speed, this->targetTimerResolutionFactor);
 			}
 
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
@@ -1064,11 +1058,11 @@ void SoundWrapper::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPC
 	}
 
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
-	this->elapsedMicroseconds += elapsedMicroseconds;
+	this->mainChannel->elapsedTicks += elapsedMicroseconds;
 
-	this->mainChannel->cursor = this->elapsedMicroseconds / targetPCMUpdates;
+	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
 
-	if(this->mainChannel->cursor >= this->mainChannel->length)
+	if(this->mainChannel->cursor >= this->mainChannel->samples)
 	{
 		SoundWrapper::completedPlayback(this);
 	}
@@ -1178,7 +1172,7 @@ void SoundWrapper::print(int32 x, int32 y)
 		PRINT_TEXT(channel->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 		PRINT_TEXT("Length: ", x, ++y);
-		PRINT_INT(channel->length, x + xDisplacement, y);
+		PRINT_INT(channel->samples, x + xDisplacement, y);
 
 		PRINT_TEXT("Note: ", x, ++y);
 		switch(channel->soundChannelConfiguration.trackType)
@@ -1202,51 +1196,30 @@ uint32 SoundWrapper::getTotalPlaybackMilliseconds(Channel* channel)
 	{
 		case kMIDI:
 			{
-				uint32 totalSoundTicks = 0;
+				uint32 totalTicks = 0;
 
 				for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 				{
-					uint32 totalChannelTicks = 0;
 					Channel* channel = (Channel*)node->data;
+					channel->ticks = 0;
 
 					uint16* soundTrackData = (uint16*)channel->soundTrack.dataMIDI;
 
-					for(uint32 i = 0; i < channel->length; i++, totalChannelTicks += soundTrackData[channel->length + i]);
+					for(uint32 i = 0; i < channel->samples; i++, channel->ticks += soundTrackData[channel->samples + i]);
 
-
-					if(totalSoundTicks < totalChannelTicks)
+					if(totalTicks < channel->ticks)
 					{
-						totalSoundTicks = totalChannelTicks;
+						totalTicks = channel->ticks;
 					}
 				}
 
-				return (uint32)((long)totalSoundTicks * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
+				return (uint32)((long)totalTicks * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_MILLISECOND);
 			}
 			break;
 
 		case kPCM:
 
-			return (channel->length * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackFrameRate;
-			break;
-	}
-
-	return 0;
-}
-
-uint32 SoundWrapper::getElapsedMilliseconds()
-{
-	Channel* firstChannel = (Channel*)this->channels->head->data;
-
-	switch(firstChannel->soundChannelConfiguration.trackType)
-	{
-		case kMIDI:
-
-			return this->elapsedMicroseconds / __MILLISECONDS_PER_SECOND;
-			break;
-
-		case kPCM:
-
-			return (firstChannel->cursor * __MILLISECONDS_PER_SECOND) / this->pcmTargetPlaybackFrameRate;
+			return (channel->samples * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackFrameRate;
 			break;
 	}
 
@@ -1255,14 +1228,13 @@ uint32 SoundWrapper::getElapsedMilliseconds()
 
 void SoundWrapper::printPlaybackProgress(int32 x, int32 y)
 {
-	uint32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
-
-	if(elapsedMilliseconds > this->totalPlaybackMilliseconds)
+	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
 	{
-		elapsedMilliseconds = this->totalPlaybackMilliseconds;
+		return;
 	}
 
-	uint16 position = (elapsedMilliseconds * 32) / this->totalPlaybackMilliseconds;
+	float elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+	uint32 position = elapsedTicksProportion * 32;
 
 	char boxesArray[33] = 
 	{
@@ -1309,14 +1281,14 @@ void SoundWrapper::printPlaybackTime(int32 x, int32 y)
 {
 	static uint32 previousSecond = 0;
 
-	uint32 elapsedMilliseconds = SoundWrapper::getElapsedMilliseconds(this);
-
-	if(elapsedMilliseconds > this->totalPlaybackMilliseconds)
+	if(NULL == this->mainChannel || 0 == this->mainChannel->ticks)
 	{
-		elapsedMilliseconds = this->totalPlaybackMilliseconds;
+		return;
 	}
 
-	uint32 currentSecond = elapsedMilliseconds/ __MILLISECONDS_PER_SECOND;
+	float elapsedTicksProportion = __FIX7_9_EXT_TO_F(this->mainChannel->elapsedTicks) / this->mainChannel->ticks;
+
+	uint32 currentSecond = elapsedTicksProportion * this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND;
 
 	if(previousSecond > currentSecond)
 	{
@@ -1345,7 +1317,7 @@ void SoundWrapper::printMetadata(int32 x, int32 y, bool printDetails)
 
 	y++;
 
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedMilliseconds(this) / __MILLISECONDS_PER_SECOND, x + 23, y);
+	SoundWrapper::printTiming(this, 0, x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
 	SoundWrapper::printTiming(this, this->totalPlaybackMilliseconds / __MILLISECONDS_PER_SECOND, x + 28, y);
 
