@@ -29,6 +29,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __SOUND_TEST
+
 extern SoundROM* _userSounds[];
 
 
@@ -471,3 +473,5 @@ void SoundTest::applyTimerSettings()
 
 	SoundTest::printTimer(this);
 }
+
+#endif
