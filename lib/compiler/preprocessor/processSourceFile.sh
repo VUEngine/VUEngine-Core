@@ -374,14 +374,14 @@ then
 		# Add allocator if it is not abstract nor a singleton class
 		if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
 		then
-		#	echo "Adding allocator"
+			#echo "Adding allocator"
 			constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
 			# strip out 
-			echo "constructor $constructor"
+			#echo "constructor $constructor"
 			constructorParameters=`sed -E 's#__attribute__ *\(\([a-z]+\)\) *##g' <<< "$constructor"`
 			constructorParameters=`sed -e 's#^.*(\(.*\))[ 	{]*$#\1#' <<< "$constructorParameters"`
-			echo
-			echo "constructorParameters $constructorParameters"
+			#echo
+			#echo "constructorParameters $constructorParameters"
 			#echo "constructorParameters $constructorParameters"
 			allocatorParameters=`cut -d "," -f2- <<< "$constructorParameters,"`
 			#echo "allocatorParameters $allocatorParameters"
