@@ -468,7 +468,7 @@ void TimerManager::nextSecondStarted()
 
 void TimerManager::printStatus(int32 x, int32 y)
 {
-	PRINT_TEXT("TIMER MANAGER", x, y++);
+	PRINT_TEXT("TIMER STATUS", x, y++);
 
 	PRINT_TEXT("Inter./sec.:          ", x, ++y);
 	PRINT_INT(this->interruptsPerSecond, x + 17, y);
@@ -670,7 +670,7 @@ void TimerManager::repeatMethodCall(uint32 callTimes, uint32 duration, ListenerO
 
 void TimerManager::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "TIMER", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "TIMER CONFIG", x, y++, NULL);
 	y++;
 
 	switch(this->resolution)
