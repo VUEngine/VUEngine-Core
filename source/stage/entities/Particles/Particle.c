@@ -31,6 +31,7 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+
 /**
  * Class constructor
  *
@@ -39,7 +40,8 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
+
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator __attribute__((unused)))
 {
 	// construct base Container
 	Base::constructor();
