@@ -51,8 +51,11 @@ CharSetROMSpec ProfilerFontCharSet =
 	// number of chars
 	45,
 
-	// allocation type
-	__NOT_ANIMATED,
+	// whether it is shared or not
+	true,
+
+	// whether the tiles are optimized or not
+	false,
 
 	// char data
 	(uint32*)ProfilerFontTiles,
@@ -61,7 +64,7 @@ CharSetROMSpec ProfilerFontCharSet =
 	NULL    
 };
 
-FontROMSpec ProfilerFont =
+FontROMSpec ProfilerFontSpec =
 {
 	// font charset spec pointer
 	(CharSetSpec*)&ProfilerFontCharSet,

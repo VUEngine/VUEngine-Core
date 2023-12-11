@@ -51,8 +51,11 @@ CharSetROMSpec DebugFontCharSet =
 	// number of chars
 	46,
 
-	// allocation type
-	__NOT_ANIMATED,
+	// whether it is shared or not
+	true,
+
+	// whether the tiles are optimized or not
+	false,
 
 	// char data
 	(uint32*)DebugFontTiles,
@@ -61,7 +64,7 @@ CharSetROMSpec DebugFontCharSet =
 	NULL    
 };
 
-FontROMSpec DebugFont =
+FontROMSpec DebugFontSpec =
 {
 	// font charset spec pointer
 	(CharSetSpec*)&DebugFontCharSet,
