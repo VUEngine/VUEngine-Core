@@ -94,7 +94,7 @@ CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
     {%- endif %}    
 };
 
-FontROMSpec {{ sanitizedSpecName }}Font =
+FontROMSpec {{ sanitizedSpecName }}FontSpec =
 {
 	// font charset spec pointer
 	(CharSetSpec*)&{{ sanitizedSpecName }}FontCharSet,
