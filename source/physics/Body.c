@@ -1317,17 +1317,17 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 
 	Body::clampVelocity(this, false);
 
-	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
+	if(__NO_MOVEMENT == this->movementType.x && 0 != this->velocity.x)
 	{
 		this->movementType.x = __ACCELERATED_MOVEMENT;
 	}
 
-	if(__NO_MOVEMENT == this->movementType.y && this->velocity.y)
+	if(__NO_MOVEMENT == this->movementType.y && 0 != this->velocity.y)
 	{
 		this->movementType.y = __ACCELERATED_MOVEMENT;
 	}
 
-	if(__NO_MOVEMENT == this->movementType.z && this->velocity.z)
+	if(__NO_MOVEMENT == this->movementType.z && 0 != this->velocity.z)
 	{
 		this->movementType.z = __ACCELERATED_MOVEMENT;
 	}
@@ -1340,7 +1340,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(axisOfStopping && this->sendMessages)
+		if(__NO_AXIS != axisOfStopping && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}
