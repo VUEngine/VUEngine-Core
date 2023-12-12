@@ -319,32 +319,31 @@ void Body::moveUniformly(Vector3D velocity)
 	if(0 != velocity.x)
 	{
 		axisOfUniformMovement |= __X_AXIS;
-		this->velocity.x = velocity.x;
-		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
 	}
 
 	if(0 != velocity.y)
 	{
 		axisOfUniformMovement |= __Y_AXIS;
-		this->velocity.y = velocity.y;
-		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
 	}
 
 	if(0 != velocity.z)
 	{
 		axisOfUniformMovement |= __Z_AXIS;
-		this->velocity.z = velocity.z;
-		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
 	}
 
-	Body::clampVelocity(this, false);
-
-	if(0 != axisOfUniformMovement)
+	if(__NO_AXIS != axisOfUniformMovement)
 	{
 		Body::setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
 		Body::awake(this, axisOfUniformMovement);
+
+		this->velocity = velocity;
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
+
+		Body::clampVelocity(this, false);
 	}
-}
+}	
 
 // clear force
 void Body::clearExternalForce()
@@ -1155,17 +1154,17 @@ void Body::awake(uint16 axisOfAwakening)
 	{
 		bool dispatchMessage = false;
 
-		if(!this->velocity.x && (__X_AXIS & axisOfAwakening))
+		if(0 == this->velocity.x && 0 != (__X_AXIS & axisOfAwakening))
 		{
 			dispatchMessage |= (__X_AXIS & axisOfAwakening);
 		}
 
-		if(!this->velocity.y && (__Y_AXIS & axisOfAwakening))
+		if(0 == this->velocity.y && 0 != (__Y_AXIS & axisOfAwakening))
 		{
 			dispatchMessage |= (__Y_AXIS & axisOfAwakening);
 		}
 
-		if(!this->velocity.z && (__Z_AXIS & axisOfAwakening))
+		if(0 == this->velocity.z && 0 != (__Z_AXIS & axisOfAwakening))
 		{
 			dispatchMessage |= (__Z_AXIS & axisOfAwakening);
 		}
