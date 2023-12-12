@@ -483,7 +483,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
 
-	if(!this->body)
+	if(NULL == this->body)
 	{
 		return false;
 	}
@@ -540,7 +540,7 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->allowCollisions && this->shapes)
+					if(this->allowCollisions && NULL != this->shapes)
 					{
 						Actor::activeCollisionChecks(this, true);
 						return true;
@@ -551,7 +551,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 				case kMessageBodyStopped:
 
-					if(!Body::getMovementOnAllAxis(this->body) && this->shapes)
+					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->shapes)
 					{
 						Actor::activeCollisionChecks(this, false);
 					}
