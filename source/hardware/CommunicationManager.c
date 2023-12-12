@@ -226,6 +226,15 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
     }
 }
 
+void CommunicationManager::disableCommunications()
+{
+	CommunicationManager::cancelCommunications(this);
+
+	this->status = kCommunicationsStatusNone;
+
+	CommunicationManager::reset(this);	
+}
+
 void CommunicationManager::endCommunications()
 {
 	CommunicationManager::setReady(this, false);
