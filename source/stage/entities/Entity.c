@@ -1830,19 +1830,17 @@ void Entity::setSize(Size size)
 	this->size = size;
 }
 
-bool Entity::isSpriteVisible(Sprite sprite, int32 pad)
+bool Entity::isPixelPositionWithinScreenSpace(PixelVector pixelPosition, int32 pad)
 {
-	PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
-
 	PixelSize pixelSize = PixelSize::getFromSize(this->size);
 
 	int16 halfWidth	= pixelSize.x >> 1;
 	int16 halfHeight = pixelSize.y >> 1;
 	int16 halfDepth	= pixelSize.z >> 1;
 
-	int32 x = spritePosition.x;
-	int32 y = spritePosition.y;
-	int32 z = spritePosition.z;
+	int32 x = pixelPosition.x;
+	int32 y = pixelPosition.y;
+	int32 z = pixelPosition.z;
 
 	pad += __ABS(z);
 
@@ -1881,8 +1879,6 @@ bool Entity::isInCameraRange()
 
 void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 {
-	this->inCameraRange = false;
-
 	if(NULL != this->sprites && NULL != this->sprites->head)
 	{
 		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
@@ -1895,7 +1891,28 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				return;
 			}
 
-			if(Entity::isSpriteVisible(this, sprite, pad))
+			if(Entity::isPixelPositionWithinScreenSpace(this, Sprite::getDisplacedPosition(sprite), pad))
+			{
+				this->inCameraRange = true;
+				return;
+			}
+		}
+	}
+	else if(NULL != this->wireframes && NULL != this->wireframes->head)
+	{
+		for(VirtualNode wireframeNode = this->wireframes->head; NULL != wireframeNode; wireframeNode = wireframeNode->next)
+		{
+			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
+/*
+			// TODO: implement a bool flag in the wireframe that is raised
+			// when DirectDraw draws at least a pixel
+			if(Wireframe::isVisible(wireframe))
+			{
+				this->inCameraRange = true;
+				return;
+			}
+*/
+			if(Entity::isPixelPositionWithinScreenSpace(this, Wireframe::getPixelPosition(wireframe), pad))
 			{
 				this->inCameraRange = true;
 				return;
