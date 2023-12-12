@@ -259,6 +259,10 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 
 	int32 pad = (0 < position2D.z ? position2D.z : 0);
 
+#ifndef __LEGACY_COORDINATE_PROJECTION
+	position2D = PixelVector::sum(position2D, (PixelVector){__HALF_SCREEN_WIDTH, __HALF_SCREEN_HEIGHT, 0, 0});
+#endif
+
 	if(forceNoPopIn)
 	{
 		// check x visibility
