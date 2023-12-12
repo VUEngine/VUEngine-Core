@@ -338,6 +338,8 @@ void Mesh::render()
 	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL scale");
 
 	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition);
+	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+
 	Mesh::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)

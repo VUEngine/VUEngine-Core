@@ -34,7 +34,6 @@ void Asterisk::constructor(AsteriskSpec* asteriskSpec)
 	// construct base object
 	Base::constructor(&asteriskSpec->wireframeSpec);
 
-	this->center = PixelVector::zero();
 	this->length = __ABS(asteriskSpec->length);
 	this->scaledLength = this->length;
 	this->renderCycle = false;

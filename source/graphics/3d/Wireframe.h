@@ -55,6 +55,7 @@ typedef const WireframeSpec WireframeROMSpec;
 /// @ingroup graphics-3d
 abstract class Wireframe : ListenerObject
 {
+	PixelVector center;
 	Vector3D displacement;
 	WireframeSpec* wireframeSpec;
 	const Vector3D* position;
@@ -75,6 +76,7 @@ abstract class Wireframe : ListenerObject
 	void show();
 	void setupRenderingMode(const Vector3D* relativePosition);
 	void setDisplacement(const Vector3D* displacement);
+	PixelVector getPixelPosition();
 
 	virtual void draw() = 0;
 	virtual void render();

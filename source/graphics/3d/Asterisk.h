@@ -40,7 +40,7 @@ typedef const AsteriskSpec AsteriskROMSpec;
 class Asterisk : Wireframe
 {
 	// Vertices
-	PixelVector center;
+	
 	fixed_t length;
 	uint16 scaledLength;
 	bool renderCycle;

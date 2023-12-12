@@ -42,8 +42,6 @@ typedef const SphereSpec SphereROMSpec;
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
-	// Vertices
-	PixelVector center;
 	// Radious
 	fixed_t radius;
 	uint16 scaledRadius;
