@@ -275,7 +275,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 	{
 		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
 
-		if(bodyMovement)
+		if(__NO_AXIS != bodyMovement)
 		{
 			Actor::syncWithBody(this);
 

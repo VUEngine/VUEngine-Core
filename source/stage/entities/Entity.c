@@ -1626,10 +1626,7 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 {
 	uint8 invalidateGraphics = 0;
 
-	if(!isDeleted(this->sprites))
-	{
-		invalidateGraphics = invalidateTransformationFlag | this->invalidateGlobalTransformation;
-	}
+	invalidateGraphics = invalidateTransformationFlag | this->invalidateGlobalTransformation;
 	
 	if(this->invalidateGlobalTransformation)
 	{
