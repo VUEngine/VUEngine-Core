@@ -356,6 +356,12 @@ void Printing::clear()
 	}
 }
 
+void Printing::clearRow(uint16 row)
+{
+	// TODO: implement something more elegant and performant
+	Printing::text(this, "                                                ", 0, row, NULL);
+}
+
 void Printing::releaseFonts()
 {
 	Printing::removeEventListeners(this, NULL, kEventFontRewritten);

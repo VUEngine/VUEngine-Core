@@ -149,10 +149,11 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	this->processCollisions = true;
 
 	// make sure to free the memory
-	if(this->stage)
+	if(!isDeleted(this->stage))
 	{
 		// destroy the stage
 		delete this->stage;
+		this->stage = NULL;
 	}
 
 	if(!isDeleted(this->physicalWorld))

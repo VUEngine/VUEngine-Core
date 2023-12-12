@@ -103,13 +103,16 @@ void ObjectSprite::destructor()
 
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
-	if(this->registered && this->objectSpriteContainer)
+	if(this->registered && NULL != this->objectSpriteContainer)
 	{
 		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
 	}
 
-	Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
-	ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));
+	if(!isDeleted(this->texture))
+	{
+		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
+		ObjectTextureManager::releaseTexture(ObjectTextureManager::getInstance(), ObjectTexture::safeCast(this->texture));		
+	}
 
 	this->texture = NULL;
 

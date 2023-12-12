@@ -54,7 +54,7 @@ void StateMachine::constructor(void* owner)
  */
 void StateMachine::destructor()
 {
-	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
+	NM_ASSERT(!isDeleted(this->stateStack), "StateMachine::destructor: null stateStack");
 
 	// deallocate the list
 	delete this->stateStack;
@@ -210,7 +210,7 @@ VirtualList StateMachine::getStateStack()
  */
 void StateMachine::swapState(State newState)
 {
-	ASSERT(newState, "StateMachine::swapState: null newState");
+	NM_ASSERT(!isDeleted(newState), "StateMachine::swapState: null newState");
 
 	// update the stack
 	// remove current state
@@ -224,6 +224,8 @@ void StateMachine::swapState(State newState)
 		// call the exit method from current state
 		State::exit(this->currentState, this->owner);
 	}
+
+	NM_ASSERT(!isDeleted(newState), "StateMachine::swapState: newState deleted during exit of previous state");
 
 	this->currentState = newState;
 	this->previousState = NULL;
@@ -258,7 +260,7 @@ uint32 StateMachine::pushState(State newState)
 	// set new state
 	this->currentState = newState;
 
-	ASSERT(this->currentState, "StateMachine::pushState: null currentState");
+	NM_ASSERT(!isDeleted(this->currentState), "StateMachine::pushState: null currentState");
 
 	// push new state in the top of the stack
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);

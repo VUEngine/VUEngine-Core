@@ -103,6 +103,13 @@ void VirtualList::deleteData()
 
 			node = node->next;
 
+#ifndef __SHPPING
+			if(isDeleted(aux))
+			{
+				continue;
+			}
+#endif
+
 			delete aux;
 		}
 

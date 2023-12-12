@@ -227,6 +227,13 @@ singleton class Printing : ListenerObject
 	void clear();
 
 	/**
+	 * Clear a give row
+	 *
+	 * @param row	Row to clear
+	 */
+	void clearRow(uint16 row);
+
+	/**
 	 * Release fonts, free VRAM
 	 */
 	void releaseFonts();
