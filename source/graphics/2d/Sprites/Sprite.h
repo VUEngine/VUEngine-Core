@@ -165,6 +165,7 @@ abstract class Sprite : ListenerObject
 	bool isObject();
 	bool isPlaying();
 	bool isPlayingFunction(char* functionName);
+	const char* getPlayingAnimationName();
 	void nextFrame();
 	void pause(bool pause);
 	bool play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope);

@@ -520,8 +520,28 @@ void AnimationController::previousFrame()
  */
 bool AnimationController::isPlayingFunction(const char* functionName)
 {
+	if(NULL == functionName || NULL == this->animationFunction)
+	{
+		return false;
+	}
+
 	// compare function's names
 	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
+}
+
+/**
+ * Retrieve the name of the current animation
+ *
+ * @return				Name of the animation that is playing
+ */
+const char* AnimationController::getPlayingAnimationName()
+{
+	if(NULL != this->animationFunction)
+	{
+		return (const char *)this->animationFunction->name;
+	}
+
+	return "None";
 }
 
 /**

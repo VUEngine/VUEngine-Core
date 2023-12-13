@@ -61,6 +61,7 @@ class AnimationController : ListenerObject
 	uint8 getRows();
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
+	const char* getPlayingAnimationName();
 	void pause(bool pause);
 	bool play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope);
 	bool replay(const AnimationFunction* animationFunctions[]);

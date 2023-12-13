@@ -175,7 +175,7 @@ bool AnimatedEntity::playAnimation(const char* animationName)
 // play an animation
 void AnimatedEntity::stopAnimation()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
@@ -192,7 +192,7 @@ void AnimatedEntity::stopAnimation()
 // skip to next frame
 void AnimatedEntity::nextFrame()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
@@ -207,7 +207,7 @@ void AnimatedEntity::nextFrame()
 // rewind to previous frame
 void AnimatedEntity::previousFrame()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return;
 	}
@@ -230,7 +230,7 @@ bool AnimatedEntity::isPlayingAnimation()
 // is animation selected
 bool AnimatedEntity::isAnimationLoaded(char* functionName)
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return false;
 	}
@@ -239,6 +239,20 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 
 	return Sprite::isPlayingFunction(sprite, functionName);
 }
+
+// get loaded animation's name
+const char* AnimatedEntity::getPlayingAnimationName()
+{
+	if(isDeleted(this->sprites))
+	{
+		return "None";
+	}
+
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
+
+	return Sprite::getPlayingAnimationName(sprite);
+}
+
 
 // get animation spec
 const AnimationFunction** AnimatedEntity::getAnimationFunctions()
@@ -302,7 +316,7 @@ bool AnimatedEntity::handlePropagatedString(const char* string __attribute__ ((u
 
 int16 AnimatedEntity::getActualFrame()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return -1;
 	}
@@ -317,7 +331,7 @@ int16 AnimatedEntity::getActualFrame()
 
 int32 AnimatedEntity::getNumberOfFrames()
 {
-	if(!this->sprites)
+	if(isDeleted(this->sprites))
 	{
 		return -1;
 	}

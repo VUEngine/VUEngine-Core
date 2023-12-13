@@ -807,6 +807,21 @@ bool Sprite::isPlayingFunction(char* functionName)
 }
 
 /**
+ * Retrieve the name of the current animation
+ *
+ * @return				Name of the animation that is playing
+ */
+const char* Sprite::getPlayingAnimationName()
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::getPlayingAnimationName(this->animationController);
+	}
+
+	return "None";
+}
+
+/**
  * Set frame cycle decrement
  *
  * @param frameCycleDecrement	Frame cycle decrement
