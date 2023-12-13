@@ -51,6 +51,7 @@ class PhysicalWorld : ListenerObject
 	// time scale
 	fixed_t timeScale;
 	// Time scale is handled here, not in the Body class
+	uint8 cycle;
 	uint8 remainingSkipCycles;
 	uint8 skipCycles;
 	bool dirty;

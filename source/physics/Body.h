@@ -206,9 +206,8 @@ class Body : ListenerObject
 	void setMaximumSpeed(fixed_t maximumSpeed);
 	fixed_t getMaximumSpeed();
 	void print(int32 x, int32 y);
-	MovementResult updateMovement();
 	void sendMessages(bool value);
-	void update();
+	void update(uint16 cycle);
 }
 
 

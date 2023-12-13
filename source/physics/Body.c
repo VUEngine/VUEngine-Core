@@ -343,6 +343,10 @@ void Body::moveUniformly(Vector3D velocity)
 
 		Body::clampVelocity(this, false);
 	}
+
+	this->internalPosition.x = __FIXED_TO_FIX7_9_EXT(this->position.x);
+	this->internalPosition.y = __FIXED_TO_FIX7_9_EXT(this->position.y);
+	this->internalPosition.z = __FIXED_TO_FIX7_9_EXT(this->position.z);
 }	
 
 // clear force
@@ -423,7 +427,7 @@ void Body::applySustainedForce(const Vector3D* force)
 }
 
 // update movement
-void Body::update()
+void Body::update(uint16 cycle)
 {
 	if(!this->active || !this->awake)
 	{
@@ -443,7 +447,7 @@ void Body::update()
 
 			this->skipedCycles = 0;
 
-			movementResult = Body::updateMovement(this);
+			movementResult = Body::updateMovement(this, cycle);
 		}
 		else if(0 > this->skipCycles)
 		{
@@ -451,13 +455,13 @@ void Body::update()
 
 			while(this->skipCycles <= this->skipedCycles--)
 			{
-				movementResult = Body::updateMovement(this);
+				movementResult = Body::updateMovement(this, cycle);
 			}
 		}
 	}
 	else
 	{
-		movementResult = Body::updateMovement(this);
+		movementResult = Body::updateMovement(this, cycle);
 	}
 
 	// if stopped on any axis
@@ -651,7 +655,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 }
 
 // update movement over axis
-MovementResult Body::updateMovement()
+MovementResult Body::updateMovement(uint16 cycle)
 {
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
@@ -694,7 +698,7 @@ MovementResult Body::updateMovement()
 	{
 		if((__UNIFORM_MOVEMENT == this->movementType.x) && (__ABS(this->velocity.x) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.x)) && 0 == cycle % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
 			{
 				this->position.x += 0 <= this->velocity.x ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}
@@ -710,7 +714,7 @@ MovementResult Body::updateMovement()
 	{
 		if((__UNIFORM_MOVEMENT == this->movementType.y) && (__ABS(this->velocity.y) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.y)) && 0 == cycle % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
 			{
 				this->position.y += 0 <= this->velocity.y ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}
@@ -726,7 +730,7 @@ MovementResult Body::updateMovement()
 	{
 		if((__UNIFORM_MOVEMENT == this->movementType.z) && (__ABS(this->velocity.z) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER))))
 		{
-			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.z)) && 0 == FrameRate::getFPS(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
+			if(0 < __ABS(__METERS_TO_PIXELS(this->velocity.z)) && 0 == cycle % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
 			{
 				this->position.z += 0 <= this->velocity.z ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
 			}

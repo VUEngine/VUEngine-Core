@@ -62,6 +62,7 @@ void PhysicalWorld::constructor()
 	this->frictionCoefficient = 0;
 	this->timeScale = __1I_FIXED;
 	this->dirty = false;
+	this->cycle = 0;
 
 	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
 	PhysicalWorld::setTimeScale(this, __1I_FIXED);
@@ -177,6 +178,11 @@ void PhysicalWorld::update(Clock clock)
 		return;
 	}
 
+	if(__TARGET_FPS < ++this->cycle)
+	{
+		this->cycle = 1;
+	}
+
 	if(__1I_FIXED > this->timeScale)
 	{
 		if(__F_TO_FIXED(0.5f) < this->timeScale)
@@ -238,7 +244,7 @@ void PhysicalWorld::update(Clock clock)
 			}
 		}
 
-		Body::update(body);
+		Body::update(body, this->cycle);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING
@@ -251,9 +257,7 @@ void PhysicalWorld::update(Clock clock)
  */
 void PhysicalWorld::reset()
 {
-	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
-
-	VirtualList::deleteData(this->bodies);
+	this->cycle = 0;
 }
 
 /**
