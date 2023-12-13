@@ -469,7 +469,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;												\
 																										\
 		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\
@@ -530,14 +530,14 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_DYNAMIC(ClassName)																	\
 																										\
 		/* declare the static pointer to instance */													\
-		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;				\
+		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		/* define allocator */																			\
 		__CLASS_NEW_DEFINITION(ClassName)																\
 		__CLASS_NEW_END(ClassName);																		\
 																										\
 		/* a flag to know when to allow construction */													\
-		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE							\
+		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\
 										= __SINGLETON_NOT_CONSTRUCTED;									\
 																										\
 		/* define get instance method */																\

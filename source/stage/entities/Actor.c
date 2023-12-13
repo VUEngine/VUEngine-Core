@@ -586,7 +586,7 @@ void Actor::stopAllMovement()
 // stop movement completely
 void Actor::stopMovement(uint16 axis)
 {
-	if(this->body)
+	if(!isDeleted(this->body))
 	{
 		Body::stopMovement(this->body, axis);
 	}

@@ -203,7 +203,6 @@ void Clock::setTimeInMilliSeconds(uint32 milliSeconds)
 void Clock::start()
 {
 	Clock::reset(this);
-
 	this->paused = false;
 }
 

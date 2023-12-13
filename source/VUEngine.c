@@ -195,7 +195,11 @@ void VUEngine::initialize()
 
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
-	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
+#ifdef __RELEASE
+	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL, 2000);
+#else
+	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL, 500);
+#endif
 #else
 #ifdef __RELEASE
 	VUEngine::wait(VUEngine::getInstance(), 4000);

@@ -184,7 +184,7 @@ void CommunicationManager::reset()
 	}
 }
 
-void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope)
+void CommunicationManager::enableCommunications(EventListener eventLister, ListenerObject scope, uint32 wait)
 {
 	if(this->connected || kCommunicationsStatusIdle != this->status)
 	{
@@ -199,11 +199,7 @@ void CommunicationManager::enableCommunications(EventListener eventLister, Liste
 	}
 
 	// Wait a little bit for channel to stabilize
-#ifdef __RELEASE
-	VUEngine::wait(VUEngine::getInstance(), 2000);
-#else
-	VUEngine::wait(VUEngine::getInstance(), 500);
-#endif
+	VUEngine::wait(VUEngine::getInstance(), wait);
 
 	// If handshake is taking place
     if(CommunicationManager::isHandshakeIncoming(this))
