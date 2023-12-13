@@ -1876,6 +1876,8 @@ bool Entity::isInCameraRange()
 
 void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 {
+	this->inCameraRange = false;
+
 	if(NULL != this->sprites && NULL != this->sprites->head)
 	{
 		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
