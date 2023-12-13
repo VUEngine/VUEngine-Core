@@ -118,16 +118,15 @@ void Sphere::render()
 {
 	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
 
-	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition), _previousCameraInvertedRotation);
+	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+
 	Sphere::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
 	{
 		return;
 	}
-
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, __1I_FIXED));
