@@ -84,7 +84,6 @@ void LineField::transform(const Vector3D* position, const Rotation* rotation, co
 	{
 		normalScale = scale->z;
 	}
-	
 
 	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
 	
@@ -92,15 +91,15 @@ void LineField::transform(const Vector3D* position, const Rotation* rotation, co
 	{
 		this->a.x = size->x >> 1;
 		this->a.y = 0;
-		this->a.y = 0;
+		this->a.z = 0;
 
-		if(rotation->y)
+		if(0 != rotation->y)
 		{
 			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
 			this->a.z = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
 			this->a.y = 0;
 		}
-		else if(rotation->z)
+		else if(0 != rotation->z)
 		{
 			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
 			this->a.y = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
@@ -111,15 +110,15 @@ void LineField::transform(const Vector3D* position, const Rotation* rotation, co
 	{
 		this->a.x = 0;
 		this->a.y = size->y >> 1;
-		this->a.y = 0;
+		this->a.z = 0;
 
-		if(rotation->x)
+		if(0 != rotation->x)
 		{
 			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
 			this->a.z = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
 			this->a.y = 0;
 		}
-		else if(rotation->z)
+		else if(0 != rotation->z)
 		{
 			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
 			this->a.y = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
@@ -132,13 +131,13 @@ void LineField::transform(const Vector3D* position, const Rotation* rotation, co
 		this->a.y = 0;
 		this->a.z = size->z >> 1;
 
-		if(rotation->x)
+		if(0 != rotation->x)
 		{
 			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
 			this->a.y = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
 			this->a.z = 0;
 		}
-		else if(rotation->y)
+		else if(0 != rotation->y)
 		{
 			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
 			this->a.y = 0;
