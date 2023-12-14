@@ -167,7 +167,7 @@ void SoundWrapper::computeTimerResolutionFactor()
 
 	if(0 != timerResolutionRatioReduction)
 	{
-		timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS - (timerResolutionUS >> 0)));
+		timerResolutionRatioReduction = __I_TO_FIX7_9_EXT(1) - __FIX7_9_EXT_DIV(__I_TO_FIX7_9_EXT(__SOUND_TARGET_US_PER_TICK), __I_TO_FIX7_9_EXT(timerResolutionUS - (timerResolutionUS >> 2)));
 
 		this->targetTimerResolutionFactor = __FIX7_9_EXT_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
 	}
