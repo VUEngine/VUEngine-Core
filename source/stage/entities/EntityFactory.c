@@ -242,10 +242,10 @@ uint32 EntityFactory::transformEntities()
 
 		if(!positionedEntityDescription->shapesCreated)
 		{
-			bool createdShapes = Entity::createShapes(positionedEntityDescription->entity);
+			bool createdColliders = Entity::createColliders(positionedEntityDescription->entity);
 			positionedEntityDescription->shapesCreated = true;
 
-			if(createdShapes)
+			if(createdColliders)
 			{
 				return __ENTITY_PENDING_PROCESSING;
 			}

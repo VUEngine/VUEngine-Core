@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SpatialObject.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <stdarg.h>
 
 

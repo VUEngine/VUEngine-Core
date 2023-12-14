@@ -32,11 +32,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void LineField::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
+void LineField::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
-	this->classIndex = kShapeLineFieldIndex;
+	this->classIndex = kColliderLineFieldIndex;
 
 	this->lineSpec = NULL;
 	this->a = Vector3D::zero();
@@ -179,7 +179,7 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 	}
 }
 
-void LineField::testForCollision(Shape shape __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+void LineField::testForCollision(Collider collider __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 

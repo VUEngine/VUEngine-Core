@@ -17,7 +17,7 @@
 #include <Clock.h>
 #include <Printing.h>
 #include <SpatialObject.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <VirtualList.h>
 
 #include <debugConfig.h>
@@ -33,7 +33,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class Shape;
+friend class Collider;
 friend class Clock;
 friend class VirtualNode;
 friend class VirtualList;
@@ -48,7 +48,7 @@ void CollisionManager::constructor()
 {
 	Base::constructor();
 
-	// create the shape list
+	// create the collider list
 	this->shapes = new VirtualList();
 
 	this->lastCycleCheckProducts = 0;
@@ -57,7 +57,7 @@ void CollisionManager::constructor()
 	this->checkCycles = 0;
 	this->collisionChecks = 0;
 	this->collisions = 0;
-	this->checkShapesOutOfCameraRange = false;
+	this->checkCollidersOutOfCameraRange = false;
 	this->dirty = false;
 }
 
@@ -75,14 +75,14 @@ void CollisionManager::destructor()
 	Base::destructor();
 }
 
-void CollisionManager::purgeDestroyedShapes()
+void CollisionManager::purgeDestroyedColliders()
 {
 	for(VirtualNode auxNode = this->shapes->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
 	{
 		auxNextNode = auxNode->next;
 
-		// load the current shape to check against
-		Shape shapeToCheck = Shape::safeCast(auxNode->data);
+		// load the current collider to check against
+		Collider shapeToCheck = Collider::safeCast(auxNode->data);
 
 		if(shapeToCheck->destroyMe)
 		{
@@ -93,39 +93,39 @@ void CollisionManager::purgeDestroyedShapes()
 	}	
 }
 
-// register a shape
-Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
+// register a collider
+Collider CollisionManager::createCollider(SpatialObject owner, const ColliderSpec* shapeSpec)
 {
-	NM_ASSERT(!(NULL == shapeSpec || NULL == shapeSpec->allocator), "CollisionManager::createShape: invalid shape spec");
+	NM_ASSERT(!(NULL == shapeSpec || NULL == shapeSpec->allocator), "CollisionManager::createCollider: invalid collider spec");
 
 	if(NULL == shapeSpec || NULL == shapeSpec->allocator)
 	{
 		return NULL;
 	}
 
-	CollisionManager::purgeDestroyedShapes(this);
+	CollisionManager::purgeDestroyedColliders(this);
 
-	// create the shape
-	Shape shape = ((Shape (*)(SpatialObject, const ShapeSpec*)) shapeSpec->allocator)(owner, shapeSpec);
+	// create the collider
+	Collider collider = ((Collider (*)(SpatialObject, const ColliderSpec*)) shapeSpec->allocator)(owner, shapeSpec);
 
 	this->dirty = true;
 
 	// register it
-	VirtualList::pushFront(this->shapes, shape);
+	VirtualList::pushFront(this->shapes, collider);
 
-	// return created shape
-	return shape;
+	// return created collider
+	return collider;
 }
 
-// remove a shape
-void CollisionManager::destroyShape(Shape shape)
+// remove a collider
+void CollisionManager::destroyCollider(Collider collider)
 {
-	if(!isDeleted(shape))
+	if(!isDeleted(collider))
 	{
 #ifndef __ENABLE_PROFILER
-		NM_ASSERT(NULL != VirtualList::find(this->shapes, shape), "CollisionManager::destroyShape: non registerd shape");
+		NM_ASSERT(NULL != VirtualList::find(this->shapes, collider), "CollisionManager::destroyCollider: non registerd collider");
 #endif
-		shape->destroyMe = true;
+		collider->destroyMe = true;
 	}
 }
 
@@ -153,42 +153,42 @@ uint32 CollisionManager::update(Clock clock)
 	{
 		auxNextNode = auxNode->next;
 
-		// load the current shape to check against
-		Shape shape = Shape::safeCast(auxNode->data);
+		// load the current collider to check against
+		Collider collider = Collider::safeCast(auxNode->data);
 
 #ifndef __RELEASE
-		if(isDeleted(shape) || shape->destroyMe)
+		if(isDeleted(collider) || collider->destroyMe)
 #else
-		if(shape->destroyMe)
+		if(collider->destroyMe)
 #endif
 		{
 			VirtualList::removeNode(this->shapes, auxNode);
 
-			delete shape;
+			delete collider;
 			continue;
 		}
 
 	#ifdef __DRAW_SHAPES
-		if(shape->enabled && shape->ready)
+		if(collider->enabled && collider->ready)
 		{
-			Shape::show(shape);
+			Collider::show(collider);
 		}
 		else
 		{
-			Shape::hide(shape);
+			Collider::hide(collider);
 		}
 	#endif
 
-		if(!(shape->enabled && shape->ready && shape->checkForCollisions))
+		if(!(collider->enabled && collider->ready && collider->checkForCollisions))
 		{
 			continue;
 		}
 
-		Vector3D shapePosition = shape->position;
+		Vector3D shapePosition = collider->position;
 
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shapeToCheck = Shape::safeCast(node->data);
+			Collider shapeToCheck = Collider::safeCast(node->data);
 
 			if(!(shapeToCheck->enabled && shapeToCheck->ready))
 			{
@@ -199,16 +199,16 @@ uint32 CollisionManager::update(Clock clock)
 			this->lastCycleCheckProducts++;
 #endif
 
-			if(0 == (shape->layersToIgnore & shapeToCheck->layers))
+			if(0 == (collider->layersToIgnore & shapeToCheck->layers))
 			{
-				if(shape->owner == shapeToCheck->owner)
+				if(collider->owner == shapeToCheck->owner)
 				{
 					continue;
 				}
 
 				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(shapeToCheck->position, shapePosition));
 
-				if(__FIXED_SQUARE(__SHAPE_MAXIMUM_SIZE) >= distanceVectorSquareLength)
+				if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) >= distanceVectorSquareLength)
 				{
 #ifdef __SHOW_PHYSICS_PROFILING
 					this->lastCycleCollisionChecks++;
@@ -216,12 +216,12 @@ uint32 CollisionManager::update(Clock clock)
 
 #ifdef __SHOW_PHYSICS_PROFILING
 					// check if shapes overlap
-					if(kNoCollision != Shape::collides(shape, shapeToCheck))
+					if(kNoCollision != Collider::collides(collider, shapeToCheck))
 					{
 						this->lastCycleCollisions++;
 					}
 #else
-					Shape::collides(shape, shapeToCheck);
+					Collider::collides(collider, shapeToCheck);
 #endif
 					if(this->dirty)
 					{
@@ -260,7 +260,7 @@ void CollisionManager::reset()
 
 
 // draw shapes
-void CollisionManager::showShapes()
+void CollisionManager::showColliders()
 {
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
@@ -268,12 +268,12 @@ void CollisionManager::showShapes()
 	// check the shapes
 	for(; NULL != node; node = node->next)
 	{
-		Shape::show(node->data);
+		Collider::show(node->data);
 	}
 }
 
 // free memory by deleting direct draw Polyhedrons
-void CollisionManager::hideShapes()
+void CollisionManager::hideColliders()
 {
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
@@ -281,11 +281,11 @@ void CollisionManager::hideShapes()
 	// check the shapes
 	for(; NULL != node; node = node->next)
 	{
-		Shape::hide(node->data);
+		Collider::hide(node->data);
 	}
 }
 
-int32 CollisionManager::getNumberOfEnabledShapes()
+int32 CollisionManager::getNumberOfEnabledColliders()
 {
 	int32 count = 0;
 
@@ -295,9 +295,9 @@ int32 CollisionManager::getNumberOfEnabledShapes()
 	// check the shapes
 	for(; NULL != node; node = node->next)
 	{
-		Shape shape = Shape::safeCast(node->data);
+		Collider collider = Collider::safeCast(node->data);
 
-		if(shape->enabled)
+		if(collider->enabled)
 		{
 			count++;
 		}
@@ -306,7 +306,7 @@ int32 CollisionManager::getNumberOfEnabledShapes()
 	return count;
 }
 
-int32 CollisionManager::getNumberOfMovingEnabledShapes()
+int32 CollisionManager::getNumberOfMovingEnabledColliders()
 {
 	int32 count = 0;
 
@@ -316,9 +316,9 @@ int32 CollisionManager::getNumberOfMovingEnabledShapes()
 	// check the shapes
 	for(; NULL != node; node = node->next)
 	{
-		Shape shape = Shape::safeCast(node->data);
+		Collider collider = Collider::safeCast(node->data);
 
-		if(shape->enabled && shape->checkForCollisions)
+		if(collider->enabled && collider->checkForCollisions)
 		{
 			count++;
 		}
@@ -327,9 +327,9 @@ int32 CollisionManager::getNumberOfMovingEnabledShapes()
 	return count;
 }
 
-void CollisionManager::setCheckShapesOutOfCameraRange(bool value)
+void CollisionManager::setCheckCollidersOutOfCameraRange(bool value)
 {
-	this->checkShapesOutOfCameraRange = value;
+	this->checkCollidersOutOfCameraRange = value;
 }
 
 
@@ -339,14 +339,14 @@ void CollisionManager::print(int32 x, int32 y)
 	Printing::resetCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Shapes", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Colliders", x, ++y, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Registered:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Enabled:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfEnabledShapes(this), x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Moving:          ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfMovingEnabledShapes(this), x + 12, y++, NULL);
+	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfMovingEnabledColliders(this), x + 12, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Statistics (per cycle)", x, ++y, NULL);
 	y++;

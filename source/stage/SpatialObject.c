@@ -14,7 +14,7 @@
 
 #include <SpatialObject.h>
 
-#include <Shape.h>
+#include <Collider.h>
 
 #include <string.h>
 
@@ -170,10 +170,10 @@ bool SpatialObject::updateCollision(const CollisionInformation* collisionInforma
 	return false;
 }
 
-void SpatialObject::exitCollision(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
-void SpatialObject::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
 /**

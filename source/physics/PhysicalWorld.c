@@ -49,7 +49,7 @@ void PhysicalWorld::constructor()
 {
 	Base::constructor();
 
-	// create the shape list
+	// create the collider list
 	this->bodies = new VirtualList();
 
 	this->gravity.x = 0;
@@ -117,7 +117,7 @@ Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalSpecification*
 	VirtualList::pushFront(this->bodies, body);
 	ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
-	// return created shape
+	// return created collider
 	return body;
 }
 
@@ -156,7 +156,7 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 		Body body = Body::safeCast(node->data);
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
-		// check if current shape's owner is the same as the entity calling this method
+		// check if current collider's owner is the same as the entity calling this method
 		if(owner == body->owner)
 		{
 			return body;
@@ -238,8 +238,8 @@ void PhysicalWorld::update(Clock clock)
 			if(__NO_AXIS != gravitySensibleAxis)
 			{
 				// must account for the fps to avoid situations is which a collision is not detected
-				// when a body starts to fall and doesn't have enough time to detect a shape below
-				// when moving from one shape over another
+				// when a body starts to fall and doesn't have enough time to detect a collider below
+				// when moving from one collider over another
 				Body::applyGravity(body, gravitySensibleAxis);
 			}
 		}

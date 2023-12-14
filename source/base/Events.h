@@ -29,8 +29,8 @@ enum Events
 	kEventContainerAllChildrenDeleted,
 	kEventEntityLoaded,
 	kEventStageChildStreamedOut,
-	kEventShapeDeleted,
-	kEventShapeChanged,
+	kEventColliderDeleted,
+	kEventColliderChanged,
 
 	kEventGamePaused,
 	kEventGameUnpaused,

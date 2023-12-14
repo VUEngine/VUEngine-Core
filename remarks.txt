@@ -1,6 +1,6 @@
 Only one check of collision between two shapes is performed.
 If the first does nothing with the collision, the second
-shape is not checked.
+collider is not checked.
 
 
 LIMITATIONS

@@ -1162,8 +1162,8 @@
                     "MinuteChanged",
                     "NextStateSet",
                     "SecondChanged",
-                    "ShapeChanged",
-                    "ShapeDeleted",
+                    "ColliderChanged",
+                    "ColliderDeleted",
                     "SoundFinished",
                     "SoundReleased",
                     "SpatialObjectDeleted",
@@ -2931,7 +2931,7 @@
                     "physics": {
                         "type": "object",
                         "properties": {
-                            "angleToPreventShapeDisplacement": {
+                            "angleToPreventColliderDisplacement": {
                                 "type": "integer",
                                 "description": "Minimum angle to allow movement when colliding against another object.",
                                 "default": 10,

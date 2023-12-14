@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Shape.h>
+#include <Collider.h>
 #include <Line.h>
 
 
@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-class LineField : Shape
+class LineField : Collider
 {
 	LineSpec* lineSpec;
 	Vector3D normal;
@@ -41,11 +41,11 @@ class LineField : Shape
 	/// @publicsection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 
-	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
 	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	override void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	override Vector3D getNormal();
 	override void configureWireframe();
 	override void print(int32 x, int32 y);

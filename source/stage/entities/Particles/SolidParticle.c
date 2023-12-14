@@ -17,7 +17,7 @@
 #include <Ball.h>
 #include <Body.h>
 #include <CollisionManager.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -30,7 +30,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class Shape;
+friend class Collider;
 friend class VirtualList;
 friend class VirtualNode;
 
@@ -55,9 +55,9 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 	this->creator = creator;
 	this->solidParticleSpec = solidParticleSpec;
 
-	ShapeSpec shapeSpec =
+	ColliderSpec shapeSpec =
 	{
-		// shape
+		// collider
 		__TYPE(Ball),
 
 		{solidParticleSpec->radius, solidParticleSpec->radius, solidParticleSpec->radius},
@@ -81,9 +81,9 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
 		this->solidParticleSpec->layersToIgnore,
 	};
 
-	// register a shape for collision detection
-	this->shape = CollisionManager::createShape(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
-	Shape::activeCollisionChecks(this->shape, true);
+	// register a collider for collision detection
+	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
+	Collider::activeCollisionChecks(this->collider, true);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
 	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
@@ -95,10 +95,10 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, cons
  */
 void SolidParticle::destructor()
 {
-	// unregister the shape for collision detection
-	CollisionManager::destroyShape(VUEngine::getCollisionManager(VUEngine::getInstance()), this->shape);
+	// unregister the collider for collision detection
+	CollisionManager::destroyCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), this->collider);
 
-	this->shape = NULL;
+	this->collider = NULL;
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -113,29 +113,29 @@ void SolidParticle::transform()
 {
 	Base::transform(this);
 
-	SolidParticle::transformShape(this);
+	SolidParticle::transformCollider(this);
 }
 
 /**
- * Transform shape
+ * Transform collider
  */
-void SolidParticle::transformShape()
+void SolidParticle::transformCollider()
 {
 	const Rotation shapeRotation = Rotation::zero();
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {this->solidParticleSpec->radius, this->solidParticleSpec->radius, this->solidParticleSpec->radius};
 
-	Shape::transform(this->shape, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
+	Collider::transform(this->collider, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
 
 /**
- * Retrieve shape
+ * Retrieve collider
  *
- * @return		Particle's shape
+ * @return		Particle's collider
  */
-Shape SolidParticle::getShape()
+Collider SolidParticle::getCollider()
 {
-	return this->shape;
+	return this->collider;
 }
 
 /**
@@ -178,23 +178,23 @@ fixed_t SolidParticle::getDepth()
 bool SolidParticle::enterCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
+	ASSERT(collisionInformation->otherCollider, "SolidParticle::resolveCollision: otherColliders");
 
-	ASSERT(collisionInformation->collidingShape, "SolidParticle::enterCollision: collidingShapes");
+	ASSERT(collisionInformation->otherCollider, "SolidParticle::enterCollision: otherColliders");
 
 	bool returnValue = false;
 
-	if(collisionInformation->shape && collisionInformation->collidingShape)
+	if(collisionInformation->collider && collisionInformation->otherCollider)
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape::resolveCollision(collisionInformation->shape, collisionInformation, false);
+			Collider::resolveCollision(collisionInformation->collider, collisionInformation, false);
 
-			SpatialObject owner = Shape::getOwner(collisionInformation->collidingShape);
+			SpatialObject owner = Collider::getOwner(collisionInformation->otherCollider);
 			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(owner);
 			fixed_t bounciness =  SpatialObject::getBounciness(owner);
 
-			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
 		}
 
@@ -215,7 +215,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
  */
 bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 {
-	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
+	ASSERT(this->collider, "Particle::isSubjectToGravity: null collider");
 
 	fixed_t collisionCheckDistance = __I_TO_FIXED(1);
 
@@ -226,7 +226,7 @@ bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	return Shape::canMoveTowards(this->shape, displacement, 0);
+	return Collider::canMoveTowards(this->collider, displacement, 0);
 }
 
 /**
@@ -241,7 +241,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 	{
 		case kMessageBodyStartedMoving:
 
-			Shape::activeCollisionChecks(this->shape, true);
+			Collider::activeCollisionChecks(this->collider, true);
 			return true;
 			break;
 
@@ -249,7 +249,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
 			{
-				Shape::activeCollisionChecks(this->shape, false);
+				Collider::activeCollisionChecks(this->collider, false);
 			}
 			break;
 	}
@@ -266,15 +266,15 @@ void SolidParticle::setPosition(const Vector3D* position)
 {
 	Base::setPosition(this, position);
 
-//	SolidParticle::transformShape(this);
+//	SolidParticle::transformCollider(this);
 }
 
 /**
  * Retrieve shapes list
  *
- * @return		SolidParticle's Shape list
+ * @return		SolidParticle's Collider list
  */
-VirtualList SolidParticle::getShapes()
+VirtualList SolidParticle::getColliders()
 {
 	static VirtualList shapesList = NULL;
 
@@ -285,7 +285,7 @@ VirtualList SolidParticle::getShapes()
 
 	VirtualList::clear(shapesList);
 
-	VirtualList::pushBack(shapesList, this->shape);
+	VirtualList::pushBack(shapesList, this->collider);
 
 	return shapesList;
 }
@@ -311,20 +311,20 @@ const Vector3D* SolidParticle::getVelocity()
 }
 
 /**
- * Inform me about not colliding shape
+ * Inform me about not colliding collider
  *
- * @param shapeNotCollidingAnymore		Shape that is no longer colliding
+ * @param shapeNotCollidingAnymore		Collider that is no longer colliding
  */
-void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void SolidParticle::exitCollision(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
-	if(isShapeImpenetrable)
+	if(isColliderImpenetrable)
 	{
 		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 
-	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));
+	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(this->collider));
 }
 
 /**
@@ -333,5 +333,5 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 void SolidParticle::reset()
 {
 	Base::reset(this);
-	Shape::reset(this->shape);
+	Collider::reset(this->collider);
 }

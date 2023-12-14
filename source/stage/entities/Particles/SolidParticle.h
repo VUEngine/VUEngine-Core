@@ -23,7 +23,7 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-class Shape;
+class Collider;
 
 /**
  * Defines a SolidParticle
@@ -77,15 +77,15 @@ typedef const SolidParticleSpec SolidParticleROMSpec;
 class SolidParticle : PhysicalParticle
 {
 	ParticleSystem creator;
-	// Particle's shape for collision detection
-	Shape shape;
+	// Particle's collider for collision detection
+	Collider collider;
 	//
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
 	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator);
-	Shape getShape();
-	VirtualList getShapes();
+	Collider getCollider();
+	VirtualList getColliders();
 	override fixed_t getWidth();
 	override fixed_t getHeight();
 	override fixed_t getDepth();
@@ -96,7 +96,7 @@ class SolidParticle : PhysicalParticle
 	override void setPosition(const Vector3D* position);
 	override uint32 getInGameType();
 	override const Vector3D* getVelocity();
-	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
 	override void reset();
 }
 

@@ -36,18 +36,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Box::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
+void Box::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
-	this->classIndex = kShapeBoxIndex;
+	this->classIndex = kColliderBoxIndex;
 
 	this->rotationVertexDisplacement = Vector3D::zero();
 
 	this->normals = NULL;
 
 	int32 normalIndex = 0;
-	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
+	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
 		this->vertexProjections[normalIndex].min = 0;
 		this->vertexProjections[normalIndex].max = 0;
@@ -273,7 +273,7 @@ void Box::transform(const Vector3D* position, const Rotation* rotation, const Sc
 	this->rightBox.y0 = -this->rightBox.y1;
 	this->rightBox.z0 = -this->rightBox.z1;
 
-	// position the shape to avoid in real time calculation
+	// position the collider to avoid in real time calculation
 	this->rightBox.x0 += position->x;
 	this->rightBox.x1 += position->x;
 	this->rightBox.y0 += position->y;
@@ -431,14 +431,14 @@ void Box::projectOntoItself()
 	int32 normalIndex = 0;
 
 	// initialize vertex projections
-	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
+	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
 	{
 		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
 	}
 }
 
 // test if collision with the entity give the displacement
-void Box::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
+void Box::testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
 {
 	// save position
 	RightBox rightBox = this->rightBox;
@@ -456,7 +456,7 @@ void Box::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncre
 	Box::projectOntoItself(this);
 
 	// test for collision on displaced center
-	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, collisionInformation);
+	CollisionHelper::checkIfOverlap(Collider::safeCast(this), collider, collisionInformation);
 
 	// put back myself
 	this->rightBox = rightBox;

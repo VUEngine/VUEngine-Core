@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Shape.h>
+#include <Collider.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,8 +47,8 @@ class SpatialObject : ListenerObject
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
-	virtual void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	virtual void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	virtual void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void otherColliderOwnerDestroyed(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
 	virtual uint32 getInGameType();
 }
 

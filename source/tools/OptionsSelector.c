@@ -51,7 +51,7 @@
 #include <PhysicalWorld.h>
 #include <Printing.h>
 #include <Polyhedron.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <SolidParticle.h>
 #include <SoundManager.h>
 #include <Sphere.h>

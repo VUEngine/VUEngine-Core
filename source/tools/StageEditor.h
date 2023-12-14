@@ -48,8 +48,8 @@ singleton class StageEditor : Tool
 {
 	// Current in game entity
 	VirtualNode currentEntityNode;
-	// Current entity's shape
-	Shape shape;
+	// Current entity's collider
+	Collider collider;
 	// Mode
 	int32 mode;
 	// Actors selector

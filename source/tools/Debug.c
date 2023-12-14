@@ -58,7 +58,7 @@
 #include <ParticleSystem.h>
 #include <PhysicalWorld.h>
 #include <Polyhedron.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <SolidParticle.h>
 #include <SoundManager.h>
 #include <Sphere.h>
@@ -212,7 +212,7 @@ void Debug::show()
  */
 void Debug::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 }
@@ -380,7 +380,7 @@ void Debug::showPage(int32 increment)
 
 		Debug::setBlackBackground(this);
 
-		CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+		CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 
 		((void (*)(Debug, int32, int32, int32))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -682,7 +682,7 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 	{
 		{&PhysicalWorld_getObjectSize, 	"PhysicalWorld"},
 		{&Body_getObjectSize, 			"Body"},
-		{&Shape_getObjectSize, 			"Shape"},
+		{&Collider_getObjectSize, 			"Collider"},
 		{&Ball_getObjectSize, 			"Ball"},
 		{&Box_getObjectSize,			"Box"},
 		{&InverseBox_getObjectSize,		"InverseBox"},
@@ -1379,7 +1379,7 @@ void Debug::physicsPage(int32 increment __attribute__ ((unused)), int32 x __attr
 	Debug::removeSubPages(this);
 
 	VirtualList::pushBack(this->subPages, &Debug::physicStatusShowStatistics);
-	VirtualList::pushBack(this->subPages, &Debug::physicStatusShowShapes);
+	VirtualList::pushBack(this->subPages, &Debug::physicStatusShowColliders);
 	this->currentSubPage = this->subPages->head;
 
 	Debug::showSubPage(this, 0);
@@ -1397,7 +1397,7 @@ void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)),
 {
 	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y);
 	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))), x, y + 6);
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 
 	Debug::setBlackBackground(this);
 }
@@ -1410,10 +1410,10 @@ void Debug::physicStatusShowStatistics(int32 increment __attribute__ ((unused)),
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-void Debug::physicStatusShowShapes(int32 increment __attribute__ ((unused)), int32 x, int32 y)
+void Debug::physicStatusShowColliders(int32 increment __attribute__ ((unused)), int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
-	this->update = (void (*)(void *))&Debug::showCollisionShapes;
+	this->update = (void (*)(void *))&Debug::showCollisionColliders;
 
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	Debug::dimmGame(this);
@@ -1424,9 +1424,9 @@ void Debug::physicStatusShowShapes(int32 increment __attribute__ ((unused)), int
  *
  * @private
  */
-void Debug::showCollisionShapes()
+void Debug::showCollisionColliders()
 {
-	CollisionManager::showShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::showColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 }
 
 /**

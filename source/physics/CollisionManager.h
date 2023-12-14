@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Shape.h>
+#include <Collider.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,20 +45,20 @@ class CollisionManager : ListenerObject
 	uint16 collisionChecks;
 	uint16 collisions;
 	uint16 checkCycles;
-	bool checkShapesOutOfCameraRange;
+	bool checkCollidersOutOfCameraRange;
 	bool dirty;
 
 	/// @publicsection
 	void constructor();
-	void hideShapes();
+	void hideColliders();
 	void print(int32 x, int32 y);
-	Shape createShape(SpatialObject owner, const ShapeSpec* shapeSpec);
-	void destroyShape(Shape shape);
+	Collider createCollider(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void destroyCollider(Collider collider);
 	void reset();
-	void showShapes();
-	void setCheckShapesOutOfCameraRange(bool value);
+	void showColliders();
+	void setCheckCollidersOutOfCameraRange(bool value);
 	uint32 update(Clock clock);
-	void purgeDestroyedShapes();
+	void purgeDestroyedColliders();
 }
 
 

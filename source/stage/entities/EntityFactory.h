@@ -20,7 +20,7 @@
 #include <Body.h>
 #include <Entity.h>
 #include <Sprite.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <Wireframe.h>
 
 

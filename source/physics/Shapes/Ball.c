@@ -33,11 +33,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Ball::constructor(SpatialObject owner, const ShapeSpec* shapeSpec)
+void Ball::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 {
 	Base::constructor(owner, shapeSpec);
 
-	this->classIndex = kShapeBallIndex;
+	this->classIndex = kColliderBallIndex;
 
 	this->radius = 0;
 }
@@ -85,7 +85,7 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 	}
 }
 
-void Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
+void Ball::testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
 {
 	// save state
 	Vector3D center = this->position;
@@ -97,7 +97,7 @@ void Ball::testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncr
 	this->position.y += displacement.y;
 	this->position.z += displacement.z;
 	
-	CollisionHelper::checkIfOverlap(Shape::safeCast(this), shape, collisionInformation);
+	CollisionHelper::checkIfOverlap(Collider::safeCast(this), collider, collisionInformation);
 
 	// restore state
 	this->position = center;

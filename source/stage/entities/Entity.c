@@ -21,7 +21,7 @@
 #include <Mesh.h>
 #include <Optics.h>
 #include <Printing.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <SpriteManager.h>
 #include <Telegram.h>
 #include <VirtualList.h>
@@ -89,7 +89,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 
 	this->invalidateGraphics = 0;
-	this->transformShapes = true;
+	this->transformColliders = true;
 	this->allowCollisions = true;
 }
 
@@ -119,7 +119,7 @@ void Entity::destroyComponents()
 {
 	Entity::destroyWireframes(this);
 	Entity::destroySprites(this);
-	Entity::destroyShapes(this);
+	Entity::destroyColliders(this);
 	Entity::destroyBehaviors(this);
 }
 
@@ -174,7 +174,7 @@ void Entity::setSpec(void* entitySpec)
  *
  * @private
  */
-void Entity::destroyShapes()
+void Entity::destroyColliders()
 {
 	if(NULL != this->shapes)
 	{
@@ -184,7 +184,7 @@ void Entity::destroyShapes()
 
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			CollisionManager::destroyShape(collisionManager, Shape::safeCast(node->data));
+			CollisionManager::destroyCollider(collisionManager, Collider::safeCast(node->data));
 		}
 
 		delete this->shapes;
@@ -496,13 +496,13 @@ void Entity::destroyWireframes()
 /**
  * Add shapes
  */
-bool Entity::createShapes()
+bool Entity::createColliders()
 {
 	// this method can be called multiple times so only add shapes
 	// if not already done
 	if(NULL == this->shapes)
 	{
-		Entity::addShapes(this, this->entitySpec->shapeSpecs, true);
+		Entity::addColliders(this, this->entitySpec->shapeSpecs, true);
 	}
 
 	return NULL != this->shapes;
@@ -514,16 +514,16 @@ bool Entity::createShapes()
  * @private
  * @param shapeSpecs		List of shapes
  */
-void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
+void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
 {
 	if(NULL == shapeSpecs)
 	{
 		return;
 	}
 
-	if(destroyOldShapes)
+	if(destroyOldColliders)
 	{
-		Entity::destroyShapes(this);
+		Entity::destroyColliders(this);
 	}
 
 	if(NULL == this->shapes)
@@ -536,7 +536,7 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
 	// go through n sprites in entity's spec
 	for(int32 i = 0; NULL != shapeSpecs[i].allocator; i++)
 	{
-		Entity::addShape(this, &shapeSpecs[i], collisionManager);
+		Entity::addCollider(this, &shapeSpecs[i], collisionManager);
 	}
 }
 
@@ -546,7 +546,7 @@ void Entity::addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes)
  * @private
  * @param wireframeSpec		Wireframe spec
  */
-Shape Entity::addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager)
+Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager)
 {
 	if(NULL == shapeSpec)
 	{
@@ -563,17 +563,17 @@ Shape Entity::addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager)
 		this->shapes = new VirtualList();
 	}
 
-	Shape shape = CollisionManager::createShape(collisionManager, SpatialObject::safeCast(this), shapeSpec);
+	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), shapeSpec);
 
-	NM_ASSERT(!isDeleted(shape), "Entity::addShape: shape not created");
+	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
 
-	if(!isDeleted(shape))
+	if(!isDeleted(collider))
 	{
-		VirtualList::pushBack(this->shapes, shape);
-		this->transformShapes = true;
+		VirtualList::pushBack(this->shapes, collider);
+		this->transformColliders = true;
 	}
 
-	return shape;
+	return collider;
 }
 
 /**
@@ -1387,17 +1387,17 @@ uint32 Entity::areAllChildrenReady()
 }
 
 /**
- * Set shape's position
+ * Set collider's position
  *
  * @private
  */
-void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, int32 shapeSpecIndex)
+void Entity::transformCollider(Collider collider, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, int32 shapeSpecIndex)
 {
-	if(!isDeleted(shape))
+	if(!isDeleted(collider))
 	{
 		if(NULL != this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && NULL != this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
     	{
-			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
+			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 
 			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), this->transformation.localRotation);
 
@@ -1409,54 +1409,54 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
 
 			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
 
-			Shape::transform(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			Collider::transform(collider, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 		else
 		{
-			Shape::transform(shape, myPosition, myRotation, myScale, &this->size);
+			Collider::transform(collider, myPosition, myRotation, myScale, &this->size);
 		}
 	}
 }
 
 /**
- * Set shape's position
+ * Set collider's position
  *
  * @private
  */
-void Entity::transformShapes()
+void Entity::transformColliders()
 {
-	if(!isDeleted(this->shapes) && this->transformShapes)
+	if(!isDeleted(this->shapes) && this->transformColliders)
 	{
-		// setup shape
+		// setup collider
 		const Vector3D* myPosition = Entity::getPosition(this);
 		const Rotation* myRotation = Entity::getRotation(this);
 		const Scale* myScale = Entity::getScale(this);
 
 		if(this->entitySpec->shapeSpecs)
     	{
-			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
+			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 			int32 i = 0;
 
 			for(VirtualNode node = this->shapes->head; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
-				Shape shape = Shape::safeCast(node->data);
+				Collider collider = Collider::safeCast(node->data);
 
-				Entity::transformShape(this, shape, myPosition, myRotation, myScale, i);
+				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, i);
 			}
 		}
 		else
 		{
 			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 			{
-				Shape shape = Shape::safeCast(node->data);
+				Collider collider = Collider::safeCast(node->data);
 
-				Entity::transformShape(this, shape, myPosition, myRotation, myScale, -1);
+				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, -1);
 			}
 		}
 	}
 }
 
-bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
+bool Entity::transformColliderAtSpecIndex(int32 shapeSpecIndex)
 {
 	if(NULL == this->entitySpec->shapeSpecs)
 	{
@@ -1470,11 +1470,11 @@ bool Entity::transformShapeAtSpecIndex(int32 shapeSpecIndex)
 
 	if(this->shapes && 0 <= shapeSpecIndex && NULL != VirtualList::begin(this->shapes))
 	{
-		Shape shape = Shape::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
+		Collider collider = Collider::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
 
-		if(!isDeleted(shape))
+		if(!isDeleted(collider))
 		{
-			Entity::transformShape(this, shape, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), shapeSpecIndex);
+			Entity::transformCollider(this, collider, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), shapeSpecIndex);
 		}
 
 		return true;
@@ -1590,7 +1590,7 @@ void Entity::createComponents()
 
 	Entity::createSprites(this);
 	Entity::createWireframes(this);
-	Entity::createShapes(this);
+	Entity::createColliders(this);
 	Entity::createBehaviors(this);
 
 	// now can calculate the size
@@ -1609,7 +1609,7 @@ void Entity::initialTransform(const Transformation* environmentTransform)
 	Base::initialTransform(this, environmentTransform);
 
 	Entity::synchronizeGraphics(this);
-	Entity::transformShapes(this);
+	Entity::transformColliders(this);
 
 	if(this->hidden)
 	{
@@ -1632,7 +1632,7 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-		Entity::transformShapes(this);
+		Entity::transformColliders(this);
 	}
 	else if(NULL != this->children)
 	{
@@ -1649,7 +1649,7 @@ void Entity::setPosition(const Vector3D* position)
 {
 	Base::setPosition(this, position);
 
-	Entity::transformShapes(this);
+	Entity::transformColliders(this);
 }
 
 /**
@@ -1659,7 +1659,7 @@ void Entity::setRotation(const Rotation* rotation)
 {
 	Base::setRotation(this, rotation);
 
-	Entity::transformShapes(this);
+	Entity::transformColliders(this);
 }
 
 /**
@@ -1669,7 +1669,7 @@ void Entity::setLocalPosition(const Vector3D* position)
 {
 	Base::setLocalPosition(this, position);
 
-	Entity::transformShapes(this);
+	Entity::transformColliders(this);
 }
 
 /**
@@ -1679,7 +1679,7 @@ void Entity::setLocalRotation(const Rotation* rotation)
 {
 	Base::setLocalRotation(this, rotation);
 
-	Entity::transformShapes(this);
+	Entity::transformColliders(this);
 }
 
 /**
@@ -1982,9 +1982,9 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 /**
  * Retrieve shapes list
  *
- * @return		Entity's Shape list
+ * @return		Entity's Collider list
  */
-VirtualList Entity::getShapes()
+VirtualList Entity::getColliders()
 {
 	return this->shapes;
 }
@@ -2140,9 +2140,9 @@ void Entity::activeCollisionChecks(bool active)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			Shape::activeCollisionChecks(shape, active);
+			Collider::activeCollisionChecks(collider, active);
 		}
 	}
 }
@@ -2157,9 +2157,9 @@ void Entity::registerCollisions(bool value)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			Shape::registerCollisions(shape, value);
+			Collider::registerCollisions(collider, value);
 		}
 	}
 }
@@ -2175,9 +2175,9 @@ void Entity::allowCollisions(bool value)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			Shape::enable(shape, value);
+			Collider::enable(collider, value);
 		}
 	}
 }
@@ -2194,29 +2194,29 @@ bool Entity::doesAllowCollisions()
 /**
  * Returns whether I have collision shapes or not
  */
-bool Entity::hasShapes()
+bool Entity::hasColliders()
 {
 	return NULL != this->shapes && 0 < VirtualList::getSize(this->shapes);
 }
 
-void Entity::showShapes()
+void Entity::showColliders()
 {
 	if(NULL != this->shapes)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape::show(node->data);
+			Collider::show(node->data);
 		}
 	}
 }
 
-void Entity::hideShapes()
+void Entity::hideColliders()
 {
 	if(NULL != this->shapes)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape::hide(node->data);
+			Collider::hide(node->data);
 		}
 	}
 }
@@ -2285,11 +2285,11 @@ NormalizedDirection Entity::getNormalizedDirection()
 }
 
 /**
- * Get Shape layers
+ * Get Collider layers
  *
- * @return		Shape layers
+ * @return		Collider layers
  */
-uint32 Entity::getShapesLayers()
+uint32 Entity::getCollidersLayers()
 {
 	uint32 shapesLayers = 0;
 
@@ -2297,9 +2297,9 @@ uint32 Entity::getShapesLayers()
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayers |= Shape::getLayers(shape);
+			shapesLayers |= Collider::getLayers(collider);
 		}
 	}
 
@@ -2307,29 +2307,29 @@ uint32 Entity::getShapesLayers()
 }
 
 /**
- * Set Shape layers
+ * Set Collider layers
  *
- * @param uint32	Shape layers
+ * @param uint32	Collider layers
  */
-void Entity::setShapesLayers(uint32 layers)
+void Entity::setCollidersLayers(uint32 layers)
 {
 	if(NULL != this->shapes)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			Shape::setLayers(shape, layers);
+			Collider::setLayers(collider, layers);
 		}
 	}
 }
 
 /**
- * Get Shape layers to ignore
+ * Get Collider layers to ignore
  *
- * @return		Shape layers to ignore
+ * @return		Collider layers to ignore
  */
-uint32 Entity::getShapesLayersToIgnore()
+uint32 Entity::getCollidersLayersToIgnore()
 {
 	uint32 shapesLayersToIgnore = 0;
 
@@ -2337,9 +2337,9 @@ uint32 Entity::getShapesLayersToIgnore()
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayersToIgnore |= Shape::getLayersToIgnore(shape);
+			shapesLayersToIgnore |= Collider::getLayersToIgnore(collider);
 		}
 	}
 
@@ -2347,19 +2347,19 @@ uint32 Entity::getShapesLayersToIgnore()
 }
 
 /**
- * Set Shape layers to ignore
+ * Set Collider layers to ignore
  *
- * @param uint32	Shape layers to ignore
+ * @param uint32	Collider layers to ignore
  */
-void Entity::setShapesLayersToIgnore(uint32 layersToIgnore)
+void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
 	if(NULL != this->shapes)
 	{
 		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			Shape::setLayersToIgnore(shape, layersToIgnore);
+			Collider::setLayersToIgnore(collider, layersToIgnore);
 		}
 	}
 }

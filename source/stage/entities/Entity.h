@@ -59,7 +59,7 @@ typedef struct EntitySpec
 	WireframeSpec** wireframeSpecs;
 
 	/// collision shapes
-	ShapeSpec* shapeSpecs;
+	ColliderSpec* shapeSpecs;
 
 	/// pixelSize
 	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
@@ -110,7 +110,7 @@ class Entity : Container
 	// Flag used to know if the entity is within the camera reach
 	bool inCameraRange;
 	// Flag to prevent transforming the shapes during the transformation phase
-	bool transformShapes;
+	bool transformColliders;
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
 	// Entity's internal id, set by the engine
@@ -121,7 +121,7 @@ class Entity : Container
 	EntityFactory entityFactory;
 	// sprites list
 	VirtualList sprites;
-	// Shapes for collision detection
+	// Colliders for collision detection
 	VirtualList shapes;
 	// wireframes
 	VirtualList wireframes;
@@ -143,14 +143,14 @@ class Entity : Container
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	bool createSprites();
 	bool createWireframes();
-	bool createShapes();
+	bool createColliders();
 	bool createBehaviors();
 	Sprite addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager);
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
 	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
-	Shape addShape(ShapeSpec* shapeSpec, CollisionManager collisionManager);
-	void addShapes(ShapeSpec* shapeSpecs, bool destroyOldShapes);
+	Collider addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager);
+	void addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders);
 	void destroySprites();
 	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -164,23 +164,23 @@ class Entity : Container
 	int16 getInternalId();
 	VirtualList getSprites();
 	VirtualList getWireframes();
-	void transformShapes();
+	void transformColliders();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
 	void registerCollisions(bool value);
 	bool doesAllowCollisions();
-	bool hasShapes();
-	void showShapes();
-	void hideShapes();
+	bool hasColliders();
+	void showColliders();
+	void hideColliders();
 	NormalizedDirection getNormalizedDirection();
-	uint32 getShapesLayers();
-	void setShapesLayers(uint32 layers);
-	uint32 getShapesLayersToIgnore();
-	void setShapesLayersToIgnore(uint32 layersToIgnore);
+	uint32 getCollidersLayers();
+	void setCollidersLayers(uint32 layers);
+	uint32 getCollidersLayersToIgnore();
+	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
 	bool isInCameraRange();
-	VirtualList getShapes();
+	VirtualList getColliders();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	void setSpec(void* entitySpec);
 	void setSize(Size size);

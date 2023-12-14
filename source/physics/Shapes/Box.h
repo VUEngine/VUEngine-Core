@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Shape.h>
+#include <Collider.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -30,10 +30,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-class Box : Shape
+class Box : Collider
 {
 	// the normals of the box
-	VertexProjection vertexProjections[__SHAPE_NORMALS];
+	VertexProjection vertexProjections[__COLLIDER_NORMALS];
 	// the rectangle
 	RightBox rightBox;
 	// for collision detection purposes
@@ -44,12 +44,12 @@ class Box : Shape
 	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 
-	void constructor(SpatialObject owner, const ShapeSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();
 	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void testForCollision(Shape shape, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	override void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }

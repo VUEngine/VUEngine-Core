@@ -17,7 +17,7 @@
 #include <Body.h>
 #include <Camera.h>
 #include <PhysicalWorld.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <State.h>
 #include <StateMachine.h>
 #include <Telegram.h>
@@ -132,8 +132,8 @@ void Actor::setLocalPosition(const Vector3D* position)
 	Vector3D displacement = this->transformation.localPosition;
 
 	// Must transform shapes after everything is setup
-	bool transformShapes = this->transformShapes;
-	this->transformShapes = false;
+	bool transformColliders = this->transformColliders;
+	this->transformColliders = false;
 	Base::setLocalPosition(this, position);
 
 	displacement.x -= this->transformation.localPosition.x;
@@ -151,8 +151,8 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 
-	this->transformShapes = transformShapes;
-	Actor::transformShapes(this);
+	this->transformColliders = transformColliders;
+	Actor::transformColliders(this);
 }
 
 void Actor::syncWithBody()
@@ -269,7 +269,7 @@ void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __at
 // graphically refresh of characters that are visible
 void Actor::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	bool transformShapes = this->transformShapes;
+	bool transformColliders = this->transformColliders;
 
 	if(!isDeleted(this->body))
 	{
@@ -280,7 +280,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 			Actor::syncWithBody(this);
 
 			// Prevent transformation of shapes again when calling Base::transform
-			this->transformShapes = false;
+			this->transformColliders = false;
 
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
@@ -305,7 +305,7 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 
-	this->transformShapes = transformShapes;
+	this->transformColliders = transformColliders;
 }
 
 void Actor::resume()
@@ -327,7 +327,7 @@ void Actor::update()
 	}
 
 //	Body::print(this->body, 1, 0);
-//	Shape::print(VirtualList::front(this->shapes), 1, 20);
+//	Collider::print(VirtualList::front(this->shapes), 1, 20);
 //	Printing::resetCoordinates(Printing::getInstance());
 }
 
@@ -437,8 +437,8 @@ bool Actor::canMoveTowards(Vector3D direction)
 
 		for(; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
-			canMove &= Shape::canMoveTowards(shape, displacement, 0);
+			Collider collider = Collider::safeCast(node->data);
+			canMove &= Collider::canMoveTowards(collider, displacement, 0);
 		}
 	}
 
@@ -460,9 +460,9 @@ fixed_t Actor::getSurroundingFrictionCoefficient()
 
 		for(; NULL != node; node = node->next)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			Collider collider = Collider::safeCast(node->data);
 
-			totalFrictionCoefficient += Shape::getCollidingFrictionCoefficient(shape);
+			totalFrictionCoefficient += Collider::getCollidingFrictionCoefficient(collider);
 		}
 	}
 
@@ -474,14 +474,14 @@ fixed_t Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute_
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
 
-bool Actor::registerCollidingShapes()
+bool Actor::registerOtherColliders()
 {
 	return true;
 }
 
 bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 {
-	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
+	ASSERT(collisionInformation->otherCollider, "Actor::enterCollision: otherColliders");
 
 	if(NULL == this->body)
 	{
@@ -490,20 +490,20 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 
 	bool returnValue = false;
 
-	if(collisionInformation->shape && collisionInformation->collidingShape)
+	if(collisionInformation->collider && collisionInformation->otherCollider)
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape::resolveCollision(collisionInformation->shape, collisionInformation, Actor::registerCollidingShapes(this));
+			Collider::resolveCollision(collisionInformation->collider, collisionInformation, Actor::registerOtherColliders(this));
 
-			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
+			SpatialObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
 
 			fixed_t bounciness = Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 			fixed_t frictionCoefficient = Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
 			if(Actor::mustBounce(this))
 			{
-				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
 
@@ -676,7 +676,7 @@ void Actor::setPosition(const Vector3D* position)
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
 
-	Actor::transformShapes(this);
+	Actor::transformColliders(this);
 }
 
 // retrieve global position
@@ -714,7 +714,7 @@ fixed_t Actor::getMaximumSpeed()
 	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
-void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -723,13 +723,13 @@ void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotC
 
 	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
 
-	if(isShapeImpenetrable)
+	if(isColliderImpenetrable)
 	{
 		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}
 }
 
-void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -738,7 +738,7 @@ void Actor::collidingShapeOwnerDestroyed(Shape shape __attribute__ ((unused)), S
 
 	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
 
-	if(isShapeImpenetrable)
+	if(isColliderImpenetrable)
 	{
 		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
 	}

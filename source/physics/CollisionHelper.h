@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <Shape.h>
+#include <Collider.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@
 static class CollisionHelper : ListenerObject
 {
 	/// @publicsection
-	static void checkIfOverlap(Shape shapeA, Shape shapeB, CollisionInformation* collisionInformation);
+	static void checkIfOverlap(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
 }
 
 

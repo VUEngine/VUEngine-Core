@@ -29,7 +29,7 @@
 #include <PhysicalWorld.h>
 #include <Printing.h>
 #include <SpriteManager.h>
-#include <Shape.h>
+#include <Collider.h>
 #include <Stage.h>
 #include <StateMachine.h>
 #include <VirtualList.h>
@@ -113,7 +113,7 @@ void StageEditor::constructor()
 	this->gameState = NULL;
 	this->userObjectSprite = NULL;
 	this->mode = kFirstMode + 1;
-	this->shape = NULL;
+	this->collider = NULL;
 	this->userObjectsSelector = new OptionsSelector(2, 12, NULL, NULL, NULL);
 
 	VirtualList userObjects = new VirtualList();
@@ -167,7 +167,7 @@ void StageEditor::show()
 	this->mode = kFirstMode + 1;
 	this->userObjectSprite = NULL;
 
-	StageEditor::releaseShape(this);
+	StageEditor::releaseCollider(this);
 	StageEditor::setupMode(this);
 
 	StageEditor::dimmGame(this);
@@ -178,10 +178,10 @@ void StageEditor::show()
  */
 void StageEditor::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
+	CollisionManager::hideColliders(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance())))));
 	Printing::clear(Printing::getInstance());
 	StageEditor::removePreviousSprite(this);
-	StageEditor::releaseShape(this);
+	StageEditor::releaseCollider(this);
 	this->currentEntityNode = NULL;
 
 	Tool::lightUpGame(this);
@@ -267,7 +267,7 @@ void StageEditor::setupMode()
 
 			if(OptionsSelector::getNumberOfOptions(this->userObjectsSelector))
 			{
-				StageEditor::releaseShape(this);
+				StageEditor::releaseCollider(this);
 				StageEditor::printUserObjects(this);
 				StageEditor::showSelectedUserObject(this);
 				break;
@@ -277,14 +277,14 @@ void StageEditor::setupMode()
 
 		case kMoveCamera:
 
-			StageEditor::releaseShape(this);
+			StageEditor::releaseCollider(this);
 			StageEditor::printCameraPosition(this);
 			StageEditor::printTranslationStepSize(this, 38, 7);
 			break;
 
 		case kChangeProjection:
 
-			StageEditor::releaseShape(this);
+			StageEditor::releaseCollider(this);
 			StageEditor::printProjectionValues(this);
 			StageEditor::printTranslationStepSize(this, 38, 10);
 			break;
@@ -297,7 +297,7 @@ void StageEditor::setupMode()
 			}
 			else
 			{
-				StageEditor::getShape(this);
+				StageEditor::getCollider(this);
 				StageEditor::highLightEntity(this);
 			}
 
@@ -308,32 +308,32 @@ void StageEditor::setupMode()
 }
 
 /**
- * Release shape
+ * Release collider
  *
  * @private
  */
-void StageEditor::releaseShape()
+void StageEditor::releaseCollider()
 {
 	if(this->currentEntityNode)
 	{
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
-		Entity::hideShapes(entity);
+		Entity::hideColliders(entity);
 
-		if(!Entity::hasShapes(entity) && this->shape)
+		if(!Entity::hasColliders(entity) && this->collider)
 		{
-			delete this->shape;
+			delete this->collider;
 		}
 
-		this->shape = NULL;
+		this->collider = NULL;
 	}
 }
 
 /**
- * Get shape
+ * Get collider
  *
  * @private
  */
-void StageEditor::getShape()
+void StageEditor::getCollider()
 {
 	if(!this->currentEntityNode)
 	{
@@ -341,27 +341,27 @@ void StageEditor::getShape()
 	}
 
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
-	Entity::showShapes(entity);
+	Entity::showColliders(entity);
 
-	if(!Entity::hasShapes(entity))
+	if(!Entity::hasColliders(entity))
 	{
-		this->shape = Shape::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
+		this->collider = Collider::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
 
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-		Shape::transform(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
-		Shape::setReady(this->shape, false);
+		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Collider::setReady(this->collider, false);
 	}
 }
 
 /**
- * Position shape
+ * Position collider
  *
  * @memberof 	StageEditor
  * @private
  */
-void StageEditor::positionShape()
+void StageEditor::positionCollider()
 {
 	if(!this->currentEntityNode)
 	{
@@ -369,13 +369,13 @@ void StageEditor::positionShape()
 	}
 
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
-	Entity::showShapes(entity);
+	Entity::showColliders(entity);
 
-	if(!Entity::hasShapes(entity) && this->shape)
+	if(!Entity::hasColliders(entity) && this->collider)
 	{
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
-		Shape::transform(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
-		Shape::show(this->shape);
+		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Collider::show(this->collider);
 	}
 }
 
@@ -390,7 +390,7 @@ void StageEditor::highLightEntity()
 	if(this->currentEntityNode)
 	{
 		StageEditor::printEntityPosition(this);
-		StageEditor::positionShape(this);
+		StageEditor::positionCollider(this);
 	}
 	else
 	{
@@ -406,7 +406,7 @@ void StageEditor::highLightEntity()
  */
 void StageEditor::selectPreviousEntity()
 {
-	StageEditor::releaseShape(this);
+	StageEditor::releaseCollider(this);
 
 	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 
@@ -426,7 +426,7 @@ void StageEditor::selectPreviousEntity()
 
 	if(this->currentEntityNode)
 	{
-		StageEditor::getShape(this);
+		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
@@ -439,7 +439,7 @@ void StageEditor::selectPreviousEntity()
  */
 void StageEditor::selectNextEntity()
 {
-	StageEditor::releaseShape(this);
+	StageEditor::releaseCollider(this);
 
 	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 
@@ -459,7 +459,7 @@ void StageEditor::selectNextEntity()
 
 	if(this->currentEntityNode)
 	{
-		StageEditor::getShape(this);
+		StageEditor::getCollider(this);
 		StageEditor::highLightEntity(this);
 	}
 }
@@ -767,7 +767,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		GameState::transform(this->gameState);
 		GameState::synchronizeGraphics(this->gameState);
 
-		StageEditor::positionShape(this);
+		StageEditor::positionCollider(this);
 
 		StageEditor::printEntityPosition(this);
 

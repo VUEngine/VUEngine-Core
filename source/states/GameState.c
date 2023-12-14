@@ -193,7 +193,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		// Make sure collision shapes are not drawn while suspended
 		if(this->collisionManager)
 		{
-			CollisionManager::hideShapes(this->collisionManager);
+			CollisionManager::hideColliders(this->collisionManager);
 		}
 
 		if(this->stage)
@@ -352,7 +352,7 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		// Force collision purging
 		if(!isDeleted(this->collisionManager))
 		{
-			CollisionManager::purgeDestroyedShapes(this->collisionManager);
+			CollisionManager::purgeDestroyedColliders(this->collisionManager);
 		}
 
 		if(streamingComplete)
