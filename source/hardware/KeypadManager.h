@@ -31,6 +31,7 @@
 #define	__S_HWDIS		0x01	// Disable Hardware Reading
 
 // keypad specs
+#define	K_NON			0x000	// No key
 #define	K_PWR			0x0001	// Low Power
 #define	K_SGN			0x0002	// Signature; 1 = Standard Pad
 #define	K_A				0x0004	// A Button
