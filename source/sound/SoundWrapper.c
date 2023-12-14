@@ -732,7 +732,7 @@ static void SoundWrapper::computeMIDITrackSamples(Channel* channel)
 
 	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackSamples: null soundTrack");
 
-	for(channel->samples = 0; soundTrackData[channel->samples] != ENDSOUND && soundTrackData[channel->samples] != LOOPSOUND; channel->samples++);
+	for(channel->samples = 0; ENDSOUND != soundTrackData[channel->samples] && LOOPSOUND != soundTrackData[channel->samples]; channel->samples++);
 
 	for(uint16 sample = 0; sample < channel->samples; sample++, channel->ticks += soundTrackData[channel->samples + sample]);
 
@@ -752,15 +752,9 @@ static inline uint8 SoundWrapper::clampMIDIOutputValue(int8 value)
 	return (uint8)value;
 }
 
-inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
+static inline bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 {
-	if(channel->cursor > channel->samples)
-	{
-		channel->finished = true;
-		return true;
-	}
-
-	return false;
+	return channel->cursor >= channel->samples;
 }
 
 void SoundWrapper::completedPlayback()
@@ -954,13 +948,21 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 			continue;
 		}
 
+		finished = false;
+
 		channel->elapsedTicks += channel->tickStep;
 
 		if(channel->elapsedTicks >= channel->nextElapsedTicksTarget || 0 == elapsedMicroseconds)
 		{
 			if(0 != elapsedMicroseconds)
 			{
-				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
+				channel->finished = SoundWrapper::checkIfPlaybackFinishedOnChannel(channel);
+
+				if(channel->finished)
+				{
+					continue;
+				}
+				
 				channel->nextElapsedTicksTarget += __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]);
 			}
 
@@ -996,10 +998,6 @@ void SoundWrapper::updateMIDIPlayback(uint32 elapsedMicroseconds)
 			SoundWrapper::playMIDINote(this, channel, leftVolumeFactor, rightVolumeFactor);
 
 			channel->cursor++;
-		}
-		else
-		{
-			finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
 		}
 	}
 
