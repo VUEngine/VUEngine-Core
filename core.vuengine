@@ -111,16 +111,12 @@
 			}],
             "template": "templates/RumbleEffects.h.nj"
         },
-        "vb_release.ld": {
-            "targets": [{
-				"path": "lib/compiler/linker/vb_release.ld",
-				"root": "project"
-			}],
-            "template": "templates/vb.ld.nj"
-        },
-        "vb_beta.ld": {
+        "vb.ld": {
             "targets": [{
 				"path": "lib/compiler/linker/vb_beta.ld",
+				"root": "project"
+			}, {
+				"path": "lib/compiler/linker/vb_release.ld",
 				"root": "project"
 			}],
             "template": "templates/vb.ld.nj"
@@ -129,11 +125,7 @@
             "targets": [{
 				"path": "lib/compiler/linker/vb_tools.ld",
 				"root": "project"
-			}],
-            "template": "templates/vb_tools.ld.nj"
-        },
-        "vb_debug.ld": {
-            "targets": [{
+			}, {
 				"path": "lib/compiler/linker/vb_debug.ld",
 				"root": "project"
 			}],
@@ -697,12 +689,10 @@
             },
             "icon": "fa fa-cogs",
             "templates": [
+                "config.h",
                 "config.make",
-				"vb_release.ld",
-                "vb_beta.ld",
-                "vb_tools.ld",
-                "vb_debug.ld",
-                "config.h"
+				"vb.ld",
+                "vb_tools.ld"
             ]
         },
         "DebugMacros": {
