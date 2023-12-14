@@ -107,7 +107,7 @@ int32 KeypadManager::isEnabled()
 /**
  * Read user input
  */
-const UserInput* KeypadManager::captureUserInput()
+UserInput KeypadManager::captureUserInput()
 {
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
@@ -152,7 +152,7 @@ const UserInput* KeypadManager::captureUserInput()
 
 	this->reseted = false;
 
-	return &this->userInput;
+	return this->userInput;
 }
 
 /**
