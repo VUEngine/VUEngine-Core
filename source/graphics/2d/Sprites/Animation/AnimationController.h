@@ -36,7 +36,7 @@ class AnimationController : ListenerObject
 	// actual animation's frame to show
 	int16 actualFrame;
 	// previous animation's frame shown
-	uint8 previousFrameValue;
+	int16 previousFrameValue;
 	// the number of game cycles that an animation frame is shown
 	uint8 frameDuration;
 	// frame delay decrement update cycle
