@@ -1,5 +1,13 @@
-{%- set config = project.items.EngineConfig | values | first -%}
-{%- set compiler = project.items.Compiler | values | first -%}
+{%- if project.combined.items.EngineConfig.project is defined -%}
+	{%- set config = project.combined.items.EngineConfig.project -%}
+{%- else -%}
+	{%- set config = project.combined.items.EngineConfig.engine -%}
+{%- endif -%}
+{%- if project.combined.items.Compiler.project is defined -%}
+	{%- set compiler = project.combined.items.Compiler.project -%}
+{%- else -%}
+	{%- set compiler = project.combined.items.Compiler.engine -%}
+{%- endif -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}
 

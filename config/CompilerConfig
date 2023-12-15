@@ -1,0 +1,35 @@
+{
+    "framePointer": false,
+    "memorySections": {
+        "dram": {
+            "length": -24,
+            "origin": ""
+        },
+        "exp": {
+            "length": 16,
+            "origin": "0x04000000"
+        },
+        "rom": {
+            "length": 16,
+            "origin": "0x07000000"
+        },
+        "sram": {
+            "length": 16,
+            "origin": "0x06000000"
+        },
+        "wram": {
+            "length": 64,
+            "origin": "0x05000000"
+        }
+    },
+    "memoryUsage": {
+        "initializedData": ".sdata",
+        "memoryPool": ".sdata",
+        "staticSingletons": ".dram_bss",
+        "uninitializedData": ".sbss",
+        "virtualTables": ".dram_bss"
+    },
+    "optimization": "O2",
+    "output": "c",
+    "prologFunctions": false
+}

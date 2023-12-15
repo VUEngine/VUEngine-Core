@@ -13,13 +13,13 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-extern FontSpec DefaultFont;
-extern FontSpec ProfilerFont;
-extern FontSpec DebugFont;
+extern FontSpec DefaultFontSpec;
+extern FontSpec ProfilerFontSpec;
+extern FontSpec DebugFontSpec;
 {% if project.combined.items.Font %}
 {%- for font in project.combined.items.Font | values | unique('name') | sort(attribute='name') -%}
-{%- if font._contributor != "engine" -%}
-extern FontSpec {{ font.name | sanitizeSpecName  }}Font;
+{%- if font._contributor != 'engine' -%}
+extern FontSpec {{ font.name | sanitizeSpecName  }}FontSpec;
 {% endif -%}
 {% endfor -%}
 {% endif %}
