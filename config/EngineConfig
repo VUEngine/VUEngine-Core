@@ -121,7 +121,7 @@
         "printingPalette": 0
     },
     "physics": {
-        "angleToPreventShapeDisplacement": 10,
+        "angleToPreventColliderDisplacement": 10,
         "bodiesToCheckForGravity": 10,
         "frictionForceFactorPower": 2,
         "gravity": 10,

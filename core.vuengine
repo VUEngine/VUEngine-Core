@@ -61,7 +61,7 @@
         },
         "Fonts.h": {
             "targets": [{
-				"path": "source/assets/Fonts.h",
+				"path": "headers/Fonts.h",
 				"root": "project"
 			}],
             "template": "templates/Fonts.h.nj",
@@ -83,7 +83,7 @@
         },
         "GameEvents.h": {
             "targets": [{
-				"path": "source/GameEvents.h",
+				"path": "headers/GameEvents.h",
 				"root": "project"
 			}],
             "template": "templates/GameEvents.h.nj"
@@ -106,7 +106,7 @@
         },
         "RumbleEffects.h": {
             "targets": [{
-				"path": "source/assets/RumbleEffects.h",
+				"path": "headers/RumbleEffects.h",
 				"root": "project"
 			}],
             "template": "templates/RumbleEffects.h.nj"
@@ -133,7 +133,7 @@
         },
         "WaveForms.h": {
             "targets": [{
-				"path": "source/assets/WaveForms.h",
+				"path": "headers/WaveForms.h",
 				"root": "project"
 			}],
             "template": "templates/WaveForms.h.nj",
