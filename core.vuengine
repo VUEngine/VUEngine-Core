@@ -1958,6 +1958,7 @@
             ]
         },
         "Entity": {
+			"enabled": false,
 			"file": ".entity",
             "schema": {
                 "title": "Entity",
@@ -2808,6 +2809,7 @@
             ]
         },
         "Song": {
+			"enabled": false,
 			"file": ".song",
             "schema": {
                 "title": "Song",
