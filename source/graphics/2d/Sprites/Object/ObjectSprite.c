@@ -20,7 +20,7 @@
 #include <SpriteManager.h>
 #include <VIPManager.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

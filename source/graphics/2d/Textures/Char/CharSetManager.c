@@ -18,7 +18,7 @@
 #include <Printing.h>
 #include <VirtualList.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 		return charSet;
 	}
 
-// TODO: implement __CHAR_FORCE_LOADING in config.h file
+// TODO: implement __CHAR_FORCE_LOADING in Config.h file
 #ifdef __CHAR_FORCE_LOADING
 	else
 	{

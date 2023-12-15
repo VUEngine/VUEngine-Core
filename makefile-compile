@@ -116,29 +116,29 @@ ifeq ($(TYPE), preprocessor)
 endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/headers/$(GAME_NAME)/source -type d -print)
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/headers/$(GAME_NAME) -type d -print)
 INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/headers -path $(WORKING_FOLDER)/headers/$(GAME_NAME) -prune -o -type d -print)
 
 PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@")
 
 # Obligatory headers
-ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 									\
-						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 						\
-						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/libvuengine.h 											\
-						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then			\
-							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))											\
-						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 	\
-							echo -include $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))										\
-						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)				\
+ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 												\
+						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 									\
+						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/headers/LibVUEngine.h 													\
+						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then				\
+							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))												\
+						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then 		\
+							echo -include $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))											\
+						$(shell if [ -f $(MY_HOME)/headers/Config.h ]; then echo -include $(MY_HOME)/headers/Config.h; fi;)				\
 
-ASSETS_ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 								\
-						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 						\
-						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/base/libgccvb/MinimalLib.h 							\
-						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then			\
-							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))											\
-						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 	\
-							echo -include $(USER_PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))										\
-						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)				\
+ASSETS_ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 											\
+						$(shell if [ ! -z $(DEBUG_CONFIG_FILE) ]; then echo -include $(DEBUG_CONFIG_FILE); fi;) 									\
+						-include $(WORKING_FOLDER)/headers/$(ENGINE_NAME)/source/base/libgccvb/MinimalLib.h 										\
+						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then				\
+							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))												\
+						$(foreach PLUGIN, $(PLUGINS_CLEAN), $(shell if [ -f $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h ]; then 		\
+							echo -include $(USER_PLUGINS_FOLDER)/$(PLUGIN)/headers/Config.h; fi; ))											\
+						$(shell if [ -f $(MY_HOME)/headers/Config.h ]; then echo -include $(MY_HOME)/headers/Config.h; fi;)				\
 
 
 
@@ -155,6 +155,9 @@ C_OBJECTS = $(file < $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/C_OBJECTS.t
 ASSEMBLY_OBJECTS = $(file < $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt)
 
 compile: phony $(C_OBJECTS) $(ASSETS_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+
+printH:
+	@echo "INCLUDE_PATHS $(INCLUDE_PATHS)"
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\

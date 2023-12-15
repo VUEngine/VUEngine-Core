@@ -6,6 +6,7 @@ override ENGINE_HOME = $(ENGINE_FOLDER)
 
 # List of header files.
 HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
+HEADERS_DIRS := $(HEADERS_DIRS) $(shell find $(MY_HOME)/headers -type d -print)
 HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 

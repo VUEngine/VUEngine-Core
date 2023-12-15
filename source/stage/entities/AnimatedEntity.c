@@ -18,7 +18,7 @@
 #include <Sprite.h>
 #include <VirtualList.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 #include <string.h>
 
 

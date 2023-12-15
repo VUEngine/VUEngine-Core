@@ -24,7 +24,7 @@
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

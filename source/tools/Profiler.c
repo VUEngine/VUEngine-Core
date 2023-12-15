@@ -24,7 +24,7 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 #define __ENABLE_PROFILER_SKIP_FRAMES				5
 

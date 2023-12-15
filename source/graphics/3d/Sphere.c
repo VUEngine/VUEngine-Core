@@ -19,7 +19,7 @@
 #include <Optics.h>
 #include <WireframeManager.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

@@ -28,8 +28,8 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
-#include <debugUtilities.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <string.h>
 
 

@@ -20,7 +20,7 @@
 #include <Printing.h>
 #include <Sphere.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

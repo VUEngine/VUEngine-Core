@@ -19,7 +19,7 @@
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 #include <string.h>
 
 

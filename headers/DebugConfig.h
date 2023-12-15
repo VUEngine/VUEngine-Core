@@ -10,7 +10,7 @@
 #ifndef	DEBUG_CONFIG_H_
 #undef	DEBUG_CONFIG_H_
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 // avoid declaration warnings
 

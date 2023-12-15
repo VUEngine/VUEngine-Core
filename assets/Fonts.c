@@ -15,9 +15,9 @@
 
 FontSpec* const _fonts[] =
 {
-	(FontSpec*)&DefaultFontSpec,
-	(FontSpec*)&ProfilerFontSpec,
-	(FontSpec*)&DebugFontSpec,
+	(FontSpec*)&DefaultFont,
+	(FontSpec*)&ProfilerFont,
+	(FontSpec*)&DebugFont,
 	
 	NULL
 };

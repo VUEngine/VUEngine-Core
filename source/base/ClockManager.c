@@ -17,7 +17,7 @@
 #include <Clock.h>
 #include <VirtualList.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

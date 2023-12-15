@@ -22,7 +22,7 @@
 #include <VirtualNode.h>
 #include <VIPManager.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

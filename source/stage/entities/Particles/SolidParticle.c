@@ -23,7 +23,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

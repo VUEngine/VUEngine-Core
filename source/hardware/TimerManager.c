@@ -23,7 +23,7 @@
 #include <SoundTest.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

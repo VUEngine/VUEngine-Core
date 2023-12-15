@@ -19,7 +19,7 @@
 #include <Printing.h>
 #include <SpatialObject.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@
 #include <Mem.h>
 #include <VIPManager.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

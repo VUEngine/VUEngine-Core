@@ -18,7 +18,7 @@
 #include <Optics.h>
 #include <SpriteManager.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@
 #include <Optics.h>
 #include <VirtualList.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

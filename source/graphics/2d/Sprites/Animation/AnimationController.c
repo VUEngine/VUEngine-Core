@@ -18,7 +18,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <Sprite.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 #include <string.h>
 
 

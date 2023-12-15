@@ -22,12 +22,12 @@
             "template": "templates/ColumnTableSpec.c.nj",
             "itemSpecific": "ColumnTable"
         },
-        "config.h": {
+        "Config.h": {
             "targets": [{
-				"path": "source/config.h",
+				"path": "headers/Config.h",
 				"root": "project"
 			}],
-            "template": "templates/config.h.nj"
+            "template": "templates/Config.h.nj"
         },
         "config.make": {
             "targets": [{
@@ -39,12 +39,12 @@
 				"type": "installedPluginsChanged"
             }]
         },
-        "debugConfig.h": {
+        "DebugConfig.h": {
             "targets": [{
-				"path": "source/debugConfig.h",
+				"path": "source/DebugConfig.h",
 				"root": "project"
 			}],
-            "template": "templates/debugConfig.h.nj"
+            "template": "templates/DebugConfig.h.nj"
         },
         "Fonts.c": {
             "targets": [{
@@ -689,7 +689,7 @@
             },
             "icon": "fa fa-cogs",
             "templates": [
-                "config.h",
+                "Config.h",
                 "config.make",
 				"vb.ld",
                 "vb_tools.ld"
@@ -732,7 +732,7 @@
             },
             "icon": "fa fa-bug",
             "templates": [
-                "debugConfig.h"
+                "DebugConfig.h"
             ]
         },
         "EngineConfig": {
@@ -1954,7 +1954,7 @@
             },
             "icon": "fa fa-sliders",
             "templates": [
-                "config.h"
+                "Config.h"
             ]
         },
         "Entity": {

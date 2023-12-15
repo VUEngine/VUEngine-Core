@@ -21,7 +21,7 @@
 #include <Optics.h>
 #include <Printing.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

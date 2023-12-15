@@ -20,7 +20,7 @@
 #include <Collider.h>
 #include <VirtualList.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
