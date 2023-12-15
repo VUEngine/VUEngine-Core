@@ -119,7 +119,7 @@ endif
 INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/headers/$(GAME_NAME) -type d -print)
 INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/headers -path $(WORKING_FOLDER)/headers/$(GAME_NAME) -prune -o -type d -print)
 
-PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@")
+PLUGINS_CLEAN = $(shell echo $(PLUGINS) | sed -r "s@(user//|vuengine//)@/@g")
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 												\
@@ -155,9 +155,6 @@ C_OBJECTS = $(file < $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/C_OBJECTS.t
 ASSEMBLY_OBJECTS = $(file < $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/ASSEMBLY_OBJECTS.txt)
 
 compile: phony $(C_OBJECTS) $(ASSETS_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
-
-printH:
-	@echo "INCLUDE_PATHS $(INCLUDE_PATHS)"
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
