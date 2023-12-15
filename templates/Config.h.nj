@@ -18,7 +18,7 @@
 {{ macros.sectionHeader('Includes') }}
 
 #include "PluginsConfig.h"
-#include "RomHeader.h"
+#include "RomInfo.h"
 
 
 {% if config.game | length -%}
