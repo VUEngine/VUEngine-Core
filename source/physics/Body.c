@@ -1389,7 +1389,9 @@ void Body::sendMessages(bool value)
 
 void Body::print(int32 x, int32 y)
 {
-	Printing::text(Printing::getInstance(), "Active:", x, y, NULL);
+	Printing::text(Printing::getInstance(), "BODY", x, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Active:", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), this->active ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
