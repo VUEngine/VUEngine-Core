@@ -20,7 +20,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

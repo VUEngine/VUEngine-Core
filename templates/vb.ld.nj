@@ -1,4 +1,8 @@
-{%- set compiler = project.items.Compiler | values | first -%}
+{%- if project.combined.items.Compiler.project is defined -%}
+	{%- set compiler = project.combined.items.Compiler.project -%}
+{%- else -%}
+	{%- set compiler = project.combined.items.Compiler.engine -%}
+{%- endif -%}
 {% include('templates/partials/fileHeader.ld.nj') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")

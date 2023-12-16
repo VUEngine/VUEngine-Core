@@ -18,7 +18,7 @@
 #include <Printing.h>
 #include <Utilities.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

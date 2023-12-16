@@ -16,7 +16,7 @@
 
 #include <Printing.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 #include <string.h>
 
 

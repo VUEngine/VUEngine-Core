@@ -18,7 +18,7 @@
 #include <Polyhedron.h>
 #include <Printing.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-{%- set events = project.items.Events | values | first -%}
+{%- set events = project.combined.items.Events.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.h.nj') %}
 

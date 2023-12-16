@@ -21,8 +21,8 @@
 #include <VIPManager.h>
 #include <Wireframe.h>
 
-#include <debugConfig.h>
-#include <debugUtilities.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

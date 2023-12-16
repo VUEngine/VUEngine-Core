@@ -91,8 +91,8 @@ ifneq ($(CLEAN_TYPE), all)
 endif
 
 # Configuration files
-CONFIG_FILE = 			$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo $(MY_HOME)/source/config.h; fi;)
-DEBUG_CONFIG_FILE = 	$(shell if [ -f $(MY_HOME)/source/debugConfig.h ]; then echo $(MY_HOME)/source/debugConfig.h; fi;)
+CONFIG_FILE = 			$(shell if [ -f $(MY_HOME)/headers/Config.h ]; then echo $(MY_HOME)/headers/Config.h; fi;)
+DEBUG_CONFIG_FILE = 	$(shell if [ -f $(MY_HOME)/headers/DebugConfig.h ]; then echo $(MY_HOME)/headers/DebugConfig.h; fi;)
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(NAME)/classesHierarchy.txt
@@ -307,6 +307,7 @@ dirs:
 	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)/headers
 	@mkdir -p $(WORKING_FOLDER)/assets/$(NAME)/hashes
 	@rm -Rf $(WORKING_FOLDER)/classes/locks
 	@echo "$(OBJECTS_DIRS)" > $(DIRS_HELPER_FILE)

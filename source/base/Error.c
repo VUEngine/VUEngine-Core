@@ -21,7 +21,7 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 #include <string.h>
 
 

@@ -17,7 +17,7 @@
 #include <Printing.h>
 #include <VUEngine.h>
 
-#include <debugConfig.h>
+#include <DebugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -80,7 +80,7 @@
 #include <VUEngine.h>
 #include <Wireframe.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

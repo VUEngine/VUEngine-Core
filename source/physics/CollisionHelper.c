@@ -20,7 +20,7 @@
 #include <LineField.h>
 #include <Collider.h>
 
-#include <debugUtilities.h>
+#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
