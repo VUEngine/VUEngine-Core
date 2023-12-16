@@ -2701,7 +2701,7 @@
 			"schema": {
 				"title": "In-Game Types",
 				"properties": {
-					"layers": {
+					"types": {
 						"type": "array",
 						"items": {
 							"type": "string",
