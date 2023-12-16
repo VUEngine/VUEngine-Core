@@ -567,7 +567,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	UserInput userInput = KeypadManager::captureUserInput(this->keypadManager);
 	
 #ifdef __TOOLS
-	if(VUEngine::checkIfOpenTool(this, userInput))
+	if(VUEngine::checkIfOpenTool(this, &userInput))
 	{
 		return;
 	}
