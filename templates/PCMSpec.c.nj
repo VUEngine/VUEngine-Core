@@ -98,7 +98,7 @@ SoundROM {{ sanitizedSpecName }}Sound =
 	{{ item.loop }},
 
 	// Target timer resolution in us
-	0,
+	100,
 
 	// Tracks
 	(SoundChannel**){{ sanitizedSpecName }}SoundChannels
