@@ -17,7 +17,7 @@
 enum GameEvents
 {
 	{%- for event in events.events | sort %}
-	kEvent{{ event }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
+	kEvent{{ event | sanitizeSpecName }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };
 {%- endif %}

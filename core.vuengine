@@ -14,6 +14,13 @@
 			"template": "templates/BrightnessRepeatSpec.c.nj",
 			"itemSpecific": "BrightnessRepeat"
 		},
+		"ColliderLayers.h": {
+			"targets": [{
+				"path": "headers/ColliderLayers.h",
+				"root": "project"
+			}],
+			"template": "templates/ColliderLayers.h.nj"
+		},
 		"ColumnTableSpec.c": {
 			"targets": [{
 				"path": "Converted/${_filename}ColumnTableSpec.c",
@@ -87,6 +94,20 @@
 				"root": "project"
 			}],
 			"template": "templates/GameEvents.h.nj"
+		},
+		"InGameTypes.h": {
+			"targets": [{
+				"path": "headers/InGameTypes.h",
+				"root": "project"
+			}],
+			"template": "templates/InGameTypes.h.nj"
+		},
+		"Messages.h": {
+			"targets": [{
+				"path": "headers/Messages.h",
+				"root": "project"
+			}],
+			"template": "templates/Messages.h.nj"
 		},
 		"PCMSpec.c": {
 			"targets": [{
@@ -258,7 +279,10 @@
 				},
 				"required": []
 			},
-			"icon": "codicon codicon-activate-breakpoints"
+			"icon": "codicon codicon-activate-breakpoints",
+			"templates": [
+				"ColliderLayers.h"
+			]
 		},
 		"Compiler": {
 			"file": "CompilerConfig",
@@ -2711,7 +2735,10 @@
 				},
 				"required": []
 			},
-			"icon": "codicon codicon-broadcast"
+			"icon": "codicon codicon-broadcast",
+			"templates": [
+				"InGameTypes.h"
+			]
 		},
 		"Messages": {
 			"file": "Messages",
@@ -2728,7 +2755,10 @@
 				},
 				"required": []
 			},
-			"icon": "fa fa-commenting-o"
+			"icon": "fa fa-commenting-o",
+			"templates": [
+				"Messages.h"
+			]
 		},
 		"PCM": {
 			"file": ".pcm",

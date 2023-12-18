@@ -1,0 +1,26 @@
+{%- set types = project.combined.items.InGameTypes.project -%}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader.h.nj') %}
+
+#ifndef IN_GAME_TYPES_H_
+#define IN_GAME_TYPES_H_
+
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <Constants.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+{% if types.types.length > 0 -%}
+enum InGameTypes
+{
+	{%- for type in types.types | sort %}
+	kType{{ type | sanitizeSpecName }}{% if loop.first %} = kTypeNone + 1{% endif %},
+	{%- endfor %}
+};
+{%- endif %}
+
+
+#endif
