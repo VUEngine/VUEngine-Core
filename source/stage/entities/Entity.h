@@ -69,7 +69,7 @@ typedef struct EntitySpec
 	uint8 inGameType;
 
 	/// physical specification
-	PhysicalSpecification* physicalSpecification;
+	PhysicalProperties* physicalProperties;
 
 } EntitySpec;
 

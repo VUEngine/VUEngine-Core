@@ -50,7 +50,7 @@ typedef struct MovementResult
 } MovementResult;
 
 // defines a body
-typedef struct PhysicalSpecification
+typedef struct PhysicalProperties
 {
 	/// mass
 	fixed_t mass;
@@ -63,9 +63,9 @@ typedef struct PhysicalSpecification
 	/// maximum speed
 	fixed_t maximumSpeed;
 
-} PhysicalSpecification;
+} PhysicalProperties;
 
-typedef const PhysicalSpecification PhysicalSpecificationROMSpec;
+typedef const PhysicalProperties PhysicalSpecificationROMSpec;
 
 typedef struct Vector3DPlus
 {
@@ -152,7 +152,7 @@ class Body : ListenerObject
 	static const Vector3D* getCurrentGravity();
 	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
 
-	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
+	void constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
 	void applySustainedForce(const Vector3D* force);
 	uint8 applyForce(const Vector3D* force);
 	uint8 applyGravity(uint16 axis);

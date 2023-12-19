@@ -228,7 +228,7 @@ BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
 			kType{{ entity.collisions.type }},
 
 			// physical specification
-			(PhysicalSpecification*)NULL,
+			(PhysicalProperties*)NULL,
 		},
 
 		// pointer to the animation spec for the item

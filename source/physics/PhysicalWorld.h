@@ -25,7 +25,7 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, uint16 axisSubjectToGravity);
+typedef Body (*BodyAllocator)(SpatialObject, const PhysicalProperties*, uint16 axisSubjectToGravity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ class PhysicalWorld : ListenerObject
 	bool isSpatialObjectRegistered(SpatialObject owner);
 	void print(int32 x, int32 y);
 	void purgeBodyLists();
-	Body createBody(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity);
+	Body createBody(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
 	void destroyBody(Body body);
 	void reset();
 	void setGravity(Vector3D gravity);

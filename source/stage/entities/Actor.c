@@ -54,7 +54,7 @@ void Actor::constructor(const ActorSpec* actorSpec, int16 internalId, const char
 	// create body
 	if(actorSpec->createBody)
 	{
-		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
+		Actor::createBody(this, actorSpec->animatedEntitySpec.entitySpec.physicalProperties, actorSpec->axisSubjectToGravity);
 	}
 }
 
@@ -80,7 +80,7 @@ void Actor::destructor()
 	Base::destructor();
 }
 
-void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
 {
 	if(!isDeleted(this->body))
 	{
@@ -88,13 +88,13 @@ void Actor::createBody(const PhysicalSpecification* physicalSpecification, uint1
 		return;
 	}
 
-	if(NULL != physicalSpecification)
+	if(NULL != physicalProperties)
 	{
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), physicalSpecification, axisSubjectToGravity);
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), physicalProperties, axisSubjectToGravity);
 	}
 	else
 	{
-		PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
+		PhysicalProperties defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
 		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
 	}
 
@@ -688,9 +688,9 @@ const Vector3D* Actor::getPosition()
 // get bounciness
 fixed_t Actor::getBounciness()
 {
-	PhysicalSpecification* physicalSpecification = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalSpecification;
+	PhysicalProperties* physicalProperties = ((ActorSpec*)this->entitySpec)->animatedEntitySpec.entitySpec.physicalProperties;
 
-	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
+	return !isDeleted(this->body) ? Body::getBounciness(this->body) : physicalProperties ? physicalProperties->bounciness : 0;
 }
 
 // get velocity

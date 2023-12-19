@@ -116,16 +116,16 @@ typedef struct NormalRegistry
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Body::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, uint16 axisSubjectToGravity)
+void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
 {
 	Base::constructor();
 
 	this->destroy = false;
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = __BODY_MIN_MASS < physicalSpecification->mass ? __BODY_MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
+	this->mass = __BODY_MIN_MASS < physicalProperties->mass ? __BODY_MAX_MASS > physicalProperties->mass ? physicalProperties->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
 
-	this->bounciness = physicalSpecification->bounciness;
+	this->bounciness = physicalProperties->bounciness;
 	this->frictionCoefficient = 0;
 	this->surroundingFrictionCoefficient = 0;
 	this->totalFrictionCoefficient = 0;
@@ -148,8 +148,8 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->externalForce	 		= Vector3D::zero();
 	this->friction 				= Vector3D::zero();
 	this->totalNormal			= Vector3D::zero();
-	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
-	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
+	this->maximumVelocity 		= physicalProperties->maximumVelocity;
+	this->maximumSpeed 			= physicalProperties->maximumSpeed;
 	this->speed 				= 0;
 	this->clearExternalForce 	= __NO_AXIS;
 	this->skipCycles 			= 0;
@@ -166,7 +166,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 
 	this->gravity = Body::getGravity(this);
 
-	Body::setFrictionCoefficient(this, physicalSpecification->frictionCoefficient);
+	Body::setFrictionCoefficient(this, physicalProperties->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
 }
 

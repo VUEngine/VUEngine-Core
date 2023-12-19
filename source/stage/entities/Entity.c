@@ -2114,7 +2114,7 @@ uint32 Entity::getInGameType()
  */
 fixed_t Entity::getBounciness()
 {
-	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->bounciness : 0;
+	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->bounciness : 0;
 }
 
 /**
@@ -2124,7 +2124,7 @@ fixed_t Entity::getBounciness()
  */
 fixed_t Entity::getFrictionCoefficient()
 {
-	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->frictionCoefficient : 0;
+	return this->entitySpec->physicalProperties ? this->entitySpec->physicalProperties->frictionCoefficient : 0;
 }
 
 /**
