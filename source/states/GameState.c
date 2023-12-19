@@ -12,8 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <GameState.h>
-
 #include <Camera.h>
 #include <Clock.h>
 #include <CollisionManager.h>
@@ -24,6 +22,8 @@
 #include <Telegram.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
+
+#include "GameState.h"
 
 
 //---------------------------------------------------------------------------------------------------------

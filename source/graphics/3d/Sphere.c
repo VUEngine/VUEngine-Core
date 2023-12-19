@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sphere.h>
-
 #include <DirectDraw.h>
+#include <DebugUtilities.h>
 #include <Math.h>
 #include <Optics.h>
 #include <WireframeManager.h>
 
-#include <DebugUtilities.h>
+#include "Sphere.h"
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

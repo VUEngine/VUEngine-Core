@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CharSet.h>
-
 #include <CharSetManager.h>
+#include <DebugConfig.h>
 #include <Mem.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "CharSet.h"
 
 
 //---------------------------------------------------------------------------------------------------------

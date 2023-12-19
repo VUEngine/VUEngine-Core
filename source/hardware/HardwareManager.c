@@ -12,9 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <HardwareManager.h>
-
 #include <CommunicationManager.h>
+#include <DebugConfig.h>
 #include <KeypadManager.h>
 #include <Printing.h>
 #include <SoundManager.h>
@@ -22,7 +21,7 @@
 #include <Utilities.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "HardwareManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

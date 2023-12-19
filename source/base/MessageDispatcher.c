@@ -12,16 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MessageDispatcher.h>
-
 #include <Clock.h>
+#include <DebugUtilities.h>
 #include <Printing.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <DebugUtilities.h>
+#include "MessageDispatcher.h"
 
 
 //---------------------------------------------------------------------------------------------------------

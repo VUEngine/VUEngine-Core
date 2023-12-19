@@ -12,8 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Body.h>
-
+#include <DebugConfig.h>
 #include <FrameRate.h>
 #include <MessageDispatcher.h>
 #include <PhysicalWorld.h>
@@ -23,7 +22,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
+#include "Body.h"
 
 
 //---------------------------------------------------------------------------------------------------------

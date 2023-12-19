@@ -12,8 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SoundWrapper.h>
-
+#include <DebugUtilities.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
 #include <SoundManager.h>
@@ -22,7 +21,7 @@
 #include <Utilities.h>
 #include <VUEngine.h>
 
-#include <DebugUtilities.h>
+#include "SoundWrapper.h"
 
 
 //---------------------------------------------------------------------------------------------------------

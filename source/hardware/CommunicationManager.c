@@ -12,11 +12,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CommunicationManager.h>
-
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <Mem.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
@@ -25,8 +25,7 @@
 #include <TimerManager.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
+#include "CommunicationManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

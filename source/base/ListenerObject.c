@@ -12,8 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
-
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
 #include <Telegram.h>
@@ -21,8 +21,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
+#include "ListenerObject.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <StopwatchManager.h>
-
+#include <DebugConfig.h>
 #include <Stopwatch.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include <DebugConfig.h>
+#include "StopwatchManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

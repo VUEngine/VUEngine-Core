@@ -12,16 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Camera.h>
-
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
+#include <DebugConfig.h>
 #include <DirectDraw.h>
 #include <Entity.h>
 #include <Optics.h>
 #include <Printing.h>
 
-#include <DebugConfig.h>
+#include "Camera.h"
 
 
 //---------------------------------------------------------------------------------------------------------

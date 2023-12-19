@@ -12,17 +12,17 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Error.h>
+#include <string.h>
 
 #include <BgmapTextureManager.h>
+#include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printing.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
-#include <string.h>
+#include "Error.h"
 
 
 //---------------------------------------------------------------------------------------------------------

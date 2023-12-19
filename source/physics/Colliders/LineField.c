@@ -12,14 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <LineField.h>
-
 #include <CollisionHelper.h>
+#include <DebugConfig.h>
 #include <Line.h>
 #include <Printing.h>
 #include <SpatialObject.h>
 
-#include <DebugConfig.h>
+#include "LineField.h"
 
 
 //---------------------------------------------------------------------------------------------------------

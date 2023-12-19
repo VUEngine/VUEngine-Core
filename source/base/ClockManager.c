@@ -12,12 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ClockManager.h>
-
 #include <Clock.h>
+#include <DebugConfig.h>
 #include <VirtualList.h>
 
-#include <DebugConfig.h>
+#include "ClockManager.h"
+
 
 
 //---------------------------------------------------------------------------------------------------------

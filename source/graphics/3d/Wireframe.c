@@ -12,14 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Wireframe.h>
-
 #include <Camera.h>
+#include <DebugConfig.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <WireframeManager.h>
 
-#include <DebugConfig.h>
+#include "Wireframe.h"
 
 
 //---------------------------------------------------------------------------------------------------------

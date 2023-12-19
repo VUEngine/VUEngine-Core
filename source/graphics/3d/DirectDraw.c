@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <DirectDraw.h>
-
 #include <Camera.h>
-#include <VIPManager.h>
-
 #include <DebugConfig.h>
 #include <DebugUtilities.h>
+#include <VIPManager.h>
+
+#include "DirectDraw.h"
 
 
 //---------------------------------------------------------------------------------------------------------

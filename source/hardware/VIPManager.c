@@ -12,11 +12,10 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <VIPManager.h>
-
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
+#include <DebugConfig.h>
 #include <DirectDraw.h>
 #include <HardwareManager.h>
 #include <Mem.h>
@@ -30,7 +29,7 @@
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
-#include <DebugConfig.h>
+#include "VIPManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

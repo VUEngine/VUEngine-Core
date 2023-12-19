@@ -12,9 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CameraEffectManager.h>
-
 #include <Camera.h>
+#include <DebugConfig.h>
 #include <Entity.h>
 #include <GameState.h>
 #include <MessageDispatcher.h>
@@ -23,7 +22,7 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
+#include "CameraEffectManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

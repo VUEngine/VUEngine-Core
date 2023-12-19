@@ -12,10 +12,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Printing.h>
+#include <string.h>
 
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
+#include <DebugConfig.h>
 #include <Mem.h>
 #include <PrintingSprite.h>
 #include <SpriteManager.h>
@@ -23,8 +24,7 @@
 #include <VirtualList.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
-#include <string.h>
+#include "Printing.h"
 
 
 //---------------------------------------------------------------------------------------------------------

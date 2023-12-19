@@ -12,12 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Clock.h>
-
 #include <ClockManager.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
 #include <Utilities.h>
+
+#include "Clock.h"
 
 
 //---------------------------------------------------------------------------------------------------------

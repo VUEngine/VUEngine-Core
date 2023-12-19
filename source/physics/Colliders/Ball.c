@@ -12,15 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Ball.h>
-
 #include <CollisionHelper.h>
+#include <DebugConfig.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Printing.h>
 #include <Sphere.h>
 
-#include <DebugConfig.h>
+#include "Ball.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -12,14 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Line.h>
-
 #include <DirectDraw.h>
+#include <DebugUtilities.h>
 #include <Math.h>
 #include <Optics.h>
 #include <WireframeManager.h>
 
-#include <DebugUtilities.h>
+#include "Line.h"
 
 
 //---------------------------------------------------------------------------------------------------------

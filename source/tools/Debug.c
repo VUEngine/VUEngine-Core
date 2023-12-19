@@ -14,8 +14,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Debug.h>
-
 #include <Actor.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
@@ -35,6 +33,7 @@
 #include <ClockManager.h>
 #include <Container.h>
 #include <DebugState.h>
+#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <Entity.h>
 #include <CollisionManager.h>
@@ -80,7 +79,7 @@
 #include <VUEngine.h>
 #include <Wireframe.h>
 
-#include <DebugUtilities.h>
+#include "Debug.h"
 
 
 //---------------------------------------------------------------------------------------------------------

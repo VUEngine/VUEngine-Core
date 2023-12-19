@@ -12,7 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OptionsSelector.h>
+#include <string.h>
 
 #include <Actor.h>
 #include <AnimationCoordinatorFactory.h>
@@ -74,7 +74,7 @@
 #include <VUEngine.h>
 #include <Wireframe.h>
 
-#include <string.h>
+#include "OptionsSelector.h"
 
 
 //---------------------------------------------------------------------------------------------------------

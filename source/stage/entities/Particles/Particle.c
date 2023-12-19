@@ -12,12 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Particle.h>
-
 #include <ParticleSystem.h>
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <Wireframe.h>
+
+#include "Particle.h"
 
 
 //---------------------------------------------------------------------------------------------------------

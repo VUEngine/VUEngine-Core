@@ -12,7 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <VUEngine.h>
+#include <string.h>
 
 #include <AnimationCoordinatorFactory.h>
 #include <AnimationInspectorState.h>
@@ -23,6 +23,7 @@
 #include <Clock.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
+#include <DebugConfig.h>
 #include <DebugState.h>
 #include <DirectDraw.h>
 #include <CollisionManager.h>
@@ -56,8 +57,7 @@
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
-#include <DebugConfig.h>
-#include <string.h>
+#include "VUEngine.h"
 
 
 //---------------------------------------------------------------------------------------------------------

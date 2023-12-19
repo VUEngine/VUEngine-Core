@@ -12,10 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
+#include <string.h>
 
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <EntityFactory.h>
 #include <MBgmapSprite.h>
 #include <Mesh.h>
@@ -28,9 +30,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
-#include <string.h>
+#include "Entity.h"
 
 
 //---------------------------------------------------------------------------------------------------------

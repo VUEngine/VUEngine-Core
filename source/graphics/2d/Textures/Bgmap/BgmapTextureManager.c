@@ -12,13 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapTextureManager.h>
-
 #include <BgmapTexture.h>
 #include <ParamTableManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
+
+#include "BgmapTextureManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -12,12 +12,14 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Stage.h>
+#include <string.h>
 
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <CharSetManager.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <Entity.h>
 #include <EntityFactory.h>
 #include <HardwareManager.h>
@@ -33,9 +35,7 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
-#include <string.h>
+#include "Stage.h"
 
 
 //---------------------------------------------------------------------------------------------------------

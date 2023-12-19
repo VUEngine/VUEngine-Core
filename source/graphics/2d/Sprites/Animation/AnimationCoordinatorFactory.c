@@ -12,13 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimationCoordinatorFactory.h>
-
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <ListenerObject.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+
+#include "AnimationCoordinatorFactory.h"
 
 
 //---------------------------------------------------------------------------------------------------------

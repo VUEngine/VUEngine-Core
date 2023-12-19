@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Texture.h>
-
 #include <CharSetManager.h>
+#include <DebugUtilities.h>
 #include <Optics.h>
 #include <SpriteManager.h>
 
-#include <DebugUtilities.h>
+#include "Texture.h"
 
 
 //---------------------------------------------------------------------------------------------------------

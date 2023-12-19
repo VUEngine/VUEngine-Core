@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimationController.h>
+#include <string.h>
 
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
+#include <DebugConfig.h>
 #include <Sprite.h>
 
-#include <DebugConfig.h>
-#include <string.h>
+#include "AnimationController.h"
 
 
 //---------------------------------------------------------------------------------------------------------

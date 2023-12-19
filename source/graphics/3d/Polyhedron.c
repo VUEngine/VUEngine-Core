@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Polyhedron.h>
-
+#include <DebugConfig.h>
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
 
-#include <DebugConfig.h>
+#include "Polyhedron.h"
 
 
 //---------------------------------------------------------------------------------------------------------

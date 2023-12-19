@@ -12,17 +12,16 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <WireframeManager.h>
-
 #include <Camera.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
 #include <Wireframe.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
+#include "WireframeManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

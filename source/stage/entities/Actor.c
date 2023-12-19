@@ -12,10 +12,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Actor.h>
-
 #include <Body.h>
 #include <Camera.h>
+#include <DebugUtilities.h>
 #include <PhysicalWorld.h>
 #include <Collider.h>
 #include <State.h>
@@ -25,7 +24,7 @@
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <DebugUtilities.h>
+#include "Actor.h"
 
 
 //---------------------------------------------------------------------------------------------------------

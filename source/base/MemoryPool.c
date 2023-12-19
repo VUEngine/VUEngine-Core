@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MemoryPool.h>
-
+#include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printing.h>
 #include <Utilities.h>
 
-#include <DebugConfig.h>
+#include "MemoryPool.h"
 
 
 //---------------------------------------------------------------------------------------------------------

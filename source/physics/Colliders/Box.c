@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Box.h>
-
 #include <CollisionHelper.h>
+#include <DebugConfig.h>
 #include <Polyhedron.h>
 #include <Printing.h>
 
-#include <DebugConfig.h>
+#include "Box.h"
 
 
 //---------------------------------------------------------------------------------------------------------

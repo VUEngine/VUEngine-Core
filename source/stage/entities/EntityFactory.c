@@ -12,14 +12,13 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <EntityFactory.h>
-
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <Entity.h>
 #include <Printing.h>
 #include <VirtualList.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
+#include "EntityFactory.h"
 
 
 //---------------------------------------------------------------------------------------------------------

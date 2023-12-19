@@ -12,15 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CollisionManager.h>
-
 #include <Clock.h>
+#include <DebugConfig.h>
 #include <Printing.h>
 #include <SpatialObject.h>
 #include <Collider.h>
 #include <VirtualList.h>
 
-#include <DebugConfig.h>
+#include "CollisionManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

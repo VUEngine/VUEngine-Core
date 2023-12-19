@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <RumbleManager.h>
 
 #include <CommunicationManager.h>
 #ifdef __DEBUG_TOOL
 #include <Debug.h>
 #endif
-
 #include <DebugConfig.h>
+
+#include "RumbleManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

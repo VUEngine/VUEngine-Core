@@ -14,8 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Profiler.h>
-
+#include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <Printing.h>
 #include <TimerManager.h>
@@ -24,7 +23,8 @@
 #include <VIPManager.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
+
+#include "Profiler.h"
 
 #define __ENABLE_PROFILER_SKIP_FRAMES				5
 

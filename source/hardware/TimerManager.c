@@ -12,8 +12,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <TimerManager.h>
-
+#include <DebugConfig.h>
 #include <HardwareManager.h>
 #include <ListenerObject.h>
 #include <Printing.h>
@@ -23,7 +22,7 @@
 #include <SoundTest.h>
 #include <VUEngine.h>
 
-#include <DebugConfig.h>
+#include "TimerManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

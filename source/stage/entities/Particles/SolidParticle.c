@@ -12,18 +12,17 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SolidParticle.h>
-
 #include <Ball.h>
 #include <Body.h>
 #include <CollisionManager.h>
+#include <DebugUtilities.h>
 #include <Collider.h>
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
 
-#include <DebugUtilities.h>
+#include "SolidParticle.h"
 
 
 //---------------------------------------------------------------------------------------------------------

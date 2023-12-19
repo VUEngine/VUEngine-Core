@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CameraMovementManager.h>
-
 #include <Camera.h>
+#include <DebugConfig.h>
 #include <Entity.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "CameraMovementManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

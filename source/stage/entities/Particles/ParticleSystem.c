@@ -12,15 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ParticleSystem.h>
-
+#include <DebugUtilities.h>
 #include <Particle.h>
 #include <Printing.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VUEngine.h>
 
-#include <DebugUtilities.h>
+#include "ParticleSystem.h"
 
 
 //---------------------------------------------------------------------------------------------------------

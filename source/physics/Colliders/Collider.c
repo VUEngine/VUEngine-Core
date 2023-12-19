@@ -12,10 +12,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Collider.h>
-
 #include <CollisionHelper.h>
 #include <CollisionManager.h>
+#include <DebugConfig.h>
 #include <Printing.h>
 #include <SpatialObject.h>
 #include <VirtualList.h>
@@ -23,7 +22,7 @@
 #include <VUEngine.h>
 #include <WireframeManager.h>
 
-#include <DebugConfig.h>
+#include "Collider.h"
 
 
 //---------------------------------------------------------------------------------------------------------

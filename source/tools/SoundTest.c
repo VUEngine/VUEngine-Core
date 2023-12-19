@@ -12,8 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SoundTest.h>
-
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
 #include <KeypadManager.h>
@@ -23,6 +21,8 @@
 #include <Utilities.h>
 #include <VIPManager.h>
 #include <VUEngine.h>
+
+#include "SoundTest.h"
 
 
 //---------------------------------------------------------------------------------------------------------

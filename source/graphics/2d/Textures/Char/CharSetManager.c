@@ -12,13 +12,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CharSetManager.h>
-
 #include <CharSet.h>
+#include <DebugUtilities.h>
 #include <Printing.h>
 #include <VirtualList.h>
 
-#include <DebugUtilities.h>
+#include "CharSetManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

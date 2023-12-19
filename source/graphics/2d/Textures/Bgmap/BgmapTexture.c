@@ -12,16 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapTexture.h>
-
 #include <BgmapTextureManager.h>
 #include <CharSet.h>
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <Mem.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
-#include <DebugUtilities.h>
+#include "BgmapTexture.h"
 
 
 //---------------------------------------------------------------------------------------------------------

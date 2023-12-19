@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SoundManager.h>
-
 #include <Camera.h>
 #include <Printing.h>
 #include <Profiler.h>
 #include <SoundWrapper.h>
 #include <VirtualList.h>
 #include <WaveForms.h>
+
+#include "SoundManager.h"
 
 
 //---------------------------------------------------------------------------------------------------------

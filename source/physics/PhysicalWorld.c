@@ -12,15 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <PhysicalWorld.h>
-
 #include <Body.h>
 #include <Clock.h>
+#include <DebugConfig.h>
 #include <Printing.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include <DebugConfig.h>
+#include "PhysicalWorld.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Container.h>
+#include <string.h>
 
 #include <Behavior.h>
+#include <DebugUtilities.h>
 #include <Printing.h>
 #include <VirtualList.h>
 
-#include <DebugUtilities.h>
-#include <string.h>
+#include "Container.h"
 
 
 //---------------------------------------------------------------------------------------------------------

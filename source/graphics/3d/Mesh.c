@@ -12,9 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Mesh.h>
-
 #include <DirectDraw.h>
+#include <DebugConfig.h>
 #include <Math.h>
 #include <Optics.h>
 #include <PixelVector.h>
@@ -22,7 +21,7 @@
 #include <VirtualNode.h>
 #include <WireframeManager.h>
 
-#include <DebugConfig.h>
+#include "Mesh.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimationInspector.h>
+#include <string.h>
 
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
@@ -30,7 +30,7 @@
 #include <VirtualList.h>
 #include <VirtualNode.h>
 
-#include <string.h>
+#include "AnimationInspector.h"
 
 
 //---------------------------------------------------------------------------------------------------------
