@@ -8,7 +8,7 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-RumbleEffectROMSpec {{ item.name | sanitizeSpecName }}RumbleEffect =
+RumbleEffectROMSpec {{ item.name | sanitizeSpecName }}RumbleEffectSpec =
 {
 	// Effect #
 	{% if item.effect >= 1 and item.effect <= 123 -%}

@@ -11,7 +11,7 @@
 {% if item.description -%}
 // {{ item.description }}
 {% endif -%}
-BrightnessRepeatROMSpec {{ item.name | sanitizeSpecName }}BrightnessRepeat =
+BrightnessRepeatROMSpec {{ item.name | sanitizeSpecName }}BrightnessRepeatSpec =
 {
 	// mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},
@@ -20,7 +20,10 @@ BrightnessRepeatROMSpec {{ item.name | sanitizeSpecName }}BrightnessRepeat =
 	{
         {% for x in range(0, 96) -%}
             {%- if not (item.mirror and loop.index > 48) -%}
-                {%- set value = item.values[x] | default(15) -%}
+				{%- set value = item.values[x] | default(15) -%}
+                {%- if value is null -%}
+					{%- set value = 15 -%}
+                {%- endif -%}
                 {%- if value < 10 -%}{{ ' ' }} {%- endif -%}
                 {{- value -}}{{- ', '-}} 
                 {%- if loop.index % 16 == 0 and not (loop.last or (item.mirror and loop.index == 48)) -%}

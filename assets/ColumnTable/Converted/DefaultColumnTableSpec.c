@@ -14,7 +14,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // The default column table as provided by Nintendo
-ColumnTableROMSpec DefaultColumnTable =
+ColumnTableROMSpec DefaultColumnTableSpec =
 {
 	// mirror spec?
 	false,

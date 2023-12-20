@@ -189,7 +189,7 @@ BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
 
 {{ macros.sectionHeader('Entity') }}
 
-{{ entity.entity.class }}ROMSpec {{ entityName }}Entity =
+{{ entity.entity.class }}ROMSpec {{ entityName }}EntitySpec =
 {
 	// animated entity
 	{
