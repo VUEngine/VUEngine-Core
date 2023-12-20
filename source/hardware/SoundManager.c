@@ -346,16 +346,23 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 {
+	VirtualNode node = _soundManager->soundsMIDI->head;
+
+	if(NULL == node)
+	{
+		return;
+	}
+
+	Camera::suspendUIGraphicsSynchronization(_camera);
+
 	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
 	{		
-		Camera::suspendUIGraphicsSynchronization(_camera);
-
 		static uint32 accumulatedElapsedMicroseconds = 0;
 		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
 		if(NULL == _soundManager->soundMIDINode)
 		{
-			_soundManager->soundMIDINode = _soundManager->soundsMIDI->head;
+			_soundManager->soundMIDINode = node;
 			accumulatedElapsedMicroseconds = elapsedMicroseconds;
 		}
 
@@ -366,36 +373,43 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 			_soundManager->soundMIDINode = _soundManager->soundMIDINode->next;
 		}
 	}
-	else if(NULL != _soundManager->soundsMIDI->head)
+	else
 	{
-		Camera::suspendUIGraphicsSynchronization(_camera);
-
-		for(VirtualNode node = _soundManager->soundsMIDI->head; NULL != node; node = node->next)
+		do
 		{
 			NM_ASSERT(NULL != node, "SoundManager::playMIDISounds: NULL node");
 			NM_ASSERT(!isDeleted(node), "SoundManager::playMIDISounds: deleted node");
 			NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
 			NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
 			Sound::updateMIDIPlayback(Sound::safeCast(node->data), elapsedMicroseconds);
-		}
 
-		Camera::resumeUIGraphicsSynchronization(_camera);
+			node = node->next;
+		}
+		while(NULL != node);
+
 	}
+
+	Camera::resumeUIGraphicsSynchronization(_camera);
 }
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
 {
-	if(NULL == _soundManager->soundsPCM->head)
+	VirtualNode node = _soundManager->soundsPCM->head;
+
+	if(NULL == node)
 	{
 		return;
 	}
 
 	HardwareManager::suspendInterrupts();
 
-	for(VirtualNode node = _soundManager->soundsPCM->head; NULL != node; node = node->next)
+	do
 	{
 		Sound::updatePCMPlayback(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
+
+		node = node->next;
 	}
+	while(NULL != node);
 
 	HardwareManager::resumeInterrupts();
 }

@@ -914,10 +914,10 @@ void Sound::updateVolumeReduction()
 	}
 }
 
-void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds)
+void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds __attribute__((unused)))
 {
 	// Optimization, if no soundSpec or paused, the sum will be different than 0
-	if((NULL == this->soundSpec) + this->paused + (!this->turnedOn))
+	if(this->paused + (!this->turnedOn))
 	{
 		return;
 	}
@@ -951,19 +951,16 @@ void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds)
 
 		channel->elapsedTicks += channel->tickStep;
 
-		if(channel->elapsedTicks >= channel->nextElapsedTicksTarget || 0 == elapsedMicroseconds)
+		if(channel->elapsedTicks >= channel->nextElapsedTicksTarget)
 		{
-			if(0 != elapsedMicroseconds)
-			{
-				channel->finished = Sound::checkIfPlaybackFinishedOnChannel(channel);
+			channel->finished = Sound::checkIfPlaybackFinishedOnChannel(channel);
 
-				if(channel->finished)
-				{
-					continue;
-				}
-				
-				channel->nextElapsedTicksTarget += __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]);
+			if(channel->finished)
+			{
+				continue;
 			}
+			
+			channel->nextElapsedTicksTarget += __I_TO_FIX7_9_EXT(channel->soundTrack.dataMIDI[channel->samples + 1 + channel->cursor]);
 
 			if(NULL != this->position && 0 > leftVolumeFactor + rightVolumeFactor)
 			{
@@ -1016,7 +1013,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 	CACHE_ENABLE;
 
 	// Optimization, if no soundSpec or paused, the sum will be different than 0
-	if((NULL == this->soundSpec) + this->paused + (!this->turnedOn))
+	if(this->paused + (!this->turnedOn))
 	{
 		return;
 	}
@@ -1024,7 +1021,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
 	this->mainChannel->elapsedTicks += elapsedMicroseconds;
 
-	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
+ 	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
 
 	if(this->mainChannel->cursor >= this->mainChannel->samples)
 	{
@@ -1055,7 +1052,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 				volume = 0;
 			}
 		}
-	
+
 		if(kSoundPlaybackNormal != this->playbackType)
 		{
 			Sound::updateVolumeReduction(this);
