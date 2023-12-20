@@ -65,7 +65,7 @@ typedef struct PhysicalProperties
 
 } PhysicalProperties;
 
-typedef const PhysicalProperties PhysicalSpecificationROMSpec;
+typedef const PhysicalProperties PhysicalPropertiesROMSpec;
 
 typedef struct Vector3DPlus
 {
