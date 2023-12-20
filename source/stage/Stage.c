@@ -1325,7 +1325,7 @@ void Stage::setupSounds()
 
 			VirtualList::pushBack(this->sounds, sound);
 
-			if(!Sound::isTurnedOn(sound))
+			if(!Sound::isPlaying(sound))
 			{
 				Sound::play(sound, NULL, kSoundPlaybackFadeIn);
 			}

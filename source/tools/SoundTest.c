@@ -173,7 +173,7 @@ void SoundTest::printGUI(bool clearScreen)
 	int32 yControls = 4;
 
 	// Controls
-	if(!Sound::isTurnedOn(this->sound) || Sound::isPaused(this->sound))
+	if(!Sound::isPlaying(this->sound))
 	{
 		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
 	}
@@ -220,7 +220,7 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		if(!isDeleted(this->sound))
 		{
-			if(!Sound::isTurnedOn(this->sound) || Sound::isPaused(this->sound))
+			if(!Sound::isPlaying(this->sound))
 			{
 				Sound::play(this->sound, NULL, kSoundPlaybackNormal);
 			}

@@ -234,6 +234,16 @@ const Channel* Sound::getChannel(uint8 index)
 }
 
 /**
+ * Is playing?
+ *
+ * @return bool
+ */
+bool Sound::isPlaying()
+{
+	return Sound::isTurnedOn(this) && !this->paused;
+}
+
+/**
  * Is paused?
  *
  * @return bool

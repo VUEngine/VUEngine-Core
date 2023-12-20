@@ -247,6 +247,7 @@ class Sound : ListenerObject
 
 	const Channel* getChannel(uint8 index);
 	bool isUsingChannel(Channel* channel);
+	bool isPlaying();
 	bool isPaused();
 	bool isTurnedOn();
 	bool hasPCMTracks();
