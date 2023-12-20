@@ -69,7 +69,7 @@
 #include <StageEditorState.h>
 #include <State.h>
 #include <StateMachine.h>
-#include <SoundWrapper.h>
+#include <Sound.h>
 #include <Telegram.h>
 #include <Texture.h>
 #include <TimerManager.h>
@@ -626,7 +626,7 @@ void Debug::memoryStatusShowSecondPage(int32 increment __attribute__ ((unused)),
 		{&Telegram_getObjectSize, 		"Telegram"},
 		{&VirtualList_getObjectSize, 	"VirtualList"},
 		{&VirtualNode_getObjectSize, 	"VirtualNode"},
-		{&SoundWrapper_getObjectSize, 	"SoundWrapper"},
+		{&Sound_getObjectSize, 	"Sound"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

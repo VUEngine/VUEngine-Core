@@ -125,7 +125,7 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->cameraPreviousDistance = 0;
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
-	this->soundWrappers = NULL;
+	this->sounds = NULL;
 	this->streaming = this->stageSpec->streaming;
 	this->streamingAmplitude = this->streaming.streamingAmplitude;
 	this->forceNoPopIn = false;
@@ -144,23 +144,23 @@ void Stage::destructor()
 		this->entityLoadingListeners = NULL;
 	}
 
-	if(!isDeleted(this->soundWrappers))
+	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
 		// they are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+			Sound sound = Sound::safeCast(node->data);
 
-			if(!isDeleted(soundWrapper))
+			if(!isDeleted(sound))
 			{
-				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
 			}
 		}
 
-		delete this->soundWrappers;
-		this->soundWrappers = NULL;
+		delete this->sounds;
+		this->sounds = NULL;
 	}
 
 	if(!isDeleted(this->entityFactory))
@@ -189,19 +189,19 @@ void Stage::destructor()
 
 void Stage::fadeSounds(uint32 playbackType)
 {
-	if(!isDeleted(this->soundWrappers))
+	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
 		// they are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+			Sound sound = Sound::safeCast(node->data);
 
-			if(!isDeleted(soundWrapper))
+			if(!isDeleted(sound))
 			{
-				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
-				SoundWrapper::play(soundWrapper, NULL, playbackType);
+				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::play(sound, NULL, playbackType);
 			}
 		}
 	}
@@ -209,19 +209,19 @@ void Stage::fadeSounds(uint32 playbackType)
 
 void Stage::pauseSounds()
 {
-	if(!isDeleted(this->soundWrappers))
+	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
 		// they are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+			Sound sound = Sound::safeCast(node->data);
 
-			if(!isDeleted(soundWrapper))
+			if(!isDeleted(sound))
 			{
-				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
-				SoundWrapper::pause(soundWrapper);
+				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::pause(sound);
 			}
 		}
 	}
@@ -229,19 +229,19 @@ void Stage::pauseSounds()
 
 void Stage::unpauseSounds()
 {
-	if(!isDeleted(this->soundWrappers))
+	if(!isDeleted(this->sounds))
 	{
 		// Do not need to release sound wrappers here,
 		// they are taken care by the SoundManager when
 		// I called SoundManager::stopAllSounds
-		for(VirtualNode node = this->soundWrappers->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->sounds->head; NULL != node; node = node->next)
 		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+			Sound sound = Sound::safeCast(node->data);
 
-			if(!isDeleted(soundWrapper))
+			if(!isDeleted(sound))
 			{
-				SoundWrapper::removeEventListenerScopes(soundWrapper, ListenerObject::safeCast(this), kEventSoundReleased);
-				SoundWrapper::unpause(soundWrapper);
+				Sound::removeEventListenerScopes(sound, ListenerObject::safeCast(this), kEventSoundReleased);
+				Sound::unpause(sound);
 			}
 		}
 	}
@@ -1062,9 +1062,9 @@ EntityFactory Stage::getEntityFactory()
 	return this->entityFactory;
 }
 
-VirtualList Stage::getSoundWrappers()
+VirtualList Stage::getSounds()
 {
-	return this->soundWrappers;
+	return this->sounds;
 }
 
 bool Stage::stream()
@@ -1304,38 +1304,38 @@ void Stage::setupSounds()
 
 	for(; NULL != this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundWrapper soundWrapper = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundWrapperReleased, ListenerObject::safeCast(this));
+		Sound sound = SoundManager::findSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
 
-		if(isDeleted(soundWrapper))
+		if(isDeleted(sound))
 		{
-			soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundWrapperReleased, ListenerObject::safeCast(this));
+			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
 		}
 
-		if(SoundWrapper::hasPCMTracks(soundWrapper))
+		if(Sound::hasPCMTracks(sound))
 		{
 			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNonVIPMultiplexedInterrupts);
 		}
 
-		if(!isDeleted(soundWrapper))
+		if(!isDeleted(sound))
 		{
-			if(isDeleted(this->soundWrappers))
+			if(isDeleted(this->sounds))
 			{
-				this->soundWrappers = new VirtualList();
+				this->sounds = new VirtualList();
 			}
 
-			VirtualList::pushBack(this->soundWrappers, soundWrapper);
+			VirtualList::pushBack(this->sounds, sound);
 
-			if(!SoundWrapper::isTurnedOn(soundWrapper))
+			if(!Sound::isTurnedOn(sound))
 			{
-				SoundWrapper::play(soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+				Sound::play(sound, NULL, kSoundPlaybackFadeIn);
 			}
 		}
 	}
 }
 
-void Stage::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
+void Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
-	VirtualList::removeElement(this->soundWrappers, eventFirer);
+	VirtualList::removeElement(this->sounds, eventFirer);
 
 	Stage::fireEvent(this, kEventSoundReleased);
 }

@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ListenerObject.h>
-#include <SoundWrapper.h>
+#include <Sound.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,10 +91,10 @@ enum ChannelTypes
 /// @ingroup hardware
 singleton class SoundManager : ListenerObject
 {
-	VirtualList soundWrappers;
-	VirtualList soundWrappersMIDI;
-	VirtualList soundWrappersPCM;
-	VirtualNode soundWrapperMIDINode;
+	VirtualList sounds;
+	VirtualList soundsMIDI;
+	VirtualList soundsPCM;
+	VirtualNode soundMIDINode;
 	VirtualList queuedSounds;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_WAVEFORMS];
@@ -114,18 +114,18 @@ singleton class SoundManager : ListenerObject
 
 	void update();
 
-	void stopAllSounds(bool release, Sound** excludedSounds);
+	void stopAllSounds(bool release, SoundSpec** excludedSounds);
 	void flushQueuedSounds();
 
-	bool playSound(const Sound* sound, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
-	SoundWrapper getSound(const Sound* sound, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
-	SoundWrapper findSound(const Sound* sound, EventListener soundReleaseListener, ListenerObject scope);
+	bool playSound(const SoundSpec* soundSpec, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+	Sound getSound(const SoundSpec* soundSpec, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
+	Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
 
-	void releaseSoundWrapper(SoundWrapper soundWrapper);
+	void releaseSound(Sound sound);
 	void releaseChannels(VirtualList channels);
 	void deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt);
 	void startPCMPlayback();
-	bool isPlayingSound(const Sound* sound);
+	bool isPlayingSound(const SoundSpec* soundSpec);
 
 	void lock();
 	void unlock();

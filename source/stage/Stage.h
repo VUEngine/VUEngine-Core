@@ -135,7 +135,7 @@ typedef struct StageSpec
 		TextureSpec** textureSpecs;
 
 		// pointer to the background sounds
-		Sound** sounds;
+		SoundSpec** sounds;
 
 	} assets;
 
@@ -191,7 +191,7 @@ class Stage : Container
 	// the pivot node for streaming
 	VirtualNode streamingHeadNode;
 	// The sounds
-	VirtualList soundWrappers;
+	VirtualList sounds;
 	// List of listeners for entity loading
 	VirtualList entityLoadingListeners;
 	// Streaming settings
@@ -236,7 +236,7 @@ class Stage : Container
 	Entity findChildByInternalId(int16 internalId);
 	bool updateEntityFactory();
 	EntityFactory getEntityFactory();
-	VirtualList getSoundWrappers();
+	VirtualList getSounds();
 	bool streamAll();
 	bool streamInAll();
 	bool streamOutAll();

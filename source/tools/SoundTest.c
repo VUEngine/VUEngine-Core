@@ -31,7 +31,7 @@
 
 #ifdef __SOUND_TEST
 
-extern SoundROM* _userSounds[];
+extern SoundROMSpec* _userSounds[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ void SoundTest::constructor()
 {
 	Base::constructor();
 
-	this->soundWrapper = NULL;
+	this->sound = NULL;
 	this->selectedSound = 0;
 }
 
@@ -56,9 +56,9 @@ void SoundTest::constructor()
  */
 void SoundTest::destructor()
 {
-	SoundTest::releaseSoundWrapper(this);
+	SoundTest::releaseSound(this);
 
-	this->soundWrapper = NULL;
+	this->sound = NULL;
 
 	// allow a new construct
 	Base::destructor();
@@ -67,13 +67,13 @@ void SoundTest::destructor()
 /**
  * Release sound
  */
-void SoundTest::releaseSoundWrapper()
+void SoundTest::releaseSound()
 {
-	if(!isDeleted(this->soundWrapper))
+	if(!isDeleted(this->sound))
 	{
-		SoundWrapper::release(this->soundWrapper);
+		Sound::release(this->sound);
 
-		this->soundWrapper = NULL;
+		this->sound = NULL;
 	}
 }
 
@@ -82,19 +82,19 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
-	if(!isDeleted(this->soundWrapper))
+	if(!isDeleted(this->sound))
 	{
 		static uint16 delay = 0;
 
 		if(delay++ >= __TARGET_FPS)
 		{
-			SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
-			SoundWrapper::printPlaybackTime(this->soundWrapper, 24, 8);
+			Sound::printPlaybackProgress(this->sound, 1, 6);
+			Sound::printPlaybackTime(this->sound, 24, 8);
 			delay = 0;
 		}
 		else
 		{
-			SoundWrapper::printVolume(this->soundWrapper, 1, 17, false);
+			Sound::printVolume(this->sound, 1, 17, false);
 		}
 	}
 }
@@ -129,7 +129,7 @@ void SoundTest::show()
  */
 void SoundTest::hide()
 {
-	SoundTest::releaseSoundWrapper(this);
+	SoundTest::releaseSound(this);
 	Printing::clear(Printing::getInstance());
 	SpriteManager::showSprites(SpriteManager::getInstance(), NULL, true);
 	SoundTest::lightUpGame(this);
@@ -164,7 +164,7 @@ void SoundTest::printGUI(bool clearScreen)
 	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
 	Printing::text(printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
 
-	if(isDeleted(this->soundWrapper))
+	if(isDeleted(this->sound))
 	{
 		return;
 	}
@@ -173,7 +173,7 @@ void SoundTest::printGUI(bool clearScreen)
 	int32 yControls = 4;
 
 	// Controls
-	if(!SoundWrapper::isTurnedOn(this->soundWrapper) || SoundWrapper::isPaused(this->soundWrapper))
+	if(!Sound::isTurnedOn(this->sound) || Sound::isPaused(this->sound))
 	{
 		Printing::text(printing, "Play     \x13", xControls, yControls++, NULL);
 	}
@@ -183,14 +183,14 @@ void SoundTest::printGUI(bool clearScreen)
 	}
 	Printing::text(printing, "Rewind   \x14", xControls, yControls++, NULL);
 	Printing::text(printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(printing, SoundWrapper::hasPCMTracks(this->soundWrapper) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	Printing::text(printing, Sound::hasPCMTracks(this->sound) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
 	yControls++;
 	Printing::text(printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
 	Printing::text(printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
 	Printing::text(printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
-	SoundWrapper::printMetadata(this->soundWrapper, 1, 4, true);
+	Sound::printMetadata(this->sound, 1, 4, true);
 }
 
 void SoundTest::processUserInput(uint16 pressedKey)
@@ -213,49 +213,49 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	}
 	else if(K_A & pressedKey)
 	{
-		if(isDeleted(this->soundWrapper))
+		if(isDeleted(this->sound))
 		{
 			SoundTest::loadSound(this);
 		}
 
-		if(!isDeleted(this->soundWrapper))
+		if(!isDeleted(this->sound))
 		{
-			if(!SoundWrapper::isTurnedOn(this->soundWrapper) || SoundWrapper::isPaused(this->soundWrapper))
+			if(!Sound::isTurnedOn(this->sound) || Sound::isPaused(this->sound))
 			{
-				SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackNormal);
+				Sound::play(this->sound, NULL, kSoundPlaybackNormal);
 			}
 			else
 			{
-				SoundWrapper::pause(this->soundWrapper);
+				Sound::pause(this->sound);
 			}
 		}
 	}
 	else if(K_B & pressedKey)
 	{
-		if(isDeleted(this->soundWrapper))
+		if(isDeleted(this->sound))
 		{
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::rewind(this->soundWrapper);
+		Sound::rewind(this->sound);
 	}
 	else if(K_LD & pressedKey)
 	{
-		if(isDeleted(this->soundWrapper))
+		if(isDeleted(this->sound))
 		{
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX7_9(0.01f));
+		Sound::setSpeed(this->sound, Sound::getSpeed(this->sound) - __F_TO_FIX7_9(0.01f));
 	}
 	else if(K_LU & pressedKey)
 	{
-		if(isDeleted(this->soundWrapper))
+		if(isDeleted(this->sound))
 		{
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX7_9(0.01f));
+		Sound::setSpeed(this->sound, Sound::getSpeed(this->sound) +  __F_TO_FIX7_9(0.01f));
 	}
 	// Timer controls
 	else if(K_RU & pressedKey)
@@ -337,22 +337,22 @@ void SoundTest::processUserInput(uint16 pressedKey)
 
 		SoundTest::printTimer(this);
 
-		if(!isDeleted(this->soundWrapper))
+		if(!isDeleted(this->sound))
 		{
-			SoundWrapper::pause(this->soundWrapper);
-			SoundWrapper::rewind(this->soundWrapper);
-			SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
+			Sound::pause(this->sound);
+			Sound::rewind(this->sound);
+			Sound::computeTimerResolutionFactor(this->sound);
 
-			if(!SoundWrapper::isPaused(this->soundWrapper))
+			if(!Sound::isPaused(this->sound))
 			{
-				SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
+				Sound::play(this->sound, NULL, kSoundPlaybackFadeIn);
 			}
 		}
 	}
 
-	if(!isDeleted(this->soundWrapper))
+	if(!isDeleted(this->sound))
 	{
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 4, true);
+		Sound::printMetadata(this->sound, 1, 4, true);
 	}
 }
 
@@ -411,21 +411,21 @@ void SoundTest::loadSound()
 	PRINT_TEXT("Loading...", 1, 4);
 #endif
 
-	SoundTest::releaseSoundWrapper(this);
+	SoundTest::releaseSound(this);
 
 	TimerManager::reset(TimerManager::getInstance());
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_20US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kUS);
 	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), _userSounds[this->selectedSound]->targetTimerResolutionUS);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundWrapperReleased, ListenerObject::safeCast(this));
+	this->sound = SoundManager::getSound(SoundManager::getInstance(), (SoundSpec*)_userSounds[this->selectedSound], kPlayAll, (EventListener)SoundTest::onSoundReleased, ListenerObject::safeCast(this));
 
-	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
+	NM_ASSERT(!isDeleted(this->sound), "SoundTest::loadSound: no sound");
 
-	if(!isDeleted(this->soundWrapper))
+	if(!isDeleted(this->sound))
 	{
-		SoundWrapper::addEventListener(this->soundWrapper, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
-		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
+		Sound::addEventListener(this->sound, ListenerObject::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
+		Sound::computeTimerResolutionFactor(this->sound);
 		SoundTest::applyTimerSettings(this);
 
 #ifdef __SOUND_TEST
@@ -440,18 +440,18 @@ void SoundTest::loadSound()
 
 void SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
-	if(!isDeleted(this->soundWrapper))
+	if(!isDeleted(this->sound))
 	{
-		SoundWrapper::printPlaybackTime(this->soundWrapper, 24, 8);
-		SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
+		Sound::printPlaybackTime(this->sound, 24, 8);
+		Sound::printPlaybackProgress(this->sound, 1, 6);
 	}
 }
 
-void SoundTest::onSoundWrapperReleased(ListenerObject eventFirer __attribute__((unused)))
+void SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
-	if(SoundWrapper::safeCast(eventFirer) == this->soundWrapper)
+	if(Sound::safeCast(eventFirer) == this->sound)
 	{
-		this->soundWrapper = NULL;
+		this->sound = NULL;
 	}
 }
 

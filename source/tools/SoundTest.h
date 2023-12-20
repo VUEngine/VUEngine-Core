@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Tool.h>
-#include <SoundWrapper.h>
+#include <Sound.h>
 #include <SoundManager.h>
 
 
@@ -32,7 +32,7 @@
 /// @ingroup tools
 singleton class SoundTest : Tool
 {
-	SoundWrapper soundWrapper;
+	Sound sound;
 	uint16 selectedSound;
 
 	/// @publicsection

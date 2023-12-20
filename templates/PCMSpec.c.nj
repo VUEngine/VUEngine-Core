@@ -89,7 +89,7 @@ SoundChannelROM* const {{ sanitizedSpecName }}SoundChannels[] =
 	NULL
 };
 
-SoundROM {{ sanitizedSpecName }}Sound =
+SoundROMSpec {{ sanitizedSpecName }}SoundSpec =
 {
 	// Name
 	"{{ item.name }}",

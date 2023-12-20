@@ -63,7 +63,7 @@
 #include <StageEditorState.h>
 #include <State.h>
 #include <StateMachine.h>
-#include <SoundWrapper.h>
+#include <Sound.h>
 #include <Telegram.h>
 #include <Texture.h>
 #include <TimerManager.h>

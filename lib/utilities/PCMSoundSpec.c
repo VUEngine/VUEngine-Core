@@ -100,7 +100,7 @@ SoundChannelROM* const PCMSoundChannels[] =
 	NULL
 };
 
-SoundROM PCMSound =
+SoundROMSpec PCMSoundSpec =
 {
 	/// Name
 	"PCM Sound Name",
