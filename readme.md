@@ -111,9 +111,12 @@ A short summary of the file layout:
 
 - assets: engine default font, etc
 - doc: Documentation
+- config: various configuration files
 - lib: precompiler, miscellaneous files needed for linking, etc.
+- headers: various header files
 - source: VUEngine source code.
 - source/base/libgccvb: heavily modified libgccvb
+- config: code generation templated
 
 
 ACKNOWLEDGMENTS
