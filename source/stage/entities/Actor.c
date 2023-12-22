@@ -93,8 +93,8 @@ void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axis
 	}
 	else
 	{
-		PhysicalProperties defaultActorPhysicalSpecification = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
-		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, axisSubjectToGravity);
+		PhysicalProperties defaultActorPhysicalProperties = {__I_TO_FIXED(1), 0, 0, Vector3D::zero(), 0};
+		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalProperties, axisSubjectToGravity);
 	}
 
 	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
