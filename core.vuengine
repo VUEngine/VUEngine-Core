@@ -53,6 +53,14 @@
 			}],
 			"template": "templates/DebugConfig.h.nj"
 		},
+		"EntitySpec.c": {
+			"targets": [{
+				"path": "Converted/${_filename}EntitySpec.c",
+				"root": "file"
+			}],
+			"template": "templates/EntitySpec.c.nj",
+			"itemSpecific": "Entity"
+		},
 		"Fonts.c": {
 			"targets": [{
 				"path": "assets/Fonts.c",
@@ -2036,12 +2044,16 @@
 					"animations": {
 						"type": "object",
 						"properties": {
+							"enabled": {
+								"type": "boolean",
+								"default": false
+							},
 							"default": {
 								"type": "string",
 								"description": "Animation to play as a default when entity is created",
 								"default": "Default"
 							},
-							"items": {
+							"animations": {
 								"type": "array",
 								"items": {
 									"type": "object",
@@ -2102,7 +2114,7 @@
 								"type": "string",
 								"default": "None"
 							},
-							"shapes": {
+							"colliders": {
 								"type": "array",
 								"items": {
 									"type": "object",
@@ -2231,7 +2243,7 @@
 											"properties": {
 												"allocator": {
 													"type": "string",
-													"default": ""
+													"default": "Mesh"
 												},
 												"displacement": {
 													"type": "object",
@@ -2243,9 +2255,6 @@
 															"type": "number"
 														},
 														"z": {
-															"type": "number"
-														},
-														"parallax": {
 															"type": "number"
 														}
 													}
@@ -2264,7 +2273,7 @@
 												},
 												"interlaced": {
 													"type": "boolean",
-													"default": 3
+													"default": false
 												}
 											}
 										},
@@ -2577,7 +2586,10 @@
 				"type": "EntityEditor",
 				"scope": "#"
 			},
-			"icon": "fa fa-id-card-o"
+			"icon": "fa fa-id-card-o",
+			"templates": [
+				"EntitySpec.c"
+			]
 		},
 		"Events": {
 			"file": "Events",

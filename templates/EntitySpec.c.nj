@@ -1,34 +1,37 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader.c.nj') %}
+{%- set sanitizedSpecName = item.name | sanitizeSpecName -%}
 
-{%- set entityName = entity.name | toUpperSnakeCase -%}
-{%- set spriteTypes = [] -%}
-{%- for sprite in entity.sprites -%}
-	{%- set spriteTypes = (spriteTypes.push(sprite.type), spriteTypes) -%}
+{%- set includes = [] -%}
+{%- for sprite in item.sprites -%}
+	{%- set includes = (includes.push(sprite.type), includes) -%}
 {%- endfor %}
+{%- if item.collisions.inGameType != 'None' -%}
+	{%- set includes = (includes.push('InGameTypes'), includes) -%}
+{%- endif %}
+{%- if item.physics.enabled -%}
+	{%- set includes = (includes.push('Body'), includes) -%}
+{%- endif %}
 
 
 {{ macros.sectionHeader('Includes') }}
 
-#include <Libgccvb.h>
-#include <FinishLine.h>
-{% for spriteType in spriteTypes | unique -%}
-#include <{{ spriteType }}.h>
-{%- endfor %}
-
+{% for include in includes | unique -%}
+#include <{{ include }}.h>
+{% endfor %}
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% for sprite in entity.sprites -%}
+{% for sprite in item.sprites -%}
 extern uint32 {{ sprite.texture.image.name | sanitizeSpecName }}Tiles[];
 extern uint16 {{ sprite.texture.image.name | sanitizeSpecName }}Map[];
 {% endfor %}
 
-{% if entity.animations.definitions.length -%}
+{% if item.animations.definitions.length -%}
 {{ macros.sectionHeader('Animations') }}
 
-{% for animation in entity.animations.definitions -%}
-AnimationFunctionROMSpec {{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation =
+{% for animation in item.animations.animations -%}
+AnimationFunctionROMSpec {{ sanitizedSpecName }}{{ animation.name | toUpperSnakeCase }}Animation =
 {
 	// number of frames of this animation function
 	{{ animation.frames.length }},
@@ -53,27 +56,27 @@ AnimationFunctionROMSpec {{ entityName }}{{ animation.name | toUpperSnakeCase }}
 
 {% endfor -%}
 
-AnimationFunctionROMSpec* const {{ entityName }}Animations =
+AnimationFunctionROMSpec* const {{ sanitizedSpecName }}Animations =
 {
-	{% for animation in entity.animations.definitions -%}
-		(AnimationFunction*){{ entityName }}{{ animation.name | toUpperSnakeCase }}Animation,
+	{% for animation in item.animations.definitions -%}
+		(AnimationFunction*){{ sanitizedSpecName }}{{ animation.name | toUpperSnakeCase }}Animation,
 	{% endfor -%}
 	NULL
 };
 {% endif %}
 
-{% if entity.sprites.length -%}
+{% if item.sprites.length -%}
 {{ macros.sectionHeader('Sprites') }}
 
 {% set spriteNames = [] -%}
-{%- for sprite in entity.sprites -%}
+{%- for sprite in item.sprites -%}
 
 {%- if sprite.name -%}
-	{%- set spriteName = entity.name ~ sprite.name -%}
-{%- elseif entity.sprites.length > 1-%}
-	{%- set spriteName = entity.name ~ loop.index -%}
+	{%- set spriteName = item.name ~ sprite.name -%}
+{%- elseif item.sprites.length > 1-%}
+	{%- set spriteName = item.name ~ loop.index -%}
 {%- else -%}
-	{%- set spriteName = entity.name -%}
+	{%- set spriteName = item.name -%}
 {%- endif -%}
 {%- set spriteName = spriteName | toUpperSnakeCase -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
@@ -122,8 +125,8 @@ TextureROMSpec {{ spriteName }}Texture =
 	},
 
 	// number of frames
-	{% if sprite.texture.charset.type == 'animatedMulti' and entity.animations.definitions.length -%}
-	{{ entity.animations.definitions.length }}
+	{% if sprite.texture.charset.type == 'animatedMulti' and item.animations.definitions.length -%}
+	{{ item.animations.definitions.length }}
 	{%- else -%}
 	1,
 	{%- endif %}
@@ -141,14 +144,14 @@ TextureROMSpec {{ spriteName }}Texture =
 	false,
 };
 
-{{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}Sprite =
+{{ sprite.type | replace('Animated', '') }}ROMSpec {{ spriteName }}SpriteSpec =
 {
 	{
 		// sprite's type
 		__TYPE({{ sprite.type }}),
 
 		// texture spec
-		(TextureSpec*)&{{ entityName }}Texture,
+		(TextureSpec*)&{{ sanitizedSpecName }}Texture,
 
 		// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 		__TRANSPARENCY_{{ sprite.transparency }},
@@ -177,10 +180,10 @@ TextureROMSpec {{ spriteName }}Texture =
 
 {% endfor -%}
 
-BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
+BgmapSpriteROMSpec* const {{ sanitizedSpecName }}SpriteSpecs[] =
 {
 	{% for spriteName in spriteNames -%}
-	&{{ spriteName }}Sprite,
+	&{{ spriteName }}SpriteSpec,
 	{% endfor -%}
 	NULL
 };
@@ -189,52 +192,72 @@ BgmapSpriteROMSpec* const {{ entityName }}Sprites[] =
 
 {{ macros.sectionHeader('Entity') }}
 
-{{ entity.entity.class }}ROMSpec {{ entityName }}EntitySpec =
+{% if item.physics.enabled -%}
+PhysicalPropertiesROMSpec {{ sanitizedSpecName }}PhysicalPropertiesSpec =
 {
-	// animated entity
+	// mass
+	__F_TO_FIX10_6({{ item.physics.mass }}f),
+
+	// friction
+	__F_TO_FIX10_6({{ item.physics.friction }}f),
+
+	// bounciness
+	__F_TO_FIX10_6({{ item.physics.bounciness }}f),
+
+	// maximum velocity
 	{
-		// entity
-		{
-			// class allocator
-			__TYPE({{ entity.entity.class }}),
+		__I_TO_FIXED({{ item.physics.maximumVelocity.x }}), 
+		__I_TO_FIXED({{ item.physics.maximumVelocity.y }}), 
+		__I_TO_FIXED({{ item.physics.maximumVelocity.z }}),
+	},
 
-			// children
-			NULL,
+	// maximum speed
+	__I_TO_FIXED({{ item.physics.maximumSpeed }})
+};
 
-			// behaviors
-			NULL,
+{% endif -%}
 
-			// extra
-			NULL,
+EntityROMSpec {{ sanitizedSpecName }}EntitySpec =
+{
+	// class allocator
+	__TYPE(Entity),
 
-			// sprites
-			(SpriteSpec**){{ entityName }}Sprites,
+	// children
+	NULL,
 
-			// use z displacement in projection
-			false,
-			
-			// collision shapes
-			(ColliderSpec*)NULL,
+	// behaviors
+	NULL,
 
-			// size
-			// if 0, width and height will be inferred from the first sprite's texture's size
-			{
-				{{ entity.entity.size.x }}, // x
-				{{ entity.entity.size.y }}, // y
-				{{ entity.entity.size.z }}, // z
-			},
+	// extra
+	NULL,
 
-			// gameworld's character's type
-			kType{{ entity.collisions.type }},
+	// sprites
+	(SpriteSpec**){{ sanitizedSpecName }}SpriteSpecs,
 
-			// physical specification
-			(PhysicalProperties*)NULL,
-		},
+	// use z displacement in projection
+	false,
 
-		// pointer to the animation spec for the item
-		{{ entityName }}Animations,
+	// meshes
+	(WireframeSpec**)NULL,
 
-		// initial animation
-		"{{ entity.animations.default }}",
-	}
+	// collision shapes
+	(ColliderSpec*)NULL,
+
+	// size
+	// if 0, width and height will be inferred from the first sprite's texture's size
+	{
+		{{ item.pixelSize.x }}, // x
+		{{ item.pixelSize.y }}, // y
+		{{ item.pixelSize.z }}, // z
+	},
+
+	// gameworld's character's type
+	kType{{ item.collisions.inGameType | sanitizeSpecName }},
+
+	// physical specification
+	(PhysicalProperties*){%- if item.physics.enabled -%} 
+			&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
+		{%- else -%} 
+			NULL
+		{%- endif -%},
 };
