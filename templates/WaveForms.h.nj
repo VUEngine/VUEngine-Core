@@ -1,5 +1,5 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef WAVEFORMS_H_
 #define WAVEFORMS_H_

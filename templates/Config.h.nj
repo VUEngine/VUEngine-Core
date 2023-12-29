@@ -9,7 +9,7 @@
 	{%- set compiler = project.combined.items.Compiler.engine -%}
 {%- endif -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef CONFIG_H_
 #define CONFIG_H_

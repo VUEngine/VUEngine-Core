@@ -1,6 +1,6 @@
 {%- set events = project.combined.items.Events.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef GAME_EVENTS_H_
 #define GAME_EVENTS_H_

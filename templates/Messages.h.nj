@@ -1,6 +1,6 @@
 {%- set messages = project.combined.items.Messages.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef MESSAGES_H_
 #define MESSAGES_H_

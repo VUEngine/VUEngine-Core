@@ -1,7 +1,7 @@
 {%- set debug = project.combined.items.DebugMacros.project -%}
 
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef	DEBUG_CONFIG_H_
 #undef	DEBUG_CONFIG_H_

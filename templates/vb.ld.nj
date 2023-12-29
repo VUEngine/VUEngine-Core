@@ -3,7 +3,7 @@
 {%- else -%}
 	{%- set compiler = project.combined.items.Compiler.engine -%}
 {%- endif -%}
-{% include('templates/partials/fileHeader.ld.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.ld.nj') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */

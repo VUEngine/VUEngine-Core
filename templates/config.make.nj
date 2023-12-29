@@ -3,7 +3,7 @@
 {%- else -%}
 	{%- set compiler = project.combined.items.Compiler.engine -%}
 {%- endif -%}
-{% include('templates/partials/fileHeader.make.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.make.nj') %}
 
 # VUEngine based plugins that the project uses
 PLUGINS 						= {% if project.plugins is defined and project.plugins is iterable %}{{ project.plugins | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}{% endif %}

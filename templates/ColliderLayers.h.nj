@@ -1,6 +1,6 @@
 {%- set layers = project.combined.items.ColliderLayers.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef COLLIDER_LAYERS_H_
 #define COLLIDER_LAYERS_H_

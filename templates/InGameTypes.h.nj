@@ -1,6 +1,6 @@
 {%- set types = project.combined.items.InGameTypes.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef IN_GAME_TYPES_H_
 #define IN_GAME_TYPES_H_
