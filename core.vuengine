@@ -287,6 +287,10 @@
 				},
 				"required": []
 			},
+			"uiSchema": {
+				"type": "SimpleListEditor",
+				"scope": "#/properties/layers"
+			},
 			"icon": "codicon codicon-activate-breakpoints",
 			"templates": [
 				"ColliderLayers.h"
@@ -2606,6 +2610,10 @@
 				},
 				"required": []
 			},
+			"uiSchema": {
+				"type": "SimpleListEditor",
+				"scope": "#/properties/events"
+			},
 			"icon": "fa fa-bullhorn",
 			"templates": [
 				"GameEvents.h"
@@ -2747,6 +2755,10 @@
 				},
 				"required": []
 			},
+			"uiSchema": {
+				"type": "SimpleListEditor",
+				"scope": "#/properties/types"
+			},
 			"icon": "codicon codicon-broadcast",
 			"templates": [
 				"InGameTypes.h"
@@ -2766,6 +2778,10 @@
 					}
 				},
 				"required": []
+			},
+			"uiSchema": {
+				"type": "SimpleListEditor",
+				"scope": "#/properties/messages"
 			},
 			"icon": "fa fa-commenting-o",
 			"templates": [

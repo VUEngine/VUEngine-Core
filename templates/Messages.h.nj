@@ -16,7 +16,7 @@
 {% if messages.messages.length > 0 -%}
 enum Messages
 {
-	{%- for message in messages.messages | sort %}
+	{%- for message in messages.messages | removeEmpty | sort %}
 	kMessage{{ message | sanitizeSpecName }}{% if loop.first %} = kMessageLastEngine + 1{% endif %},
 	{%- endfor %}
 };

@@ -17,7 +17,7 @@
 enum ColliderLayers
 {
 	{%- set current = 0 -%}
-	{%- for layer in layers.layers | sort -%}
+	{%- for layer in layers.layers | removeEmpty | sort -%}
 	{%- set current = current + 1 %}
 	kLayer{{ layer | sanitizeSpecName }} = 1 << (kLayerNone + {{ current }}),
 	{%- endfor %}

@@ -16,7 +16,7 @@
 {% if types.types.length > 0 -%}
 enum InGameTypes
 {
-	{%- for type in types.types | sort %}
+	{%- for type in types.types | removeEmpty | sort %}
 	kType{{ type | sanitizeSpecName }}{% if loop.first %} = kTypeNone + 1{% endif %},
 	{%- endfor %}
 };
