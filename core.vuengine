@@ -2234,10 +2234,10 @@
 							}
 						}
 					},
-					"meshes": {
+					"wireframes": {
 						"type": "object",
 						"properties": {
-							"meshes": {
+							"wireframes": {
 								"type": "array",
 								"items": {
 									"type": "object",
@@ -2245,9 +2245,9 @@
 										"wireframe": {
 											"type": "object",
 											"properties": {
-												"allocator": {
+												"type": {
 													"type": "string",
-													"default": "Mesh"
+													"default": "Sphere"
 												},
 												"displacement": {
 													"type": "object",
@@ -2330,6 +2330,18 @@
 													}
 												}
 											}
+										},
+										"length": {
+											"type": "integer",
+											"default": 0
+										},
+										"radius": {
+											"type": "integer",
+											"default": 0
+										},
+										"drawCenter": {
+											"type": "boolean",
+											"default": true
 										}
 									}
 								}
@@ -2392,44 +2404,76 @@
 								],
 								"default": "Bgmap"
 							},
+							"customClass": {
+								"type": "string",
+								"default": ""
+							},
 							"useZDisplacementInProjection": {
 								"type": "boolean",
 								"default": false
+							},
+							"sharedTiles": {
+								"type": "boolean",
+								"default": false
+							},
+							"optimizedTiles": {
+								"type": "boolean",
+								"default": false
+							},
+							"section": {
+								"type": "string",
+								"oneOf": [
+									{
+										"const": "rom",
+										"title": "ROM Space"
+									},
+									{
+										"const": "exp",
+										"title": "Expansion Space"
+									}
+								],
+								"default": "rom"
+							},
+							"compression": {
+								"type": "string",
+								"oneOf": [
+									{
+										"const": "none",
+										"title": "None"
+									},
+									{
+										"const": "rle",
+										"title": "RLE"
+									}
+								],
+								"default": "none"
 							},
 							"sprites": {
 								"type": "array",
 								"items": {
 									"type": "object",
 									"properties": {
-										"name": {
-											"type": "string",
-											"default": ""
-										},
-										"class": {
-											"type": "string",
-											"default": "BgmapSprite"
-										},
 										"bgmapMode": {
 											"type": "string",
 											"oneOf": [
 												{
-													"const": "BGMAP",
+													"const": "Bgmap",
 													"title": "Bgmap"
 												},
 												{
-													"const": "AFFINE",
+													"const": "Affine",
 													"title": "Affine"
 												},
 												{
-													"const": "OBJECT",
+													"const": "Object",
 													"title": "Object"
 												},
 												{
-													"const": "HBIAS",
+													"const": "HBias",
 													"title": "HBias"
 												}
 											],
-											"default": "BGMAP"
+											"default": "Bgmap"
 										},
 										"displayMode": {
 											"type": "string",
@@ -2457,12 +2501,12 @@
 													"title": "No transparency"
 												},
 												{
-													"const": "Even",
-													"title": "Display only on even frames"
-												},
-												{
 													"const": "Odd",
 													"title": "Display only on odd frames"
+												},
+												{
+													"const": "Even",
+													"title": "Display only on even frames"
 												}
 											],
 											"default": "None"
@@ -2491,52 +2535,11 @@
 										"texture": {
 											"type": "object",
 											"properties": {
-												"charset": {
-													"type": "object",
-													"properties": {
-														"type": {
-															"type": "string",
-															"oneOf": [
-																{
-																	"const": "animatedSingle",
-																	"title": "Animated (Single)"
-																},
-																{
-																	"const": "animatedSingleOptimized",
-																	"title": "Animated (Single Optimized)"
-																},
-																{
-																	"const": "animatedShared",
-																	"title": "Animated (Shared)"
-																},
-																{
-																	"const": "animatedSharedCoordinated",
-																	"title": "Animated (Shared Coordinated)"
-																},
-																{
-																	"const": "animatedMulti",
-																	"title": "Animated (Multi)"
-																},
-																{
-																	"const": "notAnimated",
-																	"title": "Not Animated"
-																}
-															],
-															"default": "notAnimated"
-														}
-													}
-												},
-												"image": {
-													"type": "object",
-													"properties": {
-														"name": {
-															"type": "string",
-															"default": ""
-														},
-														"chars": {
-															"type": "integer",
-															"minimum": 0
-														}
+												"files": {
+													"type": "array",
+													"items": {
+														"type": "string",
+														"default": ""
 													}
 												},
 												"padding": {
@@ -2544,10 +2547,12 @@
 													"properties": {
 														"x": {
 															"type": "integer",
+															"maximum": 255,
 															"minimum": 0
 														},
 														"y": {
 															"type": "integer",
+															"maximum": 255,
 															"minimum": 0
 														}
 													}
@@ -2561,16 +2566,31 @@
 													"type": "boolean",
 													"default": false
 												},
+												"flip": {
+													"type": "object",
+													"properties": {
+														"horizontal": {
+															"type": "boolean",
+															"default": false
+														},
+														"vertical": {
+															"type": "boolean",
+															"default": false
+														}
+													}
+												},
 												"size": {
 													"type": "object",
 													"properties": {
 														"x": {
 															"type": "integer",
-															"minimum": 0
+															"maximum": 64,
+															"minimum": 1
 														},
 														"y": {
 															"type": "integer",
-															"minimum": 0
+															"maximum": 64,
+															"minimum": 1
 														}
 													}
 												}

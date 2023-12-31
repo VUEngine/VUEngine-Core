@@ -26,7 +26,7 @@
     {%- endfor -%}
 {%- endfor -%}
 
-{%- if item.compression !== 'none' -%}
+{%- if item.compression != 'none' -%}
     {%- set compressionResults = compressTiles(tilesData, item.compression, {
         isAnimation: true,
         individualFiles: false,
@@ -50,7 +50,7 @@
 const uint32 {{ sanitizedSpecName }}FontTiles[{{ item.characterCount * item.size.x * item.size.y * 4 + 4 }}] __attribute__((aligned(4)))
 {%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
 {
-    {% if item.compression !== 'none' -%}
+    {% if item.compression != 'none' -%}
         0x00000001,
     {%- else -%}
         0x00000000,
