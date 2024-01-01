@@ -56,14 +56,21 @@
 	{%- set imageData = item.sprites.sprites[imageData - 1]._imageData -%}
 {%- endif -%}
 {%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ imageData._dupeIndex ~ 'CharsetSpec' -%}
+{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 {%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ loop.index -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
 {%- if imageData.tiles is defined and imageData._dupeIndex == loop.index %}
 CharSetROMSpec {{ charsetSpecName }} =
 {
-	// number of chars in function of the number of frames to load at the same time
+	// number of chars in function or the number of frames to load at the same time
+	{%- if item.animations.enabled and imageData.animation.largestFrame is defined %}
+	{{ imageData.animation.largestFrame }},
+	{%- elseif item.animations.enabled and not item.animations.multiframe %}
+	{{ (imageData.tiles.count / item.animations.totalFrames) | round(0, "floor") }},
+	{%- else %}
 	{{ imageData.tiles.count }},
+	{%- endif %}
 
 	// whether it is shared or not
 	{{ item.sprites.sharedTiles }},
@@ -72,11 +79,11 @@ CharSetROMSpec {{ charsetSpecName }} =
 	{{ item.sprites.optimizedTiles }},
 
 	// char spec
-	(uint32*){{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name }}Tiles,
+	(uint32*){{ tilesName }}Tiles,
 
 	// pointer to the frames offsets
 	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets.length %}
-	(uint32*){{ tileName }}TilesFrameOffsets,
+	(uint32*){{ tilesName }}TilesFrameOffsets,
 	{%- else %}
 	NULL,
 	{%- endif %}
@@ -93,16 +100,20 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
 
 	// cols (max 64)
-	{{ imageData.maps[0].width }},
+	{{ imageData.maps[0].width | round(0, "floor") }},
 
 	// rows (max 64)
-	{{ imageData.maps[0].height }},
+	{{ imageData.maps[0].height | round(0, "floor") }},
 
 	// padding for affine/hbias transformations
 	{ {{ sprite.texture.padding.x }}, {{ sprite.texture.padding.y }} },
 
 	// number of frames
+	{%- if item.animations.enabled and item.animations.multiframe %}
+	{{ item.animations.totalFrames }},
+	{%- else %}
 	1,
+	{%- endif %}
 
 	// palette number (0-3)
 	{{ sprite.texture.palette }},

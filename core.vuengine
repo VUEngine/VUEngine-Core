@@ -2053,9 +2053,18 @@
 								"default": false
 							},
 							"default": {
-								"type": "string",
+								"type": "number",
 								"description": "Animation to play as a default when entity is created",
-								"default": "Default"
+								"default": 0
+							},
+							"totalFrames": {
+								"type": "integer",
+								"minimum": 1,
+								"default": 1
+							},
+							"multiframe": {
+								"type": "boolean",
+								"default": false
 							},
 							"animations": {
 								"type": "array",
@@ -2065,7 +2074,7 @@
 										"name": {
 											"type": "string",
 											"description": "Name of this animation",
-											"default": "New"
+											"default": ""
 										},
 										"cycles": {
 											"type": "integer",
@@ -2082,7 +2091,7 @@
 										"loop": {
 											"type": "boolean",
 											"description": "Play this animation in a loop or stop after playing it once?",
-											"default": false
+											"default": true
 										},
 										"frames": {
 											"type": "array",
@@ -2420,11 +2429,11 @@
 							},
 							"sharedTiles": {
 								"type": "boolean",
-								"default": false
+								"default": true
 							},
 							"optimizedTiles": {
 								"type": "boolean",
-								"default": false
+								"default": true
 							},
 							"section": {
 								"type": "string",
