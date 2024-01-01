@@ -2111,7 +2111,7 @@
 							"default": ""
 						}
 					},
-					"collisions": {
+					"colliders": {
 						"type": "object",
 						"properties": {
 							"inGameType": {
@@ -2127,8 +2127,8 @@
 											"type": "string",
 											"oneOf": [
 												{
-													"const": "LineField",
-													"title": "Line Field"
+													"const": "Ball",
+													"title": "Ball"
 												},
 												{
 													"const": "Box",
@@ -2139,11 +2139,11 @@
 													"title": "Inverse Box"
 												},
 												{
-													"const": "Ball",
-													"title": "Ball"
+													"const": "LineField",
+													"title": "Line Field"
 												}
 											],
-											"default": "Box"
+											"default": "Ball"
 										},
 										"pixelSize": {
 											"type": "object",
@@ -2222,12 +2222,18 @@
 											"default": false
 										},
 										"layers": {
-											"type": "string",
-											"default": ""
+											"type": "array",
+											"items": {
+												"type": "string",
+												"default": ""
+											}
 										},
-										"layersToIgnore": {
-											"type": "string",
-											"default": ""
+										"layersToCheck": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"default": ""
+											}
 										}
 									}
 								}

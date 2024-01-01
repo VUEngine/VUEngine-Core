@@ -10,11 +10,16 @@
 
 {#- DETERMINE INCLUDES -#}
 {%- set includes = [spriteClass, 'Entity', 'Texture'] -%}
-{%- if item.collisions.inGameType != 'None' -%}
+{%- if item.colliders.inGameType != 'None' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif %}
 {%- if item.physics.enabled -%}
 	{%- set includes = (includes.push('Body'), includes) -%}
+{%- endif %}
+{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
+	{%- for collider in item.colliders.colliders -%}
+		{%- set includes = (includes.push(collider.type), includes) -%}
+	{%- endfor -%}
 {%- endif %}
 
 {#- CONVERT IMAGES -#}
@@ -275,11 +280,132 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}Animations =
 };
 {% endif %}
 
+{#- PRINT WIREFRAMES -#}
+{%- if item.wireframes.wireframes.length %}
+
+
+{{ macros.sectionHeader('Wireframes') }}
+
+{% set wireframeNames = [] -%}
+{%- for wireframe in item.wireframes.wireframes -%}
+{%- set wireframeName = sanitizedSpecName ~ loop.index -%}
+{%- set wireframeNames = (wireframeNames.push(wireframeName), wireframeNames) -%}
+
+{% if wireframe.wireframe.type == 'Mesh' -%}
+const PixelVector {{ wireframeName }}Segments[][2]=
+{
+	{%- for segment in wireframe.segments %}
+	{
+		{ {{ segment.fromVertex.x }}, {{ segment.fromVertex.y }}, {{ segment.fromVertex.z }}, {{ segment.fromVertex.parallax }} },
+		{ {{ segment.toVertex.x }}, {{ segment.toVertex.y }}, {{ segment.toVertex.z }}, {{ segment.toVertex.parallax }} },
+	},
+	{%- endfor %}
+
+	// limiter
+	{
+		{0, 0, 0, 0}, 
+		{0, 0, 0, 0}
+	},
+};
+
+{% endif -%}
+
+{{ wireframe.wireframe.type }}ROMSpec {{ wireframeName }}WireframeSpec =
+{
+	{
+		// class allocator
+		__TYPE({{ wireframe.wireframe.type }}),
+
+		// displacement
+		{ {{ wireframe.wireframe.displacement.x }}, {{ wireframe.wireframe.displacement.y }}, {{ wireframe.wireframe.displacement.z }}},
+		
+		// color
+		{{ ['__COLOR_BLACK', '__COLOR_DARK_RED', '__COLOR_MEDIUM_RED', '__COLOR_BRIGHT_RED'][wireframe.wireframe.color] }},
+
+		// transparent
+		__TRANSPARENCY_{{ wireframe.wireframe.transparency | upper }},
+
+		// interlaced
+		{{ wireframe.wireframe.interlaced }},
+	},
+
+	{% if wireframe.wireframe.type == 'Sphere' -%}
+	// radius
+	__PIXELS_TO_METERS({{ wireframe.radius }}),
+
+	// draw center
+	{{ wireframe.drawCenter }},
+	{%- elseif wireframe.wireframe.type == 'Mesh' -%}
+	// segments
+	(PixelVector(*)[2]){{ wireframeName }}Segments,
+	{%- elseif wireframe.wireframe.type == 'Asterisk' -%}
+	// length
+	{{ wireframe.length }},
+	{%- endif %}
+};
+
+{% endfor -%}
+
+WireframeROMSpec* const {{ sanitizedSpecName }}WireframeSpecs[] =
+{
+	{% for wireframeName in wireframeNames -%}
+	(WireframeSpec*)&{{ wireframeName }}WireframeSpec,
+	{% endfor -%}
+	NULL
+};
+{% endif %}
+
+{#- PRINT COLLIDERS -#}
+{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
+
+{{ macros.sectionHeader('Colliders') }}
+
+ColliderROMSpecROMSpec {{ sanitizedSpecName }}ColliderSpecs =
+{
+	{% for collider in item.colliders.colliders -%}
+	{
+		// collider
+		__TYPE({{ collider.type }}),
+
+		// size (x, y, z)
+		{ __F_TO_FIX7_9({{ collider.pixelSize.x }}), __F_TO_FIX7_9({{ collider.pixelSize.y }}), __F_TO_FIX7_9({{ collider.pixelSize.z }}) },
+
+		// displacement (x, y, z, p)
+		{ __F_TO_FIX7_9({{ collider.displacement.x }}), __F_TO_FIX7_9({{ collider.displacement.y }}), __F_TO_FIX7_9({{ collider.displacement.z }}), __F_TO_FIX7_9({{ collider.displacement.parallax }}) },
+
+		// rotation (x, y, z)
+		{ __F_TO_FIX7_9({{ collider.rotation.x }}), __F_TO_FIX7_9({{ collider.rotation.y }}), __F_TO_FIX7_9({{ collider.rotation.z }}) },
+
+		// scale (x, y, z)
+		{ __F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }}) },
+
+		// if true this collider checks for collisions against other shapes
+		{{ collider.checkForCollisions }},
+
+		// layers in which I live
+		{%- if collider.layers.length > 0 %}
+		kLayer{{ collider.layers.join(' | kLayer') }},
+		{%- else %}
+		kLayerNone,
+		{%- endif %}
+
+		// layers to ignore when checking for collisions
+		{%- if collider.layersToCheck.length > 0 %}
+		kLayerAll & ~(kLayer{{ collider.layersToCheck.join(' | kLayer') }})
+		{%- else %}
+		kLayerAll,
+		{%- endif %}
+	},
+	{% endfor %}
+	{NULL, {0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0}, {0, 0, 0}, false, kLayerNone, kLayerNone}
+};
+{% endif %}
 
 {{ macros.sectionHeader('Entity') }}
 
 {#- PRINT PHYSICAL PROPERTIES -#}
-{% if item.physics.enabled -%}
+{% if item.physics.enabled %}
+
 PhysicalPropertiesROMSpec {{ sanitizedSpecName }}PhysicalPropertiesSpec =
 {
 	// mass
@@ -324,11 +450,15 @@ EntityROMSpec {{ sanitizedSpecName }}EntitySpec =
 	// use z displacement in projection
 	false,
 
-	// meshes
+	// wireframes
 	(WireframeSpec**)NULL,
 
-	// collision shapes
-	(ColliderSpec*)NULL,
+	// collider shapes
+	{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
+	(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
+	{%- else %}
+	NULL,
+	{%- endif %}
 
 	// size
 	// if 0, width and height will be inferred from the first sprite's texture's size
@@ -339,7 +469,7 @@ EntityROMSpec {{ sanitizedSpecName }}EntitySpec =
 	},
 
 	// gameworld's character's type
-	kType{{ item.collisions.inGameType | sanitizeSpecName }},
+	kType{{ item.colliders.inGameType | sanitizeSpecName }},
 
 	// physical specification
 	(PhysicalProperties*){%- if item.physics.enabled -%} 
