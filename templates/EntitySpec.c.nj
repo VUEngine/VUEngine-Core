@@ -22,92 +22,6 @@
 	{%- endfor -%}
 {%- endif %}
 
-{#- CONVERT IMAGES -#}
-{%- set section = item.sprites.section -%}
-{%- set compression = item.sprites.compression -%}
-{%- set convertedFiles = {} -%}
-{%- if item.sprites.sharedTiles -%}
-	{%- set files = [] -%}
-	{#- keep track of added files to be able to map back maps later -#}
-	{%- set spriteFilesIndex = {} -%}
-	{%- set mapCounter = 0 -%}
-	{%- for sprite in item.sprites.sprites -%}
-		{%- for file in sprite.texture.files -%}
-			{#- there must only be only one file here -#}
-			{%- if spriteFilesIndex[file] is not defined -%}
-				{%- set files = (files.push(file), files) -%}
-				{%- set spriteFilesIndex = spriteFilesIndex | setProperty(file, mapCounter) -%}
-				{%- set mapCounter = mapCounter + 1 -%}
-			{%- endif -%}
-		{%- endfor -%}
-	{%- endfor -%}
-	{%- set conversionSettings = {
-		"animation": {
-			"frames": 0,
-			"individualFiles": false,
-			"isAnimation": false
-		},
-		"files": files,
-		"map": {
-			"compression": compression,
-			"generate": true,
-			"reduce": {
-				"flipped": item.sprites.optimizedTiles,
-				"unique": item.sprites.optimizedTiles
-			}
-		},
-		"name": sanitizedSpecName,
-		"section": section,
-		"tileset": {
-			"compression": compression,
-			"shared": true
-		}
-	} -%}
-	{%- set newImageData = itemUri | convertImage(conversionSettings) -%}
-	{%- set newImageData = newImageData | setProperty('loopIndex', 1) -%}
-	{%- set convertedFiles = {'0': newImageData} -%}
-	{#- map imagedata back to sprites -#}
-	{%- for sprite in item.sprites.sprites -%}
-		{%- set slicedImageData = { animation: newImageData.animation, tiles: newImageData.tiles, maps: [newImageData.maps[spriteFilesIndex[sprite.texture.files[0]]]], loopIndex: newImageData.loopIndex } -%}
-		{%- set sprite = sprite | setProperty('imageData', slicedImageData) -%}
-	{%- endfor -%}
-{%- else -%}
-	{%- for sprite in item.sprites.sprites -%}
-		{#- keep track of already converted files to avoid converting the same image twice -#}
-		{%- set checksum = sprite.texture.files | crc32 -%}
-		{%- if convertedFiles[checksum] is defined -%}
-			{%- set sprite = sprite | setProperty('imageData', convertedFiles[checksum]) -%}
-		{%- else -%}
-			{%- set conversionSettings = {
-				"animation": {
-					"frames": sprite.texture.files.length,
-					"individualFiles": sprite.texture.files.length > 1,
-					"isAnimation": false
-				},
-				"files": sprite.texture.files,
-				"map": {
-					"compression": compression,
-					"generate": true,
-					"reduce": {
-						"flipped": item.sprites.optimizedTiles,
-						"unique": item.sprites.optimizedTiles
-					}
-				},
-				"name": sanitizedSpecName,
-				"section": section,
-				"tileset": {
-					"compression": compression,
-					"shared": false
-				}
-			} -%}
-			{%- set newImageData = itemUri | convertImage(conversionSettings) -%}
-			{%- set newImageData = newImageData | setProperty('loopIndex', loop.index) -%}
-			{%- set convertedFiles = convertedFiles | setProperty(checksum, newImageData) -%}
-			{%- set sprite = sprite | setProperty('imageData', newImageData) -%}
-		{%- endif -%}
-	{%- endfor -%}
-{%- endif -%}
-
 {#- PRINT INCLUDES -#}
 {%- if includes.length %}
 
@@ -119,31 +33,37 @@
 {%- endif %}
 
 {#- PRINT IMAGE DATA AND SPRITES -#}
-{%- set allImageData = convertedFiles | values -%}
-{%- if allImageData.length %}
+{%- if item.sprites.sprites.length %}
 
 {{ macros.sectionHeader('Image Data') }}
-{% for imageData in allImageData -%}
-	{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
-	{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
-	{%- include('templates/partials/image/tiles.c.nj') -%}
-	{%- include('templates/partials/image/maps.c.nj') -%}
-	{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+{% for sprite in item.sprites.sprites -%}
+	{%- if not sprite._imageData | int -%}
+		{%- set imageData = sprite._imageData -%}
+		{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
+		{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+		{%- include('templates/partials/image/tiles.c.nj') -%}
+		{%- include('templates/partials/image/maps.c.nj') -%}
+		{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+	{%- endif -%}
 {% endfor %}
 
 {{ macros.sectionHeader('Sprites') }}
 
 {% set spriteNames = [] -%}
 {%- for sprite in item.sprites.sprites -%}
-{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ sprite.imageData.loopIndex ~ 'CharsetSpec' -%}
+{%- set imageData = sprite._imageData -%}
+{%- if imageData | int -%}
+	{%- set imageData = item.sprites.sprites[imageData - 1]._imageData -%}
+{%- endif -%}
+{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ imageData._dupeIndex ~ 'CharsetSpec' -%}
 {%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ loop.index -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
-{%- if sprite.imageData.loopIndex is defined and sprite.imageData.loopIndex === loop.index %}
+{%- if imageData.tiles is defined and imageData._dupeIndex == loop.index %}
 CharSetROMSpec {{ charsetSpecName }} =
 {
 	// number of chars in function of the number of frames to load at the same time
-	{{ sprite.imageData.tiles.count }},
+	{{ imageData.tiles.count }},
 
 	// whether it is shared or not
 	{{ item.sprites.sharedTiles }},
@@ -152,10 +72,10 @@ CharSetROMSpec {{ charsetSpecName }} =
 	{{ item.sprites.optimizedTiles }},
 
 	// char spec
-	(uint32*){{ sanitizedSpecName ~ 'Entity' ~ sprite.imageData.tiles.name }}Tiles,
+	(uint32*){{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name }}Tiles,
 
 	// pointer to the frames offsets
-	{%- if sprite.imageData.tiles.frameOffsets is defined and sprite.imageData.tiles.frameOffsets.length %}
+	{%- if imageData.tiles.frameOffsets is defined and imageData.tiles.frameOffsets.length %}
 	(uint32*){{ tileName }}TilesFrameOffsets,
 	{%- else %}
 	NULL,
@@ -170,13 +90,13 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	(CharSetSpec*)&{{ charsetSpecName }},
 
 	// bgmap spec
-	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ sprite.imageData.maps[0].name }}Map,
+	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
 
 	// cols (max 64)
-	{{ sprite.imageData.maps[0].width }},
+	{{ imageData.maps[0].width }},
 
 	// rows (max 64)
-	{{ sprite.imageData.maps[0].height }},
+	{{ imageData.maps[0].height }},
 
 	// padding for affine/hbias transformations
 	{ {{ sprite.texture.padding.x }}, {{ sprite.texture.padding.y }} },
