@@ -41,6 +41,9 @@
 		{%- set imageData = sprite._imageData -%}
 		{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 		{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+
+		{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
+		{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
 		{%- include('templates/partials/image/tiles.c.nj') -%}
 		{%- include('templates/partials/image/maps.c.nj') -%}
 		{%- include('templates/partials/image/frameOffsets.c.nj') -%}

@@ -2468,6 +2468,10 @@
 								"items": {
 									"type": "object",
 									"properties": {
+										"_imageData": {
+											"type": "integer",
+											"default": 0
+										},
 										"bgmapMode": {
 											"type": "string",
 											"oneOf": [
