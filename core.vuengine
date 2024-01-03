@@ -2107,17 +2107,27 @@
 						}
 					},
 					"behaviors": {
-						"type": "array",
-						"items": {
-							"type": "string",
-							"default": ""
+						"type": "object",
+						"properties": {
+							"behaviors": {
+								"type": "array",
+								"items": {
+									"type": "string",
+									"default": ""
+								}
+							}
 						}
 					},
-					"childEntities": {
-						"type": "array",
-						"items": {
-							"type": "string",
-							"default": ""
+					"children": {
+						"type": "object",
+						"properties": {
+							"children": {
+								"type": "array",
+								"items": {
+									"type": "string",
+									"default": ""
+								}
+							}
 						}
 					},
 					"colliders": {
