@@ -1,11 +1,12 @@
 # compiler
 COMPILER_VERSION = 4.7
 COMPILER_OUTPUT = c
-COMPILER_NAME = v810
+COMPILER_NAME = clang
+COMPILER_HOME = /home/jorgeche/Documents/work/workspaces/virtualboy/tools/compiler/llvm-v810/bin
 
-GCC = $(COMPILER_NAME)-gcc
-AS = $(COMPILER_NAME)-as
-AR = $(COMPILER_NAME)-ar
-LD = $(COMPILER_NAME)-ld
-OBJCOPY = $(COMPILER_NAME)-objcopy
-OBJDUMP = $(COMPILER_NAME)-objdump
+CC = $(COMPILER_HOME)/clang
+AS = $(COMPILER_HOME)/llvm-mc
+lu = $(COMPILER_HOME)/llvm-ar
+LD = $(COMPILER_HOME)/ld.lld
+OBJCOPY = $(COMPILER_HOME)/llvm-objcopy
+OBJDUMP = $(COMPILER_HOME)/llvm-objdump
