@@ -1,0 +1,121 @@
+{
+	"file": ".font",
+	"schema": {
+		"title": "Font",
+		"properties": {
+			"name": {
+				"type": "string",
+				"default": ""
+			},
+			"offset": {
+				"type": "integer",
+				"default": 0,
+				"minimum": 0,
+				"maximum": 255
+			},
+			"characterCount": {
+				"type": "integer",
+				"default": 256,
+				"minimum": 1,
+				"maximum": 256
+			},
+			"size": {
+				"type": "object",
+				"properties": {
+					"x": {
+						"type": "integer",
+						"default": 1,
+						"minimum": 1,
+						"maximum": 4
+					},
+					"y": {
+						"type": "integer",
+						"default": 1,
+						"minimum": 1,
+						"maximum": 4
+					}
+				}
+			},
+			"variableSize": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean",
+						"default": false
+					},
+					"x": {
+						"type": "array",
+						"items": {
+							"type": "integer",
+							"default": 8,
+							"minimum": 1,
+							"maximum": 32
+						},
+						"default": []
+					},
+					"y": {
+						"type": "integer",
+						"default": 8,
+						"minimum": 1,
+						"maximum": 32
+					}
+				}
+			},
+			"section": {
+				"type": "string",
+				"oneOf": [
+					{
+						"const": "rom",
+						"title": "ROM Space"
+					},
+					{
+						"const": "exp",
+						"title": "Expansion Space"
+					}
+				],
+				"default": "rom"
+			},
+			"compression": {
+				"type": "string",
+				"oneOf": [
+					{
+						"const": "none",
+						"title": "None"
+					},
+					{
+						"const": "rle",
+						"title": "RLE"
+					}
+				],
+				"default": "none"
+			},
+			"characters": {
+				"type": "array",
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "array",
+						"items": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"maximum": 3
+						}
+					}
+				},
+				"default": []
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "FontEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-font",
+	"templates": [
+		"FontsC",
+		"FontsH",
+		"FontSpec"
+	]
+}

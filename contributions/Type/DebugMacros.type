@@ -1,0 +1,40 @@
+{
+	"file": "DebugMacros",
+	"schema": {
+		"title": "Debug Macros",
+		"properties": {
+			"macros": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"default": ""
+						},
+						"value": {
+							"type": "string",
+							"default": ""
+						},
+						"define": {
+							"type": "boolean",
+							"default": false
+						},
+						"dependent": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"default": ""
+							}
+						}
+					}
+				}
+			}
+		},
+		"required": []
+	},
+	"icon": "fa fa-bug",
+	"templates": [
+		"DebugConfig"
+	]
+}

@@ -1,0 +1,52 @@
+{
+	"file": ".pcm",
+	"schema": {
+		"title": "PCM Conversion",
+		"properties": {
+			"name": {
+				"type": "string",
+				"default": ""
+			},
+			"sourceFile": {
+				"type": "string",
+				"default": ""
+			},
+			"range": {
+				"type": "integer",
+				"default": 1,
+				"minimum": 1,
+				"maximum": 5
+			},
+			"loop": {
+				"type": "boolean",
+				"default": false
+			},
+			"section": {
+				"type": "string",
+				"oneOf": [
+					{
+						"const": "rom",
+						"title": "ROM Space"
+					},
+					{
+						"const": "exp",
+						"title": "Expansion Space"
+					}
+				],
+				"default": "rom"
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "PCMEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-music",
+	"templates": [
+		"PCMSpec"
+	],
+	"forFiles": [
+		".wav"
+	]
+}

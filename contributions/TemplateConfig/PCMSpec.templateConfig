@@ -1,0 +1,8 @@
+{
+	"targets": [{
+		"path": "Converted/${_filename}PCMSpec.c",
+		"root": "file"
+	}],
+	"template": "contributions/Template/PCMSpec.c.nj",
+	"itemSpecific": "PCM"
+}

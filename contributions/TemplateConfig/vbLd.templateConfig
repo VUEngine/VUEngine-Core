@@ -1,0 +1,10 @@
+{
+	"targets": [{
+		"path": "lib/compiler/linker/vb_beta.ld",
+		"root": "project"
+	}, {
+		"path": "lib/compiler/linker/vb_release.ld",
+		"root": "project"
+	}],
+	"template": "contributions/Template/vb.ld.nj"
+}

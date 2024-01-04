@@ -1,0 +1,28 @@
+{
+	"file": ".waveform",
+	"schema": {
+		"title": "WaveForm",
+		"properties": {
+			"name": {
+				"type": "string",
+				"default": ""
+			},
+			"values": {
+				"type": "array",
+				"items": {
+					"type": "integer",
+					"maximum": 63,
+					"minimum": 0
+				},
+				"maxItems": 32,
+				"minItems": 32
+			}
+		},
+		"required": []
+	},
+	"icon": "fa fa-bar-chart-o",
+	"templates": [
+		"WaveFormSpec",
+		"WaveForms"
+	]
+}

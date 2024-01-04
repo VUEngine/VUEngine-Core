@@ -1,0 +1,7 @@
+{
+	"targets": [{
+		"path": "headers/GameEvents.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/GameEvents.h.nj"
+}

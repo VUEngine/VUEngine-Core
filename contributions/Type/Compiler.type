@@ -1,0 +1,452 @@
+{
+	"file": "CompilerConfig",
+	"schema": {
+		"title": "Compiler Config",
+		"properties": {
+			"framePointer": {
+				"type": "boolean",
+				"default": false
+			},
+			"optimization": {
+				"type": "string",
+				"oneOf": [
+					{
+						"const": "O0",
+						"title": "O0",
+						"description": "No optimization"
+					},
+					{
+						"const": "O1",
+						"title": "O1",
+						"description": "Optimize minimally"
+					},
+					{
+						"const": "O2",
+						"title": "O2",
+						"description": "Optimize more"
+					},
+					{
+						"const": "O3",
+						"title": "O3",
+						"description": "Optimize even more"
+					},
+					{
+						"const": "Ofast",
+						"title": "Ofast",
+						"description": "Optimize very aggressively"
+					},
+					{
+						"const": "Os",
+						"title": "Os",
+						"description": "Optimize for size"
+					}
+				],
+				"default": "O2"
+			},
+			"output": {
+				"type": "string",
+				"oneOf": [
+					{
+						"const": "c",
+						"title": "C"
+					}
+				],
+				"default": "c"
+			},
+			"prologFunctions": {
+				"type": "boolean",
+				"default": false
+			},
+			"memorySections": {
+				"type": "object",
+				"properties": {
+					"dram": {
+						"type": "object",
+						"properties": {
+							"length": {
+								"type": "integer",
+								"default": -24,
+								"maximum": 0
+							},
+							"origin": {
+								"type": "string",
+								"default": ""
+							}
+						}
+					},
+					"exp": {
+						"type": "object",
+						"properties": {
+							"length": {
+								"type": "integer",
+								"default": 16,
+								"minimum": 0
+							},
+							"origin": {
+								"type": "string",
+								"default": "0x04000000"
+							}
+						}
+					},
+					"rom": {
+						"type": "object",
+						"properties": {
+							"length": {
+								"type": "integer",
+								"default": 16,
+								"minimum": 0
+							},
+							"origin": {
+								"type": "string",
+								"default": "0x07000000"
+							}
+						}
+					},
+					"sram": {
+						"type": "object",
+						"properties": {
+							"length": {
+								"type": "integer",
+								"default": 16,
+								"minimum": 0
+							},
+							"origin": {
+								"type": "string",
+								"default": "0x06000000"
+							}
+						}
+					},
+					"wram": {
+						"type": "object",
+						"properties": {
+							"length": {
+								"type": "integer",
+								"default": 64,
+								"minimum": 0
+							},
+							"origin": {
+								"type": "string",
+								"default": "0x05000000"
+							}
+						}
+					}
+				}
+			},
+			"memoryUsage": {
+				"type": "object",
+				"properties": {
+					"initializedData": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": ".data",
+								"title": ".data"
+							},
+							{
+								"const": ".dram_bss",
+								"title": ".dram_bss"
+							},
+							{
+								"const": ".sbss",
+								"title": ".sbss"
+							},
+							{
+								"const": ".sdata",
+								"title": ".sdata"
+							},
+							{
+								"const": ".sram_bs",
+								"title": ".sram_bs"
+							}
+						],
+						"default": ".sdata"
+					},
+					"memoryPool": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": ".dram_bss",
+								"title": ".dram_bss"
+							},
+							{
+								"const": ".sbss",
+								"title": ".sbss"
+							},
+							{
+								"const": ".sdata",
+								"title": ".sdata"
+							},
+							{
+								"const": ".sram_bs",
+								"title": ".sram_bs"
+							}
+						],
+						"default": ".sdata"
+					},
+					"staticSingletons": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": ".dram_bss",
+								"title": ".dram_bss"
+							},
+							{
+								"const": ".sbss",
+								"title": ".sbss"
+							},
+							{
+								"const": ".sdata",
+								"title": ".sdata"
+							},
+							{
+								"const": ".sram_bs",
+								"title": ".sram_bs"
+							}
+						],
+						"default": ".dram_bss"
+					},
+					"uninitializedData": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": ".dram_bss",
+								"title": ".dram_bss"
+							},
+							{
+								"const": ".sbss",
+								"title": ".sbss"
+							},
+							{
+								"const": ".sdata",
+								"title": ".sdata"
+							},
+							{
+								"const": ".sram_bs",
+								"title": ".sram_bs"
+							}
+						],
+						"default": ".sbss"
+					},
+					"virtualTables": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": ".dram_bss",
+								"title": ".dram_bss"
+							},
+							{
+								"const": ".sbss",
+								"title": ".sbss"
+							},
+							{
+								"const": ".sdata",
+								"title": ".sdata"
+							},
+							{
+								"const": ".sram_bs",
+								"title": ".sram_bs"
+							}
+						],
+						"default": ".dram_bss"
+					}
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "Categorization",
+		"elements": [
+			{
+				"type": "Category",
+				"label": "Compiler Config",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/framePointer",
+								"label": "Frame Pointer"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optimization",
+								"label": "Optimization"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/output",
+								"label": "Output"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/prologFunctions",
+								"label": "Prolog Functions"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Memory Sections",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Group",
+								"label": "DRAM",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/dram/properties/length",
+												"label": "Length"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/dram/properties/origin",
+												"label": "Origin"
+											}
+										]
+									}
+								]
+							},
+							{
+								"type": "Group",
+								"label": "Expansion",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/exp/properties/length",
+												"label": "Length"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/exp/properties/origin",
+												"label": "Origin"
+											}
+										]
+									}
+								]
+							},
+							{
+								"type": "Group",
+								"label": "WRAM",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/wram/properties/length",
+												"label": "Length"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/wram/properties/origin",
+												"label": "Origin"
+											}
+										]
+									}
+								]
+							},
+							{
+								"type": "Group",
+								"label": "SRAM",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/sram/properties/length",
+												"label": "Length"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/sram/properties/origin",
+												"label": "Origin"
+											}
+										]
+									}
+								]
+							},
+							{
+								"type": "Group",
+								"label": "ROM",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/rom/properties/length",
+												"label": "Length"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/memorySections/properties/rom/properties/origin",
+												"label": "Origin"
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Memory Usage",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryUsage/properties/initializedData",
+								"label": "Initialized Data"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryUsage/properties/memoryPool",
+								"label": "Memory Pools"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryUsage/properties/staticSingletons",
+								"label": "Static Singletons"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryUsage/properties/uninitializedData",
+								"label": "Uninitialized Data"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryUsage/properties/virtualTables",
+								"label": "Virtual Tables"
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"icon": "fa fa-cogs",
+	"templates": [
+		"Config",
+		"configMake",
+		"vbLd",
+		"vbToolsLd"
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"targets": [{
+		"path": "headers/ColliderLayers.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/ColliderLayers.h.nj"
+}

@@ -1,0 +1,24 @@
+{
+	"file": "InGameTypes",
+	"schema": {
+		"title": "In-Game Types",
+		"properties": {
+			"types": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "SimpleListEditor",
+		"scope": "#/properties/types"
+	},
+	"icon": "codicon codicon-broadcast",
+	"templates": [
+		"InGameTypes"
+	]
+}

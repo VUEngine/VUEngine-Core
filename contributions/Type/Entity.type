@@ -1,0 +1,623 @@
+{
+	"enabled": false,
+	"file": ".entity",
+	"schema": {
+		"title": "Entity",
+		"properties": {
+			"name": {
+				"type": "string",
+				"default": ""
+			},
+			"extraInfo": {
+				"type": "string",
+				"default": ""
+			},
+			"pixelSize": {
+				"type": "object",
+				"properties": {
+					"x": {
+						"type": "number",
+						"minimum": 0
+					},
+					"y": {
+						"type": "number",
+						"minimum": 0
+					},
+					"z": {
+						"type": "number",
+						"minimum": 0
+					}
+				}
+			},
+			"animations": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean",
+						"default": false
+					},
+					"default": {
+						"type": "number"
+					},
+					"totalFrames": {
+						"type": "integer",
+						"minimum": 1,
+						"default": 1
+					},
+					"multiframe": {
+						"type": "boolean",
+						"default": false
+					},
+					"animations": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string",
+									"default": ""
+								},
+								"cycles": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 255,
+									"default": 8
+								},
+								"callback": {
+									"type": "string",
+									"default": ""
+								},
+								"loop": {
+									"type": "boolean",
+									"default": true
+								},
+								"frames": {
+									"type": "array",
+									"items": {
+										"type": "integer",
+										"minimum": 0
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"behaviors": {
+				"type": "object",
+				"properties": {
+					"behaviors": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"default": ""
+						}
+					}
+				}
+			},
+			"children": {
+				"type": "object",
+				"properties": {
+					"children": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"default": ""
+						}
+					}
+				}
+			},
+			"colliders": {
+				"type": "object",
+				"properties": {
+					"inGameType": {
+						"type": "string",
+						"default": "None"
+					},
+					"colliders": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"oneOf": [
+										{
+											"const": "Ball",
+											"title": "Ball"
+										},
+										{
+											"const": "Box",
+											"title": "Box"
+										},
+										{
+											"const": "InverseBox",
+											"title": "Inverse Box"
+										},
+										{
+											"const": "LineField",
+											"title": "Line Field"
+										}
+									],
+									"default": "Ball"
+								},
+								"pixelSize": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"minimum": 0
+										},
+										"y": {
+											"type": "number",
+											"minimum": 0
+										},
+										"z": {
+											"type": "number",
+											"minimum": 0
+										}
+									}
+								},
+								"displacement": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"minimum": 0
+										},
+										"y": {
+											"type": "number",
+											"minimum": 0
+										},
+										"z": {
+											"type": "number",
+											"minimum": 0
+										},
+										"parallax": {
+											"type": "number",
+											"minimum": 0
+										}
+									}
+								},
+								"rotation": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"minimum": 0
+										},
+										"y": {
+											"type": "number",
+											"minimum": 0
+										},
+										"z": {
+											"type": "number",
+											"minimum": 0
+										}
+									}
+								},
+								"scale": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"minimum": 0
+										},
+										"y": {
+											"type": "number",
+											"minimum": 0
+										},
+										"z": {
+											"type": "number",
+											"minimum": 0
+										}
+									}
+								},
+								"checkForCollisions": {
+									"type": "boolean",
+									"default": false
+								},
+								"layers": {
+									"type": "array",
+									"items": {
+										"type": "string",
+										"default": ""
+									}
+								},
+								"layersToCheck": {
+									"type": "array",
+									"items": {
+										"type": "string",
+										"default": ""
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"wireframes": {
+				"type": "object",
+				"properties": {
+					"wireframes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"wireframe": {
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string",
+											"default": "Sphere"
+										},
+										"displacement": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "number"
+												},
+												"y": {
+													"type": "number"
+												},
+												"z": {
+													"type": "number"
+												}
+											}
+										},
+										"color": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 3,
+											"default": 3
+										},
+										"transparent": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 2,
+											"default": 0
+										},
+										"interlaced": {
+											"type": "boolean",
+											"default": false
+										}
+									}
+								},
+								"segments": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"fromVertex": {
+												"type": "object",
+												"properties": {
+													"x": {
+														"type": "number",
+														"minimum": 0
+													},
+													"y": {
+														"type": "number",
+														"minimum": 0
+													},
+													"z": {
+														"type": "number",
+														"minimum": 0
+													},
+													"parallax": {
+														"type": "number",
+														"minimum": 0
+													}
+												}
+											},
+											"toVertex": {
+												"type": "object",
+												"properties": {
+													"x": {
+														"type": "number",
+														"minimum": 0
+													},
+													"y": {
+														"type": "number",
+														"minimum": 0
+													},
+													"z": {
+														"type": "number",
+														"minimum": 0
+													},
+													"parallax": {
+														"type": "number",
+														"minimum": 0
+													}
+												}
+											}
+										}
+									}
+								},
+								"length": {
+									"type": "integer",
+									"default": 0
+								},
+								"radius": {
+									"type": "integer",
+									"default": 0
+								},
+								"drawCenter": {
+									"type": "boolean",
+									"default": true
+								}
+							}
+						}
+					}
+				},
+				"required": []
+			},
+			"physics": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean",
+						"default": false
+					},
+					"mass": {
+						"type": "number"
+					},
+					"friction": {
+						"type": "number"
+					},
+					"bounciness": {
+						"type": "number"
+					},
+					"maximumVelocity": {
+						"type": "object",
+						"properties": {
+							"x": {
+								"type": "number",
+								"minimum": 0
+							},
+							"y": {
+								"type": "number",
+								"minimum": 0
+							},
+							"z": {
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					},
+					"maximumSpeed": {
+						"type": "number"
+					}
+				}
+			},
+			"sprites": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": "Bgmap",
+								"title": "Bgmap"
+							},
+							{
+								"const": "Object",
+								"title": "Object"
+							}
+						],
+						"default": "Bgmap"
+					},
+					"customClass": {
+						"type": "string",
+						"default": ""
+					},
+					"useZDisplacementInProjection": {
+						"type": "boolean",
+						"default": false
+					},
+					"sharedTiles": {
+						"type": "boolean",
+						"default": true
+					},
+					"optimizedTiles": {
+						"type": "boolean",
+						"default": true
+					},
+					"section": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": "rom",
+								"title": "ROM Space"
+							},
+							{
+								"const": "exp",
+								"title": "Expansion Space"
+							}
+						],
+						"default": "rom"
+					},
+					"compression": {
+						"type": "string",
+						"oneOf": [
+							{
+								"const": "none",
+								"title": "None"
+							},
+							{
+								"const": "rle",
+								"title": "RLE"
+							}
+						],
+						"default": "none"
+					},
+					"sprites": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"_imageData": {
+									"type": "integer",
+									"default": 0
+								},
+								"bgmapMode": {
+									"type": "string",
+									"oneOf": [
+										{
+											"const": "Bgmap",
+											"title": "Bgmap"
+										},
+										{
+											"const": "Affine",
+											"title": "Affine"
+										},
+										{
+											"const": "Object",
+											"title": "Object"
+										},
+										{
+											"const": "HBias",
+											"title": "HBias"
+										}
+									],
+									"default": "Bgmap"
+								},
+								"displayMode": {
+									"type": "string",
+									"oneOf": [
+										{
+											"const": "Both",
+											"title": "Display on both eyes"
+										},
+										{
+											"const": "Left",
+											"title": "Display on left eye only"
+										},
+										{
+											"const": "Right",
+											"title": "Display on right eye only"
+										}
+									],
+									"default": "Both"
+								},
+								"transparency": {
+									"type": "string",
+									"oneOf": [
+										{
+											"const": "None",
+											"title": "No transparency"
+										},
+										{
+											"const": "Odd",
+											"title": "Display only on odd frames"
+										},
+										{
+											"const": "Even",
+											"title": "Display only on even frames"
+										}
+									],
+									"default": "None"
+								},
+								"displacement": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										},
+										"parallax": {
+											"type": "number"
+										}
+									}
+								},
+								"manipulationFunction": {
+									"type": "string",
+									"default": ""
+								},
+								"texture": {
+									"type": "object",
+									"properties": {
+										"files": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"default": ""
+											}
+										},
+										"padding": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												},
+												"y": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												}
+											}
+										},
+										"palette": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 3
+										},
+										"recycleable": {
+											"type": "boolean",
+											"default": false
+										},
+										"flip": {
+											"type": "object",
+											"properties": {
+												"horizontal": {
+													"type": "boolean",
+													"default": false
+												},
+												"vertical": {
+													"type": "boolean",
+													"default": false
+												}
+											}
+										},
+										"size": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "integer",
+													"maximum": 64,
+													"minimum": 1
+												},
+												"y": {
+													"type": "integer",
+													"maximum": 64,
+													"minimum": 1
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"required": [
+			"name"
+		]
+	},
+	"uiSchema": {
+		"type": "EntityEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-id-card-o",
+	"templates": [
+		"EntitySpec"
+	]
+}

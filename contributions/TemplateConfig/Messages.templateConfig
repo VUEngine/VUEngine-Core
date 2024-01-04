@@ -1,0 +1,7 @@
+{
+	"targets": [{
+		"path": "headers/Messages.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/Messages.h.nj"
+}

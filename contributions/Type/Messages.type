@@ -1,0 +1,24 @@
+{
+	"file": "Messages",
+	"schema": {
+		"title": "Messages",
+		"properties": {
+			"messages": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "SimpleListEditor",
+		"scope": "#/properties/messages"
+	},
+	"icon": "fa fa-commenting-o",
+	"templates": [
+		"Messages"
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"targets": [{
+		"path": "headers/InGameTypes.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/InGameTypes.h.nj"
+}

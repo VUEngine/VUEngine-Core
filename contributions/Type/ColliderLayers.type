@@ -1,0 +1,24 @@
+{
+	"file": "ColliderLayers",
+	"schema": {
+		"title": "Collider Layers",
+		"properties": {
+			"layers": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "SimpleListEditor",
+		"scope": "#/properties/layers"
+	},
+	"icon": "codicon codicon-activate-breakpoints",
+	"templates": [
+		"ColliderLayers"
+	]
+}
