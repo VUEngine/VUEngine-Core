@@ -386,6 +386,18 @@
 					},
 					"maximumSpeed": {
 						"type": "number"
+					},
+					"gravityAxes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"rotationAxes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
 					}
 				}
 			},

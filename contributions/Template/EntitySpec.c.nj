@@ -8,7 +8,9 @@
 {%- endif -%}
 
 {#- DETERMINE ENTITY CLASS -#}
-{%- if item.animations.enabled -%}
+{%- if item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
+	{%- set entityClass = 'Actor' -%}
+{%- elseif item.animations.enabled -%}
 	{%- set entityClass = 'AnimatedEntity' -%}
 {%- else %}
 	{%- set entityClass = 'Entity' -%}
@@ -418,82 +420,105 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 {# PRINT ENTITY SPEC -#}
 {{ entityClass }}ROMSpec {{ sanitizedSpecName }}EntitySpec =
 {
-{%- if item.animations.enabled -%}
+	{%- if entityClass == 'Actor' %}
 	{
+	{%- endif %}
+		{%- if entityClass == 'Actor' or entityClass == 'AnimatedEntity' %}
 		{
-{%- endif %}
-		// class allocator
-		__TYPE({{ entityClass }}),
-
-		// children
-		{%- if item.children.children.length %}
-		(struct PositionedEntity*){{ sanitizedSpecName }}Children,
-		{%- else %}
-		NULL,
 		{%- endif %}
+			// class allocator
+			__TYPE({{ entityClass }}),
 
-		// behaviors
-		{%- if item.behaviors.behaviors.length %}
-		(BehaviorSpec**){{ sanitizedSpecName }}Behaviors,
-		{%- else %}
-		NULL,
-		{%- endif %}
+			// children
+			{%- if item.children.children.length %}
+			(struct PositionedEntity*){{ sanitizedSpecName }}Children,
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// extra
-		{%- if item.extraInfo != '' %}
-		(void*)"{{ item.extraInfo }}",
-		{%- else %}
-		NULL,
-		{%- endif %}
+			// behaviors
+			{%- if item.behaviors.behaviors.length %}
+			(BehaviorSpec**){{ sanitizedSpecName }}Behaviors,
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// sprites
-		{%- if item.sprites.sprites.length %}
-		(SpriteSpec**){{ sanitizedSpecName }}SpriteSpecs,
-		{%- else %}
-		NULL,
-		{%- endif %}
+			// extra
+			{%- if item.extraInfo != '' %}
+			(void*)"{{ item.extraInfo }}",
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// use z displacement in projection
-		{{ item.sprites.useZDisplacementInProjection }},
+			// sprites
+			{%- if item.sprites.sprites.length %}
+			(SpriteSpec**){{ sanitizedSpecName }}SpriteSpecs,
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// wireframes
-		{%- if item.wireframes.wireframes.length %}
-		(WireframeSpec**){{ sanitizedSpecName }}WireframeSpecs[],
-		{%- else %}
-		NULL,
-		{%- endif %}
+			// use z displacement in projection
+			{{ item.sprites.useZDisplacementInProjection }},
 
-		// collider shapes
-		{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
-		(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
-		{%- else %}
-		NULL,
-		{%- endif %}
+			// wireframes
+			{%- if item.wireframes.wireframes.length %}
+			(WireframeSpec**){{ sanitizedSpecName }}WireframeSpecs[],
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// size
-		// if 0, width and height will be inferred from the first sprite's texture's size
-		{ {{ item.pixelSize.x }}, {{ item.pixelSize.y }}, {{ item.pixelSize.z }} },
+			// collider shapes
+			{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
+			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
+			{%- else %}
+			NULL,
+			{%- endif %}
 
-		// gameworld's character's type
-		kType{{ item.colliders.inGameType | sanitizeSpecName }},
+			// size
+			// if 0, width and height will be inferred from the first sprite's texture's size
+			{ {{ item.pixelSize.x }}, {{ item.pixelSize.y }}, {{ item.pixelSize.z }} },
 
-		// physical specification
-		(PhysicalProperties*){%- if item.physics.enabled -%} 
-		&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
+			// gameworld's character's type
+			kType{{ item.colliders.inGameType | sanitizeSpecName }},
+
+			// physical specification
+			(PhysicalProperties*){%- if item.physics.enabled -%} 
+			&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
+			{%- else -%} 
+			NULL
+			{%- endif -%},
+		{%- if entityClass == 'Actor' or entityClass == 'AnimatedEntity' %}
+		},
+
+		// pointer to the animation spec for the character
+		(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
+
+		// initial animation
+		"{%- if item.animations.animations[item.animations.default].name != '' -%}
+			{{ item.animations.animations[item.animations.default].name | sanitizeSpecName }}
 		{%- else -%} 
-		NULL
-		{%- endif -%},
-{%- if item.animations.enabled -%}
+			Animation{{ item.animations.default + 1 }}
+		{%- endif -%}",
+		{%- endif -%}
+
+	{%- if entityClass == 'Actor' %}
 	},
 
-	// pointer to the animation spec for the character
-	(const AnimationFunction**)&{{ sanitizedSpecName }}AnimationSpecs,
+	// true to create a body
+	{{ item.physics.enabled }},
 
-	// initial animation
-	"{%- if item.animations.animations[item.animations.default].name != '' -%}
-		{{ item.animations.animations[item.animations.default].name | sanitizeSpecName }}
-	{%- else -%} 
-		Animation{{ item.animations.default + 1 }}
-	{%- endif -%}"
-{%- endif %}
+	// axis subject to gravity
+	{%- if item.physics.gravityAxes is defined and item.physics.gravityAxes is iterable and item.physics.gravityAxes.length %}
+	__{{ item.physics.gravityAxes.join(', __') }}
+	{%- else %} 
+	__NO_AXIS,
+	{%- endif %}
+
+	// axis around which to rotate the entity when syncronizing with body
+	{%- if item.physics.rotationAxes is defined and item.physics.rotationAxes is iterable and item.physics.rotationAxes.length %}
+	__{{ item.physics.rotationAxes.join(' | __') }}
+	{%- else %} 
+	__NO_AXIS,
+	{%- endif %}
+	{%- endif %}
 };
