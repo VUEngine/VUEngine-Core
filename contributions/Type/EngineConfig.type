@@ -155,17 +155,7 @@
 						"default": false
 					},
 					"frameCycle": {
-						"type": "integer",
-						"oneOf": [
-							{
-								"const": 0,
-								"title": "50 FPS"
-							},
-							{
-								"const": 1,
-								"title": "25 FPS"
-							}
-						]
+						"type": "integer"
 					},
 					"runDelayedMessagesAtHalfFrameRate": {
 						"type": "boolean",
