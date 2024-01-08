@@ -67,7 +67,6 @@ void SoundTestState::enter(void* owner __attribute__ ((unused)))
 
 	this->stream = false;
 	this->transform = false;
-	this->synchronizeGraphics = false;
 	this->updatePhysics = false;
 	this->processCollisions = false;
 }

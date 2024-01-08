@@ -144,7 +144,6 @@ class ParticleSystem : Entity
 
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void synchronizeGraphics();
 	override void resume();
 	override void suspend();
 	override void show();

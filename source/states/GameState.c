@@ -63,7 +63,6 @@ void GameState::constructor()
 
 	this->stream = true;
 	this->transform = true;
-	this->synchronizeGraphics = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
 }
@@ -144,7 +143,6 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 {
 	this->stream = true;
 	this->transform = true;
-	this->synchronizeGraphics = true;
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
@@ -340,9 +338,6 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		// Transformation everything
 		GameState::transform(this);
 
-		// Force graphics to get ready
-		GameState::synchronizeGraphics(this);
-
 		// Stream in and out all relevant entities
 		bool streamingComplete = !stageStreamMethod(this->stage);
 
@@ -425,22 +420,6 @@ void GameState::initialTransform()
 }
 
 /**
- * Start a cycle on the Stage that coordinates the entities with their sprites
- */
-void GameState::synchronizeGraphics()
-{
-	if(!this->synchronizeGraphics)
-	{
-		return;
-	}
-
-	NM_ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
-
-	// then transformation loaded entities
-	Stage::synchronizeGraphics(this->stage);
-}
-
-/**
  * Start a physics simulation cycle on the Stage
  */
 void GameState::updatePhysics()
@@ -513,9 +492,6 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 
 	// transformation everything
 	GameState::initialTransform(this);
-
-	// set up visual representation
-	GameState::synchronizeGraphics(this);
 
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);

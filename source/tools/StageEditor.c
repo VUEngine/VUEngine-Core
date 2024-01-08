@@ -636,7 +636,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 	StageEditor::printProjectionValues(this);
 	GameState::transform(this->gameState);
-	GameState::synchronizeGraphics(this->gameState);
 }
 
 /**
@@ -764,7 +763,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		Container::invalidateGlobalPosition(container);
 
 		GameState::transform(this->gameState);
-		GameState::synchronizeGraphics(this->gameState);
 
 		StageEditor::positionCollider(this);
 
@@ -971,7 +969,6 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
 	Camera::translate(Camera::getInstance(), translation, true);
 	GameState::transform(this->gameState);
-	GameState::synchronizeGraphics(this->gameState);
 	StageEditor::printCameraPosition(this);
 	Stage::streamAll(GameState::getStage(this->gameState));
 }

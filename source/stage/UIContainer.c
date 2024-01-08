@@ -87,14 +87,3 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 
 	return NULL;
 }
-
-void UIContainer::synchronizeGraphics()
-{
-	NM_ASSERT(_camera, "UIContainer::transform: null camera");
-
-	Camera::startUIGraphicsSynchronization(_camera);
-
-	Base::synchronizeGraphics(this);
-
-	Camera::stopUIGraphicsSynchronization(_camera);
-}

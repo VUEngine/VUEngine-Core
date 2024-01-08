@@ -629,35 +629,6 @@ void ParticleSystem::transformParticles()
 	}
 }
 
-void ParticleSystem::synchronizeGraphics()
-{
-	ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
-
-	if(ParticleSystem::isPaused(this) || isDeleted(this->particles))
-	{
-		return;
-	}
-
-	if(NULL != this->children || !this->dontStreamOut)
-	{
-		Base::synchronizeGraphics(this);
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(particle), "ParticleSystem::synchronizeGraphics: deleted particle");
-
-		if(particle->expired)
-		{
-			continue;
-		}
-
-		Particle::synchronizeGraphics(particle);
-	}
-}
-
 /**
  * Handles incoming messages
  *

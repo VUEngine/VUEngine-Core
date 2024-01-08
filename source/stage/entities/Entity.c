@@ -69,7 +69,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	Base::constructor(name);
 
 	this->transform = Entity::overrides(this, transform);
-	this->synchronizeGraphics = Entity::overrides(this, synchronizeGraphics);
 
 	// set the ids
 	this->internalId = internalId;
@@ -331,7 +330,6 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 	{
 		VirtualList::pushBack(this->sprites, sprite);
 
-		this->synchronizeGraphics = true;
 		this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	}
 
@@ -463,7 +461,6 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
 	if(!isDeleted(wireframe))
 	{
 		VirtualList::pushBack(this->wireframes, wireframe);
-		this->synchronizeGraphics = true;
 	}
 
 	return wireframe;
@@ -1447,26 +1444,6 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	}
 	
 	this->invalidateGraphics |= invalidateGraphics;
-}
-
-/**
- * Update visual representation
- */
-void Entity::synchronizeGraphics()
-{
-#ifndef __RELEASE	
-	if(!this->transformed)
-	{
-		return;
-	}
-#endif
-
-	if(NULL != this->children)
-	{
-		Base::synchronizeGraphics(this);
-	}
-
-	this->invalidateGraphics = false;
 
 	this->inCameraRange = this->dontStreamOut;
 
@@ -1829,12 +1806,7 @@ void Entity::resume()
 	{
 		// Force syncronization even if hidden
 		this->hidden = false;
-		Entity::synchronizeGraphics(this);
 		Entity::hide(this);
-	}
-	else
-	{
-		Entity::synchronizeGraphics(this);
 	}
 }
 

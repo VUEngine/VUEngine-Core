@@ -647,28 +647,6 @@ void VUEngine::updateSound()
 #endif
 }
 
-// update game's rendering subsystem
-void VUEngine::synchronizeGraphics(GameState gameState)
-{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_GRAPHICS;
-#endif
-
-#ifdef __TOOLS
-	if(VUEngine::isInSoundTest(this))
-	{
-		return;
-	}
-#endif
-
-	// apply transformations to graphics
-	GameState::synchronizeGraphics(gameState);
-
-#ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_GRAPHICS);
-#endif
-}
-
 // update game's physics subsystem
 void VUEngine::updatePhysics(GameState gameState)
 {
@@ -884,9 +862,6 @@ GameState VUEngine::run(GameState currentGameState)
 
 	// focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
-
-	// Synchronize 2D graphics
-	VUEngine::synchronizeGraphics(this, currentGameState);
 
 	// dispatch delayed messages
 	VUEngine::dispatchDelayedMessages(this);

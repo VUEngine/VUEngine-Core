@@ -166,32 +166,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 }
 
 /**
- * Update Visual Representation
- *
- * @param updateSpritePosition
- */
-void Particle::synchronizeGraphics()
-{
-	if(isDeleted(this->sprite))
-	{
-		return;
-	}
-
-	if(this->position.z != this->previousZ)
-	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this->sprite, this->position.z);
-
-		this->previousZ = this->position.z;
-	}
-
-	PixelVector position = Vector3D::transformToPixelVector(this->position);
-
-	// update sprite's 2D position
-	Sprite::setPosition(this->sprite, &position);
-}
-
-/**
  * Add force
  *
  * @param force
@@ -316,7 +290,25 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
  * Transform
  */
 void Particle::transform()
-{}
+{
+	if(isDeleted(this->sprite))
+	{
+		return;
+	}
+
+	if(this->position.z != this->previousZ)
+	{
+		// calculate sprite's parallax
+		Sprite::calculateParallax(this->sprite, this->position.z);
+
+		this->previousZ = this->position.z;
+	}
+
+	PixelVector position = Vector3D::transformToPixelVector(this->position);
+
+	// update sprite's 2D position
+	Sprite::setPosition(this->sprite, &position);	
+}
 
 /**
  * Resume

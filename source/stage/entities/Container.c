@@ -47,7 +47,6 @@ void Container::constructor(const char* const name)
 	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
-	this->synchronizeGraphics = Container::overrides(this, synchronizeGraphics);
 
 	this->transformed = false;
 
@@ -158,7 +157,6 @@ void Container::deleteMyself()
 
 	this->update = false;
 	this->transform = false;
-	this->synchronizeGraphics = false;
 
 	if(!isDeleted(this->parent))
 	{
@@ -255,7 +253,6 @@ void Container::addChild(Container child)
 
 		Container::invalidateGlobalTransformation(child);
 
-		this->synchronizeGraphics = this->synchronizeGraphics || Container::overrides(child, synchronizeGraphics);
 		this->update = this->update || Container::overrides(child, update);
 		this->transform = this->transform || Container::overrides(child, transform);
 	}
@@ -729,32 +726,6 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			}
 
 			Container::transform(child, &this->transformation, invalidateTransformationFlag);
-		}
-	}
-}
-
-void Container::synchronizeGraphics()
-{
-	Container::synchronizeChildrenGraphics(this);
-}
-
-void Container::synchronizeChildrenGraphics()
-{
-	// if I have children
-	if(NULL != this->children)
-	{
-		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			bool skip = (!child->invalidateGraphics && NULL == child->children) || child->deleteMe || !child->synchronizeGraphics || child->hidden || !child->transformed;
-
-			if(skip)
-			{
-				continue;
-			}
-
-			Container::synchronizeGraphics(child);
 		}
 	}
 }

@@ -252,7 +252,6 @@ class Stage : Container
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void suspend();
 	override void resume();
-	override void synchronizeGraphics();
 	override void removeChild(Container child, bool deleteChild);
 	override bool handlePropagatedMessage(int32 message);
 	override bool handlePropagatedString(const char* string);

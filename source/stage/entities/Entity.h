@@ -192,7 +192,6 @@ class Entity : Container
 	override void initialTransform(const Transformation* environmentTransform);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setTransparent(uint8 transparent);
-	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
 	override const Size* getSize();
 	override fixed_t getWidth();
