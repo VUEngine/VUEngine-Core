@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Box::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void Box::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	Base::constructor(owner, shapeSpec);
+	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderBoxIndex;
 
@@ -256,6 +256,8 @@ void Box::computeRightBox()
 		}
 	}
 
+	Vector3D displacement = Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement);
+
 	// box's center if placed on P(0, 0, 0)
 	this->rightBox.x1 = surroundingBoxSize.x >> 1;
 	this->rightBox.y1 = surroundingBoxSize.y >> 1;
@@ -265,6 +267,14 @@ void Box::computeRightBox()
 	this->rightBox.y0 = -this->rightBox.y1;
 	this->rightBox.z0 = -this->rightBox.z1;
 
+	this->rightBox.x0 += displacement.x;
+	this->rightBox.y0 += displacement.y;
+	this->rightBox.z0 += displacement.z;
+
+	this->rightBox.x1 += displacement.x;
+	this->rightBox.y1 += displacement.y;
+	this->rightBox.z1 += displacement.z;
+	
 	if(NULL != this->normals)
 	{
 		Box::projectOntoItself(this);

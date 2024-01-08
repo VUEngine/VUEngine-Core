@@ -178,7 +178,6 @@ abstract class Sprite : Component
 	virtual void setScale(const Scale* scale);
 	virtual void registerWithManager() = 0;
 	virtual void unregisterWithManager() = 0;
-	virtual void rewrite();
 	virtual void hideForDebug();
 	virtual void forceShow();
 	virtual Scale getScale();

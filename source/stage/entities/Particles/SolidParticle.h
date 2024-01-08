@@ -95,7 +95,7 @@ class SolidParticle : PhysicalParticle
 	override void setPosition(const Vector3D* position);
 	override uint32 getInGameType();
 	override const Vector3D* getVelocity();
-	override void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
+	override void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
 	override void reset();
 }
 

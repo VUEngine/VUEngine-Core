@@ -40,17 +40,17 @@ class SpatialObject : ListenerObject
 	virtual void setRotation(const Rotation* rotation);
 	virtual const Scale* getScale();
 	virtual void setScale(const Scale* scale);
-	virtual const Size* getSize();
+	virtual const Vector3D* getDirection();
 	virtual void setDirection(const Vector3D* direction);
+	virtual const Size* getSize();
 	virtual fixed_t getBounciness();
 	virtual fixed_t getFrictionCoefficient();
 	virtual const Vector3D* getVelocity();
-	virtual const Vector3D* getDirection();
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
-	virtual void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
-	virtual void otherColliderOwnerDestroyed(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void otherColliderOwnerDestroyed(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
 	virtual uint32 getInGameType();
 }
 

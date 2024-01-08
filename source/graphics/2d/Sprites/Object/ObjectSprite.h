@@ -89,7 +89,6 @@ class ObjectSprite : Sprite
 	override void unregisterWithManager();
 	override int16 doRender(int16 index, bool evenFrame);
 	override void setRotation(const Rotation* rotation);
-	override void rewrite();
 	override int32 getTotalPixels();
 }
 

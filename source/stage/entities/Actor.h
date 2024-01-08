@@ -91,8 +91,8 @@ class Actor : AnimatedEntity
 	override const Vector3D* getVelocity();
 	override const Vector3D* getDirection();
 	override fixed_t getSpeed();
-	override void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
-	override void otherColliderOwnerDestroyed(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
+	override void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
+	override void otherColliderOwnerDestroyed(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 	override void destroyComponents();

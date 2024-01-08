@@ -58,8 +58,8 @@ typedef struct EntitySpec
 	/// wireframees
 	WireframeSpec** wireframeSpecs;
 
-	/// collision shapes
-	ColliderSpec* shapeSpecs;
+	/// collision colliders
+	ColliderSpec* colliderSpecs;
 
 	/// pixelSize
 	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
@@ -120,7 +120,7 @@ class Entity : Container
 	// components list
 	VirtualList sprites;
 	// Colliders for collision detection
-	VirtualList shapes;
+	VirtualList colliders;
 	// wireframes
 	VirtualList wireframes;
 	// Entity's spec
@@ -147,8 +147,8 @@ class Entity : Container
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
 	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
-	Collider addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager);
-	void addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders);
+	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
+	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
 	void destroySprites();
 	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);

@@ -31,9 +31,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void LineField::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	Base::constructor(owner, shapeSpec);
+	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderLineFieldIndex;
 
@@ -217,8 +217,8 @@ void LineField::configureWireframe()
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 {
-	vertexes[0] = this->a;
-	vertexes[1] = this->b;
+	vertexes[0] = Vector3D::sum(this->a, *this->position);
+	vertexes[1] = Vector3D::sum(this->b, *this->position);
 }
 
 Vector3D LineField::getNormal()

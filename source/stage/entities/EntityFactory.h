@@ -52,7 +52,7 @@ typedef struct PositionedEntityDescription
 	int16 internalId;
 	bool spritesCreated;
 	bool wireframesCreated;
-	bool shapesCreated;
+	bool collidersCreated;
 	bool behaviorsCreated;
 	bool transformed;
 	bool graphicsSynchronized;

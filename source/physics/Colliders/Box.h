@@ -44,7 +44,7 @@ class Box : Collider
 	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();

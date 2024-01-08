@@ -190,7 +190,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 		// Save the camera position for resume reconfiguration
 		this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
-		// Make sure collision shapes are not drawn while suspended
+		// Make sure collision colliders are not drawn while suspended
 		if(this->collisionManager)
 		{
 			CollisionManager::hideColliders(this->collisionManager);

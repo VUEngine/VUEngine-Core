@@ -31,9 +31,9 @@ friend class Box;
  *
  * @param owner
  */
-void InverseBox::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	Base::constructor(owner, shapeSpec);
+	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderInverseBoxIndex;
 }

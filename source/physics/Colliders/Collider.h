@@ -102,7 +102,7 @@ typedef struct CollisionData
 {
 	CollisionResult result;
 	CollisionInformation collisionInformation;
-	Collider shapeNotCollidingAnymore;
+	Collider colliderNotCollidingAnymore;
 	bool isImpenetrableOtherCollider;
 
 } CollisionData;
@@ -141,7 +141,7 @@ typedef struct ColliderSpec
 	/// scale modifier
 	Scale scale;
 
-	/// if true this collider checks for collisions against other shapes
+	/// if true this collider checks for collisions against other colliders
 	bool checkForCollisions;
 
 	/// layers in which I live
@@ -188,7 +188,7 @@ enum ColliderClassIndexes
 /// @ingroup physics
 abstract class Collider : Component
 {
-	// colliding shapes list
+	// colliding colliders list
 	VirtualList otherColliders;
 	// layers on which this collider live
 	uint32 layers;
@@ -200,9 +200,9 @@ abstract class Collider : Component
 	uint8 ready;
 	// flag to know if collider is reacting to collisions
 	uint8 enabled;
-	// flag to check against other shapes
+	// flag to check against other colliders
 	uint8 checkForCollisions;
-	// flag to allow registration of colliding shapes
+	// flag to allow registration of colliding colliders
 	bool registerCollisions;
 	// flag to destroy it
 	bool destroyMe;
@@ -210,7 +210,7 @@ abstract class Collider : Component
 	uint8 classIndex;
 
 	/// @publicsection
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);
 	void exitCollision(CollisionData* collisionData);

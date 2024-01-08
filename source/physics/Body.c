@@ -463,15 +463,18 @@ void Body::update(uint16 cycle)
 		movementResult = Body::updateMovement(this, cycle);
 	}
 
-	SpatialObject::setPosition(this->owner, &this->position);
-	SpatialObject::setDirection(this->owner, &this->direction);
+	if(!isDeleted(this->owner))
+	{
+		SpatialObject::setPosition(this->owner, &this->position);
+		SpatialObject::setDirection(this->owner, &this->direction);
+	}
 
 	// if stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{
 		Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(0 != movementResult.axisStoppedMovement && this->sendMessages)
+		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
 		}
@@ -1175,7 +1178,7 @@ void Body::awake(uint16 axisOfAwakening)
 			dispatchMessage |= (__Z_AXIS & axisOfAwakening);
 		}
 
-		if(dispatchMessage)
+		if(!isDeleted(this->owner) && dispatchMessage)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
 		}
@@ -1346,7 +1349,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(__NO_AXIS != axisOfStopping && this->sendMessages)
+		if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}

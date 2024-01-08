@@ -212,7 +212,7 @@ void Actor::update()
 	}
 
 //	Body::print(this->body, 1, 0);
-//	Collider::print(VirtualList::front(this->shapes), 1, 20);
+//	Collider::print(VirtualList::front(this->colliders), 1, 20);
 //	Printing::resetCoordinates(Printing::getInstance());
 }
 
@@ -316,9 +316,9 @@ bool Actor::canMoveTowards(Vector3D direction)
 
 	bool canMove = true;
 
-	if(this->shapes)
+	if(this->colliders)
 	{
-		VirtualNode node = this->shapes->head;
+		VirtualNode node = this->colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{
@@ -339,9 +339,9 @@ fixed_t Actor::getSurroundingFrictionCoefficient()
 {
 	fixed_t totalFrictionCoefficient = 0;
 
-	if(!isDeleted(this->shapes))
+	if(!isDeleted(this->colliders))
 	{
-		VirtualNode node = this->shapes->head;
+		VirtualNode node = this->colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{
@@ -423,7 +423,7 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->allowCollisions && NULL != this->shapes)
+					if(this->allowCollisions && NULL != this->colliders)
 					{
 						Actor::activeCollisionChecks(this, true);
 						return true;
@@ -433,7 +433,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 				case kMessageBodyStopped:
 
-					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->shapes)
+					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->colliders)
 					{
 						Actor::activeCollisionChecks(this, false);
 					}
@@ -587,7 +587,7 @@ fixed_t Actor::getMaximumSpeed()
 	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
-void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
+void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -598,11 +598,11 @@ void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider 
 
 	if(isColliderImpenetrable)
 	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
 	}
 }
 
-void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
+void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -613,7 +613,7 @@ void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused
 
 	if(isColliderImpenetrable)
 	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
 	}
 }
 

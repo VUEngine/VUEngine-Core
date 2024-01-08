@@ -282,7 +282,7 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
@@ -346,7 +346,7 @@ void WireframeManager::draw()
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);

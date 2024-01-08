@@ -601,19 +601,6 @@ uint16 Sprite::getEffectiveHeight()
 }
 
 /**
- * Reload the sprite in BGMap memory
- */
-void Sprite::rewrite()
-{
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	Texture::rewrite(this->texture);
-}
-
-/**
  * Get half width
  *
  * @return

@@ -33,9 +33,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Ball::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void Ball::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	Base::constructor(owner, shapeSpec);
+	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderBallIndex;
 	this->radius = 0;

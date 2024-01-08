@@ -147,7 +147,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->graphicsSynchronized = false;
 	positionedEntityDescription->spritesCreated = false;
 	positionedEntityDescription->wireframesCreated = false;
-	positionedEntityDescription->shapesCreated = false;
+	positionedEntityDescription->collidersCreated = false;
 	positionedEntityDescription->behaviorsCreated = false;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
@@ -239,10 +239,10 @@ uint32 EntityFactory::transformEntities()
 			}
 		}
 
-		if(!positionedEntityDescription->shapesCreated)
+		if(!positionedEntityDescription->collidersCreated)
 		{
 			bool createdColliders = Entity::createColliders(positionedEntityDescription->entity);
-			positionedEntityDescription->shapesCreated = true;
+			positionedEntityDescription->collidersCreated = true;
 
 			if(createdColliders)
 			{

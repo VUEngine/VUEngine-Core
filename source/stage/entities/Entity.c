@@ -79,7 +79,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 
 	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
-	this->shapes = NULL;
+	this->colliders = NULL;
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
@@ -169,25 +169,25 @@ void Entity::setSpec(void* entitySpec)
 }
 
 /**
- * Destroy shapes
+ * Destroy colliders
  *
  * @private
  */
 void Entity::destroyColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		ASSERT(!isDeleted(this->shapes), "Entity::setSpec: dead shapes");
+		ASSERT(!isDeleted(this->colliders), "Entity::setSpec: dead colliders");
 
 		CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
 
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			CollisionManager::destroyCollider(collisionManager, Collider::safeCast(node->data));
 		}
 
-		delete this->shapes;
-		this->shapes = NULL;
+		delete this->colliders;
+		this->colliders = NULL;
 	}
 }
 
@@ -266,7 +266,7 @@ void Entity::destroyBehaviors()
  */
 bool Entity::createSprites()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
 	if(NULL == this->sprites)
 	{
@@ -392,7 +392,7 @@ void Entity::destroySprites()
  */
 bool Entity::createWireframes()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
 	if(NULL == this->wireframes)
 	{
@@ -478,7 +478,7 @@ void Entity::destroyWireframes()
 {
 	if(NULL != this->wireframes)
 	{
-		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead shapes");
+		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead colliders");
 
 		WireframeManager wireframeManager = WireframeManager::getInstance();
 
@@ -493,29 +493,29 @@ void Entity::destroyWireframes()
 }
 
 /**
- * Add shapes
+ * Add colliders
  */
 bool Entity::createColliders()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
-	if(NULL == this->shapes)
+	if(NULL == this->colliders)
 	{
-		Entity::addColliders(this, this->entitySpec->shapeSpecs, true);
+		Entity::addColliders(this, this->entitySpec->colliderSpecs, true);
 	}
 
-	return NULL != this->shapes;
+	return NULL != this->colliders;
 }
 
 /**
- * Add shapes from a list of specs
+ * Add colliders from a list of specs
  *
  * @private
- * @param shapeSpecs		List of shapes
+ * @param colliderSpecs		List of colliders
  */
-void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
+void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 {
-	if(NULL == shapeSpecs)
+	if(NULL == colliderSpecs)
 	{
 		return;
 	}
@@ -525,17 +525,17 @@ void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
 		Entity::destroyColliders(this);
 	}
 
-	if(NULL == this->shapes)
+	if(NULL == this->colliders)
 	{
-		this->shapes = new VirtualList();
+		this->colliders = new VirtualList();
 	}
 
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
 
 	// go through n sprites in entity's spec
-	for(int32 i = 0; NULL != shapeSpecs[i].allocator; i++)
+	for(int32 i = 0; NULL != colliderSpecs[i].allocator; i++)
 	{
-		Entity::addCollider(this, &shapeSpecs[i], collisionManager);
+		Entity::addCollider(this, &colliderSpecs[i], collisionManager);
 	}
 }
 
@@ -545,9 +545,9 @@ void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
  * @private
  * @param wireframeSpec		Wireframe spec
  */
-Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager)
+Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager)
 {
-	if(NULL == shapeSpec)
+	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
@@ -557,18 +557,18 @@ Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collision
 		collisionManager = VUEngine::getCollisionManager(_vuEngine);
 	}
 
-	if(NULL == this->shapes)
+	if(NULL == this->colliders)
 	{
-		this->shapes = new VirtualList();
+		this->colliders = new VirtualList();
 	}
 
-	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), shapeSpec);
+	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
 
 	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
 
 	if(!isDeleted(collider))
 	{
-		VirtualList::pushBack(this->shapes, collider);
+		VirtualList::pushBack(this->colliders, collider);
 	}
 
 	return collider;
@@ -1732,13 +1732,13 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 }
 
 /**
- * Retrieve shapes list
+ * Retrieve colliders list
  *
  * @return		Entity's Collider list
  */
 VirtualList Entity::getColliders()
 {
-	return this->shapes;
+	return this->colliders;
 }
 
 /**
@@ -1880,7 +1880,7 @@ fixed_t Entity::getFrictionCoefficient()
 }
 
 /**
- * Propagate that movement started to the shapes
+ * Propagate that movement started to the colliders
  *
  *@para Active status
  */
@@ -1888,9 +1888,9 @@ void Entity::activeCollisionChecks(bool active)
 {
 	this->allowCollisions |= active;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -1900,14 +1900,14 @@ void Entity::activeCollisionChecks(bool active)
 }
 
 /**
- * Set whether shapes must register shapes against which they have collided
+ * Set whether colliders must register colliders against which they have collided
  * in order to receive update and exit collision notifications
  */
 void Entity::registerCollisions(bool value)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -1917,15 +1917,15 @@ void Entity::registerCollisions(bool value)
 }
 
 /**
- * Propagate active status to the shapes
+ * Propagate active status to the colliders
  */
 void Entity::allowCollisions(bool value)
 {
 	this->allowCollisions = value;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -1944,18 +1944,18 @@ bool Entity::doesAllowCollisions()
 
 
 /**
- * Returns whether I have collision shapes or not
+ * Returns whether I have collision colliders or not
  */
 bool Entity::hasColliders()
 {
-	return NULL != this->shapes && 0 < VirtualList::getSize(this->shapes);
+	return NULL != this->colliders && 0 < VirtualList::getSize(this->colliders);
 }
 
 void Entity::showColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider::show(node->data);
 		}
@@ -1964,9 +1964,9 @@ void Entity::showColliders()
 
 void Entity::hideColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider::hide(node->data);
 		}
@@ -2043,19 +2043,19 @@ NormalizedDirection Entity::getNormalizedDirection()
  */
 uint32 Entity::getCollidersLayers()
 {
-	uint32 shapesLayers = 0;
+	uint32 collidersLayers = 0;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayers |= Collider::getLayers(collider);
+			collidersLayers |= Collider::getLayers(collider);
 		}
 	}
 
-	return shapesLayers;
+	return collidersLayers;
 }
 
 /**
@@ -2065,9 +2065,9 @@ uint32 Entity::getCollidersLayers()
  */
 void Entity::setCollidersLayers(uint32 layers)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -2083,19 +2083,19 @@ void Entity::setCollidersLayers(uint32 layers)
  */
 uint32 Entity::getCollidersLayersToIgnore()
 {
-	uint32 shapesLayersToIgnore = 0;
+	uint32 collidersLayersToIgnore = 0;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayersToIgnore |= Collider::getLayersToIgnore(collider);
+			collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
 		}
 	}
 
-	return shapesLayersToIgnore;
+	return collidersLayersToIgnore;
 }
 
 /**
@@ -2105,9 +2105,9 @@ uint32 Entity::getCollidersLayersToIgnore()
  */
 void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 

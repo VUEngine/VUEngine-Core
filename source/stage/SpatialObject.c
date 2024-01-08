@@ -184,14 +184,14 @@ bool SpatialObject::updateCollision(const CollisionInformation* collisionInforma
 	return false;
 }
 
-void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
+void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
-void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
+void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
 /**
- * Retrieve shapes list
+ * Retrieve colliders list
  *
  * @memberof	SpatialObject
  * @public

@@ -41,7 +41,7 @@ class LineField : Collider
 	/// @publicsection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
 	override Vector3D getNormal();
