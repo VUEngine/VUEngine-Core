@@ -463,6 +463,9 @@ void Body::update(uint16 cycle)
 		movementResult = Body::updateMovement(this, cycle);
 	}
 
+	SpatialObject::setPosition(this->owner, &this->position);
+	SpatialObject::setDirection(this->owner, &this->direction);
+
 	// if stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{

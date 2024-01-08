@@ -138,6 +138,9 @@ const Size* SpatialObject::getSize()
 	return &size;
 }
 
+void SpatialObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
+{}
+
 // get bounciness
 fixed_t SpatialObject::getBounciness()
 {

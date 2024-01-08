@@ -75,9 +75,6 @@ class Actor : AnimatedEntity
 	virtual bool applyForce(const Vector3D* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(uint16 axis);
-	virtual void syncPositionWithBody();
-	virtual void syncRotationWithBody();
-	virtual void syncRotationWithBodyAfterBouncing(SpatialObject collidingObject);
 	virtual fixed_t getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fixed_t getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fixed_t getSurroundingFrictionCoefficient();
@@ -85,14 +82,11 @@ class Actor : AnimatedEntity
 	virtual bool registerOtherColliders();
 	virtual fixed_t getMaximumSpeed();
 	override void update();
-	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform);
-	override void resume();
 	override bool handleMessage(Telegram telegram);
 	override void setLocalPosition(const Vector3D* position);
+	override void setDirection(const Vector3D* direction);
 	override fixed_t getBounciness();
-	override const Vector3D* getPosition();
-	override void setPosition(const Vector3D* position);
 	override bool isSubjectToGravity(Vector3D gravity);
 	override const Vector3D* getVelocity();
 	override const Vector3D* getDirection();
