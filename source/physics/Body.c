@@ -311,21 +311,21 @@ void Body::moveAccelerated(uint16 axis)
 }
 
 // set movement type to uniform
-void Body::moveUniformly(Vector3D velocity)
+void Body::moveUniformly(const Vector3D* velocity)
 {
 	uint16 axisOfUniformMovement = 0;
 
-	if(0 != velocity.x)
+	if(0 != velocity->x)
 	{
 		axisOfUniformMovement |= __X_AXIS;
 	}
 
-	if(0 != velocity.y)
+	if(0 != velocity->y)
 	{
 		axisOfUniformMovement |= __Y_AXIS;
 	}
 
-	if(0 != velocity.z)
+	if(0 != velocity->z)
 	{
 		axisOfUniformMovement |= __Z_AXIS;
 	}
@@ -335,10 +335,10 @@ void Body::moveUniformly(Vector3D velocity)
 		Body::setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
 		Body::awake(this, axisOfUniformMovement);
 
-		this->velocity = velocity;
-		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
-		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
-		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
+		this->velocity = *velocity;
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 
 		Body::clampVelocity(this, false);
 	}

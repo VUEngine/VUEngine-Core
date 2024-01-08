@@ -125,7 +125,7 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
 			acceleration.z
 		};
 
-		Body::moveUniformly(this->body, velocity);
+		Body::moveUniformly(this->body, &velocity);
 	}
 	else
 	{

@@ -473,6 +473,28 @@ void Actor::stopMovement(uint16 axis)
 	}
 }
 
+bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
+{
+	ASSERT(this->body, "Actor::applyForce: null body");
+
+	if(!this->body)
+	{
+		return false;
+	}
+
+	if(checkIfCanMove)
+	{
+		if(!Actor::canMoveTowards(this, *velocity))
+		{
+			return false;
+		}
+	}
+
+	Body::moveUniformly(this->body, velocity);
+
+	return true;
+}
+
 bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
@@ -493,17 +515,6 @@ bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 	Body::applyForce(this->body, force);
 
 	return true;
-}
-
-void Actor::moveUniformly(Vector3D* velocity)
-{
-	// move me with physics
-	if(this->body)
-	{
-		Body::moveUniformly(this->body, *velocity);
-
-		Actor::activeCollisionChecks(this, true);
-	}
 }
 
 // is it moving?
