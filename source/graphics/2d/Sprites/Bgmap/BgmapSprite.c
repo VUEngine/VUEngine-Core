@@ -208,11 +208,6 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 	{
 		this->rotationCache = *rotation;
 
-		if(!isDeleted(this->texture))
-		{
-			BgmapSprite::calculateSize(this, this->scale);
-		}
-
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
 		// scale the texture in the next render cycle

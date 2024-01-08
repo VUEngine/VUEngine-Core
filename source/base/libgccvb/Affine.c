@@ -152,7 +152,7 @@ PRINT_INT(lastRow, 1, 16);
 //PRINT_INT(__METERS_TO_PIXELS(_optical->scalingFactor), 1, 15);
 */
 
-		for(;counter && i <= lastRow; i++, counter--)
+		for(; 0!= counter && i <= lastRow; i++, counter--)
 		{
 			if(0 == scaleX)
 			{
@@ -237,7 +237,7 @@ PRINT_INT(lastRow, 1, 16);
 	}
 	else
 	{
-		for(;counter && i <= lastRow; i++, counter--)
+		for(; 0!= counter && i <= lastRow; i++, counter--)
 		{
 			affine[i].pb_y = __FIXED_TO_FIX13_3(__FIXED_MULT(__I_TO_FIXED(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 			affine[i].parallax = fixedAffineMatrix.parallax;
