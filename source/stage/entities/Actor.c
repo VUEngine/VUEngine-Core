@@ -130,9 +130,6 @@ void Actor::setLocalPosition(const Vector3D* position)
 {
 	Vector3D displacement = this->transformation.localPosition;
 
-	// Must transform shapes after everything is setup
-	bool transformColliders = this->transformColliders;
-	this->transformColliders = false;
 	Base::setLocalPosition(this, position);
 
 	displacement.x -= this->transformation.localPosition.x;
@@ -143,14 +140,12 @@ void Actor::setLocalPosition(const Vector3D* position)
 	this->transformation.globalPosition.y -= displacement.y;
 	this->transformation.globalPosition.z -= displacement.z;
 
-	if(this->body)
+	if(NULL != this->body)
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
 
 	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
-
-	this->transformColliders = transformColliders;
 }
 
 void Actor::syncWithBody()
@@ -267,8 +262,6 @@ void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __at
 // graphically refresh of characters that are visible
 void Actor::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	bool transformColliders = this->transformColliders;
-
 	if(!isDeleted(this->body))
 	{
 		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
@@ -276,9 +269,6 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 		if(__NO_AXIS != bodyMovement)
 		{
 			Actor::syncWithBody(this);
-
-			// Prevent transformation of shapes again when calling Base::transform
-			this->transformColliders = false;
 
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
@@ -302,8 +292,6 @@ void Actor::transform(const Transformation* environmentTransform, uint8 invalida
 		// call base
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
-
-	this->transformColliders = transformColliders;
 }
 
 void Actor::resume()
