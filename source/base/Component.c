@@ -105,6 +105,5 @@ void Component::show()
 void Component::hide()
 {
 	this->draw = false;
-	this->positioned = false;
 	this->show = __HIDE;
 }

@@ -109,8 +109,6 @@ class Entity : Container
 {
 	// Flag used to know if the entity is within the camera reach
 	bool inCameraRange;
-	// Flag to prevent transforming the shapes during the transformation phase
-	bool transformColliders;
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
 	// Entity's internal id, set by the engine

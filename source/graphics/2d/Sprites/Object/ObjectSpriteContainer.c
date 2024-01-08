@@ -169,7 +169,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 		{
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-		//	ObjectSprite::setPosition(objectSprite, &objectSprite->center);
+			ObjectSprite::setPosition(objectSprite, position);
 		}
 	}
 

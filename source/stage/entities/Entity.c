@@ -89,7 +89,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 
 	this->invalidateGraphics = 0;
-	this->transformColliders = true;
 	this->allowCollisions = true;
 }
 
@@ -570,7 +569,6 @@ Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collision
 	if(!isDeleted(collider))
 	{
 		VirtualList::pushBack(this->shapes, collider);
-		this->transformColliders = true;
 	}
 
 	return collider;

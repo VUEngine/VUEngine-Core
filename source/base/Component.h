@@ -39,7 +39,6 @@ abstract class Component : ListenerObject
 	const Scale* scale;
 	uint8 show;
 	bool draw;
-	bool positioned;
 	uint8 transparent;
 	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
  	bool renderFlag;

@@ -50,6 +50,9 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 {
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
+	this->rotationCache = Rotation::zero();
+	this->scaleCache = Scale::unit();
+
 	// create the texture
 	if(NULL != bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
@@ -195,9 +198,16 @@ Scale BgmapSprite::getScale()
  *
  */
 void BgmapSprite::setRotation(const Rotation* rotation)
-{	
+{
+	if(NULL == rotation)
+	{
+		return;
+	}
+
 	if(0 < this->param)
 	{
+		this->rotationCache = *rotation;
+
 		if(!isDeleted(this->texture))
 		{
 			BgmapSprite::calculateSize(this, this->scale);
@@ -248,8 +258,15 @@ void BgmapSprite::setRotation(const Rotation* rotation)
  */
 void BgmapSprite::setScale(const Scale* scale)
 {
+	if(NULL == scale)
+	{
+		return;
+	}
+
 	if(__WORLD_AFFINE & this->head)
 	{
+		this->scaleCache = *scale;
+
 		if(!isDeleted(this->texture))
 		{
 			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
@@ -590,8 +607,8 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
-			bgmapSprite->scale,
-			bgmapSprite->rotation
+			&bgmapSprite->scaleCache,
+			&bgmapSprite->rotationCache
 		);
 	}
 
