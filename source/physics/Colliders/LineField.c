@@ -81,7 +81,8 @@ void LineField::computeSize()
 	}
 
 	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
-	
+
+	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), *this->rotation);	
 	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	if(0 != size.x)
@@ -90,16 +91,16 @@ void LineField::computeSize()
 		this->a.y = 0;
 		this->a.z = 0;
 
-		if(0 != this->rotation->y)
+		if(0 != rotation.y)
 		{
-			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->y))));
-			this->a.z = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->y))));
+			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.y))));
+			this->a.z = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.y))));
 			this->a.y = 0;
 		}
-		else if(0 != this->rotation->z)
+		else if(0 != rotation.z)
 		{
-			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->z))));
-			this->a.y = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->z))));
+			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.z))));
+			this->a.y = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.z))));
 			this->a.z = 0;
 		}
 	}
@@ -109,16 +110,16 @@ void LineField::computeSize()
 		this->a.y = size.y >> 1;
 		this->a.z = 0;
 
-		if(0 != this->rotation->x)
+		if(0 != rotation.x)
 		{
-			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->x))));
-			this->a.z = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->x))));
+			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.x))));
+			this->a.z = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.x))));
 			this->a.y = 0;
 		}
-		else if(0 != this->rotation->z)
+		else if(0 != rotation.z)
 		{
-			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->z))));
-			this->a.y = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->z))));
+			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.z))));
+			this->a.y = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.z))));
 			this->a.z = 0;
 		}
 	}
@@ -128,17 +129,17 @@ void LineField::computeSize()
 		this->a.y = 0;
 		this->a.z = size.z >> 1;
 
-		if(0 != this->rotation->x)
+		if(0 != rotation.x)
 		{
-			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->y))));
-			this->a.y = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->y))));
+			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.y))));
+			this->a.y = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.y))));
 			this->a.z = 0;
 		}
-		else if(0 != this->rotation->y)
+		else if(0 != rotation.y)
 		{
-			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->x))));
+			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.x))));
 			this->a.y = 0;
-			this->a.z = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(this->rotation->x))));
+			this->a.z = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.x))));
 		}
 	}
 
