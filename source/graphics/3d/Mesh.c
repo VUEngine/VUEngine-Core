@@ -41,17 +41,17 @@ friend class VirtualList;
  *
  * @private
  */
-void Mesh::constructor(MeshSpec* meshSpec)
+void Mesh::constructor(SpatialObject owner, MeshSpec* meshSpec)
 {
 	// construct base object
-	Base::constructor(&meshSpec->wireframeSpec);
+	Base::constructor(owner, &meshSpec->wireframeSpec);
 
 	this->segments = new VirtualList();
 	this->vertices = new VirtualList();
 
-	if(NULL != this->wireframeSpec)
+	if(NULL != this->componentSpec)
 	{
-		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments, Vector3D::zero());
+		Mesh::addSegments(this, ((MeshSpec*)this->componentSpec)->segments, Vector3D::zero());
 	}
 }
 

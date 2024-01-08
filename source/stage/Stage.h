@@ -218,7 +218,6 @@ class Stage : Container
 	PaletteConfig getPaletteConfig();
 	void loadPostProcessingEffects();
 	void setupTimer();
-	Size getSize();
 	PixelSize getPixelSize();
 	PixelOptical getPixelOptical();
 	CameraFrustum getCameraFrustum();

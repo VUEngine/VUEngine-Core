@@ -119,7 +119,7 @@ class Entity : Container
 	Size size;
 	// Entity factory
 	EntityFactory entityFactory;
-	// sprites list
+	// components list
 	VirtualList sprites;
 	// Colliders for collision detection
 	VirtualList shapes;
@@ -164,7 +164,6 @@ class Entity : Container
 	int16 getInternalId();
 	VirtualList getSprites();
 	VirtualList getWireframes();
-	void transformColliders();
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
@@ -194,15 +193,10 @@ class Entity : Container
 	override void createComponents();
 	override void initialTransform(const Transformation* environmentTransform);
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void setPosition(const Vector3D* position);
-	override void setRotation(const Rotation* rotation);
-	override void setLocalPosition(const Vector3D* position);
-	override void setLocalRotation(const Rotation* rotation);
 	override void setTransparent(uint8 transparent);
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
-	override const Rotation* getRotation();
-	override const Scale* getScale();
+	override const Size* getSize();
 	override fixed_t getWidth();
 	override fixed_t getHeight();
 	override fixed_t getDepth();

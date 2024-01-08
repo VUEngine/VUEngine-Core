@@ -41,12 +41,11 @@
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner)
+void PrintingSprite::constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec)
 {
-	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
+	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);
 
 	PrintingSprite::reset(this);
-	PrintingSprite::registerWithManager(this);
 }
 
 /**
@@ -85,9 +84,9 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 	worldPointer->mx = this->bgmapTextureSource.mx;
 	worldPointer->mp = this->bgmapTextureSource.mp;
 	worldPointer->my = this->bgmapTextureSource.my;
-	worldPointer->gx = this->position.x;
-	worldPointer->gp = this->position.parallax;
-	worldPointer->gy = this->position.y;
+	worldPointer->gx = this->center.x;
+	worldPointer->gp = this->center.parallax;
+	worldPointer->gy = this->center.y;
 	worldPointer->w = this->w;
 	worldPointer->h = this->h;
 	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
@@ -97,11 +96,9 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 
 void PrintingSprite::reset()
 {
-	this->positioned = true;
-
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.parallax = 0;
+	this->center.x = 0;
+	this->center.y = 0;
+	this->center.parallax = 0;
 
 	this->bgmapTextureSource.mx = __PRINTING_BGMAP_X_OFFSET;
 	this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
@@ -113,9 +110,9 @@ void PrintingSprite::reset()
 
 void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
 {
-	this->position.x = gx;
-	this->position.y = gy;
-	this->position.parallax = gp;
+	this->center.x = gx;
+	this->center.y = gy;
+	this->center.parallax = gp;
 }
 
 void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
@@ -133,15 +130,15 @@ void PrintingSprite::setSize(uint16 w, uint16 h)
 
 int16 PrintingSprite::getGX()
 {
-	return this->position.x;
+	return this->center.x;
 }
 
 int16 PrintingSprite::getGY()
 {
-	return this->position.y;
+	return this->center.y;
 }
 
 int16 PrintingSprite::getGP()
 {
-	return this->position.parallax;
+	return this->center.parallax;
 }

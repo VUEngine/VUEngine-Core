@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Component.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
@@ -101,16 +101,8 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-abstract class Sprite : ListenerObject
+abstract class Sprite : Component
 {
-	// Flag to signal if the sprite has been already registered
-	bool registered;
-	// show flag
-	bool show;
-	// Flag to allow rendering
-	bool positioned;
-	// Projected position based on optics configuration
-	PixelVector position;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
 	// Animation Controller
@@ -125,23 +117,17 @@ abstract class Sprite : ListenerObject
 	int16 halfHeight;
 	// World layer where to render the texture
 	int16 index;
-	// Flag for making it transparent
-	uint8 transparent;
 	// Update animation
 	bool writeAnimationFrame;
 	// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
-	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
- 	bool renderFlag;
 
 	/// @publicsection
-	void constructor(const SpriteSpec* spriteSpec, ListenerObject owner);
-	void createAnimationController(CharSetSpec* charSetSpec, ListenerObject owner);
-	const PixelVector* getPosition();
+	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);
+	void createAnimationController(CharSetSpec* charSetSpec);
 	uint16 getHead();
 	uint16 getMode();
 	Texture getTexture();
-	uint8 getTransparent();
 	uint32 getEffectiveHead();
 	uint16 getEffectiveHeight();
 	uint16 getEffectiveWidth();
@@ -152,7 +138,6 @@ abstract class Sprite : ListenerObject
 	int16 getWorldMX();
 	int16 getWorldMY();
 	bool isHidden();
-	void setTransparent(uint8 value);
 	int16 getActualFrame();
 	const PixelVector* getDisplacement();
 	void setDisplacement(const PixelVector* displacement);
@@ -185,25 +170,24 @@ abstract class Sprite : ListenerObject
 	bool isDisposed();
 	int16 render(int16 index, bool evenFrame);
 	void calculateParallax(fixed_t z);
-	void hide();
-	void show();
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
-	void position(const Vector3D* position);
 	void setPosition(const PixelVector* position);
+	const PixelVector* getPosition();
+	virtual void setRotation(const Rotation* rotation);
+	virtual void setScale(const Scale* scale);
+	virtual void registerWithManager() = 0;
+	virtual void unregisterWithManager() = 0;
 	virtual void rewrite();
 	virtual void hideForDebug();
 	virtual void forceShow();
 	virtual Scale getScale();
 	virtual void processEffects();
 	virtual int16 doRender(int16 index, bool evenFrame) = 0;
-	virtual void resize(Scale scale, fixed_t z);
-	virtual void rotate(const Rotation* rotation);
 	virtual void writeAnimation();
 	virtual bool writeTextures(int16 maximumTextureRowsToWrite);
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels() = 0;
-	virtual void registerWithManager() = 0;
 	virtual void invalidateRenderFlag();
 }
 

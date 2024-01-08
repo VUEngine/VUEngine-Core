@@ -12,11 +12,10 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
-
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
+#include <DebugUtilities.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>
@@ -24,7 +23,7 @@
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <DebugUtilities.h>
+#include "Sprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,9 +46,9 @@ friend class AnimationController;
  * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteSpec* spriteSpec, ListenerObject owner __attribute__((unused)))
+void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
-	Base::constructor();
+	Base::constructor(owner, &spriteSpec);
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;
@@ -58,15 +57,10 @@ void Sprite::constructor(const SpriteSpec* spriteSpec, ListenerObject owner __at
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->position = (PixelVector){0, 0, 0, 0};
-	this->displacement = (PixelVector){0, 0, 0, 0};
-	this->show = __SHOW;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
-	this->positioned = false;
-	this->registered = false;
 	this->checkIfWithinScreenSpace = true;
-	this->renderFlag = false;
+	this->renderFlag = true;
 }
 
 /**
@@ -87,7 +81,7 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject owner)
+void Sprite::createAnimationController(CharSetSpec* charSetSpec)
 {
     this->animationController = new AnimationController();
 
@@ -104,7 +98,7 @@ void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject 
 			(
 				AnimationCoordinatorFactory::getInstance(),
 				this->animationController, 
-				owner, 
+				ListenerObject::safeCast(this->owner), 
 				charSetSpec
 			)
 		);
@@ -124,7 +118,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
 /*
-	if(__HIDE == this->show || !this->positioned)
+	if(__HIDE == this->show)
 	{
 		return __NO_RENDER_INDEX;
 	}
@@ -158,6 +152,13 @@ int16 Sprite::render(int16 index, bool evenFrame)
 */
 	Sprite::update(this);
 
+	if(NULL != this->owner)
+	{
+		Sprite::position(this);
+		Sprite::rotate(this);
+		Sprite::scale(this);
+	}
+
 	// Do not remove this check, it prevents sprites from loop
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
@@ -175,6 +176,193 @@ int16 Sprite::render(int16 index, bool evenFrame)
  	}
 
 	return this->index;
+}
+
+/**
+ * Retrieve the texture
+ *
+ * @return 		Texture struct
+ */
+Texture Sprite::getTexture()
+{
+	return this->texture;
+}
+
+/**
+ * Show
+ */
+void Sprite::forceShow()
+{
+	this->show = __SHOW;
+
+	Sprite::setPosition(this, &this->center);
+}
+
+/**
+ * Hide
+ */
+void Sprite::hideForDebug()
+{
+	this->show = __HIDE;
+
+	Sprite::setPosition(this, &this->center);
+}
+
+/**
+ * Is the Sprite show?
+ *
+ * @return		Boolean telling whether the sprite is show
+ */
+bool Sprite::isHidden()
+{
+	return __HIDE == this->show;
+}
+
+/**
+ * Calculate 2D position
+ *
+ * @param position		3D position
+ */
+void Sprite::position()
+{
+	if(NULL == this->position)
+	{
+		return;
+	}
+
+	PixelVector position2D = Vector3D::transformToPixelVector(*this->position);
+
+	Sprite::setPosition(this, &position2D);
+}
+
+/**
+ * Set position
+ *
+ * @param position		Pixel position
+ */
+void Sprite::setPosition(const PixelVector* position)
+{
+	if(NULL == position)
+	{
+		return;
+	}
+
+	this->center = *position;
+
+	this->renderFlag = true;
+}
+
+/**
+ * Get position relative to the camera
+ *
+ * @return			Position relative to camera
+ */
+const PixelVector* Sprite::getPosition()
+{
+	return (const PixelVector*)&this->center;
+}
+
+
+/**
+ * Get displacement
+ *
+ * @return
+ */
+const PixelVector* Sprite::getDisplacement()
+{
+	return &this->displacement;
+}
+
+/**
+ * Set displacement
+ *
+ * @param displacement 	PixelVector
+ */
+void Sprite::setDisplacement(const PixelVector* displacement)
+{
+	this->displacement = *displacement;
+
+	this->renderFlag = true;
+}
+
+/**
+ * Get displaced position relative to the camera
+ *
+ * @return			Displaced position relative to camera
+ */
+PixelVector Sprite::getDisplacedPosition()
+{
+	PixelVector position =
+	{
+		this->center.x + this->displacement.x,
+		this->center.y + this->displacement.y,
+		this->center.z + this->displacement.z,
+		this->center.parallax + this->displacement.parallax
+	};
+
+	return position;
+}
+
+/**
+ * Rotate
+ *
+ * @param rotation	Rotation struct
+ */
+void Sprite::rotate()
+{
+	if(NULL == this->rotation)
+	{
+		return;
+	}
+
+	this->renderFlag = true;
+
+	Sprite::setRotation(this, this->rotation);
+}
+
+void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
+{
+}
+
+const Rotation* Sprite::getRotation()
+{
+	return this->rotation;
+}
+
+/**
+ * Calculate zoom scaling factor
+ *
+ * @param scale	Scale struct to apply
+ * @param z
+ */
+void Sprite::scale()
+{
+	if(NULL == this->scale || NULL == this->position)
+	{
+		return;
+	}
+
+	Scale scale = *this->scale;
+
+	NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+	NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+
+	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->position->z, true));
+
+	ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+	ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+
+	scale.x = __FIX7_9_MULT(scale.x, ratio);
+	scale.y = __FIX7_9_MULT(scale.y, ratio);
+
+	NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
+	NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
+
+	Sprite::setScale(this, &scale);
+}
+
+void Sprite::setScale(const Scale* scale __attribute__((unused)))
+{
 }
 
 /**
@@ -196,112 +384,6 @@ Scale Sprite::getScale()
 }
 
 /**
- * Calculate zoom scaling factor
- *
- * @param scale	Scale struct to apply
- * @param z
- */
-void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute__ ((unused)))
-{
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	this->halfWidth = Texture::getCols(this->texture) << 2;
-	this->halfHeight = Texture::getRows(this->texture) << 2;
-}
-
-/**
- * Retrieve the texture
- *
- * @return 		Texture struct
- */
-Texture Sprite::getTexture()
-{
-	return this->texture;
-}
-
-/**
- * Show
- */
-void Sprite::show()
-{
-	this->show = __SHOW;
-}
-
-/**
- * Hide
- */
-void Sprite::hide()
-{
-	this->show = __HIDE;
-	this->positioned = false;
-}
-
-/**
- * Show
- */
-void Sprite::forceShow()
-{
-	this->show = __SHOW;
-
-	Sprite::setPosition(this, &this->position);
-}
-
-/**
- * Hide
- */
-void Sprite::hideForDebug()
-{
-	this->show = __HIDE;
-	this->positioned = false;
-
-	Sprite::setPosition(this, &this->position);
-}
-
-/**
- * Is the Sprite show?
- *
- * @return		Boolean telling whether the sprite is show
- */
-bool Sprite::isHidden()
-{
-	return __HIDE == this->show;
-}
-
-/**
- * Calculate 2D position
- *
- * @param position		3D position
- */
-void Sprite::position(const Vector3D* position)
-{
-	PixelVector position2D = Vector3D::transformToPixelVector(*position);
-
-	Sprite::setPosition(this, &position2D);
-}
-
-/**
- * Set position
- *
- * @param position		Pixel position
- */
-void Sprite::setPosition(const PixelVector* position)
-{
-	this->positioned = 	true;
-
-	this->position = *position;
-
-	this->renderFlag = true;
-
-	if(!this->registered)
-	{
-		Sprite::registerWithManager(this);
-	}
-}
-
-/**
  * Calculate parallax
  *
  * @param z				Z coordinate to base on the calculation
@@ -309,36 +391,8 @@ void Sprite::setPosition(const PixelVector* position)
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
 	int16 parallax = Optics::calculateParallax(z);
-	this->renderFlag = this->renderFlag || this->position.parallax != parallax;
-	this->position.parallax = parallax;
-}
-
-/**
- * Get position relative to the camera
- *
- * @return			Position relative to camera
- */
-const PixelVector* Sprite::getPosition()
-{
-	return (const PixelVector*)&this->position;
-}
-
-/**
- * Get displaced position relative to the camera
- *
- * @return			Displaced position relative to camera
- */
-PixelVector Sprite::getDisplacedPosition()
-{
-	PixelVector position =
-	{
-		this->position.x + this->displacement.x,
-		this->position.y + this->displacement.y,
-		this->position.z + this->displacement.z,
-		this->position.parallax + this->displacement.parallax
-	};
-
-	return position;
+	this->renderFlag = this->renderFlag || this->center.parallax != parallax;
+	this->center.parallax = parallax;
 }
 
 /**
@@ -427,7 +481,7 @@ int16 Sprite::getEffectiveX()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->position.x;
+		return this->center.x;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -443,7 +497,7 @@ int16 Sprite::getEffectiveY()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->position.y;
+		return this->center.y;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -459,7 +513,7 @@ int16 Sprite::getEffectiveP()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->position.parallax;
+		return this->center.parallax;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -560,38 +614,6 @@ void Sprite::rewrite()
 }
 
 /**
- * Get displacement
- *
- * @return
- */
-const PixelVector* Sprite::getDisplacement()
-{
-	return &this->displacement;
-}
-
-/**
- * Set displacement
- *
- * @param displacement 	PixelVector
- */
-void Sprite::setDisplacement(const PixelVector* displacement)
-{
-	this->displacement = *displacement;
-
-	this->renderFlag = true;
-}
-
-/**
- * Rotate
- *
- * @param rotation	Rotation struct
- */
-void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
-{
-	this->renderFlag = true;
-}
-
-/**
  * Get half width
  *
  * @return
@@ -645,44 +667,22 @@ bool Sprite::isVisible()
  */
 bool Sprite::isWithinScreenSpace()
 {
-	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	if(!((unsigned)(this->center.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	if(!((unsigned)(this->center.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
 	{
 		return false;
 	}
 /*
-	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
+	if(!((unsigned)(this->center.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
 	{
 		return false;
 	}
 */
 	return true;
-}
-
-/**
- * Get Sprite's transparency mode
- *
- * @return		Transparency mode
- */
-uint8 Sprite::getTransparent()
-{
-	return this->transparent;
-}
-
-/**
- * Set Sprite transparent
- *
- * @param value	Transparency mode
- */
-void Sprite::setTransparent(uint8 value)
-{
-	this->transparent = value;
-
-	this->renderFlag = true;
 }
 
 /**
@@ -1009,10 +1009,10 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
+	Printing::int32(Printing::getInstance(), this->center.x, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->center.y, x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), this->center.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), this->center.parallax, x + 36, y, NULL);
 	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
 	Printing::int32(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);

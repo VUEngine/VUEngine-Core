@@ -30,10 +30,10 @@
  *
  * @private
  */
-void Sphere::constructor(SphereSpec* sphereSpec)
+void Sphere::constructor(SpatialObject owner, SphereSpec* sphereSpec)
 {
 	// construct base object
-	Base::constructor(&sphereSpec->wireframeSpec);
+	Base::constructor(owner, &sphereSpec->wireframeSpec);
 
 	this->center = PixelVector::zero();
 

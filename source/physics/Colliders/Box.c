@@ -52,13 +52,8 @@ void Box::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 		this->vertexProjections[normalIndex].max = 0;
 	}
 
-	this->rightBox.x0 = __I_TO_FIXED(-1);
-	this->rightBox.y0 = __I_TO_FIXED(-1);
-	this->rightBox.z0 = __I_TO_FIXED(-1);
-
-	this->rightBox.x1 = __I_TO_FIXED(1);
-	this->rightBox.y1 = __I_TO_FIXED(1);
-	this->rightBox.z1 = __I_TO_FIXED(1);
+	Box::computeRightBox(this);
+	Box::projectOntoItself(this);
 }
 
 // class's destructor
@@ -75,28 +70,26 @@ void Box::destructor()
 	Base::destructor();
 }
 
-void Box::transform(const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box::computeRightBox()
 {
-	Base::transform(this, position, rotation, scale, size);
-
 	this->rotationVertexDisplacement.x = 0;
 	this->rotationVertexDisplacement.y = 0;
 	this->rotationVertexDisplacement.z = 0;
 
-	Size surroundingBoxSize = *size;
+	Size surroundingBoxSize = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	// angle | theta | psi
-	if(rotation->z | rotation->y | rotation->x)
+	if(0 != this->rotation->z || 0 != this->rotation->y || 0 != this->rotation->x)
 	{
 		fixed_t width = surroundingBoxSize.x >> 1;
 		fixed_t height = surroundingBoxSize.y >> 1;
 		fixed_t depth = surroundingBoxSize.z >> 1;
 
-		// allow only one rotation
-		if(rotation->z && 256 != rotation->z)
+		// allow only one this->rotation
+		if(0 != this->rotation->z && 256 != this->rotation->z)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = rotation->z - ((rotation->z / 256) << 8);
+			int16 angle = this->rotation->z - ((this->rotation->z / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -149,10 +142,10 @@ void Box::transform(const Vector3D* position, const Rotation* rotation, const Sc
 				this->rotationVertexDisplacement.y = 0;
 			}
 		}
-		else if(rotation->y && 256 != rotation->y)
+		else if(0 != this->rotation->y && 256 != this->rotation->y)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = rotation->y - ((rotation->y / 256) << 8);
+			int16 angle = this->rotation->y - ((this->rotation->y / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -205,10 +198,10 @@ void Box::transform(const Vector3D* position, const Rotation* rotation, const Sc
 				this->rotationVertexDisplacement.z = 0;
 			}
 		}
-		else if(rotation->x && 256 != rotation->x)
+		else if(0 != this->rotation->x && 256 != this->rotation->x)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = rotation->x - ((rotation->x / 256) << 8);
+			int16 angle = this->rotation->x - ((this->rotation->x / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -272,15 +265,7 @@ void Box::transform(const Vector3D* position, const Rotation* rotation, const Sc
 	this->rightBox.y0 = -this->rightBox.y1;
 	this->rightBox.z0 = -this->rightBox.z1;
 
-	// position the collider to avoid in real time calculation
-	this->rightBox.x0 += position->x;
-	this->rightBox.x1 += position->x;
-	this->rightBox.y0 += position->y;
-	this->rightBox.y1 += position->y;
-	this->rightBox.z0 += position->z;
-	this->rightBox.z1 += position->z;
-
-	if(this->normals)
+	if(NULL != this->normals)
 	{
 		Box::projectOntoItself(this);
 	}
@@ -297,9 +282,9 @@ void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
 	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
 
-	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
+	if(0 != this->rotationVertexDisplacement.x || 0 != this->rotationVertexDisplacement.y || 0 != this->rotationVertexDisplacement.z)
 	{
-		if(!this->rotationVertexDisplacement.z)
+		if(0 == this->rotationVertexDisplacement.z)
 		{
 			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
 			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
@@ -311,7 +296,7 @@ void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
 			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
 		}
-		else if(!this->rotationVertexDisplacement.y)
+		else if(0 == this->rotationVertexDisplacement.y)
 		{
 			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
 			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
@@ -323,7 +308,7 @@ void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
 			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
 		}
-		else if(!this->rotationVertexDisplacement.x)
+		else if(0 == this->rotationVertexDisplacement.x)
 		{
 			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
 			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
@@ -337,15 +322,15 @@ void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 		}
 	}
 
-	vertexes[0] = leftTopNear;
-	vertexes[1] = rightTopNear;
-	vertexes[2] = leftBottomNear;
-	vertexes[3] = rightBottomNear;
+	vertexes[0] = Vector3D::sum(leftTopNear, *this->position);
+	vertexes[1] = Vector3D::sum(rightTopNear, *this->position);
+	vertexes[2] = Vector3D::sum(leftBottomNear, *this->position);
+	vertexes[3] = Vector3D::sum(rightBottomNear, *this->position);
 
-	vertexes[4] = leftTopFar;
-	vertexes[5] = rightTopFar;
-	vertexes[6] = leftBottomFar;
-	vertexes[7] = rightBottomFar;
+	vertexes[4] = Vector3D::sum(leftTopFar, *this->position);
+	vertexes[5] = Vector3D::sum(rightTopFar, *this->position);
+	vertexes[6] = Vector3D::sum(leftBottomFar, *this->position);
+	vertexes[7] = Vector3D::sum(rightBottomFar, *this->position);
 }
 
 void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
@@ -357,7 +342,7 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 	normals[2] = Vector3D::getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
 */
 
-	if(!this->normals)
+	if(NULL == this->normals)
 	{
 		this->normals = new Normals;
 	}
@@ -437,20 +422,20 @@ void Box::projectOntoItself()
 }
 
 // test if collision with the entity give the displacement
-void Box::testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
+void Box::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
 {
 	// save position
 	RightBox rightBox = this->rightBox;
 
 	// add displacement
-	this->rightBox.x0 += displacement.x - sizeIncrement;
-	this->rightBox.x1 += displacement.x + sizeIncrement;
+	this->rightBox.x0 -= sizeIncrement;
+	this->rightBox.x1 += sizeIncrement;
 
-	this->rightBox.y0 += displacement.y - sizeIncrement;
-	this->rightBox.y1 += displacement.y + sizeIncrement;
+	this->rightBox.y0 -= sizeIncrement;
+	this->rightBox.y1 += sizeIncrement;
 
-	this->rightBox.z0 += displacement.z - sizeIncrement;
-	this->rightBox.z1 += displacement.z + sizeIncrement;
+	this->rightBox.z0 -= sizeIncrement;
+	this->rightBox.z1 += sizeIncrement;
 
 	Box::projectOntoItself(this);
 
@@ -491,7 +476,7 @@ void Box::configureWireframe()
 	};
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Polyhedron(&polyhedronSpec));
+	this->wireframe = Wireframe::safeCast(new Polyhedron(this->owner, &polyhedronSpec));
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{
@@ -566,17 +551,17 @@ void Box::print(int32 x, int32 y)
 	RightBox rightBox = this->rightBox;
 
 	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->position->x), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->position->x), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->position->y), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->position->y), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->position->z), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->position->z), x + 8, y++, NULL);
 }

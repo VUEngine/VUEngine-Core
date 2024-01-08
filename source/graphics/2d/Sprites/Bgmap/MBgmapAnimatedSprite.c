@@ -26,13 +26,13 @@
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner)
+void MBgmapAnimatedSprite::constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
 {
-	Base::constructor(&mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec, owner);
+	Base::constructor(owner, &mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec);
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
 
-	MBgmapAnimatedSprite::createAnimationController(this, mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec, owner);
+	MBgmapAnimatedSprite::createAnimationController(this, mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec);
 }
 
 void MBgmapAnimatedSprite::destructor()

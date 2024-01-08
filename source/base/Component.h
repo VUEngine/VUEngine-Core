@@ -7,50 +7,50 @@
  * that was distributed with this source code.
  */
 
-#ifndef BOX_H_
-#define BOX_H_
+#ifndef COMPONENT_H_
+#define COMPONENT_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Collider.h>
+#include <ListenerObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												MACROS
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-#define __BOX_VERTEXES	8
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup physics
-class Box : Collider
+class SpatialObject;
+
+typedef const void ComponentSpec;
+
+abstract class Component : ListenerObject 
 {
-	// the normals of the box
-	VertexProjection vertexProjections[__COLLIDER_NORMALS];
-	// the rectangle
-	RightBox rightBox;
-	// for collision detection purposes
-	Normals* normals;
-	// for rotation purposes
-	Vector3D rotationVertexDisplacement;
+	SpatialObject owner;
+	const ComponentSpec* componentSpec;
+	const Vector3D* position;
+	const Rotation* rotation;
+	const Scale* scale;
+	uint8 show;
+	bool draw;
+	bool positioned;
+	uint8 transparent;
+	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
+ 	bool renderFlag;
+	PixelVector center;
 
 	/// @publicsection
-	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
-
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
-	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
-	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
-	void projectOntoItself();
-	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
-	override void configureWireframe();
-	override void print(int32 x, int32 y);
+	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
+	void hide();
+	void show();
+	uint8 getTransparent();
+	void setTransparent(uint8 value);
 }
 
 

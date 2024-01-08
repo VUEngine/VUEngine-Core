@@ -151,7 +151,6 @@ void Actor::setLocalPosition(const Vector3D* position)
 	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 
 	this->transformColliders = transformColliders;
-	Actor::transformColliders(this);
 }
 
 void Actor::syncWithBody()
@@ -453,7 +452,7 @@ fixed_t Actor::getSurroundingFrictionCoefficient()
 {
 	fixed_t totalFrictionCoefficient = 0;
 
-	if(this->shapes)
+	if(!isDeleted(this->shapes))
 	{
 		VirtualNode node = this->shapes->head;
 
@@ -674,8 +673,6 @@ void Actor::setPosition(const Vector3D* position)
 	{
 		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
 	}
-
-	Actor::transformColliders(this);
 }
 
 // retrieve global position

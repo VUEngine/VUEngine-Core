@@ -12,15 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ObjectSprite.h>
-
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
 #include <ObjectTextureManager.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "ObjectSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,9 +48,9 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner)
+void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
-	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
+	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
 
 	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;
 	this->objectSpriteContainer = NULL;
@@ -68,7 +68,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
-	if(objectSpriteSpec->spriteSpec.textureSpec)
+	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
@@ -101,13 +101,6 @@ void ObjectSprite::destructor()
 {
 	ObjectSprite::removeFromCache(this);
 
-	// remove from sprite container before I become invalid
-	// and the VPU triggers a new render cycle
-	if(this->registered && NULL != this->objectSpriteContainer)
-	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
-	}
-
 	if(!isDeleted(this->texture))
 	{
 		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
@@ -119,6 +112,33 @@ void ObjectSprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Check if assigned to a container
+ *
+ * @memberof			ObjectSprite
+ * @private
+ */
+void ObjectSprite::registerWithManager()
+{
+	if(NULL == this->objectSpriteContainer)
+	{
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->center.z + this->displacement.z);
+
+		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
+		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
+	}
+}
+
+void ObjectSprite::unregisterWithManager()
+{
+	if(NULL != this->objectSpriteContainer)
+	{
+		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
+	}
+
+	this->objectSpriteContainer = NULL;
 }
 
 void ObjectSprite::removeFromCache()
@@ -154,7 +174,7 @@ void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((
 
 void ObjectSprite::rewrite()
 {
-	if(__HIDE == this->show || !this->positioned)
+	if(__HIDE == this->show)
 	{
 		return;
 	}
@@ -195,14 +215,13 @@ void ObjectSprite::rewrite()
  * @memberof			ObjectSprite
  * @public
  *
- * @param rotation		The rotation
  */
-void ObjectSprite::rotate(const Rotation* rotation)
+void ObjectSprite::setRotation(const Rotation* rotation)
 {
 	NormalizedDirection normalizedDirection =
 	{
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
 		__FAR,
 	};
 
@@ -251,21 +270,6 @@ void ObjectSprite::rotate(const Rotation* rotation)
 }
 
 /**
- * Check if assigned to a container
- *
- * @memberof			ObjectSprite
- * @private
- */
-void ObjectSprite::registerWithManager()
-{
-	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
-	{
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->position.z + this->displacement.z);
-		this->registered = ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
-	}
-}
-
-/**
  * Write WORLD data to DRAM
  *
  * @memberof		ObjectSprite
@@ -278,10 +282,10 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	int16 x = this->position.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
-	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
+	int16 x = this->center.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
+	int16 y = this->center.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
-	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
+	uint16 secondWordValue = this->head | (this->center.parallax + this->displacement.parallax);
 	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
 
 	int16 yDisplacement = 0;
@@ -365,7 +369,7 @@ int16 ObjectSprite::getTotalObjects()
  */
 void ObjectSprite::invalidateObjectSpriteContainer()
 {
-	this->objectSpriteContainer = NULL;
+	Sprite::unregisterWithManager(this);
 }
 
 /**

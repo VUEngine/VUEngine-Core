@@ -124,8 +124,19 @@ const Scale* SpatialObject::getScale()
 
 	return &scale;
 }
+
 void SpatialObject::setScale(const Scale* scale __attribute__ ((unused)))
 {}
+
+const Size* SpatialObject::getSize()
+{
+	static Size size =
+	{
+		0, 0, 0
+	};
+
+	return &size;
+}
 
 // get bounciness
 fixed_t SpatialObject::getBounciness()

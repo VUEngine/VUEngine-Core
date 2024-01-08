@@ -76,9 +76,8 @@ class MBgmapSprite : BgmapSprite
 	uint32 textureYOffset;
 
 	/// @publicsection
-	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
 	override int16 doRender(int16 index, bool evenFrame);
-	override void resize(Scale scale, fixed_t z);
 	override bool writeTextures(int16 maximumTextureRowsToWrite);
 }
 

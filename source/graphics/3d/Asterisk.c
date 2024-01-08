@@ -29,10 +29,10 @@
  *
  * @private
  */
-void Asterisk::constructor(AsteriskSpec* asteriskSpec)
+void Asterisk::constructor(SpatialObject owner, AsteriskSpec* asteriskSpec)
 {
 	// construct base object
-	Base::constructor(&asteriskSpec->wireframeSpec);
+	Base::constructor(owner, &asteriskSpec->wireframeSpec);
 
 	this->length = __ABS(asteriskSpec->length);
 	this->scaledLength = this->length;

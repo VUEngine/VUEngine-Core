@@ -40,6 +40,7 @@ class SpatialObject : ListenerObject
 	virtual void setRotation(const Rotation* rotation);
 	virtual const Scale* getScale();
 	virtual void setScale(const Scale* scale);
+	virtual const Size* getSize();
 	virtual fixed_t getBounciness();
 	virtual fixed_t getFrictionCoefficient();
 	virtual const Vector3D* getVelocity();

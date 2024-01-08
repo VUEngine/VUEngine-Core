@@ -92,7 +92,6 @@ class SolidParticle : PhysicalParticle
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 	override bool isSubjectToGravity(Vector3D gravity);
 	override bool handleMessage(Telegram telegram);
-	override void transform();
 	override void setPosition(const Vector3D* position);
 	override uint32 getInGameType();
 	override const Vector3D* getVelocity();

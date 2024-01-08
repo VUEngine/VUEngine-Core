@@ -220,7 +220,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	if(!VUEngine::isExitingToolState(VUEngine::getInstance()))
 	{
 		// Set camera to its previous position
-		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
+		Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(Stage::getPixelSize(this->stage)));
 		Camera::setPosition(Camera::getInstance(), this->cameraPosition, true);
 		Camera::setup(Camera::getInstance(), Stage::getPixelOptical(this->stage), Stage::getCameraFrustum(this->stage));
 

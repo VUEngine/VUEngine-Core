@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Component.h>
 #include <Wireframe.h>
 
 
@@ -186,12 +186,8 @@ enum ColliderClassIndexes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-abstract class Collider : ListenerObject
+abstract class Collider : Component
 {
-	// Position
-	Vector3D position;
-	// the entity to which the collider belongs
-	SpatialObject owner;
 	// colliding shapes list
 	VirtualList otherColliders;
 	// layers on which this collider live
@@ -212,7 +208,6 @@ abstract class Collider : ListenerObject
 	bool destroyMe;
 	// class index 
 	uint8 classIndex;
-
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
@@ -243,10 +238,9 @@ abstract class Collider : ListenerObject
 	Vector3D getPosition();
 	void setPosition(const Vector3D* position);
 
-	virtual void setup(uint32 layers, uint32 layersToIgnore);
-	virtual void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+//	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual Vector3D getNormal();
-	virtual void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation) = 0;
+	virtual void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
 }

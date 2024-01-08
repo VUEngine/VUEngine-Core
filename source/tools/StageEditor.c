@@ -807,7 +807,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
+		this->userObjectSprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
@@ -818,8 +818,8 @@ void StageEditor::showSelectedUserObject()
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 		Sprite::setPosition(this->userObjectSprite, &spritePosition);
-		Sprite::rotate(this->userObjectSprite, &spriteRotation);
-		Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
+		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
+		Sprite::setScale(this->userObjectSprite, &spriteScale);
 		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->writeAnimationFrame = true;

@@ -90,7 +90,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
 	if(NULL != spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, SpatialObject::safeCast(this));
 
 		if(NULL != animationName && NULL != animationFunctions)
 		{
@@ -111,8 +111,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationF
 	if(NULL != wireframeSpec)
 	{
 		// call the appropriate allocator to support inheritance
-		this->wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec);
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, this->expired);
+		this->wireframe = ((Wireframe (*)(WireframeSpec*, SpatialObject)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec, SpatialObject::safeCast(this));
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
@@ -388,11 +387,6 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
-	}
 
 	if(NULL != force)
 	{

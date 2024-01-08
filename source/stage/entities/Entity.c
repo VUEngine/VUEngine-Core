@@ -324,13 +324,14 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		this->sprites = new VirtualList();
 	}
 
-	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, ListenerObject::safeCast(this));
+	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
 
 	if(!isDeleted(sprite))
 	{
 		VirtualList::pushBack(this->sprites, sprite);
+
 		this->synchronizeGraphics = true;
 		this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	}
@@ -456,13 +457,12 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
 		this->wireframes = new VirtualList();
 	}
 
-	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec);
+	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(wireframe), "Entity::addWireframe: wireframe not created");
 
 	if(!isDeleted(wireframe))
 	{
-		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
 		VirtualList::pushBack(this->wireframes, wireframe);
 		this->synchronizeGraphics = true;
 	}
@@ -1201,8 +1201,6 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
-	Entity::createComponents(entity);
-
 	return entity;
 }
 
@@ -1387,198 +1385,12 @@ uint32 Entity::areAllChildrenReady()
 }
 
 /**
- * Set collider's position
- *
- * @private
- */
-void Entity::transformCollider(Collider collider, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, int32 shapeSpecIndex)
-{
-	if(!isDeleted(collider))
-	{
-		if(NULL != this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && NULL != this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
-    	{
-			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-
-			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), this->transformation.localRotation);
-
-			Vector3D shapePosition = Vector3D::sum(*myPosition, shapeDisplacement);
-
-			Rotation shapeRotation = Rotation::sum(*myRotation, Rotation::getFromPixelRotation(shapeSpecs[shapeSpecIndex].pixelRotation));
-
-			Scale shapeScale = Scale::product(*myScale, shapeSpecs[shapeSpecIndex].scale);
-
-			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
-
-			Collider::transform(collider, &shapePosition, &shapeRotation, &shapeScale, &size);
-		}
-		else
-		{
-			Collider::transform(collider, myPosition, myRotation, myScale, &this->size);
-		}
-	}
-}
-
-/**
- * Set collider's position
- *
- * @private
- */
-void Entity::transformColliders()
-{
-	if(!isDeleted(this->shapes) && this->transformColliders)
-	{
-		// setup collider
-		const Vector3D* myPosition = Entity::getPosition(this);
-		const Rotation* myRotation = Entity::getRotation(this);
-		const Scale* myScale = Entity::getScale(this);
-
-		if(this->entitySpec->shapeSpecs)
-    	{
-			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-			int32 i = 0;
-
-			for(VirtualNode node = this->shapes->head; node && shapeSpecs[i].allocator; node = node->next, i++)
-			{
-				Collider collider = Collider::safeCast(node->data);
-
-				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, i);
-			}
-		}
-		else
-		{
-			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
-			{
-				Collider collider = Collider::safeCast(node->data);
-
-				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, -1);
-			}
-		}
-	}
-}
-
-bool Entity::transformColliderAtSpecIndex(int32 shapeSpecIndex)
-{
-	if(NULL == this->entitySpec->shapeSpecs)
-	{
-		return false;
-	}
-
-	if(NULL == this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
-	{
-		return false;
-	}
-
-	if(this->shapes && 0 <= shapeSpecIndex && NULL != VirtualList::begin(this->shapes))
-	{
-		Collider collider = Collider::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
-
-		if(!isDeleted(collider))
-		{
-			Entity::transformCollider(this, collider, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), shapeSpecIndex);
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-/**
  * Process extra info in initialization
  *
  * @param extraInfo
  */
 void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {
-}
-
-void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
-{
-	updatePosition |= updateRotation;
-	updatePosition |= updateProjection;
-	updateScale |= updateRotation;	
-
-	if(this->entitySpec->useZDisplacementInProjection)
-	{
-		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-	else
-	{
-		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-}
-
-void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			Vector3D position = relativeGlobalPosition;
-			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
-
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, Optics::calculateParallax(position.z));
-			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
-
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &projectedPosition);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.globalRotation);
-		}
-		
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
-}
-
-void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &position);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.globalRotation);
-		}
-
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
 }
 
 void Entity::createComponents()
@@ -1608,8 +1420,7 @@ void Entity::initialTransform(const Transformation* environmentTransform)
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform);
 
-	Entity::synchronizeGraphics(this);
-	Entity::transformColliders(this);
+	Entity::createComponents(this);
 
 	if(this->hidden)
 	{
@@ -1631,8 +1442,6 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	if(this->invalidateGlobalTransformation)
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
-
-		Entity::transformColliders(this);
 	}
 	else if(NULL != this->children)
 	{
@@ -1640,46 +1449,6 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	}
 	
 	this->invalidateGraphics |= invalidateGraphics;
-}
-
-/**
- * Set global position
- */
-void Entity::setPosition(const Vector3D* position)
-{
-	Base::setPosition(this, position);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set global rotation
- */
-void Entity::setRotation(const Rotation* rotation)
-{
-	Base::setRotation(this, rotation);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set local position
- */
-void Entity::setLocalPosition(const Vector3D* position)
-{
-	Base::setLocalPosition(this, position);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set local rotation
- */
-void Entity::setLocalRotation(const Rotation* rotation)
-{
-	Base::setLocalRotation(this, rotation);
-
-	Entity::transformColliders(this);
 }
 
 /**
@@ -1697,11 +1466,6 @@ void Entity::synchronizeGraphics()
 	if(NULL != this->children)
 	{
 		Base::synchronizeGraphics(this);
-	}
-
-	if(!isDeleted(this->sprites))
-	{
-		Entity::updateSprites(this, this->invalidateGraphics & __INVALIDATE_POSITION, this->invalidateGraphics & __INVALIDATE_SCALE, this->invalidateGraphics & __INVALIDATE_ROTATION, this->invalidateGraphics & __INVALIDATE_PROJECTION);
 	}
 
 	this->invalidateGraphics = false;
@@ -1725,23 +1489,13 @@ EntitySpec* Entity::getSpec()
 }
 
 /**
- * Retrieve rotation
+ * Retrieve size
  *
- * @return		Global rotation
+ * @return		Size
  */
-const Rotation* Entity::getRotation()
+const Size* Entity::getSize()
 {
-	return &this->transformation.globalRotation;
-}
-
-/**
- * Retrieve scale
- *
- * @return		Global position
- */
-const Scale* Entity::getScale()
-{
-	return &this->transformation.globalScale;
+	return &this->size;
 }
 
 /**

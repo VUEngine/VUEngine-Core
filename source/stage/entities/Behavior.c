@@ -22,9 +22,9 @@
 /**
  * Class constructor
  */
-void Behavior::constructor(const BehaviorSpec* behaviorSpec)
+void Behavior::constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
-	Base::constructor();
+	Base::constructor(owner, behaviorSpec);
 
 	this->enabled = behaviorSpec->enabled;
 }

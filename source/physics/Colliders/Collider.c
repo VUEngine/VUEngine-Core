@@ -52,10 +52,7 @@ friend class VirtualList;
 void Collider::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 {
 	// construct base object
-	Base::constructor();
-
-	// set the owner
-	this->owner = owner;
+	Base::constructor(owner, shapeSpec);
 
 	// not setup yet
 	this->destroyMe = false;
@@ -70,8 +67,6 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 	this->layersToIgnore = shapeSpec->layersToIgnore;
 	this->otherColliders = NULL;
 	this->registerCollisions = shapeSpec->checkForCollisions;
-
-	this->position = Vector3D::zero();
 }
 
 /**
@@ -176,25 +171,11 @@ Vector3D Collider::getNormal()
 }
 
 /**
- * Position
+ * Test if I collide with the give collider
  *
- * @param position				Vector3d*
- * @param rotation				Rotation*
- * @param scale					Scale*
- * @param size					Size*
  */
-void Collider::transform(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Collider::testForCollision(Collider collider __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
-	if(this->enabled && NULL != this->events)
-	{
-		Collider::fireEvent(this, kEventColliderChanged);
-		NM_ASSERT(!isDeleted(this), "Collider::transformm: deleted this during kEventColliderChanged");
-	}
-
-	this->ready = true;
-
-	// TODO: must update the rightbox
-	this->position = *position;
 }
 
 /**
@@ -307,7 +288,7 @@ CollisionResult Collider::collides(Collider collider)
 	// to determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
-		Collider::testForCollision(this, collider, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
+		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
 
 		if(collisionData.collisionInformation.collider == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -401,51 +382,6 @@ bool Collider::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __att
 	return canMove;
 }
 
-/*
-void Collider::checkPreviousCollisions(Collider otherCollider)
-{
-	if(!this->otherColliders)
-	{
-		return;
-	}
-
-	VirtualNode node = this->otherColliders->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
-
-		ASSERT(!isDeleted(otherColliderRegistry), "Collider::invalidateSolutionVectors: dead otherColliderRegistry");
-
-		if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->collider != otherCollider)
-		{
-			CollisionInformation collisionInformation =  Collider::testForCollision(this, otherColliderRegistry->collider, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
-
-			if(collisionInformation.collider == this && 0 < collisionInformation.solutionVector.magnitude)
-			{
-				if(collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
-				{
-					if(Collider::canMoveTowards(this, Vector3D::scalarProduct(otherColliderRegistry->solutionVector.direction, collisionInformation.solutionVector.magnitude), 0))
-					{
-						Collider::displaceOwner(this, Vector3D::scalarProduct(collisionInformation.solutionVector.direction, collisionInformation.solutionVector.magnitude));
-					}
-				}
-				else if(collisionInformation.solutionVector.magnitude < otherColliderRegistry->solutionVector.magnitude)
-				{
-					// since I'm not close to that collider anymore, we can discard it
-					otherColliderRegistry->solutionVector.magnitude = 0;
-				}
-			}
-			else
-			{
-				// since I'm not close to that collider anymore, we can discard it
-				otherColliderRegistry->solutionVector.magnitude = 0;
-			}
-		}
-	}
-}
-*/
-
 /**
  * Retrieve the position
  *
@@ -453,7 +389,7 @@ void Collider::checkPreviousCollisions(Collider otherCollider)
  */
 Vector3D Collider::getPosition()
 {
-	return this->position;
+	return *this->position;
 }
 
 /**
@@ -464,7 +400,7 @@ Vector3D Collider::getPosition()
 void Collider::setPosition(const Vector3D* position)
 {
 	// TODO: must update the rightbox
-	this->position = *position;
+	this->position = position;
 }
 
 /**
@@ -851,7 +787,6 @@ void Collider::show()
 		{
 			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
 
-			Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
 			Wireframe::show(this->wireframe);
 		}
 	}

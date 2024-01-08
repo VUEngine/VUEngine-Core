@@ -415,15 +415,6 @@ void Stage::loadPostProcessingEffects()
 	}
 }
 
-// retrieve size
-Size Stage::getSize()
-{
-	ASSERT(this->stageSpec, "Stage::getSize: null stageSpec");
-
-	// set world's limits
-	return Size::getFromPixelSize(this->stageSpec->level.pixelSize);
-}
-
 PixelSize Stage::getPixelSize()
 {
 	ASSERT(this->stageSpec, "Stage::getPixelSize: null stageSpec");

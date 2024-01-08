@@ -64,7 +64,7 @@ class PrintingSprite : BgmapSprite
 	int8 printingBgmapSegment;
 	
 	/// @publicsection
-	void constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec);
 	void reset();
 
 	void setPrintingBgmapSegment(int8 printingBgmapSegment);

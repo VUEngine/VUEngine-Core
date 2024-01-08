@@ -37,10 +37,10 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(PolyhedronSpec* polyhedronSpec)
+void Polyhedron::constructor(SpatialObject owner, PolyhedronSpec* polyhedronSpec)
 {
 	// construct base object
-	Base::constructor(&polyhedronSpec->wireframeSpec);
+	Base::constructor(owner, &polyhedronSpec->wireframeSpec);
 
 	// don't create the list yet
 	this->vertices = NULL;

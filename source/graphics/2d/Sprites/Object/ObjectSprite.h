@@ -80,15 +80,15 @@ class ObjectSprite : Sprite
 	int8 yDisplacementDelta;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 	int16 getTotalObjects();
 	void invalidateObjectSpriteContainer();
 	void resetTotalObjects();
 
+	override void registerWithManager();
+	override void unregisterWithManager();
 	override int16 doRender(int16 index, bool evenFrame);
-	override void rotate(const Rotation* rotation);
-	override void registerWithManager();
-	override void registerWithManager();
+	override void setRotation(const Rotation* rotation);
 	override void rewrite();
 	override int32 getTotalPixels();
 }

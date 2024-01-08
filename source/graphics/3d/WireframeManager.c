@@ -104,14 +104,14 @@ void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
  *
  * @param wireframeSpec	Wireframe spec
  */
-Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(WireframeSpec*))wireframeSpec->allocator)(wireframeSpec);
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
 	if(WireframeManager::registerWireframe(this, wireframe) == wireframe)
 	{
