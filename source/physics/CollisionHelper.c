@@ -211,13 +211,16 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 
 	Vector3D ballSideToCheck = Vector3D::sum(*ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
 
-	fixed_t position = __FIXED_MULT((lineField->b.x - lineField->a.x), (ballSideToCheck.y - lineField->a.y)) - __FIXED_MULT((lineField->b.y - lineField->a.y), (ballSideToCheck.x - lineField->a.x));
+	Vector3D lineFieldA = Vector3D::sum(lineField->a, *lineField->position);
+	Vector3D lineFieldB = Vector3D::sum(lineField->b, *lineField->position);
+
+	fixed_t position = __FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - __FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
 
 	if(0 > position)
 	{
-		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineField->a, lineField->b);
+		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineFieldA, lineFieldB);
 
-		bool collision = Vector3D::isVectorInsideLine(projection, lineField->a, lineField->b);
+		bool collision = Vector3D::isVectorInsideLine(projection, lineFieldA, lineFieldB);
 
 		if(!collision)
 		{
@@ -230,7 +233,7 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 			{
 				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpedicular(ballRadiusVector, left));
 				
-				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineField->a, lineField->b);
+				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineFieldA, lineFieldB);
 			}
 		}
 

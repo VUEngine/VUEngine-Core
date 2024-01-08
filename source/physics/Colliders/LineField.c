@@ -144,8 +144,8 @@ void LineField::computeSize()
 
 	this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
 
-	this->a = Vector3D::sum(this->a, *this->position);
-	this->b = Vector3D::sum(this->b, *this->position);
+	this->a = Vector3D::sum(this->a, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	this->b = Vector3D::sum(this->b, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 
 	fixed_t dx = this->b.x - this->a.x;
 	fixed_t dy = this->b.y - this->a.y;
