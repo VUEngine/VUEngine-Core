@@ -48,7 +48,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	this->particles = NULL;
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -572,8 +571,6 @@ Particle ParticleSystem::spawnParticle()
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
 	this->previousGlobalPosition = this->transformation.globalPosition;
-
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 
 	bool transformed = this->transformed;
 

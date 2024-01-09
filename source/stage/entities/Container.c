@@ -689,14 +689,11 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	// if I have children
 	if(NULL != this->children)
 	{
-		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
-
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-			child->invalidateGraphics |= invalidateGraphics;
 
 			// Do not enable this check to optimize things
 			// It messes up child entities when you need to 

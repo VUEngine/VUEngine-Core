@@ -173,7 +173,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 		}
 	}
 
-	this->center.z = position->z;
+	this->center = *position;
 }
 
 /**

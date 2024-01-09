@@ -86,8 +86,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
-
-	this->invalidateGraphics = 0;
 	this->allowCollisions = true;
 }
 
@@ -329,8 +327,6 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 	if(!isDeleted(sprite))
 	{
 		VirtualList::pushBack(this->sprites, sprite);
-
-		this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	}
 
 	return sprite;
@@ -1429,11 +1425,7 @@ void Entity::initialTransform(const Transformation* environmentTransform)
  * @param environmentTransform
  */
 void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
-{
-	uint8 invalidateGraphics = 0;
-
-	invalidateGraphics = invalidateTransformationFlag | this->invalidateGlobalTransformation;
-	
+{	
 	if(this->invalidateGlobalTransformation)
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
@@ -1442,8 +1434,6 @@ void Entity::transform(const Transformation* environmentTransform, uint8 invalid
 	{
 		Entity::transformChildren(this, invalidateTransformationFlag);
 	}
-	
-	this->invalidateGraphics |= invalidateGraphics;
 
 	this->inCameraRange = this->dontStreamOut;
 
@@ -1795,11 +1785,6 @@ void Entity::resume()
 	{
 		Entity::createSprites(this);
 		Entity::createWireframes(this);
-	}
-	else
-	{
-		// force update sprites on next game's cycle
-		this->invalidateGraphics = this->invalidateGlobalTransformation;
 	}
 
 	if(this->hidden)

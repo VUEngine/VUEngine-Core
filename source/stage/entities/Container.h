@@ -66,8 +66,6 @@ class Container : SpatialObject
 {
 	// whether to inherit position, rotation and scale from environment (parents)
 	uint8 inheritEnvironment;
-	// Flag to update graphics' attributes
-	uint8 invalidateGraphics;
 	// Flag to recalculate global transformations
 	uint8 invalidateGlobalTransformation;
 	// 3D transformation
