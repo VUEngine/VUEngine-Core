@@ -154,12 +154,6 @@ void AnimationInspector::destructor()
  */
 void AnimationInspector::update()
 {
-	if(this->gameState && this->animatedSprite)
-	{
-		Sprite::updateAnimation(this->animatedSprite);
-		Sprite::update(this->animatedSprite);
-		Sprite::processEffects(this->animatedSprite);
-	}
 }
 
 /**
