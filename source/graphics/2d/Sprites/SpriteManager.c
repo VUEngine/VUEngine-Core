@@ -230,7 +230,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 
 			if(size[i])
 			{
-				ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+				ObjectSpriteContainer::setPixelPosition(objectSpriteContainer, &position);
 			}
 
 #ifndef __RELEASE

@@ -157,26 +157,6 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 }
 
 /**
- * Set 2D position
- *
- * @param position		New 2D position
- */
-void ObjectSpriteContainer::setPosition(const PixelVector* position)
-{
-	if(this->objectSprites)
-	{
-		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-			ObjectSprite::setPixelPosition(objectSprite, position);
-		}
-	}
-
-	this->center = *position;
-}
-
-/**
  * Sort the object sprites within this container according to their z coordinates
  *
  * @private

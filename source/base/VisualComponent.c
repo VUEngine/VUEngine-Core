@@ -16,7 +16,7 @@
 #include <DebugUtilities.h>
 #include <SpatialObject.h>
 
-#include "Component.h"
+#include "VisualComponent.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,58 +41,57 @@ static const Transformation _dummyTransformation =
 /**
  * Class constructor
  */
-void Component::constructor(SpatialObject owner, const ComponentSpec* componentSpec)
+void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec)
 {
-	Base::constructor();
-	
-	this->componentSpec = componentSpec;
-	this->owner = owner;
+	Base::constructor(owner, visualComponentSpec);
 
-	if(!isDeleted(this->owner))
-	{
-		this->transformation = SpatialObject::getTransformation(this->owner);
-	}
-	else
-	{
-		this->transformation = &_dummyTransformation;
-	}
+	this->center = (PixelVector){0, 0, 0, 0};
+	this->show = __SHOW;
 }
 
 /**
  * Class destructor
  */
-void Component::destructor()
+void VisualComponent::destructor()
 {	
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
 /**
- * Retrieve the position
- *
- * @return Vector3D			Collider's position
+ * Start being rendered
  */
-Vector3D Component::getPosition()
+void VisualComponent::show()
 {
-	return this->transformation->position;
+	this->rendered = __SHOW == this->show;
+	this->show = __SHOW;
 }
 
 /**
- * Retrieve the rotation
- *
- * @return Rotation			Collider's rotation
+ * Stop being rendered
  */
-Rotation Component::getRotation()
+void VisualComponent::hide()
 {
-	return this->transformation->rotation;
+	this->rendered = false;
+	this->show = __HIDE;
 }
 
 /**
- * Retrieve the rotation
+ * Get transparency mode
  *
- * @return Scale			Collider's scale
+ * @return		Transparency mode
  */
-Scale Component::getScale()
+uint8 VisualComponent::getTransparent()
 {
-	return this->transformation->scale;
+	return this->transparent;
+}
+
+/**
+ * Set transparency mode
+ *
+ * @param value	Transparency mode
+ */
+void VisualComponent::setTransparent(uint8 value)
+{
+	this->transparent = value;
 }

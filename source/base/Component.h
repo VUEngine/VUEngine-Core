@@ -32,20 +32,13 @@ typedef const void ComponentSpec;
 
 abstract class Component : ListenerObject 
 {
-	const ComponentSpec* componentSpec;
 	SpatialObject owner;
+	const ComponentSpec* componentSpec;
 	const Transformation* transformation;
-	uint8 show;
-	bool rendered;
-	uint8 transparent;
-	PixelVector center;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
-	void hide();
-	void show();
-	uint8 getTransparent();
-	void setTransparent(uint8 value);
+
 	Vector3D getPosition();
 	Rotation getRotation();
 	Scale getScale();

@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Component.h>
+#include <VisualComponent.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
@@ -101,7 +101,7 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup graphics-2d-sprites
-abstract class Sprite : Component
+abstract class Sprite : VisualComponent
 {
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
