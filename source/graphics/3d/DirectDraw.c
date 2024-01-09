@@ -507,7 +507,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	return true;
 }
 
-static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	uint16 xFromDeltaLeft = (unsigned)(fromPoint.x - fromPoint.parallax - _frustum.x0);
 	uint16 xFromDeltaRight = (unsigned)(fromPoint.x +  fromPoint.parallax - _frustum.x0);
@@ -531,7 +531,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(xOutside || yOutside || zOutside)
 	{
-		return;
+		return false;
 	}
 
 	fixed_ext_t fromPointX = __I_TO_FIXED_EXT(fromPoint.x);
@@ -550,7 +550,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	
 	if(0 == dx && 0 == dy)
 	{
-		return;
+		return false;
 	}
 
 	if(_frustumWidth < xFromDeltaLeft || _frustumWidth < xFromDeltaRight || _frustumHeight < yFromDelta)
@@ -559,7 +559,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		if(!DirectDraw::shrinkLineToScreenSpace(&fromPointX, &fromPointY, &fromPointParallax, dx, dy, dParallax, toPointX, toPointY, toPointParallax))
 		{
-			return;
+			return false;
 		}
 
 		xFromOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(fromPointX - _frustumFixedPoint.x0);
@@ -572,7 +572,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 		if(!DirectDraw::shrinkLineToScreenSpace(&toPointX, &toPointY, &toPointParallax, dx, dy, dParallax, fromPointX, fromPointY, fromPointParallax))
 		{
-			return;
+			return false;
 		}
 
 		xToOutside = (unsigned)_frustumFixedPoint.x1 - _frustumFixedPoint.x0 < (unsigned)(toPointX - _frustumFixedPoint.x0);
@@ -582,7 +582,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if((xFromOutside && xToOutside) || (yFromOutside && yToOutside))
 	{
-		return;
+		return false;
 	}
 
 /*
@@ -650,7 +650,7 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 	if(_directDraw->drawPixels > _directDraw->maximuDrawPixels)
 	{
-		return;
+		return false;
 	}
 
 	if(interlaced)
@@ -695,7 +695,6 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				parallaxStart += parallaxStep;
 			}
 		}		
-		return;
 	}
 	else
 	{
@@ -711,13 +710,15 @@ static void DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			parallaxStart += parallaxStep;
 		}
 	}
+
+	return true;
 }
 
-static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(0 >= radius)
 	{
-		return;
+		return false;
 	}
 	
 	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
@@ -734,7 +735,7 @@ static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 
 
 	if(xOutside || yOutside || zOutside)
 	{
-		return;
+		return false;
 	}
 
 	uint32 radiusSquare = radius * radius;
@@ -745,13 +746,15 @@ static void DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 
 
 		DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
 	}
+	
+	return true;
 }
 
-static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(0 >= radius)
 	{
-		return;
+		return false;
 	}
 
 	bool xFromOutside = _frustumWidth < (unsigned)(center.x - _frustum.x0);
@@ -768,7 +771,7 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 
 	if(xOutside || yOutside || zOutside)
 	{
-		return;
+		return false;
 	}
 
 	uint32 radiusSquare = radius * radius;
@@ -820,28 +823,34 @@ static void DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
 		}
 	}
+
+	return true;
 }
 
-static void DirectDraw::drawColorPoint(int16 x, int16 y, int16 parallax, int32 color)
+static bool DirectDraw::drawColorPoint(int16 x, int16 y, int16 parallax, int32 color)
 {
 	uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
 	DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, x, y, parallax, color);
+
+	return true;
 }
 
-static void DirectDraw::drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex)
+static bool DirectDraw::drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex)
 {
 	uint32 buffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 
 	DirectDraw::drawColorPixelInterlaced((BYTE*)buffer, x, y, 0!= bufferIndex ? -parallax : parallax, color);
+
+	return true;
 }
 
-static void DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(!DirectDraw::isPointInsideFrustum(center))
 	{
-		return;
+		return false;
 	}
 
 	int16 radiusHelper = 0;
@@ -902,13 +911,15 @@ static void DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 			}
 		}
 	}
+
+	return true;
 }
 
-static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(!DirectDraw::isPointInsideFrustum(center))
 	{
-		return;
+		return false;
 	}
 
 	int16 lengthHelper = 0;
@@ -950,13 +961,15 @@ static void DirectDraw::drawColorX(PixelVector center, int16 length, int32 color
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, (center.x + halfLength) - lengthHelper, y, center.parallax, color);
 		}
 	}
+
+	return true;
 }
 
-static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
+static bool DirectDraw::drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced)
 {
 	if(!DirectDraw::isPointInsideFrustum(center))
 	{
-		return;
+		return false;
 	}
 
 	int16 lengthHelper = 0;
@@ -995,6 +1008,8 @@ static void DirectDraw::drawColorCross(PixelVector center, int16 length, int32 c
 			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x, center.y + coordinate, center.parallax, color);
 		}
 	}
+
+	return true;
 }
 
 static bool DirectDraw::isPointInsideFrustum(PixelVector point)

@@ -83,7 +83,7 @@ void Line::render()
  */
 void Line::draw()
 {
-	DirectDraw::drawColorLine
+	this->drawn = DirectDraw::drawColorLine
 	(
 		this->a,
 		this->b,

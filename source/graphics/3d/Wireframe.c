@@ -49,6 +49,7 @@ void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
 	this->squaredDistanceToCamera = 0;
 	this->rendered = false;
 	this->displacement = Vector3D::zero();
+	this->drawn = false;
 }
 
 /**
@@ -207,4 +208,14 @@ void Wireframe::setDisplacement(const Vector3D* displacement)
 	{
 		this->displacement = *displacement;
 	}
+}
+
+/**
+ * Is visible?
+ *
+ * @return visibility
+ */
+bool Wireframe::isVisible()
+{
+	return this->drawn && __SHOW == this->show;
 }

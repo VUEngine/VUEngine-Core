@@ -1576,9 +1576,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 		}
 	}
 
-	// TODO: implement a bool flag in the wireframe that is raised
 	// when DirectDraw draws at least a pixel
-/*
 	if(!this->hidden && NULL != this->wireframes && NULL != this->wireframes->head)
 	{
 		for(VirtualNode wireframeNode = this->wireframes->head; NULL != wireframeNode; wireframeNode = wireframeNode->next)
@@ -1592,7 +1590,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 			}
 		}
 	}
-*/
+
 	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
 
 	if(NULL != this->centerDisplacement)

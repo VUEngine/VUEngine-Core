@@ -145,7 +145,7 @@ void Sphere::draw()
 {
 	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
-	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+	this->drawn = DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
 	if(this->drawCenter)
 	{

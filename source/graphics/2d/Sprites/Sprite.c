@@ -175,8 +175,14 @@ int16 Sprite::render(int16 index, bool evenFrame)
  	else
 	{
 		this->rendered = true;
+
  		this->index = Sprite::doRender(this, index, evenFrame);
- 	}
+
+		if(index != this->index)
+		{
+			this->rendered = false;
+		}
+	}
 
 	return this->index;
 }

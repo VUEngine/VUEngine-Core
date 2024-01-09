@@ -57,6 +57,7 @@ abstract class Wireframe : VisualComponent
 {
 	Vector3D displacement;
 	fixed_ext_t squaredDistanceToCamera;
+	bool drawn;
 	bool interlaced;
 	uint8 color;
 	uint8 bufferIndex;
@@ -65,6 +66,7 @@ abstract class Wireframe : VisualComponent
 	void constructor(SpatialObject owner, WireframeSpec* wireframeSpec);
 	void setupRenderingMode(const Vector3D* relativePosition);
 	void setDisplacement(const Vector3D* displacement);
+	bool isVisible();
 	PixelVector getPixelPosition();
 
 	virtual void draw() = 0;

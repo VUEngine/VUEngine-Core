@@ -84,11 +84,11 @@ void Asterisk::draw()
 
 	if(this->renderCycle)
 	{
-		DirectDraw::drawColorX(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		this->drawn = DirectDraw::drawColorX(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 	else		
 	{
-		DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		this->drawn = DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;

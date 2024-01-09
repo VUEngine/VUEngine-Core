@@ -38,14 +38,14 @@ singleton class DirectDraw : Object
 	/// @publicsection
 	static DirectDraw getInstance();
 	static void writeToFrameBuffers();
-	static void drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
-	static void drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static void drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static void drawColorPoint(int16 x, int16 y, int16 parallax, int32 color);
-	static void drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex);
-	static void drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
-	static void drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
-	static void drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorPoint(int16 x, int16 y, int16 parallax, int32 color);
+	static bool drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex);
+	static bool drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawSolidRhumbus(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorCross(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
+	static bool drawColorX(PixelVector center, int16 length, int32 color, uint8 bufferIndex, bool interlaced);
 	static bool isPointInsideFrustum(PixelVector point);
 
 	void reset();
