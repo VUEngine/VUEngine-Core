@@ -1546,41 +1546,6 @@ void Entity::setSize(Size size)
 	this->size = size;
 }
 
-bool Entity::isPixelPositionWithinScreenSpace(PixelVector pixelPosition, int32 pad)
-{
-	PixelSize pixelSize = PixelSize::getFromSize(this->size);
-
-	int16 halfWidth	= pixelSize.x >> 1;
-	int16 halfHeight = pixelSize.y >> 1;
-	int16 halfDepth	= pixelSize.z >> 1;
-
-	int32 x = pixelPosition.x;
-	int32 y = pixelPosition.y;
-	int32 z = pixelPosition.z;
-
-	pad += __ABS(z);
-
-	// check x visibility
-	if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
-	{
-		return false;
-	}
-
-	// check y visibility
-	if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
-	{
-		return false;
-	}
-
-	// check z visibility
-	if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
-	{
-		return false;
-	}
-
-	return true;
-}
-
 /**
  * Whether it is visible
  *
@@ -1597,7 +1562,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 {
 	this->inCameraRange = false;
 
-	if(NULL != this->sprites && NULL != this->sprites->head)
+	if(!this->hidden && NULL != this->sprites && NULL != this->sprites->head)
 	{
 		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
 		{
@@ -1608,72 +1573,60 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				this->inCameraRange = true;
 				return;
 			}
-
-			if(Entity::isPixelPositionWithinScreenSpace(this, Sprite::getDisplacedPosition(sprite), pad))
-			{
-				this->inCameraRange = true;
-				return;
-			}
 		}
 	}
-	else if(NULL != this->wireframes && NULL != this->wireframes->head)
+
+	// TODO: implement a bool flag in the wireframe that is raised
+	// when DirectDraw draws at least a pixel
+/*
+	if(!this->hidden && NULL != this->wireframes && NULL != this->wireframes->head)
 	{
 		for(VirtualNode wireframeNode = this->wireframes->head; NULL != wireframeNode; wireframeNode = wireframeNode->next)
 		{
 			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
-/*
-			// TODO: implement a bool flag in the wireframe that is raised
-			// when DirectDraw draws at least a pixel
+
 			if(Wireframe::isVisible(wireframe))
 			{
 				this->inCameraRange = true;
 				return;
 			}
-*/
-			if(Entity::isPixelPositionWithinScreenSpace(this, Wireframe::getPixelPosition(wireframe), pad))
-			{
-				this->inCameraRange = true;
-				return;
-			}
 		}
 	}
-	else
+*/
+	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
+
+	if(NULL != this->centerDisplacement)
 	{
-		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
+		position3D = Vector3D::sum(position3D, *this->centerDisplacement);
+	}
 
-		if(NULL != this->centerDisplacement)
-		{
-			position3D = Vector3D::sum(position3D, *this->centerDisplacement);
-		}
+	position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
+	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
 
-		position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
-		PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
+	PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
 
-		PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
+	size.x = __ABS(size.x);
+	size.y = __ABS(size.y);
+	size.z = __ABS(size.z);
 
-		size.x = __ABS(size.x);
-		size.y = __ABS(size.y);
-		size.z = __ABS(size.z);
+	this->inCameraRange = true;
 
-		this->inCameraRange = true;
+	int32 helperPad = pad + (0 < position2D.z ? position2D.z : 0);
 
-		int32 helperPad = pad + (0 < position2D.z ? position2D.z : 0);
-
-		// check x visibility
-		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
-		{
-			this->inCameraRange = false;
-		}
-		// check y visibility
-		else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
-		{
-			this->inCameraRange = false;
-		}
-		// check z visibility
-		else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
-		{
-			this->inCameraRange = false;
-		}
+	// check x visibility
+	if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
+	{
+		this->inCameraRange = false;
+	}
+	// check y visibility
+	else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
+	{
+		this->inCameraRange = false;
+	}
+	// check z visibility
+	else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
+	{
+		this->inCameraRange = false;
 	}
 
 	if(!this->inCameraRange && recursive && NULL != this->children)

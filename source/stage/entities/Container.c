@@ -704,12 +704,12 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			{
 				continue;
 			}
-
+/*
 			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
 			{
 				continue;
 			}
-
+*/
 			Container::transform(child, &this->transformation, invalidateTransformationFlag);
 		}
 	}
