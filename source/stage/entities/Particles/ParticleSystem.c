@@ -61,6 +61,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
+	this->transformed = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }

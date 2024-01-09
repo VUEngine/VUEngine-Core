@@ -48,8 +48,6 @@ void Container::constructor(const char* const name)
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
 
-	this->transformed = false;
-
 	// set position
 	this->transformation.localPosition = Vector3D::zero();
 	this->transformation.globalPosition = Vector3D::zero();
@@ -642,8 +640,6 @@ void Container::initialTransform(const Transformation* environmentTransform)
 			Container::initialTransform(child, &this->transformation);
 		}
 	}
-
-	this->transformed = !this->hidden;
 }
 
 /**
@@ -686,7 +682,6 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 
 	// don't update position on next transformation cycle
 	this->invalidateGlobalTransformation = false;
-	this->transformed = true;
 }
 
 void Container::transformChildren(uint8 invalidateTransformationFlag)
@@ -861,8 +856,6 @@ void Container::setLocalPosition(const Vector3D* position)
 
 		this->transformation.localPosition = *position;
 	}
-
-//	this->transformed = false;
 }
 
 /**
@@ -1420,7 +1413,6 @@ void Container::show()
 	}
 
 	Container::invalidateGlobalTransformation(this);
-	this->transformed = false;
 }
 
 void Container::hide()

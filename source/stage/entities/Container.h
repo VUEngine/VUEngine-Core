@@ -90,8 +90,6 @@ class Container : SpatialObject
 	bool transform;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
-	// Raise flag when transformed to allow graphics sync
-	bool transformed;
 
 	/// @publicsection
 	void constructor(const char* const name);

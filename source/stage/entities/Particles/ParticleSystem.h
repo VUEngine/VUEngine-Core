@@ -122,6 +122,8 @@ class ParticleSystem : Entity
 	bool selfDestroyWhenDone;
 	// Flag to prevent computing force when not necessary
 	bool applyForceToParticles;
+	// Raise flag when transformed to reset particles' positions
+	bool transformed;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
