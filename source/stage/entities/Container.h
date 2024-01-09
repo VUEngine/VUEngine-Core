@@ -70,6 +70,7 @@ class Container : SpatialObject
 	uint8 invalidateGlobalTransformation;
 	// 3D transformation
 	Transformation transformation;
+	Transformation localTransformation;
 	// Children list
 	VirtualList children;
 	// Bahaviors list

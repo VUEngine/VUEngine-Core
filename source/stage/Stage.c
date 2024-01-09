@@ -56,24 +56,14 @@ friend class VirtualList;
 
 const Transformation neutralEnvironmentTransformation =
 {
-	// spatial local position
+	// spatial position
 	{0, 0, 0},
-
-	// spatial global position
+ 
+	// spatial rotation
 	{0, 0, 0},
-
-	// local rotation
-	{0, 0, 0},
-
-	// global rotation
-	{0, 0, 0},
-
-	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
-	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
+ 
+	// spatial scale
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
 };
 
 #ifdef __PROFILE_STREAMING

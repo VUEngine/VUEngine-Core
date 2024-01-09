@@ -578,9 +578,9 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 {
 	PixelVector pixelGlobalPosition = PixelVector::getFromVector3D(environmentPosition, 0);
 
-	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
-	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
-	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->transformation.localPosition.z);
+	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->localTransformation.position.x);
+	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->localTransformation.position.y);
+	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->localTransformation.position.z);
 
 	int16 left = 0;
 	int16 right = 0;
@@ -750,9 +750,9 @@ void Entity::calculateSize(bool force)
 
 	Vector3D centerDisplacement =
 	{
-		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->transformation.localPosition.x,
-		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->transformation.localPosition.y,
-		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
+		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->localTransformation.position.x,
+		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->localTransformation.position.y,
+		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->localTransformation.position.z
 	};
 
 	if(0 != (centerDisplacement.x | centerDisplacement.y | centerDisplacement.z))
@@ -1639,7 +1639,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 	}
 	else
 	{
-		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
+		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
 
 		if(NULL != this->centerDisplacement)
 		{
@@ -1954,10 +1954,10 @@ void Entity::setNormalizedDirection(NormalizedDirection normalizedDirection)
 
 	Rotation rotation =
 	{
-		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->transformation.localRotation.x,
-		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->transformation.localRotation.y,
-		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transformation.localRotation.z,
-		this->transformation.localRotation.z,
+		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->localTransformation.rotation.x,
+		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->localTransformation.rotation.y,
+		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->localTransformation.rotation.z,
+		this->localTransformation.rotation.z,
 	};
 
 	Entity::setLocalRotation(this, &rotation);
@@ -1975,17 +1975,17 @@ NormalizedDirection Entity::getNormalizedDirection()
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.y))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.y))
 	{
 		normalizedDirection.x = __LEFT;
 	}
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.x))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.x))
 	{
 		normalizedDirection.y = __UP;
 	}
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.z))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.z))
 	{
 		normalizedDirection.z = __NEAR;
 	}

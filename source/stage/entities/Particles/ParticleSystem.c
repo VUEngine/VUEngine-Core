@@ -388,7 +388,7 @@ bool ParticleSystem::recycleParticle()
  */
 Vector3D ParticleSystem::getParticleSpawnPosition()
 {
-	Vector3D position = this->transformation.globalPosition;
+	Vector3D position = this->transformation.position;
 
 	if(0 != this->spawnPositionDisplacement.x)
 	{
@@ -416,7 +416,7 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 {
 	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
 	{
-		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
+		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.position));
 		fixed_t strength = (Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->minimumForce) + Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->maximumForce)) >> 1;
 		return Vector3D::scalarProduct(direction, strength);
 	}
@@ -570,7 +570,7 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	this->previousGlobalPosition = this->transformation.globalPosition;
+	this->previousGlobalPosition = this->transformation.position;
 
 	bool transformed = this->transformed;
 

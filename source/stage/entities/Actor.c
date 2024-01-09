@@ -97,7 +97,7 @@ void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axis
 		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalProperties, axisSubjectToGravity);
 	}
 
-	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+	Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 }
 
 void Actor::initializeStateMachine(State state)
@@ -132,28 +132,28 @@ void Actor::setPosition(const Vector3D* position)
 
 	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 }
 
 //set class's local position
 void Actor::setLocalPosition(const Vector3D* position)
 {
-	Vector3D displacement = this->transformation.localPosition;
+	Vector3D displacement = this->localTransformation.position;
 
 	Base::setLocalPosition(this, position);
 
-	displacement.x -= this->transformation.localPosition.x;
-	displacement.y -= this->transformation.localPosition.y;
-	displacement.z -= this->transformation.localPosition.z;
+	displacement.x -= this->localTransformation.position.x;
+	displacement.y -= this->localTransformation.position.y;
+	displacement.z -= this->localTransformation.position.z;
 
-	this->transformation.globalPosition.x -= displacement.x;
-	this->transformation.globalPosition.y -= displacement.y;
-	this->transformation.globalPosition.z -= displacement.z;
+	this->transformation.position.x -= displacement.x;
+	this->transformation.position.y -= displacement.y;
+	this->transformation.position.z -= displacement.z;
 
 	if(NULL != this->body)
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 
 	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
@@ -239,17 +239,17 @@ bool Actor::hasChangedDirection(uint16 axis, const Rotation* previousRotation)
 	{
 		case __X_AXIS:
 
-			return this->transformation.localRotation.x != previousRotation->x;
+			return this->localTransformation.rotation.x != previousRotation->x;
 			break;
 
 		case __Y_AXIS:
 
-			return this->transformation.localRotation.y != previousRotation->y;
+			return this->localTransformation.rotation.y != previousRotation->y;
 			break;
 
 		case __Z_AXIS:
 
-			return this->transformation.localRotation.z != previousRotation->z;
+			return this->localTransformation.rotation.z != previousRotation->z;
 			break;
 	}
 
@@ -545,7 +545,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 }
 
@@ -565,7 +565,7 @@ void Actor::initialTransform(const Transformation* environmentTransform)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 }
 
