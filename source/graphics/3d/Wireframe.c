@@ -108,6 +108,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 	if(0 > Vector3D::dotProduct(*relativePosition, _cameraDirection))
 	{
+		this->drawn = false;
 		this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 		this->color = __COLOR_BLACK;
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
@@ -135,6 +136,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 		if(0 == distanceToCamera)
 		{
+			this->drawn = false;
 			this->color = __COLOR_BLACK;
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
@@ -154,14 +156,17 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
+			this->drawn = false;
 			this->color = __COLOR_BLACK;
 			return;
 		}
 
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
-			this->interlaced = true;
+			this->drawn = false;
 			this->color = __COLOR_BLACK;
+			this->interlaced = true;
+			return;
 		}
 		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
 		{
