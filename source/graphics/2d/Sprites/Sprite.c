@@ -156,7 +156,11 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	{
 		Sprite::position(this);
 		Sprite::rotate(this);
-		Sprite::scale(this);
+
+		if(Sprite::overrides(this, setScale))
+		{
+			Sprite::scale(this);
+		}
 	}
 
 	// Do not remove this check, it prevents sprites from loop

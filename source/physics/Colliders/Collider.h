@@ -235,8 +235,6 @@ abstract class Collider : Component
 	void show();
 	void hide();
 	void setVisible(bool value);
-	Vector3D getPosition();
-	void setPosition(const Vector3D* position);
 
 //	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual Vector3D getNormal();

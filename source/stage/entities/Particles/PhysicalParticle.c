@@ -85,14 +85,6 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
 }
 
 /**
- * Transform
- */
-void PhysicalParticle::transform()
-{
-	this->position = *Body::getPosition(this->body);
-}
-
-/**
  * Add force
  *
  * @param force
@@ -151,7 +143,10 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 {
 	ASSERT(this->body, "Particle::setPosition: null body");
 
-	Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+	if(Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+	}
 
 	Base::setPosition(this, position);
 }

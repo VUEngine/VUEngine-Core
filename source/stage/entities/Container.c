@@ -736,16 +736,6 @@ const Vector3D* Container::getLocalPosition()
 }
 
 /**
- * Retrieve global position
- *
- * @return		Global position
- */
-const Vector3D* Container::getPosition()
-{
-	return &this->transformation.position;
-}
-
-/**
  * Set global position
  *
  * @param position	Pointer to position
@@ -765,16 +755,6 @@ void Container::setPosition(const Vector3D* position)
 	}
 }
 
-/**
- * Retrieve global rotation
- *
- * @return		Global rotation
- */
-const Rotation* Container::getRotation()
-{
-	return &this->transformation.rotation;
-}
-
 void Container::setRotation(const Rotation* rotation)
 {
 	Rotation displacement = Rotation::sub(this->transformation.rotation, *rotation);
@@ -783,16 +763,6 @@ void Container::setRotation(const Rotation* rotation)
 	this->localTransformation.rotation = Rotation::sub(this->transformation.rotation, displacement);
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
-}
-
-/**
- * Retrieve global scale
- *
- * @return		Global scale
- */
-const Scale* Container::getScale()
-{
-	return &this->transformation.scale;
 }
 
 void Container::setScale(const Scale* scale)

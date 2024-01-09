@@ -234,18 +234,6 @@ bool SolidParticle::handleMessage(Telegram telegram)
 }
 
 /**
- * Set position
- *
- * @param position	Position to move particle to
- */
-void SolidParticle::setPosition(const Vector3D* position)
-{
-	Base::setPosition(this, position);
-
-//	SolidParticle::transformCollider(this);
-}
-
-/**
  * Retrieve colliders list
  *
  * @return		SolidParticle's Collider list

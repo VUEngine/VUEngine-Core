@@ -110,42 +110,34 @@ fixed_t SpatialObject::getDepth()
 
 const Vector3D* SpatialObject::getPosition()
 {
-	static Vector3D position =
-	{
-		0, 0, 0
-	};
-
-	return &position;
+	return &this->transformation.position;
 }
 
-void SpatialObject::setPosition(const Vector3D* position __attribute__ ((unused)))
-{}
+void SpatialObject::setPosition(const Vector3D* position)
+{
+	this->transformation.position = *position;
+}
 
 const Rotation* SpatialObject::getRotation()
 {
-	static Rotation rotation =
-	{
-		0, 0, 0
-	};
+	return &this->transformation.rotation;
 
-	return &rotation;
 }
 
-void SpatialObject::setRotation(const Rotation* rotation __attribute__ ((unused)))
-{}
+void SpatialObject::setRotation(const Rotation* rotation)
+{
+	this->transformation.rotation = *rotation;
+}
 
 const Scale* SpatialObject::getScale()
 {
-	static Scale scale =
-	{
-		__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9
-	};
-
-	return &scale;
+	return &this->transformation.scale;
 }
 
-void SpatialObject::setScale(const Scale* scale __attribute__ ((unused)))
-{}
+void SpatialObject::setScale(const Scale* scale)
+{
+	this->transformation.scale = *scale;
+}
 
 const Size* SpatialObject::getSize()
 {

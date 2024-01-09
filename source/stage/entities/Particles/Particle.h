@@ -65,8 +65,6 @@ typedef const ParticleSpec ParticleROMSpec;
 /// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
-	// Particle's life span in milliseconds
-	Vector3D position;
 	// To optimizize parallax computation
 	fixed_t previousZ;
 	// sprite
@@ -91,13 +89,10 @@ class Particle : SpatialObject
 	void suspend();
 	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
-	virtual void transform();
 	virtual void reset();
 	virtual void changeMass();
 
 	override bool isSubjectToGravity(Vector3D gravity);
-	override void setPosition(const Vector3D* position);
-	override const Vector3D* getPosition();
 }
 
 

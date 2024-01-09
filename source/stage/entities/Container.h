@@ -155,11 +155,8 @@ class Container : SpatialObject
 	virtual bool isTransformed();
 	virtual void destroyComponents();
 
-	override const Vector3D* getPosition();
 	override void setPosition(const Vector3D* position);
-	override const Rotation* getRotation();
 	override void setRotation(const Rotation* rotation);
-	override const Scale* getScale();
 	override void setScale(const Scale* scale);
 }
 
