@@ -1,5 +1,5 @@
 {
-	"enabled": false,
+	"enabled": true,
 	"file": ".song",
 	"schema": {
 		"title": "Song",

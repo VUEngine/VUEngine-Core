@@ -408,7 +408,7 @@ BehaviorROMSpec* const {{ sanitizedSpecName }}Behaviors[] =
 PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 {
 	{%- for child in item.children.children -%}
-	{%- set childEntity = project.combined.items.Entity[child.itemId] -%}
+	{%- set childEntity = project.items.Entity[child.itemId] -%}
 	{%- if childEntity is defined %}
 	{&{{ childEntity.name | sanitizeSpecName }}EntitySpec, { {{ child.position.x }}, {{ child.position.y }}, {{ child.position.z }}, {{ child.position.parallax }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
 	{%- endif %}

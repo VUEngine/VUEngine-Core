@@ -1,7 +1,7 @@
-{%- if project.combined.items.Compiler.project is defined -%}
-	{%- set compiler = project.combined.items.Compiler.project -%}
+{%- if project.items.Compiler.project is defined -%}
+	{%- set compiler = project.items.Compiler.project -%}
 {%- else -%}
-	{%- set compiler = project.combined.items.Compiler.engine -%}
+	{%- set compiler = project.items.Compiler.engine -%}
 {%- endif -%}
 {% include('templates/partials/fileHeader/fileHeader.ld.nj') %}
 

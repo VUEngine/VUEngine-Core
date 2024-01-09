@@ -1,4 +1,4 @@
-{%- set messages = project.combined.items.Messages.project -%}
+{%- set messages = project.items.Messages.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 

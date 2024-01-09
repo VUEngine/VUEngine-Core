@@ -1,12 +1,12 @@
-{%- if project.combined.items.EngineConfig.project is defined -%}
-	{%- set config = project.combined.items.EngineConfig.project -%}
+{%- if project.items.EngineConfig.project is defined -%}
+	{%- set config = project.items.EngineConfig.project -%}
 {%- else -%}
-	{%- set config = project.combined.items.EngineConfig.engine -%}
+	{%- set config = project.items.EngineConfig.engine -%}
 {%- endif -%}
-{%- if project.combined.items.Compiler.project is defined -%}
-	{%- set compiler = project.combined.items.Compiler.project -%}
+{%- if project.items.Compiler.project is defined -%}
+	{%- set compiler = project.items.Compiler.project -%}
 {%- else -%}
-	{%- set compiler = project.combined.items.Compiler.engine -%}
+	{%- set compiler = project.items.Compiler.engine -%}
 {%- endif -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}

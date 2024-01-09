@@ -1,9 +1,9 @@
-{%- if project.combined.items.Compiler.project is defined -%}
-	{%- set compiler = project.combined.items.Compiler.project -%}
+{%- if project.items.Compiler.project is defined -%}
+	{%- set compiler = project.items.Compiler.project -%}
 {%- else -%}
-	{%- set compiler = project.combined.items.Compiler.engine -%}
+	{%- set compiler = project.items.Compiler.engine -%}
 {%- endif -%}
-{%- set plugins = project.combined.items.GameConfig.project.plugins -%}
+{%- set plugins = project.items.GameConfig.project.plugins -%}
 {% include('templates/partials/fileHeader/fileHeader.make.nj') %}
 
 # VUEngine plugins which the project uses

@@ -1,4 +1,4 @@
-{%- set types = project.combined.items.InGameTypes.project -%}
+{%- set types = project.items.InGameTypes.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 

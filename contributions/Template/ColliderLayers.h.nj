@@ -1,4 +1,4 @@
-{%- set layers = project.combined.items.ColliderLayers.project -%}
+{%- set layers = project.items.ColliderLayers.project -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
