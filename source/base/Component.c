@@ -23,9 +23,15 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-static const Vector3D _dummyPosition = {0, 0, 0};
-static const Rotation _dummyRotation = {0, 0, 0};
-static const Scale _dummyScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+static const Transformation _dummyTransformation = 
+{
+	// position
+	{0, 0, 0},
+	// rotation
+	{0, 0, 0},
+	// scale
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,15 +54,11 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 
 	if(!isDeleted(this->owner))
 	{
-		this->position = SpatialObject::getPosition(this->owner);
-		this->rotation = SpatialObject::getRotation(this->owner);
-		this->scale = SpatialObject::getScale(this->owner);
+		this->transformation = SpatialObject::getTransformation(this->owner);
 	}
 	else
 	{
-		this->position = &_dummyPosition;
-		this->rotation = &_dummyRotation;
-		this->scale = &_dummyScale;
+		this->transformation = &_dummyTransformation;
 	}
 }
 
@@ -106,4 +108,34 @@ void Component::hide()
 {
 	this->draw = false;
 	this->show = __HIDE;
+}
+
+/**
+ * Retrieve the position
+ *
+ * @return Vector3D			Collider's position
+ */
+Vector3D Component::getPosition()
+{
+	return this->transformation->position;
+}
+
+/**
+ * Retrieve the rotation
+ *
+ * @return Rotation			Collider's rotation
+ */
+Rotation Component::getRotation()
+{
+	return this->transformation->rotation;
+}
+
+/**
+ * Retrieve the rotation
+ *
+ * @return Scale			Collider's scale
+ */
+Scale Component::getScale()
+{
+	return this->transformation->scale;
 }

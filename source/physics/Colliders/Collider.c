@@ -383,27 +383,6 @@ bool Collider::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __att
 }
 
 /**
- * Retrieve the position
- *
- * @return Vector3D			Collider's position
- */
-Vector3D Collider::getPosition()
-{
-	return *this->position;
-}
-
-/**
- * Set position
- *
- * @param position				Vector3d*
- */
-void Collider::setPosition(const Vector3D* position)
-{
-	// TODO: must update the rightbox
-	this->position = position;
-}
-
-/**
  * Displace owner
  *
  * @param displacement		Displacement to apply to owner

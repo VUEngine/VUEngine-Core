@@ -116,9 +116,9 @@ void Sphere::setRadiusScale(fixed_t radiusScale)
  */
 void Sphere::render()
 {
-	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
-	Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition), _previousCameraInvertedRotation);
+	Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition), _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	Sphere::setupRenderingMode(this, &relativePosition);
@@ -143,7 +143,7 @@ void Sphere::render()
  */
 void Sphere::draw()
 {
-	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
 	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 

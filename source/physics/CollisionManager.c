@@ -183,7 +183,7 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		Vector3D colliderPosition = *collider->position;
+		Vector3D colliderPosition = collider->transformation->position;
 
 		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
@@ -205,7 +205,7 @@ uint32 CollisionManager::update(Clock clock)
 					continue;
 				}
 
-				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(*colliderToCheck->position, colliderPosition));
+				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
 
 				if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) >= distanceVectorSquareLength)
 				{

@@ -79,17 +79,17 @@ void Box::computeRightBox()
 	Size surroundingBoxSize = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	// angle | theta | psi
-	if(0 != this->rotation->z || 0 != this->rotation->y || 0 != this->rotation->x)
+	if(0 != this->transformation->rotation.z || 0 != this->transformation->rotation.y || 0 != this->transformation->rotation.x)
 	{
 		fixed_t width = surroundingBoxSize.x >> 1;
 		fixed_t height = surroundingBoxSize.y >> 1;
 		fixed_t depth = surroundingBoxSize.z >> 1;
 
-		// allow only one this->rotation
-		if(0 != this->rotation->z && 256 != this->rotation->z)
+		// allow only one this->transformation->rotation
+		if(0 != this->transformation->rotation.z && 256 != this->transformation->rotation.z)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = this->rotation->z - ((this->rotation->z / 256) << 8);
+			int16 angle = this->transformation->rotation.z - ((this->transformation->rotation.z / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -142,10 +142,10 @@ void Box::computeRightBox()
 				this->rotationVertexDisplacement.y = 0;
 			}
 		}
-		else if(0 != this->rotation->y && 256 != this->rotation->y)
+		else if(0 != this->transformation->rotation.y && 256 != this->transformation->rotation.y)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = this->rotation->y - ((this->rotation->y / 256) << 8);
+			int16 angle = this->transformation->rotation.y - ((this->transformation->rotation.y / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -198,10 +198,10 @@ void Box::computeRightBox()
 				this->rotationVertexDisplacement.z = 0;
 			}
 		}
-		else if(0 != this->rotation->x && 256 != this->rotation->x)
+		else if(0 != this->transformation->rotation.x && 256 != this->transformation->rotation.x)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
-			int16 angle = this->rotation->x - ((this->rotation->x / 256) << 8);
+			int16 angle = this->transformation->rotation.x - ((this->transformation->rotation.x / 256) << 8);
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
@@ -332,15 +332,15 @@ void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 		}
 	}
 
-	vertexes[0] = Vector3D::sum(leftTopNear, *this->position);
-	vertexes[1] = Vector3D::sum(rightTopNear, *this->position);
-	vertexes[2] = Vector3D::sum(leftBottomNear, *this->position);
-	vertexes[3] = Vector3D::sum(rightBottomNear, *this->position);
+	vertexes[0] = Vector3D::sum(leftTopNear, this->transformation->position);
+	vertexes[1] = Vector3D::sum(rightTopNear, this->transformation->position);
+	vertexes[2] = Vector3D::sum(leftBottomNear, this->transformation->position);
+	vertexes[3] = Vector3D::sum(rightBottomNear, this->transformation->position);
 
-	vertexes[4] = Vector3D::sum(leftTopFar, *this->position);
-	vertexes[5] = Vector3D::sum(rightTopFar, *this->position);
-	vertexes[6] = Vector3D::sum(leftBottomFar, *this->position);
-	vertexes[7] = Vector3D::sum(rightBottomFar, *this->position);
+	vertexes[4] = Vector3D::sum(leftTopFar, this->transformation->position);
+	vertexes[5] = Vector3D::sum(rightTopFar, this->transformation->position);
+	vertexes[6] = Vector3D::sum(leftBottomFar, this->transformation->position);
+	vertexes[7] = Vector3D::sum(rightBottomFar, this->transformation->position);
 }
 
 void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
@@ -561,17 +561,17 @@ void Box::print(int32 x, int32 y)
 	RightBox rightBox = this->rightBox;
 
 	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->position->x), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->transformation->position.x), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->position->x), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->transformation->position.x), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->position->y), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->transformation->position.y), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->position->y), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->transformation->position.y), x + 8, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->position->z), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->transformation->position.z), x + 2, y, NULL);
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->position->z), x + 8, y++, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
 }

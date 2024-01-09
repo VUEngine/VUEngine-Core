@@ -172,8 +172,8 @@ abstract class Sprite : Component
 	void calculateParallax(fixed_t z);
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
-	void setPosition(const PixelVector* position);
-	const PixelVector* getPosition();
+	void setPixelPosition(const PixelVector* position);
+	const PixelVector* getPixelPosition();
 	virtual void setRotation(const Rotation* rotation);
 	virtual void setScale(const Scale* scale);
 	virtual void registerWithManager() = 0;

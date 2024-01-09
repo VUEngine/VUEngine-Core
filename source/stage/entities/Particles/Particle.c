@@ -307,7 +307,7 @@ void Particle::transform()
 	PixelVector position = Vector3D::transformToPixelVector(this->position);
 
 	// update sprite's 2D position
-	Sprite::setPosition(this->sprite, &position);	
+	Sprite::setPixelPosition(this->sprite, &position);	
 }
 
 /**

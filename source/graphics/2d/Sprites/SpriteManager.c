@@ -268,7 +268,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 		}
 		else
 		{
-			if(__ABS(Sprite::getPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer)->z - z))
+			if(__ABS(Sprite::getPixelPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPixelPosition(suitableObjectSpriteContainer)->z - z))
 			{
 				suitableObjectSpriteContainer = objectSpriteContainer;
 			}
@@ -782,7 +782,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 		Sprite::forceShow(sprite);
 
-		Sprite::setPosition(sprite, &sprite->center);
+		Sprite::setPixelPosition(sprite, &sprite->center);
 
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}

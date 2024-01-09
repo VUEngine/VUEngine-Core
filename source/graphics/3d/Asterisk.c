@@ -54,9 +54,9 @@ void Asterisk::destructor()
  */
 void Asterisk::render()
 {
-	NM_ASSERT(NULL != this->position, "Asterisk::render: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Asterisk::render: NULL transformation");
 
-	Vector3D relativePosition = Vector3D::sub(*this->position, _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::sub(this->transformation->position, _previousCameraPosition);
 	Asterisk::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
@@ -80,7 +80,7 @@ void Asterisk::render()
  */
 void Asterisk::draw()
 {
-	NM_ASSERT(NULL != this->position, "Asterisk::draw: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Asterisk::draw: NULL transformation");
 
 	if(this->renderCycle)
 	{

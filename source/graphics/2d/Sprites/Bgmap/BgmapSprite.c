@@ -187,7 +187,7 @@ void BgmapSprite::releaseTexture()
 Scale BgmapSprite::getScale()
 {
 	// return the scale
-	return *this->scale;
+	return this->transformation->scale;
 }
 
 /**
@@ -284,7 +284,7 @@ void BgmapSprite::setScale(const Scale* scale)
 void BgmapSprite::calculateSize(const Scale* scale)
 {
 	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->y))),
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
 		__FIXED_MULT(
 			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
 			__FIX7_9_TO_FIXED(scale->x)
@@ -292,7 +292,7 @@ void BgmapSprite::calculateSize(const Scale* scale)
 	))) + 1;
 
 	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation->x))),
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
 		__FIXED_MULT(
 			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
 			__FIX7_9_TO_FIXED(scale->y)

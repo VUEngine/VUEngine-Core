@@ -195,7 +195,7 @@ void Sprite::forceShow()
 {
 	this->show = __SHOW;
 
-	Sprite::setPosition(this, &this->center);
+	Sprite::setPixelPosition(this, &this->center);
 }
 
 /**
@@ -205,7 +205,7 @@ void Sprite::hideForDebug()
 {
 	this->show = __HIDE;
 
-	Sprite::setPosition(this, &this->center);
+	Sprite::setPixelPosition(this, &this->center);
 }
 
 /**
@@ -225,14 +225,14 @@ bool Sprite::isHidden()
  */
 void Sprite::position()
 {
-	if(NULL == this->position)
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	PixelVector position2D = Vector3D::transformToPixelVector(*this->position);
+	PixelVector position2D = Vector3D::transformToPixelVector(this->transformation->position);
 
-	Sprite::setPosition(this, &position2D);
+	Sprite::setPixelPosition(this, &position2D);
 }
 
 /**
@@ -240,7 +240,7 @@ void Sprite::position()
  *
  * @param position		Pixel position
  */
-void Sprite::setPosition(const PixelVector* position)
+void Sprite::setPixelPosition(const PixelVector* position)
 {
 	if(NULL == position)
 	{
@@ -257,7 +257,7 @@ void Sprite::setPosition(const PixelVector* position)
  *
  * @return			Position relative to camera
  */
-const PixelVector* Sprite::getPosition()
+const PixelVector* Sprite::getPixelPosition()
 {
 	return (const PixelVector*)&this->center;
 }
@@ -310,14 +310,14 @@ PixelVector Sprite::getDisplacedPosition()
  */
 void Sprite::rotate()
 {
-	if(NULL == this->rotation)
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
 	this->renderFlag = true;
 
-	Sprite::setRotation(this, this->rotation);
+	Sprite::setRotation(this, &this->transformation->rotation);
 }
 
 void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
@@ -326,7 +326,7 @@ void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 
 const Rotation* Sprite::getRotation()
 {
-	return this->rotation;
+	return &this->transformation->rotation;
 }
 
 /**
@@ -337,17 +337,17 @@ const Rotation* Sprite::getRotation()
  */
 void Sprite::scale()
 {
-	if(NULL == this->scale || NULL == this->position)
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	Scale scale = *this->scale;
+	Scale scale = this->transformation->scale;
 
 	NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
 	NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
 
-	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->position->z, true));
+	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
 
 	ratio = 0 > ratio? __1I_FIX7_9 : ratio;
 	ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;

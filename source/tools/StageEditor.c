@@ -815,7 +815,7 @@ void StageEditor::showSelectedUserObject()
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		Sprite::setPosition(this->userObjectSprite, &spritePosition);
+		Sprite::setPixelPosition(this->userObjectSprite, &spritePosition);
 		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
 		Sprite::setScale(this->userObjectSprite, &spriteScale);
 		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);

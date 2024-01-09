@@ -63,26 +63,31 @@ void LineField::destructor()
 
 void LineField::computeSize()
 {
+	if(NULL == this->transformation)
+	{
+		return;
+	}
+
 	fix7_9 normalScale = __I_TO_FIX7_9(1);
 
-	if(this->scale->x > normalScale)
+	if(this->transformation->scale.x > normalScale)
 	{
-		normalScale = this->scale->x;
+		normalScale = this->transformation->scale.x;
 	}
 
-	if(this->scale->y > normalScale)
+	if(this->transformation->scale.y > normalScale)
 	{
-		normalScale = this->scale->y;
+		normalScale = this->transformation->scale.y;
 	}
 
-	if(this->scale->z > normalScale)
+	if(this->transformation->scale.z > normalScale)
 	{
-		normalScale = this->scale->z;
+		normalScale = this->transformation->scale.z;
 	}
 
 	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
 
-	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), *this->rotation);	
+	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), this->transformation->rotation);	
 	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	if(0 != size.x)
@@ -217,8 +222,8 @@ void LineField::configureWireframe()
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 {
-	vertexes[0] = Vector3D::sum(this->a, *this->position);
-	vertexes[1] = Vector3D::sum(this->b, *this->position);
+	vertexes[0] = Vector3D::sum(this->a, this->transformation->position);
+	vertexes[1] = Vector3D::sum(this->b, this->transformation->position);
 }
 
 Vector3D LineField::getNormal()

@@ -755,13 +755,13 @@ void AnimationInspector::createSprite()
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::setPixelPosition(this->animatedSprite, &spritePosition);
 	Sprite::processEffects(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::setPixelPosition(this->animatedSprite, &spritePosition);
 	Sprite::setRotation(this->animatedSprite, &spriteRotation);
 	Sprite::setScale(this->animatedSprite, &spriteScale);
 	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);

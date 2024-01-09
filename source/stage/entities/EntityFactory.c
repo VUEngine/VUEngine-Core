@@ -263,7 +263,7 @@ uint32 EntityFactory::transformEntities()
 
 		if(!positionedEntityDescription->transformed)
 		{
-			Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
+			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
 			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
 			positionedEntityDescription->transformed = true;
 
@@ -278,8 +278,7 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PROCESSED;
 		}
 
-		Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
-
+		const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
 		Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 

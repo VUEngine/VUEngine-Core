@@ -332,11 +332,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
-	NM_ASSERT(NULL != this->position, "Mesh::render: NULL position");
-	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL rotation");
-	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL scale");
+	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
-	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	Mesh::setupRenderingMode(this, &relativePosition);
@@ -346,8 +344,8 @@ void Mesh::render()
 		return;
 	}
 
-	bool scale = (__1I_FIX7_9 != this->scale->x) + (__1I_FIX7_9 != this->scale->y) + (__1I_FIX7_9 != this->scale->z);
-	bool rotate = (0 != this->rotation->x) + (0 != this->rotation->y) + (0 != this->rotation->z);
+	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
+	bool rotate = (0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
 
 	if(!scale && !rotate)
 	{
@@ -366,8 +364,8 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Rotation rotation = *this->rotation;
-		Scale scale = *this->scale;
+		Rotation rotation = this->transformation->rotation;
+		Scale scale = this->transformation->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -382,7 +380,7 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Rotation rotation = *this->rotation;
+		Rotation rotation = this->transformation->rotation;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -397,7 +395,7 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Scale scale = *this->scale;
+		Scale scale = this->transformation->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -415,9 +413,7 @@ void Mesh::render()
  */
 void Mesh::draw()
 {
-	NM_ASSERT(NULL != this->position, "Mesh::draw: NULL position");
-	NM_ASSERT(NULL != this->rotation, "Mesh::draw: NULL position");
-	NM_ASSERT(NULL != this->scale, "Mesh::draw: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Mesh::draw: NULL transformation");
 
 	CACHE_RESET;
 
