@@ -69,7 +69,6 @@ class Container : SpatialObject
 	// Flag to recalculate global transformations
 	uint8 invalidateGlobalTransformation;
 	// 3D transformation
-	Transformation transformation;
 	Transformation localTransformation;
 	// Children list
 	VirtualList children;
@@ -111,7 +110,6 @@ class Container : SpatialObject
 	const Scale* getLocalScale();
 	const char* getName();
 	Container getParent();
-	Transformation* getTransform();
 	void invalidateGlobalPosition();
 	void invalidateGlobalRotation();
 	void invalidateGlobalScale();

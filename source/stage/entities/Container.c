@@ -50,15 +50,12 @@ void Container::constructor(const char* const name)
 
 	// set position
 	this->localTransformation.position = Vector3D::zero();
-	this->transformation.position = Vector3D::zero();
 
 	// set rotation
 	this->localTransformation.rotation = Rotation::zero();
-	this->transformation.rotation = Rotation::zero();
 
 	// set scale
 	this->localTransformation.scale = Scale::unit();
-	this->transformation.scale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -716,16 +713,6 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			Container::transform(child, &this->transformation, invalidateTransformationFlag);
 		}
 	}
-}
-
-/**
- * Retrieve transformation
- *
- * @return		Pointer to Transformation
- */
-Transformation* Container::getTransform()
-{
-	return &this->transformation;
 }
 
 /**

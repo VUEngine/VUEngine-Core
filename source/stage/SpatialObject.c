@@ -28,6 +28,15 @@ void SpatialObject::constructor()
 {
 	// construct base object
 	Base::constructor();
+
+	// set position
+	this->transformation.position = Vector3D::zero();
+
+	// set rotation
+	this->transformation.rotation = Rotation::zero();
+
+	// set scale
+	this->transformation.scale = Scale::unit();
 }
 
 // class's destructor
@@ -72,6 +81,16 @@ fixed_t SpatialObject::getRadius()
 	}
 
 	return 0;
+}
+
+/**
+ * Retrieve transformation
+ *
+ * @return		Pointer to Transformation
+ */
+const Transformation* SpatialObject::getTransformation()
+{
+	return &this->transformation;
 }
 
 fixed_t SpatialObject::getWidth()

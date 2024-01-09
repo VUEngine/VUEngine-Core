@@ -26,9 +26,13 @@
 /// @ingroup stage
 class SpatialObject : ListenerObject
 {
+	// 3D transformation
+	Transformation transformation;
+	
 	/// @publicsection
 	void constructor();
 	void destructor();
+	const Transformation* getTransformation();
 	virtual bool isSubjectToGravity(Vector3D gravity);
 	virtual fixed_t getRadius();
 	virtual fixed_t getWidth();
