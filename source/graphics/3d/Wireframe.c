@@ -47,7 +47,7 @@ void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
 	this->bufferIndex = 0;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
-	this->draw = false;
+	this->rendered = false;
 	this->displacement = Vector3D::zero();
 }
 

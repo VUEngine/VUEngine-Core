@@ -60,7 +60,6 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
-	this->renderFlag = true;
 }
 
 /**
@@ -169,14 +168,14 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return __NO_RENDER_INDEX;
 	}
 
-	if((previousIndex == index) && !this->renderFlag)
+	if((previousIndex == index) && this->rendered)
  	{
  		this->index = previousIndex;
  	}
  	else
 	{
- 		this->renderFlag = false;
  		this->index = Sprite::doRender(this, index, evenFrame);
+		this->rendered = true;
  	}
 
 	return this->index;
@@ -252,8 +251,7 @@ void Sprite::setPixelPosition(const PixelVector* position)
 	}
 
 	this->center = *position;
-
-	this->renderFlag = true;
+	this->rendered = false;
 }
 
 /**
@@ -285,8 +283,7 @@ const PixelVector* Sprite::getDisplacement()
 void Sprite::setDisplacement(const PixelVector* displacement)
 {
 	this->displacement = *displacement;
-
-	this->renderFlag = true;
+	this->rendered = false;
 }
 
 /**
@@ -319,7 +316,7 @@ void Sprite::rotate()
 		return;
 	}
 
-	this->renderFlag = true;
+	this->rendered = false;
 
 	Sprite::setRotation(this, &this->transformation->rotation);
 }
@@ -362,6 +359,7 @@ void Sprite::scale()
 	NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
 	NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
 
+	this->rendered = false;
 	Sprite::setScale(this, &scale);
 }
 
@@ -394,9 +392,7 @@ Scale Sprite::getScale()
  */
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
-	int16 parallax = Optics::calculateParallax(z);
-	this->renderFlag = this->renderFlag || this->center.parallax != parallax;
-	this->center.parallax = parallax;
+	this->center.parallax = Optics::calculateParallax(z);
 }
 
 /**
@@ -634,6 +630,16 @@ int32 Sprite::getHalfHeight()
  */
 void Sprite::update()
 {
+	if(NULL == this->animationController)
+	{
+		return;
+	}
+
+	if(!this->writeAnimationFrame)
+	{
+		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
+	}
+	
 	if(this->writeAnimationFrame)
 	{
 		Sprite::writeAnimation(this);
@@ -677,27 +683,6 @@ bool Sprite::isWithinScreenSpace()
 }
 
 /**
- * Animate the Sprite
- */
-bool Sprite::updateAnimation()
-{
-	bool stillAnimating = false;
-
-	if(!isDeleted(this->animationController))
-	{
-		// first animate the frame
-		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
-#ifdef __RELEASE
-		stillAnimating |= this->animationController->playing;
-#else
-		stillAnimating |= AnimationController::isPlaying(this->animationController);
-#endif
-	}
-
-	return stillAnimating;
-}
-
-/**
  * Pause animation
  *
  * @param pause	Boolean
@@ -729,7 +714,7 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* fun
 	{
 		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
 		this->writeAnimationFrame |= playBackStarted;
-		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
+		this->rendered = this->rendered && !this->writeAnimationFrame;
 	}
 
 	return playBackStarted;
@@ -757,7 +742,7 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 	if(!isDeleted(this->animationController))
 	{
 		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::replay(this->animationController, animationFunctions);
-		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
+		this->rendered = this->rendered && !this->writeAnimationFrame;
 
 		return this->writeAnimationFrame;
 	}
@@ -1094,7 +1079,7 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  */
 void Sprite::invalidateRenderFlag()
 {
-	this->renderFlag = true;
+	this->rendered = false;
 }
 
 

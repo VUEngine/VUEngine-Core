@@ -36,10 +36,8 @@ abstract class Component : ListenerObject
 	SpatialObject owner;
 	const Transformation* transformation;
 	uint8 show;
-	bool draw;
+	bool rendered;
 	uint8 transparent;
-	// Flag to avoid rewriting DRAM's cache if not needed (helps a lot in menus)
- 	bool renderFlag;
 	PixelVector center;
 
 	/// @publicsection

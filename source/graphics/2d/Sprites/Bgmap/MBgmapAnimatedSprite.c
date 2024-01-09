@@ -79,5 +79,4 @@ void MBgmapAnimatedSprite::setFrame(uint16 frame)
 	int32 frameColumn = Texture::getCols(this->texture) * frame;
 	this->bgmapTextureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
 	this->bgmapTextureSource.my = (my + (frameColumn % totalColumns)) << 3;
-	this->renderFlag = true;
 }

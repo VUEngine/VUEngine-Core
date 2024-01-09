@@ -93,35 +93,6 @@ void AnimatedEntity::onAnimationStarted(ListenerObject eventFirer __attribute__ 
 	this->update = true;
 }
 
-// execute character's logic
-void AnimatedEntity::update()
-{
-	// call base
-	Base::update(this);
-
-	AnimatedEntity::animate(this);
-}
-
-// update animations
-void AnimatedEntity::animate()
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	bool stillPlaying = false;
-
-	// move each child to a temporary list
-	for(VirtualNode node = this->sprites->head; node && this->sprites; node = node->next)
-	{
-		// first animate the frame
-		stillPlaying |= Sprite::updateAnimation(node->data);
-	}
-
-	this->update = stillPlaying || AnimatedEntity::overrides(this, update);
-}
-
 // pause animation
 void AnimatedEntity::pauseAnimation(bool pause)
 {
@@ -137,8 +108,6 @@ void AnimatedEntity::pauseAnimation(bool pause)
 	{
 		Sprite::pause(node->data, pause);
 	}
-
-	this->update = !pause || AnimatedEntity::overrides(this, update);
 }
 
 // play an animation

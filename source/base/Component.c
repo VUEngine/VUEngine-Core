@@ -89,8 +89,6 @@ uint8 Component::getTransparent()
 void Component::setTransparent(uint8 value)
 {
 	this->transparent = value;
-
-	this->renderFlag = true;
 }
 
 /**
@@ -98,6 +96,7 @@ void Component::setTransparent(uint8 value)
  */
 void Component::show()
 {
+	this->rendered = __SHOW == this->show;
 	this->show = __SHOW;
 }
 
@@ -106,7 +105,7 @@ void Component::show()
  */
 void Component::hide()
 {
-	this->draw = false;
+	this->rendered = false;
 	this->show = __HIDE;
 }
 

@@ -153,11 +153,6 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 		{
 			behavior(this);
 		}
-
-		if(!isDeleted(this->sprite))
-		{
-			Sprite::updateAnimation(this->sprite);
-		}
 	}
 
 	return false;

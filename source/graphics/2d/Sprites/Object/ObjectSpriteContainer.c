@@ -286,7 +286,6 @@ void ObjectSpriteContainer::hideForDebug()
 int16 ObjectSpriteContainer::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	this->index = index;
-	this->renderFlag = true;
 
 	return index;
 }

@@ -75,7 +75,6 @@ class AnimatedEntity : Entity
 	void onAnimationCompleteHide(ListenerObject eventFirer);
 	void animate();
 	override void ready(bool recursive);
-	override void update();
 	override void resume();
 	override bool handlePropagatedString(const char* string);
 }

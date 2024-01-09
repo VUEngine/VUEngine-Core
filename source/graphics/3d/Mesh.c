@@ -262,7 +262,7 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 
 	// Prevent rendering when modifying the mesh because if segments are added after the initial render
 	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
-	this->draw = false;
+	this->rendered = false;
 
 	do
 	{
