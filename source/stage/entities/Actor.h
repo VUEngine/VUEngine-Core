@@ -84,6 +84,7 @@ class Actor : AnimatedEntity
 	override void update();
 	override void initialTransform(const Transformation* environmentTransform);
 	override bool handleMessage(Telegram telegram);
+	override void setPosition(const Vector3D* position);
 	override void setLocalPosition(const Vector3D* position);
 	override void setDirection(const Vector3D* direction);
 	override fixed_t getBounciness();

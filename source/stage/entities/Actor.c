@@ -125,6 +125,17 @@ void Actor::destroyComponents()
 	}
 }
 
+// set position
+void Actor::setPosition(const Vector3D* position)
+{
+	Base::setPosition(this, position);
+
+	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+	}
+}
+
 //set class's local position
 void Actor::setLocalPosition(const Vector3D* position)
 {
