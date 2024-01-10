@@ -352,6 +352,12 @@ void Container::purgeChildren()
 				delete child;
 			}
 		}
+
+		if(NULL == this->children->head)
+		{
+			delete this->children;
+			this->children = NULL;
+		}
 	}
 }
 
@@ -451,7 +457,7 @@ void Container::updateChildren()
 				continue;
 			}
 
-			if(!child->update)
+			if(!child->update && NULL == child->children)
 			{
 				continue;
 			}
