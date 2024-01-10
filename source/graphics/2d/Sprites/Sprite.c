@@ -747,7 +747,7 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::replay(this->animationController, animationFunctions);
+		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationFunctions);
 		this->rendered = this->rendered && !this->writeAnimationFrame;
 
 		return this->writeAnimationFrame;
