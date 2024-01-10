@@ -218,6 +218,8 @@ void ObjectSprite::rewrite()
  */
 void ObjectSprite::setRotation(const Rotation* rotation)
 {
+	this->rotation = *rotation;
+
 	NormalizedDirection normalizedDirection =
 	{
 		__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,

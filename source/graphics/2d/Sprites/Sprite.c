@@ -60,6 +60,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
+	this->rotation = Rotation::zero();
 }
 
 /**
@@ -324,11 +325,22 @@ void Sprite::rotate()
 
 	this->rendered = false;
 
-	Sprite::setRotation(this, &this->transformation->rotation);
+	if
+	(
+		this->rotation.x != this->transformation->rotation.x
+		||
+		this->rotation.y != this->transformation->rotation.y
+		||
+		this->rotation.z != this->transformation->rotation.z
+	)
+	{
+		Sprite::setRotation(this, &this->transformation->rotation);
+	}
 }
 
 void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 {
+	this->rotation = *rotation;
 }
 
 const Rotation* Sprite::getRotation()

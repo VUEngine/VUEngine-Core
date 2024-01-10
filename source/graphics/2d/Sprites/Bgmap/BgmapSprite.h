@@ -76,8 +76,7 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	Rotation rotationCache;
-	Scale scaleCache;
+	Scale scale;
 	
 	// bgmap's source coordinates
 	BgmapTextureSource bgmapTextureSource;

@@ -50,8 +50,7 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 {
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
-	this->rotationCache = Rotation::zero();
-	this->scaleCache = Scale::unit();
+	this->scale = Scale::unit();
 
 	// create the texture
 	if(NULL != bgmapSpriteSpec->spriteSpec.textureSpec)
@@ -206,7 +205,7 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 
 	if(0 < this->param)
 	{
-		this->rotationCache = *rotation;
+		this->rotation = *rotation;
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
@@ -260,7 +259,7 @@ void BgmapSprite::setScale(const Scale* scale)
 
 	if(__WORLD_AFFINE & this->head)
 	{
-		this->scaleCache = *scale;
+		this->scale = *scale;
 
 		if(!isDeleted(this->texture))
 		{
@@ -602,8 +601,8 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
 			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
-			&bgmapSprite->scaleCache,
-			&bgmapSprite->rotationCache
+			&bgmapSprite->scale,
+			&bgmapSprite->rotation
 		);
 	}
 
