@@ -187,7 +187,7 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
 
 	int16 jDisplacement = 0;
 
@@ -286,7 +286,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 y = this->center.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->center.parallax + this->displacement.parallax);
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
