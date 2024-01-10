@@ -641,9 +641,13 @@ void Sprite::update()
 		return;
 	}
 
+#ifdef __RELEASE
+	if(!this->writeAnimationFrame && this->animationController->playing)
+#else
 	if(!this->writeAnimationFrame)
+#endif
 	{
-		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
+		this->writeAnimationFrame = AnimationController::updateAnimation(this->animationController);
 	}
 	
 	if(this->writeAnimationFrame)
@@ -699,7 +703,6 @@ void Sprite::pause(bool pause)
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
-		this->writeAnimationFrame |= !pause;
 	}
 }
 
@@ -719,7 +722,6 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* fun
 	if(!isDeleted(this->animationController))
 	{
 		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
-		this->writeAnimationFrame |= playBackStarted;
 		this->rendered = this->rendered && !this->writeAnimationFrame;
 	}
 
@@ -747,7 +749,7 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::replay(this->animationController, animationFunctions);
+		AnimationController::replay(this->animationController, animationFunctions);
 		this->rendered = this->rendered && !this->writeAnimationFrame;
 
 		return this->writeAnimationFrame;
@@ -840,7 +842,7 @@ void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::setActualFrame(this->animationController, actualFrame);
+		AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else if(!isDeleted(this->texture))
 	{
