@@ -40,14 +40,14 @@ extern int32 strcmp(const char *, const char *);
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapAnimatedSprite::constructor(const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec, ListenerObject owner)
+void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec)
 {
 	// construct base object
-	Base::constructor(&bgmapAnimatedSpriteSpec->bgmapSpriteSpec, owner);
+	Base::constructor(owner, &bgmapAnimatedSpriteSpec->bgmapSpriteSpec);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-	BgmapAnimatedSprite::createAnimationController(this, bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec, owner);
+	BgmapAnimatedSprite::createAnimationController(this, bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec);
 }
 
 /**
@@ -89,5 +89,5 @@ void BgmapAnimatedSprite::setFrame(uint16 frame)
 	int16 my = BgmapTexture::getYOffset(this->texture) + Texture::getRows(this->texture) * (mx / 64);
 	this->bgmapTextureSource.mx = __MODULO(mx, 64) << 3;
 	this->bgmapTextureSource.my = my << 3;
-	this->renderFlag = true;
+	this->rendered = false;
 }

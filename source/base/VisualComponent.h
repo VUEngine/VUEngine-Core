@@ -7,34 +7,41 @@
  * that was distributed with this source code.
  */
 
-#ifndef BALL_H_
-#define BALL_H_
+#ifndef VISUAL_COMPONENT_H_
+#define VISUAL_COMPONENT_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Collider.h>
+#include <Component.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup physics
-class Ball : Collider
+typedef ComponentSpec VisualComponentSpec;
+
+abstract class VisualComponent : Component 
 {
-	// the radius of the ball
-	fixed_t radius;
+	PixelVector center;
+	uint8 transparent;
+	uint8 show;
+	bool rendered;
 
 	/// @publicsection
-	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
-	
-	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
-	override void configureWireframe();
-	override void print(int32 x, int32 y);
+	void constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec);
+
+	void show();
+	void hide();
+	uint8 getTransparent();
+	void setTransparent(uint8 value);
 }
 
 

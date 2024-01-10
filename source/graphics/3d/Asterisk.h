@@ -39,14 +39,12 @@ typedef const AsteriskSpec AsteriskROMSpec;
 /// @ingroup graphics-3d
 class Asterisk : Wireframe
 {
-	// Vertices
-	
 	fixed_t length;
 	uint16 scaledLength;
 	bool renderCycle;
 
 	/// @publicsection
-	void constructor(AsteriskSpec* asteriskSpec);
+	void constructor(SpatialObject owner, AsteriskSpec* asteriskSpec);
 	override void render();
 	override void draw();
 }

@@ -26,29 +26,35 @@
 /// @ingroup stage
 class SpatialObject : ListenerObject
 {
+	// 3D transformation
+	Transformation transformation;
+	
 	/// @publicsection
 	void constructor();
 	void destructor();
+	const Transformation* getTransformation();
+	const Vector3D* getPosition();
+	const Rotation* getRotation();
+	const Scale* getScale();
 	virtual bool isSubjectToGravity(Vector3D gravity);
 	virtual fixed_t getRadius();
 	virtual fixed_t getWidth();
 	virtual fixed_t getHeight();
 	virtual fixed_t getDepth();
-	virtual const Vector3D* getPosition();
 	virtual void setPosition(const Vector3D* position);
-	virtual const Rotation* getRotation();
 	virtual void setRotation(const Rotation* rotation);
-	virtual const Scale* getScale();
 	virtual void setScale(const Scale* scale);
+	virtual const Vector3D* getDirection();
+	virtual void setDirection(const Vector3D* direction);
+	virtual const Size* getSize();
 	virtual fixed_t getBounciness();
 	virtual fixed_t getFrictionCoefficient();
 	virtual const Vector3D* getVelocity();
-	virtual const Vector3D* getDirection();
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
-	virtual void exitCollision(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
-	virtual void otherColliderOwnerDestroyed(Collider collider, Collider shapeNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void otherColliderOwnerDestroyed(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
 	virtual uint32 getInGameType();
 }
 

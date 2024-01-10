@@ -117,24 +117,29 @@ void SpriteManager::destructor()
  */
 void SpriteManager::cleanUp()
 {
-	if(!isDeleted(this->objectSpriteContainers))
-	{
-		VirtualList::deleteData(this->objectSpriteContainers);
-		delete this->objectSpriteContainers;
-		this->objectSpriteContainers = NULL;
-	}
-
 	if(!isDeleted(this->sprites))
 	{
-		VirtualList::deleteData(this->sprites);
-		delete this->sprites;
+		VirtualList sprites = this->sprites;
 		this->sprites = NULL;
+
+		VirtualList::deleteData(sprites);
+		delete sprites;
+	}
+
+	if(!isDeleted(this->objectSpriteContainers))
+	{
+		VirtualList objectSpriteContainers = this->objectSpriteContainers;
+		this->objectSpriteContainers = NULL;
+
+		delete objectSpriteContainers;
 	}
 
 	if(!isDeleted(this->specialSprites))
 	{
-		delete this->specialSprites;
+		VirtualList specialSprites = this->specialSprites;
 		this->specialSprites = NULL;
+
+		delete specialSprites;
 	}
 }
 
@@ -215,6 +220,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 		if(0 < size[i])
 		{
 			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer();
+			ObjectSpriteContainer::registerWithManager(objectSpriteContainer);
 			VirtualList::pushBack(this->objectSpriteContainers, objectSpriteContainer);
 
 			PixelVector position =
@@ -224,7 +230,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 
 			if(size[i])
 			{
-				ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+				ObjectSpriteContainer::setPixelPosition(objectSpriteContainer, &position);
 			}
 
 #ifndef __RELEASE
@@ -262,7 +268,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 		}
 		else
 		{
-			if(__ABS(Sprite::getPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer)->z - z))
+			if(__ABS(Sprite::getPixelPosition(objectSpriteContainer)->z - z) < __ABS(Sprite::getPixelPosition(suitableObjectSpriteContainer)->z - z))
 			{
 				suitableObjectSpriteContainer = objectSpriteContainer;
 			}
@@ -310,13 +316,15 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 seg
  *
  * @param sprite	Sprite to create
  */
-Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, ListenerObject owner)
+Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, SpatialObject owner)
 {
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
-	Sprite sprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
+	Sprite sprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
+
+	Sprite::registerWithManager(sprite);
 
 	return sprite;
 }
@@ -337,6 +345,8 @@ void SpriteManager::destroySprite(Sprite sprite)
 	}
 
 	Sprite::hide(sprite);
+	Sprite::unregisterWithManager(sprite);
+
 	delete sprite;
 }
 
@@ -371,7 +381,7 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 #endif
 
 		// check if z positions are swapped
-		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
+		if(sprite->center.z + sprite->displacement.z <= otherSprite->center.z + otherSprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
 			return;
@@ -403,7 +413,7 @@ bool SpriteManager::sortProgressively(bool deferred)
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+		if(nextSprite->center.z + nextSprite->displacement.z < sprite->center.z + sprite->displacement.z)
 		{
 			// swap nodes' data
 			node->data = nextSprite;
@@ -569,7 +579,7 @@ void SpriteManager::applySpecialEffects()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(__HIDE == sprite->show || !sprite->positioned)
+		if(__HIDE == sprite->show)
 		{
 			continue;
 		}
@@ -652,7 +662,7 @@ void SpriteManager::render()
 
 		// Saves on method calls quite a bit when there are lots of
 		// sprites. Don't remove.
-		if(__HIDE == sprite->show || !sprite->positioned || (sprite->transparent & this->evenFrame))
+		if(__HIDE == sprite->show || (sprite->transparent & this->evenFrame))
 		{
 			sprite->index = __NO_RENDER_INDEX;
 			continue;
@@ -772,7 +782,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 		Sprite::forceShow(sprite);
 
-		Sprite::setPosition(sprite, &sprite->position);
+		Sprite::setPixelPosition(sprite, &sprite->center);
 
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
@@ -976,7 +986,7 @@ int32 SpriteManager::getTotalPixelsDrawn()
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(sprite->positioned && __SHOW == sprite->show)
+		if(__SHOW == sprite->show)
 		{
 			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
 		}
@@ -1037,7 +1047,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		Printing::int32(this->printing, counter, auxX, auxY, NULL);
 		Printing::text(this->printing, ": ", auxX + 2, auxY, NULL);
 		Printing::text(this->printing, spriteClassName, auxX + 4, auxY, NULL);
-//		Printing::int32(this->printing, sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
+//		Printing::int32(this->printing, sprite->center.z + sprite->displacement.z, auxX + 2, auxY, NULL);
 //		Printing::hex(this->printing, _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 //		Printing::int32(this->printing, Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 

@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Component.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,11 +43,11 @@ typedef const BehaviorSpec BehaviorROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-abstract class Behavior : ListenerObject
+abstract class Behavior : Component
 {
 	bool enabled;
 
-	void constructor(const BehaviorSpec* behaviorSpec);
+	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
 	bool isEnabled();
 	void setEnabled(bool value);

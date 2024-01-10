@@ -12,12 +12,13 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ObjectAnimatedSprite.h>
+#include <string.h>
 
 #include <AnimationController.h>
+#include <DebugUtilities.h>
 #include <ObjectSpriteContainer.h>
 
-#include <string.h>
+#include "ObjectAnimatedSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,12 +38,12 @@ extern int32 strcmp(const char *, const char *);
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectAnimatedSprite::constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, ListenerObject owner)
+void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec)
 {
 	// construct base object
-	Base::constructor(&objectAnimatedSpriteSpec->objectSpriteSpec, owner);
+	Base::constructor(owner, &objectAnimatedSpriteSpec->objectSpriteSpec);
 
-	ObjectAnimatedSprite::createAnimationController(this, objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec, owner);
+	ObjectAnimatedSprite::createAnimationController(this, objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec);
 }
 
 /**

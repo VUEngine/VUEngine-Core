@@ -47,21 +47,15 @@ void Container::constructor(const char* const name)
 	// By default, save on calls to main methods.
 	this->update = Container::overrides(this, update);
 	this->transform = Container::overrides(this, transform);
-	this->synchronizeGraphics = Container::overrides(this, synchronizeGraphics);
-
-	this->transformed = false;
 
 	// set position
-	this->transformation.localPosition = Vector3D::zero();
-	this->transformation.globalPosition = Vector3D::zero();
+	this->localTransformation.position = Vector3D::zero();
 
 	// set rotation
-	this->transformation.localRotation = Rotation::zero();
-	this->transformation.globalRotation = Rotation::zero();
+	this->localTransformation.rotation = Rotation::zero();
 
 	// set scale
-	this->transformation.localScale = Scale::unit();
-	this->transformation.globalScale = Scale::unit();
+	this->localTransformation.scale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -158,7 +152,6 @@ void Container::deleteMyself()
 
 	this->update = false;
 	this->transform = false;
-	this->synchronizeGraphics = false;
 
 	if(!isDeleted(this->parent))
 	{
@@ -242,9 +235,9 @@ void Container::addChild(Container child)
 		{
 			Container::removeChild(child->parent, child, false);
 
-			Transformation environmentTransform = Container::getEnvironmentTransform(this);
-			Container::concatenateTransform(this, &environmentTransform, &this->transformation);
-			Container::changeEnvironment(child, &environmentTransform);
+			Transformation environmentTransformation = Container::getEnvironmentTransform(this);
+			Container::concatenateTransform(this, &environmentTransformation, &this->transformation);
+			Container::changeEnvironment(child, &environmentTransformation);
 		}
 
 		// set new parent
@@ -255,7 +248,6 @@ void Container::addChild(Container child)
 
 		Container::invalidateGlobalTransformation(child);
 
-		this->synchronizeGraphics = this->synchronizeGraphics || Container::overrides(child, synchronizeGraphics);
 		this->update = this->update || Container::overrides(child, update);
 		this->transform = this->transform || Container::overrides(child, transform);
 	}
@@ -483,23 +475,19 @@ Transformation Container::getEnvironmentTransform()
 {
 	if(!this->parent)
 	{
-		Transformation environmentTransform =
+		Transformation environmentTransformation =
 		{
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// local rotation
-				{0, 0, 0},
-				// global rotation
-				{0, 0, 0},
-				// local scale
-				{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-				// global scale
-				{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+			// spatial position
+			{0, 0, 0},
+		
+			// spatial rotation
+			{0, 0, 0},
+		
+			// spatial scale
+			{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 		};
 
-		return environmentTransform;
+		return environmentTransformation;
 	}
 
 	return this->parent->transformation;
@@ -511,31 +499,31 @@ Transformation Container::getEnvironmentTransform()
  * @param concatenatedTransformation
  * @param transformation
  */
-void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* transformation)
+void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* localTransformation)
 {
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
 
 	// tranlate position
-	concatenatedTransformation->globalPosition = Vector3D::sum(concatenatedTransformation->globalPosition, transformation->localPosition);
+	concatenatedTransformation->position = Vector3D::sum(concatenatedTransformation->position, localTransformation->position);
 
 	// propagate rotation
-	concatenatedTransformation->globalRotation = Rotation::sum(concatenatedTransformation->globalRotation, transformation->localRotation);
+	concatenatedTransformation->rotation = Rotation::sum(concatenatedTransformation->rotation, localTransformation->rotation);
 
 	// propagate scale
-	concatenatedTransformation->globalScale = Scale::product(concatenatedTransformation->globalScale, transformation->localScale);
+	concatenatedTransformation->scale = Scale::product(concatenatedTransformation->scale, localTransformation->scale);
 }
 
 /**
  * Change environment
  *
- * @param environmentTransform
+ * @param environmentTransformation
  */
-void Container::changeEnvironment(Transformation* environmentTransform)
+void Container::changeEnvironment(Transformation* environmentTransformation)
 {
-	Vector3D localPosition = Vector3D::sub(this->transformation.globalPosition, environmentTransform->globalPosition);
-	Rotation localRotation = Rotation::sub(this->transformation.globalRotation, environmentTransform->globalRotation);
-	Scale localScale = Scale::division(this->transformation.globalScale, environmentTransform->globalScale);
+	Vector3D localPosition = Vector3D::sub(this->transformation.position, environmentTransformation->position);
+	Rotation localRotation = Rotation::sub(this->transformation.rotation, environmentTransformation->rotation);
+	Scale localScale = Scale::division(this->transformation.scale, environmentTransformation->scale);
 
 	Container::setLocalPosition(this, &localPosition);
 	Container::setLocalRotation(this, &localRotation);
@@ -549,45 +537,45 @@ void Container::changeEnvironment(Transformation* environmentTransform)
  *
  *
  * @private
- * @param environmentTransform
+ * @param environmentTransformation
  */
-inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransformation)
 {
-	Vector3D localPosition = this->transformation.localPosition;
+	Vector3D localPosition = this->localTransformation.position;
 
-	if(0 != (environmentTransform->globalRotation.x | environmentTransform->globalRotation.y | environmentTransform->globalRotation.z))
+	if(0 != (environmentTransformation->rotation.x | environmentTransformation->rotation.y | environmentTransformation->rotation.z))
 	{
-		localPosition = Vector3D::rotate(localPosition, environmentTransform->globalRotation);
+		localPosition = Vector3D::rotate(localPosition, environmentTransformation->rotation);
 	}
 
-	if(0 != (environmentTransform->globalScale.x | environmentTransform->globalScale.y | environmentTransform->globalScale.z))
+	if(0 != (environmentTransformation->scale.x | environmentTransformation->scale.y | environmentTransformation->scale.z))
 	{
-		localPosition = Vector3D::scale(localPosition, environmentTransform->globalScale);
+		localPosition = Vector3D::scale(localPosition, environmentTransformation->scale);
 	}
 
-	this->transformation.globalPosition = Vector3D::sum(environmentTransform->globalPosition, localPosition);
+	this->transformation.position = Vector3D::sum(environmentTransformation->position, localPosition);
 }
 
 /**
  *
  *
  * @private
- * @param environmentTransform
+ * @param environmentTransformation
  */
-inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransformation)
 {
-	this->transformation.globalRotation = Rotation::sum(environmentTransform->globalRotation, this->transformation.localRotation);
+	this->transformation.rotation = Rotation::sum(environmentTransformation->rotation, this->localTransformation.rotation);
 }
 
 /**
  *
  *
  * @private
- * @param environmentTransform
+ * @param environmentTransformation
  */
-inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToScale(const Transformation* environmentTransformation)
 {
-	this->transformation.globalScale = Scale::product(environmentTransform->globalScale, this->transformation.localScale);
+	this->transformation.scale = Scale::product(environmentTransformation->scale, this->localTransformation.scale);
 }
 
 /**
@@ -610,25 +598,25 @@ void Container::createComponents()
 /**
  * Initial transformation
  *
- * @param environmentTransform
+ * @param environmentTransformation
  * @param recursive
  */
-void Container::initialTransform(const Transformation* environmentTransform)
+void Container::initialTransform(const Transformation* environmentTransformation)
 {
 	// concatenate transformation
 	if(__INHERIT_SCALE & this->inheritEnvironment)
 	{
-		Container::applyEnvironmentToScale(this, environmentTransform);
+		Container::applyEnvironmentToScale(this, environmentTransformation);
 	}
 
 	if(__INHERIT_ROTATION & this->inheritEnvironment)
 	{
-		Container::applyEnvironmentToRotation(this, environmentTransform);
+		Container::applyEnvironmentToRotation(this, environmentTransformation);
 	}
 
 	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->inheritEnvironment)
 	{
-		Container::applyEnvironmentToPosition(this, environmentTransform);
+		Container::applyEnvironmentToPosition(this, environmentTransformation);
 	}
 
 	Container::invalidateGlobalTransformation(this);
@@ -645,25 +633,23 @@ void Container::initialTransform(const Transformation* environmentTransform)
 			Container::initialTransform(child, &this->transformation);
 		}
 	}
-
-	this->transformed = !this->hidden;
 }
 
 /**
  * Initial transformation
  *
- * @param environmentTransform
+ * @param environmentTransformation
  * @param invalidateTransformationFlag
  */
-void Container::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
+void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
 {
-	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
+	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
 	if(0 != (__INVALIDATE_SCALE & this->invalidateGlobalTransformation))
 	{
 		if(0 != (__INHERIT_SCALE & this->inheritEnvironment))
 		{
-			Container::applyEnvironmentToScale(this, environmentTransform);
+			Container::applyEnvironmentToScale(this, environmentTransformation);
 		}
 	}
 
@@ -671,7 +657,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 	{
 		if(0 != (__INHERIT_ROTATION & this->inheritEnvironment))
 		{
-			Container::applyEnvironmentToRotation(this, environmentTransform);
+			Container::applyEnvironmentToRotation(this, environmentTransformation);
 		}
 	}
 
@@ -680,7 +666,7 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 		// apply environment transformation
 		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))
 		{
-			Container::applyEnvironmentToPosition(this, environmentTransform);
+			Container::applyEnvironmentToPosition(this, environmentTransformation);
 		}
 	}
 
@@ -689,7 +675,6 @@ void Container::transform(const Transformation* environmentTransform, uint8 inva
 
 	// don't update position on next transformation cycle
 	this->invalidateGlobalTransformation = false;
-	this->transformed = true;
 }
 
 void Container::transformChildren(uint8 invalidateTransformationFlag)
@@ -697,14 +682,11 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 	// if I have children
 	if(NULL != this->children)
 	{
-		uint8 invalidateGraphics = (__INVALIDATE_POSITION & invalidateTransformationFlag) | (__INVALIDATE_ROTATION & invalidateTransformationFlag) | (__INVALIDATE_SCALE & invalidateTransformationFlag) | (__INVALIDATE_PROJECTION & invalidateTransformationFlag);
-
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-			child->invalidateGraphics |= invalidateGraphics;
 
 			// Do not enable this check to optimize things
 			// It messes up child entities when you need to 
@@ -728,45 +710,17 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 				continue;
 			}
 
-			Container::transform(child, &this->transformation, invalidateTransformationFlag);
-		}
-	}
-}
-
-void Container::synchronizeGraphics()
-{
-	Container::synchronizeChildrenGraphics(this);
-}
-
-void Container::synchronizeChildrenGraphics()
-{
-	// if I have children
-	if(NULL != this->children)
-	{
-		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-		{
-			Container child = Container::safeCast(node->data);
-
-			bool skip = (!child->invalidateGraphics && NULL == child->children) || child->deleteMe || !child->synchronizeGraphics || child->hidden || !child->transformed;
-
-			if(skip)
+			if(Container::overrides(child, transform))
 			{
-				continue;
+				Container::transform(child, &this->transformation, invalidateTransformationFlag);
 			}
-
-			Container::synchronizeGraphics(child);
+			else
+			{
+				// TODO: fix this hack
+				Container_transform(child, &this->transformation, invalidateTransformationFlag);				
+			}
 		}
 	}
-}
-
-/**
- * Retrieve transformation
- *
- * @return		Pointer to Transformation
- */
-Transformation* Container::getTransform()
-{
-	return &this->transformation;
 }
 
 /**
@@ -776,7 +730,7 @@ Transformation* Container::getTransform()
  */
 const Vector3D* Container::getGlobalPosition()
 {
-	return &this->transformation.globalPosition;
+	return &this->transformation.position;
 }
 
 /**
@@ -786,17 +740,7 @@ const Vector3D* Container::getGlobalPosition()
  */
 const Vector3D* Container::getLocalPosition()
 {
-	return &this->transformation.localPosition;
-}
-
-/**
- * Retrieve global position
- *
- * @return		Global position
- */
-const Vector3D* Container::getPosition()
-{
-	return &this->transformation.globalPosition;
+	return &this->localTransformation.position;
 }
 
 /**
@@ -806,10 +750,10 @@ const Vector3D* Container::getPosition()
  */
 void Container::setPosition(const Vector3D* position)
 {
-	Vector3D displacement = Vector3D::get(this->transformation.globalPosition, *position);
+	Vector3D displacement = Vector3D::get(this->transformation.position, *position);
 
-	this->transformation.localPosition = Vector3D::sum(this->transformation.localPosition, displacement);
-	this->transformation.globalPosition = *position;
+	this->localTransformation.position = Vector3D::sum(this->localTransformation.position, displacement);
+	this->transformation.position = *position;
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
@@ -819,42 +763,22 @@ void Container::setPosition(const Vector3D* position)
 	}
 }
 
-/**
- * Retrieve global rotation
- *
- * @return		Global rotation
- */
-const Rotation* Container::getRotation()
-{
-	return &this->transformation.globalRotation;
-}
-
 void Container::setRotation(const Rotation* rotation)
 {
-	Rotation displacement = Rotation::sub(this->transformation.globalRotation, *rotation);
+	Rotation displacement = Rotation::sub(this->transformation.rotation, *rotation);
 
-	this->transformation.globalRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
-	this->transformation.localRotation = Rotation::sub(this->transformation.globalRotation, displacement);
+	this->transformation.rotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
+	this->localTransformation.rotation = Rotation::sub(this->transformation.rotation, displacement);
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 }
 
-/**
- * Retrieve global scale
- *
- * @return		Global scale
- */
-const Scale* Container::getScale()
-{
-	return &this->transformation.globalScale;
-}
-
 void Container::setScale(const Scale* scale)
 {
-	Scale factor = Scale::division(this->transformation.globalScale, *scale);
+	Scale factor = Scale::division(this->transformation.scale, *scale);
 
-	this->transformation.localScale = Scale::product(this->transformation.globalScale, factor);	
-	this->transformation.globalScale = *scale;
+	this->localTransformation.scale = Scale::product(this->transformation.scale, factor);	
+	this->transformation.scale = *scale;
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 }
@@ -867,31 +791,29 @@ void Container::setScale(const Scale* scale)
 void Container::setLocalPosition(const Vector3D* position)
 {
 	// force global position calculation on the next transformation cycle
-	if(position == &this->transformation.localPosition)
+	if(position == &this->localTransformation.position)
 	{
 		Container::invalidateGlobalPosition(this);
 		Container::invalidateGlobalScale(this);
 	}
 	else
 	{
-		if(this->transformation.localPosition.z != position->z)
+		if(this->localTransformation.position.z != position->z)
 		{
 			Container::invalidateGlobalPosition(this);
 			Container::invalidateGlobalScale(this);
 		}
-		else if(this->transformation.localPosition.x != position->x)
+		else if(this->localTransformation.position.x != position->x)
 		{
 			Container::invalidateGlobalPosition(this);
 		}
-		else if(this->transformation.localPosition.y != position->y)
+		else if(this->localTransformation.position.y != position->y)
 		{
 			Container::invalidateGlobalPosition(this);
 		}
 
-		this->transformation.localPosition = *position;
+		this->localTransformation.position = *position;
 	}
-
-//	this->transformed = false;
 }
 
 /**
@@ -901,7 +823,7 @@ void Container::setLocalPosition(const Vector3D* position)
  */
 const Rotation* Container::getLocalRotation()
 {
-	return &this->transformation.localRotation;
+	return &this->localTransformation.rotation;
 }
 
 /**
@@ -913,20 +835,20 @@ void Container::setLocalRotation(const Rotation* rotation)
 {
 	Rotation auxRotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
 
-	if(this->transformation.localRotation.z != auxRotation.z)
+	if(this->localTransformation.rotation.z != auxRotation.z)
 	{
 		Container::invalidateGlobalRotation(this);
 	}
-	else if(this->transformation.localRotation.x != auxRotation.x)
+	else if(this->localTransformation.rotation.x != auxRotation.x)
 	{
 		Container::invalidateGlobalRotation(this);
 	}
-	else if(this->transformation.localRotation.y != auxRotation.y)
+	else if(this->localTransformation.rotation.y != auxRotation.y)
 	{
 		Container::invalidateGlobalRotation(this);
 	}
 
-	this->transformation.localRotation = auxRotation;
+	this->localTransformation.rotation = auxRotation;
 }
 
 /**
@@ -936,7 +858,7 @@ void Container::setLocalRotation(const Rotation* rotation)
  */
 const Scale* Container::getLocalScale()
 {
-	return &this->transformation.localScale;
+	return &this->localTransformation.scale;
 }
 
 /**
@@ -946,26 +868,26 @@ const Scale* Container::getLocalScale()
  */
 void Container::setLocalScale(const Scale* scale)
 {
-	if(scale == &this->transformation.localScale)
+	if(scale == &this->localTransformation.scale)
 	{
 		Container::invalidateGlobalScale(this);
 	}
 	else
 	{
-		if(this->transformation.localScale.z != scale->z)
+		if(this->localTransformation.scale.z != scale->z)
 		{
 			Container::invalidateGlobalRotation(this);
 		}
-		else if(this->transformation.localScale.x != scale->x)
+		else if(this->localTransformation.scale.x != scale->x)
 		{
 			Container::invalidateGlobalRotation(this);
 		}
-		else if(this->transformation.localScale.y != scale->y)
+		else if(this->localTransformation.scale.y != scale->y)
 		{
 			Container::invalidateGlobalRotation(this);
 		}
 
-		this->transformation.localScale = *scale;
+		this->localTransformation.scale = *scale;
 	}
 }
 
@@ -977,7 +899,7 @@ void Container::setLocalScale(const Scale* scale)
 void Container::translate(const Vector3D* translation)
 {
 
-	Vector3D localPosition = Vector3D::sum(this->transformation.localPosition, *translation);
+	Vector3D localPosition = Vector3D::sum(this->localTransformation.position, *translation);
 	Container::setLocalPosition(this, &localPosition);	
 }
 
@@ -993,7 +915,7 @@ void Container::rotate(const Rotation* rotation)
 		Container::invalidateGlobalRotation(this);
 	}
 
-	this->transformation.localRotation = Rotation::sum(this->transformation.localRotation, *rotation);	
+	this->localTransformation.rotation = Rotation::sum(this->localTransformation.rotation, *rotation);	
 }
 
 /**
@@ -1005,7 +927,7 @@ void Container::scale(const Scale* scale)
 {
 	Container::invalidateGlobalScale(this);
 
-	this->transformation.localScale = Scale::product(this->transformation.localScale, *scale);	
+	this->localTransformation.scale = Scale::product(this->localTransformation.scale, *scale);	
 }
 
 /**
@@ -1449,7 +1371,6 @@ void Container::show()
 	}
 
 	Container::invalidateGlobalTransformation(this);
-	this->transformed = false;
 }
 
 void Container::hide()
@@ -1528,7 +1449,7 @@ bool Container::isTransformed()
 
 Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)
 {
-	Rotation rotation = this->transformation.localRotation;
+	Rotation rotation = this->localTransformation.rotation;
 
 	if(__X_AXIS & axis)
 	{

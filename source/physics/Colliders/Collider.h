@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Component.h>
 #include <Wireframe.h>
 
 
@@ -102,7 +102,7 @@ typedef struct CollisionData
 {
 	CollisionResult result;
 	CollisionInformation collisionInformation;
-	Collider shapeNotCollidingAnymore;
+	Collider colliderNotCollidingAnymore;
 	bool isImpenetrableOtherCollider;
 
 } CollisionData;
@@ -141,7 +141,7 @@ typedef struct ColliderSpec
 	/// scale modifier
 	Scale scale;
 
-	/// if true this collider checks for collisions against other shapes
+	/// if true this collider checks for collisions against other colliders
 	bool checkForCollisions;
 
 	/// layers in which I live
@@ -186,13 +186,9 @@ enum ColliderClassIndexes
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup physics
-abstract class Collider : ListenerObject
+abstract class Collider : Component
 {
-	// Position
-	Vector3D position;
-	// the entity to which the collider belongs
-	SpatialObject owner;
-	// colliding shapes list
+	// colliding colliders list
 	VirtualList otherColliders;
 	// layers on which this collider live
 	uint32 layers;
@@ -204,18 +200,17 @@ abstract class Collider : ListenerObject
 	uint8 ready;
 	// flag to know if collider is reacting to collisions
 	uint8 enabled;
-	// flag to check against other shapes
+	// flag to check against other colliders
 	uint8 checkForCollisions;
-	// flag to allow registration of colliding shapes
+	// flag to allow registration of colliding colliders
 	bool registerCollisions;
 	// flag to destroy it
 	bool destroyMe;
 	// class index 
 	uint8 classIndex;
 
-
 	/// @publicsection
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);
 	void exitCollision(CollisionData* collisionData);
@@ -240,13 +235,10 @@ abstract class Collider : ListenerObject
 	void show();
 	void hide();
 	void setVisible(bool value);
-	Vector3D getPosition();
-	void setPosition(const Vector3D* position);
 
-	virtual void setup(uint32 layers, uint32 layersToIgnore);
-	virtual void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+//	virtual void setup(uint32 layers, uint32 layersToIgnore);
 	virtual Vector3D getNormal();
-	virtual void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation) = 0;
+	virtual void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
 }

@@ -181,7 +181,7 @@ void Printing::addSprite()
 		0, 0, 0, 0
 	};
 
-	PrintingSprite::setPosition(this->activePrintingSprite, &position);
+	PrintingSprite::setPixelPosition(this->activePrintingSprite, &position);
 
 	VirtualList::pushBack(this->printingSprites, this->activePrintingSprite);
 }
@@ -586,7 +586,7 @@ void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __a
 			0, 0, -64, -4
 		};
 
-		PrintingSprite::setPosition(this->activePrintingSprite, &position);
+		PrintingSprite::setPixelPosition(this->activePrintingSprite, &position);
 	}
 }
 
@@ -625,7 +625,7 @@ void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 			parallax
 		};
 
-		PrintingSprite::setPosition(this->activePrintingSprite, &position);
+		PrintingSprite::setPixelPosition(this->activePrintingSprite, &position);
 	}
 }
 
@@ -748,7 +748,7 @@ void Printing::show()
 	if(!isDeleted(this->activePrintingSprite))
 	{
 		PrintingSprite::show(this->activePrintingSprite);
-		PrintingSprite::setPosition(this->activePrintingSprite, PrintingSprite::getPosition(this->activePrintingSprite));
+		PrintingSprite::setPixelPosition(this->activePrintingSprite, PrintingSprite::getPixelPosition(this->activePrintingSprite));
 	}
 }
 

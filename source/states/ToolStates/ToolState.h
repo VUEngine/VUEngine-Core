@@ -40,7 +40,6 @@ abstract class ToolState : GameState
 	override void processUserInput(const UserInput*  userInput);
 	override bool stream();
 	override void transform();
-	override void synchronizeGraphics();
 }
 
 

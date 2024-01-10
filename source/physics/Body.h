@@ -183,7 +183,7 @@ class Body : ListenerObject
 	uint16 getMovementOnAllAxis();
 	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
-	void moveUniformly(Vector3D velocity);
+	void moveUniformly(const Vector3D* velocity);
 	void setActive(bool active);
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
 	void setBounciness(fixed_t bounciness);

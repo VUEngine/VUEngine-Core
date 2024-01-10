@@ -41,7 +41,7 @@ typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 class ObjectAnimatedSprite : ObjectSprite
 {	
 	/// @publicsection
-	void constructor(const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
 	override void writeAnimation();
 }
 

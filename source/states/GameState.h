@@ -53,7 +53,6 @@ class GameState : State
 	// Flags to disable some processes
 	bool stream;
 	bool transform;
-	bool synchronizeGraphics;
 	bool updatePhysics;
 	bool processCollisions;
 
@@ -89,7 +88,6 @@ class GameState : State
 	void hideEntityWithName(const char* entityName);
 	void showEntityWithName(const char* entityName);
 
-	virtual void synchronizeGraphics();
 	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();

@@ -12,14 +12,26 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include "InverseBox.h"
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
+#include <SpatialObject.h>
+
+#include "VisualComponent.h"
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class Box;
+static const Transformation _dummyTransformation = 
+{
+	// position
+	{0, 0, 0},
+	// rotation
+	{0, 0, 0},
+	// scale
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,22 +40,58 @@ friend class Box;
 
 /**
  * Class constructor
- *
- * @param owner
  */
-void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
+void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec* visualComponentSpec)
 {
-	Base::constructor(owner, colliderSpec);
+	Base::constructor(owner, visualComponentSpec);
 
-	this->classIndex = kColliderInverseBoxIndex;
+	this->center = (PixelVector){0, 0, 0, 0};
+	this->show = __SHOW;
 }
 
 /**
  * Class destructor
  */
- void InverseBox::destructor()
-{
-	// destroy the super object
+void VisualComponent::destructor()
+{	
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Start being rendered
+ */
+void VisualComponent::show()
+{
+	this->rendered = __SHOW == this->show;
+	this->show = __SHOW;
+}
+
+/**
+ * Stop being rendered
+ */
+void VisualComponent::hide()
+{
+	this->rendered = false;
+	this->show = __HIDE;
+}
+
+/**
+ * Get transparency mode
+ *
+ * @return		Transparency mode
+ */
+uint8 VisualComponent::getTransparent()
+{
+	return this->transparent;
+}
+
+/**
+ * Set transparency mode
+ *
+ * @param value	Transparency mode
+ */
+void VisualComponent::setTransparent(uint8 value)
+{
+	this->transparent = value;
 }

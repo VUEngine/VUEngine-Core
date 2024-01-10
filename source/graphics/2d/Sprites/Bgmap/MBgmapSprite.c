@@ -57,9 +57,9 @@ friend class VirtualList;
  * @param mBgmapSpriteSpec		Spec to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner)
+void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
 {
-	Base::constructor(&mBgmapSpriteSpec->bgmapSpriteSpec, owner);
+	Base::constructor(owner, &mBgmapSpriteSpec->bgmapSpriteSpec);
 
 	this->checkIfWithinScreenSpace = false;
 
@@ -226,11 +226,11 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	BgmapTextureSource bgmapTextureSource = this->bgmapTextureSource;
 
-	PixelVector position = this->position;
+	PixelVector position = this->center;
 
 	if(this->mBgmapSpriteSpec->xLoop)
 	{
-		bgmapTextureSource.mx = -this->position.x;
+		bgmapTextureSource.mx = -this->center.x;
 		position.x = 0;
 	}
 	else
@@ -240,7 +240,7 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	if(this->mBgmapSpriteSpec->yLoop)
 	{
-		bgmapTextureSource.my = -this->position.y;
+		bgmapTextureSource.my = -this->center.y;
 		position.y = 0;
 	}
 	else
@@ -354,22 +354,6 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	}
 
 	return index;
-}
-
-/**
- * Resize
- *
- * @memberof			MBgmapSprite
- * @public
- *
- * @param scale			Scale to apply
- * @param z				Z coordinate to base on the size calculation
- */
-void MBgmapSprite::resize(Scale scale, fixed_t z)
-{
-	Base::resize(this, scale, z);
-
-	MBgmapSprite::calculateSize(this);
 }
 
 /**

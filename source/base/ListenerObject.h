@@ -50,8 +50,6 @@ typedef struct Event
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// Base class for all other classes in the engine, it derives from nothing but itself
-/// @ingroup base
 abstract class ListenerObject : Object
 {
 	// List of registered events.

@@ -33,22 +33,22 @@ friend class Ball;
 friend class LineField;
 
 
-static void CollisionHelper::checkIfBallOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBallOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBallOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBallOverlapsLineField(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBoxOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBoxOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBoxOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfBoxOverlapsLineField(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfInverseBoxOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfInverseBoxOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfInverseBoxOverlapsLineField(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfLineFieldOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfLineFieldOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkLineFieldIfOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
-static void CollisionHelper::checkIfLineFieldOverlapsLineField(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBallOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBallOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBallOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBallOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBoxOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfBoxOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfInverseBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfInverseBoxOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfInverseBoxOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfLineFieldOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfLineFieldOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkLineFieldIfOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
+static void CollisionHelper::checkIfLineFieldOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,22 +80,7 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 		boxB->normals->vectors,
 	};
 
-	// will need
-	Vector3D centers[2] =
-	{
-		{
-			(boxA->rightBox.x0 + boxA->rightBox.x1) >> 1,
-			(boxA->rightBox.y0 + boxA->rightBox.y1) >> 1,
-			(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1,
-		},
-		{
-			(boxB->rightBox.x0 + boxB->rightBox.x1) >> 1,
-			(boxB->rightBox.y0 + boxB->rightBox.y1) >> 1,
-			(boxB->rightBox.z0 + boxB->rightBox.z1) >> 1,
-		}
-	};
-
-	Vector3D distanceVector = Vector3D::get(centers[1], centers[0]);
+	Vector3D distanceVector = Vector3D::get(boxB->transformation->position, boxA->transformation->position);
 
  	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
@@ -175,7 +160,7 @@ static void CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall(InverseBo
 static void CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, Ball ballB, SolutionVector* solutionVector)
 {
 	// Compute the distance vector backwards to avoid the need to multiply by -1 the direction
-	Vector3D distanceVector = Vector3D::get(ballB->position, ballA->position);
+	Vector3D distanceVector = Vector3D::get(ballB->transformation->position, ballA->transformation->position);
 	fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(distanceVector);
 	fixed_t radiusesLength = ballA->radius + ballB->radius;
 
@@ -224,15 +209,18 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	// A first check should compare them and use the bigger's collider axis as the line onto which
 	// project the other collider's points
 
-	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
+	Vector3D ballSideToCheck = Vector3D::sum(ball->transformation->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
 
-	fixed_t position = __FIXED_MULT((lineField->b.x - lineField->a.x), (ballSideToCheck.y - lineField->a.y)) - __FIXED_MULT((lineField->b.y - lineField->a.y), (ballSideToCheck.x - lineField->a.x));
+	Vector3D lineFieldA = Vector3D::sum(lineField->a, lineField->transformation->position);
+	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->transformation->position);
+
+	fixed_t position = __FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - __FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
 
 	if(0 > position)
 	{
-		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineField->a, lineField->b);
+		Vector3D projection = Vector3D::projectOntoHighPrecision(ballSideToCheck, lineFieldA, lineFieldB);
 
-		bool collision = Vector3D::isVectorInsideLine(projection, lineField->a, lineField->b);
+		bool collision = Vector3D::isVectorInsideLine(projection, lineFieldA, lineFieldB);
 
 		if(!collision)
 		{
@@ -245,7 +233,7 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 			{
 				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpedicular(ballRadiusVector, left));
 				
-				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineField->a, lineField->b);
+				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineFieldA, lineFieldB);
 			}
 		}
 
@@ -265,22 +253,14 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 static void CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball ballB, SolutionVector* solutionVector)
 {
 	// if the normals have not been computed yet do so now
-	if(!boxA->normals)
+	if(NULL == boxA->normals)
 	{
 		Box::projectOntoItself(boxA);
 	}
 
 	Vector3D* normals = boxA->normals->vectors;
 
-	// will need
-	Vector3D boxACenter =
-	{
-		(boxA->rightBox.x0 + boxA->rightBox.x1) >> 1,
-		(boxA->rightBox.y0 + boxA->rightBox.y1) >> 1,
-		(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1,
-	};
-
-	Vector3D distanceVector = Vector3D::get(boxACenter, ballB->position);
+	Vector3D distanceVector = Vector3D::get(boxA->transformation->position, ballB->transformation->position);
 
 	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
@@ -295,7 +275,7 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 		fixed_t ballBMin = 0;
 		fixed_t ballBMax = 0;
 
-		Ball::project(ballB->position, ballB->radius, currentNormal, &ballBMin, &ballBMax);
+		Ball::project(ballB->transformation->position, ballB->radius, currentNormal, &ballBMin, &ballBMax);
 
 		fixed_t intervalDistance = 0;
 
@@ -330,10 +310,10 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 	}
 }
 
-static void CollisionHelper::checkIfBallOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBallOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	Ball ballA = Ball::safeCast(shapeA);
-	Ball ballB = Ball::safeCast(shapeB);
+	Ball ballA = Ball::safeCast(colliderA);
+	Ball ballB = Ball::safeCast(colliderB);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
@@ -347,20 +327,20 @@ static void CollisionHelper::checkIfBallOverlapsBall(Collider shapeA, Collider s
 	}
 }
 
-static void CollisionHelper::checkIfBallOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBallOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	CollisionHelper::checkIfBoxOverlapsBall(shapeB, shapeA, collisionInformation);
+	CollisionHelper::checkIfBoxOverlapsBall(colliderB, colliderA, collisionInformation);
 }
 
-static void CollisionHelper::checkIfBallOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBallOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	CollisionHelper::checkIfInverseBoxOverlapsBall(shapeB, shapeA, collisionInformation);
+	CollisionHelper::checkIfInverseBoxOverlapsBall(colliderB, colliderA, collisionInformation);
 }
 
-static void CollisionHelper::checkIfBallOverlapsLineField(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBallOverlapsLineField(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	Ball ball = Ball::safeCast(shapeA);
-	LineField lineField = LineField::safeCast(shapeB);
+	Ball ball = Ball::safeCast(colliderA);
+	LineField lineField = LineField::safeCast(colliderB);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
@@ -375,23 +355,16 @@ static void CollisionHelper::checkIfBallOverlapsLineField(Collider shapeA, Colli
 }
 
 
-static void CollisionHelper::checkIfBoxOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	Box boxA = Box::safeCast(shapeA); 
-	Ball ballB = Ball::safeCast(shapeB);
-
-	Vector3D boxACenter =
-	{
-		(boxA->rightBox.x0 + boxA->rightBox.x1) >> 1,
-		(boxA->rightBox.y0 + boxA->rightBox.y1) >> 1,
-		(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1,
-	};
+	Box boxA = Box::safeCast(colliderA); 
+	Ball ballB = Ball::safeCast(colliderB);
 
 	Vector3D intervalDistance =
 	{
-		boxACenter.x < ballB->position.x ? ((ballB->position.x - ballB->radius) - boxA->rightBox.x1) : (boxA->rightBox.x0 - (ballB->position.x + ballB->radius)),
-		boxACenter.y < ballB->position.y ? ((ballB->position.y - ballB->radius) - boxA->rightBox.y1) : (boxA->rightBox.y0 - (ballB->position.y + ballB->radius)),
-		boxACenter.z < ballB->position.z ? ((ballB->position.z - ballB->radius) - boxA->rightBox.z1) : (boxA->rightBox.z0 - (ballB->position.z + ballB->radius)),
+		boxA->transformation->position.x < ballB->transformation->position.x ? ((ballB->transformation->position.x - ballB->radius) - (boxA->transformation->position.x + boxA->rightBox.x1)) : ((boxA->transformation->position.x + boxA->rightBox.x0) - (ballB->transformation->position.x + ballB->radius)),
+		boxA->transformation->position.y < ballB->transformation->position.y ? ((ballB->transformation->position.y - ballB->radius) - (boxA->transformation->position.y + boxA->rightBox.y1)) : ((boxA->transformation->position.y + boxA->rightBox.y0) - (ballB->transformation->position.y + ballB->radius)),
+		boxA->transformation->position.z < ballB->transformation->position.z ? ((ballB->transformation->position.z - ballB->radius) - (boxA->transformation->position.z + boxA->rightBox.z1)) : ((boxA->transformation->position.z + boxA->rightBox.z0) - (ballB->transformation->position.z + ballB->radius)),
 	};
 
 	// test for collision
@@ -412,7 +385,7 @@ static void CollisionHelper::checkIfBoxOverlapsBall(Collider shapeA, Collider sh
 		}
 		else
 		{
-			Vector3D distanceVector = Vector3D::get(boxACenter, ballB->position);
+			Vector3D distanceVector = Vector3D::get(boxA->transformation->position, ballB->transformation->position);
 
 			Vector3D normals[__COLLIDER_NORMALS] =
 			{
@@ -448,16 +421,16 @@ static void CollisionHelper::checkIfBoxOverlapsBall(Collider shapeA, Collider sh
 	}
 }
 
-static void CollisionHelper::checkIfBoxOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	Box boxA = Box::safeCast(shapeA); 
-	Box boxB = Box::safeCast(shapeB); 
+	Box boxA = Box::safeCast(colliderA); 
+	Box boxB = Box::safeCast(colliderB); 
 
 	Vector3D intervalDistance =
 	{
-		(boxA->rightBox.x0 + boxA->rightBox.x1) >> 1 < (boxB->rightBox.x0 + boxB->rightBox.x1) >> 1 ? (boxB->rightBox.x0 - boxA->rightBox.x1) : (boxA->rightBox.x0 - boxB->rightBox.x1),
-		(boxA->rightBox.y0 + boxA->rightBox.y1) >> 1 < (boxB->rightBox.y0 + boxB->rightBox.y1) >> 1 ? (boxB->rightBox.y0 - boxA->rightBox.y1) : (boxA->rightBox.y0 - boxB->rightBox.y1),
-		(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1 < (boxB->rightBox.z0 + boxB->rightBox.z1) >> 1 ? (boxB->rightBox.z0 - boxA->rightBox.z1) : (boxA->rightBox.z0 - boxB->rightBox.z1),
+		boxA->transformation->position.x < boxB->transformation->position.x ? ((boxB->transformation->position.x + boxB->rightBox.x0) - (boxA->transformation->position.x + boxA->rightBox.x1)) : ((boxA->transformation->position.x + boxA->rightBox.x0) - (boxB->transformation->position.x + boxB->rightBox.x1)),
+		boxA->transformation->position.y < boxB->transformation->position.y ? ((boxB->transformation->position.y + boxB->rightBox.y0) - (boxA->transformation->position.y + boxA->rightBox.y1)) : ((boxA->transformation->position.y + boxA->rightBox.y0) - (boxB->transformation->position.y + boxB->rightBox.y1)),
+		boxA->transformation->position.z < boxB->transformation->position.z ? ((boxB->transformation->position.z + boxB->rightBox.z0) - (boxA->transformation->position.z + boxA->rightBox.z1)) : ((boxA->transformation->position.z + boxA->rightBox.z0) - (boxB->transformation->position.z + boxB->rightBox.z1)),
 	};
 
 	// test for collision
@@ -480,21 +453,7 @@ static void CollisionHelper::checkIfBoxOverlapsBox(Collider shapeA, Collider sha
 		}
 		else
 		{
-			Vector3D boxACenter =
-			{
-				(boxA->rightBox.x0 + boxA->rightBox.x1) >> 1,
-				(boxA->rightBox.y0 + boxA->rightBox.y1) >> 1,
-				(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1,
-			};
-
-			Vector3D boxBCenter =
-			{
-				(boxB->rightBox.x0 + boxB->rightBox.x1) >> 1,
-				(boxB->rightBox.y0 + boxB->rightBox.y1) >> 1,
-				(boxB->rightBox.z0 + boxB->rightBox.z1) >> 1,
-			};
-
-			Vector3D distanceVector = Vector3D::get(boxBCenter, boxACenter);
+			Vector3D distanceVector = Vector3D::get(boxB->transformation->position, boxA->transformation->position);
 
 			Vector3D normals[__COLLIDER_NORMALS] =
 			{
@@ -531,10 +490,10 @@ static void CollisionHelper::checkIfBoxOverlapsBox(Collider shapeA, Collider sha
 	}
 }
 
-static void CollisionHelper::checkIfBoxOverlapsInverseBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfBoxOverlapsInverseBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	Box boxA = Box::safeCast(shapeA); 
-	InverseBox inverseBoxB = InverseBox::safeCast(shapeB);
+	Box boxA = Box::safeCast(colliderA); 
+	InverseBox inverseBoxB = InverseBox::safeCast(colliderB);
 
 	// test for collision
 	if
@@ -550,27 +509,20 @@ static void CollisionHelper::checkIfBoxOverlapsInverseBox(Collider shapeA, Colli
 	}
 }
 
-static void CollisionHelper::checkIfBoxOverlapsLineField(Collider shapeA __attribute__((unused)), Collider shapeB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionHelper::checkIfBoxOverlapsLineField(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	InverseBox inverseBoxA = InverseBox::safeCast(shapeA); 
-	Ball ballB = Ball::safeCast(shapeB);
-
-	Vector3D inverseBoxACenter =
-	{
-		(inverseBoxA->rightBox.x0 + inverseBoxA->rightBox.x1) >> 1,
-		(inverseBoxA->rightBox.y0 + inverseBoxA->rightBox.y1) >> 1,
-		(inverseBoxA->rightBox.z0 + inverseBoxA->rightBox.z1) >> 1,
-	};
+	InverseBox inverseBoxA = InverseBox::safeCast(colliderA); 
+	Ball ballB = Ball::safeCast(colliderB);
 
 	Vector3D intervalDistance =
 	{
-		inverseBoxACenter.x > ballB->position.x ? ((ballB->position.x - ballB->radius) - inverseBoxA->rightBox.x0) : (inverseBoxA->rightBox.x1 - (ballB->position.x + ballB->radius)),
-		inverseBoxACenter.y > ballB->position.y ? ((ballB->position.y - ballB->radius) - inverseBoxA->rightBox.y0) : (inverseBoxA->rightBox.y1 - (ballB->position.y + ballB->radius)),
-		inverseBoxACenter.z > ballB->position.z ? ((ballB->position.z - ballB->radius) - inverseBoxA->rightBox.z0) : (inverseBoxA->rightBox.z1 - (ballB->position.z + ballB->radius)),
+		inverseBoxA->transformation->position.x > ballB->transformation->position.x ? ((ballB->transformation->position.x - ballB->radius) - (inverseBoxA->transformation->position.x + inverseBoxA->rightBox.x0)) : ((inverseBoxA->transformation->position.x + inverseBoxA->rightBox.x1) - (ballB->transformation->position.x + ballB->radius)),
+		inverseBoxA->transformation->position.y > ballB->transformation->position.y ? ((ballB->transformation->position.y - ballB->radius) - (inverseBoxA->transformation->position.y + inverseBoxA->rightBox.y0)) : ((inverseBoxA->transformation->position.y + inverseBoxA->rightBox.y1) - (ballB->transformation->position.y + ballB->radius)),
+		inverseBoxA->transformation->position.z > ballB->transformation->position.z ? ((ballB->transformation->position.z - ballB->radius) - (inverseBoxA->transformation->position.z + inverseBoxA->rightBox.z0)) : ((inverseBoxA->transformation->position.z + inverseBoxA->rightBox.z1) - (ballB->transformation->position.z + ballB->radius)),
 	};
 
 	// test for collision
@@ -584,7 +536,7 @@ static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider shapeA, Coll
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		Vector3D distanceVector = Vector3D::get(inverseBoxACenter, ballB->position);
+		Vector3D distanceVector = Vector3D::get(inverseBoxA->transformation->position, ballB->transformation->position);
 
 		Vector3D normals[__COLLIDER_NORMALS] =
 		{
@@ -620,57 +572,57 @@ static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider shapeA, Coll
 	}
 }
 
-static void CollisionHelper::checkIfInverseBoxOverlapsBox(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfInverseBoxOverlapsBox(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	CollisionHelper::checkIfBoxOverlapsInverseBox(shapeB, shapeA, collisionInformation);
+	CollisionHelper::checkIfBoxOverlapsInverseBox(colliderB, colliderA, collisionInformation);
 }
 
-static void CollisionHelper::checkIfInverseBoxOverlapsInverseBox(Collider shapeA __attribute__ ((unused)), Collider shapeB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
-{
-}
-
-static void CollisionHelper::checkIfInverseBoxOverlapsLineField(Collider shapeA __attribute__ ((unused)), Collider shapeB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
+static void CollisionHelper::checkIfInverseBoxOverlapsInverseBox(Collider colliderA __attribute__ ((unused)), Collider colliderB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 }
 
-static void CollisionHelper::checkIfLineFieldOverlapsBall(Collider shapeA __attribute__((unused)), Collider shapeB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionHelper::checkIfInverseBoxOverlapsLineField(Collider colliderA __attribute__ ((unused)), Collider colliderB __attribute__ ((unused)), CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 }
 
-static void CollisionHelper::checkIfLineFieldOverlapsBox(Collider shapeA __attribute__((unused)), Collider shapeB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionHelper::checkIfLineFieldOverlapsBall(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-static void CollisionHelper::checkLineFieldIfOverlapsInverseBox(Collider shapeA __attribute__((unused)), Collider shapeB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionHelper::checkIfLineFieldOverlapsBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
-static void CollisionHelper::checkIfLineFieldOverlapsLineField(Collider shapeA __attribute__((unused)), Collider shapeB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+static void CollisionHelper::checkLineFieldIfOverlapsInverseBox(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
+{
+}
+
+static void CollisionHelper::checkIfLineFieldOverlapsLineField(Collider colliderA __attribute__((unused)), Collider colliderB __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
 }
 
 /**
- * Check if two shapes overlap
+ * Check if two colliders overlap
  *
- * @param shapeA	Collider
- * @param shapeB	Collider
+ * @param colliderA	Collider
+ * @param colliderB	Collider
  */
-static void CollisionHelper::checkIfOverlap(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation)
+static void CollisionHelper::checkIfOverlap(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation)
 {
-	NM_ASSERT(!isDeleted(shapeA), "CollisionHelper::checkIfOverlap: deleted shapeA");
-	NM_ASSERT(!isDeleted(shapeB), "CollisionHelper::checkIfOverlap: deleted shapeB");
+	NM_ASSERT(!isDeleted(colliderA), "CollisionHelper::checkIfOverlap: deleted colliderA");
+	NM_ASSERT(!isDeleted(colliderB), "CollisionHelper::checkIfOverlap: deleted colliderB");
 
-	NM_ASSERT(4 > (unsigned)shapeA->classIndex, "CollisionHelper::checkIfOverlap: wrong shapeA's class index");
-	NM_ASSERT(4 > (unsigned)shapeB->classIndex, "CollisionHelper::checkIfOverlap: wrong shapeB's class index");
+	NM_ASSERT(4 > (unsigned)colliderA->classIndex, "CollisionHelper::checkIfOverlap: wrong colliderA's class index");
+	NM_ASSERT(4 > (unsigned)colliderB->classIndex, "CollisionHelper::checkIfOverlap: wrong colliderB's class index");
 
-	if(isDeleted(shapeA) || isDeleted(shapeB) || NULL == collisionInformation)
+	if(isDeleted(colliderA) || isDeleted(colliderB) || NULL == collisionInformation)
 	{
 		return;
 	}
 
-	typedef void (*CollisionHelperFunction)(Collider shapeA, Collider shapeB, CollisionInformation* collisionInformation);
+	typedef void (*CollisionHelperFunction)(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
 
-	// Will need to update this as more shapes are added
+	// Will need to update this as more colliders are added
 	// {Ball, Box, InverseBox, LineField} x {Ball, Box, InverseBox, LineField}
 	static CollisionHelperFunction collisionHelperFunctions[][4] =
 	{
@@ -684,16 +636,16 @@ static void CollisionHelper::checkIfOverlap(Collider shapeA, Collider shapeB, Co
 		{CollisionHelper::checkIfLineFieldOverlapsBall, CollisionHelper::checkIfLineFieldOverlapsBox, CollisionHelper::checkLineFieldIfOverlapsInverseBox, CollisionHelper::checkIfLineFieldOverlapsLineField},
 	};
 
-	CollisionHelperFunction collisionHelperFunction = collisionHelperFunctions[shapeA->classIndex][shapeB->classIndex];
+	CollisionHelperFunction collisionHelperFunction = collisionHelperFunctions[colliderA->classIndex][colliderB->classIndex];
 
 	collisionInformation->collider = NULL;
 
-	collisionHelperFunction(shapeA, shapeB, collisionInformation);
+	collisionHelperFunction(colliderA, colliderB, collisionInformation);
 
 	// We could have swapped the arguments to the checking methods to avoid code repetition
 	if(NULL != collisionInformation->collider)
 	{
-		collisionInformation->collider = shapeA;
-		collisionInformation->otherCollider = shapeB;
+		collisionInformation->collider = colliderA;
+		collisionInformation->otherCollider = colliderB;
 	}
 }

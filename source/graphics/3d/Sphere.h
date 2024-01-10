@@ -48,7 +48,7 @@ class Sphere : Wireframe
 	bool drawCenter;
 
 	/// @publicsection
-	void constructor(SphereSpec* sphereSpec);
+	void constructor(SpatialObject owner, SphereSpec* sphereSpec);
 	PixelVector getCenter();
 	fixed_t getRadius();
 	void setCenter(PixelVector center);

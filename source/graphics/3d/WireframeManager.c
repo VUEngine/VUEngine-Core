@@ -104,14 +104,14 @@ void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
  *
  * @param wireframeSpec	Wireframe spec
  */
-Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(WireframeSpec*))wireframeSpec->allocator)(wireframeSpec);
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
 	if(WireframeManager::registerWireframe(this, wireframe) == wireframe)
 	{
@@ -282,7 +282,7 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
@@ -297,7 +297,7 @@ void WireframeManager::render()
 
 		Wireframe::render(wireframe);
 
-		wireframe->draw = true;
+		wireframe->rendered = true;
 
 #ifdef __PROFILE_WIREFRAMES
 		if(__COLOR_BLACK != wireframe->color)
@@ -346,12 +346,12 @@ void WireframeManager::draw()
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if(!wireframe->draw || __COLOR_BLACK == wireframe->color)
+		if(!wireframe->rendered || __COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}

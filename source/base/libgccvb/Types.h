@@ -268,23 +268,14 @@ typedef struct TexturePadding
 // a spatial description
 typedef struct Transformation
 {
-	// spatial local position
-	Vector3D localPosition;
+	// spatial position
+	Vector3D position;
 
-	// spatial global position
-	Vector3D globalPosition;
+	// spatial rotation
+	Rotation rotation;
 
-	// local rotation
-	Rotation localRotation;
-
-	// global rotation
-	Rotation globalRotation;
-
-	// scale
-	Scale localScale;
-
-	// scale
-	Scale globalScale;
+	// spatial scale
+	Scale scale;
 
 } Transformation;
 

@@ -319,8 +319,8 @@
 // smaller values allow movement to start when colliding against a collider and trying to move towards it
 #define __COLLIDER_ANGLE_TO_PREVENT_DISPLACEMENT						{% if config.physics.angleToPreventColliderDisplacement %}__FIX7_9_TO_FIXED(__COS({{ config.physics.angleToPreventColliderDisplacement }})){% else %}__F_TO_FIXED(0.01f){% endif %}
 
-// maximum size of shapes allows to avoid checks against far away shapes
-#define __COLLIDER_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if config.physics.shapesMaximumSize %}{{ config.physics.shapesMaximumSize }}{% else %}256{% endif %})
+// maximum size of colliders allows to avoid checks against far away colliders
+#define __COLLIDER_MAXIMUM_SIZE										__PIXELS_TO_METERS({% if config.physics.collidersMaximumSize %}{{ config.physics.collidersMaximumSize }}{% else %}256{% endif %})
 
 
 {{ macros.sectionHeader('Sound') }}

@@ -154,12 +154,6 @@ void AnimationInspector::destructor()
  */
 void AnimationInspector::update()
 {
-	if(this->gameState && this->animatedSprite)
-	{
-		Sprite::updateAnimation(this->animatedSprite);
-		Sprite::update(this->animatedSprite);
-		Sprite::processEffects(this->animatedSprite);
-	}
 }
 
 /**
@@ -747,7 +741,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, NULL));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
@@ -755,15 +749,15 @@ void AnimationInspector::createSprite()
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::setPixelPosition(this->animatedSprite, &spritePosition);
 	Sprite::processEffects(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 
-	Sprite::setPosition(this->animatedSprite, &spritePosition);
-	Sprite::rotate(this->animatedSprite, &spriteRotation);
-	Sprite::resize(this->animatedSprite, spriteScale, spritePosition.z);
+	Sprite::setPixelPosition(this->animatedSprite, &spritePosition);
+	Sprite::setRotation(this->animatedSprite, &spriteRotation);
+	Sprite::setScale(this->animatedSprite, &spriteScale);
 	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->writeAnimationFrame = true;

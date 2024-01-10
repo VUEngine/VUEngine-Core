@@ -12,8 +12,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ObjectSpriteContainer.h>
-
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectTexture.h>
@@ -27,7 +27,7 @@
 #include <VirtualNode.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "ObjectSpriteContainer.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,13 +64,9 @@ void ObjectSpriteContainer::constructor()
 	this->firstObjectIndex = 0;
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
-	this->show = __SHOW;
 	this->transparent = __TRANSPARENCY_NONE;
-	this->positioned = true;
 	this->lockSpritesLists = false;
 	this->hideSprites = false;
-
-	ObjectSpriteContainer::registerWithManager(this);
 }
 
 /**
@@ -78,13 +74,16 @@ void ObjectSpriteContainer::constructor()
  */
 void ObjectSpriteContainer::destructor()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
-
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-	VirtualList::deleteData(this->objectSprites);
-	delete this->objectSprites;
-	this->objectSprites = NULL;
+	if(!isDeleted(this->objectSprites))
+	{
+		VirtualList objectSprites = this->objectSprites;
+		this->objectSprites = NULL;
+
+		VirtualList::deleteData(objectSprites);
+		delete objectSprites;
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -97,10 +96,16 @@ void ObjectSpriteContainer::destructor()
  */
 void ObjectSpriteContainer::registerWithManager()
 {
-	if(!this->registered)
-	{
-		this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
-	}
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+}
+
+/**
+ * Unregister
+ *
+ */
+void ObjectSpriteContainer::unregisterWithManager()
+{
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
 
 /**
@@ -152,26 +157,6 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 }
 
 /**
- * Set 2D position
- *
- * @param position		New 2D position
- */
-void ObjectSpriteContainer::setPosition(const PixelVector* position)
-{
-	if(this->objectSprites)
-	{
-		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-		{
-			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-			ObjectSprite::setPosition(objectSprite, &objectSprite->position);
-		}
-	}
-
-	this->position.z = position->z;
-}
-
-/**
  * Sort the object sprites within this container according to their z coordinates
  *
  * @private
@@ -200,7 +185,7 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+		if(nextSprite->center.z + nextSprite->displacement.z > sprite->center.z + sprite->displacement.z)
 		{
 			// swap nodes' data
 			node->data = nextSprite;
@@ -264,14 +249,12 @@ void ObjectSpriteContainer::forceShow()
 {
 	Base::forceShow(this);
 	this->show = __HIDE;
-	this->positioned = true;
 	this->hideSprites = false;
 }
 
 void ObjectSpriteContainer::hideForDebug()
 {
 	this->show = __SHOW;
-	this->positioned = true;
 	this->hideSprites = true;
 }
 
@@ -283,7 +266,6 @@ void ObjectSpriteContainer::hideForDebug()
 int16 ObjectSpriteContainer::doRender(int16 index, bool evenFrame __attribute__((unused)))
 {
 	this->index = index;
-	this->renderFlag = true;
 
 	return index;
 }
@@ -299,13 +281,13 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame)
 	{
 		for(VirtualNode node = this->objectSprites->head; NULL != node && 0 < _objectIndex; node = node->next)
 		{
-			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::doRender: NULL node's data");
+			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::renderSprites: NULL node's data");
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
-			if(__HIDE == objectSprite->show || !objectSprite->positioned || (objectSprite->transparent & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
+			if(__HIDE == objectSprite->show || (objectSprite->transparent & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
 			{
 				objectSprite->index = __NO_RENDER_INDEX;
 				continue;
@@ -402,7 +384,7 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::getDigitsCount(this->firstObjectIndex), y, NULL);
 	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Utilities::getDigitsCount(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->center.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }

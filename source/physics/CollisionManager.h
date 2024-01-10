@@ -36,8 +36,8 @@ class Clock;
 /// @ingroup physics
 class CollisionManager : ListenerObject
 {
-	// a list of registered shapes
-	VirtualList	shapes;
+	// a list of registered colliders
+	VirtualList	colliders;
 	// counters for statistics
 	uint16 lastCycleCheckProducts;
 	uint16 lastCycleCollisionChecks;
@@ -52,7 +52,7 @@ class CollisionManager : ListenerObject
 	void constructor();
 	void hideColliders();
 	void print(int32 x, int32 y);
-	Collider createCollider(SpatialObject owner, const ColliderSpec* shapeSpec);
+	Collider createCollider(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void destroyCollider(Collider collider);
 	void reset();
 	void showColliders();

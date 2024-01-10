@@ -66,12 +66,10 @@ class Container : SpatialObject
 {
 	// whether to inherit position, rotation and scale from environment (parents)
 	uint8 inheritEnvironment;
-	// Flag to update graphics' attributes
-	uint8 invalidateGraphics;
 	// Flag to recalculate global transformations
 	uint8 invalidateGlobalTransformation;
 	// 3D transformation
-	Transformation transformation;
+	Transformation localTransformation;
 	// Children list
 	VirtualList children;
 	// Bahaviors list
@@ -88,12 +86,8 @@ class Container : SpatialObject
 	bool update;
 	// flag to enable calls to the transform method
 	bool transform;
-	// flag to enable calls to the synchronizeGraphics method
-	bool synchronizeGraphics;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
-	// Raise flag when transformed to allow graphics sync
-	bool transformed;
 
 	/// @publicsection
 	void constructor(const char* const name);
@@ -116,7 +110,6 @@ class Container : SpatialObject
 	const Scale* getLocalScale();
 	const char* getName();
 	Container getParent();
-	Transformation* getTransform();
 	void invalidateGlobalPosition();
 	void invalidateGlobalRotation();
 	void invalidateGlobalScale();
@@ -132,7 +125,6 @@ class Container : SpatialObject
 	void setInheritEnvironment(uint8 inheritEnvironment);
 	void updateChildren();
 	void updateChildren();
-	void synchronizeChildrenGraphics();
 	void translate(const Vector3D* translation);
 	void rotate(const Rotation* rotation);
 	void scale(const Scale* scale);
@@ -146,7 +138,6 @@ class Container : SpatialObject
 	virtual void ready(bool recursive);
 	virtual void update();
 	virtual void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	virtual void synchronizeGraphics();
 	virtual void createComponents();
 	virtual void initialTransform(const Transformation* environmentTransform);
 	virtual void setLocalPosition(const Vector3D* position);
@@ -164,11 +155,8 @@ class Container : SpatialObject
 	virtual bool isTransformed();
 	virtual void destroyComponents();
 
-	override const Vector3D* getPosition();
 	override void setPosition(const Vector3D* position);
-	override const Rotation* getRotation();
 	override void setRotation(const Rotation* rotation);
-	override const Scale* getScale();
 	override void setScale(const Scale* scale);
 }
 

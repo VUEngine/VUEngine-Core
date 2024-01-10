@@ -12,14 +12,26 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include "InverseBox.h"
+#include <DebugConfig.h>
+#include <DebugUtilities.h>
+#include <SpatialObject.h>
+
+#include "Component.h"
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-friend class Box;
+static const Transformation _dummyTransformation = 
+{
+	// position
+	{0, 0, 0},
+	// rotation
+	{0, 0, 0},
+	// scale
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,22 +40,59 @@ friend class Box;
 
 /**
  * Class constructor
- *
- * @param owner
  */
-void InverseBox::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
+void Component::constructor(SpatialObject owner, const ComponentSpec* componentSpec)
 {
-	Base::constructor(owner, colliderSpec);
+	Base::constructor();
+	
+	this->componentSpec = componentSpec;
+	this->owner = owner;
 
-	this->classIndex = kColliderInverseBoxIndex;
+	if(!isDeleted(this->owner))
+	{
+		this->transformation = SpatialObject::getTransformation(this->owner);
+	}
+	else
+	{
+		this->transformation = &_dummyTransformation;
+	}
 }
 
 /**
  * Class destructor
  */
- void InverseBox::destructor()
-{
-	// destroy the super object
+void Component::destructor()
+{	
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Retrieve the position
+ *
+ * @return Vector3D			Collider's position
+ */
+Vector3D Component::getPosition()
+{
+	return this->transformation->position;
+}
+
+/**
+ * Retrieve the rotation
+ *
+ * @return Rotation			Collider's rotation
+ */
+Rotation Component::getRotation()
+{
+	return this->transformation->rotation;
+}
+
+/**
+ * Retrieve the rotation
+ *
+ * @return Scale			Collider's scale
+ */
+Scale Component::getScale()
+{
+	return this->transformation->scale;
 }

@@ -311,21 +311,21 @@ void Body::moveAccelerated(uint16 axis)
 }
 
 // set movement type to uniform
-void Body::moveUniformly(Vector3D velocity)
+void Body::moveUniformly(const Vector3D* velocity)
 {
 	uint16 axisOfUniformMovement = 0;
 
-	if(0 != velocity.x)
+	if(0 != velocity->x)
 	{
 		axisOfUniformMovement |= __X_AXIS;
 	}
 
-	if(0 != velocity.y)
+	if(0 != velocity->y)
 	{
 		axisOfUniformMovement |= __Y_AXIS;
 	}
 
-	if(0 != velocity.z)
+	if(0 != velocity->z)
 	{
 		axisOfUniformMovement |= __Z_AXIS;
 	}
@@ -335,10 +335,10 @@ void Body::moveUniformly(Vector3D velocity)
 		Body::setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
 		Body::awake(this, axisOfUniformMovement);
 
-		this->velocity = velocity;
-		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
-		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
-		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
+		this->velocity = *velocity;
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 
 		Body::clampVelocity(this, false);
 	}
@@ -463,12 +463,18 @@ void Body::update(uint16 cycle)
 		movementResult = Body::updateMovement(this, cycle);
 	}
 
+	if(!isDeleted(this->owner))
+	{
+		SpatialObject::setPosition(this->owner, &this->position);
+		SpatialObject::setDirection(this->owner, &this->direction);
+	}
+
 	// if stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{
 		Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(0 != movementResult.axisStoppedMovement && this->sendMessages)
+		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
 		}
@@ -1172,7 +1178,7 @@ void Body::awake(uint16 axisOfAwakening)
 			dispatchMessage |= (__Z_AXIS & axisOfAwakening);
 		}
 
-		if(dispatchMessage)
+		if(!isDeleted(this->owner) && dispatchMessage)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
 		}
@@ -1343,7 +1349,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(__NO_AXIS != axisOfStopping && this->sendMessages)
+		if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}

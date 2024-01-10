@@ -37,10 +37,10 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(PolyhedronSpec* polyhedronSpec)
+void Polyhedron::constructor(SpatialObject owner, PolyhedronSpec* polyhedronSpec)
 {
 	// construct base object
-	Base::constructor(&polyhedronSpec->wireframeSpec);
+	Base::constructor(owner, &polyhedronSpec->wireframeSpec);
 
 	// don't create the list yet
 	this->vertices = NULL;
@@ -123,7 +123,7 @@ void Polyhedron::draw()
 			toVertex2D = PixelVector::project(toVertex3D, 0);
 
 			// draw the line in both buffers
-			DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0, false);
+			this->drawn |= DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0, false) ;
 		}
 	}
 }

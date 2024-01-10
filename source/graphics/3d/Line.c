@@ -30,13 +30,13 @@
  *
  * @private
  */
-void Line::constructor(LineSpec* lineSpec)
+void Line::constructor(SpatialObject owner, LineSpec* lineSpec)
 {
 	// construct base object
-	Base::constructor(&lineSpec->wireframeSpec);
+	Base::constructor(owner, &lineSpec->wireframeSpec);
 
-	((LineSpec*)this->wireframeSpec)->a = lineSpec->a;
-	((LineSpec*)this->wireframeSpec)->b = lineSpec->b;
+	((LineSpec*)this->componentSpec)->a = lineSpec->a;
+	((LineSpec*)this->componentSpec)->b = lineSpec->b;
 
 	this->a = PixelVector::zero();
 	this->b = PixelVector::zero();
@@ -57,7 +57,7 @@ void Line::destructor()
  */
 void Line::render()
 {
-	Vector3D position = Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b);
+	Vector3D position = Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b);
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 	Sphere::setupRenderingMode(this, &relativePosition);
@@ -67,11 +67,11 @@ void Line::render()
 		return;
 	}
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->wireframeSpec)->a, _previousCameraPosition);
+	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->a, _previousCameraPosition);
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->a = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->wireframeSpec)->b, _previousCameraPosition);
+	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->b, _previousCameraPosition);
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->b = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 }
@@ -83,7 +83,7 @@ void Line::render()
  */
 void Line::draw()
 {
-	DirectDraw::drawColorLine
+	this->drawn = DirectDraw::drawColorLine
 	(
 		this->a,
 		this->b,
@@ -94,8 +94,8 @@ void Line::draw()
 /*
 	DirectDraw::drawColorLine
 	(
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b)), 0),
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b), this->normal)), 0),
+		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b)), 0),
+		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b), this->normal)), 0),
 		__COLOR_BRIGHT_RED,
 		0,
 		false

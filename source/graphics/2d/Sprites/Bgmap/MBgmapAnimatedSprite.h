@@ -46,7 +46,7 @@ typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 class MBgmapAnimatedSprite : MBgmapSprite
 {
 	/// @publicsection
-	void constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
 	override void writeAnimation();
 }
 

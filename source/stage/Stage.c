@@ -56,24 +56,14 @@ friend class VirtualList;
 
 const Transformation neutralEnvironmentTransformation =
 {
-	// spatial local position
+	// spatial position
 	{0, 0, 0},
-
-	// spatial global position
+ 
+	// spatial rotation
 	{0, 0, 0},
-
-	// local rotation
-	{0, 0, 0},
-
-	// global rotation
-	{0, 0, 0},
-
-	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
-	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
+ 
+	// spatial scale
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
 };
 
 #ifdef __PROFILE_STREAMING
@@ -358,8 +348,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// load background music
 	Stage::setupSounds(this);
 
-	Entity::setVisibilityPadding(this->streaming.loadPadding + this->streaming.unloadPadding);
-
 	if(overrideCameraPosition)
 	{
 		Camera::reset(Camera::getInstance());
@@ -413,15 +401,6 @@ void Stage::loadPostProcessingEffects()
 			VUEngine::pushFrontPostProcessingEffect(_vuEngine, this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
-}
-
-// retrieve size
-Size Stage::getSize()
-{
-	ASSERT(this->stageSpec, "Stage::getSize: null stageSpec");
-
-	// set world's limits
-	return Size::getFromPixelSize(this->stageSpec->level.pixelSize);
 }
 
 PixelSize Stage::getPixelSize()
@@ -874,8 +853,13 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !entity->inCameraRange)
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this))
 		{
+			if(Entity::isInCameraRange(entity, this->streaming.loadPadding + this->streaming.unloadPadding, true))
+			{
+				continue;
+			}
+
 			VirtualNode auxNode = this->stageEntityDescriptions->head;
 			StageEntityDescription* stageEntityDescription = NULL;
 
@@ -1178,16 +1162,6 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 	if(!isDeleted(this->uiContainer))
 	{
 		Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
-	}
-}
-
-void Stage::synchronizeGraphics()
-{
-	Base::synchronizeGraphics(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::synchronizeGraphics(this->uiContainer);
 	}
 }
 

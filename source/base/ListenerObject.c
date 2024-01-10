@@ -41,6 +41,10 @@ friend class VirtualList;
  */
 void ListenerObject::constructor()
 {
+#ifndef __SHIPPING	
+	Base::constructor();
+#endif
+
 	this->events = NULL;
 	this->eventFirings = 0;
 }

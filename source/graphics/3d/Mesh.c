@@ -41,17 +41,17 @@ friend class VirtualList;
  *
  * @private
  */
-void Mesh::constructor(MeshSpec* meshSpec)
+void Mesh::constructor(SpatialObject owner, MeshSpec* meshSpec)
 {
 	// construct base object
-	Base::constructor(&meshSpec->wireframeSpec);
+	Base::constructor(owner, &meshSpec->wireframeSpec);
 
 	this->segments = new VirtualList();
 	this->vertices = new VirtualList();
 
-	if(NULL != this->wireframeSpec)
+	if(NULL != this->componentSpec)
 	{
-		Mesh::addSegments(this, ((MeshSpec*)this->wireframeSpec)->segments, Vector3D::zero());
+		Mesh::addSegments(this, ((MeshSpec*)this->componentSpec)->segments, Vector3D::zero());
 	}
 }
 
@@ -262,7 +262,7 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 
 	// Prevent rendering when modifying the mesh because if segments are added after the initial render
 	// there can be graphical glitches if XPEND kicks in in the mist of adding new vertexes
-	this->draw = false;
+	this->rendered = false;
 
 	do
 	{
@@ -332,11 +332,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
  */
 void Mesh::render()
 {
-	NM_ASSERT(NULL != this->position, "Mesh::render: NULL position");
-	NM_ASSERT(NULL != this->rotation, "Mesh::render: NULL rotation");
-	NM_ASSERT(NULL != this->scale, "Mesh::render: NULL scale");
+	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
-	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition);
+	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	Mesh::setupRenderingMode(this, &relativePosition);
@@ -346,8 +344,8 @@ void Mesh::render()
 		return;
 	}
 
-	bool scale = (__1I_FIX7_9 != this->scale->x) + (__1I_FIX7_9 != this->scale->y) + (__1I_FIX7_9 != this->scale->z);
-	bool rotate = (0 != this->rotation->x) + (0 != this->rotation->y) + (0 != this->rotation->z);
+	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
+	bool rotate = (0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
 
 	if(!scale && !rotate)
 	{
@@ -366,8 +364,8 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Rotation rotation = *this->rotation;
-		Scale scale = *this->scale;
+		Rotation rotation = this->transformation->rotation;
+		Scale scale = this->transformation->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -382,7 +380,7 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Rotation rotation = *this->rotation;
+		Rotation rotation = this->transformation->rotation;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -397,7 +395,7 @@ void Mesh::render()
 	{
 		CACHE_RESET;
 
-		Scale scale = *this->scale;
+		Scale scale = this->transformation->scale;
 
 		for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 		{
@@ -415,9 +413,7 @@ void Mesh::render()
  */
 void Mesh::draw()
 {
-	NM_ASSERT(NULL != this->position, "Mesh::draw: NULL position");
-	NM_ASSERT(NULL != this->rotation, "Mesh::draw: NULL position");
-	NM_ASSERT(NULL != this->scale, "Mesh::draw: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Mesh::draw: NULL transformation");
 
 	CACHE_RESET;
 
@@ -426,7 +422,7 @@ void Mesh::draw()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+		this->drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
@@ -442,7 +438,7 @@ void Mesh::drawInterlaced()
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true);
+		this->drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
 	}
 
 	this->bufferIndex = !this->bufferIndex;

@@ -147,7 +147,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->graphicsSynchronized = false;
 	positionedEntityDescription->spritesCreated = false;
 	positionedEntityDescription->wireframesCreated = false;
-	positionedEntityDescription->shapesCreated = false;
+	positionedEntityDescription->collidersCreated = false;
 	positionedEntityDescription->behaviorsCreated = false;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
@@ -239,10 +239,10 @@ uint32 EntityFactory::transformEntities()
 			}
 		}
 
-		if(!positionedEntityDescription->shapesCreated)
+		if(!positionedEntityDescription->collidersCreated)
 		{
 			bool createdColliders = Entity::createColliders(positionedEntityDescription->entity);
-			positionedEntityDescription->shapesCreated = true;
+			positionedEntityDescription->collidersCreated = true;
 
 			if(createdColliders)
 			{
@@ -263,7 +263,7 @@ uint32 EntityFactory::transformEntities()
 
 		if(!positionedEntityDescription->transformed)
 		{
-			Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
+			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
 			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
 			positionedEntityDescription->transformed = true;
 
@@ -278,8 +278,7 @@ uint32 EntityFactory::transformEntities()
 			return __ENTITY_PROCESSED;
 		}
 
-		Transformation* environmentTransform = Entity::getTransform(positionedEntityDescription->parent);
-
+		const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
 		Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
 		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 
@@ -315,7 +314,6 @@ uint32 EntityFactory::makeReadyEntities()
 		{
 			Entity::calculateSize(positionedEntityDescription->entity, false);
 			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
-			Entity::synchronizeGraphics(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
 
 			return __ENTITY_PENDING_PROCESSING;

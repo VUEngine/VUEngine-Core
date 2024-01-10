@@ -130,11 +130,4 @@ void ToolState::transform()
 {
 }
 
-/**
- * Sync graphics
- *
- */
-void ToolState::synchronizeGraphics()
-{
-}
 

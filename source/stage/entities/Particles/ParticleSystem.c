@@ -48,7 +48,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	this->particles = NULL;
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -61,6 +60,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
+	this->transformed = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -388,7 +388,7 @@ bool ParticleSystem::recycleParticle()
  */
 Vector3D ParticleSystem::getParticleSpawnPosition()
 {
-	Vector3D position = this->transformation.globalPosition;
+	Vector3D position = this->transformation.position;
 
 	if(0 != this->spawnPositionDisplacement.x)
 	{
@@ -416,7 +416,7 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 {
 	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
 	{
-		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
+		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.position));
 		fixed_t strength = (Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->minimumForce) + Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->maximumForce)) >> 1;
 		return Vector3D::scalarProduct(direction, strength);
 	}
@@ -570,9 +570,7 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	this->previousGlobalPosition = this->transformation.globalPosition;
-
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
+	this->previousGlobalPosition = this->transformation.position;
 
 	bool transformed = this->transformed;
 
@@ -584,8 +582,6 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 	{
 		ParticleSystem::resetParticlesPositions(this);
 	}
-
-	ParticleSystem::transformParticles(this);
 }
 
 void ParticleSystem::resetParticlesPositions()
@@ -606,55 +602,6 @@ void ParticleSystem::resetParticlesPositions()
 
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 		Particle::setPosition(particle, &position);
-	}
-}
-
-void ParticleSystem::transformParticles()
-{
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		if(particle->expired || !particle->transform)
-		{
-			continue;
-		}
-
-		Particle::transform(particle);
-	}
-}
-
-void ParticleSystem::synchronizeGraphics()
-{
-	ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
-
-	if(ParticleSystem::isPaused(this) || isDeleted(this->particles))
-	{
-		return;
-	}
-
-	if(NULL != this->children || !this->dontStreamOut)
-	{
-		Base::synchronizeGraphics(this);
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(particle), "ParticleSystem::synchronizeGraphics: deleted particle");
-
-		if(particle->expired)
-		{
-			continue;
-		}
-
-		Particle::synchronizeGraphics(particle);
 	}
 }
 

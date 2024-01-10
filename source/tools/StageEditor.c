@@ -636,7 +636,6 @@ void StageEditor::changeProjection(uint32 pressedKey)
 
 	StageEditor::printProjectionValues(this);
 	GameState::transform(this->gameState);
-	GameState::synchronizeGraphics(this->gameState);
 }
 
 /**
@@ -764,7 +763,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		Container::invalidateGlobalPosition(container);
 
 		GameState::transform(this->gameState);
-		GameState::synchronizeGraphics(this->gameState);
 
 		StageEditor::positionCollider(this);
 
@@ -807,7 +805,7 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteSpec)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteSpec*, ListenerObject)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
+		this->userObjectSprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(NULL, (SpriteSpec*)spriteSpec);
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
@@ -817,9 +815,9 @@ void StageEditor::showSelectedUserObject()
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		Sprite::setPosition(this->userObjectSprite, &spritePosition);
-		Sprite::rotate(this->userObjectSprite, &spriteRotation);
-		Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
+		Sprite::setPixelPosition(this->userObjectSprite, &spritePosition);
+		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
+		Sprite::setScale(this->userObjectSprite, &spriteScale);
 		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->writeAnimationFrame = true;
@@ -951,8 +949,6 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
-		Printing::text(Printing::getInstance(),		"Visible:                        ", 			x, 		++y, 	NULL);
-		Printing::text(Printing::getInstance(),		Entity::isInCameraRange(entity) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y, NULL);
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
 		Printing::int32(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);
@@ -971,7 +967,6 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
 	Camera::translate(Camera::getInstance(), translation, true);
 	GameState::transform(this->gameState);
-	GameState::synchronizeGraphics(this->gameState);
 	StageEditor::printCameraPosition(this);
 	Stage::streamAll(GameState::getStage(this->gameState));
 }

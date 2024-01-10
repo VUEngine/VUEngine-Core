@@ -92,7 +92,7 @@ singleton class SpriteManager : Object
 	/// @publicsection
 	static SpriteManager getInstance();
 
-	Sprite createSprite(SpriteSpec* spriteSpec, ListenerObject owner);
+	Sprite createSprite(SpriteSpec* spriteSpec, SpatialObject owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
 	void deferParamTableEffects(bool deferAffineTransformations);

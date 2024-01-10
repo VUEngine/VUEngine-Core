@@ -97,7 +97,7 @@ void Actor::createBody(const PhysicalProperties* physicalProperties, uint16 axis
 		this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &defaultActorPhysicalProperties, axisSubjectToGravity);
 	}
 
-	Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+	Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 }
 
 void Actor::initializeStateMachine(State state)
@@ -125,193 +125,90 @@ void Actor::destroyComponents()
 	}
 }
 
+// set position
+void Actor::setPosition(const Vector3D* position)
+{
+	Base::setPosition(this, position);
+
+	if(!isDeleted(this->body) && Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
+	}
+}
+
 //set class's local position
 void Actor::setLocalPosition(const Vector3D* position)
 {
-	Vector3D displacement = this->transformation.localPosition;
+	Vector3D displacement = this->localTransformation.position;
 
-	// Must transform shapes after everything is setup
-	bool transformColliders = this->transformColliders;
-	this->transformColliders = false;
 	Base::setLocalPosition(this, position);
 
-	displacement.x -= this->transformation.localPosition.x;
-	displacement.y -= this->transformation.localPosition.y;
-	displacement.z -= this->transformation.localPosition.z;
+	displacement.x -= this->localTransformation.position.x;
+	displacement.y -= this->localTransformation.position.y;
+	displacement.z -= this->localTransformation.position.z;
 
-	this->transformation.globalPosition.x -= displacement.x;
-	this->transformation.globalPosition.y -= displacement.y;
-	this->transformation.globalPosition.z -= displacement.z;
+	this->transformation.position.x -= displacement.x;
+	this->transformation.position.y -= displacement.y;
+	this->transformation.position.z -= displacement.z;
 
-	if(this->body)
+	if(NULL != this->body)
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 
 	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
-
-	this->transformColliders = transformColliders;
-	Actor::transformColliders(this);
 }
 
-void Actor::syncWithBody()
+void Actor::setDirection(const Vector3D* direction)
 {
-	if(!isDeleted(this->body))
-	{
-		if(Actor::overrides(this, syncPositionWithBody))
-		{
-			Actor::syncPositionWithBody(this);
-		}
-		else
-		{
-			Actor::doSyncPositionWithBody(this);
-		}
-
-		if((uint16)__LOCK_AXIS != ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
-		{
-			if(Actor::overrides(this, syncRotationWithBody))
-			{
-				Actor::syncRotationWithBody(this);
-			}
-			else
-			{
-				Actor::doSyncRotationWithBody(this);
-			}
-		}
-	}
-}
-
-void Actor::syncPositionWithBody()
-{
-	Actor::doSyncPositionWithBody(this);
-}
-
-void Actor::doSyncPositionWithBody()
-{
-	if(isDeleted(this->body))
+	if(NULL == direction)
 	{
 		return;
 	}
 
-	// modify the global position according to the body's displacement
-	Vector3D bodyLastDisplacement = Vector3D::get(this->transformation.globalPosition, *Body::getPosition(this->body));
-
-	// sync local position with global position
-	Vector3D localPosition = Vector3D::sum(this->transformation.localPosition, bodyLastDisplacement);
-
-	Base::setLocalPosition(this, &localPosition);
-}
-
-void Actor::doSyncRotationWithBody()
-{
-	if(!isDeleted(this->body))
+	if((uint16)__LOCK_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 	{
-		if((uint16)__LOCK_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
-		{
-			return;
-		}
-
-		Vector3D direction = *Body::getDirection(this->body);
-		
-		if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
-		{
-			NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this);
-
-			if(0 > direction.x)
-			{
-				normalizedDirection.x = __LEFT;
-			}
-			else if(0 < direction.x)
-			{
-				normalizedDirection.x = __RIGHT;
-			}
-
-			if(0 > direction.y)
-			{
-				normalizedDirection.y = __UP;
-			}
-			else if(0 < direction.y)
-			{
-				normalizedDirection.y = __DOWN;
-			}
-
-			if(0 > direction.z)
-			{
-				normalizedDirection.z = __NEAR;
-			}
-			else if(0 < direction.z)
-			{
-				normalizedDirection.z = __FAR;
-			}
-
-			Actor::setNormalizedDirection(this, normalizedDirection);
-		}
-		else
-		{
-			Rotation localRotation = Actor::getRotationFromDirection(this, &direction, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
-			Base::setLocalRotation(this, &localRotation);
-		}
+		return;
 	}
-}
-
-void Actor::syncRotationWithBody()
-{
-	Actor::doSyncRotationWithBody(this);
-}
-
-void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __attribute__((unused)))
-{
-	Actor::syncRotationWithBody(this);
-}
-
-// updates the animation attributes
-// graphically refresh of characters that are visible
-void Actor::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
-{
-	bool transformColliders = this->transformColliders;
-
-	if(!isDeleted(this->body))
+		
+	if(__NO_AXIS == ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody)
 	{
-		uint16 bodyMovement = Body::getMovementOnAllAxis(this->body);
+		NormalizedDirection normalizedDirection = Actor::getNormalizedDirection(this);
 
-		if(__NO_AXIS != bodyMovement)
+		if(0 > direction->x)
 		{
-			Actor::syncWithBody(this);
-
-			// Prevent transformation of shapes again when calling Base::transform
-			this->transformColliders = false;
-
-			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
-
-			if(!isDeleted(this->sprites) && (__Z_AXIS & bodyMovement))
-			{
-				this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
-			}
+			normalizedDirection.x = __LEFT;
+		}
+		else if(0 < direction->x)
+		{
+			normalizedDirection.x = __RIGHT;
 		}
 
-		Transformation surrogateEnvironmentTransformation = *environmentTransform;
+		if(0 > direction->y)
+		{
+			normalizedDirection.y = __UP;
+		}
+		else if(0 < direction->y)
+		{
+			normalizedDirection.y = __DOWN;
+		}
 
-		surrogateEnvironmentTransformation.globalRotation = Rotation::zero();
+		if(0 > direction->z)
+		{
+			normalizedDirection.z = __NEAR;
+		}
+		else if(0 < direction->z)
+		{
+			normalizedDirection.z = __FAR;
+		}
 
-		environmentTransform = &surrogateEnvironmentTransformation;
-
-		// call base
-		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+		Actor::setNormalizedDirection(this, normalizedDirection);
 	}
 	else
 	{
-		// call base
-		Base::transform(this, environmentTransform, invalidateTransformationFlag);
+		Rotation localRotation = Actor::getRotationFromDirection(this, direction, ((ActorSpec*)this->entitySpec)->axisForSynchronizationWithBody);
+		Base::setLocalRotation(this, &localRotation);
 	}
-
-	this->transformColliders = transformColliders;
-}
-
-void Actor::resume()
-{
-	Base::resume(this);
-
-	Actor::syncWithBody(this);
 }
 
 // execute character's logic
@@ -326,7 +223,7 @@ void Actor::update()
 	}
 
 //	Body::print(this->body, 1, 0);
-//	Collider::print(VirtualList::front(this->shapes), 1, 20);
+//	Collider::print(VirtualList::front(this->colliders), 1, 20);
 //	Printing::resetCoordinates(Printing::getInstance());
 }
 
@@ -342,17 +239,17 @@ bool Actor::hasChangedDirection(uint16 axis, const Rotation* previousRotation)
 	{
 		case __X_AXIS:
 
-			return this->transformation.localRotation.x != previousRotation->x;
+			return this->localTransformation.rotation.x != previousRotation->x;
 			break;
 
 		case __Y_AXIS:
 
-			return this->transformation.localRotation.y != previousRotation->y;
+			return this->localTransformation.rotation.y != previousRotation->y;
 			break;
 
 		case __Z_AXIS:
 
-			return this->transformation.localRotation.z != previousRotation->z;
+			return this->localTransformation.rotation.z != previousRotation->z;
 			break;
 	}
 
@@ -364,7 +261,7 @@ void Actor::changeDirectionOnAxis(uint16 axis)
 {
 	if(!isDeleted(this->body))
 	{
-		Actor::syncRotationWithBody(this);
+		Actor::setDirection(this, Body::getDirection(this->body));
 	}
 	else
 	{
@@ -430,9 +327,9 @@ bool Actor::canMoveTowards(Vector3D direction)
 
 	bool canMove = true;
 
-	if(this->shapes)
+	if(this->colliders)
 	{
-		VirtualNode node = this->shapes->head;
+		VirtualNode node = this->colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{
@@ -453,9 +350,9 @@ fixed_t Actor::getSurroundingFrictionCoefficient()
 {
 	fixed_t totalFrictionCoefficient = 0;
 
-	if(this->shapes)
+	if(!isDeleted(this->colliders))
 	{
-		VirtualNode node = this->shapes->head;
+		VirtualNode node = this->colliders->head;
 
 		for(; NULL != node; node = node->next)
 		{
@@ -504,8 +401,6 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			{
 				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
-				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
-
 				Actor::fireEvent(this, kEventActorBounced);
 				NM_ASSERT(!isDeleted(this), "Actor::enterCollision: deleted this during kEventActorBounced");
 			}
@@ -539,23 +434,21 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->allowCollisions && NULL != this->shapes)
+					if(this->allowCollisions && NULL != this->colliders)
 					{
 						Actor::activeCollisionChecks(this, true);
 						return true;
 					}
 
-					Actor::syncWithBody(this);
 					break;
 
 				case kMessageBodyStopped:
 
-					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->shapes)
+					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->colliders)
 					{
 						Actor::activeCollisionChecks(this, false);
 					}
 
-					Actor::syncWithBody(this);
 					break;
 
 				case kMessageBodyChangedDirection:
@@ -591,6 +484,28 @@ void Actor::stopMovement(uint16 axis)
 	}
 }
 
+bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
+{
+	ASSERT(this->body, "Actor::applyForce: null body");
+
+	if(!this->body)
+	{
+		return false;
+	}
+
+	if(checkIfCanMove)
+	{
+		if(!Actor::canMoveTowards(this, *velocity))
+		{
+			return false;
+		}
+	}
+
+	Body::moveUniformly(this->body, velocity);
+
+	return true;
+}
+
 bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::applyForce: null body");
@@ -613,17 +528,6 @@ bool Actor::applyForce(const Vector3D* force, bool checkIfCanMove)
 	return true;
 }
 
-void Actor::moveUniformly(Vector3D* velocity)
-{
-	// move me with physics
-	if(this->body)
-	{
-		Body::moveUniformly(this->body, *velocity);
-
-		Actor::activeCollisionChecks(this, true);
-	}
-}
-
 // is it moving?
 bool Actor::isMoving()
 {
@@ -641,7 +545,7 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 }
 
@@ -661,27 +565,8 @@ void Actor::initialTransform(const Transformation* environmentTransform)
 
 	if(!isDeleted(this->body))
 	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
+		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
-}
-
-// set position
-void Actor::setPosition(const Vector3D* position)
-{
-	Base::setPosition(this, position);
-
-	if(!isDeleted(this->body))
-	{
-		Body::setPosition(this->body, &this->transformation.globalPosition, SpatialObject::safeCast(this));
-	}
-
-	Actor::transformColliders(this);
-}
-
-// retrieve global position
-const Vector3D* Actor::getPosition()
-{
-	return !isDeleted(this->body) ? Body::getPosition(this->body) : Base::getPosition(this);
 }
 
 // get bounciness
@@ -713,7 +598,7 @@ fixed_t Actor::getMaximumSpeed()
 	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
 }
 
-void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
+void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -724,11 +609,11 @@ void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider 
 
 	if(isColliderImpenetrable)
 	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
 	}
 }
 
-void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore, bool isColliderImpenetrable)
+void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
 {
 	if(isDeleted(this->body))
 	{
@@ -739,7 +624,7 @@ void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused
 
 	if(isColliderImpenetrable)
 	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
 	}
 }
 

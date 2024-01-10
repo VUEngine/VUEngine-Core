@@ -44,12 +44,11 @@ class Box : Collider
 	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();
-	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }

@@ -49,10 +49,8 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
 	this->wireframe = NULL;
-	this->position = Vector3D::zero();
 	this->previousZ = 0;
 	this->expired = false;
-	this->transform = Particle::overrides(this, transform);
 
 	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
 	Particle::addWireframe(this, wireframeSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
@@ -90,7 +88,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
 	if(NULL != spriteSpec)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, SpatialObject::safeCast(this));
 
 		if(NULL != animationName && NULL != animationFunctions)
 		{
@@ -111,8 +109,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationF
 	if(NULL != wireframeSpec)
 	{
 		// call the appropriate allocator to support inheritance
-		this->wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec);
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, this->expired);
+		this->wireframe = ((Wireframe (*)(WireframeSpec*, SpatialObject)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec, SpatialObject::safeCast(this));
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
@@ -156,40 +153,9 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 		{
 			behavior(this);
 		}
-
-		if(!isDeleted(this->sprite))
-		{
-			Sprite::updateAnimation(this->sprite);
-		}
 	}
 
 	return false;
-}
-
-/**
- * Update Visual Representation
- *
- * @param updateSpritePosition
- */
-void Particle::synchronizeGraphics()
-{
-	if(isDeleted(this->sprite))
-	{
-		return;
-	}
-
-	if(this->position.z != this->previousZ)
-	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this->sprite, this->position.z);
-
-		this->previousZ = this->position.z;
-	}
-
-	PixelVector position = Vector3D::transformToPixelVector(this->position);
-
-	// update sprite's 2D position
-	Sprite::setPosition(this->sprite, &position);
 }
 
 /**
@@ -227,26 +193,6 @@ void Particle::setMass(fixed_t mass __attribute__ ((unused)))
  */
 void Particle::changeMass()
 {
-}
-
-/**
- * Set position
- *
- * @param position
- */
-void Particle::setPosition(const Vector3D* position)
-{
-	this->position = *position;
-}
-
-/**
- * Retrieve position
- *
- * @return		Position of particle's body
- */
-const Vector3D* Particle::getPosition()
-{
-	return &this->position;
 }
 
 /**
@@ -314,12 +260,6 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 }
 
 /**
- * Transform
- */
-void Particle::transform()
-{}
-
-/**
  * Resume
  */
 void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
@@ -377,22 +317,18 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		Particle::changeMass(this);
 	}
 
-	if(Particle::overrides(this, setPosition))
+	// TOOD: the preprocessor does't catch properly this override check with Particle 	
+	if(SpatialObject::overrides(this, setPosition))
 	{
-		Particle::setPosition(this, position);
+		SpatialObject::setPosition(this, position);
 	}
 	else
 	{
-		this->position = *position;
+		this->transformation.position = *position;
 	}
 
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
-	}
 
 	if(NULL != force)
 	{
@@ -431,7 +367,7 @@ bool Particle::isVisible()
 	}
 	else
 	{
-		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
 		pixelVector = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 	}
 

@@ -76,21 +76,19 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
+	Scale scale;
+	
 	// bgmap's source coordinates
 	BgmapTextureSource bgmapTextureSource;
 	// param table offset
 	int16 paramTableRow;
-	// angle with respect to each axis (indexes for the _sinLut array)
-	Rotation rotation;
-	// scale
-	Scale scale;
 	// pointer to function that implements the param table based effects
 	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
 	uint32 param;
 
 	/// @publicsection
-	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 	void setMode(uint16 display, uint16 mode);
 	void invalidateParamTable();
 	int16 getParamTableRow();
@@ -103,12 +101,13 @@ class BgmapSprite : Sprite
 	void applyHbiasEffects();
 	bool hasSpecialEffects();
 
+	override void registerWithManager();
+	override void unregisterWithManager();
 	override int16 doRender(int16 index, bool evenFrame);
 	override void processEffects();
-	override void rotate(const Rotation* rotation);
+	override void setRotation(const Rotation* rotation);
 	override Scale getScale();
-	override void resize(Scale scale, fixed_t z);
-	override void registerWithManager();
+	override void setScale(const Scale* scale);
 	override int32 getTotalPixels();
 }
 

@@ -49,13 +49,10 @@ friend class VirtualList;
  *
  * @param owner
  */
-void Collider::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	// construct base object
-	Base::constructor();
-
-	// set the owner
-	this->owner = owner;
+	Base::constructor(owner, colliderSpec);
 
 	// not setup yet
 	this->destroyMe = false;
@@ -66,12 +63,10 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 
 	// set flag
 	this->checkForCollisions = false;
-	this->layers = shapeSpec->layers;
-	this->layersToIgnore = shapeSpec->layersToIgnore;
+	this->layers = colliderSpec->layers;
+	this->layersToIgnore = colliderSpec->layersToIgnore;
 	this->otherColliders = NULL;
-	this->registerCollisions = shapeSpec->checkForCollisions;
-
-	this->position = Vector3D::zero();
+	this->registerCollisions = colliderSpec->checkForCollisions;
 }
 
 /**
@@ -176,25 +171,11 @@ Vector3D Collider::getNormal()
 }
 
 /**
- * Position
+ * Test if I collide with the give collider
  *
- * @param position				Vector3d*
- * @param rotation				Rotation*
- * @param scale					Scale*
- * @param size					Size*
  */
-void Collider::transform(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Collider::testForCollision(Collider collider __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
 {
-	if(this->enabled && NULL != this->events)
-	{
-		Collider::fireEvent(this, kEventColliderChanged);
-		NM_ASSERT(!isDeleted(this), "Collider::transformm: deleted this during kEventColliderChanged");
-	}
-
-	this->ready = true;
-
-	// TODO: must update the rightbox
-	this->position = *position;
 }
 
 /**
@@ -231,8 +212,8 @@ void Collider::updateCollision(CollisionData* collisionData)
  */
 void Collider::exitCollision(CollisionData* collisionData)
 {
-	SpatialObject::exitCollision(this->owner, collisionData->collisionInformation.collider, collisionData->shapeNotCollidingAnymore, collisionData->isImpenetrableOtherCollider);
-	Collider::unregisterOtherCollider(this, collisionData->shapeNotCollidingAnymore);
+	SpatialObject::exitCollision(this->owner, collisionData->collisionInformation.collider, collisionData->colliderNotCollidingAnymore, collisionData->isImpenetrableOtherCollider);
+	Collider::unregisterOtherCollider(this, collisionData->colliderNotCollidingAnymore);
 }
 
 /**
@@ -254,7 +235,7 @@ CollisionResult Collider::collides(Collider collider)
 	collisionData.result = kNoCollision;
 	collisionData.collisionInformation.collider = NULL;
 	collisionData.collisionInformation.otherCollider = NULL;
-	collisionData.shapeNotCollidingAnymore = NULL;
+	collisionData.colliderNotCollidingAnymore = NULL;
 	collisionData.isImpenetrableOtherCollider = false;
 	
 	/*
@@ -303,11 +284,11 @@ CollisionResult Collider::collides(Collider collider)
 			}
 		}
 	}
-	// impenetrable registered colliding shapes require a another test
+	// impenetrable registered colliding colliders require a another test
 	// to determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
-		Collider::testForCollision(this, collider, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
+		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
 
 		if(collisionData.collisionInformation.collider == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -319,7 +300,7 @@ CollisionResult Collider::collides(Collider collider)
 			collisionData.collisionInformation.collider = this;
 			collisionData.result = kExitCollision;
 			collisionData.isImpenetrableOtherCollider = true;
-			collisionData.shapeNotCollidingAnymore = collider;
+			collisionData.colliderNotCollidingAnymore = collider;
 		}
 	}
 	else
@@ -336,7 +317,7 @@ CollisionResult Collider::collides(Collider collider)
 			collisionData.collisionInformation.collider = this;
 			collisionData.result = kExitCollision;
 			collisionData.isImpenetrableOtherCollider = otherColliderRegistry->isImpenetrable;
-			collisionData.shapeNotCollidingAnymore = collider;
+			collisionData.colliderNotCollidingAnymore = collider;
 		}
 	}
 
@@ -401,72 +382,6 @@ bool Collider::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __att
 	return canMove;
 }
 
-/*
-void Collider::checkPreviousCollisions(Collider otherCollider)
-{
-	if(!this->otherColliders)
-	{
-		return;
-	}
-
-	VirtualNode node = this->otherColliders->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
-
-		ASSERT(!isDeleted(otherColliderRegistry), "Collider::invalidateSolutionVectors: dead otherColliderRegistry");
-
-		if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->collider != otherCollider)
-		{
-			CollisionInformation collisionInformation =  Collider::testForCollision(this, otherColliderRegistry->collider, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
-
-			if(collisionInformation.collider == this && 0 < collisionInformation.solutionVector.magnitude)
-			{
-				if(collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
-				{
-					if(Collider::canMoveTowards(this, Vector3D::scalarProduct(otherColliderRegistry->solutionVector.direction, collisionInformation.solutionVector.magnitude), 0))
-					{
-						Collider::displaceOwner(this, Vector3D::scalarProduct(collisionInformation.solutionVector.direction, collisionInformation.solutionVector.magnitude));
-					}
-				}
-				else if(collisionInformation.solutionVector.magnitude < otherColliderRegistry->solutionVector.magnitude)
-				{
-					// since I'm not close to that collider anymore, we can discard it
-					otherColliderRegistry->solutionVector.magnitude = 0;
-				}
-			}
-			else
-			{
-				// since I'm not close to that collider anymore, we can discard it
-				otherColliderRegistry->solutionVector.magnitude = 0;
-			}
-		}
-	}
-}
-*/
-
-/**
- * Retrieve the position
- *
- * @return Vector3D			Collider's position
- */
-Vector3D Collider::getPosition()
-{
-	return this->position;
-}
-
-/**
- * Set position
- *
- * @param position				Vector3d*
- */
-void Collider::setPosition(const Vector3D* position)
-{
-	// TODO: must update the rightbox
-	this->position = *position;
-}
-
 /**
  * Displace owner
  *
@@ -503,7 +418,7 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 	{
 		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
-		// need to invalidate solution vectors for other colliding shapes
+		// need to invalidate solution vectors for other colliding colliders
 		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
 
 		if(registerOtherCollider)
@@ -536,7 +451,7 @@ bool Collider::isEnabled()
 }
 
 /**
- * Make this collider to test collision against other shapes
+ * Make this collider to test collision against other colliders
  *
  * @param activate
  */
@@ -689,9 +604,9 @@ void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 		return;
 	}
 
-	Collider shapeNotCollidingAnymore = Collider::safeCast(eventFirer);
+	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
 
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, shapeNotCollidingAnymore);
+	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, colliderNotCollidingAnymore);
 	ASSERT(otherColliderRegistry, "Collider::onOtherColliderDestroyed: onOtherColliderDestroyed not found");
 
 	if(!otherColliderRegistry)
@@ -701,9 +616,9 @@ void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
 
-	if(Collider::unregisterOtherCollider(this, shapeNotCollidingAnymore))
+	if(Collider::unregisterOtherCollider(this, colliderNotCollidingAnymore))
 	{
-		SpatialObject::otherColliderOwnerDestroyed(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		SpatialObject::otherColliderOwnerDestroyed(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -720,18 +635,18 @@ void Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		return;
 	}
 
-	Collider shapeNotCollidingAnymore = Collider::safeCast(eventFirer);
+	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
 
-	Collider::registerOtherCollider(this, shapeNotCollidingAnymore, (SolutionVector){{0, 0, 0}, 0}, true);
+	Collider::registerOtherCollider(this, colliderNotCollidingAnymore, (SolutionVector){{0, 0, 0}, 0}, true);
 
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, shapeNotCollidingAnymore);
+	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, colliderNotCollidingAnymore);
 	ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
 
-	if(Collider::unregisterOtherCollider(this, shapeNotCollidingAnymore))
+	if(Collider::unregisterOtherCollider(this, colliderNotCollidingAnymore))
 	{
-		SpatialObject::exitCollision(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		SpatialObject::exitCollision(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -765,7 +680,7 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 }
 
 /**
- * Get total friction of colliding shapes
+ * Get total friction of colliding colliders
  *
  * @return				The sum of friction coefficients
  */
@@ -851,7 +766,6 @@ void Collider::show()
 		{
 			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
 
-			Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
 			Wireframe::show(this->wireframe);
 		}
 	}
@@ -877,8 +791,8 @@ void Collider::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
 	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
 
-	Printing::text(Printing::getInstance(), "Colliding shapes:            ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getSize(this->otherColliders) : 0, x + 21, y++, NULL);
-	Printing::text(Printing::getInstance(), "Impenetrable shapes:            ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }

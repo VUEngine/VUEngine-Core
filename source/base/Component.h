@@ -7,34 +7,41 @@
  * that was distributed with this source code.
  */
 
-#ifndef BALL_H_
-#define BALL_H_
+#ifndef COMPONENT_H_
+#define COMPONENT_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Collider.h>
+#include <ListenerObject.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup physics
-class Ball : Collider
+class SpatialObject;
+
+typedef const void ComponentSpec;
+
+abstract class Component : ListenerObject 
 {
-	// the radius of the ball
-	fixed_t radius;
+	SpatialObject owner;
+	const ComponentSpec* componentSpec;
+	const Transformation* transformation;
 
 	/// @publicsection
-	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
-	
-	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
-	override void configureWireframe();
-	override void print(int32 x, int32 y);
+	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
+
+	Vector3D getPosition();
+	Rotation getRotation();
+	Scale getScale();
 }
 
 

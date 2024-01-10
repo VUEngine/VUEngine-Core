@@ -340,7 +340,7 @@ ColliderROMSpecROMSpec {{ sanitizedSpecName }}ColliderSpecs =
 		// scale (x, y, z)
 		{ __F_TO_FIX7_9({{ collider.scale.x }}), __F_TO_FIX7_9({{ collider.scale.y }}), __F_TO_FIX7_9({{ collider.scale.z }}) },
 
-		// if true this collider checks for collisions against other shapes
+		// if true this collider checks for collisions against other colliders
 		{{ collider.checkForCollisions }},
 
 		// layers in which I live
@@ -467,7 +467,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			NULL,
 			{%- endif %}
 
-			// collider shapes
+			// collider colliders
 			{%- if item.colliders.inGameType != 'None' and item.colliders.colliders.length %}
 			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
 			{%- else %}
