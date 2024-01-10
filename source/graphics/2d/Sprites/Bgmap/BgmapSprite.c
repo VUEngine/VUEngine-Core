@@ -203,9 +203,10 @@ void BgmapSprite::setRotation(const Rotation* rotation)
 		return;
 	}
 
+	this->rotation = *rotation;
+
 	if(0 < this->param)
 	{
-		this->rotation = *rotation;
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
