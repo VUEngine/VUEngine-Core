@@ -704,13 +704,21 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			{
 				continue;
 			}
-/*
+
 			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
 			{
 				continue;
 			}
-*/
-			Container::transform(child, &this->transformation, invalidateTransformationFlag);
+
+			if(Container::overrides(child, transform))
+			{
+				Container::transform(child, &this->transformation, invalidateTransformationFlag);
+			}
+			else
+			{
+				// TODO: fix this hack
+				Container_transform(child, &this->transformation, invalidateTransformationFlag);				
+			}
 		}
 	}
 }

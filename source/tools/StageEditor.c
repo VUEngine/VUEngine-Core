@@ -949,8 +949,6 @@ void StageEditor::printEntityPosition()
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
 		Printing::int32(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
-		Printing::text(Printing::getInstance(),		"Visible:                        ", 			x, 		++y, 	NULL);
-		Printing::text(Printing::getInstance(),		Entity::isInCameraRange(entity) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y, NULL);
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
 		Printing::int32(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);

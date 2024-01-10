@@ -37,8 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-static int16 _visibilityPadding __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,11 +47,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-static void Entity::setVisibilityPadding(int16 visibilityPadding)
-{
-	_visibilityPadding = visibilityPadding;
-}
 
 /**
  * Class constructor
@@ -82,7 +75,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
-	this->inCameraRange = true;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -1426,21 +1418,6 @@ void Entity::initialTransform(const Transformation* environmentTransform)
  */
 void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {	
-	if(this->invalidateGlobalTransformation)
-	{
-		Base::transform(this, environmentTransform, invalidateTransformationFlag);
-	}
-	else if(NULL != this->children)
-	{
-		Entity::transformChildren(this, invalidateTransformationFlag);
-	}
-
-	this->inCameraRange = this->dontStreamOut;
-
-	if(!this->inCameraRange)
-	{
-		Entity::computeIfInCameraRange(this, _visibilityPadding, true);
-	}
 }
 
 /**
@@ -1547,21 +1524,13 @@ void Entity::setSize(Size size)
 }
 
 /**
- * Whether it is visible
+ * Check whether it is visible
  *
- * @param pad
  * @param recursive
  * @return			Boolean if visible
  */
-bool Entity::isInCameraRange()
+bool Entity::isInCameraRange(int16 padding, bool recursive)
 {
-	return this->inCameraRange;
-}
-
-void Entity::computeIfInCameraRange(int32 pad, bool recursive)
-{
-	this->inCameraRange = false;
-
 	if(!this->hidden && NULL != this->sprites && NULL != this->sprites->head)
 	{
 		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
@@ -1570,8 +1539,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 			if(Sprite::isVisible(sprite))
 			{
-				this->inCameraRange = true;
-				return;
+				return true;
 			}
 		}
 	}
@@ -1585,8 +1553,7 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 			if(Wireframe::isVisible(wireframe))
 			{
-				this->inCameraRange = true;
-				return;
+				return true;
 			}
 		}
 	}
@@ -1607,27 +1574,27 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 	size.y = __ABS(size.y);
 	size.z = __ABS(size.z);
 
-	this->inCameraRange = true;
+	bool inCameraRange = true;
 
-	int32 helperPad = pad + (0 < position2D.z ? position2D.z : 0);
+	int32 helperPad = padding + (0 < position2D.z ? position2D.z : 0);
 
 	// check x visibility
 	if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
 	{
-		this->inCameraRange = false;
+		inCameraRange = false;
 	}
 	// check y visibility
 	else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
 	{
-		this->inCameraRange = false;
+		inCameraRange = false;
 	}
 	// check z visibility
-	else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
+	else if(position2D.z + size.z < _cameraFrustum->z0 - padding || position2D.z - size.z > _cameraFrustum->z1 + padding)
 	{
-		this->inCameraRange = false;
+		inCameraRange = false;
 	}
 
-	if(!this->inCameraRange && recursive && NULL != this->children)
+	if(!inCameraRange && recursive && NULL != this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
@@ -1638,15 +1605,14 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				continue;
 			}
 
-			Entity::computeIfInCameraRange(child, pad, true);
-
-			if(Entity::isInCameraRange(child))
+			if(Entity::isInCameraRange(child, padding, true))
 			{
-				this->inCameraRange = true;
-				break;
+				return true;
 			}
 		}
 	}
+
+	return inCameraRange;
 }
 
 /**

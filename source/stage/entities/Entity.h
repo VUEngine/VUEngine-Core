@@ -107,8 +107,6 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 /// @ingroup stage-entities
 class Entity : Container
 {
-	// Flag used to know if the entity is within the camera reach
-	bool inCameraRange;
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
 	// Entity's internal id, set by the engine
@@ -134,7 +132,6 @@ class Entity : Container
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
-	static void setVisibilityPadding(int16 visibilityPadding);
 
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
@@ -176,12 +173,11 @@ class Entity : Container
 	uint32 getCollidersLayersToIgnore();
 	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
-	bool isInCameraRange();
 	VirtualList getColliders();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	void setSpec(void* entitySpec);
 	void setSize(Size size);
-	void computeIfInCameraRange(int32 pad, bool recursive);
+	bool isInCameraRange(int16 padding, bool recursive);
 
 	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	virtual void setExtraInfo(void* extraInfo);
@@ -190,7 +186,6 @@ class Entity : Container
 	override void addChild(Container child);
 	override void createComponents();
 	override void initialTransform(const Transformation* environmentTransform);
-	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void setTransparent(uint8 transparent);
 	override bool handleMessage(Telegram telegram);
 	override const Size* getSize();
