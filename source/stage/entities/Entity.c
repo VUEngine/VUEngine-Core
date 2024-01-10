@@ -61,8 +61,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	// construct base Container
 	Base::constructor(name);
 
-	this->transform = Entity::overrides(this, transform);
-
 	// set the ids
 	this->internalId = internalId;
 
@@ -1409,15 +1407,6 @@ void Entity::initialTransform(const Transformation* environmentTransform)
 	{
 		Entity::hide(this);
 	}
-}
-
-/**
- * Transform class
- *
- * @param environmentTransform
- */
-void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
-{	
 }
 
 /**
