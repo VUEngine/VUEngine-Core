@@ -66,33 +66,3 @@ void Component::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Retrieve the position
- *
- * @return Vector3D			Collider's position
- */
-Vector3D Component::getPosition()
-{
-	return this->transformation->position;
-}
-
-/**
- * Retrieve the rotation
- *
- * @return Rotation			Collider's rotation
- */
-Rotation Component::getRotation()
-{
-	return this->transformation->rotation;
-}
-
-/**
- * Retrieve the rotation
- *
- * @return Scale			Collider's scale
- */
-Scale Component::getScale()
-{
-	return this->transformation->scale;
-}

@@ -38,10 +38,6 @@ abstract class Component : ListenerObject
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
-
-	Vector3D getPosition();
-	Rotation getRotation();
-	Scale getScale();
 }
 
 
