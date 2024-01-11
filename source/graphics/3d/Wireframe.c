@@ -42,7 +42,6 @@ void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
 	Base::constructor(owner, wireframeSpec);
 
 	this->color = NULL == wireframeSpec ? __COLOR_BRIGHT_RED : wireframeSpec->color;
-	this->center = PixelVector::zero();
 	this->interlaced = false;
 	this->bufferIndex = 0;
 	this->transparent = wireframeSpec->transparent;
@@ -85,11 +84,6 @@ VirtualList Wireframe::getVertices()
 PixelRightBox Wireframe::getPixelRightBox()
 {
 	return (PixelRightBox){0, 0, 0, 0, 0, 0};
-}
-
-PixelVector Wireframe::getPixelPosition()
-{
-	return this->center;
 }
 
 void Wireframe::setupRenderingMode(const Vector3D* relativePosition)

@@ -37,6 +37,7 @@ void Asterisk::constructor(SpatialObject owner, AsteriskSpec* asteriskSpec)
 	this->length = __ABS(asteriskSpec->length);
 	this->scaledLength = this->length;
 	this->renderCycle = false;
+	this->center = PixelVector::zero();
 }
 
 /**

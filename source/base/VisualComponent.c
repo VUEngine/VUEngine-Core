@@ -45,7 +45,6 @@ void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec
 {
 	Base::constructor(owner, visualComponentSpec);
 
-	this->center = (PixelVector){0, 0, 0, 0};
 	this->show = __SHOW;
 }
 

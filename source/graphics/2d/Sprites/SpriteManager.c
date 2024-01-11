@@ -381,7 +381,7 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 #endif
 
 		// check if z positions are swapped
-		if(sprite->center.z + sprite->displacement.z <= otherSprite->center.z + otherSprite->displacement.z)
+		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
 			return;
@@ -413,7 +413,7 @@ bool SpriteManager::sortProgressively(bool deferred)
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->center.z + nextSprite->displacement.z < sprite->center.z + sprite->displacement.z)
+		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
 			node->data = nextSprite;
@@ -782,7 +782,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 		Sprite::forceShow(sprite);
 
-		Sprite::setPixelPosition(sprite, &sprite->center);
+		Sprite::setPixelPosition(sprite, &sprite->position);
 
 		_worldAttributesBaseAddress[sprite->index].head &= ~__WORLD_END;
 	}
@@ -1047,7 +1047,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 		Printing::int32(this->printing, counter, auxX, auxY, NULL);
 		Printing::text(this->printing, ": ", auxX + 2, auxY, NULL);
 		Printing::text(this->printing, spriteClassName, auxX + 4, auxY, NULL);
-//		Printing::int32(this->printing, sprite->center.z + sprite->displacement.z, auxX + 2, auxY, NULL);
+//		Printing::int32(this->printing, sprite->position.z + sprite->displacement.z, auxX + 2, auxY, NULL);
 //		Printing::hex(this->printing, _worldAttributesBaseAddress[sprite->index].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 //		Printing::int32(this->printing, Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 

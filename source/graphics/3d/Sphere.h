@@ -42,7 +42,7 @@ typedef const SphereSpec SphereROMSpec;
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
-	// Radious
+	PixelVector center;
 	fixed_t radius;
 	uint16 scaledRadius;
 	bool drawCenter;

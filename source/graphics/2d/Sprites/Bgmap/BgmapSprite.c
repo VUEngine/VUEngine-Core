@@ -316,9 +316,9 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
 	// get coordinates
-	int16 gx = this->center.x + this->displacement.x - this->halfWidth;
-	int16 gy = this->center.y + this->displacement.y - this->halfHeight;
-	int16 gp = this->center.parallax + this->displacement.parallax;
+	int16 gx = this->position.x + this->displacement.x - this->halfWidth;
+	int16 gy = this->position.y + this->displacement.y - this->halfHeight;
+	int16 gp = this->position.parallax + this->displacement.parallax;
 
 	int16 auxGp = __ABS(gp);
 

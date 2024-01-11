@@ -226,11 +226,11 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	BgmapTextureSource bgmapTextureSource = this->bgmapTextureSource;
 
-	PixelVector position = this->center;
+	PixelVector position = this->position;
 
 	if(this->mBgmapSpriteSpec->xLoop)
 	{
-		bgmapTextureSource.mx = -this->center.x;
+		bgmapTextureSource.mx = -this->position.x;
 		position.x = 0;
 	}
 	else
@@ -240,7 +240,7 @@ int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 	if(this->mBgmapSpriteSpec->yLoop)
 	{
-		bgmapTextureSource.my = -this->center.y;
+		bgmapTextureSource.my = -this->position.y;
 		position.y = 0;
 	}
 	else

@@ -335,7 +335,6 @@ void Mesh::render()
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
 	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
-	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	Mesh::setupRenderingMode(this, &relativePosition);
 

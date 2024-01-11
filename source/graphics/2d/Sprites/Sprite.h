@@ -103,6 +103,7 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : VisualComponent
 {
+	PixelVector position;
 	Rotation rotation;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;

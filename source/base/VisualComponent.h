@@ -30,7 +30,6 @@ typedef ComponentSpec VisualComponentSpec;
 
 abstract class VisualComponent : Component 
 {
-	PixelVector center;
 	uint8 transparent;
 	uint8 show;
 	bool rendered;

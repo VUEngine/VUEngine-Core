@@ -84,9 +84,9 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 	worldPointer->mx = this->bgmapTextureSource.mx;
 	worldPointer->mp = this->bgmapTextureSource.mp;
 	worldPointer->my = this->bgmapTextureSource.my;
-	worldPointer->gx = this->center.x;
-	worldPointer->gp = this->center.parallax;
-	worldPointer->gy = this->center.y;
+	worldPointer->gx = this->position.x;
+	worldPointer->gp = this->position.parallax;
+	worldPointer->gy = this->position.y;
 	worldPointer->w = this->w;
 	worldPointer->h = this->h;
 	worldPointer->head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | this->printingBgmapSegment;
@@ -96,9 +96,9 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 
 void PrintingSprite::reset()
 {
-	this->center.x = 0;
-	this->center.y = 0;
-	this->center.parallax = 0;
+	this->position.x = 0;
+	this->position.y = 0;
+	this->position.parallax = 0;
 
 	this->bgmapTextureSource.mx = __PRINTING_BGMAP_X_OFFSET;
 	this->bgmapTextureSource.my = __PRINTING_BGMAP_Y_OFFSET;
@@ -110,9 +110,9 @@ void PrintingSprite::reset()
 
 void PrintingSprite::setGValues(int16 gx, int16 gy, int16 gp)
 {
-	this->center.x = gx;
-	this->center.y = gy;
-	this->center.parallax = gp;
+	this->position.x = gx;
+	this->position.y = gy;
+	this->position.parallax = gp;
 }
 
 void PrintingSprite::setMValues(int16 mx, int16 my, int16 mp)
@@ -130,15 +130,15 @@ void PrintingSprite::setSize(uint16 w, uint16 h)
 
 int16 PrintingSprite::getGX()
 {
-	return this->center.x;
+	return this->position.x;
 }
 
 int16 PrintingSprite::getGY()
 {
-	return this->center.y;
+	return this->position.y;
 }
 
 int16 PrintingSprite::getGP()
 {
-	return this->center.parallax;
+	return this->position.parallax;
 }

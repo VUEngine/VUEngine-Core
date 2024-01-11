@@ -185,7 +185,7 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 		// check if z positions are swapped
-		if(nextSprite->center.z + nextSprite->displacement.z > sprite->center.z + sprite->displacement.z)
+		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
 		{
 			// swap nodes' data
 			node->data = nextSprite;
@@ -384,7 +384,7 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::getDigitsCount(this->firstObjectIndex), y, NULL);
 	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Utilities::getDigitsCount(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->center.z, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }

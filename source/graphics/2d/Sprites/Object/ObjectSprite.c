@@ -124,7 +124,7 @@ void ObjectSprite::registerWithManager()
 {
 	if(NULL == this->objectSpriteContainer)
 	{
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->center.z + this->displacement.z);
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->position.z + this->displacement.z);
 
 		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
 		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
@@ -284,10 +284,10 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
 
-	int16 x = this->center.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
-	int16 y = this->center.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
+	int16 x = this->position.x - this->halfWidth + this->displacement.x - this->xDisplacementDelta;
+	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
-	uint16 secondWordValue = this->head | (this->center.parallax + this->displacement.parallax);
+	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
 	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
 
 	int16 yDisplacement = 0;

@@ -52,6 +52,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;
+	this->position = (PixelVector){0, 0, 0, 0};
 	this->head = 0;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
@@ -205,7 +206,7 @@ void Sprite::forceShow()
 {
 	this->show = __SHOW;
 
-	Sprite::setPixelPosition(this, &this->center);
+	Sprite::setPixelPosition(this, &this->position);
 }
 
 /**
@@ -215,7 +216,7 @@ void Sprite::hideForDebug()
 {
 	this->show = __HIDE;
 
-	Sprite::setPixelPosition(this, &this->center);
+	Sprite::setPixelPosition(this, &this->position);
 }
 
 /**
@@ -261,15 +262,15 @@ void Sprite::setPixelPosition(const PixelVector* position)
 	(
 		!this->rendered
 		||
-		this->center.x != this->transformation->position.x
+		this->position.x != position->x
 		||
-		this->center.y != this->transformation->position.y
+		this->position.y != position->y
 		||
-		this->center.z != this->transformation->position.z
+		this->position.z != position->z
 	)
 	{
+		this->position = *position;
 		this->rendered = false;
-		this->center = *position;
 	}
 }
 
@@ -280,7 +281,7 @@ void Sprite::setPixelPosition(const PixelVector* position)
  */
 const PixelVector* Sprite::getPixelPosition()
 {
-	return (const PixelVector*)&this->center;
+	return (const PixelVector*)&this->position;
 }
 
 
@@ -314,10 +315,10 @@ PixelVector Sprite::getDisplacedPosition()
 {
 	PixelVector position =
 	{
-		this->center.x + this->displacement.x,
-		this->center.y + this->displacement.y,
-		this->center.z + this->displacement.z,
-		this->center.parallax + this->displacement.parallax
+		this->position.x + this->displacement.x,
+		this->position.y + this->displacement.y,
+		this->position.z + this->displacement.z,
+		this->position.parallax + this->displacement.parallax
 	};
 
 	return position;
@@ -354,6 +355,7 @@ void Sprite::rotate()
 void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 {
 	this->rotation = *rotation;
+	this->rendered = false;
 }
 
 const Rotation* Sprite::getRotation()
@@ -390,12 +392,12 @@ void Sprite::scale()
 	NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
 	NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
 
-	this->rendered = false;
 	Sprite::setScale(this, &scale);
 }
 
 void Sprite::setScale(const Scale* scale __attribute__((unused)))
 {
+	this->rendered = false;
 }
 
 /**
@@ -423,7 +425,7 @@ Scale Sprite::getScale()
  */
 void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 {
-	this->center.parallax = Optics::calculateParallax(z);
+	this->position.parallax = Optics::calculateParallax(z);
 }
 
 /**
@@ -512,7 +514,7 @@ int16 Sprite::getEffectiveX()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->center.x;
+		return this->position.x;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -528,7 +530,7 @@ int16 Sprite::getEffectiveY()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->center.y;
+		return this->position.y;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -544,7 +546,7 @@ int16 Sprite::getEffectiveP()
 {
 	if(Sprite::isObject(this))
 	{
-		return this->center.parallax;
+		return this->position.parallax;
 	}
 
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
@@ -699,17 +701,17 @@ bool Sprite::isVisible()
  */
 bool Sprite::isWithinScreenSpace()
 {
-	if(!((unsigned)(this->center.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
 	{
 		return false;
 	}
 
-	if(!((unsigned)(this->center.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
 	{
 		return false;
 	}
 /*
-	if(!((unsigned)(this->center.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
+	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
 	{
 		return false;
 	}
@@ -1018,10 +1020,10 @@ void Sprite::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), (__HIDE != this->show) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Pos. (x,y,z,p):                      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->center.x, x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), this->center.y, x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), this->center.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
-	Printing::int32(Printing::getInstance(), this->center.parallax, x + 36, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.x, x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.y, x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.z + Sprite::getDisplacement(this)->z, x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), this->position.parallax, x + 36, y, NULL);
 	Printing::text(Printing::getInstance(), "Displ. (x,y,z,p):                    ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->displacement.x, x + 18, y, NULL);
 	Printing::int32(Printing::getInstance(), this->displacement.y, x + 24, y, NULL);

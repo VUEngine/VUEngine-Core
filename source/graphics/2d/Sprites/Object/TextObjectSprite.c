@@ -101,15 +101,15 @@ int16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool evenF
 	int32 xDirection = this->head & 0x2000 ? -1 : 1;
 	int32 yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int32 x = this->center.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __OBJECT_SPRITE_FLIP_X_DISPLACEMENT : 0);
+	int32 x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __OBJECT_SPRITE_FLIP_X_DISPLACEMENT : 0);
 
 	// TODO: the halfHeight should be calculted based on the font's height
-	int32 y = this->center.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT : 0);
+	int32 y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT : 0);
 
 	//FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 	int32 i = 0;
-	uint16 secondWordValue = (this->head & __OBJECT_SPRITE_CHAR_SHOW_MASK) | ((this->center.parallax + this->displacement.parallax) & ~__OBJECT_SPRITE_CHAR_SHOW_MASK);
+	uint16 secondWordValue = (this->head & __OBJECT_SPRITE_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_SPRITE_CHAR_SHOW_MASK);
 	uint16 fourthWordValue = (this->head & 0x3000);
 	ObjectAttributes* objectPointer = NULL;
 
