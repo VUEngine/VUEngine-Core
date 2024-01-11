@@ -318,7 +318,7 @@ int32 GameState::propagateMessage(int32 message)
  */
 int32 GameState::propagateString(const char* string)
 {
-	return Stage::propagateString(this->stage, Container::onPropagatedString, string);// || UIContainer::propagateString(this->uiContainer, Container::onPropagatedString, string);
+	return Stage::propagateString(this->stage, Container::onPropagatedString, string) || Container::propagateString(this->uiContainer, Container::onPropagatedString, string);
 }
 
 /**
