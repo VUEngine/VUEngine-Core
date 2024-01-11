@@ -166,6 +166,11 @@ void LineField::addDisplacement(fixed_t displacement)
 	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
 }
 
+Vector3D LineField::getCenter()
+{
+	return Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b));
+}
+
 static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
 {
 	// project this onto the current normal
