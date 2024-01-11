@@ -257,8 +257,20 @@ void Sprite::setPixelPosition(const PixelVector* position)
 		return;
 	}
 
-	this->center = *position;
-	this->rendered = false;
+	if
+	(
+		!this->rendered
+		||
+		this->center.x != this->transformation->position.x
+		||
+		this->center.y != this->transformation->position.y
+		||
+		this->center.z != this->transformation->position.z
+	)
+	{
+		this->rendered = false;
+		this->center = *position;
+	}
 }
 
 /**
@@ -323,10 +335,10 @@ void Sprite::rotate()
 		return;
 	}
 
-	this->rendered = false;
-
 	if
 	(
+		!this->rendered
+		||
 		this->rotation.x != this->transformation->rotation.x
 		||
 		this->rotation.y != this->transformation->rotation.y
@@ -335,6 +347,7 @@ void Sprite::rotate()
 	)
 	{
 		Sprite::setRotation(this, &this->transformation->rotation);
+		this->rendered = false;
 	}
 }
 

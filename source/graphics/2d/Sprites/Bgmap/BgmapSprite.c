@@ -260,6 +260,7 @@ void BgmapSprite::setScale(const Scale* scale)
 
 	if(__WORLD_AFFINE & this->head)
 	{
+		this->rendered = false;
 		this->scale = *scale;
 
 		if(!isDeleted(this->texture))

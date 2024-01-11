@@ -1161,7 +1161,7 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 
 	if(!isDeleted(this->uiContainer))
 	{
-		Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
+		UIContainer::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
 	}
 }
 
