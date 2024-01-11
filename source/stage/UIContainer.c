@@ -39,6 +39,8 @@ void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
 	// add entities in the spec
 	UIContainer::addEntities(this, uiContainerSpec->entities);
 
+	this->inheritEnvironment = __INHERIT_POSITION;
+
 	_camera = Camera::getInstance();
 }
 
@@ -86,4 +88,14 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 	}
 
 	return NULL;
+}
+
+void UIContainer::prepareToRender()
+{
+	extern Transformation neutralEnvironmentTransformation;
+
+	this->localTransformation.position = *_cameraPosition;
+	this->invalidateGlobalTransformation = __INVALIDATE_POSITION;
+
+	Base::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_POSITION);
 }

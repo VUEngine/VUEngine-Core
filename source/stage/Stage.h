@@ -249,7 +249,6 @@ class Stage : Container
 	virtual bool stream();
 	
 	override void update();
-	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
 	override void suspend();
 	override void resume();
 	override void removeChild(Container child, bool deleteChild);

@@ -667,7 +667,7 @@ void Container::transform(const Transformation* environmentTransformation, uint8
 		}
 	}
 
-	if(0 != ((__INHERIT_POSITION | __INHERIT_ROTATION) & this->invalidateGlobalTransformation))
+	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & this->invalidateGlobalTransformation))
 	{
 		// apply environment transformation
 		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))

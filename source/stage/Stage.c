@@ -1154,17 +1154,6 @@ void Stage::update()
 	}
 }
 
-// transformation state
-void Stage::transform(const Transformation* environmentTransform __attribute__ ((unused)), uint8 invalidateTransformationFlag)
-{
-	Base::transform(this, environmentTransform, invalidateTransformationFlag);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
-	}
-}
-
 // retrieve ui
 UIContainer Stage::getUIContainer()
 {

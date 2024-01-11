@@ -51,6 +51,7 @@
 #include <Telegram.h>
 #include <ToolState.h>
 #include <TimerManager.h>
+#include <UIContainer.h>
 #include <Utilities.h>
 #include <VirtualList.h>
 #include <VIPManager.h>
@@ -743,6 +744,16 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 {
 	this->nextGameCycleStarted = true;
 
+	// focus the camera once collisions are resolved
+	VUEngine::focusCamera(this);
+
+	UIContainer uiContainer = Stage::getUIContainer(VUEngine::getStage(this));
+
+	if(!isDeleted(uiContainer))
+	{
+		UIContainer::prepareToRender(uiContainer);
+	}
+
 	ClockManager::update(this->clockManager, gameFrameDuration);
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
@@ -859,9 +870,6 @@ GameState VUEngine::run(GameState currentGameState)
 
 	// process collisions
 	VUEngine::updateCollisions(this, currentGameState);
-
-	// focus the camera once collisions are resolved
-	VUEngine::focusCamera(this);
 
 	// dispatch delayed messages
 	VUEngine::dispatchDelayedMessages(this);
