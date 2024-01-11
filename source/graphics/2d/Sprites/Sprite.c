@@ -157,11 +157,7 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	{
 		Sprite::position(this);
 		Sprite::rotate(this);
-
-		if(Sprite::overrides(this, setScale))
-		{
-			Sprite::scale(this);
-		}
+		Sprite::scale(this);
 	}
 
 	// Do not remove this check, it prevents sprites from loop
@@ -376,28 +372,45 @@ void Sprite::scale()
 		return;
 	}
 
-	Scale scale = this->transformation->scale;
+	if
+	(
+		!this->rendered
+		||
+		this->scale.x != this->transformation->scale.x
+		||
+		this->scale.y != this->transformation->scale.y
+		||
+		this->scale.z != this->transformation->scale.z
+	)
+	{
+		this->scale = this->transformation->scale;
 
-	NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
-	NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+		if(Sprite::overrides(this, setScale))
+		{
+			Scale scale = this->scale;
 
-	fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
+			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
 
-	ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-	ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
 
-	scale.x = __FIX7_9_MULT(scale.x, ratio);
-	scale.y = __FIX7_9_MULT(scale.y, ratio);
+			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
-	NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
-	NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
+			scale.x = __FIX7_9_MULT(scale.x, ratio);
+			scale.y = __FIX7_9_MULT(scale.y, ratio);
 
-	Sprite::setScale(this, &scale);
+			NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
+
+			Sprite::setScale(this, &scale);
+			this->rendered = false;
+		}		
+	}
 }
 
 void Sprite::setScale(const Scale* scale __attribute__((unused)))
 {
-	this->rendered = false;
 }
 
 /**

@@ -76,16 +76,15 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	Scale scale;
-	
-	// bgmap's source coordinates
-	BgmapTextureSource bgmapTextureSource;
+	// The unusual order of the attributes is to optimize data packing as much as possible
 	// param table offset
 	int16 paramTableRow;
-	// pointer to function that implements the param table based effects
-	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
 	uint32 param;
+	// pointer to function that implements the param table based effects
+	ParamTableEffectMethod applyParamTableEffect;
+	// bgmap's source coordinates
+	BgmapTextureSource bgmapTextureSource;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);

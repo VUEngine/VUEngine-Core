@@ -65,12 +65,13 @@ typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-object
 class ObjectSprite : Sprite
 {
+	// number of objects
+	int16 totalObjects;
+
 	// parent sprite
 	ObjectSpriteContainer objectSpriteContainer;
 	ObjectTextureSource objectTextureSource;
 
-	// number of objects
-	int16 totalObjects;
 	// cache some attributes to speed up rendering
 	uint8 cols;
 	uint8 rows;

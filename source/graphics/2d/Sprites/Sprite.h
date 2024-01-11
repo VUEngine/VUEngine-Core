@@ -103,26 +103,31 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : VisualComponent
 {
+	// The unusual order of the attributes is to optimize data packing as much as possible
+	// Flag to check if rendered even if outside the screen
+	bool checkIfWithinScreenSpace;
+	// 2D position
 	PixelVector position;
-	Rotation rotation;
 	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
-	// Animation Controller
-	AnimationController animationController;
-	// Our texture
-	Texture texture;
+	// Rotation cache
+	Rotation rotation;
+	// World layer where to render the texture
+	int16 index;
+	// Scale cache
+	Scale scale;
 	// Head spec for world entry setup
 	uint16 head;
 	// Texture's half width
 	int16 halfWidth;
 	// Texture's half height
 	int16 halfHeight;
-	// World layer where to render the texture
-	int16 index;
-	// Update animation
+	// Animation Controller
+	AnimationController animationController;
+	// Our texture
+	Texture texture;
+	// Update animation flag
 	bool writeAnimationFrame;
-	// Flag to check if rendered even if outside the screen
-	bool checkIfWithinScreenSpace;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);
