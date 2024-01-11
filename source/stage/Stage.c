@@ -109,7 +109,6 @@ void Stage::constructor(StageSpec *stageSpec)
 
 	this->stageSpec = stageSpec;
 	this->stageEntityDescriptions = NULL;
-	this->uiContainer = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
 	this->cameraPreviousDistance = 0;
@@ -157,12 +156,6 @@ void Stage::destructor()
 	{
 		delete this->entityFactory;
 		this->entityFactory = NULL;
-	}
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
 	}
 
 	if(!isDeleted(this->stageEntityDescriptions))
@@ -365,9 +358,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// preload graphics
 	Stage::prepareGraphics(this);
 
-	// setup ui
-	Stage::setupUI(this);
-
 	// register all the entities in the stage's spec
 	Stage::registerEntities(this, positionedEntitiesToIgnore);
 
@@ -384,11 +374,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 	// apply transformations
 	Stage::initialTransform(this, &neutralEnvironmentTransformation);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-	}
 }
 
 void Stage::loadPostProcessingEffects()
@@ -425,32 +410,6 @@ PixelOptical Stage::getPixelOptical()
 
 	// set world's limits
 	return this->stageSpec->rendering.pixelOptical;
-}
-
-// setup ui
-void Stage::setupUI()
-{
-	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
-
-	if(this->stageSpec->entities.uiContainerSpec.allocator)
-	{
-		// call the appropriate allocator to support inheritance
-		this->uiContainer = ((UIContainer (*)(UIContainerSpec*)) this->stageSpec->entities.uiContainerSpec.allocator)(&this->stageSpec->entities.uiContainerSpec);
-		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
-
-		// setup ui if allocated and constructed
-		if(!isDeleted(this->uiContainer))
-		{
-			// apply transformations
-			UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-		}
-	}
 }
 
 void Stage::onEntityLoaded(ListenerObject eventFirer)
@@ -1143,23 +1102,6 @@ bool Stage::streamOutAll()
 	return result;
 }
 
-// execute stage's logic
-void Stage::update()
-{
-	Base::update(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		Container::update(this->uiContainer);
-	}
-}
-
-// retrieve ui
-UIContainer Stage::getUIContainer()
-{
-	return this->uiContainer;
-}
-
 // suspend for pause
 void Stage::suspend()
 {
@@ -1169,11 +1111,6 @@ void Stage::suspend()
 //	EntityFactory::prepareAllEntities(this->entityFactory); // It seems buggy
 
 	Base::suspend(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		Container::suspend(this->uiContainer);
-	}
 
 	// relinquish camera focus priority
 	if(!isDeleted(this->focusEntity))
@@ -1225,12 +1162,6 @@ void Stage::resume()
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::resume(this->uiContainer);
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-	}
 
 	this->entityFactory = new EntityFactory();
 }
@@ -1306,28 +1237,6 @@ void Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 void Stage::setupTimer()
 {
 	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
-}
-
-bool Stage::handlePropagatedMessage(int32 message)
-{
-	if(!isDeleted(this->uiContainer))
-	{
-		// propagate message to ui
-		return Container::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
-	}
-
-	return false;
-}
-
-bool Stage::handlePropagatedString(const char* string)
-{
-	if(!isDeleted(this->uiContainer))
-	{
-		// propagate message to ui
-		return Container::propagateMessage(this->uiContainer, Container::onPropagatedString, string);
-	}
-
-	return false;
 }
 
 void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))

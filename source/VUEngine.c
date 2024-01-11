@@ -747,7 +747,7 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	// focus the camera once collisions are resolved
 	VUEngine::focusCamera(this);
 
-	UIContainer uiContainer = Stage::getUIContainer(VUEngine::getStage(this));
+	UIContainer uiContainer = VUEngine::getUIContainer(this);
 
 	if(!isDeleted(uiContainer))
 	{
@@ -1033,6 +1033,20 @@ Stage VUEngine::getStage()
 
 	State state = StateMachine::getCurrentState(this->stateMachine);
 	return isDeleted(state) ? NULL : GameState::getStage(GameState::safeCast(state));
+}
+
+// retrieve the current level's stage
+UIContainer VUEngine::getUIContainer()
+{
+#ifdef __TOOLS
+	if(VUEngine::isInSpecialMode(this))
+	{
+		return GameState::getUIContainer(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
+	}
+#endif
+
+	State state = StateMachine::getCurrentState(this->stateMachine);
+	return isDeleted(state) ? NULL : GameState::getUIContainer(GameState::safeCast(state));
 }
 
 // retrieve current state

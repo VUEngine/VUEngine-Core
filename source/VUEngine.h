@@ -50,19 +50,20 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-class VUEngine;
 class Clock;
-class Stage;
-class GameState;
-class ToolState;
-class StateMachine;
 class CollisionManager;
-class PhysicalWorld;
 class CommunicationManager;
-class SpriteManager;
-class WireframeManager;
+class GameState;
+class PhysicalWorld;
 class SoundManager;
 class SpatialObject;
+class SpriteManager;
+class StateMachine;
+class Stage;
+class ToolState;
+class UIContainer;
+class VUEngine;
+class WireframeManager;
 
 extern VUEngine _vuEngine __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
@@ -118,6 +119,7 @@ singleton class VUEngine : ListenerObject
 	uint32 getTime();
 	StateMachine getStateMachine();
 	Stage getStage();
+	UIContainer getUIContainer();
 	GameState getCurrentState();
 	uint16 getGameFrameDuration();
 	void setGameFrameRate(uint16 gameFrameRate);

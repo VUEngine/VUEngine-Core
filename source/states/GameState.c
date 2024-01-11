@@ -47,6 +47,7 @@ void GameState::constructor()
 	Base::constructor();
 
 	this->stage = NULL;
+	this->uiContainer = NULL;
 
 	// clocks
 	this->messagingClock = new Clock();
@@ -77,12 +78,18 @@ void GameState::destructor()
 	delete this->physicsClock;
 
 	// destroy the stage
-	if(this->stage)
+	if(!isDeleted(this->stage))
 	{
 		// destroy the stage
 		delete this->stage;
 
 		this->stage = NULL;
+	}
+
+	if(!isDeleted(this->uiContainer))
+	{
+		delete this->uiContainer;
+		this->uiContainer = NULL;
 	}
 
 	// must delete these after deleting the stage
@@ -129,8 +136,8 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 
 	if(!Clock::isPaused(this->updateClock))
 	{
-		// update the stage
 		Stage::update(this->stage);
+		UIContainer::update(this->uiContainer);
 	}
 }
 
@@ -146,12 +153,16 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	this->updatePhysics = true;
 	this->processCollisions = true;
 
-	// make sure to free the memory
 	if(!isDeleted(this->stage))
 	{
-		// destroy the stage
 		delete this->stage;
 		this->stage = NULL;
+	}
+
+	if(!isDeleted(this->uiContainer))
+	{
+		delete this->uiContainer;
+		this->uiContainer = NULL;
 	}
 
 	if(!isDeleted(this->physicalWorld))
@@ -194,9 +205,14 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 			CollisionManager::hideColliders(this->collisionManager);
 		}
 
-		if(this->stage)
+		if(!isDeleted(this->stage))
 		{
 			Container::suspend(this->stage);
+		}
+
+		if(!isDeleted(this->uiContainer))
+		{
+			Container::suspend(this->uiContainer);
 		}
 
 		// Make sure that all graphical resources are released.
@@ -225,8 +241,11 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		// Reset the engine state
 		VUEngine::reset(VUEngine::getInstance(), NULL == Stage::getStageSpec(this->stage)->assets.sounds);
 
-		// Update the stage
+		// Resume the stage
 		Container::resume(this->stage);
+
+		// Resume the UI		
+		Container::resume(this->uiContainer);
 
 		// Move the camera to its previous position
 		Camera::focus(Camera::getInstance(), false);
@@ -277,7 +296,7 @@ bool GameState::processUserInputRegardlessOfInput()
  */
 bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram)
 {
-	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram));
+	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
 }
 
 /**
@@ -288,7 +307,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
  */
 int32 GameState::propagateMessage(int32 message)
 {	
-	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, message);
+	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, message) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
 }
 
 /**
@@ -299,7 +318,7 @@ int32 GameState::propagateMessage(int32 message)
  */
 int32 GameState::propagateString(const char* string)
 {
-	return Container::propagateString(this->stage, Container::onPropagatedString, string);
+	return Stage::propagateString(this->stage, Container::onPropagatedString, string);// || UIContainer::propagateString(this->uiContainer, Container::onPropagatedString, string);
 }
 
 /**
@@ -417,6 +436,8 @@ void GameState::initialTransform()
 	extern Transformation neutralEnvironmentTransformation;
 
 	Stage::initialTransform(this->stage, &neutralEnvironmentTransformation);
+
+	UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
 }
 
 /**
@@ -464,12 +485,6 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 		stageSpec = (StageSpec*)&EmptyStageSpec;
 	}
 
-	if(this->stage)
-	{
-		// destroy the stage
-		delete this->stage;
-	}
-
 	// Reset the engine state
 	VUEngine::reset(VUEngine::getInstance(), NULL == stageSpec->assets.sounds);
 
@@ -478,23 +493,17 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusEntity(Camera::getInstance(), NULL);
 
-	// construct the stage
-	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
-	ASSERT(this->stage, "GameState::loadStage: null stage");
+	// setup the stage
+	GameState::setupStage(this, stageSpec, positionedEntitiesToIgnore, overrideCameraPosition, forceNoPopIn);
 
-	Stage::forceNoPopIn(this->stage, forceNoPopIn);
-
-	// load world entities
-	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
+	// load the UI
+	GameState::setupUI(this, stageSpec);
 
 	// move the camera to its previous position
 	Camera::focus(Camera::getInstance(), false);
 
 	// transformation everything
 	GameState::initialTransform(this);
-
-	// load post processing effects
-	Stage::loadPostProcessingEffects(this->stage);
 
 	// Transform everything definitively
 	GameState::transform(this);
@@ -505,6 +514,59 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	HardwareManager::resumeInterrupts();
 }
 
+void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
+{
+	if(!isDeleted(this->stage))
+	{
+		delete this->stage;
+		this->stage = NULL;
+	}
+
+	// construct the stage
+	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
+	ASSERT(this->stage, "GameState::loadStage: null stage");
+
+	Stage::forceNoPopIn(this->stage, forceNoPopIn);
+
+	// load the stage
+	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
+
+	// load post processing effects
+	Stage::loadPostProcessingEffects(this->stage);
+}
+
+// setup ui
+void GameState::setupUI(StageSpec* stageSpec)
+{
+	if(!isDeleted(this->uiContainer))
+	{
+		delete this->uiContainer;
+		this->uiContainer = NULL;
+	}
+
+	if(NULL != stageSpec->entities.uiContainerSpec.allocator)
+	{
+		// call the appropriate allocator to support inheritance
+		this->uiContainer = ((UIContainer (*)(UIContainerSpec*)) stageSpec->entities.uiContainerSpec.allocator)(&stageSpec->entities.uiContainerSpec);
+	}
+	else
+	{
+		// call the appropriate allocator to support inheritance
+		this->uiContainer = new UIContainer(NULL);
+	}
+
+	NM_ASSERT(!isDeleted(this->uiContainer), "GameState::setupUI: null UIContainer");
+
+	// setup ui if allocated and constructed
+	if(!isDeleted(this->uiContainer))
+	{
+		extern Transformation neutralEnvironmentTransformation;
+	
+		// apply transformations
+		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
+	}
+}
+
 /**
  * Retrieve the Stage
  *
@@ -513,6 +575,16 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 Stage GameState::getStage()
 {
 	return this->stage;
+}
+
+/**
+ * Retrieve the UI container
+ *
+ * @return			UIContainer
+ */
+UIContainer GameState::getUIContainer()
+{
+	return this->uiContainer;
 }
 
 /**

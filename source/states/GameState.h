@@ -18,6 +18,7 @@
 #include <State.h>
 #include <KeypadManager.h>
 #include <Stage.h>
+#include <UIContainer.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,6 +41,8 @@ class GameState : State
 	CollisionManager collisionManager;
 	// a pointer to the game's stage
 	Stage stage;
+	// the ui container
+	UIContainer uiContainer;
 	// flag to allow streaming
 	int32 canStream;
 	// must save to allow pause
@@ -63,6 +66,7 @@ class GameState : State
 	PhysicalWorld getPhysicalWorld();
 	Clock getPhysicsClock();
 	Stage getStage();
+	UIContainer getUIContainer();
 	Clock getUpdateClock();
 	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn);
 	void pauseAnimations(bool pause);

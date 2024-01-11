@@ -199,8 +199,6 @@ class Stage : Container
 	// index for method to execute
 	int32 streamingPhase;
 	uint16 streamingAmplitude;
-	// the ui container
-	UIContainer uiContainer;
 	// focus entity: needed for streaming
 	Entity focusEntity;
 	// camera's previous distance. Used for the streaming
@@ -227,7 +225,6 @@ class Stage : Container
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId);
-	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
 	void showStreamingProfiling(int32 x, int32 y);
 	bool unloadOutOfRangeEntities(int32 defer);
@@ -248,12 +245,9 @@ class Stage : Container
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
 	
-	override void update();
 	override void suspend();
 	override void resume();
 	override void removeChild(Container child, bool deleteChild);
-	override bool handlePropagatedMessage(int32 message);
-	override bool handlePropagatedString(const char* string);
 }
 
 
