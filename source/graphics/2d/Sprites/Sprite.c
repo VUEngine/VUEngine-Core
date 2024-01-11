@@ -206,7 +206,7 @@ void Sprite::forceShow()
 {
 	this->show = __SHOW;
 
-	Sprite::setPixelPosition(this, &this->position);
+	Sprite::setPosition(this, &this->position);
 }
 
 /**
@@ -216,7 +216,7 @@ void Sprite::hideForDebug()
 {
 	this->show = __HIDE;
 
-	Sprite::setPixelPosition(this, &this->position);
+	Sprite::setPosition(this, &this->position);
 }
 
 /**
@@ -243,7 +243,7 @@ void Sprite::position()
 
 	PixelVector position2D = Vector3D::transformToPixelVector(this->transformation->position);
 
-	Sprite::setPixelPosition(this, &position2D);
+	Sprite::setPosition(this, &position2D);
 }
 
 /**
@@ -251,7 +251,7 @@ void Sprite::position()
  *
  * @param position		Pixel position
  */
-void Sprite::setPixelPosition(const PixelVector* position)
+void Sprite::setPosition(const PixelVector* position)
 {
 	if(NULL == position)
 	{
@@ -279,7 +279,7 @@ void Sprite::setPixelPosition(const PixelVector* position)
  *
  * @return			Position relative to camera
  */
-const PixelVector* Sprite::getPixelPosition()
+const PixelVector* Sprite::getPosition()
 {
 	return (const PixelVector*)&this->position;
 }
