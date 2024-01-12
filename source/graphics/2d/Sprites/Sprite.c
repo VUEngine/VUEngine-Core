@@ -151,7 +151,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
-	Sprite::update(this);
 
 	if(NULL != this->owner)
 	{
@@ -160,11 +159,13 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		Sprite::scale(this);
 	}
 
-	// Do not remove this check, it prevents sprites from loop
+	// Do not remove this check, it prevents sprites from looping
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
 		return __NO_RENDER_INDEX;
 	}
+
+	Sprite::update(this);
 
 	if((previousIndex == index) && this->rendered)
  	{
