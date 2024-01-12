@@ -207,12 +207,12 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 
 		if(!isDeleted(this->stage))
 		{
-			Container::suspend(this->stage);
+			Stage::suspend(this->stage);
 		}
 
 		if(!isDeleted(this->uiContainer))
 		{
-			Container::suspend(this->uiContainer);
+			UIContainer::suspend(this->uiContainer);
 		}
 
 		// Make sure that all graphical resources are released.

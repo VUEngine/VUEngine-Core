@@ -1317,10 +1317,10 @@ void Container::suspend()
 		}
 	}
 
+	Container::purgeChildren(this);
+
 	if(NULL != this->children)
 	{
-		Container::purgeChildren(this);
-
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
