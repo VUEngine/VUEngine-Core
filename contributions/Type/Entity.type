@@ -1,41 +1,44 @@
 {
-	"enabled": true,
+	"enabled": false,
 	"file": ".entity",
 	"schema": {
 		"title": "Entity",
 		"properties": {
 			"name": {
-				"type": "string",
-				"default": ""
+				"type": "string"
 			},
-			"extraInfo": {
-				"type": "string",
-				"default": ""
-			},
-			"pixelSize": {
-				"type": "object",
-				"properties": {
-					"x": {
-						"type": "number",
-						"minimum": 0
-					},
-					"y": {
-						"type": "number",
-						"minimum": 0
-					},
-					"z": {
-						"type": "number",
-						"minimum": 0
-					}
-				}
-			},
-			"animations": {
+			"extraProperties": {
 				"type": "object",
 				"properties": {
 					"enabled": {
 						"type": "boolean",
 						"default": false
 					},
+					"extraInfo": {
+						"type": "string"
+					},
+					"pixelSize": {
+						"type": "object",
+						"properties": {
+							"x": {
+								"type": "number",
+								"minimum": 0
+							},
+							"y": {
+								"type": "number",
+								"minimum": 0
+							},
+							"z": {
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					}
+				}
+			},
+			"animations": {
+				"type": "object",
+				"properties": {
 					"default": {
 						"type": "number"
 					},
@@ -419,8 +422,7 @@
 						"default": "Bgmap"
 					},
 					"customClass": {
-						"type": "string",
-						"default": ""
+						"type": "string"
 					},
 					"useZDisplacementInProjection": {
 						"type": "boolean",
