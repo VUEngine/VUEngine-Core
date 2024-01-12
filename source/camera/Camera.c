@@ -66,10 +66,7 @@ void Camera::constructor()
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
 	this->position = Vector3D::zero();
-	this->positionBackup = Vector3D::zero();
-
 	this->rotation = Rotation::zero();
-	this->rotationBackup = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
 
 	this->cameraFrustum.x0 = 0;
@@ -80,8 +77,6 @@ void Camera::constructor()
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
 	this->transformationFlags = false;
-	this->synchronizingUIGraphics = false;
-	this->UISynchronizationInterruptions = 0;
 
 	PixelOptical pixelOptical =
     {
@@ -325,7 +320,7 @@ Rotation Camera::getRotation()
  */
 void Camera::setPosition(Vector3D position, bool cap)
 {
-	this->positionBackup = this->position;
+	Vector3D currentPosition = this->position;
 	this->position = position;
 
 	if(cap)
@@ -334,7 +329,7 @@ void Camera::setPosition(Vector3D position, bool cap)
 	}
 
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, this->positionBackup));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }
 
 static uint8 Camera::computeRotationFlags(Rotation rotation)
@@ -374,85 +369,6 @@ void Camera::rotate(Rotation rotation)
 }
 
 /**
- * Set camera's position for UI transformation
- */
-void Camera::startUIGraphicsSynchronization()
-{
-	if(!this->synchronizingUIGraphics)
-	{
-		this->positionBackup = this->position;
-		this->rotationBackup = this->rotation;
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		this->opticalBackup = this->optical;
-		this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
-#endif
-
-		this->UISynchronizationInterruptions = 0;
-		this->synchronizingUIGraphics = true;
-
-		this->position = Vector3D::zero();
-		this->rotation = Rotation::zero();
-		this->invertedRotation = Rotation::zero();
-
-	}
-}
-
-/**
- * Set camera's position after UI transformation
- */
-void Camera::stopUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		HardwareManager::suspendInterrupts();
-
-		this->synchronizingUIGraphics = false;
-		this->position = this->positionBackup;
-		this->rotation = this->rotationBackup;
-		this->invertedRotation = Rotation::invert(this->rotation);
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		this->optical = this->opticalBackup;
-#endif
-
-		this->UISynchronizationInterruptions = 0;
-		HardwareManager::resumeInterrupts();
-	}
-}
-
-void Camera::suspendUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		if(0 == this->UISynchronizationInterruptions++)
-		{
-			this->position = this->positionBackup;
-			this->rotation = this->rotationBackup;
-			this->invertedRotation = Rotation::invert(this->rotation);
-#ifndef __LEGACY_COORDINATE_PROJECTION
-			this->optical = this->opticalBackup;
-#endif
-		}
-	}
-}
-
-void Camera::resumeUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		if(0 == --this->UISynchronizationInterruptions)
-		{
-			this->position = Vector3D::zero();
-			this->rotation = Rotation::zero();
-			this->invertedRotation = Rotation::zero();
-
-#ifndef __LEGACY_COORDINATE_PROJECTION
-			this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
-#endif
-		}
-	}
-}
-
-/**
  * Retrieve optical config structure
  *
  * @return 		Optical config structure
@@ -484,7 +400,6 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
 	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
-	this->opticalBackup = this->optical;
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
 	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
@@ -572,8 +487,6 @@ void Camera::reset()
 	this->invertedRotation = Rotation::zero();
 
 	this->transformationFlags = false;
-	this->synchronizingUIGraphics = false;
-	this->UISynchronizationInterruptions = 0;
 
 	Camera::resetCameraFrustum(this);
 

@@ -50,15 +50,11 @@ singleton class Camera : ListenerObject
 {
 	// Optical values used in projection values
 	Optical optical;
-	Optical opticalBackup;
 	// Camera position
 	Vector3D position;
-	// Backup of Camera position
-	Vector3D positionBackup;
 	// Rotation
 	Rotation rotation;
 	// Backup of Camera rotation
-	Rotation rotationBackup;
 	Rotation invertedRotation;
 	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
@@ -70,10 +66,6 @@ singleton class Camera : ListenerObject
 	CameraFrustum cameraFrustum;
 	// Transformation flags
 	uint8 transformationFlags;
-	// Flag raised when synchronizing UI graphics
-	bool synchronizingUIGraphics;
-	// Counter to keep track of concurrent calls to suspend UI synchronization
-	int8 UISynchronizationInterruptions;
 
 	/// @publicsection
 	static Camera getInstance();
@@ -88,8 +80,6 @@ singleton class Camera : ListenerObject
 	Size getStageSize();
 	void translate(Vector3D, int32 cap);
 	void onFocusEntityDeleted(Entity actor);
-	void startUIGraphicsSynchronization();
-	void stopUIGraphicsSynchronization();
 	void suspendUIGraphicsSynchronization();
 	void resumeUIGraphicsSynchronization();
 	void reset();

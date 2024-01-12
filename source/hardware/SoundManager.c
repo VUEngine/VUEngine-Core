@@ -353,8 +353,6 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 		return;
 	}
 
-	Camera::suspendUIGraphicsSynchronization(_camera);
-
 	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
 	{		
 		static uint32 accumulatedElapsedMicroseconds = 0;
@@ -386,10 +384,7 @@ static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
 			node = node->next;
 		}
 		while(NULL != node);
-
 	}
-
-	Camera::resumeUIGraphicsSynchronization(_camera);
 }
 
 static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)

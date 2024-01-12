@@ -1304,7 +1304,7 @@ Container Container::getChildAtPosition(int16 position)
  */
 void Container::suspend()
 {
-	if(this->behaviors)
+	if(NULL != this->behaviors)
 	{
 		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
 		{
