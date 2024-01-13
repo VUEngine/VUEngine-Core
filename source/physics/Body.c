@@ -662,8 +662,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 // update movement over axis
 MovementResult Body::updateMovement(uint16 cycle)
 {
-	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
+	this->friction = Vector3D::scalarProduct(this->direction, -this->frictionForceMagnitude);
 
 	Vector3D previousVelocity = this->velocity;
 
@@ -1099,6 +1098,9 @@ void Body::computeFrictionForceMagnitude()
 			}
 		}
 	}
+
+	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
+	this->frictionForceMagnitude = __FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER));
 }
 
 // set friction
