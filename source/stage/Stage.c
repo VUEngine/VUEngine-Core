@@ -795,12 +795,11 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 	bool unloadedEntities = false;
 
-	// need a temporary list to remove and delete entities
 	VirtualNode node = this->children->head;
 
 	CACHE_RESET;
 
-	// check which actors must be unloaded
+	// check which entites must be unloaded
 	for(; NULL != node; node = node->next)
 	{
 		// get next entity
