@@ -207,12 +207,12 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	if(isDeleted(this->charSet))
 	{
 		Texture::loadCharSet(this);
-	}
 
-	if(isDeleted(this->charSet))
-	{
-		this->status = kTextureInvalid;
-		return false;
+		if(isDeleted(this->charSet))
+		{
+			this->status = kTextureInvalid;
+			return false;
+		}
 	}
 
 	if(kCharSetWritten != this->charSet->status)
