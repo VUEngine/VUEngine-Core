@@ -155,12 +155,9 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(NULL != this->owner)
 	{
-		bool force = __NO_RENDER_INDEX == previousIndex;
-		this->rendered = this->rendered && !force;
-
-		Sprite::position(this, force);
-		Sprite::rotate(this, force);
-		Sprite::scale(this, force);
+		Sprite::position(this);
+		Sprite::rotate(this);
+		Sprite::scale(this);
 	}
 
 	// Do not remove this check, it prevents sprites from looping
@@ -171,11 +168,9 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	Sprite::update(this);
 
-	if((previousIndex == index) && this->rendered)
- 	{
- 		this->index = previousIndex;
- 	}
- 	else
+	this->rendered = this->rendered && __NO_RENDER_INDEX != this->index;
+
+	if(this->index != index || !this->rendered)
 	{
 		this->rendered = true;
 
@@ -235,29 +230,26 @@ bool Sprite::isHidden()
  *
  * @param position		3D position
  */
-void Sprite::position(bool force)
+void Sprite::position()
 {
 	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	PixelVector position2D = Vector3D::transformToPixelVector(this->transformation->position);
+	PixelVector position = Vector3D::transformToPixelVector(this->transformation->position);
 
 	if
 	(
-		force
+		this->position.x != position.x
 		||
-		this->position.x != position2D.x
+		this->position.y != position.y
 		||
-		this->position.y != position2D.y
-		||
-		this->position.z != position2D.z
+		this->position.z != position.z
 	)
 	{
-		Sprite::setPosition(this, &position2D);
+		Sprite::setPosition(this, &position);
 	}
-
 }
 
 /**
@@ -331,7 +323,7 @@ PixelVector Sprite::getDisplacedPosition()
  *
  * @param rotation	Rotation struct
  */
-void Sprite::rotate(bool force)
+void Sprite::rotate()
 {
 	if(NULL == this->transformation)
 	{
@@ -340,8 +332,6 @@ void Sprite::rotate(bool force)
 
 	if
 	(
-		force
-		||
 		this->rotation.x != this->transformation->rotation.x
 		||
 		this->rotation.y != this->transformation->rotation.y
@@ -371,7 +361,7 @@ const Rotation* Sprite::getRotation()
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite::scale(bool force)
+void Sprite::scale()
 {
 	if(NULL == this->transformation)
 	{
@@ -380,8 +370,6 @@ void Sprite::scale(bool force)
 
 	if
 	(
-		force
-		||
 		this->scale.x != this->transformation->scale.x
 		||
 		this->scale.y != this->transformation->scale.y
