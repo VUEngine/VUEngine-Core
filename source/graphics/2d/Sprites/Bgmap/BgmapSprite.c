@@ -50,8 +50,6 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 {
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
-	this->scale = Scale::unit();
-
 	// create the texture
 	if(NULL != bgmapSpriteSpec->spriteSpec.textureSpec)
 	{

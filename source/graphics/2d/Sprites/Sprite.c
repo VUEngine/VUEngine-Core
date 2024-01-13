@@ -52,7 +52,6 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;
-	this->position = (PixelVector){0, 0, 0, 0};
 	this->head = 0;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
@@ -61,7 +60,9 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
+	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
+	this->scale = Scale::unit();
 }
 
 /**
@@ -154,9 +155,12 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(NULL != this->owner)
 	{
-		Sprite::position(this);
-		Sprite::rotate(this);
-		Sprite::scale(this);
+		bool force = __NO_RENDER_INDEX == previousIndex;
+		this->rendered = this->rendered && !force;
+
+		Sprite::position(this, force);
+		Sprite::rotate(this, force);
+		Sprite::scale(this, force);
 	}
 
 	// Do not remove this check, it prevents sprites from looping
@@ -231,7 +235,7 @@ bool Sprite::isHidden()
  *
  * @param position		3D position
  */
-void Sprite::position()
+void Sprite::position(bool force)
 {
 	if(NULL == this->transformation)
 	{
@@ -240,7 +244,20 @@ void Sprite::position()
 
 	PixelVector position2D = Vector3D::transformToPixelVector(this->transformation->position);
 
-	Sprite::setPosition(this, &position2D);
+	if
+	(
+		force
+		||
+		this->position.x != position2D.x
+		||
+		this->position.y != position2D.y
+		||
+		this->position.z != position2D.z
+	)
+	{
+		Sprite::setPosition(this, &position2D);
+	}
+
 }
 
 /**
@@ -255,20 +272,8 @@ void Sprite::setPosition(const PixelVector* position)
 		return;
 	}
 
-	if
-	(
-		!this->rendered
-		||
-		this->position.x != position->x
-		||
-		this->position.y != position->y
-		||
-		this->position.z != position->z
-	)
-	{
-		this->position = *position;
-		this->rendered = false;
-	}
+	this->position = *position;
+	this->rendered = false;
 }
 
 /**
@@ -326,7 +331,7 @@ PixelVector Sprite::getDisplacedPosition()
  *
  * @param rotation	Rotation struct
  */
-void Sprite::rotate()
+void Sprite::rotate(bool force)
 {
 	if(NULL == this->transformation)
 	{
@@ -335,7 +340,7 @@ void Sprite::rotate()
 
 	if
 	(
-		!this->rendered
+		force
 		||
 		this->rotation.x != this->transformation->rotation.x
 		||
@@ -345,7 +350,7 @@ void Sprite::rotate()
 	)
 	{
 		Sprite::setRotation(this, &this->transformation->rotation);
-		this->rendered = false;
+		this->rotation = this->transformation->rotation;
 	}
 }
 
@@ -366,7 +371,7 @@ const Rotation* Sprite::getRotation()
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite::scale()
+void Sprite::scale(bool force)
 {
 	if(NULL == this->transformation)
 	{
@@ -375,7 +380,7 @@ void Sprite::scale()
 
 	if
 	(
-		!this->rendered
+		force
 		||
 		this->scale.x != this->transformation->scale.x
 		||
@@ -405,7 +410,6 @@ void Sprite::scale()
 			NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
 
 			Sprite::setScale(this, &scale);
-			this->rendered = false;
 		}		
 	}
 }
