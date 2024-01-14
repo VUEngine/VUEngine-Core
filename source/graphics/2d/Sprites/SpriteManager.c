@@ -38,6 +38,7 @@
 #define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
 #ifdef __SHOW_SPRITES_PROFILING
+int32 _renderedSprites = 0; 
 int32 _writtenTiles = 0;
 int32 _writtenTextureTiles = 0;
 int32 _writtenObjectTiles = 0;
@@ -642,6 +643,10 @@ void SpriteManager::writeDRAM()
  */
 void SpriteManager::render()
 {
+#ifdef __SHOW_SPRITES_PROFILING
+	_renderedSprites = 0;
+#endif
+
 	if(!this->lockSpritesLists)
 	{
 		this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
@@ -1017,6 +1022,8 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printing::text(this->printing, "Sprites count:              ", x, ++y, NULL);
 	Printing::int32(this->printing, VirtualList::getSize(this->sprites), x + 22, y, NULL);
 #ifdef __SHOW_SPRITES_PROFILING
+	Printing::text(this->printing, "Rendered sprites:              ", x, ++y, NULL);
+	Printing::int32(this->printing, _renderedSprites, x + 22, y, NULL);
 	Printing::text(this->printing, "Written chars:              ", x, ++y, NULL);
 	Printing::int32(this->printing, _writtenTiles, x + 22, y, NULL);
 	Printing::text(this->printing, "Written texture tiles:              ", x, ++y, NULL);

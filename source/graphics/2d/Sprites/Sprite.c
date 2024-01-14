@@ -178,6 +178,11 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
  		this->index = Sprite::doRender(this, index, evenFrame);
 
+#ifdef __SHOW_SPRITES_PROFILING
+		extern int32 _renderedSprites;
+		_renderedSprites++;
+#endif		
+
 		if(index != this->index)
 		{
 			this->rendered = false;
