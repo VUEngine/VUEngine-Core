@@ -128,6 +128,8 @@ abstract class Sprite : VisualComponent
 	Texture texture;
 	// Update animation flag
 	bool writeAnimationFrame;
+	// The flag raises after the first render cycle
+	bool transformed;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);

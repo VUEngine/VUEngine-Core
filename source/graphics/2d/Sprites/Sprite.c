@@ -63,6 +63,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
 	this->scale = Scale::unit();
+	this->transformed = false;
 }
 
 /**
@@ -157,6 +158,8 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		Sprite::position(this);
 		Sprite::rotate(this);
 		Sprite::scale(this);
+
+		this->transformed = true;
 	}
 
 	// Do not remove this check, it prevents sprites from looping
@@ -240,6 +243,8 @@ void Sprite::position()
 
 	if
 	(
+		!this->transformed 
+		||
 		this->position.x != position.x
 		||
 		this->position.y != position.y
@@ -331,6 +336,8 @@ void Sprite::rotate()
 
 	if
 	(
+		!this->transformed
+		||
 		this->rotation.x != this->transformation->rotation.x
 		||
 		this->rotation.y != this->transformation->rotation.y
@@ -369,6 +376,8 @@ void Sprite::scale()
 
 	if
 	(
+		!this->transformed
+		||
 		this->scale.x != this->transformation->scale.x
 		||
 		this->scale.y != this->transformation->scale.y
