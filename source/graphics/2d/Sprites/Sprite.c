@@ -113,7 +113,6 @@ void Sprite::processEffects()
 
 int16 Sprite::render(int16 index, bool evenFrame)
 {
-	int16 previousIndex = this->index;
 	this->index = __NO_RENDER_INDEX;
 
 	// If the client code makes these checks before calling this method,

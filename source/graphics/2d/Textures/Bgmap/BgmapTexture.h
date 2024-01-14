@@ -51,7 +51,7 @@ class BgmapTexture : Texture
 	int8 remainingRowsToBeWritten;
 	int16 xOffset;
 	int16 yOffset;
-	// flip flag
+	// flip flags
 	bool horizontalFlip : 1;
 	bool verticalFlip : 1;
 
