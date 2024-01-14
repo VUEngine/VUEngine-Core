@@ -498,6 +498,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 	// create new texture and register it
 	BgmapTexture bgmapTexture = new BgmapTexture(bgmapTextureSpec, id);
 	BgmapTexture::setSegment(bgmapTexture, segment);
+	BgmapTexture::setOffsets(bgmapTexture, BgmapTextureManager::getXOffset(this, id), BgmapTextureManager::getYOffset(this, id));
 
 	VirtualList::pushBack(this->bgmapTextures, bgmapTexture);
 

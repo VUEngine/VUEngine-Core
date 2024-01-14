@@ -55,6 +55,9 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 	this->horizontalFlip = this->textureSpec->horizontalFlip;
 	this->verticalFlip = this->textureSpec->verticalFlip;
 
+	this->xOffset = 0;
+	this->yOffset = 0;
+
 	if(NULL == _bgmapTextureManager)
 	{
 		_bgmapTextureManager = BgmapTextureManager::getInstance();
@@ -109,17 +112,15 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
-	int16 xOffset = (int16)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
-	int16 yOffset = (int16)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 	uint16 charSetOffset = (uint16)CharSet::getOffset(this->charSet);
 	
 	if(BgmapTexture::isMultiframe(this))
 	{
-		BgmapTexture::writeAllFrames(this, maximumTextureRowsToWrite, xOffset, yOffset, charSetOffset);
+		BgmapTexture::writeAllFrames(this, maximumTextureRowsToWrite, this->xOffset, this->yOffset, charSetOffset);
 	}
 	else
 	{
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, xOffset, yOffset, charSetOffset);
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset);
 	}
 
 	if(kTexturePendingRewriting == status)
@@ -378,13 +379,24 @@ int8 BgmapTexture::getRemainingRowsToBeWritten()
 }
 
 /**
+ * Set the Texture's x and y offsets within the BGMAP segment where it is allocated
+ *
+ * @return				Texture's x offset within BGMAP segment
+ */
+void BgmapTexture::setOffsets(int16 xOffset, int16 yOffset)
+{
+	this->xOffset = xOffset;
+	this->yOffset = yOffset;
+}
+
+/**
  * Retrieve the Texture's x offset within the BGMAP segment where it is allocated
  *
  * @return				Texture's x offset within BGMAP segment
  */
 int16 BgmapTexture::getXOffset()
 {
-	return BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	return this->xOffset;
 }
 
 /**
@@ -394,7 +406,7 @@ int16 BgmapTexture::getXOffset()
  */
 int16 BgmapTexture::getYOffset()
 {
-	return BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
+	return this->yOffset;
 }
 
 /**
