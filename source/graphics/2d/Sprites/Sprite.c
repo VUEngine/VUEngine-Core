@@ -114,8 +114,6 @@ void Sprite::processEffects()
 
 int16 Sprite::render(int16 index, bool evenFrame)
 {
-	this->index = __NO_RENDER_INDEX;
-
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
@@ -129,18 +127,19 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	if(isDeleted(this->texture))
 	{
 		this->index = Sprite::doRender(this, index, evenFrame);
-
 		return this->index;
 	}
 
 	if(kTextureInvalid == this->texture->status)
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
 
 	if(kTexturePendingWriting == this->texture->status)
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
 
 	// If the client code makes these checks before calling this method,
@@ -165,14 +164,13 @@ int16 Sprite::render(int16 index, bool evenFrame)
 	// Do not remove this check, it prevents sprites from looping
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
 
 	Sprite::update(this);
 
-	this->rendered = this->rendered && __NO_RENDER_INDEX != this->index;
-
-	if(this->index != index || !this->rendered)
+	if(!this->rendered || this->index != index)
 	{
 		this->rendered = true;
 
@@ -182,11 +180,6 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		extern int32 _renderedSprites;
 		_renderedSprites++;
 #endif		
-
-		if(index != this->index)
-		{
-			this->rendered = false;
-		}
 	}
 
 	return this->index;
@@ -352,6 +345,7 @@ void Sprite::rotate()
 	{
 		Sprite::setRotation(this, &this->transformation->rotation);
 		this->rotation = this->transformation->rotation;
+		this->rendered = false;
 	}
 }
 
@@ -391,6 +385,7 @@ void Sprite::scale()
 	)
 	{
 		this->scale = this->transformation->scale;
+		this->rendered = false;
 
 		if(Sprite::overrides(this, setScale))
 		{
@@ -417,6 +412,7 @@ void Sprite::scale()
 
 void Sprite::setScale(const Scale* scale __attribute__((unused)))
 {
+	this->rendered = false;
 }
 
 /**
