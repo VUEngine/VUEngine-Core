@@ -50,25 +50,28 @@
 					"multiframe": {
 						"type": "boolean",
 						"default": false
-					},
+					}
+				}
+			},
+			"components": {
+				"type": "object",
+				"properties": {
 					"animations": {
 						"type": "array",
 						"items": {
 							"type": "object",
 							"properties": {
 								"name": {
-									"type": "string",
-									"default": ""
+									"type": "string"
 								},
 								"cycles": {
 									"type": "integer",
-									"minimum": 0,
+									"minimum": 1,
 									"maximum": 255,
 									"default": 8
 								},
 								"callback": {
-									"type": "string",
-									"default": ""
+									"type": "string"
 								},
 								"loop": {
 									"type": "boolean",
@@ -83,39 +86,61 @@
 								}
 							}
 						}
-					}
-				}
-			},
-			"behaviors": {
-				"type": "object",
-				"properties": {
+					},
 					"behaviors": {
 						"type": "array",
 						"items": {
-							"type": "string",
-							"default": ""
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								}
+							}
 						}
-					}
-				}
-			},
-			"children": {
-				"type": "object",
-				"properties": {
+					},
 					"children": {
 						"type": "array",
 						"items": {
-							"type": "string",
-							"default": ""
+							"type": "object",
+							"properties": {
+								"itemId": {
+									"type": "string"
+								},
+								"onScreenPosition": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										},
+										"zDisplacement": {
+											"type": "number"
+										}
+									}
+								},
+								"name": {
+									"type": "string"
+								},
+								"children": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"extraInfo": {
+									"type": "string"
+								},
+								"loadRegardlessOfPosition": {
+									"type": "boolean",
+									"default": false
+								}
+							}
 						}
-					}
-				}
-			},
-			"colliders": {
-				"type": "object",
-				"properties": {
-					"inGameType": {
-						"type": "string",
-						"default": "None"
 					},
 					"colliders": {
 						"type": "array",
@@ -124,24 +149,6 @@
 							"properties": {
 								"type": {
 									"type": "string",
-									"oneOf": [
-										{
-											"const": "Ball",
-											"title": "Ball"
-										},
-										{
-											"const": "Box",
-											"title": "Box"
-										},
-										{
-											"const": "InverseBox",
-											"title": "Inverse Box"
-										},
-										{
-											"const": "LineField",
-											"title": "Line Field"
-										}
-									],
 									"default": "Ball"
 								},
 								"pixelSize": {
@@ -165,20 +172,16 @@
 									"type": "object",
 									"properties": {
 										"x": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"y": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"z": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"parallax": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										}
 									}
 								},
@@ -186,16 +189,13 @@
 									"type": "object",
 									"properties": {
 										"x": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"y": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"z": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										}
 									}
 								},
@@ -203,16 +203,13 @@
 									"type": "object",
 									"properties": {
 										"x": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"y": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										},
 										"z": {
-											"type": "number",
-											"minimum": 0
+											"type": "number"
 										}
 									}
 								},
@@ -223,25 +220,110 @@
 								"layers": {
 									"type": "array",
 									"items": {
-										"type": "string",
-										"default": ""
+										"type": "string"
 									}
 								},
 								"layersToCheck": {
 									"type": "array",
 									"items": {
-										"type": "string",
-										"default": ""
+										"type": "string"
 									}
 								}
 							}
 						}
-					}
-				}
-			},
-			"wireframes": {
-				"type": "object",
-				"properties": {
+					},
+					"sprites": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"_imageData": {
+									"type": "integer",
+									"default": 0
+								},
+								"bgmapMode": {
+									"type": "string",
+									"default": "Bgmap"
+								},
+								"displayMode": {
+									"type": "string",
+									"default": "ON"
+								},
+								"transparency": {
+									"type": "string",
+									"default": "None"
+								},
+								"displacement": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										},
+										"parallax": {
+											"type": "number"
+										}
+									}
+								},
+								"manipulationFunction": {
+									"type": "string"
+								},
+								"texture": {
+									"type": "object",
+									"properties": {
+										"files": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"padding": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												},
+												"y": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												}
+											}
+										},
+										"palette": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 3
+										},
+										"recycleable": {
+											"type": "boolean",
+											"default": false
+										},
+										"flip": {
+											"type": "object",
+											"properties": {
+												"horizontal": {
+													"type": "boolean",
+													"default": false
+												},
+												"vertical": {
+													"type": "boolean",
+													"default": false
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					"wireframes": {
 						"type": "array",
 						"items": {
@@ -295,20 +377,16 @@
 												"type": "object",
 												"properties": {
 													"x": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"y": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"z": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"parallax": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													}
 												}
 											},
@@ -316,20 +394,16 @@
 												"type": "object",
 												"properties": {
 													"x": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"y": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"z": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													},
 													"parallax": {
-														"type": "number",
-														"minimum": 0
+														"type": "number"
 													}
 												}
 											}
@@ -351,8 +425,11 @@
 							}
 						}
 					}
-				},
-				"required": []
+				}
+			},
+			"inGameType": {
+				"type": "string",
+				"default": "None"
 			},
 			"physics": {
 				"type": "object",
@@ -370,25 +447,22 @@
 					"bounciness": {
 						"type": "number"
 					},
+					"maximumSpeed": {
+						"type": "number"
+					},
 					"maximumVelocity": {
 						"type": "object",
 						"properties": {
 							"x": {
-								"type": "number",
-								"minimum": 0
+								"type": "number"
 							},
 							"y": {
-								"type": "number",
-								"minimum": 0
+								"type": "number"
 							},
 							"z": {
-								"type": "number",
-								"minimum": 0
+								"type": "number"
 							}
 						}
-					},
-					"maximumSpeed": {
-						"type": "number"
 					},
 					"gravityAxes": {
 						"type": "array",
@@ -409,16 +483,6 @@
 				"properties": {
 					"type": {
 						"type": "string",
-						"oneOf": [
-							{
-								"const": "Bgmap",
-								"title": "Bgmap"
-							},
-							{
-								"const": "Object",
-								"title": "Object"
-							}
-						],
 						"default": "Bgmap"
 					},
 					"customClass": {
@@ -438,186 +502,11 @@
 					},
 					"section": {
 						"type": "string",
-						"oneOf": [
-							{
-								"const": "rom",
-								"title": "ROM Space"
-							},
-							{
-								"const": "exp",
-								"title": "Expansion Space"
-							}
-						],
 						"default": "rom"
 					},
 					"compression": {
 						"type": "string",
-						"oneOf": [
-							{
-								"const": "none",
-								"title": "None"
-							},
-							{
-								"const": "rle",
-								"title": "RLE"
-							}
-						],
 						"default": "none"
-					},
-					"sprites": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"_imageData": {
-									"type": "integer",
-									"default": 0
-								},
-								"bgmapMode": {
-									"type": "string",
-									"oneOf": [
-										{
-											"const": "Bgmap",
-											"title": "Bgmap"
-										},
-										{
-											"const": "Affine",
-											"title": "Affine"
-										},
-										{
-											"const": "Object",
-											"title": "Object"
-										},
-										{
-											"const": "HBias",
-											"title": "HBias"
-										}
-									],
-									"default": "Bgmap"
-								},
-								"displayMode": {
-									"type": "string",
-									"oneOf": [
-										{
-											"const": "Both",
-											"title": "Display on both eyes"
-										},
-										{
-											"const": "Left",
-											"title": "Display on left eye only"
-										},
-										{
-											"const": "Right",
-											"title": "Display on right eye only"
-										}
-									],
-									"default": "Both"
-								},
-								"transparency": {
-									"type": "string",
-									"oneOf": [
-										{
-											"const": "None",
-											"title": "No transparency"
-										},
-										{
-											"const": "Odd",
-											"title": "Display only on odd frames"
-										},
-										{
-											"const": "Even",
-											"title": "Display only on even frames"
-										}
-									],
-									"default": "None"
-								},
-								"displacement": {
-									"type": "object",
-									"properties": {
-										"x": {
-											"type": "number"
-										},
-										"y": {
-											"type": "number"
-										},
-										"z": {
-											"type": "number"
-										},
-										"parallax": {
-											"type": "number"
-										}
-									}
-								},
-								"manipulationFunction": {
-									"type": "string",
-									"default": ""
-								},
-								"texture": {
-									"type": "object",
-									"properties": {
-										"files": {
-											"type": "array",
-											"items": {
-												"type": "string",
-												"default": ""
-											}
-										},
-										"padding": {
-											"type": "object",
-											"properties": {
-												"x": {
-													"type": "integer",
-													"maximum": 255,
-													"minimum": 0
-												},
-												"y": {
-													"type": "integer",
-													"maximum": 255,
-													"minimum": 0
-												}
-											}
-										},
-										"palette": {
-											"type": "integer",
-											"minimum": 0,
-											"maximum": 3
-										},
-										"recycleable": {
-											"type": "boolean",
-											"default": false
-										},
-										"flip": {
-											"type": "object",
-											"properties": {
-												"horizontal": {
-													"type": "boolean",
-													"default": false
-												},
-												"vertical": {
-													"type": "boolean",
-													"default": false
-												}
-											}
-										},
-										"size": {
-											"type": "object",
-											"properties": {
-												"x": {
-													"type": "integer",
-													"maximum": 64,
-													"minimum": 1
-												},
-												"y": {
-													"type": "integer",
-													"maximum": 64,
-													"minimum": 1
-												}
-											}
-										}
-									}
-								}
-							}
-						}
 					}
 				}
 			}
