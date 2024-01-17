@@ -270,7 +270,7 @@ int16 ObjectSpriteContainer::doRender(int16 index, bool evenFrame __attribute__(
 	return index;
 }
 
-void ObjectSpriteContainer::renderSprites(bool evenFrame)
+void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 {
 	// Setup spt
 	this->spt = _spt;
@@ -295,7 +295,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame)
 
 			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
 			// but calling ObjectSprite::getTotalObjects is too costly
-			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), evenFrame) == _objectIndex - (objectSprite->totalObjects - 1))
+			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), evenFrame, updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1))
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}

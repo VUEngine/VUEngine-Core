@@ -177,7 +177,7 @@ abstract class Sprite : VisualComponent
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	int16 render(int16 index, bool evenFrame);
+	int16 render(int16 index, bool evenFrame, bool updateAnimation);
 	void calculateParallax(fixed_t z);
 	int16 getIndex();
 	PixelVector getDisplacedPosition();

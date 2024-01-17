@@ -15,6 +15,7 @@
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
+#include <Clock.h>
 #include <DebugUtilities.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
@@ -112,7 +113,7 @@ void Sprite::processEffects()
 {
 }
 
-int16 Sprite::render(int16 index, bool evenFrame)
+int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -168,7 +169,10 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 
-	Sprite::update(this);
+	if(updateAnimation)	
+	{
+		Sprite::update(this);	
+	}
 
 	if(!this->rendered || this->index != index)
 	{

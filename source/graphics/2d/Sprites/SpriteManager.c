@@ -16,6 +16,7 @@
 
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
+#include <Clock.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
@@ -659,6 +660,8 @@ void SpriteManager::render()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
+	bool updateAnimations = !Clock::isPaused(VUEngine::getUpdateClock(VUEngine::getInstance()));
+
 	for(VirtualNode node = this->sprites->tail; NULL != node && 0 < this->freeLayer; node = node->previous)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::render: NULL node's data");
@@ -673,7 +676,7 @@ void SpriteManager::render()
 			continue;
 		}
 
-		if(Sprite::render(sprite, this->freeLayer, this->evenFrame) == this->freeLayer)
+		if(Sprite::render(sprite, this->freeLayer, this->evenFrame, updateAnimations) == this->freeLayer)
 		{
 			this->freeLayer--;
 		}
@@ -687,7 +690,7 @@ void SpriteManager::render()
 	{
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
-		ObjectSpriteContainer::renderSprites(objectSpriteContainer, this->evenFrame);
+		ObjectSpriteContainer::renderSprites(objectSpriteContainer, this->evenFrame, updateAnimations);
 	}
 
 	ObjectSpriteContainer::finishRendering();

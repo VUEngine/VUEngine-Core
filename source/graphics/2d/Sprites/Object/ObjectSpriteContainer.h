@@ -66,7 +66,7 @@ class ObjectSpriteContainer : Sprite
 	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);
 	void hideSprites(ObjectSprite spareSprite);
-	void renderSprites(bool evenFrame);
+	void renderSprites(bool evenFrame, bool updateAnimations);
 
 	override void registerWithManager();
 	override void unregisterWithManager();
