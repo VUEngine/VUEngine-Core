@@ -264,7 +264,7 @@ bool AnimationController::updateAnimation()
 		// Reset frame duration
 		AnimationController::resetFrameDuration(this);
 
-		uint8 actualFrameValue = this->animationFunction->frames[this->actualFrame];
+		uint16 actualFrameValue = this->animationFunction->frames[this->actualFrame];
 
 		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
 		this->previousFrameValue = actualFrameValue;
