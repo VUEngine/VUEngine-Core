@@ -1,6 +1,6 @@
 {
 	"targets": [{
-		"path": "source/DebugConfig.h",
+		"path": "headers/DebugConfig.h",
 		"root": "project"
 	}],
 	"template": "contributions/Template/DebugConfig.h.nj"

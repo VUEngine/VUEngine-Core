@@ -27,29 +27,13 @@ RumbleEffectROMSpec {{ item.name | sanitizeSpecName }}RumbleEffectSpec =
 		__RUMBLE_FREQ_160HZ,
 	{%- endif %}
 	// Positive Sustain
-	{% if item.sustainPositive >= 0 and item.sustainPositive <= 255 -%}
-		{{ item.sustainPositive }}
-	{%- else -%}
-		255
-	{%- endif %},
+	255,
 	// Negative Sustain
-	{% if item.sustainNegative >= 0 and item.sustainNegative <= 255 -%}
-		{{ item.sustainNegative }}
-	{%- else -%}
-		255
-	{%- endif %},
+	255,
 	// Overdrive
-	{% if item.overdrive >= 0 and item.overdrive <= 255 -%}
-		{{ item.overdrive }}
-	{%- else -%}
-		255
-	{%- endif %},
+	255,
 	// Break
-	{% if item.break >= 0 and item.break <= 255 -%}
-		{{ item.break }}
-	{%- else -%}
-		255
-	{%- endif %},
+	255,
 	// Stop before starting
 	{% if item.stopBeforeStarting %}true{% else %}false{% endif %},
 };
