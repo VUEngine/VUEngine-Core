@@ -244,8 +244,10 @@ typedef struct PaletteConfig
 enum MultiplexedInterrupts
 {
 	kVIPNoMultiplexedInterrupts = 0,
+	kVIPNonVIPMultiplexedInterrupts,
+	kVIPGameStartMultiplexedInterrupts,
+	kVIPXpendMultiplexedInterrupts,
 	kVIPAllMultiplexedInterrupts,
-	kVIPNonVIPMultiplexedInterrupts
 };
 
 class SpatialObject;
