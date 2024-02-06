@@ -28,6 +28,7 @@
 #define	__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS				1000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		100
+#define __DIRECT_DRAW_LINE_SHRINKEN_PADDING					32
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
@@ -553,7 +554,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return false;
 	}
 
-	if(_frustumWidth < xFromDeltaLeft || _frustumWidth < xFromDeltaRight || _frustumHeight < yFromDelta)
+	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaLeft || _frustumWidth +__DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yFromDelta)
 	{
 		totalPixelRounding = 0;
 
@@ -566,7 +567,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	if(_frustumWidth < xToDeltaLeft || _frustumWidth < xToDeltaRight || _frustumHeight < yToDelta)
+	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xToDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xToDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yToDelta)
 	{
 		totalPixelRounding = 0;
 
