@@ -306,21 +306,18 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 8) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 + 8))
 		{
-			int16 j = 0;
-			for(; j < this->cols; j++)
+			for(int16 j = 0; j < this->cols; j++)
 			{
 				int16 objectIndex = objectIndexStart + j;
 
 				objectPointer = &_objectAttributesCache[objectIndex];
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			}
+
 			continue;
 		}
 
-		int16 j = 0;
-		int16 xDisplacement = 0;
-
-		for(; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
+		for(int16 j = 0, xDisplacement = 0; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
 		{
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
