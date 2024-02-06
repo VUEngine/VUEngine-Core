@@ -241,7 +241,16 @@ void Sprite::position()
 		return;
 	}
 
+#ifdef __SPRITE_ROTATE_IN_3D
 	PixelVector position = Vector3D::transformToPixelVector(this->transformation->position);
+#else
+	PixelVector position = Vector3D::projectToPixelVector(Vector3D::sub(this->transformation->position, *_cameraPosition), 0);
+
+	if(position.z != this->position.z)
+	{
+		position.parallax = Optics::calculateParallax(this->transformation->position.z);
+	}	
+#endif
 
 	if
 	(

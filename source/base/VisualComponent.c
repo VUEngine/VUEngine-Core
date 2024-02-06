@@ -26,7 +26,7 @@
 static const Transformation _dummyTransformation = 
 {
 	// position
-	{0, 0, 0},
+	{-__SCREEN_WIDTH, -__SCREEN_HEIGHT, -__SCREEN_DEPTH},
 	// rotation
 	{0, 0, 0},
 	// scale
