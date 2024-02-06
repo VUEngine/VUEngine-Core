@@ -73,6 +73,7 @@ class ObjectSprite : Sprite
 	ObjectTextureSource objectTextureSource;
 
 	// cache some attributes to speed up rendering
+	uint16 fourthWordValue;
 	uint8 cols;
 	uint8 rows;
 	int8 xDisplacementIncrement;
