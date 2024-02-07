@@ -271,6 +271,8 @@ void ObjectSprite::setRotation(const Rotation* rotation)
 		this->halfHeight = -this->halfHeight;
 		this->yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
 	}
+
+	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
 
 /**
