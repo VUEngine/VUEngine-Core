@@ -171,7 +171,7 @@ int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
 
 	if(updateAnimation)	
 	{
-		Sprite::update(this);	
+		Sprite::update(this);
 	}
 
 	if(!this->rendered || this->index != index)
@@ -709,6 +709,7 @@ void Sprite::update()
 	{
 		Sprite::writeAnimation(this);
 		this->writeAnimationFrame = false;
+		this->rendered = false;
 	}
 }
 
