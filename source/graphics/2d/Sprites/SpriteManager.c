@@ -363,7 +363,7 @@ void SpriteManager::sort()
 /**
  * Sort sprite according to its z coordinate
  */
-void SpriteManager::doRegisterSprite(Sprite sprite)
+bool SpriteManager::doRegisterSprite(Sprite sprite)
 {
 	this->deferredSort = false;
 
@@ -375,22 +375,22 @@ void SpriteManager::doRegisterSprite(Sprite sprite)
 
 		NM_ASSERT(otherSprite != sprite, "SpriteManager::doRegisterSprite: sprite already registered");
 
-#ifndef __RELEASE
 		if(otherSprite == sprite)
 		{
-			return;
+			return false;
 		}
-#endif
 
 		// check if z positions are swapped
 		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
-			return;
+			return true;
 		}
 	}
 
 	VirtualList::pushBack(this->sprites, sprite);
+
+	return true;
 }
 
 /**
@@ -477,20 +477,13 @@ bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME(sprite), 1, 20, NULL);
 		NM_ASSERT(false, "SpriteManager::registerSprite: sprite already registered");
 	}
-#else
-	if(VirtualList::find(this->sprites, sprite))
-	{
-		return true;
-	}
 #endif
 
 	if(!isDeleted(sprite))
 	{
 		this->lockSpritesLists = true;
 
-		SpriteManager::doRegisterSprite(this, sprite);
-
-		if(hasEffects)
+		if(SpriteManager::doRegisterSprite(this, sprite) && hasEffects)
 		{
 			VirtualList::pushBack(this->specialSprites, sprite);
 		}
