@@ -420,6 +420,10 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				{
 #ifdef __RELEASE
 					_vipRegisters[__XPCTRL] &= ~__XPEN;
+					// Do not remove. When the performance is high enough
+					// removing the check causes the weird glitch where the 
+					// right display freezes
+					while(_vipRegisters[__XPSTTS] & __XPBSYR);
 #else
 					VIPManager::disableDrawing(this);
 #endif
