@@ -1206,7 +1206,7 @@ void Stage::setupSounds()
 
 		if(Sound::hasPCMTracks(sound))
 		{
-			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNonVIPMultiplexedInterrupts);
+			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNoMultiplexedInterrupts);
 		}
 
 		if(!isDeleted(sound))
