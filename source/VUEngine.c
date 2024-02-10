@@ -114,6 +114,7 @@ void VUEngine::constructor()
 
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
+	this->previousGameCycleEndedOnTime = false;
 	this->isPaused = false;
 	this->isToolStateTransition = false;
 
@@ -413,6 +414,7 @@ void VUEngine::changedState(ListenerObject eventFirer)
 
 	// Reset flags
 	this->currentGameCycleEnded = true;
+	this->previousGameCycleEndedOnTime = true;
 	this->nextGameCycleStarted = false;
 
 	// Save current state
@@ -737,6 +739,7 @@ void VUEngine::updateFrameRate()
 		return;
 	}
 #endif
+
 	FrameRate::update(this->frameRate);
 }
 
@@ -757,6 +760,8 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	ClockManager::update(this->clockManager, gameFrameDuration);
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
+
+	this->previousGameCycleEndedOnTime = this->currentGameCycleEnded;
 }
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
@@ -837,10 +842,13 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 
 void VUEngine::currentFrameStarted()
 {
+	if(this->previousGameCycleEndedOnTime)
+	{
+		VUEngine::updateFrameRate(this);
+	}
+
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
-
-	VUEngine::updateFrameRate(this);
 }
 
 void VUEngine::currentGameCycleEnded()
@@ -871,14 +879,17 @@ GameState VUEngine::run(GameState currentGameState)
 	// process collisions
 	VUEngine::updateCollisions(this, currentGameState);
 
-	// dispatch delayed messages
-	VUEngine::dispatchDelayedMessages(this);
-
 	// stream after the logic to avoid having a very heady frame
 	if(!VUEngine::stream(this, currentGameState))
 	{
-		// Update sound related logic
-		VUEngine::updateSound(this);
+		if(this->previousGameCycleEndedOnTime)
+		{
+			// dispatch delayed messages
+			VUEngine::dispatchDelayedMessages(this);
+
+			// Update sound related logic
+			VUEngine::updateSound(this);
+		}
 	}
 
 	// update game's logic

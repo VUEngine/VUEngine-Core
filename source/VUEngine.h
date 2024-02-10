@@ -92,6 +92,7 @@ singleton class VUEngine : ListenerObject
 	// frame flags
 	volatile bool currentGameCycleEnded;
 	volatile bool nextGameCycleStarted;
+	volatile bool previousGameCycleEndedOnTime;
 	// game paused flag
 	bool isPaused;
 	bool isToolStateTransition;
