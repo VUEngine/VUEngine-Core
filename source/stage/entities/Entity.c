@@ -280,11 +280,6 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 		Entity::destroySprites(this);
 	}
 
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
-	}
-
 	SpriteManager spriteManager = SpriteManager::getInstance();
 
 	for(int32 i = 0; NULL != spriteSpecs[i] && NULL != spriteSpecs[i]->allocator; i++)
@@ -404,11 +399,6 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 		Entity::destroyWireframes(this);
 	}
 
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
-	}
-
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
 	for(int32 i = 0; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
@@ -506,11 +496,6 @@ void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 	if(destroyOldColliders)
 	{
 		Entity::destroyColliders(this);
-	}
-
-	if(NULL == this->colliders)
-	{
-		this->colliders = new VirtualList();
 	}
 
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
