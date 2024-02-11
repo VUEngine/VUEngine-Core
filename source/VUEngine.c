@@ -739,9 +739,66 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 		{
 			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
 		}
-
+#ifdef __SHOW_TIMER_MANAGER_STATUS
+		TimerManager::printStatus(this->timerManager, 1, 10);
+		TimerManager::nextSecondStarted(this->timerManager);
+#endif
 		SoundManager::updateFrameRate(this->soundManager);
+
+		totalTime = 0;
+
+#ifdef __SHOW_STREAMING_PROFILING
+
+		if(!VUEngine::isInSpecialMode(this))
+		{
+			Printing::resetCoordinates(Printing::getInstance());
+			Stage::showStreamingProfiling(VUEngine::getStage(this), 1, 1);
+		}
+#endif
+
+#ifdef __DEBUG
+#ifdef __PRINT_DEBUG_ALERT
+		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
+#endif
+#endif
+
+#ifdef __SHOW_CHAR_MEMORY_STATUS
+		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
+#endif
+
+#ifdef __SHOW_BGMAP_MEMORY_STATUS
+		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
+		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
+#endif
+
+#ifdef __SHOW_MEMORY_POOL_STATUS
+		if(!VUEngine::isInSpecialMode(this))
+		{
+			Printing::resetCoordinates(Printing::getInstance());
+
+#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
+			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
+#else
+			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
+#endif
+		}
+#endif
+
+#ifdef __SHOW_STACK_OVERFLOW_ALERT
+		if(!VUEngine::isInSpecialMode(this))
+		{
+			Printing::resetCoordinates(Printing::getInstance());
+			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
+		}
+#endif
 	}
+
+#ifdef __TOOLS
+	if(VUEngine::isInSoundTest(this))
+	{
+		SoundManager::printPlaybackTime(this->soundManager);
+	}
+#endif
 }
 
 bool VUEngine::hasCurrentFrameEnded()
