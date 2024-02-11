@@ -48,13 +48,13 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 	this->componentSpec = componentSpec;
 	this->owner = owner;
 
-	if(!isDeleted(this->owner))
+	if(isDeleted(this->owner))
 	{
-		this->transformation = SpatialObject::getTransformation(this->owner);
+		this->transformation = &_dummyTransformation;
 	}
 	else
 	{
-		this->transformation = &_dummyTransformation;
+		this->transformation = SpatialObject::getTransformation(this->owner);
 	}
 }
 
