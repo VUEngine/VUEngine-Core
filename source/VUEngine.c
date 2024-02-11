@@ -850,20 +850,23 @@ void VUEngine::run(GameState currentGameState)
 		// process collisions
 		VUEngine::updateCollisions(this, currentGameState);
 
-		// dispatch delayed messages
-		VUEngine::dispatchDelayedMessages(this);
-
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
 
 		if(!this->nextGameCycleStarted)
 		{
-			// stream after the logic to avoid having a very heady frame
-			if(!VUEngine::stream(this, currentGameState))
+			// dispatch delayed messages
+			VUEngine::dispatchDelayedMessages(this);
+
+			if(!this->nextGameCycleStarted)
 			{
-				if(!this->nextGameCycleStarted)
+				// stream after the logic to avoid having a very heady frame
+				if(!VUEngine::stream(this, currentGameState))
 				{
-					// Update sound related logic
-					VUEngine::updateSound(this);
+					if(!this->nextGameCycleStarted)
+					{
+						// Update sound related logic
+						VUEngine::updateSound(this);
+					}
 				}
 			}
 		}
