@@ -49,22 +49,6 @@ void Behavior::setEnabled(bool value)
 	this->enabled = value;
 }
 
-void Behavior::start(Container owner __attribute__((unused)))
-{
-}
-
-void Behavior::update(Container owner __attribute__((unused)))
-{
-}
-
-void Behavior::pause(Container owner __attribute__((unused)))
-{
-}
-
-void Behavior::resume(Container owner __attribute__((unused)))
-{
-}
-
 static Behavior Behavior::create(const BehaviorSpec* behaviorSpec)
 {
 	ASSERT(behaviorSpec, "Behavior::create: NULL behavior");

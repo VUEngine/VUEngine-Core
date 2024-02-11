@@ -29,6 +29,7 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class Behavior;
 class Entity;
 class EntityFactory;
 class Telegram;
@@ -121,6 +122,8 @@ class Entity : Container
 	VirtualList colliders;
 	// wireframes
 	VirtualList wireframes;
+	// Bahaviors list
+	VirtualList behaviors;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement
@@ -146,6 +149,7 @@ class Entity : Container
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
 	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
 	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
+	Behavior addBehavior(BehaviorSpec* behaviorSpec);
 	void destroySprites();
 	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -159,6 +163,7 @@ class Entity : Container
 	int16 getInternalId();
 	VirtualList getSprites();
 	VirtualList getWireframes();
+	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);

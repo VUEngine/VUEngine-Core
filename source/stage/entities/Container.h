@@ -58,7 +58,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-class Behavior;
 class VirtualList;
 
 /// @ingroup stage-entities
@@ -72,8 +71,6 @@ class Container : SpatialObject
 	Transformation localTransformation;
 	// Children list
 	VirtualList children;
-	// Bahaviors list
-	VirtualList behaviors;
 	// Parent
 	Container parent;
 	// Name
@@ -95,8 +92,6 @@ class Container : SpatialObject
 	void streamOut(bool streamOut);
 	void deleteMyself();
 	void deleteAllChildren();
-	void addBehavior(Behavior behavior);
-	void removeBehavior(Behavior behavior);
 	int32 doKeyHold(int32 pressedKey);
 	int32 doKeyPressed(int32 pressedKey);
 	int32 doKeyUp(int32 pressedKey);
@@ -131,7 +126,6 @@ class Container : SpatialObject
 	Rotation getRotationFromDirection(const Vector3D* direction, uint8 axis);
 
 	// Use: typeofclass(ClassName)
-	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	bool getChildren(ClassPointer classPointer, VirtualList children);
 	void transformChildren(uint8 invalidateTransformationFlag);
 	

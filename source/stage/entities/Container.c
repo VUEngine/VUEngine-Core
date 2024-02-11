@@ -14,7 +14,6 @@
 
 #include <string.h>
 
-#include <Behavior.h>
 #include <DebugUtilities.h>
 #include <Printing.h>
 #include <VirtualList.h>
@@ -62,7 +61,6 @@ void Container::constructor(const char* const name)
 
 	this->parent = NULL;
 	this->children = NULL;
-	this->behaviors = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
 	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
@@ -109,13 +107,6 @@ void Container::destructor()
 		delete this->children;
 		this->children = NULL;
 
-	}
-
-	if(!isDeleted(this->behaviors))
-	{
-		VirtualList::deleteData(this->behaviors);
-		delete this->behaviors;
-		this->behaviors = NULL;
 	}
 
 	// first remove from parent
@@ -167,30 +158,6 @@ void Container::deleteMyself()
 void Container::streamOut(bool streamOut)
 {
 	this->dontStreamOut = !streamOut;
-}
-
-void Container::addBehavior(Behavior behavior)
-{
-	if(!isDeleted(behavior))
-	{
-		if(!this->behaviors)
-		{
-			this->behaviors = new VirtualList();
-		}
-
-		if(!VirtualList::find(this->behaviors, behavior))
-		{
-			VirtualList::pushBack(this->behaviors, behavior);
-		}
-	}
-}
-
-void Container::removeBehavior(Behavior behavior)
-{
-	if(this->behaviors)
-	{
-		VirtualList::removeElement(this->behaviors, behavior);
-	}
 }
 
 void Container::deleteAllChildren()
@@ -368,19 +335,6 @@ void Container::purgeChildren()
  */
 void Container::ready(bool recursive)
 {
-	if(this->behaviors)
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(Behavior::isEnabled(behavior))
-			{
-				Behavior::start(behavior, this);
-			}
-		}
-	}
-
 	if(recursive && this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
@@ -396,28 +350,7 @@ void Container::ready(bool recursive)
  */
 void Container::update()
 {
-	Container::updateBehaviors(this);
 	Container::updateChildren(this);
-}
-
-/**
- * Update container's behaviors
- *
- */
-void Container::updateBehaviors()
-{
-	if(NULL != this->behaviors)
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(Behavior::isEnabled(behavior))
-			{
-				Behavior::update(behavior, this);
-			}
-		}
-	}
 }
 
 /**
@@ -1304,19 +1237,6 @@ Container Container::getChildAtPosition(int16 position)
  */
 void Container::suspend()
 {
-	if(NULL != this->behaviors)
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(Behavior::isEnabled(behavior))
-			{
-				Behavior::pause(behavior, this);
-			}
-		}
-	}
-
 	Container::purgeChildren(this);
 
 	if(NULL != this->children)
@@ -1335,19 +1255,6 @@ void Container::suspend()
  */
 void Container::resume()
 {
-	if(this->behaviors)
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(Behavior::isEnabled(behavior))
-			{
-				Behavior::resume(behavior, this);
-			}
-		}
-	}
-
 	if(NULL != this->children)
 	{
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
@@ -1417,29 +1324,6 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 		}
 
 		if(VirtualList::getSize(children))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
-{
-	if(this->behaviors && !isDeleted(behaviors))
-	{
-		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
-		{
-			Behavior behavior = Behavior::safeCast(node->data);
-
-			if(!classPointer || Object::getCast(behavior, classPointer, NULL))
-			{
-				VirtualList::pushBack(behaviors, behavior);
-			}
-		}
-
-		if(NULL != behaviors->head)
 		{
 			return true;
 		}

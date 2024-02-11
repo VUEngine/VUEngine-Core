@@ -12,11 +12,15 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <CollisionManager.h>
 #include <DebugConfig.h>
 #include <DebugUtilities.h>
 #include <Entity.h>
 #include <Printing.h>
+#include <SpriteManager.h>
 #include <VirtualList.h>
+#include <VUEngine.h>
+#include <WireframeManager.h>
 
 #include "EntityFactory.h"
 
@@ -149,6 +153,7 @@ void EntityFactory::spawnEntity(const PositionedEntity* positionedEntity, Contai
 	positionedEntityDescription->wireframesCreated = false;
 	positionedEntityDescription->collidersCreated = false;
 	positionedEntityDescription->behaviorsCreated = false;
+	positionedEntityDescription->componentIndex = 0;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -219,46 +224,78 @@ uint32 EntityFactory::transformEntities()
 	{
 		if(!positionedEntityDescription->spritesCreated)
 		{
-			bool createdSprites = Entity::createSprites(positionedEntityDescription->entity);
-			positionedEntityDescription->spritesCreated = true;
-
-			if(createdSprites)
+			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
+			
+			if(NULL != entitySpec && NULL != entitySpec->spriteSpecs && NULL != entitySpec->spriteSpecs[positionedEntityDescription->componentIndex])
 			{
-				return __ENTITY_PENDING_PROCESSING;
+				bool createdComponent = NULL != Entity::addSprite(positionedEntityDescription->entity, entitySpec->spriteSpecs[positionedEntityDescription->componentIndex], SpriteManager::getInstance());
+				positionedEntityDescription->componentIndex++;
+
+				if(createdComponent)
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
 			}
+
+			positionedEntityDescription->spritesCreated = true;
+			positionedEntityDescription->componentIndex = 0;
 		}
 
 		if(!positionedEntityDescription->wireframesCreated)
 		{
-			bool createdWireframes = Entity::createWireframes(positionedEntityDescription->entity);
-			positionedEntityDescription->wireframesCreated = true;
-
-			if(createdWireframes)
+			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
+			
+			if(NULL != entitySpec && NULL != entitySpec->wireframeSpecs && NULL != entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex])
 			{
-				return __ENTITY_PENDING_PROCESSING;
+				bool createdComponent = NULL != Entity::addWireframe(positionedEntityDescription->entity, entitySpec->wireframeSpecs[positionedEntityDescription->componentIndex], WireframeManager::getInstance());
+				positionedEntityDescription->componentIndex++;
+
+				if(createdComponent)
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
 			}
+
+			positionedEntityDescription->wireframesCreated = true;
+			positionedEntityDescription->componentIndex = 0;
 		}
 
 		if(!positionedEntityDescription->collidersCreated)
 		{
-			bool createdColliders = Entity::createColliders(positionedEntityDescription->entity);
-			positionedEntityDescription->collidersCreated = true;
-
-			if(createdColliders)
+			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
+			
+			if(NULL != entitySpec && NULL != entitySpec->colliderSpecs[positionedEntityDescription->componentIndex].allocator)
 			{
-				return __ENTITY_PENDING_PROCESSING;
+				bool createdComponent = NULL != Entity::addCollider(positionedEntityDescription->entity, &entitySpec->colliderSpecs[positionedEntityDescription->componentIndex], VUEngine::getCollisionManager(VUEngine::getInstance()));
+				positionedEntityDescription->componentIndex++;
+
+				if(createdComponent)
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
 			}
+
+			positionedEntityDescription->collidersCreated = true;
+			positionedEntityDescription->componentIndex = 0;
 		}
 
 		if(!positionedEntityDescription->behaviorsCreated)
 		{
-			bool createdBehaviors = Entity::createBehaviors(positionedEntityDescription->entity);
-			positionedEntityDescription->behaviorsCreated = true;
-
-			if(createdBehaviors)
+			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
+			
+			if(NULL != entitySpec && NULL != entitySpec->behaviorSpecs && NULL != entitySpec->behaviorSpecs[positionedEntityDescription->componentIndex])
 			{
-				return __ENTITY_PENDING_PROCESSING;
+				bool createdComponent = NULL != Entity::addBehavior(positionedEntityDescription->entity, entitySpec->behaviorSpecs[positionedEntityDescription->componentIndex]);
+				positionedEntityDescription->componentIndex++;
+
+				if(createdComponent)
+				{
+					return __ENTITY_PENDING_PROCESSING;
+				}
 			}
+
+			positionedEntityDescription->behaviorsCreated = true;
+			positionedEntityDescription->componentIndex = 0;
 		}
 
 		if(!positionedEntityDescription->transformed)
