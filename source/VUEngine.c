@@ -25,6 +25,7 @@
 #include <CollisionManager.h>
 #include <DebugConfig.h>
 #include <DebugState.h>
+#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <CollisionManager.h>
 #include <FrameRate.h>
@@ -114,7 +115,6 @@ void VUEngine::constructor()
 
 	this->nextGameCycleStarted = false;
 	this->currentGameCycleEnded = false;
-	this->previousGameCycleEndedOnTime = false;
 	this->isPaused = false;
 	this->isToolStateTransition = false;
 
@@ -234,43 +234,7 @@ void VUEngine::start(GameState currentGameState)
 
 	if(NULL == StateMachine::getCurrentState(this->stateMachine))
 	{
-		// Set state
-		VUEngine::setState(this, currentGameState);
-
-		while(NULL != currentGameState)
-		{
-			VUEngine::currentFrameStarted(this);
-
-#ifdef __ENABLE_PROFILER
-			HardwareManager::disableInterrupts();
-			Profiler::start(Profiler::getInstance());
-#endif
-
-			currentGameState = VUEngine::run(this, currentGameState);
-
-#ifdef __ENABLE_PROFILER
-			HardwareManager::enableInterrupts();
-#endif
-
-			VUEngine::currentGameCycleEnded(this);
-
-#ifndef __RELEASE
-			VUEngine::debug(this);
-#endif
-
-			while(!this->nextGameCycleStarted)
-			{
-				// This breaks PCM playback but reports torn frames more accurately
-				if(!this->nextGameCycleStarted)
-				{
-					// Halting the CPU seems to only affect the profiling in Mednafen
-					// But still haven't tested it on hardware
-#if !defined(__ENABLE_PROFILER) && !defined(__PRINT_FRAMERATE)
-					HardwareManager::halt();
-#endif
-				}
-			}
-		}
+		VUEngine::run(this, currentGameState);
 	}
 	else
 	{
@@ -414,8 +378,7 @@ void VUEngine::changedState(ListenerObject eventFirer)
 
 	// Reset flags
 	this->currentGameCycleEnded = true;
-	this->previousGameCycleEndedOnTime = true;
-	this->nextGameCycleStarted = false;
+	this->nextGameCycleStarted = true;
 
 	// Save current state
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -760,8 +723,6 @@ void VUEngine::nextGameCycleStarted(uint16 gameFrameDuration)
 	ClockManager::update(this->clockManager, gameFrameDuration);
 
 	FrameRate::gameFrameStarted(this->frameRate, this->currentGameCycleEnded);
-
-	this->previousGameCycleEndedOnTime = this->currentGameCycleEnded;
 }
 
 void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
@@ -778,82 +739,9 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 		{
 			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
 		}
-#ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::printStatus(this->timerManager, 1, 10);
-		TimerManager::nextSecondStarted(this->timerManager);
-#endif
+
 		SoundManager::updateFrameRate(this->soundManager);
-
-		totalTime = 0;
-
-#ifdef __SHOW_STREAMING_PROFILING
-
-		if(!VUEngine::isInSpecialMode(this))
-		{
-			Printing::resetCoordinates(Printing::getInstance());
-			Stage::showStreamingProfiling(VUEngine::getStage(this), 1, 1);
-		}
-#endif
-
-#ifdef __DEBUG
-#ifdef __PRINT_DEBUG_ALERT
-		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
-#endif
-#endif
-
-#ifdef __SHOW_CHAR_MEMORY_STATUS
-		CharSetManager::print(CharSetManager::getInstance(), 1, 5);
-#endif
-
-#ifdef __SHOW_BGMAP_MEMORY_STATUS
-		BgmapTextureManager::print(BgmapTextureManager::getInstance(), 1, 5);
-		ParamTableManager::print(ParamTableManager::getInstance(), 1 + 27, 5);
-#endif
-
-#ifdef __SHOW_MEMORY_POOL_STATUS
-		if(!VUEngine::isInSpecialMode(this))
-		{
-			Printing::resetCoordinates(Printing::getInstance());
-
-#ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
-			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
-#else
-			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
-#endif
-		}
-#endif
-
-#ifdef __SHOW_STACK_OVERFLOW_ALERT
-		if(!VUEngine::isInSpecialMode(this))
-		{
-			Printing::resetCoordinates(Printing::getInstance());
-			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
-		}
-#endif
 	}
-
-#ifdef __TOOLS
-	if(VUEngine::isInSoundTest(this))
-	{
-		SoundManager::printPlaybackTime(this->soundManager);
-	}
-#endif
-}
-
-void VUEngine::currentFrameStarted()
-{
-	if(this->previousGameCycleEndedOnTime)
-	{
-		VUEngine::updateFrameRate(this);
-	}
-
-	this->nextGameCycleStarted = false;
-	this->currentGameCycleEnded = false;
-}
-
-void VUEngine::currentGameCycleEnded()
-{
-	this->currentGameCycleEnded = true;
 }
 
 bool VUEngine::hasCurrentFrameEnded()
@@ -862,38 +750,73 @@ bool VUEngine::hasCurrentFrameEnded()
 	return this->currentGameCycleEnded;
 }
 
-GameState VUEngine::run(GameState currentGameState)
+void VUEngine::run(GameState currentGameState)
 {
-	// Generate random seed
-	_gameRandomSeed = Utilities::randomSeed();
+	// Set state
+	VUEngine::setState(this, currentGameState);
 
-	// process user's input
-	VUEngine::processUserInput(this, currentGameState);
-
-	// simulate physics
-	VUEngine::updatePhysics(this, currentGameState);
-
-	// apply transformations
-	VUEngine::updateTransformations(this, currentGameState);
-
-	// process collisions
-	VUEngine::updateCollisions(this, currentGameState);
-
-	// stream after the logic to avoid having a very heady frame
-	if(!VUEngine::stream(this, currentGameState))
+	while(NULL != currentGameState)
 	{
-		if(this->previousGameCycleEndedOnTime)
+#ifndef __RELEASE
+		VUEngine::debug(this);
+#endif
+
+		while(!this->nextGameCycleStarted)
 		{
-			// dispatch delayed messages
-			VUEngine::dispatchDelayedMessages(this);
-
-			// Update sound related logic
-			VUEngine::updateSound(this);
+#if !defined(__ENABLE_PROFILER)
+			HardwareManager::halt();
+#endif
 		}
-	}
 
-	// update game's logic
-	return VUEngine::updateLogic(this, currentGameState);
+		this->nextGameCycleStarted = false;
+		this->currentGameCycleEnded = false;
+
+		VUEngine::updateFrameRate(this);
+
+#ifdef __ENABLE_PROFILER
+		HardwareManager::disableInterrupts();
+		Profiler::start(Profiler::getInstance());
+#endif
+
+		// Generate random seed
+		_gameRandomSeed = Utilities::randomSeed();
+
+		// process user's input
+		VUEngine::processUserInput(this, currentGameState);
+
+		// simulate physics
+		VUEngine::updatePhysics(this, currentGameState);
+
+		// apply transformations
+		VUEngine::updateTransformations(this, currentGameState);
+
+		// process collisions
+		VUEngine::updateCollisions(this, currentGameState);
+
+		// dispatch delayed messages
+		VUEngine::dispatchDelayedMessages(this);
+
+		currentGameState = VUEngine::updateLogic(this, currentGameState);
+
+		if(!this->nextGameCycleStarted)
+		{
+			// stream after the logic to avoid having a very heady frame
+			if(!VUEngine::stream(this, currentGameState))
+			{
+				if(!this->nextGameCycleStarted)
+				{
+					// Update sound related logic
+					VUEngine::updateSound(this);
+				}
+			}
+		}
+
+#ifdef __ENABLE_PROFILER
+		HardwareManager::enableInterrupts();
+#endif
+
+		this->currentGameCycleEnded = true;
+	}
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
