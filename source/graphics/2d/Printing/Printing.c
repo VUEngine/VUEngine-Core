@@ -764,7 +764,7 @@ void Printing::render(uint8 textLayer)
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::doRender(this->activePrintingSprite, textLayer, false);
+		PrintingSprite::doRender(this->activePrintingSprite, textLayer);
 	}
 }
 

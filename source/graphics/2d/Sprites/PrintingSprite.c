@@ -77,7 +77,7 @@ void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
  *
  * @param evenFrame
  */
-int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 PrintingSprite::doRender(int16 index)
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 

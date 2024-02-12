@@ -77,7 +77,7 @@ class PrintingSprite : BgmapSprite
 	int16 getGY();
 	int16 getGP();
 
-	override int16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index);
 }
 
 

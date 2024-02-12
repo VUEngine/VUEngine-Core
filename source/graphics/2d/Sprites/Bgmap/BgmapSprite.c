@@ -305,9 +305,9 @@ void BgmapSprite::calculateSize(const Scale* scale)
  * @memberof		BgmapSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 BgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 

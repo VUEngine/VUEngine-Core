@@ -114,7 +114,7 @@ void Sprite::processEffects()
 {
 }
 
-int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
+int16 Sprite::render(int16 index, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -128,7 +128,7 @@ int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
 
 	if(isDeleted(this->texture))
 	{
-		this->index = Sprite::doRender(this, index, evenFrame);
+		this->index = Sprite::doRender(this, index);
 		return this->index;
 	}
 
@@ -184,7 +184,7 @@ int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
 	{
 		this->rendered = true;
 
- 		this->index = Sprite::doRender(this, index, evenFrame);
+ 		this->index = Sprite::doRender(this, index);
 
 #ifdef __SHOW_SPRITES_PROFILING
 		extern int32 _renderedSprites;

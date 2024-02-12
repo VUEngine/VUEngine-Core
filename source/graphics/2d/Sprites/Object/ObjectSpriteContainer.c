@@ -259,17 +259,23 @@ void ObjectSpriteContainer::hideForDebug()
 }
 
 /**
- * Write WORLD data to DRAM
+ * Render
  *
- * @param evenFrame
+ * @param index
  */
-int16 ObjectSpriteContainer::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 ObjectSpriteContainer::doRender(int16 index)
 {
 	this->index = index;
 
 	return index;
 }
 
+/**
+ * Render child sprites
+ *
+ * @param evenFrame
+ * @param updateAnimations
+ */
 void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 {
 	// Setup spt
@@ -295,7 +301,7 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 			// Do not change the order of this condition, objectSprite->totalObjects may be modified during rendering
 			// but calling ObjectSprite::getTotalObjects is too costly
-			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), evenFrame, updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1))
+			if(ObjectSprite::render(objectSprite, _objectIndex - (objectSprite->totalObjects - 1), updateAnimations) == _objectIndex - (objectSprite->totalObjects - 1))
 			{
 				_objectIndex -= objectSprite->totalObjects;
 			}
