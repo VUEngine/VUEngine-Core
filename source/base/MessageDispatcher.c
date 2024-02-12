@@ -195,11 +195,11 @@ void MessageDispatcher::processDiscardedMessages()
 /**
  * Dispatch the delayed messages whose delay has expired
  */
-uint32 MessageDispatcher::dispatchDelayedMessages()
+bool MessageDispatcher::dispatchDelayedMessages()
 {
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
-	uint32 messagesDispatched = false;
+	bool messagesDispatched = false;
 
 	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
 	{

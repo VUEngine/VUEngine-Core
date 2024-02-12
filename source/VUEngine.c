@@ -569,7 +569,6 @@ void VUEngine::dispatchDelayedMessages()
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
 #endif
-
 }
 
 // update game's logic subsystem
@@ -818,13 +817,6 @@ void VUEngine::run(GameState currentGameState)
 		VUEngine::debug(this);
 #endif
 
-		while(!this->nextGameCycleStarted)
-		{
-#if !defined(__ENABLE_PROFILER)
-			HardwareManager::halt();
-#endif
-		}
-
 		this->nextGameCycleStarted = false;
 		this->currentGameCycleEnded = false;
 
@@ -850,24 +842,25 @@ void VUEngine::run(GameState currentGameState)
 		// process collisions
 		VUEngine::updateCollisions(this, currentGameState);
 
+		// dispatch delayed messages
+		VUEngine::dispatchDelayedMessages(this);
+
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
 
 		if(!this->nextGameCycleStarted)
 		{
-			// dispatch delayed messages
-			VUEngine::dispatchDelayedMessages(this);
+			// Give priority to the stream
+			if(!VUEngine::stream(this, currentGameState))
+			{
+				// Update sound related logic if the streaming did nothing
+				VUEngine::updateSound(this);
+			}
 
-			if(!this->nextGameCycleStarted)
+			// dispatch delayed messages
+			while(!this->nextGameCycleStarted)
 			{
 				// stream after the logic to avoid having a very heady frame
-				if(!VUEngine::stream(this, currentGameState))
-				{
-					if(!this->nextGameCycleStarted)
-					{
-						// Update sound related logic
-						VUEngine::updateSound(this);
-					}
-				}
+				VUEngine::stream(this, currentGameState);
 			}
 		}
 
