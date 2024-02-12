@@ -65,6 +65,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->rotation = Rotation::zero();
 	this->scale = Scale::unit();
 	this->transformed = false;
+	this->displacement = PixelVector::zero();
 }
 
 /**
