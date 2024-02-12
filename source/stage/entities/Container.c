@@ -57,7 +57,8 @@ void Container::constructor(const char* const name)
 	this->localTransformation.scale = Scale::unit();
 
 	// force global position calculation on the next transformation cycle
-	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
+	this->transformation.invalid = __NON_TRANSFORMED;
+	this->localTransformation.invalid = __VALID_TRANSFORMATION;
 
 	this->parent = NULL;
 	this->children = NULL;
@@ -424,6 +425,9 @@ Transformation Container::getEnvironmentTransform()
 		
 			// spatial scale
 			{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+
+			// invalidity
+			__VALID_TRANSFORMATION
 		};
 
 		return environmentTransformation;
@@ -567,7 +571,7 @@ void Container::initialTransform(const Transformation* environmentTransformation
 		{
 			Container child = Container::safeCast(node->data);
 
-			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
+			child->transformation.invalid |= this->transformation.invalid;
 
 			Container::initialTransform(child, &this->transformation);
 		}
@@ -584,7 +588,7 @@ void Container::transform(const Transformation* environmentTransformation, uint8
 {
 	ASSERT(environmentTransformation, "Container::transform: null environmentTransformation");
 
-	if(0 != (__INVALIDATE_SCALE & this->invalidateGlobalTransformation))
+	if(0 != (__INVALIDATE_SCALE & this->transformation.invalid))
 	{
 		if(0 != (__INHERIT_SCALE & this->inheritEnvironment))
 		{
@@ -592,7 +596,7 @@ void Container::transform(const Transformation* environmentTransformation, uint8
 		}
 	}
 
-	if(0 != (__INVALIDATE_ROTATION & this->invalidateGlobalTransformation))
+	if(0 != (__INVALIDATE_ROTATION & this->transformation.invalid))
 	{
 		if(0 != (__INHERIT_ROTATION & this->inheritEnvironment))
 		{
@@ -600,7 +604,7 @@ void Container::transform(const Transformation* environmentTransformation, uint8
 		}
 	}
 
-	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & this->invalidateGlobalTransformation))
+	if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & this->transformation.invalid))
 	{
 		// apply environment transformation
 		if(0 != (__INHERIT_POSITION & this->inheritEnvironment))
@@ -613,7 +617,7 @@ void Container::transform(const Transformation* environmentTransformation, uint8
 	Container::transformChildren(this, invalidateTransformationFlag);
 
 	// don't update position on next transformation cycle
-	this->invalidateGlobalTransformation = false;
+	this->transformation.invalid = __VALID_TRANSFORMATION;
 }
 
 void Container::transformChildren(uint8 invalidateTransformationFlag)
@@ -625,7 +629,7 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		{
 			Container child = Container::safeCast(node->data);
 
-			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
+			child->transformation.invalid |= this->transformation.invalid;
 
 			// Do not enable this check to optimize things
 			// It messes up child entities when you need to 
@@ -644,7 +648,7 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 				continue;
 			}
 
-			if(!child->transform && NULL == child->children && !child->invalidateGlobalTransformation)
+			if(!child->transform && NULL == child->children && !child->transformation.invalid)
 			{
 				continue;
 			}
@@ -694,11 +698,11 @@ void Container::setPosition(const Vector3D* position)
 	this->localTransformation.position = Vector3D::sum(this->localTransformation.position, displacement);
 	this->transformation.position = *position;
 
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+	this->transformation.invalid |= __INVALIDATE_POSITION;
 
 	if(displacement.z)
 	{
-		this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+		this->transformation.invalid |= __INVALIDATE_SCALE;
 	}
 }
 
@@ -709,7 +713,7 @@ void Container::setRotation(const Rotation* rotation)
 	this->transformation.rotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
 	this->localTransformation.rotation = Rotation::sub(this->transformation.rotation, displacement);
 
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
+	this->transformation.invalid |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 }
 
 void Container::setScale(const Scale* scale)
@@ -719,7 +723,7 @@ void Container::setScale(const Scale* scale)
 	this->localTransformation.scale = Scale::product(this->transformation.scale, factor);	
 	this->transformation.scale = *scale;
 
-	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+	this->transformation.invalid |= __INVALIDATE_SCALE;
 }
 
 /**
@@ -874,7 +878,7 @@ void Container::scale(const Scale* scale)
  */
 void Container::invalidateGlobalTransformation()
 {
-	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
+	this->transformation.invalid = __INVALIDATE_TRANSFORMATION;
 
 	if(!isDeleted(this->children))
 	{
@@ -892,7 +896,7 @@ void Container::invalidateGlobalTransformation()
  */
 void Container::invalidateGlobalPosition()
 {
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+	this->transformation.invalid |= __INVALIDATE_POSITION;
 
 	if(NULL != this->children)
 	{
@@ -910,7 +914,7 @@ void Container::invalidateGlobalPosition()
  */
 void Container::invalidateGlobalRotation()
 {
-	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
+	this->transformation.invalid |= __INVALIDATE_ROTATION;
 
 	if(NULL != this->children)
 	{
@@ -928,7 +932,7 @@ void Container::invalidateGlobalRotation()
  */
 void Container::invalidateGlobalScale()
 {
-	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+	this->transformation.invalid |= __INVALIDATE_SCALE;
 
 	if(NULL != this->children)
 	{
@@ -1334,7 +1338,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 
 bool Container::isTransformed()
 {
-	return !this->invalidateGlobalTransformation;
+	return __VALID_TRANSFORMATION == this->transformation.invalid;
 }
 
 Rotation Container::getRotationFromDirection(const Vector3D* direction, uint8 axis)

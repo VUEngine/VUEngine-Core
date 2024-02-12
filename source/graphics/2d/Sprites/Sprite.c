@@ -155,6 +155,11 @@ int16 Sprite::render(int16 index, bool evenFrame, bool updateAnimation)
 
 	if(NULL != this->owner)
 	{
+		if(NULL != this->transformation && __NON_TRANSFORMED == this->transformation->invalid)
+		{
+			return __NO_RENDER_INDEX;
+		}
+
 		Sprite::position(this);
 		Sprite::rotate(this);
 		Sprite::scale(this);

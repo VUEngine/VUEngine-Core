@@ -156,7 +156,7 @@ void Actor::setLocalPosition(const Vector3D* position)
 		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
 	}
 
-	this->invalidateGlobalTransformation |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
+	this->transformation.invalid |= (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 }
 
 void Actor::setDirection(const Vector3D* direction)

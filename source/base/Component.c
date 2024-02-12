@@ -30,7 +30,9 @@ static const Transformation _dummyTransformation =
 	// rotation
 	{0, 0, 0},
 	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+	// invalidity
+	__NON_TRANSFORMED
 };
 
 

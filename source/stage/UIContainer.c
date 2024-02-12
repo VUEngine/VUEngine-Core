@@ -96,7 +96,7 @@ void UIContainer::prepareToRender()
 
 	this->localTransformation.position = *_cameraPosition;
 	this->localTransformation.rotation = *_cameraInvertedRotation;
-	this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
+	this->transformation.invalid = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 
 	Base::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
 }

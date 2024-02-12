@@ -63,7 +63,10 @@ const Transformation neutralEnvironmentTransformation =
 	{0, 0, 0},
  
 	// spatial scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+
+	// invalidty flag
+	__VALID_TRANSFORMATION
 };
 
 #ifdef __PROFILE_STREAMING

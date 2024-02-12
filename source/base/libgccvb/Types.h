@@ -277,6 +277,9 @@ typedef struct Transformation
 	// spatial scale
 	Scale scale;
 
+	// validity flag
+	uint8 invalid;
+
 } Transformation;
 
 typedef struct RightBox

@@ -102,6 +102,21 @@
 #define __NEAR		((int32)-1)
 #define __FAR		((int32)1)
 
+// Transformations
+#define __VALID_TRANSFORMATION				0x00
+#define __NON_TRANSFORMED					0xFF
+#define __INVALIDATE_TRANSFORMATION			0x0F
+#define __INVALIDATE_POSITION				0x01
+#define __INVALIDATE_ROTATION				0x02
+#define __INVALIDATE_SCALE					0x04
+#define __INVALIDATE_PROJECTION				0x08
+
+#define __INHERIT_TRANSFORMATION			0x0F
+#define __INHERIT_NONE						0x00
+#define __INHERIT_POSITION					0x01
+#define __INHERIT_ROTATION					0x02
+#define __INHERIT_SCALE						0x04
+
 
 #define __MAXIMUM_FPS						50
 

@@ -178,7 +178,7 @@ uint32 CollisionManager::update(Clock clock)
 		}
 	#endif
 
-		if(!(collider->enabled && collider->checkForCollisions))
+		if(!(collider->enabled && collider->checkForCollisions) || __NON_TRANSFORMED == collider->transformation->invalid)
 		{
 			continue;
 		}
