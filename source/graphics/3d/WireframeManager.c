@@ -282,12 +282,13 @@ void WireframeManager::render()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
+		wireframe->rendered = false;
+
 		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
 		{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
-			wireframe->rendered = false;
 
 			continue;
 		}
