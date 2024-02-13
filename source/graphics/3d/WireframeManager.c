@@ -287,6 +287,8 @@ void WireframeManager::render()
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
+			wireframe->rendered = false;
+
 			continue;
 		}
 
