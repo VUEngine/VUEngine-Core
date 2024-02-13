@@ -42,7 +42,7 @@ void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
 	Base::constructor(owner, wireframeSpec);
 
 	this->color = NULL == wireframeSpec ? __COLOR_BRIGHT_RED : wireframeSpec->color;
-	this->interlaced = false;
+	this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 	this->bufferIndex = 0;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
@@ -117,7 +117,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 
 	if(__COLOR_BLACK != this->color)
 	{
-		this->interlaced = false;
+		this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 
 		if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD) < distanceToCamera)
 		{
@@ -166,7 +166,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		}
 		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 2)) < distanceToCamera)
 		{
-			this->interlaced = false;
+			this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 			this->color = __COLOR_DARK_RED;
 		}
 		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 3)) < distanceToCamera)
@@ -181,12 +181,12 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 		}
 		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD - (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
 		{
-			this->interlaced = false;
+			this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 			this->color = __COLOR_MEDIUM_RED;
 		}
 		else
 		{
-			this->interlaced = false;
+			this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 			this->color = __COLOR_BRIGHT_RED;
 		}
 	}
