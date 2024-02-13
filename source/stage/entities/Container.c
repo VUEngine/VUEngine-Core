@@ -336,7 +336,7 @@ void Container::purgeChildren()
  */
 void Container::ready(bool recursive)
 {
-	if(recursive && this->children)
+	if(recursive && NULL != this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
