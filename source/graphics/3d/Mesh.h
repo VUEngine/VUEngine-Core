@@ -65,9 +65,9 @@ class Mesh : Wireframe
 	
 	override PixelRightBox getPixelRightBox();
 	override VirtualList getVertices();
-	override void draw();
-	void drawInterlaced();
-	override void render();
+	override bool draw();
+	bool drawInterlaced();
+	override bool render();
 }
 
 

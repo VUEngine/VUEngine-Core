@@ -330,7 +330,7 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 /**
  * Render
  */
-void Mesh::render()
+bool Mesh::render()
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
 
@@ -340,7 +340,7 @@ void Mesh::render()
 
 	if(__COLOR_BLACK == this->color)
 	{
-		return;
+		return false;
 	}
 
 	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
@@ -405,33 +405,39 @@ void Mesh::render()
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
+
+	return true;
 }
 
 /**
  * Draw
  */
-void Mesh::draw()
+bool Mesh::draw()
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::draw: NULL transformation");
 
-	CACHE_RESET;
+	bool drawn = false;
 
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
 
 		// draw the line in both buffers
-		this->drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
+		drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;
 }
 
 /**
  * Draw interlaced
  */
-void Mesh::drawInterlaced()
+bool Mesh::drawInterlaced()
 {
+	bool drawn = false;
+
 	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
 	{
 		MeshSegment* meshSegment = (MeshSegment*)node->data;
@@ -441,6 +447,8 @@ void Mesh::drawInterlaced()
 	}
 
 	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;
 }
 
 VirtualList Mesh::getVertices()

@@ -55,7 +55,7 @@ void Line::destructor()
 /**
  * Render
  */
-void Line::render()
+bool Line::render()
 {
 	Vector3D position = Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b);
 
@@ -64,7 +64,7 @@ void Line::render()
 
 	if(__COLOR_BLACK == this->color)
 	{
-		return;
+		return false;
 	}
 
 	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->a, _previousCameraPosition);
@@ -74,6 +74,8 @@ void Line::render()
 	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->b, _previousCameraPosition);
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->b = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+
+	return true;
 }
 
 /**
@@ -81,9 +83,9 @@ void Line::render()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Line::draw()
+bool Line::draw()
 {
-	this->drawn = DirectDraw::drawColorLine
+	return DirectDraw::drawColorLine
 	(
 		this->a,
 		this->b,

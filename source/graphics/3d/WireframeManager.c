@@ -293,9 +293,7 @@ void WireframeManager::render()
 			continue;
 		}
 
-		Wireframe::render(wireframe);
-
-		wireframe->rendered = true;
+		wireframe->rendered = Wireframe::render(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
 		if(__COLOR_BLACK != wireframe->color)
@@ -346,6 +344,8 @@ void WireframeManager::draw()
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
+		wireframe->drawn = false;
+
 		if(!wireframe->rendered || __COLOR_BLACK == wireframe->color)
 		{
 			continue;
@@ -356,7 +356,7 @@ void WireframeManager::draw()
 			continue;
 		}
 
-		Wireframe::draw(wireframe);
+		wireframe->drawn = Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
 		this->drawnWireframes++;

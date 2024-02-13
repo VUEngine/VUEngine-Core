@@ -55,8 +55,8 @@ class Sphere : Wireframe
 	void setRadius(fixed_t radius);
 	void setRadiusScale(fixed_t radiusScale);
 
-	override void render();
-	override void draw();
+	override bool render();
+	override bool draw();
 }
 
 
