@@ -42,12 +42,12 @@ void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
 	Base::constructor(owner, wireframeSpec);
 
 	this->color = NULL == wireframeSpec ? __COLOR_BRIGHT_RED : wireframeSpec->color;
+	this->displacement = ((WireframeSpec*)this->componentSpec)->displacement;
 	this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
 	this->bufferIndex = 0;
 	this->transparent = wireframeSpec->transparent;
 	this->squaredDistanceToCamera = 0;
 	this->rendered = false;
-	this->displacement = Vector3D::zero();
 	this->drawn = false;
 }
 
