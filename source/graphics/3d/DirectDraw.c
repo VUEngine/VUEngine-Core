@@ -471,7 +471,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 		{
 			return false;
 		}
-		
+
 		if(0 > xySlope * xySlopeHelper)
 		{
 			xySlopeHelper = -xySlopeHelper;
@@ -499,6 +499,35 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 		y = _frustumFixedPoint.y1;
 		x = __FIXED_EXT_DIV(y - y1, xySlope) + x1;
 		parallax = __FIXED_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
+	}
+
+
+	// Check for overflows
+	if(*x0 < x1 && x >= x1)
+	{
+		return false;
+	}
+	else if(*x0 > x1 && x <= x1)
+	{
+		return false;
+	}
+
+	if(*y0 < y1 && y >= y1)
+	{
+		return false;
+	}
+	else if(*y0 > y1 && x <= y1)
+	{
+		return false;
+	}
+
+	if(*parallax0 < parallax1 && parallax >= parallax1)
+	{
+		return false;
+	}
+	else if(*parallax0 > parallax1 && parallax <= parallax1)
+	{
+		return false;
 	}
 
 	*x0 = x;
@@ -587,9 +616,15 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	}
 
 /*
-	PixelVector::print(fromPoint, 21, 12);
-	PixelVector::print(toPoint, 31, 12);
+	PixelVector::print(fromPoint, 1, 16);
+	PixelVector::print(toPoint, 11, 16);
 
+	PRINT_TEXT("x:    ", 1, 10);
+	PRINT_TEXT("y:    ", 1, 11);
+	PRINT_TEXT("p:    ", 1, 12);
+	PRINT_TEXT("x:    ", 11, 10);
+	PRINT_TEXT("y:    ", 11, 11);
+	PRINT_TEXT("p:    ", 11, 12);
 	PRINT_INT(__FIXED_EXT_TO_I(fromPointX), 1, 10);
 	PRINT_INT(__FIXED_EXT_TO_I(fromPointY), 1, 11);
 	PRINT_INT(__FIXED_EXT_TO_I(fromPointParallax), 1, 12);
