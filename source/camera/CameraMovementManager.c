@@ -16,7 +16,6 @@
 #include <DebugConfig.h>
 #include <Entity.h>
 #include <VIPManager.h>
-#include <CustomCameraEffectManager.h>
 
 #include "CameraMovementManager.h"
 
@@ -156,8 +155,6 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 		this->focusEntityPosition->y + normalizedDirection.y * this->focusEntityPositionDisplacement.y - __HALF_SCREEN_HEIGHT_METERS,
 		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
-
-	cameraNewPosition = Vector3D::sum(cameraNewPosition, CustomCameraEffectManager::getShake(CustomCameraEffectManager::getInstance()));
 
 #ifndef __RELEASE
 	Vector3D currentCameraPosition = Camera::getPosition(camera);
