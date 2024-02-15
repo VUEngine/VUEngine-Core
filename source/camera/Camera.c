@@ -245,8 +245,6 @@ void Camera::translate(Vector3D translation, int32 cap)
 
 
 	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
-
-	Vector3D::print(this->position, 1, 10);
 }
 
 /**
