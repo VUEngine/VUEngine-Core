@@ -555,20 +555,20 @@ void VUEngine::dispatchDelayedMessages()
 	this->lastProcessName = PROCESS_NAME_MESSAGES;
 #endif
 
+#ifndef __ENABLE_PROFILER
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	if(_dispatchCycle++ & 1)
-	{
 #endif
+#endif
+	{
 
 		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 
-#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
-#endif
 }
 
 // update game's logic subsystem
@@ -646,7 +646,6 @@ void VUEngine::focusCamera()
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
 #endif
-
 }
 
 void VUEngine::updateTransformations(GameState gameState)
@@ -847,6 +846,17 @@ void VUEngine::run(GameState currentGameState)
 
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
 
+#ifdef __ENABLE_PROFILER
+		// Stream entities
+		VUEngine::stream(this, currentGameState);
+
+		// Update sound related logic if the streaming did nothing
+		VUEngine::updateSound(this);
+
+		HardwareManager::enableInterrupts();
+
+		while(!this->nextGameCycleStarted);
+#else
 		if(!this->nextGameCycleStarted)
 		{
 			// Give priority to the stream
@@ -856,16 +866,13 @@ void VUEngine::run(GameState currentGameState)
 				VUEngine::updateSound(this);
 			}
 
-			// dispatch delayed messages
+			// While we wait for the next game start
 			while(!this->nextGameCycleStarted)
 			{
-				// stream after the logic to avoid having a very heady frame
+				// Stream the heck out of the pending entities
 				VUEngine::stream(this, currentGameState);
 			}
 		}
-
-#ifdef __ENABLE_PROFILER
-		HardwareManager::enableInterrupts();
 #endif
 
 		this->currentGameCycleEnded = true;
