@@ -75,6 +75,8 @@ singleton class Camera : ListenerObject
 	void focus(bool checkIfFocusEntityIsMoving);
 	CameraFrustum getCameraFrustum();
 	Entity getFocusEntity();
+	Vector3D geDisplacement();
+	void setDisplacement(Vector3D);
 	Vector3D getLastDisplacement();
 	Optical getOptical();
 	Vector3D getPosition();

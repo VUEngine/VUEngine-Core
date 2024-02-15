@@ -567,6 +567,16 @@ CameraFrustum Camera::getCameraFrustum()
 	return this->cameraFrustum;
 }
 
+Vector3D Camera::geDisplacement()
+{
+	return this->displacement;
+}
+
+void Camera::setDisplacement(Vector3D displacement)
+{
+	this->displacement = displacement;
+}
+
 /**
  * Retrieve last position displacement
  *
