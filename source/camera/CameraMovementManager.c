@@ -16,6 +16,7 @@
 #include <DebugConfig.h>
 #include <Entity.h>
 #include <VIPManager.h>
+#include <CustomCameraEffectManager.h>
 
 #include "CameraMovementManager.h"
 
@@ -126,11 +127,11 @@ void CameraMovementManager::setFocusEntityPositionDisplacement(const Vector3D* f
  *
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving __attribute__ ((unused)))
+Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving __attribute__ ((unused)))
 {
 	if(isDeleted(camera))
 	{
-		return;
+		return Vector3D::zero();
 	}
 
 	// if focusEntity is defined
@@ -138,7 +139,7 @@ void CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving
 
 	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
 	{
-		return;
+		return Camera::getPosition(camera);
 	}
 
 	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(focusEntity);
@@ -156,15 +157,17 @@ void CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving
 		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
+	cameraNewPosition = Vector3D::sum(cameraNewPosition, CustomCameraEffectManager::getShake(CustomCameraEffectManager::getInstance()));
+
 #ifndef __RELEASE
 	Vector3D currentCameraPosition = Camera::getPosition(camera);
-	Camera::setPosition(camera, cameraNewPosition, true);
 	this->lastCameraDisplacement = Vector3D::sub(Camera::getPosition(camera), currentCameraPosition);
 #else
 	Vector3D currentCameraPosition = *_cameraPosition;
-	Camera::setPosition(camera, cameraNewPosition, true);
 	this->lastCameraDisplacement = Vector3D::sub(*_cameraPosition, currentCameraPosition);
 #endif
+
+	return cameraNewPosition;
 }
 
 /**

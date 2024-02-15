@@ -52,6 +52,8 @@ singleton class Camera : ListenerObject
 	Optical optical;
 	// Camera position
 	Vector3D position;
+	// Camera position displacement
+	Vector3D displacement;
 	// Rotation
 	Rotation rotation;
 	// Backup of Camera rotation
