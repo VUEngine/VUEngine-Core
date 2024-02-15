@@ -276,8 +276,6 @@ singleton class VIPManager : ListenerObject
 	uint8 enabledMultiplexedInterrupts;
 	bool processingGAMESTART;
 	bool processingXPEND;
-	bool logicEnded;
-	bool drawingEnded;
 	volatile bool frameStartedDuringXPEND;
 	bool skipFrameBuffersProcessing;
 
@@ -311,7 +309,6 @@ singleton class VIPManager : ListenerObject
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffects();
 	void registerCurrentDrawingFrameBufferSet();
-	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStartedDuringXPEND();	
 	uint16 getGameFrameDuration();
