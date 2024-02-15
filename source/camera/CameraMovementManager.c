@@ -158,13 +158,7 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 
 	cameraNewPosition = Vector3D::sum(cameraNewPosition, camera->displacement);
 
-#ifndef __RELEASE
-	Vector3D currentCameraPosition = Camera::getPosition(camera);
-	this->lastCameraDisplacement = Vector3D::sub(Camera::getPosition(camera), currentCameraPosition);
-#else
-	Vector3D currentCameraPosition = *_cameraPosition;
-	this->lastCameraDisplacement = Vector3D::sub(*_cameraPosition, currentCameraPosition);
-#endif
+	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, *_cameraPosition);
 
 	return cameraNewPosition;
 }
