@@ -138,6 +138,7 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 
 	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
 	{
+		this->lastCameraDisplacement = Vector3D::zero();
 		return Camera::getPosition(camera);
 	}
 
