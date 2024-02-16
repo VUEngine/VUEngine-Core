@@ -857,21 +857,18 @@ void VUEngine::run(GameState currentGameState)
 
 		while(!this->nextGameCycleStarted);
 #else
-		if(!this->nextGameCycleStarted)
+		// Give priority to the stream
+		if(!VUEngine::stream(this, currentGameState))
 		{
-			// Give priority to the stream
-			if(!VUEngine::stream(this, currentGameState))
-			{
-				// Update sound related logic if the streaming did nothing
-				VUEngine::updateSound(this);
-			}
+			// Update sound related logic if the streaming did nothing
+			VUEngine::updateSound(this);
+		}
 
-			// While we wait for the next game start
-			while(!this->nextGameCycleStarted)
-			{
-				// Stream the heck out of the pending entities
-				VUEngine::stream(this, currentGameState);
-			}
+		// While we wait for the next game start
+		while(!this->nextGameCycleStarted)
+		{
+			// Stream the heck out of the pending entities
+			VUEngine::stream(this, currentGameState);
 		}
 #endif
 
