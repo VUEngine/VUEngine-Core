@@ -102,7 +102,7 @@ class BgmapSprite : Sprite
 
 	override void registerWithManager();
 	override void unregisterWithManager();
-	override int16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index);
 	override void processEffects();
 	override void setRotation(const Rotation* rotation);
 	override Scale getScale();

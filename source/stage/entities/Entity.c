@@ -14,6 +14,7 @@
 
 #include <string.h>
 
+#include <Behavior.h>
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
 #include <DebugConfig.h>
@@ -73,6 +74,7 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
+	this->behaviors = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
@@ -224,11 +226,41 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs, bool destroyOldBehaviors
 	}
 
 	// go through n behaviors in entity's spec
-	for(int32 i = 0; behaviorSpecs[i]; i++)
+	for(int32 i = 0; NULL != behaviorSpecs[i]; i++)
 	{
-		Entity::addBehavior(this, Behavior::create(behaviorSpecs[i]));
+		Entity::addBehavior(this, behaviorSpecs[i]);
 		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
 	}
+}
+
+/**
+ * Add a behavior
+ *
+ * @private
+ * @param wireframeSpec		Behavior spec
+ */
+Behavior Entity::addBehavior(BehaviorSpec* behaviorSpec)
+{
+	if(NULL == behaviorSpec)
+	{
+		return NULL;
+	}
+
+	if(NULL == this->behaviors)
+	{
+		this->behaviors = new VirtualList();
+	}
+
+	Behavior behavior = Behavior::create(behaviorSpec);
+
+	NM_ASSERT(!isDeleted(behavior), "Entity::addBehavior: behavior not created");
+
+	if(!isDeleted(behavior))
+	{
+		VirtualList::pushBack(this->behaviors, behavior);
+	}
+
+	return behavior;
 }
 
 /**
@@ -278,11 +310,6 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 	if(destroyOldSprites)
 	{
 		Entity::destroySprites(this);
-	}
-
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
 	}
 
 	SpriteManager spriteManager = SpriteManager::getInstance();
@@ -404,11 +431,6 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 		Entity::destroyWireframes(this);
 	}
 
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
-	}
-
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
 	for(int32 i = 0; NULL != wireframeSpecs[i] && NULL != wireframeSpecs[i]->allocator; i++)
@@ -506,11 +528,6 @@ void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 	if(destroyOldColliders)
 	{
 		Entity::destroyColliders(this);
-	}
-
-	if(NULL == this->colliders)
-	{
-		this->colliders = new VirtualList();
 	}
 
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
@@ -1447,6 +1464,29 @@ VirtualList Entity::getSprites()
 VirtualList Entity::getWireframes()
 {
 	return this->wireframes;
+}
+
+bool Entity::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
+{
+	if(!isDeleted(this->behaviors) && !isDeleted(behaviors))
+	{
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(!classPointer || Object::getCast(behavior, classPointer, NULL))
+			{
+				VirtualList::pushBack(behaviors, behavior);
+			}
+		}
+
+		if(NULL != behaviors->head)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

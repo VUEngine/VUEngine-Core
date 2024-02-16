@@ -25,6 +25,7 @@
 #include <CollisionManager.h>
 #include <DebugConfig.h>
 #include <DebugState.h>
+#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <CollisionManager.h>
 #include <FrameRate.h>
@@ -233,43 +234,7 @@ void VUEngine::start(GameState currentGameState)
 
 	if(NULL == StateMachine::getCurrentState(this->stateMachine))
 	{
-		// Set state
-		VUEngine::setState(this, currentGameState);
-
-		while(NULL != currentGameState)
-		{
-			VUEngine::currentFrameStarted(this);
-
-#ifdef __ENABLE_PROFILER
-			HardwareManager::disableInterrupts();
-			Profiler::start(Profiler::getInstance());
-#endif
-
-			currentGameState = VUEngine::run(this, currentGameState);
-
-#ifdef __ENABLE_PROFILER
-			HardwareManager::enableInterrupts();
-#endif
-
-			VUEngine::currentGameCycleEnded(this);
-
-#ifndef __RELEASE
-			VUEngine::debug(this);
-#endif
-
-			while(!this->nextGameCycleStarted)
-			{
-				// This breaks PCM playback but reports torn frames more accurately
-				if(!this->nextGameCycleStarted)
-				{
-					// Halting the CPU seems to only affect the profiling in Mednafen
-					// But still haven't tested it on hardware
-#if !defined(__ENABLE_PROFILER) && !defined(__PRINT_FRAMERATE)
-					HardwareManager::halt();
-#endif
-				}
-			}
-		}
+		VUEngine::run(this, currentGameState);
 	}
 	else
 	{
@@ -413,7 +378,7 @@ void VUEngine::changedState(ListenerObject eventFirer)
 
 	// Reset flags
 	this->currentGameCycleEnded = true;
-	this->nextGameCycleStarted = false;
+	this->nextGameCycleStarted = true;
 
 	// Save current state
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -590,21 +555,20 @@ void VUEngine::dispatchDelayedMessages()
 	this->lastProcessName = PROCESS_NAME_MESSAGES;
 #endif
 
+#ifndef __ENABLE_PROFILER
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	if(_dispatchCycle++ & 1)
-	{
 #endif
+#endif
+	{
 
 		MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 #ifdef __ENABLE_PROFILER
-	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
+		Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_MESSAGES);
 #endif
 
-#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 	}
-#endif
-
 }
 
 // update game's logic subsystem
@@ -682,7 +646,6 @@ void VUEngine::focusCamera()
 #ifdef __ENABLE_PROFILER
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_CAMERA);
 #endif
-
 }
 
 void VUEngine::updateTransformations(GameState gameState)
@@ -737,6 +700,7 @@ void VUEngine::updateFrameRate()
 		return;
 	}
 #endif
+
 	FrameRate::update(this->frameRate);
 }
 
@@ -835,54 +799,81 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #endif
 }
 
-void VUEngine::currentFrameStarted()
-{
-	this->nextGameCycleStarted = false;
-	this->currentGameCycleEnded = false;
-
-	VUEngine::updateFrameRate(this);
-}
-
-void VUEngine::currentGameCycleEnded()
-{
-	this->currentGameCycleEnded = true;
-}
-
 bool VUEngine::hasCurrentFrameEnded()
 {
 	// raise flag to allow the next frame to start
 	return this->currentGameCycleEnded;
 }
 
-GameState VUEngine::run(GameState currentGameState)
+void VUEngine::run(GameState currentGameState)
 {
-	// Generate random seed
-	_gameRandomSeed = Utilities::randomSeed();
+	// Set state
+	VUEngine::setState(this, currentGameState);
 
-	// process user's input
-	VUEngine::processUserInput(this, currentGameState);
-
-	// simulate physics
-	VUEngine::updatePhysics(this, currentGameState);
-
-	// apply transformations
-	VUEngine::updateTransformations(this, currentGameState);
-
-	// process collisions
-	VUEngine::updateCollisions(this, currentGameState);
-
-	// dispatch delayed messages
-	VUEngine::dispatchDelayedMessages(this);
-
-	// stream after the logic to avoid having a very heady frame
-	if(!VUEngine::stream(this, currentGameState))
+	while(NULL != currentGameState)
 	{
-		// Update sound related logic
-		VUEngine::updateSound(this);
-	}
+#ifndef __RELEASE
+		VUEngine::debug(this);
+#endif
 
-	// update game's logic
-	return VUEngine::updateLogic(this, currentGameState);
+		this->nextGameCycleStarted = false;
+		this->currentGameCycleEnded = false;
+
+		VUEngine::updateFrameRate(this);
+
+#ifdef __ENABLE_PROFILER
+		HardwareManager::disableInterrupts();
+		Profiler::start(Profiler::getInstance());
+#endif
+
+		// Generate random seed
+		_gameRandomSeed = Utilities::randomSeed();
+
+		// process user's input
+		VUEngine::processUserInput(this, currentGameState);
+
+		// simulate physics
+		VUEngine::updatePhysics(this, currentGameState);
+
+		// apply transformations
+		VUEngine::updateTransformations(this, currentGameState);
+
+		// process collisions
+		VUEngine::updateCollisions(this, currentGameState);
+
+		// dispatch delayed messages
+		VUEngine::dispatchDelayedMessages(this);
+
+		currentGameState = VUEngine::updateLogic(this, currentGameState);
+
+#ifdef __ENABLE_PROFILER
+		// Stream entities
+		VUEngine::stream(this, currentGameState);
+
+		// Update sound related logic if the streaming did nothing
+		VUEngine::updateSound(this);
+
+		HardwareManager::enableInterrupts();
+
+		while(!this->nextGameCycleStarted);
+#else
+		// Give priority to the stream
+		if(!VUEngine::stream(this, currentGameState))
+		{
+			// Update sound related logic if the streaming did nothing
+			VUEngine::updateSound(this);
+		}
+
+		// While we wait for the next game start
+		while(!this->nextGameCycleStarted)
+		{
+			// Stream the heck out of the pending entities
+			VUEngine::stream(this, currentGameState);
+		}
+#endif
+
+		this->currentGameCycleEnded = true;
+	}
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

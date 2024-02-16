@@ -30,7 +30,9 @@ static const Transformation _dummyTransformation =
 	// rotation
 	{0, 0, 0},
 	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+	// invalidity
+	__NON_TRANSFORMED
 };
 
 
@@ -48,13 +50,13 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 	this->componentSpec = componentSpec;
 	this->owner = owner;
 
-	if(!isDeleted(this->owner))
+	if(isDeleted(this->owner))
 	{
-		this->transformation = SpatialObject::getTransformation(this->owner);
+		this->transformation = &_dummyTransformation;
 	}
 	else
 	{
-		this->transformation = &_dummyTransformation;
+		this->transformation = SpatialObject::getTransformation(this->owner);
 	}
 }
 

@@ -82,9 +82,9 @@ void TextObjectSprite::destructor()
  * @memberof		TextObjectSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 TextObjectSprite::doRender(int16 index __attribute__((unused)), bool evenFrame __attribute__((unused)))
+int16 TextObjectSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "TextObjectSprite::doRender: null texture");
 

@@ -41,7 +41,7 @@ friend class VirtualList;
  */
 void ListenerObject::constructor()
 {
-#ifndef __SHIPPING	
+#ifndef __RELEASE	
 	Base::constructor();
 #endif
 

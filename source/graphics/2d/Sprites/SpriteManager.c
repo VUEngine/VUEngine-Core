@@ -669,7 +669,7 @@ void SpriteManager::render()
 			continue;
 		}
 
-		if(Sprite::render(sprite, this->freeLayer, this->evenFrame, updateAnimations) == this->freeLayer)
+		if(Sprite::render(sprite, this->freeLayer, updateAnimations) == this->freeLayer)
 		{
 			this->freeLayer--;
 		}

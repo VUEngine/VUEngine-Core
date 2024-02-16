@@ -262,7 +262,7 @@ void ParticleSystem::update()
 
 	ParticleSystem::processExpiredParticles(this);
 
-	if(this->invalidateGlobalTransformation && !this->transformed)
+	if(this->transformation.invalid && !this->transformed)
 	{
 		return;
 	}
@@ -779,7 +779,7 @@ void ParticleSystem::unpause()
 		this->nextSpawnTime = 0;
 	}
 
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+	this->transformation.invalid |= __INVALIDATE_POSITION;
 }
 
 bool ParticleSystem::isPaused()

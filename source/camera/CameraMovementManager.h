@@ -43,7 +43,7 @@ singleton class CameraMovementManager : ListenerObject
 	const Vector3D* getFocusEntityPositionDisplacement();
 	void setFocusEntityPositionDisplacement(const Vector3D* focusEntityPositionDisplacement);
 	Vector3D getLastCameraDisplacement();
-	virtual void focus(Camera camera, bool checkIfFocusEntityIsMoving);
+	virtual Vector3D focus(Camera camera, bool checkIfFocusEntityIsMoving);
 }
 
 #endif

@@ -218,9 +218,9 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
  * @memberof		MBgmapSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 MBgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 MBgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
 

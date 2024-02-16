@@ -22,7 +22,7 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-class Container;
+class Entity;
 
 // defines an entity in ROM memory
 typedef struct BehaviorSpec
@@ -47,17 +47,13 @@ abstract class Behavior : Component
 {
 	bool enabled;
 
+	static Behavior create(const BehaviorSpec* behaviorSpec);
+
 	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
 	bool isEnabled();
 	void setEnabled(bool value);
 
-	static Behavior create(const BehaviorSpec* behaviorSpec);
-
-	virtual void start(Container owner);
-	virtual void update(Container owner);
-	virtual void pause(Container owner);
-	virtual void resume(Container owner);
 }
 
 

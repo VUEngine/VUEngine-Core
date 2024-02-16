@@ -99,8 +99,6 @@ void VIPManager::constructor()
 
 	this->postProcessingEffects = new VirtualList();
 	this->currentDrawingFrameBufferSet = 0;
-	this->logicEnded = false;
-	this->drawingEnded = false;
 	this->frameStartedDuringXPEND = false;
 	this->processingXPEND = false;
 	this->processingGAMESTART = false;
@@ -144,8 +142,6 @@ void VIPManager::reset()
 	this->skipFrameBuffersProcessing = false;
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
-	this->logicEnded = false;
-	this->drawingEnded = false;
 	this->totalMilliseconds = 0;
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
@@ -247,16 +243,6 @@ void VIPManager::enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts 
 #endif
 }
 
-/**
- * Check if rendering is pending
- *
- * @return						True if XPEND already happened but DRAM writing didn't take place
- */
-bool VIPManager::isRenderingPending()
-{
-	return !this->drawingEnded;
-}
-
 uint16 VIPManager::getCurrentInterrupt()
 {
 	return this->currrentInterrupt;
@@ -340,7 +326,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 26);
 #endif
 
-				this->drawingEnded = false;
 				this->processingGAMESTART = true;
 
 				// Configure the drawing frame buffers
@@ -362,27 +347,14 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(this, __XPEND);
 					}
+				}					
 
-					// Process game's logic
-					VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
-					SpriteManager::render(_spriteManager);
-					WireframeManager::render(_wireframeManager);
-
-					// The VIP finished drawing the current frame when the game was being rendered
-					// so it didn't touch VRAM during the last XPEND
-					if(this->drawingEnded)
-					{
-						SpriteManager::writeDRAM(_spriteManager);
-						/*
-						DirectDraw::startDrawing(_directDraw);
-						WireframeManager::draw(_wireframeManager);
-						VIPManager::applyPostProcessingEffects(_vipManager);
-						*/
-					}
-				}
+				// Process game's logic
+				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
+				SpriteManager::render(_spriteManager);
+				WireframeManager::render(_wireframeManager);
 
 				this->processingGAMESTART = false;
-				this->logicEnded = true;
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptGAMESTARTProcess, PROCESS_NAME_RENDER);
@@ -404,7 +376,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 27);
 #endif
 
-				this->logicEnded = false;
 				this->processingXPEND = true;
 
 				if(this->processingGAMESTART)
@@ -435,24 +406,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					}
 				}
 
+				SpriteManager::writeDRAM(_spriteManager);
 				DirectDraw::startDrawing(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);
 
-				if(!this->processingGAMESTART)
-				{
-					SpriteManager::writeDRAM(_spriteManager);
-
-					if(this->logicEnded)
-					{
-						VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
-						SpriteManager::render(_spriteManager);
-						WireframeManager::render(_wireframeManager);
-					}
-				}
 
 				this->processingXPEND = false;
-				this->drawingEnded = true;
 
 #ifdef __ENABLE_PROFILER
 				Profiler::lap(Profiler::getInstance(), kProfilerLapTypeVIPInterruptXPENDProcess, PROCESS_NAME_VRAM_WRITE);

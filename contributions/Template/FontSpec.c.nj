@@ -33,8 +33,18 @@
         frameWidth: item.size.x,
         frameHeight: item.size.y
     }) -%}
-    {%- set tilesData = compressionResults.tilesData -%}
-    {%- set tilesFrameOffsetsData = compressionResults.frameTileOffsets -%}
+    {%- set tilesData = compressionResults.data -%}
+    {%- set tilesFrameOffsetsData = compressionResults.frameOffsets -%}
+
+	{%- set tilesCompressionLabel = '// ' ~ item.compression | upper -%}
+	{%- if compressionResults.compressionRatio < 0 -%}
+		{%- set tilesCompressionLabel = tilesCompressionLabel ~ ' compressed (' ~ compressionResults.compressionRatio | round(2) ~ '%)' -%}
+	{%- elseif compressionResults.compressionRatio == 0 -%}
+		{%- set tilesCompressionLabel = tilesCompressionLabel ~ ' compression skipped for not reducing size (±' ~ compressionResults.compressionRatio | round(2) ~ '%)' -%}
+	{%- else -%}
+		{%- set tilesCompressionLabel = tilesCompressionLabel ~ ' compression skipped for inflating size (+' ~ compressionResults.compressionRatio | round(2) ~ '%)' -%}
+	{%- endif -%}
+	{%- set tilesCompressionLabel = tilesCompressionLabel ~ '\n' -%}
 {%- endif -%}
 
 {%- import 'templates/partials/macros.nj' as macros -%}
@@ -47,6 +57,7 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
+{{ tilesCompressionLabel -}}
 const uint32 {{ sanitizedSpecName }}FontTiles[] __attribute__((aligned(4)))
 {%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
 {

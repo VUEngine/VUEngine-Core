@@ -147,6 +147,9 @@
 						"items": {
 							"type": "object",
 							"properties": {
+								"name": {
+									"type": "string"
+								},
 								"type": {
 									"type": "string",
 									"default": "Ball"
@@ -156,15 +159,18 @@
 									"properties": {
 										"x": {
 											"type": "number",
-											"minimum": 0
+											"minimum": 1,
+											"default": 32
 										},
 										"y": {
 											"type": "number",
-											"minimum": 0
+											"minimum": 1,
+											"default": 32
 										},
 										"z": {
 											"type": "number",
-											"minimum": 0
+											"minimum": 1,
+											"default": 32
 										}
 									}
 								},
@@ -203,13 +209,16 @@
 									"type": "object",
 									"properties": {
 										"x": {
-											"type": "number"
+											"type": "number",
+											"default": 1
 										},
 										"y": {
-											"type": "number"
+											"type": "number",
+											"default": 1
 										},
 										"z": {
-											"type": "number"
+											"type": "number",
+											"default": 1
 										}
 									}
 								},
@@ -232,6 +241,17 @@
 							}
 						}
 					},
+					"scripts": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"function": {
+									"type": "string"
+								}
+							}
+						}
+					},
 					"sprites": {
 						"type": "array",
 						"items": {
@@ -240,6 +260,9 @@
 								"_imageData": {
 									"type": "integer",
 									"default": 0
+								},
+								"name": {
+									"type": "string"
 								},
 								"bgmapMode": {
 									"type": "string",
@@ -329,6 +352,9 @@
 						"items": {
 							"type": "object",
 							"properties": {
+								"name": {
+									"type": "string"
+								},
 								"wireframe": {
 									"type": "object",
 									"properties": {

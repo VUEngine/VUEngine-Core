@@ -281,9 +281,9 @@ void ObjectSprite::setRotation(const Rotation* rotation)
  * @memberof		ObjectSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 ObjectSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");

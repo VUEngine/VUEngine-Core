@@ -42,8 +42,8 @@ class Line : Wireframe
 
 	/// @publicsection
 	void constructor(SpatialObject owner, LineSpec* lineSpec);
-	override void render();
-	override void draw();
+	override bool render();
+	override bool draw();
 }
 
 

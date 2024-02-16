@@ -63,7 +63,10 @@ const Transformation neutralEnvironmentTransformation =
 	{0, 0, 0},
  
 	// spatial scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9}
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
+
+	// invalidty flag
+	__VALID_TRANSFORMATION
 };
 
 #ifdef __PROFILE_STREAMING
@@ -574,43 +577,6 @@ void Stage::removeChild(Container child, bool deleteChild)
 	}
 }
 
-// unload entity from the stage
-void Stage::removeChildEntity(Entity child)
-{
-	ASSERT(child, "Stage::removeChildEntity: null child");
-
-	if(!child)
-	{
-		return;
-	}
-
-	Base::removeChild(this, Container::safeCast(child), true);
-
-	int16 internalId = Entity::getInternalId(child);
-
-	VirtualNode node = this->stageEntityDescriptions->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
-		if(stageEntityDescription->internalId == internalId)
-		{
-			stageEntityDescription->internalId = -1;
-
-			// remove from list of entities that are to be loaded by the streaming,
-			// if the entity is not to be respawned
-			if(!Entity::respawn(child))
-			{
-				delete node->data;
-				VirtualList::removeNode(this->stageEntityDescriptions, node);
-			}
-
-			break;
-		}
-	}
-}
-
 // preload fonts, charsets and textures
 void Stage::preloadAssets()
 {
@@ -840,7 +806,16 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			}
 
 			// unload it
-			Stage::removeChildEntity(this, entity);
+			Base::removeChild(this, Container::safeCast(entity), true);
+
+			stageEntityDescription->internalId = -1;
+
+			// remove from list of entities that are to be loaded by the streaming,
+			// if the entity is not to be respawned
+			if(!Entity::respawn(entity))
+			{
+				VirtualList::removeNode(this->stageEntityDescriptions, auxNode);
+			}
 
 			unloadedEntities = true;
 		}

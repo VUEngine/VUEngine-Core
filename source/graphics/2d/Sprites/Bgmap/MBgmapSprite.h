@@ -77,7 +77,7 @@ class MBgmapSprite : BgmapSprite
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
-	override int16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index);
 	override bool writeTextures(int16 maximumTextureRowsToWrite);
 }
 

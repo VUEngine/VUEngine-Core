@@ -66,6 +66,7 @@ void Camera::constructor()
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
 	this->position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
 
@@ -166,7 +167,7 @@ void Camera::focus(bool checkIfFocusEntityIsMoving)
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-	CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving);
+	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
 
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
@@ -234,7 +235,7 @@ static uint8 Camera::computeTranslationFlags(Vector3D translation)
  */
 void Camera::translate(Vector3D translation, int32 cap)
 {
-	Vector3D previousPosition = this->position;
+	Vector3D currentPosition = this->position;
 	this->position = Vector3D::sum(this->position, translation);
 
 	if(cap)
@@ -242,7 +243,8 @@ void Camera::translate(Vector3D translation, int32 cap)
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, previousPosition));
+
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }
 
 /**
@@ -563,6 +565,16 @@ CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 CameraFrustum Camera::getCameraFrustum()
 {
 	return this->cameraFrustum;
+}
+
+Vector3D Camera::geDisplacement()
+{
+	return this->displacement;
+}
+
+void Camera::setDisplacement(Vector3D displacement)
+{
+	this->displacement = displacement;
 }
 
 /**

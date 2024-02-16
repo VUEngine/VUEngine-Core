@@ -35,6 +35,7 @@ void VisualComponent::constructor(SpatialObject owner, const VisualComponentSpec
 	Base::constructor(owner, visualComponentSpec);
 
 	this->show = __SHOW;
+	this->rendered = false;
 }
 
 /**

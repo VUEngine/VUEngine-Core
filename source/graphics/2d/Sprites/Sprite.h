@@ -177,7 +177,7 @@ abstract class Sprite : VisualComponent
 	bool isVisible();
 	bool isWithinScreenSpace();
 	bool isDisposed();
-	int16 render(int16 index, bool evenFrame, bool updateAnimation);
+	int16 render(int16 index, bool updateAnimation);
 	void calculateParallax(fixed_t z);
 	int16 getIndex();
 	PixelVector getDisplacedPosition();
@@ -191,7 +191,7 @@ abstract class Sprite : VisualComponent
 	virtual void forceShow();
 	virtual Scale getScale();
 	virtual void processEffects();
-	virtual int16 doRender(int16 index, bool evenFrame) = 0;
+	virtual int16 doRender(int16 index) = 0;
 	virtual void writeAnimation();
 	virtual bool writeTextures(int16 maximumTextureRowsToWrite);
 	virtual void print(int32 x, int32 y);

@@ -69,8 +69,8 @@ abstract class Wireframe : VisualComponent
 	bool isVisible();
 	PixelVector getPixelPosition();
 
-	virtual void draw() = 0;
-	virtual void render();
+	virtual bool draw() = 0;
+	virtual bool render();
 	virtual VirtualList getVertices();
 	virtual PixelRightBox getPixelRightBox();
 }

@@ -53,7 +53,7 @@ void Asterisk::destructor()
 /**
  * Render
  */
-void Asterisk::render()
+bool Asterisk::render()
 {
 	NM_ASSERT(NULL != this->transformation, "Asterisk::render: NULL transformation");
 
@@ -62,12 +62,14 @@ void Asterisk::render()
 
 	if(__COLOR_BLACK == this->color)
 	{
-		return;
+		return false;
 	}
 
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 	this->scaledLength = __METERS_TO_PIXELS(__FIXED_MULT(this->length, Vector3D::getScale(relativePosition.z, false)));
+
+	return true;
 }
 
 /**
@@ -79,20 +81,24 @@ void Asterisk::render()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Asterisk::draw()
+bool Asterisk::draw()
 {
 	NM_ASSERT(NULL != this->transformation, "Asterisk::draw: NULL transformation");
 
+	bool drawn = false;
+
 	if(this->renderCycle)
 	{
-		this->drawn = DirectDraw::drawColorX(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		drawn = DirectDraw::drawColorX(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 	else		
 	{
-		this->drawn = DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
+		drawn = DirectDraw::drawColorCross(this->center, this->scaledLength, this->color, this->bufferIndex, this->interlaced);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
 
 	this->renderCycle = !this->renderCycle;
+	
+	return drawn;
 }

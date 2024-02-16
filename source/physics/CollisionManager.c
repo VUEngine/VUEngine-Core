@@ -178,7 +178,7 @@ uint32 CollisionManager::update(Clock clock)
 		}
 	#endif
 
-		if(!(collider->enabled && collider->checkForCollisions))
+		if(!(collider->enabled && collider->checkForCollisions) || __NON_TRANSFORMED == collider->transformation->invalid)
 		{
 			continue;
 		}
@@ -189,7 +189,7 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			Collider colliderToCheck = Collider::safeCast(node->data);
 
-			if(!(colliderToCheck->enabled))
+			if(!(colliderToCheck->enabled) || __NON_TRANSFORMED == colliderToCheck->transformation->invalid)
 			{
 				continue;
 			}
