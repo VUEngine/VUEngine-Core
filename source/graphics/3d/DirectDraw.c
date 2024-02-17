@@ -501,7 +501,6 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 		parallax = __FIXED_EXT_MULT(yParallaxSlope, y - y1) + parallax1;
 	}
 
-
 	// Check for overflows
 	if(*x0 < x1 && x >= x1)
 	{
@@ -516,7 +515,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	{
 		return false;
 	}
-	else if(*y0 > y1 && x <= y1)
+	else if(*y0 > y1 && y <= y1)
 	{
 		return false;
 	}
@@ -529,7 +528,6 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	{
 		return false;
 	}
-
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;
