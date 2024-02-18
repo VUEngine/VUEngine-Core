@@ -169,6 +169,8 @@ void Camera::focus(bool checkIfFocusEntityIsMoving)
 
 	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
 
+	this->position = Vector3D::sum(this->position, this->displacement);
+
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
 #endif

@@ -157,8 +157,6 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
-	cameraNewPosition = Vector3D::sum(cameraNewPosition, camera->displacement);
-
 	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, *_cameraPosition);
 
 	return cameraNewPosition;
