@@ -363,8 +363,6 @@ void Container::updateChildren()
 	// if I have children
 	if(NULL != this->children)
 	{
-		bool hadChildren = NULL != this->children->head;
-
 		for(VirtualNode node = this->children->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -397,11 +395,6 @@ void Container::updateChildren()
 			}
 
 			Container::update(child);
-		}
-
-		if(hadChildren && NULL == this->children->head)
-		{
-			Container::fireEvent(this, kEventContainerAllChildrenDeleted);
 		}
 	}
 }
