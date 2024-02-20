@@ -107,6 +107,14 @@ typedef struct Vector3D
 
 } Vector3D;
 
+// spatial position
+typedef struct Vector2D
+{
+	fixed_t x;
+	fixed_t y;
+
+} Vector2D;
+
 // used to represent a screen position with parallax info
 typedef struct PixelVector
 {

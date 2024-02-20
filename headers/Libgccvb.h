@@ -31,6 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MinimalLib.h>
+#include <Vector2D.h>
 #include <Vector3D.h>
 #include <Rotation.h>
 #include <Scale.h>
