@@ -35,9 +35,6 @@ void Line::constructor(SpatialObject owner, LineSpec* lineSpec)
 	// construct base object
 	Base::constructor(owner, &lineSpec->wireframeSpec);
 
-	((LineSpec*)this->componentSpec)->a = lineSpec->a;
-	((LineSpec*)this->componentSpec)->b = lineSpec->b;
-
 	this->a = PixelVector::zero();
 	this->b = PixelVector::zero();
 }
@@ -57,7 +54,7 @@ void Line::destructor()
  */
 bool Line::render()
 {
-	Vector3D position = Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b);
+	Vector3D position = Vector3D::sum(this->transformation->position, ((LineSpec*)this->componentSpec)->wireframeSpec.displacement);
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 	Sphere::setupRenderingMode(this, &relativePosition);
@@ -67,13 +64,13 @@ bool Line::render()
 		return false;
 	}
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->a, _previousCameraPosition);
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-	this->a = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+	Vector3D a = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->a);
+	a = Vector3D::rotate(a, _previousCameraInvertedRotation);
+	this->a = Vector3D::projectToPixelVector(a, Optics::calculateParallax(a.z));
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->componentSpec)->b, _previousCameraPosition);
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-	this->b = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+	Vector3D b = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->b);
+	b = Vector3D::rotate(b, _previousCameraInvertedRotation);
+	this->b = Vector3D::projectToPixelVector(b, Optics::calculateParallax(b.z));
 
 	return true;
 }
