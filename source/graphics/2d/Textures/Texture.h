@@ -115,6 +115,7 @@ abstract class Texture : ListenerObject
 	void setSpec(TextureSpec* textureSpec);
 	TextureSpec* getSpec();
 	void releaseCharSet();
+	bool isReady();
 	void writeHBiasMode();
 	int32 getNumberOfChars();
 	TextureSpec* getTextureSpec();

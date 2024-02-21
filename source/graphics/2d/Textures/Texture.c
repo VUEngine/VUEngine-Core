@@ -196,6 +196,11 @@ void Texture::releaseCharSet()
 	this->palette = this->textureSpec->palette;
 }
 
+bool Texture::isReady()
+{
+	return kTextureWritten == this->status;
+}
+
 /**
  * Write the map to DRAM
  */
