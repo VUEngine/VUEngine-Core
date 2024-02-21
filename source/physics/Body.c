@@ -1367,6 +1367,13 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		Body::sleep(this);
 	}
+	else
+	{
+		if(!isDeleted(this->owner))
+		{
+			SpatialObject::setDirection(this->owner, &this->direction);
+		}
+	}
 }
 
 void Body::setMaximumVelocity(Vector3D maximumVelocity)
