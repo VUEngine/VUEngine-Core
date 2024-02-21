@@ -211,7 +211,7 @@ void LineField::configureWireframe()
 			__TRANSPARENCY_NONE,
 		
 			/// interlaced
-			false
+			true
 		},
 
 //		Vector3D::intermediate(this->a, this->b),

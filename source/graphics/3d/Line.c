@@ -82,22 +82,16 @@ bool Line::render()
  */
 bool Line::draw()
 {
-	return DirectDraw::drawColorLine
+	bool drawn = DirectDraw::drawColorLine
 	(
 		this->a,
 		this->b,
 		this->color,
-		0,
-		false
+		this->bufferIndex,
+		this->interlaced
 	);
-/*
-	DirectDraw::drawColorLine
-	(
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b)), 0),
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(((LineSpec*)this->componentSpec)->a, ((LineSpec*)this->componentSpec)->b), this->normal)), 0),
-		__COLOR_BRIGHT_RED,
-		0,
-		false
-	);
-	*/
+
+	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;	
 }
