@@ -683,9 +683,18 @@ bool VUEngine::stream(GameState gameState)
 	this->lastProcessName = PROCESS_NAME_STREAMING;
 #endif
 
+#ifndef __ENABLE_PROFILER
 	bool result = GameState::stream(gameState);
+#else
+	bool result = false;
 
-#ifdef __ENABLE_PROFILER
+	// While we wait for the next game start
+	while(!this->nextGameCycleStarted)
+	{
+		// Stream the heck out of the pending entities
+		result = GameState::stream(gameState);
+	}
+
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeNormalProcess, PROCESS_NAME_STREAMING);
 #endif
 
@@ -847,15 +856,13 @@ void VUEngine::run(GameState currentGameState)
 		currentGameState = VUEngine::updateLogic(this, currentGameState);
 
 #ifdef __ENABLE_PROFILER
-		// Stream entities
-		VUEngine::stream(this, currentGameState);
-
 		// Update sound related logic if the streaming did nothing
 		VUEngine::updateSound(this);
 
 		HardwareManager::enableInterrupts();
 
-		while(!this->nextGameCycleStarted);
+		// Stream entities
+		VUEngine::stream(this, currentGameState);
 #else
 		// Give priority to the stream
 		if(!VUEngine::stream(this, currentGameState))
