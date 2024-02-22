@@ -47,7 +47,7 @@ abstract class Behavior : Component
 {
 	bool enabled;
 
-	static Behavior create(const BehaviorSpec* behaviorSpec);
+	static Behavior create(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
 	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 

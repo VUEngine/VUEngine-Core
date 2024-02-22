@@ -49,7 +49,7 @@ void Behavior::setEnabled(bool value)
 	this->enabled = value;
 }
 
-static Behavior Behavior::create(const BehaviorSpec* behaviorSpec)
+static Behavior Behavior::create(SpatialObject owner, const BehaviorSpec* behaviorSpec)
 {
 	ASSERT(behaviorSpec, "Behavior::create: NULL behavior");
 	ASSERT(behaviorSpec->allocator, "Behavior::create: no behavior allocator");
@@ -59,5 +59,5 @@ static Behavior Behavior::create(const BehaviorSpec* behaviorSpec)
 		return NULL;
 	}
 
-	return 	((Behavior (*)(BehaviorSpec**)) behaviorSpec->allocator)((BehaviorSpec**)behaviorSpec);
+	return 	((Behavior (*)(SpatialObject, BehaviorSpec**)) behaviorSpec->allocator)(owner, (BehaviorSpec**)behaviorSpec);
 }

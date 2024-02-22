@@ -251,7 +251,7 @@ Behavior Entity::addBehavior(BehaviorSpec* behaviorSpec)
 		this->behaviors = new VirtualList();
 	}
 
-	Behavior behavior = Behavior::create(behaviorSpec);
+	Behavior behavior = Behavior::create(SpatialObject::safeCast(this), behaviorSpec);
 
 	NM_ASSERT(!isDeleted(behavior), "Entity::addBehavior: behavior not created");
 
