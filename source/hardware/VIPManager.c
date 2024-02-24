@@ -696,22 +696,21 @@ void VIPManager::setupBrightness(Brightness* brightness)
  */
 void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
-	int32 i, leftCta, rightCta, value;
-
 	// use the default repeat values as fallback
 	if(brightnessRepeatSpec == NULL)
 	{
 		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DefaultBrightnessRepeatSpec;
 	}
-
 	// column table offsets
-	leftCta = _vipRegisters[__CTA] & 0xFF;
-	rightCta = _vipRegisters[__CTA] >> 8;
+	int16 leftCta = _vipRegisters[__CTA] & 0xFF;
+	int16 rightCta = _vipRegisters[__CTA] >> 8;
+
+	CACHE_RESET;
 
 	// write repeat values to column table
-	for(i = 0; i < 96; i++)
+	for(int16 i = 0; i < 96; i++)
 	{
-		value = (brightnessRepeatSpec->mirror && (i > 47))
+		int16 value = (brightnessRepeatSpec->mirror && (i > 47))
 			? brightnessRepeatSpec->brightnessRepeat[95 - i] << 8
 			: brightnessRepeatSpec->brightnessRepeat[i] << 8;
 
