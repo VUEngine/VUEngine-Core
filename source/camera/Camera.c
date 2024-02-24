@@ -245,7 +245,6 @@ void Camera::translate(Vector3D translation, int32 cap)
 		Camera::capPosition(this);
 	}
 
-
 	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }
 
@@ -331,7 +330,6 @@ void Camera::setPosition(Vector3D position, bool cap)
 	{
 		Camera::capPosition(this);
 	}
-
 
 	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }

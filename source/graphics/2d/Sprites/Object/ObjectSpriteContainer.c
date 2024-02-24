@@ -477,10 +477,10 @@ static void ObjectSpriteContainer::writeDRAM()
  * Invalidate render flag on all sprites
  *
  */
-void ObjectSpriteContainer::invalidateRenderFlag()
+void ObjectSpriteContainer::invalidateRendering()
 {
 	for(VirtualNode node = this->objectSprites->tail; NULL != node; node = node->previous)
 	{
-		ObjectSprite::invalidateRenderFlag(ObjectSprite::safeCast(node->data));
+		ObjectSprite::invalidateRendering(ObjectSprite::safeCast(node->data));
 	}
 }

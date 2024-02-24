@@ -706,7 +706,7 @@ void SpriteManager::forceRendering()
 {
 	for(VirtualNode node = this->sprites->tail; NULL != node; node = node->previous)
 	{
-		Sprite::invalidateRenderFlag(Sprite::safeCast(node->data));
+		Sprite::invalidateRendering(Sprite::safeCast(node->data));
 	}
 }
 

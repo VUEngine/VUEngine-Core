@@ -1147,8 +1147,9 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  * Invalidate render flag
  *
  */
-void Sprite::invalidateRenderFlag()
+void Sprite::invalidateRendering()
 {
+	this->transformed = false;
 	this->rendered = false;
 }
 
