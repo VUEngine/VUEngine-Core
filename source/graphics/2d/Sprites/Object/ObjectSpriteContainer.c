@@ -444,10 +444,6 @@ static void ObjectSpriteContainer::prepareForRendering()
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
 
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegistersCache[i] = _objectIndex;
-	}
 }
 
 static void ObjectSpriteContainer::finishRendering()
