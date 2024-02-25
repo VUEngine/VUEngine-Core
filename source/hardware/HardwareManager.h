@@ -128,11 +128,14 @@ static inline void HardwareManager::setInterruptLevel(uint8 level)
  */
 static inline void HardwareManager::enableInterrupts()
 {
-	_enabledInterrupts = true;
-	_suspendInterruptRequest = 0;
+	if(!_enabledInterrupts || 0 != _suspendInterruptRequest)
+	{
+		_enabledInterrupts = true;
+		_suspendInterruptRequest = 0;
 
-	asm("cli");
-	HardwareManager::setInterruptLevel(0);
+		asm("cli");
+		HardwareManager::setInterruptLevel(0);
+	}
 }
 
 /**
@@ -140,11 +143,14 @@ static inline void HardwareManager::enableInterrupts()
  */
 static inline void HardwareManager::disableInterrupts()
 {
-	_enabledInterrupts = false;
-	_suspendInterruptRequest = 0;
+	if(_enabledInterrupts)
+	{
+		_enabledInterrupts = false;
+		_suspendInterruptRequest = 0;
 
-	asm("sei");
-	HardwareManager::setInterruptLevel(5);
+		asm("sei");
+		HardwareManager::setInterruptLevel(5);
+	}
 }
 
 /**

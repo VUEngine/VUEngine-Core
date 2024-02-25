@@ -352,6 +352,8 @@ void CommunicationManager::startTransmissions(uint8 payload, bool async)
 	// Set transmission data
 	_communicationRegisters[__CDTR] = payload;
 
+	HardwareManager::enableInterrupts();
+
 	// Master must wait for slave to open the channel
 	if(CommunicationManager::isMaster(this))
 	{
