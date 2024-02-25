@@ -316,16 +316,13 @@ void CharSet::rewrite()
  *
  * @param tilesDisplacement		Displacement
  */
-void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
+bool CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 {
 	uint32 currentTilesDisplacement = this->tilesDisplacement;
 
 	this->tilesDisplacement = tilesDisplacement;
 
-	if(currentTilesDisplacement != this->tilesDisplacement)
-	{
-		CharSet::rewrite(this);
-	}
+	return currentTilesDisplacement != this->tilesDisplacement;
 }
 
 /**
@@ -406,18 +403,18 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 void CharSet::setFrame(uint16 frame)
 {
-	uint32 currentTilesDisplacement = this->tilesDisplacement;
+	bool write = false;
 
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
+		write = CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
 	}
 	else
 	{
-		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
+		write = CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
 	}
 
-	if(kCharSetWritten != this->status)
+	if(write || kCharSetWritten != this->status)
 	{
 		CharSet::write(this);
 	}

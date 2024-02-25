@@ -475,15 +475,15 @@ void Texture::setFrame(uint16 frame)
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
-	if(CharSet::isOptimized(this->charSet))
-	{
-		this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-	}
-
 	if(!isDeleted(this->charSet))
 	{
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
+			if(CharSet::isOptimized(this->charSet))
+			{
+				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+			}
+
 			Texture::prepare(this);
 		}
 	}
