@@ -220,29 +220,24 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 		}
 	}
 
-	if(kCharSetWritten != this->charSet->status)
-	{
-		CharSet::write(this->charSet);
-	}
+	CharSet::setFrame(this->charSet, this->frame);
 
 	this->status = kTextureWritten;
 	return true;
 }
 
-bool Texture::prepare()
+void Texture::prepare()
 {
 	switch(this->status)
 	{
 		case kTexturePendingWriting:
 
 			this->update = true;
-			return false;
 			break;
 
 		case kTexturePendingRewriting:
 
 			this->update = true;
-			return true;
 			break;
 
 		case kTextureFrameChanged:
@@ -260,13 +255,10 @@ bool Texture::prepare()
 			else
 			{
 				this->update = true;
-				return true;
 			}
 
 			break;
 	}
-
-	return kTextureWritten == this->status;
 }
 
 bool Texture::update(int16 maximumTextureRowsToWrite)
@@ -333,10 +325,7 @@ static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsTo
 		return;
 	}
 
-	if(CharSet::setFrame(texture->charSet, texture->frame))
-	{
-		CharSet::write(texture->charSet);
-	}
+	CharSet::setFrame(texture->charSet, texture->frame);
 
 	Texture::write(texture, maximumTextureRowsToWrite);
 }
@@ -348,10 +337,7 @@ static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWr
 		return;
 	}
 
-	if(CharSet::setFrame(texture->charSet, texture->frame))
-	{
-		CharSet::write(texture->charSet);
-	}
+	CharSet::setFrame(texture->charSet, texture->frame);
 
 	texture->status = kTextureWritten;
 }
@@ -632,7 +618,7 @@ void Texture::setupUpdateFunction()
 	{			
 		this->doUpdate = Texture::updateDefault;
 		CharSet::setFrame(this->charSet, this->frame);
-	}		
+	}
 }
 
 /**
@@ -653,6 +639,8 @@ uint16* Texture::getMap()
 void Texture::setPalette(uint8 palette)
 {
 	this->palette = palette;
+
+	Texture::rewrite(this);
 }
 
 /**

@@ -109,7 +109,7 @@ class CharSet : ListenerObject
 	void setTilesDisplacement(uint32 tilesDisplacement);
 	void putChar(uint32 charToReplace, uint32* newChar);
 	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
-	bool setFrame(uint16 frame);
+	void setFrame(uint16 frame);
 }
 
 

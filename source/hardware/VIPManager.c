@@ -167,6 +167,7 @@ void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
  */
 void VIPManager::enableDrawing()
 {
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] |= __XPEN;
 }
 

@@ -318,7 +318,14 @@ void CharSet::rewrite()
  */
 void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 {
+	uint32 currentTilesDisplacement = this->tilesDisplacement;
+
 	this->tilesDisplacement = tilesDisplacement;
+
+	if(currentTilesDisplacement != this->tilesDisplacement)
+	{
+		CharSet::rewrite(this);
+	}
 }
 
 /**
@@ -397,7 +404,7 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  *
  * @param frame		ROM memory displacement multiplier
  */
-bool CharSet::setFrame(uint16 frame)
+void CharSet::setFrame(uint16 frame)
 {
 	uint32 currentTilesDisplacement = this->tilesDisplacement;
 
@@ -410,5 +417,8 @@ bool CharSet::setFrame(uint16 frame)
 		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
 	}
 
-	return currentTilesDisplacement != this->tilesDisplacement;
+	if(kCharSetWritten != this->status)
+	{
+		CharSet::write(this);
+	}
 }

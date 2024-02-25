@@ -317,10 +317,7 @@ void Printing::setFontPage(const char* font, uint16 page)
 		return;
 	}
 
-	if(CharSet::setFrame(fontData->charSet, page))
-	{
-		CharSet::write(fontData->charSet);
-	}
+	CharSet::setFrame(fontData->charSet, page);
 }
 
 void Printing::loadDebugFont()

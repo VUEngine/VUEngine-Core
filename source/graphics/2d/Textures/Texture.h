@@ -137,7 +137,7 @@ abstract class Texture : ListenerObject
 	void setMapDisplacement(uint32 mapDisplacement);
 	void setFrame(uint16 frame);
 	uint16 getFrame();
-	bool prepare();
+	void prepare();
 	bool update(int16 maximumTextureRowsToWrite);
 	bool isShared();
 	bool isSingleFrame();
