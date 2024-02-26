@@ -89,6 +89,7 @@ singleton class Camera : ListenerObject
 	void reset();
 	void resetCameraFrustum();
 	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
+	CameraMovementManager getCameraMovementManager();
 	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
 	Vector3D getFocusEntityPositionDisplacement();
 	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);

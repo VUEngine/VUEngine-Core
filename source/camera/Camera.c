@@ -110,6 +110,16 @@ void Camera::destructor()
 }
 
 /**
+ * Get the movement manager
+ *
+ * @param cameraMovementManager	The CameraMovementManager
+ */
+CameraMovementManager Camera::getCameraMovementManager()
+{
+	return this->cameraMovementManager;
+}
+
+/**
  * Set the movement manager
  *
  * @param cameraMovementManager	The CameraMovementManager
