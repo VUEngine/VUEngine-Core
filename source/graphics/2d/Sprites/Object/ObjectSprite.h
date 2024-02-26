@@ -84,7 +84,6 @@ class ObjectSprite : Sprite
 	/// @publicsection
 	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 	int16 getTotalObjects();
-	void invalidateObjectSpriteContainer();
 	void resetTotalObjects();
 
 	override void registerWithManager();

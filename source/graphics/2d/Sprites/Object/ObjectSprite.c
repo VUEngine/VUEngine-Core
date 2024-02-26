@@ -372,17 +372,6 @@ int16 ObjectSprite::getTotalObjects()
 }
 
 /**
- * Set ObjectSpriteContainer to NULL
- *
- * @memberof				ObjectSprite
- * @public
- */
-void ObjectSprite::invalidateObjectSpriteContainer()
-{
-	Sprite::unregisterWithManager(this);
-}
-
-/**
  * Compute total objects
  *
  * @memberof				ObjectSprite

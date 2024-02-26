@@ -64,14 +64,16 @@ void Particle::destructor()
 	if(!isDeleted(this->sprite))
 	{
 		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-		this->sprite = NULL;
 	}
+
+	this->sprite = NULL;
 
 	if(!isDeleted(this->wireframe))
 	{
 		delete this->wireframe;
-		this->wireframe = NULL;
 	}
+
+	this->wireframe = NULL;
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -279,15 +281,16 @@ void Particle::suspend()
 	if(!isDeleted(this->sprite))
 	{
 		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-
-		this->sprite = NULL;
 	}
+
+	this->sprite = NULL;
 
 	if(!isDeleted(this->wireframe))
 	{
 		delete this->wireframe;
-		this->wireframe = NULL;
 	}
+
+	this->wireframe = NULL;
 }
 
 /**

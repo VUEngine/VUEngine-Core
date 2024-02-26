@@ -339,7 +339,7 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, SpatialObject owner)
 void SpriteManager::destroySprite(Sprite sprite)
 {
 	NM_ASSERT(!isDeleted(sprite), "SpriteManager::destroySprite: trying to dispose dead sprite");
-	ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to dispose a non sprite");
+	NM_ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::destroySprite: trying to dispose a non sprite");
 
 	if(isDeleted(sprite))
 	{
@@ -513,7 +513,7 @@ bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
  */
 void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute__((unused)))
 {
-	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
+	NM_ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
 #ifndef __ENABLE_PROFILER
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
