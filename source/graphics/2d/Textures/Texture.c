@@ -325,8 +325,6 @@ static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsTo
 		return;
 	}
 
-	CharSet::setFrame(texture->charSet, texture->frame);
-
 	Texture::write(texture, maximumTextureRowsToWrite);
 }
 
@@ -612,12 +610,10 @@ void Texture::setupUpdateFunction()
 	else if(CharSet::isOptimized(this->charSet))
 	{
 		this->doUpdate = Texture::updateOptimized;
-		CharSet::setFrame(this->charSet, this->frame);
 	}
 	else
 	{			
 		this->doUpdate = Texture::updateDefault;
-		CharSet::setFrame(this->charSet, this->frame);
 	}
 }
 
