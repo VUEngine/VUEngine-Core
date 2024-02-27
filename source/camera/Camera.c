@@ -495,6 +495,7 @@ void Camera::stopEffect(int32 effect)
 void Camera::reset()
 {
 	this->position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::zero();
 
