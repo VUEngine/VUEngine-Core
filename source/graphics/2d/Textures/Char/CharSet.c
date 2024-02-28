@@ -412,10 +412,10 @@ void CharSet::setFrame(uint16 frame)
 	else
 	{
 		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
-		
-		if(kCharSetWritten != this->status)
-		{
-			CharSet::write(this);
-		}
+	}
+
+	if(kCharSetWritten != this->status)
+	{
+		CharSet::write(this);
 	}
 }
