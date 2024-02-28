@@ -236,11 +236,16 @@ TextureSpec* Texture::getSpec()
  */
 void Texture::releaseCharSet()
 {
-//	this->update = false;
 	this->status = kTexturePendingWriting;
 
 	if(!isDeleted(this->charSet))
 	{
+		if(this->update)
+		{
+			this->update = false;
+			VirtualList::removeElement(_texturesToUpdate, this);
+		}	
+
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
