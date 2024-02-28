@@ -159,6 +159,7 @@ void SpriteManager::reset()
 	this->paramTableManager = ParamTableManager::getInstance();
 	this->objectTextureManager = ObjectTextureManager::getInstance();
 
+	Texture::reset();
 	Printing::reset(this->printing);
 	CharSetManager::reset(this->charSetManager);
 	BgmapTextureManager::reset(this->bgmapTextureManager);
@@ -602,8 +603,8 @@ void SpriteManager::writeDRAM()
 	// Update CHAR memory
 	CharSetManager::writeCharSetsProgressively(this->charSetManager);
 
-	// Update BGMAP memory
-	BgmapTextureManager::updateTextures(this->bgmapTextureManager, this->texturesMaximumRowsToWrite);
+	// Update DRAM memory
+	Texture::updateTextures(this->texturesMaximumRowsToWrite);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -611,7 +612,6 @@ void SpriteManager::writeDRAM()
 	// Finally, write OBJ and WORLD attributes to DRAM
 	if(NULL != this->objectSpriteContainers->head)
 	{
-		ObjectTextureManager::updateTextures(this->objectTextureManager, this->texturesMaximumRowsToWrite);
 		ObjectSpriteContainer::writeDRAM();
 	}
 

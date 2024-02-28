@@ -107,6 +107,8 @@ abstract class Texture : ListenerObject
 	// update flag
 	bool update;
 
+	static void updateTextures(int16 maximumTextureRowsToWrite);
+	static void reset();
 	static uint32 getTotalCols(TextureSpec* textureSpec);
 	static uint32 getTotalRows(TextureSpec* textureSpec);
 
@@ -121,7 +123,6 @@ abstract class Texture : ListenerObject
 	TextureSpec* getTextureSpec();
 	uint32 getNumberOfFrames();
 	CharSet getCharSet(uint32 loadIfNeeded);
-	void setCharSet(CharSet charSet);
 	uint16* getMap();
 	void setPalette(uint8 palette);
 	uint8 getPalette();

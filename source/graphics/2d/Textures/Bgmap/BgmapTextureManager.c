@@ -108,8 +108,6 @@ void BgmapTextureManager::reset()
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
 	}
-
-	this->deferTextureUpdate = false;
 }
 
 /*
@@ -360,40 +358,6 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
 		BgmapTexture::releaseCharSet(bgmapTexture);
-	}
-}
-
-/**
- * Update textures
- *
- * @public
- * @param value			Boolean flag
- */
-void BgmapTextureManager::setDeferTextureUpdate(bool value)
-{
-	this->deferTextureUpdate = value;
-}
-
-/**
- * Update textures
- *
- * @public
- */
-void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite)
-{
-	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
-	{
-		Texture texture = Texture::safeCast(node->data);
-
-		if(kTextureWritten != texture->status && texture->update)
-		{
-			texture->update = !Texture::update(texture, maximumTextureRowsToWrite);
-
-			if(this->deferTextureUpdate)
-			{
-				break;
-			}
-		}
 	}
 }
 

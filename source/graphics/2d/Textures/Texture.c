@@ -16,16 +16,63 @@
 #include <DebugUtilities.h>
 #include <Optics.h>
 #include <SpriteManager.h>
+#include <VirtualList.h>
+#include <VirtualNode.h>
 
 #include "Texture.h"
+
+
+//---------------------------------------------------------------------------------------------------------
+//												CLASS'S DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+friend class CharSet;
+friend class VirtualList;
+friend class VirtualNode;
+
+static VirtualList _texturesToUpdate = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-friend class CharSet;
+static void Texture::reset()
+{
+	if(NULL == _texturesToUpdate)
+	{
+		_texturesToUpdate = new VirtualList();
+	}
 
+	if(!isDeleted(_texturesToUpdate))
+	{
+		VirtualList::clear(_texturesToUpdate);
+	}
+}
+
+static void Texture::updateTextures(int16 maximumTextureRowsToWrite)
+{
+	if(NULL == _texturesToUpdate)
+	{
+		return;
+	}
+
+	for(VirtualNode node = _texturesToUpdate->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
+
+		Texture texture = Texture::safeCast(node->data);
+
+		if(texture->update && Texture::update(texture, maximumTextureRowsToWrite))
+		{
+			if(texture->update)
+			{
+				texture->update = false;
+				VirtualList::removeNode(_texturesToUpdate, node);
+			}
+		}
+	}
+}
 
 /**
  * Class constructor
@@ -36,6 +83,11 @@ friend class CharSet;
  */
 void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 {
+	if(NULL == _texturesToUpdate)
+	{
+		_texturesToUpdate = new VirtualList();
+	}
+
 	// construct base object
 	Base::constructor();
 
@@ -62,6 +114,12 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
  */
 void Texture::destructor()
 {
+	if(this->update)
+	{
+		this->update = false;
+		VirtualList::removeElement(_texturesToUpdate, this);
+	}
+
 	// make sure that I'm not destroyed again
 	this->usageCount = 0;
 
@@ -178,7 +236,7 @@ TextureSpec* Texture::getSpec()
  */
 void Texture::releaseCharSet()
 {
-	this->update = false;
+//	this->update = false;
 	this->status = kTexturePendingWriting;
 
 	if(!isDeleted(this->charSet))
@@ -232,12 +290,20 @@ void Texture::prepare()
 	{
 		case kTexturePendingWriting:
 
-			this->update = true;
+			if(!this->update)
+			{
+				VirtualList::pushBack(_texturesToUpdate, this);
+				this->update = true;
+			}
 			break;
 
 		case kTexturePendingRewriting:
 
-			this->update = true;
+			if(!this->update)
+			{
+				VirtualList::pushBack(_texturesToUpdate, this);
+				this->update = true;
+			}
 			break;
 
 		case kTextureFrameChanged:
@@ -252,8 +318,9 @@ void Texture::prepare()
 			{
 				this->status = kTextureInvalid;
 			}
-			else
+			else if(!this->update)
 			{
+				VirtualList::pushBack(_texturesToUpdate, this);
 				this->update = true;
 			}
 
@@ -572,32 +639,6 @@ CharSet Texture::getCharSet(uint32 loadIfNeeded)
 	}
 
 	return this->charSet;
-}
-
-/**
- * Set CharSet
- *
- * @param charset	CharSet
- */
-void Texture::setCharSet(CharSet charSet)
-{
-	Texture::releaseCharSet(this);
-
-	this->charSet = charSet;
-
-	if(NULL == this->charSet)
-	{
-		return;
-	}	
-
-	this->status = kTexturePendingWriting;
-
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
-
-	Texture::setupUpdateFunction(this);
-
-	Texture::rewrite(this);
 }
 
 void Texture::setupUpdateFunction()

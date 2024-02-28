@@ -31,14 +31,11 @@
 /// @ingroup graphics-2d-textures-bgmap
 singleton class ObjectTextureManager : Object
 {
-	VirtualList objectTextures;
-
 	/// @publicsection
 	static ObjectTextureManager getInstance();
 	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
 	void releaseTexture(ObjectTexture bgmapTexture);
 	void reset();
-	void updateTextures(int16 maximumTextureRowsToWrite);
 }
 
 
