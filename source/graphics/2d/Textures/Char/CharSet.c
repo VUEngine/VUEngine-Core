@@ -139,7 +139,14 @@ void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
+	uint32 currentOffset = this->offset;
+
 	this->offset = offset;
+
+	if(currentOffset != this->offset)
+	{
+		this->status = kCharSetPendingRewritting;
+	}
 }
 
 /**
@@ -304,25 +311,20 @@ void CharSet::write()
 }
 
 /**
- * Rewrite the CHARs to DRAM
- */
-void CharSet::rewrite()
-{
-	this->status = kCharSetPendingRewritting;
-}
-
-/**
  * Set displacement to add to the offset within the CHAR memory
  *
  * @param tilesDisplacement		Displacement
  */
-bool CharSet::setTilesDisplacement(uint32 tilesDisplacement)
+void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 {
 	uint32 currentTilesDisplacement = this->tilesDisplacement;
 
 	this->tilesDisplacement = tilesDisplacement;
 
-	return currentTilesDisplacement != this->tilesDisplacement;
+	if(currentTilesDisplacement != this->tilesDisplacement)
+	{
+		this->status = kCharSetPendingRewritting;
+	}
 }
 
 /**
@@ -403,19 +405,17 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 void CharSet::setFrame(uint16 frame)
 {
-	bool write = false;
-
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		write = CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
+		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
 	}
 	else
 	{
-		write = CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
-	}
-
-	if(write || kCharSetWritten != this->status)
-	{
-		CharSet::write(this);
+		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
+		
+		if(kCharSetWritten != this->status)
+		{
+			CharSet::write(this);
+		}
 	}
 }
