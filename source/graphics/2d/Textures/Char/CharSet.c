@@ -323,7 +323,7 @@ void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
 
 	if(currentTilesDisplacement != this->tilesDisplacement)
 	{
-		this->status = kCharSetPendingRewritting;
+		this->status = kCharSetNotWritten;
 	}
 }
 
