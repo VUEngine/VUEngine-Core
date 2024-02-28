@@ -377,8 +377,6 @@ bool CharSetManager::defragmentProgressively()
 					VirtualList::pushBack(this->charSetsPendingWriting, charSet);
 				}
 
-				CharSet::rewrite(charSet);
-
 				return true;
 			}
 			else if(this->freedOffset == offset)
