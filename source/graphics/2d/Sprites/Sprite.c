@@ -904,7 +904,7 @@ void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else if(!isDeleted(this->texture))
 	{

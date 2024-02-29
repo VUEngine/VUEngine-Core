@@ -81,8 +81,8 @@ static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 		
 		if(remove)
 		{
-			texture->update = false;
 			VirtualList::removeNode(_texturesToUpdate, node);
+			texture->update = false;
 		}
 	}
 }
@@ -589,12 +589,13 @@ void Texture::setFrame(uint16 frame)
 
 	if(!isDeleted(this->charSet))
 	{
+		if(CharSet::isOptimized(this->charSet))
+		{
+			this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+		}
+
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-			if(CharSet::isOptimized(this->charSet))
-			{
-				this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-			}
 
 			Texture::prepare(this);
 		}
