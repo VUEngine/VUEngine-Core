@@ -50,7 +50,7 @@ static void Texture::reset()
 	}
 }
 
-static void Texture::updateTextures(int16 maximumTextureRowsToWrite)
+static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 {
 	if(NULL == _texturesToUpdate)
 	{
@@ -63,13 +63,23 @@ static void Texture::updateTextures(int16 maximumTextureRowsToWrite)
 
 		Texture texture = Texture::safeCast(node->data);
 
-		if(texture->update && Texture::update(texture, maximumTextureRowsToWrite))
+		NM_ASSERT(__GET_CAST(Texture, texture), "Texture::updateTextures: invalid texture");
+
+		bool remove = NULL == texture->textureSpec || (texture->update && Texture::update(texture, maximumTextureRowsToWrite));
+		
+		if(remove)
 		{
-			if(texture->update)
+			texture->update = false;
+			VirtualList::removeNode(_texturesToUpdate, node);
+
+			if(defer && NULL != texture->textureSpec)
 			{
-				texture->update = false;
-				VirtualList::removeNode(_texturesToUpdate, node);
+				break;
 			}
+		}
+		else if(texture->update && defer)
+		{
+			break;
 		}
 	}
 }

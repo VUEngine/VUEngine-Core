@@ -82,6 +82,7 @@ void SpriteManager::constructor()
 
 	this->totalPixelsDrawn = 0;
 	this->deferredSort = false;
+	this->deferTextureUpdating = false;
 
 	this->sprites = NULL;
 	this->objectSpriteContainers = NULL;
@@ -90,7 +91,6 @@ void SpriteManager::constructor()
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
-	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
@@ -187,9 +187,8 @@ void SpriteManager::reset()
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 	this->deferredSort = false;
-
+	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
-	this->waitToWriteSpriteTextures = 0;
 
 	SpriteManager::stopRendering(this);
 
@@ -604,7 +603,7 @@ void SpriteManager::writeDRAM()
 	CharSetManager::writeCharSetsProgressively(this->charSetManager);
 
 	// Update DRAM memory
-	Texture::updateTextures(this->texturesMaximumRowsToWrite);
+	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);
 
 	// Update param tables
 	SpriteManager::applySpecialEffects(this);
@@ -885,6 +884,16 @@ void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
 }
 
 /**
+ * Set the flag to defer affine transformation calculations
+ *
+ * @param deferTextureUpdating	Flag
+ */
+void SpriteManager::deferTextureUpdating(bool deferTextureUpdating)
+{
+	this->deferTextureUpdating = deferTextureUpdating;
+}
+
+/**
  * Retrieve the maximum number of rows to compute per render cycle
  *
  * @return			Number of affine transformation rows to compute
@@ -920,6 +929,7 @@ void SpriteManager::computeTotalPixelsDrawn()
 void SpriteManager::prepareAll()
 {
 	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
+	bool deferTextureUpdating = this->deferTextureUpdating;
 
 	// Prevent VIP's interrupt from calling render during this process
 	HardwareManager::disableRendering(HardwareManager::getInstance());
@@ -952,6 +962,8 @@ void SpriteManager::prepareAll()
 		// Restore drawing
 		HardwareManager::enableRendering(HardwareManager::getInstance());
 	}
+
+	this->deferTextureUpdating = deferTextureUpdating;
 }
 
 void SpriteManager::renderAndDraw()

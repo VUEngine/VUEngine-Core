@@ -107,7 +107,7 @@ abstract class Texture : ListenerObject
 	// update flag
 	bool update;
 
-	static void updateTextures(int16 maximumTextureRowsToWrite);
+	static void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
 	static void reset();
 	static uint32 getTotalCols(TextureSpec* textureSpec);
 	static uint32 getTotalRows(TextureSpec* textureSpec);

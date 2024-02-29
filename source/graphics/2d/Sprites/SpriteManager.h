@@ -83,9 +83,9 @@ singleton class SpriteManager : Object
 	// number of rows to write in texture's writing
 	int8 texturesMaximumRowsToWrite;
 	// flag to control texture's writing deferring
-	int8 deferParamTableEffects;
-	// delay before writing again
-	int8 waitToWriteSpriteTextures;
+	bool deferTextureUpdating;
+	// flag to control param table effects deferring
+	bool deferParamTableEffects;
 	// flag to defer sorting
 	bool deferredSort;
 
@@ -95,6 +95,7 @@ singleton class SpriteManager : Object
 	Sprite createSprite(SpriteSpec* spriteSpec, SpatialObject owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
+	void deferTextureUpdating(bool deferTextureUpdating);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void destroySprite(Sprite sprite);
