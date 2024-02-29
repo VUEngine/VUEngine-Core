@@ -12,15 +12,15 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapAnimatedSprite.h>
+#include <string.h>
 
 #include <AnimationController.h>
 #include <BgmapTexture.h>
+#include <DebugUtilities.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <DebugUtilities.h>
-#include <string.h>
+#include "BgmapAnimatedSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------

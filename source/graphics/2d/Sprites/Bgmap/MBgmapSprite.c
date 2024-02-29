@@ -12,7 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBgmapSprite.h>
 
 #include <BgmapTextureManager.h>
 #include <Camera.h>
@@ -20,9 +19,10 @@
 #include <ParamTableManager.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
+#include <DebugConfig.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "MBgmapSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -12,14 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBgmapAnimatedSprite.h>
 
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
+#include <DebugConfig.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "MBgmapAnimatedSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
