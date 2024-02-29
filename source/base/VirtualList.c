@@ -130,6 +130,8 @@ int32 VirtualList::pushFront(const void* const data)
 
 	ASSERT(data, "VirtualList::pushFront: null data");
 
+	HardwareManager::suspendInterrupts();
+
 	// set the tail
 	if(NULL == this->tail)
 	{
@@ -147,6 +149,8 @@ int32 VirtualList::pushFront(const void* const data)
 		this->head = newNode;
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	return true;
 }
 
@@ -157,11 +161,11 @@ int32 VirtualList::pushFront(const void* const data)
  */
 void* VirtualList::popFront()
 {
+	HardwareManager::suspendInterrupts();
+
 	// if head isn't null
 	if(NULL != this->head)
 	{
-		HardwareManager::suspendInterrupts();
-
 		VirtualNode node = this->head;
 		void* data = node->data;
 
@@ -197,10 +201,11 @@ void* VirtualList::popFront()
  */
 void* VirtualList::popBack()
 {
+	HardwareManager::suspendInterrupts();
+
 	// if tail isn't null
 	if(NULL != this->tail)
 	{
-		HardwareManager::suspendInterrupts();
 		VirtualNode node = this->tail;
 		void* data = node->data;
 
@@ -240,6 +245,8 @@ int32 VirtualList::pushBack(const void* const data)
 
 	ASSERT(data, "VirtualList::pushBack: null data");
 
+	HardwareManager::suspendInterrupts();
+
 	// set the tail
 	if(NULL == this->head)
 	{
@@ -256,6 +263,8 @@ int32 VirtualList::pushBack(const void* const data)
 		// move the tail
 		this->tail = newNode;
 	}
+
+	HardwareManager::resumeInterrupts();
 
 	return true;
 }
@@ -427,10 +436,10 @@ bool VirtualList::doRemoveNode(VirtualNode node)
 		}
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	// free dynamic memory
 	delete node;
-
-	HardwareManager::resumeInterrupts();
 
 	return true;
 }
@@ -473,6 +482,8 @@ void VirtualList::moveBefore(VirtualNode node, VirtualNode nodeToMove)
 		return;
 	}
 
+	HardwareManager::suspendInterrupts();
+
 	if(nodeToMove == this->head)
 	{
 		this->head = nodeToMove->next;
@@ -508,6 +519,8 @@ void VirtualList::moveBefore(VirtualNode node, VirtualNode nodeToMove)
 		this->head = nodeToMove;
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	NM_ASSERT(NULL == this->head->previous, "VirtualList::moveBefore: head is corrupted");
 	NM_ASSERT(NULL == this->tail->next, "VirtualList::moveBefore: tail is corrupted");
 }
@@ -524,6 +537,8 @@ void VirtualList::moveAfter(VirtualNode node, VirtualNode nodeToMove)
 	{
 		return;
 	}
+
+	HardwareManager::suspendInterrupts();
 
 	if(nodeToMove == this->head)
 	{
@@ -560,9 +575,10 @@ void VirtualList::moveAfter(VirtualNode node, VirtualNode nodeToMove)
 		this->tail = nodeToMove;
 	}
 
+	HardwareManager::resumeInterrupts();
+
 	NM_ASSERT(NULL == this->head->previous, "VirtualList::moveBefore: head is corrupted");
 	NM_ASSERT(NULL == this->tail->next, "VirtualList::moveBefore: tail is corrupted");
-
 }
 
 /**
@@ -708,6 +724,8 @@ void VirtualList::substract(VirtualList sourceList)
  */
 void VirtualList::reverse()
 {
+	HardwareManager::suspendInterrupts();
+
 	if(NULL != this->head && this->tail != this->head)
 	{
 		VirtualNode node = this->head;
@@ -732,6 +750,8 @@ void VirtualList::reverse()
 		this->head = this->tail;
 		this->tail = helper;
 	}
+
+	HardwareManager::resumeInterrupts();
 }
 
 /**
