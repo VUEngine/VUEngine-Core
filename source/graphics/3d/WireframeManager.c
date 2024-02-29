@@ -67,7 +67,6 @@ void WireframeManager::constructor()
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
-	this->lockWireframeList = false;
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
 
@@ -139,11 +138,7 @@ Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		this->lockWireframeList = true;
-
 		VirtualList::pushBack(this->wireframes, wireframe);
-
-		this->lockWireframeList = false;
 
 		return wireframe;
 	}
@@ -188,9 +183,7 @@ Wireframe WireframeManager::unregisterWireframe(Wireframe wireframe)
 		return NULL;
 	}
 
-	this->lockWireframeList = true;
 	bool result = VirtualList::removeElement(this->wireframes, wireframe);
-	this->lockWireframeList = false;
 
 	return result ? wireframe : NULL;
 }
@@ -204,7 +197,6 @@ void WireframeManager::reset()
 	
 	VirtualList::clear(this->wireframes);
 	this->disabled = false;
-	this->lockWireframeList = false;
 
 	_previousCameraPosition = *_cameraPosition;
 	_previousCameraPositionBuffer = _previousCameraPosition;
@@ -308,10 +300,7 @@ void WireframeManager::render()
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
-	if(!this->lockWireframeList)
-	{
-		WireframeManager::sortProgressively(this);
-	}
+	WireframeManager::sortProgressively(this);
 #endif
 
 	_previousCameraPosition = _previousCameraPositionBuffer;

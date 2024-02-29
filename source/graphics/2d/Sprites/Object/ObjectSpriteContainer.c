@@ -65,7 +65,6 @@ void ObjectSpriteContainer::constructor()
 	this->lastObjectIndex = 0;
 	this->objectSprites = new VirtualList();
 	this->transparent = __TRANSPARENCY_NONE;
-	this->lockSpritesLists = false;
 	this->hideSprites = false;
 }
 
@@ -123,12 +122,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 
 	if(!isDeleted(objectSprite))
 	{
-		this->lockSpritesLists = true;
-
 		VirtualList::pushFront(this->objectSprites, objectSprite);
-
-		this->lockSpritesLists = false;
-
 		return true;
 	}
 
@@ -148,12 +142,8 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
 #endif
 
-	this->lockSpritesLists = true;
-
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
-
-	this->lockSpritesLists = false;
 }
 
 /**
@@ -163,11 +153,6 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
  */
 bool ObjectSpriteContainer::sortProgressively(bool deferred)
 {
-	if(this->lockSpritesLists)
-	{
-		return false;
-	}
-
 	bool swapped = false;
 
 	for(VirtualNode node = this->objectSprites->head; NULL != node && NULL != node->next; node = node->next)

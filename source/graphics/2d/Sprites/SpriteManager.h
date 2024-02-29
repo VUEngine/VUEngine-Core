@@ -74,8 +74,6 @@ singleton class SpriteManager : Object
 	int32 totalPixelsDrawn;
 	// number of rows to write in affine transformations
 	int16 maximumParamTableRowsToComputePerCall;
-	// semaphore to prevent manipulation of VirtualList during interrupt
-	bool lockSpritesLists;
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
 	// next world layer

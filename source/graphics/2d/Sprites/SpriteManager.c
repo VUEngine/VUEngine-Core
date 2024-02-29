@@ -91,7 +91,6 @@ void SpriteManager::constructor()
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
-	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	this->printing = NULL;
@@ -164,9 +163,7 @@ void SpriteManager::reset()
 	CharSetManager::reset(this->charSetManager);
 	BgmapTextureManager::reset(this->bgmapTextureManager);
 	ParamTableManager::reset(this->paramTableManager);
-
-	this->lockSpritesLists = true;
-
+	
 	SpriteManager::cleanUp(this);
 	ObjectSpriteContainer::reset();
 
@@ -192,7 +189,6 @@ void SpriteManager::reset()
 
 	SpriteManager::stopRendering(this);
 
-	this->lockSpritesLists = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
 	HardwareManager::resumeInterrupts();
@@ -481,14 +477,10 @@ bool SpriteManager::registerSprite(Sprite sprite, bool hasEffects)
 
 	if(!isDeleted(sprite))
 	{
-		this->lockSpritesLists = true;
-
 		if(SpriteManager::doRegisterSprite(this, sprite) && hasEffects)
 		{
 			VirtualList::pushBack(this->specialSprites, sprite);
 		}
-
-		this->lockSpritesLists = false;
 
 #ifndef __RELEASE
 		registeringSprite = false;
@@ -519,8 +511,6 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 #endif
 
-	this->lockSpritesLists = true;
-
 	VirtualList::removeElement(this->sprites, sprite);
 
 #ifdef __RELEASE
@@ -529,8 +519,6 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 	{
 		VirtualList::removeElement(this->specialSprites, sprite);
 	}
-
-	this->lockSpritesLists = false;
 }
 
 /**
@@ -640,10 +628,7 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
-	if(!this->lockSpritesLists)
-	{
-		this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
-	}
+	this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
 
 	ParamTableManager::defragmentProgressively(this->paramTableManager);
 

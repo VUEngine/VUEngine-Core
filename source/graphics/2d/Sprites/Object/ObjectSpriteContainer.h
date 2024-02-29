@@ -42,8 +42,6 @@ class ObjectSpriteContainer : Sprite
 	int32 lastObjectIndex;
 	// spt index
 	int32 spt;
-	// semaphore to prevent manipulation of VirtualList during interrupt
-	bool lockSpritesLists;
 	// flag to override to show / hide sprites
 	bool hideSprites;
 
