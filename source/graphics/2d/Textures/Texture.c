@@ -58,7 +58,7 @@ static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 	}
 	else
 	{
-		Texture::doUpdateTexturesDeferred(maximumTextureRowsToWrite);
+		Texture::doUpdateTextures(maximumTextureRowsToWrite);
 	}
 }
 
@@ -439,11 +439,6 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 
 static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsToWrite)
 {
-	if(isDeleted(texture->charSet))
-	{
-		return;
-	}
-
 	Texture::write(texture, maximumTextureRowsToWrite);
 }
 
