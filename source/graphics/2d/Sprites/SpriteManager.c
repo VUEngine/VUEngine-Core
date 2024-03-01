@@ -597,10 +597,7 @@ void SpriteManager::writeDRAM()
 	SpriteManager::applySpecialEffects(this);
 
 	// Finally, write OBJ and WORLD attributes to DRAM
-	if(NULL != this->objectSpriteContainers->head)
-	{
-		ObjectSpriteContainer::writeDRAM();
-	}
+	ObjectSpriteContainer::writeDRAM();
 
 	// Finally, write OBJ and WORLD attributes to DRAM
 	SpriteManager::writeWORLDAttributesToDRAM(this);
