@@ -145,7 +145,7 @@ void MBgmapSprite::releaseTextures()
  */
 void MBgmapSprite::loadTextures()
 {
-	if(this->mBgmapSpriteSpec)
+	if(NULL != this->mBgmapSpriteSpec)
 	{
 		if(NULL == this->texture && NULL == this->textures)
 		{
@@ -155,9 +155,6 @@ void MBgmapSprite::loadTextures()
 			{
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
-
-			this->texture = Texture::safeCast(VirtualList::back(this->textures));
-			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
 			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
 			this->textureYOffset = BgmapTexture::getYOffset(this->texture) << 3;
@@ -201,7 +198,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, this->mBgmapSpriteSpec->scValue);
 
 	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
-	NM_ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
+	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
 	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
 
 	if(!isDeleted(bgmapTexture))
@@ -209,6 +206,9 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 
 		VirtualList::pushBack(this->textures, bgmapTexture);
+
+		this->texture = Texture::safeCast(bgmapTexture);
+		NM_ASSERT(this->texture, "MBgmapSprite::loadTexture: null texture");
 	}
 }
 
