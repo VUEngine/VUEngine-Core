@@ -37,9 +37,9 @@ static class Mem : Object
 	static inline void copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
 	static inline void copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS);
 	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
-	static inline void addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset);
-	static inline void addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset);
-	static void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset);
+	static inline void addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
+	static inline void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfWORDS);
+	static inline void addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
 }
 
 // TODO: input registers should not be modified according to GCC's docs
@@ -69,19 +69,27 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 n
 	}
 }
 
-static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset)
+static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
-		*destination++ = *source++ + offset;
+		*destination++ |= *source++;
 	}
 }
 
-static inline void Mem::addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset)
+static inline void Mem::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS)
+{
+	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
+	{
+		*destination++ |= *source++;
+	}
+}
+
+static inline void Mem::addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
-		*destination++ = *source++ + offset;
+		*destination++ |= *source++;
 	}
 }
 

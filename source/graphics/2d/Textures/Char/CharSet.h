@@ -106,6 +106,7 @@ class CharSet : ListenerObject
 	uint16 getNumberOfChars();
 	void write();
 	void putChar(uint32 charToReplace, uint32* newChar);
+	void addChar(uint32 charToAddTo, uint32* newChar);
 	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 	void setFrame(uint16 frame);
 }

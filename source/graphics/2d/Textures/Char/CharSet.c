@@ -346,6 +346,26 @@ void CharSet::putChar(uint32 charToReplace, uint32* newChar)
 	}
 }
 
+/**
+ * Add a single CHAR to DRAM
+ *
+ * @param charToAddTp		Index of the CHAR to overwrite
+ * @param newChar			CHAR data to write
+ */
+void CharSet::addChar(uint32 charToAddTo, uint32* newChar)
+{
+	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
+	{
+		Mem::addWORD
+		(
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
+			(uint32*)newChar,
+			__UINT32S_PER_CHARS(1)
+		);
+	}
+}
+
+
 // TODO: if inline is allowed, the optimization that GCC does makes this ineffective in putPixel method
 // It is not because of O3 optimization option, the same happens with O1
 static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
