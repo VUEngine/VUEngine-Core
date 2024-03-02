@@ -338,45 +338,10 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 
 void Texture::prepare()
 {
-	switch(this->status)
+	if(!this->update)
 	{
-		case kTexturePendingWriting:
-
-			if(!this->update)
-			{
-				VirtualList::pushBack(_texturesToUpdate, this);
-				this->update = true;
-			}
-			break;
-
-		case kTexturePendingRewriting:
-
-			if(!this->update)
-			{
-				VirtualList::pushBack(_texturesToUpdate, this);
-				this->update = true;
-			}
-			break;
-
-		case kTextureFrameChanged:
-		case kTextureMapDisplacementChanged:
-
-			if(isDeleted(this->charSet))
-			{
-				Texture::loadCharSet(this);
-			}
-
-			if(isDeleted(this->charSet))
-			{
-				this->status = kTextureInvalid;
-			}
-			else if(!this->update)
-			{
-				VirtualList::pushBack(_texturesToUpdate, this);
-				this->update = true;
-			}
-
-			break;
+		VirtualList::pushBack(_texturesToUpdate, this);
+		this->update = true;
 	}
 }
 
