@@ -40,6 +40,9 @@ static class Mem : Object
 	static inline void addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
 	static inline void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfWORDS);
 	static inline void addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
+	static inline void addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset);
+	static inline void addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset);
+	static inline void addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset);
 }
 
 // TODO: input registers should not be modified according to GCC's docs
@@ -90,6 +93,30 @@ static inline void Mem::addWORD(WORD* destination, const WORD* source, uint32 nu
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
 		*destination++ |= *source++;
+	}
+}
+
+static inline void Mem::addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset)
+{
+	for(; 0 < numberOfBYTES; numberOfBYTES--)
+	{
+		*destination++ = *source++ + offset;
+	}
+}
+
+static inline void Mem::addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset)
+{
+	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
+	{
+		*destination++ = *source++ + offset;
+	}
+}
+
+static inline void Mem::addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset)
+{
+	for(; 0 < numberOfWORDS; numberOfWORDS--)
+	{
+		*destination++ = *source++ + offset;
 	}
 }
 
