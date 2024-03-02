@@ -399,30 +399,3 @@ void MBgmapSprite::calculateSize()
 		this->halfHeight = this->mBgmapSpriteSpec->height >> 1;
 	}
 }
-
-/**
- * Write textures
- *
- * @memberof		MBgmapSprite
- * @public
- *
- */
-void MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
-{
-	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
-
-	if(isDeleted(this->textures))
-	{
-		return;
-	}
-
-	VirtualNode node = this->textures->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		Texture texture = Texture::safeCast(node->data);
-
-		Texture::write(texture, maximumTextureRowsToWrite);
-	}
-}
-

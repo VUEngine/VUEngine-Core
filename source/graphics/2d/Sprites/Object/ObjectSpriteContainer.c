@@ -390,21 +390,6 @@ int32 ObjectSpriteContainer::getTotalPixels()
 	return 0;
 }
 
-/**
- * Write textures
- *
- */
-void ObjectSpriteContainer::writeTextures(int16 maximumTextureRowsToWrite)
-{
-	if(!isDeleted(this->objectSprites))
-	{
-		for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-		{
-			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data), maximumTextureRowsToWrite);
-		}
-	}
-}
-
 static void ObjectSpriteContainer::reset()
 {
 	for(int32 i = __AVAILABLE_CHAR_OBJECTS - 1; 0 <= i; i--)

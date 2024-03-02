@@ -484,20 +484,6 @@ int16 Sprite::getIndex()
 }
 
 /**
- * Write textures
- *
- */
-void Sprite::writeTextures(int16 maximumTextureRowsToWrite)
-{
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	Texture::write(this->texture, maximumTextureRowsToWrite);
-}
-
-/**
  * Get sprite's render head
  *
  * @return

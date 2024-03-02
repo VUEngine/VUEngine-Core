@@ -193,7 +193,6 @@ abstract class Sprite : VisualComponent
 	virtual void processEffects();
 	virtual int16 doRender(int16 index) = 0;
 	virtual void writeAnimation();
-	virtual void writeTextures(int16 maximumTextureRowsToWrite);
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels() = 0;
 	virtual void invalidateRendering();

@@ -546,10 +546,7 @@ void SpriteManager::writeTextures()
 {
 	CharSetManager::writeCharSets(this->charSetManager);
 
-	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
-	{
-		Sprite::writeTextures(node->data, -1);
-	}
+	Texture::updateTextures(-1, false);
 
 	CharSetManager::writeCharSets(this->charSetManager);
 }
