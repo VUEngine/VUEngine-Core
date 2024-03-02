@@ -596,7 +596,6 @@ void Texture::setFrame(uint16 frame)
 
 		if(statusChanged && kTextureFrameChanged == this->status)
 		{
-
 			Texture::prepare(this);
 		}
 	}

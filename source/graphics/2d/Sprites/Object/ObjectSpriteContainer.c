@@ -393,9 +393,8 @@ int32 ObjectSpriteContainer::getTotalPixels()
 /**
  * Write textures
  *
- * @return			true it all textures are written
  */
-bool ObjectSpriteContainer::writeTextures(int16 maximumTextureRowsToWrite)
+void ObjectSpriteContainer::writeTextures(int16 maximumTextureRowsToWrite)
 {
 	if(!isDeleted(this->objectSprites))
 	{
@@ -404,8 +403,6 @@ bool ObjectSpriteContainer::writeTextures(int16 maximumTextureRowsToWrite)
 			ObjectSprite::writeTextures(ObjectSprite::safeCast(node->data), maximumTextureRowsToWrite);
 		}
 	}
-
-	return true;
 }
 
 static void ObjectSpriteContainer::reset()

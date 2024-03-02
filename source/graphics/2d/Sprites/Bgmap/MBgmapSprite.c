@@ -406,11 +406,15 @@ void MBgmapSprite::calculateSize()
  * @memberof		MBgmapSprite
  * @public
  *
- * @return			true it all textures are written
  */
-bool MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
+void MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
 {
 	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
+
+	if(isDeleted(this->textures))
+	{
+		return;
+	}
 
 	VirtualNode node = this->textures->head;
 
@@ -418,13 +422,7 @@ bool MBgmapSprite::writeTextures(int16 maximumTextureRowsToWrite)
 	{
 		Texture texture = Texture::safeCast(node->data);
 
-		if(kTexturePendingWriting == texture->status)
-		{
-			Texture::write(texture, maximumTextureRowsToWrite);
-			break;
-		}
+		Texture::write(texture, maximumTextureRowsToWrite);
 	}
-
-	return !node;
 }
 
