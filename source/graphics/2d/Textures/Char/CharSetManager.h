@@ -32,7 +32,6 @@ singleton class CharSetManager : Object
 	VirtualList charSets;
 	// Next offset to be reclaimed
 	uint16 freedOffset;
-	bool preventDefragmentation;
 
 	/// @publicsection
 	static CharSetManager getInstance();

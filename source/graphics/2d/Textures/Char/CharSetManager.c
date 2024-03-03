@@ -54,7 +54,6 @@ void CharSetManager::constructor()
 
 	this->charSets = new VirtualList();
 	this->freedOffset = 1;
-	this->preventDefragmentation = false;
 }
 
 /**
@@ -76,15 +75,12 @@ void CharSetManager::destructor()
  */
 void CharSetManager::reset()
 {
-	this->preventDefragmentation = true;
-
 	if(this->charSets)
 	{
 		VirtualList::deleteData(this->charSets);
 	}
 
 	this->freedOffset = 1;
-	this->preventDefragmentation = false;
 }
 
 
@@ -186,8 +182,6 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	if(CharSet::decreaseUsageCount(charSet))
 	{
-		this->preventDefragmentation = true;
-
 		VirtualList::removeElement(this->charSets, charSet);
 
 		uint32 offset = CharSet::getOffset(charSet);
@@ -198,8 +192,6 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 		}
 
 		delete charSet;
-
-		this->preventDefragmentation = false;
 
 		return true;
 	}
@@ -221,8 +213,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
-	this->preventDefragmentation = true;
-
 	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
 	if(NULL != this->charSets->head)
@@ -237,7 +227,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 		VirtualList::pushBack(this->charSets, charSet);
 
-		this->preventDefragmentation = false;
 		return charSet;
 	}
 
@@ -249,7 +238,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 		VirtualList::pushBack(this->charSets, charSet);
 
-		this->preventDefragmentation = false;
 		return charSet;		
 	}
 #endif
@@ -276,8 +264,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
  */
 void CharSetManager::writeCharSets()
 {
-	this->preventDefragmentation = true;
-
 	CharSetManager::defragment(this);
 
 	VirtualNode node = this->charSets->head;
@@ -286,8 +272,6 @@ void CharSetManager::writeCharSets()
 	{
 		CharSet::write(node->data);
 	}
-
-	this->preventDefragmentation = false;
 }
 
 /**
@@ -295,14 +279,10 @@ void CharSetManager::writeCharSets()
  */
 void CharSetManager::defragment()
 {
-//	this->preventDefragmentation = true;
-	
 	while(1 < this->freedOffset)
 	{
 		CharSetManager::defragmentProgressively(this);
 	}
-
-//	this->preventDefragmentation = false;
 }
 
 /**
@@ -310,11 +290,6 @@ void CharSetManager::defragment()
  */
 bool CharSetManager::defragmentProgressively()
 {
-	if(this->preventDefragmentation)
-	{
-	//	return false;
-	}
-
 	if(1 < this->freedOffset)
 	{
 		VirtualNode node = this->charSets->head;
