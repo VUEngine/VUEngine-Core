@@ -415,15 +415,16 @@ PixelOptical Stage::getPixelOptical()
 	return this->stageSpec->rendering.pixelOptical;
 }
 
-void Stage::onEntityLoaded(ListenerObject eventFirer)
+bool Stage::onEntityLoaded(ListenerObject eventFirer)
 {
 	Entity entity = Entity::safeCast(eventFirer);
 
 	if(!isDeleted(entity) && !isDeleted(this->entityLoadingListeners))
 	{
-		Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 		Stage::alertOfLoadedEntity(this, entity);
 	}
+
+	return false;
 }
 
 void Stage::alertOfLoadedEntity(Entity entity)
@@ -1201,11 +1202,13 @@ void Stage::setupSounds()
 	}
 }
 
-void Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
+bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	VirtualList::removeElement(this->sounds, eventFirer);
 
 	Stage::fireEvent(this, kEventSoundReleased);
+
+	return false;
 }
 
 void Stage::setupTimer()
@@ -1213,7 +1216,7 @@ void Stage::setupTimer()
 	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
 }
 
-void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
+bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!isDeleted(this->focusEntity) && ListenerObject::safeCast(this->focusEntity) == eventFirer)
 	{
@@ -1224,20 +1227,22 @@ void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unuse
 	}
 
 	this->focusEntity = NULL;
+
+	return false;
 }
 
 void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);

@@ -102,7 +102,7 @@ void DirectDraw::destructor()
 	Base::destructor();
 }
 
-void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+bool DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	this->maximuDrawPixels = this->drawPixels - __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD;
 
@@ -110,6 +110,8 @@ void DirectDraw::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __at
 	{
 		this->maximuDrawPixels = __DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS;
 	}
+
+	return true;
 }
 
 /**

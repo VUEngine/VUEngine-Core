@@ -740,9 +740,11 @@ uint16 Texture::getId()
  * @private
  * @param eventFirer	CharSet
  */
-void Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
+bool Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	Texture::rewrite(this);
+
+	return true;
 }
 
 /**
@@ -751,9 +753,11 @@ void Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((u
  * @private
  * @param eventFirer	CharSet
  */
-void Texture::onCharSetDeleted(ListenerObject eventFirer)
+bool Texture::onCharSetDeleted(ListenerObject eventFirer)
 {
 	this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
+
+	return false;
 }
 
 /**

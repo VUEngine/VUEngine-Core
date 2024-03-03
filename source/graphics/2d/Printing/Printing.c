@@ -250,7 +250,7 @@ void Printing::setDirection(uint8 value)
 	}
 }
 
-void Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
+bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
 {
 	CharSet charSet = CharSet::safeCast(eventFirer);
 
@@ -260,6 +260,8 @@ void Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((
 		Printing::fireEvent(this, kEventFontRewritten);
 		NM_ASSERT(!isDeleted(this), "Printing::onFontCharChangedOffset: deleted this during kEventFontRewritten");
 	}
+
+	return true;
 }
 
 void Printing::loadFonts(FontSpec** fontSpecs)

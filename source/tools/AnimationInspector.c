@@ -916,12 +916,14 @@ void AnimationInspector::createFrameEditionSelector()
  * @private
  * @param eventFirer		AnimationController
  */
-void AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
+bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{
 		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
 	}
+
+	return true;
 }
 
 #endif

@@ -597,11 +597,11 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
  * @private
  * @param eventFirer		Destroyed collider
  */
-void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
+bool Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 {
 	if(isDeleted(this->owner))
 	{
-		return;
+		return false;
 	}
 
 	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
@@ -609,9 +609,9 @@ void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, colliderNotCollidingAnymore);
 	ASSERT(otherColliderRegistry, "Collider::onOtherColliderDestroyed: onOtherColliderDestroyed not found");
 
-	if(!otherColliderRegistry)
+	if(NULL == otherColliderRegistry)
 	{
-		return;
+		return false;
 	}
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
@@ -620,6 +620,8 @@ void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 	{
 		SpatialObject::otherColliderOwnerDestroyed(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
 	}
+
+	return false;
 }
 
 /**
@@ -628,11 +630,11 @@ void Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
  * @private
  * @param eventFirer		Changed collider
  */
-void Collider::onOtherColliderChanged(ListenerObject eventFirer)
+bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 {
 	if(isDeleted(this->owner))
 	{
-		return;
+		return false;
 	}
 
 	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
@@ -648,6 +650,8 @@ void Collider::onOtherColliderChanged(ListenerObject eventFirer)
 	{
 		SpatialObject::exitCollision(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
 	}
+
+	return true;
 }
 
 /**

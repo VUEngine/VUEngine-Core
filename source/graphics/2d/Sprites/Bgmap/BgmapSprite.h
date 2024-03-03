@@ -95,7 +95,7 @@ class BgmapSprite : Sprite
 	void setParam(uint32 param);
 	void putChar(Point* texturePixel, uint32* newChar);
 	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-	void onTextureRewritten(ListenerObject eventFirer);
+	bool onTextureRewritten(ListenerObject eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
 	bool hasSpecialEffects();

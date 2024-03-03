@@ -438,21 +438,25 @@ void SoundTest::loadSound()
 	SoundTest::printGUI(this, false);
 }
 
-void SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
+bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->sound))
 	{
 		Sound::printPlaybackTime(this->sound, 24, 8);
 		Sound::printPlaybackProgress(this->sound, 1, 6);
 	}
+
+	return true;
 }
 
-void SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
+bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(Sound::safeCast(eventFirer) == this->sound)
 	{
-		this->sound = NULL;
+		this->sound = NULL;		
 	}
+
+	return false;
 }
 
 void SoundTest::printTimer()

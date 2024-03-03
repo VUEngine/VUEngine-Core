@@ -176,9 +176,11 @@ void ObjectSprite::removeFromCache()
  *
  * @param eventFirer
  */
-void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	ObjectSprite::rewrite(this);
+
+	return true;
 }
 
 void ObjectSprite::rewrite()

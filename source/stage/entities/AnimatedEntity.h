@@ -72,7 +72,7 @@ class AnimatedEntity : Entity
 	void previousFrame();
 	void setActualFrame(int16 frame);
 	void setAnimationFunction(const AnimationFunction** animationFunctions);
-	void onAnimationCompleteHide(ListenerObject eventFirer);
+	bool onAnimationCompleteHide(ListenerObject eventFirer);
 	void animate();
 	override void ready(bool recursive);
 	override void resume();

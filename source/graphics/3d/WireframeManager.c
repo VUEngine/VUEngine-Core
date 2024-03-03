@@ -93,9 +93,11 @@ void WireframeManager::destructor()
 	Base::destructor();
 }
 
-void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{					
+bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
 	this->stopDrawing = true;
+
+	return true;
 }
 
 /**

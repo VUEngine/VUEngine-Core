@@ -274,11 +274,11 @@ void VUEngine::removeState(GameState gameState)
 	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
 }
 
-void VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
+bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 {
 	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
 	{
-		return;
+		return false;
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -302,28 +302,15 @@ void VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
+
+	return false;
 }
 
-void VUEngine::pushingState(ListenerObject eventFirer)
+bool VUEngine::pushingState(ListenerObject eventFirer)
 {
 	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
 	{
-		return;
-	}
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
-#endif
-
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
-}
-
-void VUEngine::swappingState(ListenerObject eventFirer)
-{
-	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
-	{
-		return;
+		return false;
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -333,21 +320,14 @@ void VUEngine::swappingState(ListenerObject eventFirer)
 	HardwareManager::displayOff(HardwareManager::getInstance());
 	HardwareManager::disableRendering(HardwareManager::getInstance());
 
-	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-
-	if(!isDeleted(currentGameState))
-	{
-		// Discard delayed messages from the current state
-		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
-		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
-	}
+	return false;
 }
 
-void VUEngine::poppingState(ListenerObject eventFirer)
+bool VUEngine::swappingState(ListenerObject eventFirer)
 {
 	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
 	{
-		return;
+		return false;
 	}
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -365,13 +345,41 @@ void VUEngine::poppingState(ListenerObject eventFirer)
 		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
+
+	return false;
 }
 
-void VUEngine::changedState(ListenerObject eventFirer)
+bool VUEngine::poppingState(ListenerObject eventFirer)
 {
 	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
 	{
-		return;
+		return false;
+	}
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
+#endif
+
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+
+	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+
+	if(!isDeleted(currentGameState))
+	{
+		// Discard delayed messages from the current state
+		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
+		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+	}
+
+	return false;
+}
+
+bool VUEngine::changedState(ListenerObject eventFirer)
+{
+	if(StateMachine::safeCast(eventFirer) != this->stateMachine)
+	{
+		return false;
 	}
 
 	StateMachine::removeAllEventListeners(this->stateMachine);
@@ -399,6 +407,8 @@ void VUEngine::changedState(ListenerObject eventFirer)
 
 	StopwatchManager::reset(StopwatchManager::getInstance());
 	FrameRate::reset(this->frameRate);
+
+	return false;
 }
 
 // erase engine's current status

@@ -339,7 +339,18 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				event->method(event->listener, this);
+				bool keepListening = event->method(event->listener, this);
+
+				if(!keepListening)
+				{
+					VirtualList::removeNode(this->events, node);
+
+					// safety check in case that the there is a stacking up of firings within firings
+					if(!isDeleted(event))
+					{
+						delete event;
+					}
+				}
 
 				// safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))

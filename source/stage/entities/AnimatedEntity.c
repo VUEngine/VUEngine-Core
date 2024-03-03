@@ -283,7 +283,9 @@ int32 AnimatedEntity::getNumberOfFrames()
 	return -1;
 }
 
-void AnimatedEntity::onAnimationCompleteHide(ListenerObject eventFirer __attribute__((unused)))
+bool AnimatedEntity::onAnimationCompleteHide(ListenerObject eventFirer __attribute__((unused)))
 {
 	AnimatedEntity::hide(this);
+
+	return true;
 }

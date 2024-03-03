@@ -26,7 +26,7 @@ class ListenerObject;
 class Telegram;
 class VirtualList;
 
-typedef void (*EventListener)(ListenerObject, ListenerObject);
+typedef bool (*EventListener)(ListenerObject, ListenerObject);
 
 /**
  * An Event

@@ -145,9 +145,11 @@ bool BgmapSprite::hasSpecialEffects()
  *
  * @param eventFirer
  */
-void BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
+
+	return true;
 }
 
 void BgmapSprite::releaseTexture()
