@@ -48,7 +48,9 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 	// set the offset
 	this->offset = offset;
 	this->usageCount = 1;
-	this->status = kCharSetNotWritten;
+	this->written = false;
+
+	CharSet::write(this);
 }
 
 /**
@@ -139,13 +141,13 @@ void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
-	uint32 currentOffset = this->offset;
+	this->written = this->written && this->offset == offset;
 
 	this->offset = offset;
 
-	if(currentOffset != this->offset)
+	if(!this->written)
 	{
-		this->status = kCharSetPendingRewritting;
+		CharSet::fireEvent(this, kEventCharSetChangedOffset);
 	}
 }
 
@@ -295,36 +297,7 @@ void CharSet::write()
 			break;
 	}
 
-	if(kCharSetPendingRewritting == this->status)
-	{
-		this->status = kCharSetWritten;
-
-		// propagate event
-		CharSet::fireEvent(this, kEventCharSetRewritten);
-		NM_ASSERT(!isDeleted(this), "CharSet::rewrite: deleted this during kEventCharSetRewritten");
-
-	}
-	else
-	{
-		this->status = kCharSetWritten;
-	}
-}
-
-/**
- * Set displacement to add to the offset within the CHAR memory
- *
- * @param tilesDisplacement		Displacement
- */
-void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
-{
-	uint32 currentTilesDisplacement = this->tilesDisplacement;
-
-	this->tilesDisplacement = tilesDisplacement;
-
-	if(currentTilesDisplacement != this->tilesDisplacement)
-	{
-		this->status = kCharSetNotWritten;
-	}
+	this->written = true;
 }
 
 /**
@@ -425,17 +398,21 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  */
 void CharSet::setFrame(uint16 frame)
 {
+	uint32 tilesDisplacement = 0;
+
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
+		tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
 	}
 	else
 	{
-		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
+		tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame);
 	}
 
-	if(kCharSetWritten != this->status)
+	if(!this->written || this->tilesDisplacement != tilesDisplacement)
 	{
+		this->tilesDisplacement = tilesDisplacement;
+
 		CharSet::write(this);
 	}
 }

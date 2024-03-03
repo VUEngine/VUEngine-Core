@@ -585,7 +585,7 @@ void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update CHAR memory
-	CharSetManager::writeCharSetsProgressively(this->charSetManager);
+	CharSetManager::defragmentProgressively(this->charSetManager);
 
 	// Update DRAM memory
 	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);

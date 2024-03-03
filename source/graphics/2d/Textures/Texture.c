@@ -235,7 +235,7 @@ void Texture::loadCharSet()
 
 	Texture::setupUpdateFunction(this);
 
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 }
 
@@ -293,7 +293,7 @@ void Texture::releaseCharSet()
 			VirtualList::removeElement(_texturesToUpdate, this);
 		}	
 
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
@@ -740,7 +740,7 @@ uint16 Texture::getId()
  * @private
  * @param eventFirer	CharSet
  */
-void Texture::onCharSetRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+void Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	Texture::rewrite(this);
 }
