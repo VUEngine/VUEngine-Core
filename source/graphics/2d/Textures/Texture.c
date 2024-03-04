@@ -766,7 +766,7 @@ bool Texture::onCharSetDeleted(ListenerObject eventFirer)
  * @param texturePixel	Coordinates within the map spec to write
  * @param newChar		CHAR data to write
  */
-void Texture::putChar(Point* texturePixel, uint32* newChar)
+void Texture::putChar(const Point* texturePixel, const uint32* newChar)
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
@@ -784,7 +784,7 @@ void Texture::putChar(Point* texturePixel, uint32* newChar)
  * @param charSetPixel	Pixel data
  * @param newPixelColor	Color value of pixel
  */
-void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
+void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{

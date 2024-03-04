@@ -1096,7 +1096,7 @@ void Sprite::print(int32 x, int32 y)
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::putChar(Point* texturePixel, uint32* newChar)
+void Sprite::putChar(const Point* texturePixel, const uint32* newChar)
 {
 	if(isDeleted(this->texture) || NULL == newChar || NULL == texturePixel)
 	{
@@ -1113,7 +1113,7 @@ void Sprite::putChar(Point* texturePixel, uint32* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
+void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(isDeleted(this->texture))
 	{

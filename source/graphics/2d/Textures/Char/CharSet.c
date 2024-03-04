@@ -306,7 +306,7 @@ void CharSet::write()
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::putChar(uint32 charToReplace, uint32* newChar)
+void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
 {
 	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
@@ -325,7 +325,7 @@ void CharSet::putChar(uint32 charToReplace, uint32* newChar)
  * @param charToAddTp		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::addChar(uint32 charToAddTo, uint32* newChar)
+void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
 {
 	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
 	{
@@ -369,7 +369,7 @@ static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, cons
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{

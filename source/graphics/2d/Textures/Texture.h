@@ -132,8 +132,8 @@ abstract class Texture : ListenerObject
 	uint8 getUsageCount();
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	void putChar(Point* texturePixel, uint32* newChar);
-	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
+	void putChar(const Point* texturePixel, const uint32* newChar);
+	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 	bool isWritten();
 	void setMapDisplacement(uint32 mapDisplacement);
 	void setFrame(uint16 frame);

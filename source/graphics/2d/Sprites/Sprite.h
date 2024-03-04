@@ -170,9 +170,9 @@ abstract class Sprite : VisualComponent
 	void setFrameCycleDecrement(uint8 frameDelayDelta);
 	void setFrameDuration(uint8 frameDuration);
 	void update();
-	bool updateAnimation();
-	void putChar(Point* texturePixel, uint32* newChar);
-	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
+	bool updateAnimation();	
+	void putChar(const Point* texturePixel, const uint32* newChar);
+	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 	AnimationController getAnimationController();
 	bool isVisible();
 	bool isWithinScreenSpace();
