@@ -103,6 +103,8 @@
 	{																									\
 		void* object = (void*)objectToDelete;															\
 																										\
+		HardwareManager_suspendInterrupts();															\
+																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
@@ -120,11 +122,15 @@
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}																								\
 																										\
+		HardwareManager_resumeInterrupts();																\
+																										\
 	}
 #else
 #define __DELETE(objectToDelete)																		\
 	{																									\
 		void* object = (void*)objectToDelete;															\
+																										\
+		HardwareManager_suspendInterrupts();															\
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
@@ -138,6 +144,8 @@
 		{																								\
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}																								\
+																										\
+		HardwareManager_resumeInterrupts();																\
 																										\
 	}
 #endif
