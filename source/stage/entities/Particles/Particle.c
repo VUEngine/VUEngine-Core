@@ -49,7 +49,6 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->lifeSpan = lifeSpan;
 	this->sprite = NULL;
 	this->wireframe = NULL;
-	this->previousZ = 0;
 	this->expired = false;
 
 	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
@@ -268,9 +267,6 @@ void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wirefra
 {
 	Particle::addSprite(this, spriteSpec, animationFunctions, animationName);
 	Particle::addWireframe(this, wireframeSpec, animationFunctions, animationName);
-
-	// Force parallax computation
-	this->previousZ = 0;
 }
 
 /**

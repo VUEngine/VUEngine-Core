@@ -43,8 +43,6 @@ class GameState : State
 	Stage stage;
 	// the ui container
 	UIContainer uiContainer;
-	// flag to allow streaming
-	int32 canStream;
 	// must save to allow pause
 	Vector3D cameraPosition;
 	// clock for messaging

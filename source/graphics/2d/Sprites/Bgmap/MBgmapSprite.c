@@ -63,8 +63,6 @@ void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgm
 
 	this->checkIfWithinScreenSpace = false;
 
-	this->mBgmapSpriteSpec = mBgmapSpriteSpec;
-
 	if(!isDeleted(this->texture))
 	{
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
@@ -145,15 +143,15 @@ void MBgmapSprite::releaseTextures()
  */
 void MBgmapSprite::loadTextures()
 {
-	if(NULL != this->mBgmapSpriteSpec)
+	if(NULL != ((MBgmapSpriteSpec*)this->componentSpec))
 	{
 		if(NULL == this->texture && NULL == this->textures)
 		{
 			this->textures = new VirtualList();
 
-			for(int32 i = 0; NULL != this->mBgmapSpriteSpec->textureSpecs[i]; i++)
+			for(int32 i = 0; NULL != ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i]; i++)
 			{
-				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
+				MBgmapSprite::loadTexture(this, ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i], 0 == i && ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i + 1]);
 			}
 
 			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
@@ -189,13 +187,13 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 		// This allows to have bgmaps sprites that are smaller than 512 pixels high
 		// But depends on all the segments being free
-		if(this->mBgmapSpriteSpec->xLoop && 64 > Texture::getRows(bgmapTexture))
+		if(((MBgmapSpriteSpec*)this->componentSpec)->xLoop && 64 > Texture::getRows(bgmapTexture))
 		{
 			minimumSegment += 1;
 		}
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, this->mBgmapSpriteSpec->scValue);
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue);
 
 	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
 	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
@@ -228,7 +226,7 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	PixelVector position = this->position;
 
-	if(this->mBgmapSpriteSpec->xLoop)
+	if(((MBgmapSpriteSpec*)this->componentSpec)->xLoop)
 	{
 		bgmapTextureSource.mx = -this->position.x;
 		position.x = 0;
@@ -238,7 +236,7 @@ int16 MBgmapSprite::doRender(int16 index)
  		bgmapTextureSource.mx = this->textureXOffset;
 	}
 
-	if(this->mBgmapSpriteSpec->yLoop)
+	if(((MBgmapSpriteSpec*)this->componentSpec)->yLoop)
 	{
 		bgmapTextureSource.my = -this->position.y;
 		position.y = 0;
@@ -277,7 +275,7 @@ int16 MBgmapSprite::doRender(int16 index)
 	int16 h = 0;
 
 	// set the world size
-	if(!this->mBgmapSpriteSpec->xLoop)
+	if(!((MBgmapSpriteSpec*)this->componentSpec)->xLoop)
 	{
     	w = (this->halfWidth << 1) - mxDisplacement;
 
@@ -299,7 +297,7 @@ int16 MBgmapSprite::doRender(int16 index)
 		w = _cameraFrustum->x1 - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 	}
 
-	if(!this->mBgmapSpriteSpec->yLoop)
+	if(!((MBgmapSpriteSpec*)this->componentSpec)->yLoop)
 	{
     	h = (this->halfHeight << 1) - myDisplacement;
 
@@ -346,7 +344,7 @@ int16 MBgmapSprite::doRender(int16 index)
 	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | ((MBgmapSpriteSpec*)this->componentSpec)->scValue;
 
 	if(0 < this->param)
 	{
@@ -389,13 +387,13 @@ void MBgmapSprite::calculateSize()
 	this->halfWidth = cols << 2;
 	this->halfHeight = rows << 2;
 
-	if(0 < this->mBgmapSpriteSpec->width)
+	if(0 < ((MBgmapSpriteSpec*)this->componentSpec)->width)
 	{
-		this->halfWidth = this->mBgmapSpriteSpec->width >> 1;
+		this->halfWidth = ((MBgmapSpriteSpec*)this->componentSpec)->width >> 1;
 	}
 
-	if(0 < this->mBgmapSpriteSpec->height)
+	if(0 < ((MBgmapSpriteSpec*)this->componentSpec)->height)
 	{
-		this->halfHeight = this->mBgmapSpriteSpec->height >> 1;
+		this->halfHeight = ((MBgmapSpriteSpec*)this->componentSpec)->height >> 1;
 	}
 }

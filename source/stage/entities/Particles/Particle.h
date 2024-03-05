@@ -65,14 +65,12 @@ typedef const ParticleSpec ParticleROMSpec;
 /// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
-	// To optimizize parallax computation
-	fixed_t previousZ;
+	// Particle's life span in milliseconds
+	int16 lifeSpan;
 	// sprite
 	Sprite sprite;
 	// sprite
 	Wireframe wireframe;
-	// Particle's life span in milliseconds
-	int16 lifeSpan;
 	bool expired;
 	bool transform;
 

@@ -49,7 +49,7 @@ friend class AnimationController;
  */
 void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
-	Base::constructor(owner, &spriteSpec);
+	Base::constructor(owner, spriteSpec);
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;

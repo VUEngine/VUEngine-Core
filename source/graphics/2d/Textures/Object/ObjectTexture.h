@@ -52,8 +52,6 @@ typedef const ObjectTextureSpec ObjectTextureROMSpec;
 /// @ingroup graphics-2d-textures-object
 class ObjectTexture : Texture
 {
-	ObjectSprite owner;
-
 	/// @publicsection
 	void constructor(ObjectTextureSpec* objectTextureSpec, uint16 id);
 }
