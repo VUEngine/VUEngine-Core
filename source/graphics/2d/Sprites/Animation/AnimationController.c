@@ -43,6 +43,7 @@ void AnimationController::constructor()
 
 	// initialize frame tracking
 	this->actualFrame = 0;
+	this->previousFrameValue = -1;
 
 	// initialize frame head
 	this->frameDuration = 0;
@@ -221,7 +222,6 @@ bool AnimationController::updateAnimation()
 	if(0 == this->frameDuration)
 	{
 		int16 actualFrame = this->actualFrame;
-		uint16 previousFrameValue = this->animationFunction->frames[actualFrame];
 
 		// increase the frame to show
 		this->actualFrame++;
@@ -255,8 +255,9 @@ bool AnimationController::updateAnimation()
 
 		uint16 actualFrameValue = this->animationFunction->frames[this->actualFrame];
 
-		bool frameValueChanged = previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
-
+		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
+		this->previousFrameValue = actualFrameValue;
+		
 		return frameValueChanged;
 	}
 
