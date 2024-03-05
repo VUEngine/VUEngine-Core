@@ -402,3 +402,8 @@ void WireframeManager::showWireframes()
 		Wireframe::show(wireframe);
 	}
 }
+
+bool WireframeManager::hasWireframes()
+{
+	return NULL != this->wireframes && NULL != this->wireframes->head;
+}

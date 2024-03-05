@@ -54,6 +54,7 @@ singleton class WireframeManager : ListenerObject
 	void disable();
 	void hideWireframes();
 	void showWireframes();	
+	bool hasWireframes();	
 }
 
 extern Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
