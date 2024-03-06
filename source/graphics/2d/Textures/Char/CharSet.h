@@ -25,6 +25,9 @@
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
+// CHARS PER BYTE
+#define __CHARS_PER_BYTE(n)				((n) >> 4)
+
 // uint32s per CHAR
 #define __UINT32S_PER_CHARS(n)				((n) << 2)
 
