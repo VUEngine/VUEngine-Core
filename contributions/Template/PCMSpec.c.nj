@@ -15,6 +15,7 @@
 #define {{ sanitizedSpecName }}SoundTrackLength {{ soundData | length }}
 
 const uint8 {{ sanitizedSpecName }}SoundTrack[]
+{%- if item.section == 'data' %} __attribute((section(".rodata"))){% endif %}
 {%- if item.section == 'exp' %} __attribute((section(".expdata"))){% endif %} =
 {
 #ifndef REDUCE_PCM_DATA
