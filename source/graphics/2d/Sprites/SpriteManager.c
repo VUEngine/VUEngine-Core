@@ -970,8 +970,8 @@ bool SpriteManager::isEvenFrame()
  */
 int32 SpriteManager::getTotalPixelsDrawn()
 {
-	int32 totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
-
+	int32 totalPixelsToDraw = 0;
+	
 	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::getTotalPixelsDrawn: NULL node's data");
