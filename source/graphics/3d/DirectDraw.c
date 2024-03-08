@@ -810,56 +810,109 @@ static bool DirectDraw::drawColorCircumference(PixelVector center, int16 radius,
 		return false;
 	}
 
-	uint32 radiusSquare = radius * radius;
-
+	// Bresenham circle algorithm
 	if(interlaced && 3 < radius)
 	{
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
+
+
+		int16 x = radius;
+		int16 y = 0;		
+	    int16 radiusError = 1 - x;
+
+		center.parallax /= 2;
+
+		center.x -= radius + center.parallax;
+		center.y -= radius;
 
 		if(0 != bufferIndex)
 		{
 			center.parallax = -center.parallax;
 		}
 
-		for(int16 x = -radius; x < radius; x++)
+	    while (x >= y)
 		{
-			int16 y = Math::squareRoot(radiusSquare - x * x);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
 
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x - x, center.y + y, center.parallax, color);
+			y++;
 
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, center.x + x, center.y + y, center.parallax, color);
+			if (radiusError < 0) 
+			{
+				radiusError += 2 * y + 1;
+			} 
+			else
+			{
+				x--;
+				radiusError += 2 * (y - x + 1);
+			}
 
-			x++;
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, -center.parallax, color);
+			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, -center.parallax, color);
 
-			y = Math::squareRoot(radiusSquare - x * x);
+			y++;
 
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
-
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
-		}
+			if (radiusError < 0) 
+			{
+				radiusError += 2 * y + 1;
+			} 
+			else
+			{
+				x--;
+				radiusError += 2 * (y - x + 1);
+			}
+		}		
 	}
 	else
 	{
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 		uint32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-		for(int16 x = 0; x <= radius; x++)
+		int16 x = radius;
+		int16 y = 0;		
+	    int16 radiusError = 1 - x;
+
+		center.x -= radius;
+		center.y -= radius;
+
+	    while (x >= y)
 		{
-			int16 y = Math::squareRoot(radiusSquare - x * x);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y + y + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y + x + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y + y + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y + x + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x + radius, center.y - y + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - y + radius, center.y - x + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x + radius, center.y - y + radius, center.parallax, color);
+			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + y + radius, center.y - x + radius, center.parallax, color);
 
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x - x, center.y + y, center.parallax, color);
+			y++;
 
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y - y, center.parallax, color);
-			DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, center.x + x, center.y + y, center.parallax, color);
+			if (radiusError < 0) 
+			{
+				radiusError += 2 * y + 1;
+			} 
+			else
+			{
+				x--;
+				radiusError += 2 * (y - x + 1);
+			}
 		}
 	}
-
+	
 	return true;
 }
 
