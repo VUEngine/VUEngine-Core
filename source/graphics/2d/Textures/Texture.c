@@ -338,6 +338,11 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 
 void Texture::prepare()
 {
+	if(isDeleted(this->charSet))
+	{
+		Texture::loadCharSet(this);
+	}
+
 	if(!this->update)
 	{
 		VirtualList::pushBack(_texturesToUpdate, this);
@@ -543,6 +548,7 @@ void Texture::setFrame(uint16 frame)
 {
 	if(frame == this->frame && this->status < kTextureFrameChanged)
 	{
+		this->frame = frame;
 		return;
 	}
 
@@ -552,16 +558,16 @@ void Texture::setFrame(uint16 frame)
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
+	if(statusChanged && kTextureFrameChanged == this->status)
+	{
+		Texture::prepare(this);
+	}
+
 	if(!isDeleted(this->charSet))
 	{
 		if(CharSet::isOptimized(this->charSet))
 		{
 			this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-		}
-
-		if(statusChanged && kTextureFrameChanged == this->status)
-		{
-			Texture::prepare(this);
 		}
 	}
 }
