@@ -887,8 +887,8 @@ void VUEngine::run(GameState currentGameState)
 		{
 			// Stream the heck out of the pending entities
 			VUEngine::stream(this, currentGameState);
-#endif
 		}
+#endif
 #endif
 
 		this->currentGameCycleEnded = true;
