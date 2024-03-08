@@ -881,11 +881,13 @@ void VUEngine::run(GameState currentGameState)
 			VUEngine::updateSound(this);
 		}
 
+#ifndef __UNLOCK_FPS
 		// While we wait for the next game start
 		while(!this->nextGameCycleStarted)
 		{
 			// Stream the heck out of the pending entities
 			VUEngine::stream(this, currentGameState);
+#endif
 		}
 #endif
 
