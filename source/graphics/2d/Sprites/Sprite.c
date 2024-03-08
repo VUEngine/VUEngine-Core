@@ -1096,9 +1096,25 @@ void Sprite::print(int32 x, int32 y)
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
+void Sprite::addChar(const Point* texturePixel, const uint32* newChar)
+{
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	Texture::addChar(this->texture, texturePixel, newChar);
+}
+
+/**
+ * Write a char directly to the Sprite's Texture
+ *
+ * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param newChar			Char to write
+ */
 void Sprite::putChar(const Point* texturePixel, const uint32* newChar)
 {
-	if(isDeleted(this->texture) || NULL == newChar || NULL == texturePixel)
+	if(isDeleted(this->texture))
 	{
 		return;
 	}

@@ -766,9 +766,26 @@ bool Texture::onCharSetDeleted(ListenerObject eventFirer)
  * @param texturePixel	Coordinates within the map spec to write
  * @param newChar		CHAR data to write
  */
+void Texture::addChar(const Point* texturePixel, const uint32* newChar)
+{
+	if(NULL != this->charSet && NULL != texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
+	{
+		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
+
+		CharSet::addChar(this->charSet, charToReplace, newChar);
+	}
+}
+
+/**
+ * Write a single CHAR to DRAM
+ *
+ * @param texturePixel	Coordinates within the map spec to write
+ * @param newChar		CHAR data to write
+ */
 void Texture::putChar(const Point* texturePixel, const uint32* newChar)
 {
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
+	if(NULL != this->charSet && NULL != texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
 		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
 		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;

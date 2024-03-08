@@ -171,6 +171,7 @@ abstract class Sprite : VisualComponent
 	void setFrameDuration(uint8 frameDuration);
 	void update();
 	bool updateAnimation();	
+	void addChar(const Point* texturePixel, const uint32* newChar);
 	void putChar(const Point* texturePixel, const uint32* newChar);
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 	AnimationController getAnimationController();
