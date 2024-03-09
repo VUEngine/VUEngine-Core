@@ -1,11 +1,7 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
 {%- include('templates/partials/fileHeader/fileHeader.c.nj') -%}
 
-{%- if item.name != '' -%}
-	{%- set sanitizedSpecName = item.name | sanitizeSpecName -%}
-{%- else -%}
-	{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
-{%- endif -%}
+{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
 {#- DETERMINE ENTITY CLASS -#}
 {%- if item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
@@ -33,6 +29,11 @@
 {%- if item.inGameType != 'None' and item.components.colliders.length %}
 	{%- for collider in item.components.colliders -%}
 		{%- set includes = (includes.push(collider.type), includes) -%}
+	{%- endfor -%}
+{%- endif %}
+{%- if item.components.wireframes.length %}
+	{%- for wireframe in item.components.wireframes -%}
+		{%- set includes = (includes.push(wireframe.wireframe.type), includes) -%}
 	{%- endfor -%}
 {%- endif %}
 
@@ -198,7 +199,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 {%- if animation.name != '' -%}
 	{%- set animationName = animation.name | sanitizeSpecName -%}
 {%- else -%} 
-	{%- set animationName = 'Animation' ~ loop.index -%}
+	{%- set animationName = loop.index -%}
 {%- endif -%}
 AnimationFunctionROMSpec {{ sanitizedSpecName }}{{ animationName }}AnimationSpec =
 {
@@ -208,7 +209,7 @@ AnimationFunctionROMSpec {{ sanitizedSpecName }}{{ animationName }}AnimationSpec
 	// frames to play in animation
 	{
 		{% for frame in animation.frames -%}
-			{{ frame }}, {% if loop.index % 10 == 0 and not loop.last %}{{ "\n		" }}{% endif %}
+			{{ frame - 1 }}, {% if loop.index % 10 == 0 and not loop.last %}{{ "\n		" }}{% endif %}
 		{%- endfor %}
 	},
 
@@ -253,7 +254,7 @@ AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs =
 {%- set wireframeNames = (wireframeNames.push(wireframeName), wireframeNames) -%}
 
 {% if wireframe.wireframe.type == 'Mesh' -%}
-const PixelVector {{ wireframeName }}Segments[][2]=
+const PixelVector {{ wireframeName }}WireframeSegments[][2]=
 {
 	{%- for segment in wireframe.segments %}
 	{
@@ -298,7 +299,7 @@ const PixelVector {{ wireframeName }}Segments[][2]=
 	{{ wireframe.drawCenter }},
 	{%- elseif wireframe.wireframe.type == 'Mesh' -%}
 	// segments
-	(PixelVector(*)[2]){{ wireframeName }}Segments,
+	(PixelVector(*)[2]){{ wireframeName }}WireframeSegments,
 	{%- elseif wireframe.wireframe.type == 'Asterisk' -%}
 	// length
 	{{ wireframe.length }},
@@ -497,7 +498,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 		"{%- if item.components.animations[item.animations.default].name != '' -%}
 			{{ item.components.animations[item.animations.default].name | sanitizeSpecName }}
 		{%- else -%} 
-			Animation{{ item.animations.default + 1 }}
+			{{ item.animations.default + 1 }}
 		{%- endif -%}",
 		{%- endif -%}
 

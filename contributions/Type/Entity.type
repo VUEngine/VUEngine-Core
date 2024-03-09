@@ -4,9 +4,6 @@
 	"schema": {
 		"title": "Entity",
 		"properties": {
-			"name": {
-				"type": "string"
-			},
 			"extraProperties": {
 				"type": "object",
 				"properties": {
@@ -343,6 +340,14 @@
 											}
 										}
 									}
+								},
+								"section": {
+									"type": "string",
+									"default": "rom"
+								},
+								"compression": {
+									"type": "string",
+									"default": "none"
 								}
 							}
 						}
@@ -438,11 +443,11 @@
 								},
 								"length": {
 									"type": "integer",
-									"default": 0
+									"default": 32
 								},
 								"radius": {
 									"type": "integer",
-									"default": 0
+									"default": 32
 								},
 								"drawCenter": {
 									"type": "boolean",
@@ -525,14 +530,6 @@
 					"optimizedTiles": {
 						"type": "boolean",
 						"default": true
-					},
-					"section": {
-						"type": "string",
-						"default": "rom"
-					},
-					"compression": {
-						"type": "string",
-						"default": "none"
 					}
 				}
 			}
