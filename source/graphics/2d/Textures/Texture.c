@@ -76,6 +76,7 @@ static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 		Texture texture = Texture::safeCast(node->data);
 
 		NM_ASSERT(__GET_CAST(Texture, texture), "Texture::updateTextures: invalid texture");
+		NM_ASSERT(NULL != texture->textureSpec, "Texture::updateTextures: invalid texture spec");
 
 		bool remove = NULL == texture->textureSpec || (texture->update && Texture::update(texture, maximumTextureRowsToWrite));
 		
@@ -151,7 +152,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	this->charSet = NULL;
 	// set the palette
 	this->palette = textureSpec->palette;
-	this->status = kTexturePendingWriting;
+	this->status = kTextureInvalid;
 	this->frame = 0;
 	this->update = false;
 }
@@ -207,6 +208,11 @@ bool Texture::decreaseUsageCount()
 		this->usageCount = 0;
 	}
 
+	if(0 == this->usageCount)
+	{
+		Texture::releaseCharSet(this);
+	}
+
 	return 0 == this->usageCount;
 }
 
@@ -247,16 +253,16 @@ void Texture::loadCharSet()
  */
 void Texture::releaseCharSet()
 {
-	this->status = kTexturePendingWriting;
+	if(this->update)
+	{
+		this->update = false;
+		VirtualList::removeElement(_texturesToUpdate, this);
+	}
+
+	this->status = kTextureInvalid;
 
 	if(!isDeleted(this->charSet))
 	{
-		if(this->update)
-		{
-			this->update = false;
-			VirtualList::removeElement(_texturesToUpdate, this);
-		}	
-
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
 		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
@@ -280,7 +286,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 		return;
 	}
 
-	if(this->textureSpec != textureSpec)
+	if(this->textureSpec != textureSpec || kTextureWritten != this->status)
 	{
 		if(NULL != this->charSet && textureSpec->charSetSpec != CharSet::getCharSetSpec(this->charSet))
 		{
@@ -292,6 +298,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 		this->mapDisplacement = 0;
 		this->palette = this->textureSpec->palette;
 		this->status = kTexturePendingWriting;
+		Texture::rewrite(this);
 	}
 }
 
@@ -471,7 +478,7 @@ void Texture::rewrite()
 {
 	bool statusChanged = kTexturePendingRewriting != this->status || !this->update;
 
-	this->status = this->status > kTexturePendingRewriting ? kTexturePendingRewriting : this->status;
+	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
 
 	if(statusChanged && kTexturePendingRewriting == this->status)
 	{

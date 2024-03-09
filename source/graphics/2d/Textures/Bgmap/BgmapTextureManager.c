@@ -121,7 +121,7 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 	if(NULL != textureSpecs)
 	{
 		VirtualList sortedTextureSpecs = new VirtualList();
-		VirtualList recyclableTextures = new VirtualList();
+		VirtualList preloadedTextures = new VirtualList();
 
 		for(int16 i = 0; NULL != textureSpecs[i]; i++)
 		{
@@ -166,6 +166,8 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 			}
 		}
 
+		// Must not release the texture just after loading them so
+		// the recyclable ones are not recycled immediately
 		for(VirtualNode node = sortedTextureSpecs->head; NULL != node; node = node->next)
 		{
 			TextureSpec* textureSpec = (TextureSpec*)node->data;
@@ -173,29 +175,17 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 			BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
 
 			NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
-
-			if(textureSpec->recyclable)
-			{
-#ifndef __RELEASE
-				Texture::write(bgmapTexture, -1);
-#endif
-				VirtualList::pushBack(recyclableTextures, bgmapTexture);
-			}
-			else
-			{
-				Texture::write(bgmapTexture, -1);
-				Texture::releaseCharSet(bgmapTexture);
-			}
+			VirtualList::pushBack(preloadedTextures, bgmapTexture);
 		}
 
 		delete sortedTextureSpecs;
 
-		for(VirtualNode node = VirtualList::begin(recyclableTextures); NULL != node; node = node->next)
+		for(VirtualNode node = VirtualList::begin(preloadedTextures); NULL != node; node = node->next)
 		{
 			BgmapTextureManager::releaseTexture(this, BgmapTexture::safeCast(node->data));
 		}
 
-		delete recyclableTextures;
+		delete preloadedTextures;
 	}
 }
 
@@ -355,9 +345,9 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	// if no one is using the texture anymore
-	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
+	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::releaseCharSet(bgmapTexture);
+		BgmapTexture::decreaseUsageCount(bgmapTexture);
 	}
 }
 
