@@ -338,7 +338,6 @@ void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
 	}
 }
 
-
 // TODO: if inline is allowed, the optimization that GCC does makes this ineffective in putPixel method
 // It is not because of O3 optimization option, the same happens with O1
 static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)

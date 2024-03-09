@@ -217,9 +217,12 @@ bool Texture::decreaseUsageCount()
  */
 void Texture::loadCharSet()
 {
-	Texture::releaseCharSet(this);
+	if(!isDeleted(this->charSet))
+	{
+		return;
+	}
 
-	if(NULL == this->textureSpec->charSetSpec)
+	if(NULL == this->textureSpec || NULL == this->textureSpec->charSetSpec)
 	{
 		return;
 	}
@@ -237,6 +240,30 @@ void Texture::loadCharSet()
 
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
 	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+}
+
+/**
+ * Release the CharSet
+ */
+void Texture::releaseCharSet()
+{
+	this->status = kTexturePendingWriting;
+
+	if(!isDeleted(this->charSet))
+	{
+		if(this->update)
+		{
+			this->update = false;
+			VirtualList::removeElement(_texturesToUpdate, this);
+		}	
+
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+
+		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
+
+		this->charSet = NULL;
+	}
 }
 
 /**
@@ -278,33 +305,6 @@ TextureSpec* Texture::getSpec()
 	return this->textureSpec;
 }
 
-/**
- * Release the CharSet
- */
-void Texture::releaseCharSet()
-{
-	this->status = kTexturePendingWriting;
-
-	if(!isDeleted(this->charSet))
-	{
-		if(this->update)
-		{
-			this->update = false;
-			VirtualList::removeElement(_texturesToUpdate, this);
-		}	
-
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
-
-		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
-
-		this->charSet = NULL;
-	}
-
-	this->frame = 0;
-	this->mapDisplacement = 0;
-	this->palette = this->textureSpec->palette;
-}
 
 bool Texture::isReady()
 {
