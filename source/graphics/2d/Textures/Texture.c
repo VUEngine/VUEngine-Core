@@ -208,7 +208,7 @@ bool Texture::decreaseUsageCount()
 		this->usageCount = 0;
 	}
 
-	if(0 == this->usageCount)
+	if(0 == this->usageCount && !this->textureSpec->recyclable)
 	{
 		Texture::releaseCharSet(this);
 	}
