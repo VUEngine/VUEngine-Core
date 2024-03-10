@@ -339,17 +339,17 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 
 	CharSet::setFrame(this->charSet, this->frame);
 
+	if(CharSet::isOptimized(this->charSet))
+	{
+		this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
+	}
+
 	this->status = kTextureWritten;
 	return true;
 }
 
 void Texture::prepare()
 {
-	if(isDeleted(this->charSet))
-	{
-		Texture::loadCharSet(this);
-	}
-
 	if(!this->update)
 	{
 		VirtualList::pushBack(_texturesToUpdate, this);
@@ -476,7 +476,7 @@ bool Texture::isMultiframe()
  */
 void Texture::rewrite()
 {
-	bool statusChanged = kTexturePendingRewriting != this->status || !this->update;
+	bool statusChanged = kTexturePendingRewriting != this->status;
 
 	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
 
@@ -534,7 +534,7 @@ TextureSpec* Texture::getTextureSpec()
  */
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
-	bool statusChanged = kTextureMapDisplacementChanged != this->status || !this->update;
+	bool statusChanged = kTextureMapDisplacementChanged != this->status;
 
 	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
@@ -553,29 +553,15 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
  */
 void Texture::setFrame(uint16 frame)
 {
-	if(frame == this->frame && this->status < kTextureFrameChanged)
-	{
-		this->frame = frame;
-		return;
-	}
-
 	this->frame = frame;
 
-	bool statusChanged = kTextureFrameChanged != this->status || !this->update;
+	bool statusChanged = kTextureFrameChanged != this->status;
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
 	if(statusChanged && kTextureFrameChanged == this->status)
 	{
 		Texture::prepare(this);
-	}
-
-	if(!isDeleted(this->charSet))
-	{
-		if(CharSet::isOptimized(this->charSet))
-		{
-			this->mapDisplacement = this->textureSpec->cols * this->textureSpec->rows * this->frame;
-		}
 	}
 }
 
