@@ -397,7 +397,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
  */
 void CharSet::setFrame(uint16 frame)
 {
-	uint16 tilesDisplacement = 0;
+	uint32 tilesDisplacement = 0;
 
 	if(NULL != this->charSetSpec->frameOffsets)
 	{

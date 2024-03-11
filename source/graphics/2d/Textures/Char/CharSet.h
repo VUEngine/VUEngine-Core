@@ -80,7 +80,7 @@ class CharSet : ListenerObject
 	// Charset spec
 	CharSetSpec* charSetSpec;
 	// Array spec of the charSet
-	uint16 tilesDisplacement;
+	uint32 tilesDisplacement;
 	// Memory displacement
 	uint16 offset;
 	// Written flag
