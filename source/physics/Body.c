@@ -1057,6 +1057,8 @@ void Body::computeTotalFrictionCoefficient()
 	{
 		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
+
+	Body::computeFrictionForceMagnitude(this);
 }
 
 Vector3D Body::getWeight()
