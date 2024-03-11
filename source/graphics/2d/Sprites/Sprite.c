@@ -132,7 +132,7 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
-	if(kTextureInvalid == this->texture->status)
+	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
 	{
 		this->index = __NO_RENDER_INDEX;
 		return this->index;
@@ -143,6 +143,8 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		this->index = __NO_RENDER_INDEX;
 		return this->index;
 	}
+
+	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
