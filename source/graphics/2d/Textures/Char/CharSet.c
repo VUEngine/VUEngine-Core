@@ -322,16 +322,17 @@ void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
 /**
  * Add a single CHAR to DRAM
  *
- * @param charToAddTp		Index of the CHAR to overwrite
+ * @param charToAddTo		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
 void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
 {
 	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
 	{
-		Mem::addWORD
+		Mem::combineWORDs
 		(
 			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
+			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_CHARS(charToAddTo) + 1] + this->tilesDisplacement,
 			(uint32*)newChar,
 			__UINT32S_PER_CHARS(1)
 		);

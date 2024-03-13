@@ -974,7 +974,7 @@ void Debug::charMemoryShowMemory(int32 increment __attribute__ ((unused)), int32
 	// put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
 	{
-		Mem::addHWORD
+		Mem::addOffsetToHWORD
 		(
 			(HWORD*)(&bgmapSpaceBaseAddress[(0x1000 * (printingBgmap + 1) - __PRINTABLE_BGMAP_AREA) + ((yOffset + i) << 6) + 2]),
 			(HWORD*)charMemoryMap,

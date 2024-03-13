@@ -37,9 +37,9 @@ static class Mem : Object
 	static inline void copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
 	static inline void copyHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS);
 	static inline void copyWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
-	static inline void addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES);
-	static inline void addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfWORDS);
-	static inline void addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS);
+	static inline void combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES);
+	static inline void combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfWORDS);
+	static inline void combineWORDs(WORD* destination, const WORD* source1, const WORD* source2, uint32 numberOfWORDS);
 	static inline void addOffsetToBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES, uint32 offset);
 	static inline void addOffsetToHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset);
 	static inline void addOffsetToWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS, uint32 offset);
@@ -72,27 +72,27 @@ static inline void Mem::copyWORD(WORD* destination, const WORD* source, uint32 n
 	}
 }
 
-static inline void Mem::addBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
+static inline void Mem::combineBYTEs(BYTE* destination, const BYTE* source1, const BYTE* source2, uint32 numberOfBYTES)
 {
 	for(; 0 < numberOfBYTES; numberOfBYTES--)
 	{
-		*destination++ |= *source++;
+		*destination++ = *source1++ | *source2++;
 	}
 }
 
-static inline void Mem::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS)
+static inline void Mem::combineHWORDs(HWORD* destination, const HWORD* source1, const HWORD* source2, uint32 numberOfHWORDS)
 {
 	for(; 0 < numberOfHWORDS; numberOfHWORDS--)
 	{
-		*destination++ |= *source++;
+		*destination++ = *source1++ | *source2++;
 	}
 }
 
-static inline void Mem::addWORD(WORD* destination, const WORD* source, uint32 numberOfWORDS)
+static inline void Mem::combineWORDs(WORD* destination, const WORD* source1, const WORD* source2, uint32 numberOfWORDS)
 {
 	for(; 0 < numberOfWORDS; numberOfWORDS--)
 	{
-		*destination++ |= *source++;
+		*destination++ = *source1++ | *source2++;
 	}
 }
 
