@@ -535,12 +535,12 @@ TextureSpec* Texture::getTextureSpec()
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
-
 	this->status = this->mapDisplacement != mapDisplacement && this->status > kTextureMapDisplacementChanged ? kTextureMapDisplacementChanged : this->status;
 
+	bool valueChanged = this->mapDisplacement != mapDisplacement;
 	this->mapDisplacement = mapDisplacement;
 
-	if(!this->update || (statusChanged && kTextureMapDisplacementChanged == this->status))
+	if((valueChanged && !this->update) || (statusChanged && kTextureMapDisplacementChanged == this->status))
 	{
 		Texture::prepare(this);
 	}
@@ -553,13 +553,13 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
  */
 void Texture::setFrame(uint16 frame)
 {
+	bool statusChanged = kTextureFrameChanged != this->status;
+	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
+	
+	bool valueChanged = this->frame != frame;
 	this->frame = frame;
 
-	bool statusChanged = kTextureFrameChanged != this->status;
-
-	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
-
-	if(!this->update || (statusChanged && kTextureFrameChanged == this->status))
+	if((valueChanged && !this->update) || (statusChanged && kTextureFrameChanged == this->status))
 	{
 		Texture::prepare(this);
 	}
