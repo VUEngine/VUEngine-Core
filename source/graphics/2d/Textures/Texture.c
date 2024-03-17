@@ -480,7 +480,7 @@ void Texture::rewrite()
 
 	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
 
-	if(statusChanged && kTexturePendingRewriting == this->status)
+	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
 	{
 		// Prepare the texture right away just in case the call initiates
 		// at a defragmentation process
@@ -540,7 +540,7 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
 
 	this->mapDisplacement = mapDisplacement;
 
-	if(statusChanged && kTextureMapDisplacementChanged == this->status)
+	if(!this->update || (statusChanged && kTextureMapDisplacementChanged == this->status))
 	{
 		Texture::prepare(this);
 	}
@@ -559,7 +559,7 @@ void Texture::setFrame(uint16 frame)
 
 	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
 
-	if(statusChanged && kTextureFrameChanged == this->status)
+	if(!this->update || (statusChanged && kTextureFrameChanged == this->status))
 	{
 		Texture::prepare(this);
 	}
