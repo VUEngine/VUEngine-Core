@@ -1072,6 +1072,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 	CACHE_DISABLE;
 }
 
+#ifndef __SHIPPING
 void Sound::print(int32 x, int32 y)
 {
 	if(NULL == this->soundSpec)
@@ -1160,6 +1161,7 @@ void Sound::print(int32 x, int32 y)
 		}
 	}
 }
+#endif
 
 uint32 Sound::getTotalPlaybackMilliseconds(Channel* channel)
 {

@@ -257,13 +257,15 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 		this->used += size;
 	}
 
-	if(!paramAddress)
+#ifndef __SHIPPING
+	if(0 == paramAddress)
 	{
 		Printing::text(Printing::getInstance(), "Total size: ", 20, 7, NULL);
 		Printing::int32(Printing::getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
 
 		NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 	}
+#endif
 
 	return paramAddress;
 }

@@ -465,6 +465,7 @@ void TimerManager::nextSecondStarted()
 	this->interruptsPerSecond = 0;
 }
 
+#ifndef __SHIPPING
 void TimerManager::printStatus(int32 x, int32 y)
 {
 	PRINT_TEXT("TIMER STATUS", x, y++);
@@ -478,6 +479,7 @@ void TimerManager::printStatus(int32 x, int32 y)
 	PRINT_TEXT("Real us/inter.:       ", x, ++y);
 	PRINT_INT(this->microsecondsPerInterrupt, x + 17, y);
 }
+#endif
 
 /**
  * Interrupt handler

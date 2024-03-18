@@ -601,6 +601,7 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 	Printing::setPrintingBgmapSegment(Printing::getInstance(), this->printingBgmapSegment);
 }
 
+#ifndef __SHIPPING
 /**
  * Print manager's status
  *
@@ -669,3 +670,4 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
 	Printing::int32(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
 }
+#endif

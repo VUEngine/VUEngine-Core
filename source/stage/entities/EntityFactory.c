@@ -487,6 +487,7 @@ void EntityFactory::prepareAllEntities()
 	EntityFactory::cleanUp(this);
 }
 
+#ifndef __SHIPPING
 #ifdef __PROFILE_STREAMING
 void EntityFactory::showStatus(int32 x, int32 y)
 {	int32 xDisplacement = 18;
@@ -511,4 +512,5 @@ void EntityFactory::showStatus(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
+#endif
 #endif

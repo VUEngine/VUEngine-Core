@@ -183,6 +183,7 @@ uint32 MemoryPool::getPoolSize()
 	return size;
 }
 
+#ifndef __SHIPPING
 /**
  * Print the pools' detailed usage
  *
@@ -243,7 +244,9 @@ void MemoryPool::printDetailedUsage(int32 x, int32 y)
 	Printing::int32(printing, usedBytesPercentage, x + 17 - Utilities::getDigitsCount(usedBytesPercentage), y, NULL);
 	Printing::text(printing, "% ", x + 17, y++, NULL);
 }
+#endif
 
+#ifndef __RELEASE
 /**
  * Print the pools' resumed usage
  *
@@ -300,6 +303,7 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 	Printing::text(printing, "Used: ", x, ++y, NULL);
 	Printing::int32(printing, totalUsedBytes, x + 12 - Utilities::getDigitsCount(totalUsedBytes), y++, NULL);
 }
+#endif
 
 /**
  * Free the memory pool entry were the given object is allocated

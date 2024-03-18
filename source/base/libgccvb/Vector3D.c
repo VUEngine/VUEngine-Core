@@ -21,6 +21,7 @@
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+#ifndef __SHIPPING
 static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
@@ -31,7 +32,9 @@ static inline void Vector3D::print(Vector3D vector, int32 x, int32 y)
 	PRINT_FLOAT(__FIXED_TO_F(vector.y), x + 2, y + 1);
 	PRINT_FLOAT(__FIXED_TO_F(vector.z), x + 2, y + 2);
 }
+#endif
 
+#ifndef __SHIPPING
 static inline void Vector3D::printRaw(Vector3D vector, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
@@ -42,3 +45,4 @@ static inline void Vector3D::printRaw(Vector3D vector, int32 x, int32 y)
 	PRINT_INT((vector.y), x + 2, y + 1);
 	PRINT_INT((vector.z), x + 2, y + 2);
 }
+#endif

@@ -385,6 +385,7 @@ fixed_t PhysicalWorld::getElapsedTime()
 	return __PHYSICS_TIME_ELAPSED;
 }
 
+#ifndef __SHIPPING
 /**
  * Print status
  *
@@ -407,3 +408,4 @@ void PhysicalWorld::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 }
+#endif

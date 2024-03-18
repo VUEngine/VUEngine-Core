@@ -788,6 +788,7 @@ void Collider::hide()
 	}
 }
 
+#ifndef __SHIPPING
 void Collider::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
@@ -800,3 +801,4 @@ void Collider::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }
+#endif

@@ -1271,6 +1271,7 @@ VirtualList Stage::getStageEntityDescriptions()
 	return this->stageEntityDescriptions;
 }
 
+#ifndef __SHIPPING
 void Stage::showStreamingProfiling(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
@@ -1311,4 +1312,4 @@ void Stage::showStreamingProfiling(int32 x, int32 y)
 	entityFactoryHighestTime = 0;
 #endif
 }
-
+#endif

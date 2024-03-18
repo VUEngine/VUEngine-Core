@@ -371,6 +371,7 @@ void WireframeManager::disable()
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */
+#ifndef __SHIPPING
 void WireframeManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
@@ -382,6 +383,7 @@ void WireframeManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Drawn: ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 17, y++, NULL);
 }
+#endif
 
 void WireframeManager::hideWireframes()
 {

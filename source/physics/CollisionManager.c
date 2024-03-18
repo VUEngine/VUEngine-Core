@@ -331,8 +331,7 @@ void CollisionManager::setCheckCollidersOutOfCameraRange(bool value)
 	this->checkCollidersOutOfCameraRange = value;
 }
 
-
-// print status
+#ifndef __SHIPPING
 void CollisionManager::print(int32 x, int32 y)
 {
 	Printing::resetCoordinates(Printing::getInstance());
@@ -362,3 +361,4 @@ void CollisionManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Collisions:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->lastCycleCollisions, x + 12, y, NULL);
 }
+#endif

@@ -1008,6 +1008,7 @@ void CommunicationManager::startSyncCycle()
 	}
 }
 
+#ifndef __SHIPPING
 void CommunicationManager::printStatus(int32 x, int32 y)
 {
 	PRINT_TEXT(CommunicationManager::isConnected(this) ? "Connected   " : "Disconnected", x, y);
@@ -1069,5 +1070,5 @@ void CommunicationManager::printStatus(int32 x, int32 y)
 	PRINT_INT((_communicationRegisters[__CCSR] >> 1) & 0x01, x + valueDisplacement, y++);
 	PRINT_TEXT("Read: ", x, y);
 	PRINT_INT(_communicationRegisters[__CCSR] & 0x01, x + valueDisplacement, y++);
-
 }
+#endif

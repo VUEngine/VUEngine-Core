@@ -127,6 +127,7 @@ void DirectDraw::reset()
 	});
 }
 
+#ifndef __SHIPPING
 void DirectDraw::print(int16 x, int16 y)
 {
 	Printing::text(Printing::getInstance(), "DIRECT DRAW", x, y++, NULL);
@@ -136,6 +137,7 @@ void DirectDraw::print(int16 x, int16 y)
 	Printing::text(Printing::getInstance(), "Max. pixels:       ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->maximuDrawPixels, x + 14, y++, NULL);
 }
+#endif
 
 /**
  * Reset

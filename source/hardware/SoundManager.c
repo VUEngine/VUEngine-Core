@@ -1041,6 +1041,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 	}
 }
 
+#ifndef __SHIPPING
 void SoundManager::print()
 {
 	int32 x = 1;
@@ -1146,7 +1147,9 @@ void SoundManager::print()
 		}
 	}
 }
+#endif
 
+#ifndef __RELEASE
 void SoundManager::printWaveFormStatus(int32 x, int32 y)
 {
 	// Reset all waveforms
@@ -1158,6 +1161,7 @@ void SoundManager::printWaveFormStatus(int32 x, int32 y)
 		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
 	}
 }
+#endif
 
 #ifdef __SOUND_TEST
 void SoundManager::printPlaybackTime()

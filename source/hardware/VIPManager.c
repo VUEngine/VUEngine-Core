@@ -885,6 +885,7 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
  * Print VIP's status
  *
  */
+#ifndef __SHIPPING
 void VIPManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
@@ -897,6 +898,7 @@ void VIPManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Multi XPENDs:                ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->multiplexedXPENDCounter, x + 18, y, NULL);
 }
+#endif
 
 void VIPManager::wait(uint32 milliSeconds)
 {

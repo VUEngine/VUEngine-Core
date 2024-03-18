@@ -271,6 +271,7 @@ static void KeypadManager::interruptHandler()
 	Printing::hex(Printing::getInstance(), (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
 }
 
+#ifndef __SHIPPING
 static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, int32 y)
 {
 	if(!userInput)
@@ -300,4 +301,4 @@ static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, i
 	PRINT_TEXT("powerFlag:", x, ++y);
 	PRINT_HEX(userInput->powerFlag, x + xDisplacement, y);
 }
-
+#endif

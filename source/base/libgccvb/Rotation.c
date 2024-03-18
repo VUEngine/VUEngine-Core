@@ -21,6 +21,7 @@
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+#ifndef __SHIPPING
 static inline void Rotation::print(Rotation rotation, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
@@ -31,3 +32,4 @@ static inline void Rotation::print(Rotation rotation, int32 x, int32 y)
 	PRINT_FLOAT(__FIXED_TO_F(rotation.y), x + 2, y + 1);
 	PRINT_FLOAT(__FIXED_TO_F(rotation.z), x + 2, y + 2);
 }
+#endif

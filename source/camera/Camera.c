@@ -620,6 +620,7 @@ uint8 Camera::getTransformationFlags()
  * @param y				Row
  * @param inPixels		Whether to printing the output in pixels or not
  */
+#ifndef __SHIPPING
 void Camera::print(int32 x, int32 y, bool inPixels)
 {
 	Printing printing = Printing::getInstance();
@@ -640,3 +641,4 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::text(printing, "Rotation: ", x, ++y, NULL);
 	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
 }
+#endif

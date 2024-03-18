@@ -363,6 +363,7 @@ int32 CharSetManager::getTotalCharSets()
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
+#ifndef __SHIPPING
 void CharSetManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
@@ -374,4 +375,4 @@ void CharSetManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
-
+#endif
