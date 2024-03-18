@@ -69,16 +69,23 @@
 
 {% set spriteNames = [] -%}
 {%- for sprite in item.components.sprites -%}
+{%- set spriteNumber = loop.index -%}
+{%- set isStereo = sprite.texture.files2 is defined and sprite.texture.files2.length > 0 -%}
+{%- for eye in ['L', 'R'] -%}
+{%- if eye === 'L' or isStereo -%}
 {%- set imageData = sprite._imageData -%}
 {%- if imageData | int -%}
 	{%- set imageData = item.components.sprites[imageData - 1]._imageData -%}
 {%- endif -%}
 {%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ imageData._dupeIndex ~ 'CharsetSpec' -%}
 {%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
-{%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ loop.index -%}
+{%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ spriteNumber -%}
+{%- if isStereo -%}
+	{%- set spriteName = spriteName ~ eye -%}
+{%- endif -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
-{%- if imageData.tiles is defined and imageData._dupeIndex == loop.index %}
+{%- if imageData.tiles is defined and imageData._dupeIndex == spriteNumber and eye !== 'R' %}
 CharSetROMSpec {{ charsetSpecName }} =
 {
 	// number of chars in function or the number of frames to load at the same time
@@ -115,7 +122,11 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	(CharSetSpec*)&{{ charsetSpecName }},
 
 	// bgmap spec
+	{% if isStereo and eye === 'R' -%}
+	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[1].name }}Map,
+	{%- else -%}
 	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
+	{%- endif %}
 
 	// cols (max 64)
 	{{ imageData.maps[0].width | round(0, "floor") }},
@@ -176,9 +187,15 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{%- endif %}
 
 	// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
-	__WORLD_{{ sprite.displayMode }},
+	{% if isStereo -%}
+	__WORLD_{{ eye }}ON,
+	{%- else -%}
+	__WORLD_{{ sprite.displays }},
+	{%- endif %}
 };
 
+{% endif -%}
+{% endfor -%}
 {% endfor -%}
 
 {{ spriteClass }}ROMSpec* const {{ sanitizedSpecName }}SpriteSpecs[] =
