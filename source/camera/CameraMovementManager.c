@@ -135,21 +135,13 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 		return Vector3D::zero();
 	}
 
-	// if focusEntity is defined
-	Entity focusEntity = Camera::getFocusEntity(camera);
-
-	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
+	if(isDeleted(this->focusEntity))
 	{
 		this->lastCameraDisplacement = Vector3D::zero();
 		return Camera::getPosition(camera);
 	}
 
-	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(focusEntity);
-
-	if(NULL == this->focusEntityPosition)
-	{
-		this->focusEntityPosition = Entity::getPosition(focusEntity);
-	}
+	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(this->focusEntity);
 
 	// calculate the target position
 	Vector3D cameraNewPosition =
