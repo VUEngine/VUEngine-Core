@@ -4,7 +4,9 @@
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
 {#- DETERMINE ENTITY CLASS -#}
-{%- if item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
+{%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
+	{%- set entityClass = item.extraProperties.customAllocator -%}
+{%- elseif item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
 	{%- set entityClass = 'Actor' -%}
 {%- elseif item.components.animations.length -%}
 	{%- set entityClass = 'AnimatedEntity' -%}
@@ -438,10 +440,13 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 {# PRINT ENTITY SPEC -#}
 {{ entityClass }}ROMSpec {{ sanitizedSpecName }}EntitySpec =
 {
-	{%- if entityClass == 'Actor' %}
+	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
 	{
 	{%- endif %}
-		{%- if entityClass == 'Actor' or entityClass == 'AnimatedEntity' %}
+	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' %}
+	{
+	{%- endif %}
+		{%- if entityClass != 'Entity' %}
 		{
 		{%- endif %}
 			// class allocator
@@ -505,7 +510,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{%- else -%} 
 			NULL
 			{%- endif -%},
-		{%- if entityClass == 'Actor' or entityClass == 'AnimatedEntity' %}
+		{%- if entityClass != 'Entity' %}
 		},
 
 		// pointer to the animation spec for the character
@@ -519,7 +524,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 		{%- endif -%}",
 		{%- endif -%}
 
-	{%- if entityClass == 'Actor' %}
+	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' %}
 	},
 
 	// true to create a body
@@ -538,5 +543,8 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{%- else %} 
 	__NO_AXIS,
 	{%- endif %}
+	{%- endif %}
+	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
+	}
 	{%- endif %}
 };

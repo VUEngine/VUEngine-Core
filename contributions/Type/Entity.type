@@ -1,5 +1,5 @@
 {
-	"enabled": false,
+	"enabled": true,
 	"file": ".entity",
 	"schema": {
 		"title": "Entity",
@@ -30,6 +30,9 @@
 								"minimum": 0
 							}
 						}
+					},
+					"customAllocator": {
+						"type": "string"
 					}
 				}
 			},
@@ -265,7 +268,17 @@
 									"type": "string",
 									"default": "Bgmap"
 								},
+								"colorMode": {
+									"type": "number",
+									"default": 0,
+									"min": 0,
+									"max": 1
+								},
 								"displayMode": {
+									"type": "string",
+									"default": "Mono"
+								},
+								"displays": {
 									"type": "string",
 									"default": "ON"
 								},
@@ -297,6 +310,12 @@
 									"type": "object",
 									"properties": {
 										"files": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"files2": {
 											"type": "array",
 											"items": {
 												"type": "string"
