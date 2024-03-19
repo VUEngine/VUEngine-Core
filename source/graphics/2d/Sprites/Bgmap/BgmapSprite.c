@@ -86,6 +86,8 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 	if(0 != this->param && !isDeleted(this->texture))
 	{
 		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+
+		this->head |= (BgmapTexture::safeCast(this->texture))->segment;
 	}
 }
 
@@ -406,8 +408,8 @@ int16 BgmapSprite::doRender(int16 index)
 	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
-
+	worldPointer->head = this->head;
+	
 	if(0 < this->param)
 	{
 		worldPointer->param = (uint16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
