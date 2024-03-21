@@ -155,8 +155,9 @@ static fixed_ext_t Math::fixed_extInfinity()
 
 static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 {
-	int32 entry = 0;
+	int16 firstEntry = 0;
 	int32 lastEntry = 0;
+	bool ascendent = false;
 
 	// Determine the quadrant
 	if(0 == cos)
@@ -194,42 +195,59 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 		// First quadrant
 		if(0 < sin)
 		{
-			entry = 0;
+			firstEntry = 0;
 			lastEntry = __ENTRIES_PER_QUADRANT;
 		}
 		// Fourth quadrant
 		else
 		{
-			entry = __ENTRIES_PER_QUADRANT * 3;
+			firstEntry = __ENTRIES_PER_QUADRANT * 3;
 			lastEntry = __TOTAL_ENTRIES;
 		}
+
+		ascendent = true;
 	}
 	// Second quadrant
 	else if(0 < sin)
 	{
-		entry = __ENTRIES_PER_QUADRANT;
-		lastEntry = entry + __ENTRIES_PER_QUADRANT;
+		firstEntry = __ENTRIES_PER_QUADRANT;
+		lastEntry = firstEntry + __ENTRIES_PER_QUADRANT;
 	}
 	// Third quadrant
 	else
 	{
-		entry = __ENTRIES_PER_QUADRANT * 2;
+		firstEntry = __ENTRIES_PER_QUADRANT * 2;
 		lastEntry = __TOTAL_ENTRIES - __ENTRIES_PER_QUADRANT;
 	}
 
-	int32 difference = 1024;
-	int32 angle = 0;
+	int16 pivotEntry = firstEntry + (__ENTRIES_PER_QUADRANT >> 1);
+	int16 angle = pivotEntry;
+	int16 distance = 1024;
 
-	for(; entry < lastEntry; entry++)
+	while(true)
 	{
-		if(__ABS(sin - _sinLut[entry]) <= difference)
+		int16 difference = ascendent ? sin - _sinLut[pivotEntry] : _sinLut[pivotEntry] - sin;
+
+		if(distance > __ABS(difference))
 		{
-			difference = __ABS(sin - _sinLut[entry]);
-			angle = entry;
+			distance = __ABS(difference);
 		}
-		else if(__ABS(sin - _sinLut[entry]) > difference)
+		else
 		{
 			break;
+		}
+
+		angle = pivotEntry;
+
+		if(0 < difference)
+		{
+			firstEntry = pivotEntry;
+			pivotEntry = lastEntry - ((lastEntry - pivotEntry) >> 1);
+		}
+		else if(0 > difference)
+		{
+			lastEntry = pivotEntry;
+			pivotEntry = firstEntry + ((pivotEntry - firstEntry) >> 1);
 		}
 	}
 
