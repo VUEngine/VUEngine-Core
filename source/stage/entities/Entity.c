@@ -1495,8 +1495,26 @@ bool Entity::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
  * @param telegram
  * @return			True if successfully processed, false otherwise
  */
-bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
+bool Entity::handlePropagatedMessage(int32 message)
 {
+	switch(message)
+	{
+		case kMessageReleaseVisualComponents:
+
+			Entity::destroySprites(this);
+			Entity::destroyWireframes(this);
+			break;
+
+		case kMessageReloadVisualComponents:
+
+			if(NULL != this->entitySpec)
+			{
+				Entity::createSprites(this);
+				Entity::createWireframes(this);
+			}
+			break;
+	}
+
 	return false;
 }
 

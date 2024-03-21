@@ -192,7 +192,7 @@ class Entity : Container
 	override void createComponents();
 	override void initialTransform(const Transformation* environmentTransform);
 	override void setTransparent(uint8 transparent);
-	override bool handleMessage(Telegram telegram);
+	override bool handlePropagatedMessage(int32 message);
 	override const Size* getSize();
 	override fixed_t getWidth();
 	override fixed_t getHeight();
