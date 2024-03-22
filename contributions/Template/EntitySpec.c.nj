@@ -16,12 +16,17 @@
 
 {#- DETERMINE SPRITE CLASS -#}
 {%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
+{%- if item.components.animations.length -%}
+	{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
+{%- else -%}
+	{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
+{%- endif -%}
 {%- if item.sprites.customClass is defined and item.sprites.customClass != '' -%}
 	{%- set spriteClass = item.sprites.customClass -%}
 {%- endif -%}
 
 {#- DETERMINE INCLUDES -#}
-{%- set includes = [entityClass, spriteClass, 'Texture'] -%}
+{%- set includes = [entityClass, spriteAllocatorClass, 'Texture'] -%}
 {%- if item.inGameType != 'None' -%}
 	{%- set includes = (includes.push('InGameTypes'), includes) -%}
 {%- endif -%}
@@ -57,18 +62,19 @@
 
 {{ macros.sectionHeader('Image Data') }}
 {% for sprite in item.components.sprites -%}
-	{%- if not sprite._imageData | int -%}
-		{%- set imageData = sprite._imageData -%}
-		{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
-		{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+	{%- if not sprite._imageData | int and sprite._imageData.images.length -%}
+		{%- for imageData in sprite._imageData.images -%}
+			{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
+			{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
 
-		{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
-		{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
-		{%- include('templates/partials/image/tiles.c.nj') -%}
-		{%- include('templates/partials/image/maps.c.nj') -%}
-		{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+			{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
+			{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
+			{%- include('templates/partials/image/tiles.c.nj') -%}
+			{%- include('templates/partials/image/maps.c.nj') -%}
+			{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+		{%- endfor -%}
 	{%- endif -%}
-{% endfor %}
+{%- endfor %}
 
 {{ macros.sectionHeader('Sprites') }}
 
@@ -76,13 +82,20 @@
 {%- for sprite in item.components.sprites -%}
 {%- set spriteNumber = loop.index -%}
 {%- set isStereo = sprite.texture.files2 is defined and sprite.texture.files2.length > 0 -%}
+{%- set isStereoAnimation = sprite._imageData.images and sprite._imageData.images.length == 2 -%}
 {%- for eye in ['L', 'R'] -%}
 {%- if eye === 'L' or isStereo -%}
-{%- set imageData = sprite._imageData -%}
-{%- if imageData | int -%}
-	{%- set imageData = item.components.sprites[imageData - 1]._imageData -%}
+{%- set spriteImageData = sprite._imageData -%}
+{%- if spriteImageData | int -%}
+	{#- Resolve dupes -#}
+	{%- set spriteImageData = item.components.sprites[sprite._imageData - 1]._imageData -%}
 {%- endif -%}
-{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ imageData._dupeIndex ~ 'CharsetSpec' -%}
+{%- set imageData = spriteImageData.images[0] -%}
+{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ sprite._imageData.dupeIndex -%}
+{%- if isStereoAnimation -%}
+	{%- set imageData = spriteImageData.images[loop.index0] -%}
+	{%- set charsetSpecName = charsetSpecName ~ eye -%}
+{%- endif -%}
 {%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 {%- set spriteName = sanitizedSpecName ~ 'Sprite' ~ spriteNumber -%}
 {%- if isStereo -%}
@@ -90,8 +103,8 @@
 {%- endif -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
-{%- if imageData.tiles is defined and imageData._dupeIndex == spriteNumber and eye !== 'R' %}
-CharSetROMSpec {{ charsetSpecName }} =
+{%- if imageData.tiles is defined and sprite._imageData.dupeIndex == spriteNumber and (eye !== 'R' or isStereoAnimation) %}
+CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 {
 	// number of chars in function or the number of frames to load at the same time
 	{%- if item.components.animations.length and imageData.animation.largestFrame is defined %}
@@ -124,10 +137,10 @@ CharSetROMSpec {{ charsetSpecName }} =
 TextureROMSpec {{ spriteName }}TextureSpec =
 {
 	// charset spec
-	(CharSetSpec*)&{{ charsetSpecName }},
+	(CharSetSpec*)&{{ charsetSpecName }}CharsetSpec,
 
 	// bgmap spec
-	{% if isStereo and eye === 'R' -%}
+	{% if isStereo and not isStereoAnimation and eye === 'R' -%}
 	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[1].name }}Map,
 	{%- else -%}
 	(uint16*){{ sanitizedSpecName ~ 'Entity' ~ imageData.maps[0].name }}Map,
@@ -166,7 +179,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 {
 	{
 		// sprite's type
-		__TYPE({{ spriteClass }}),
+		__TYPE({{ spriteAllocatorClass }}),
 
 		// texture spec
 		(TextureSpec*)&{{ spriteName }}TextureSpec,
@@ -223,7 +236,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 {%- else -%} 
 	{%- set animationName = loop.index -%}
 {%- endif -%}
-AnimationFunctionROMSpec {{ sanitizedSpecName }}{{ animationName }}AnimationSpec =
+AnimationFunctionROMSpec {{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec =
 {
 	// number of frames of this animation function
 	{{ animation.frames.length }},
@@ -250,17 +263,12 @@ AnimationFunctionROMSpec {{ sanitizedSpecName }}{{ animationName }}AnimationSpec
 
 {% endfor -%}
 
-AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs =
+AnimationFunctionROMSpec* const {{ sanitizedSpecName }}AnimationSpecs[] =
 {
 	{% for animation in item.components.animations -%}
-	{%- if animation.name != '' -%}
-		{%- set animationName = animation.name | sanitizeSpecName -%}
-	{%- else -%} 
-		{%- set animationName = 'Animation' ~ loop.index -%}
-	{%- endif -%}
-	(AnimationFunctionROMSpec*){{ sanitizedSpecName }}{{ animationName }}AnimationSpec,
+	(AnimationFunction*)&{{ sanitizedSpecName }}Animation{{ loop.index }}AnimationSpec,
 	{% endfor -%}
-	NULL
+	NULL,
 };
 {% endif %}
 
