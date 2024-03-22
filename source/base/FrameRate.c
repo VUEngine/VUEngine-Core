@@ -126,7 +126,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 
 #ifdef __UNLOCK_FPS
 #define __PRINT_FRAMERATE
-#define __PRINT_FRAMERATE_AT_X		40
+#define __PRINT_FRAMERATE_AT_X		30
 #define __PRINT_FRAMERATE_AT_Y		0
 #endif
 
@@ -165,6 +165,7 @@ void FrameRate::print(int32 col, int32 row)
 #ifdef __UNLOCK_FPS
 	Printing printing = Printing::getInstance();
 	Printing::int32(printing, this->FPS, col, row, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, col + 5, row, NULL);
 #else
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS   /   ", col, row, NULL);
