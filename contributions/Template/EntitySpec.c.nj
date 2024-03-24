@@ -37,6 +37,9 @@
 		{%- endif -%}
 		{%- set includes = (includes.push(spriteClass), includes) -%}
 		{%- set includes = (includes.push(spriteAllocatorClass), includes) -%}
+		{%- if sprite.bgmapMode == 'HBias' and sprite.manipulationFunction != '' %}
+			{%- set includes = (includes.push(sprite.manipulationFunction.split('_')[0] ~ 'Extensions'), includes) -%}
+		{%- endif %}
 	{%- endfor -%}
 {%- endif -%}
 {%- if item.inGameType != 'None' and item.components.colliders.length -%}
@@ -73,7 +76,7 @@
 		{%- for imageData in sprite._imageData.images -%}
 			{#- Tiles -#}
 			{%- if imageData.tiles.data -%}
-				extern uint32 {{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name }}Tiles[];{{ '\n' }}
+				extern uint32 {{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name | sanitizeSpecName }}Tiles[];{{ '\n' }}
 			{%- endif -%}
 			{#- Maps -#}
 			{%- for map in imageData.maps -%}
@@ -82,7 +85,7 @@
 			{%- endfor -%}
 			{#- Frame Offsets -#}
 			{%- if imageData.tiles.frameOffsets is defined -%}
-				extern uint32 {{ tilesName }}TilesFrameOffsets[];{{ '\n' }}
+				extern uint32 {{ sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name | sanitizeSpecName }}TilesFrameOffsets[];{{ '\n' }}
 			{%- endif -%}
 		{%- endfor -%}
 	{%- endif -%}
@@ -188,16 +191,16 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{%- endif %}
 
 	// palette number (0-3)
-	{{ sprite.texture.palette }},
+	{{ sprite.texture.palette | default(0) }},
 
 	// recyclable
-	{{ sprite.texture.recycleable }},
+	{{ sprite.texture.recycleable | default(false) }},
 
 	// vertical flip
-	{{ sprite.texture.flip.x }},
+	{{ sprite.texture.flip.x | default(false) }},
 
 	// horizontal flip
-	{{ sprite.texture.flip.y }},
+	{{ sprite.texture.flip.y | default(false) }},
 };
 
 {%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' or spriteAllocatorClass == 'MBgmapSprite' %}
@@ -286,10 +289,10 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {% endfor -%}
 {% endfor -%}
 
-{{ item.sprites.type  }}SpriteROMSpec* const {{ sanitizedSpecName }}SpriteSpecs[] =
+{{ item.sprites.type }}SpriteROMSpec* const {{ sanitizedSpecName }}SpriteSpecs[] =
 {
 	{% for spriteName in spriteNames -%}
-	&{{ spriteName }}SpriteSpec,
+	({{ item.sprites.type }}SpriteSpec*)&{{ spriteName }}SpriteSpec,
 	{% endfor -%}
 	NULL
 };
@@ -524,10 +527,10 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' and entityClass != 'Actor' %}
 	{
 	{%- endif %}
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' %}
+	{%- if item.physics.enabled %}
 	{
 	{%- endif %}
-		{%- if entityClass != 'Entity' %}
+		{%- if item.components.animations.length %}
 		{
 		{%- endif %}
 			// class allocator
@@ -591,7 +594,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			{%- else -%} 
 			NULL
 			{%- endif -%},
-		{%- if entityClass != 'Entity' %}
+		{%- if item.components.animations.length %}
 		},
 
 		// pointer to the animation spec for the character
@@ -605,7 +608,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 		{%- endif -%}",
 		{%- endif -%}
 
-	{%- if entityClass != 'Entity' and entityClass != 'AnimatedEntity' %}
+	{%- if item.physics.enabled %}
 	},
 
 	// true to create a body
