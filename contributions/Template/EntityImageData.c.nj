@@ -9,6 +9,7 @@
 			{%- for imageData in sprite._imageData.images -%}
 				{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+				{%- set section = sprite.section -%}
 
 				{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
 				{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
