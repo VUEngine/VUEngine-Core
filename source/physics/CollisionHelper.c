@@ -214,6 +214,32 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	Vector3D lineFieldA = Vector3D::sum(lineField->a, lineField->transformation->position);
 	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->transformation->position);
 
+	// Test against the bounding box first to avoid thee projection if possible
+	if(
+		(
+			lineFieldA.x != lineFieldB.x
+			&&
+			(
+				(ballSideToCheck.x + ball->radius < lineFieldA.x && ballSideToCheck.x < lineFieldB.x)
+				||
+				(ballSideToCheck.x - ball->radius > lineFieldA.x && ballSideToCheck.x > lineFieldB.x)
+			)
+		)
+		||
+		(
+			lineFieldA.y != lineFieldB.y
+			&&
+			(
+				(ballSideToCheck.y + ball->radius < lineFieldA.y && ballSideToCheck.y < lineFieldB.y)
+				||
+				(ballSideToCheck.y - ball->radius > lineFieldA.y && ballSideToCheck.y > lineFieldB.y)
+			)
+		)
+	)
+	{
+		return;
+	}
+
 	fixed_t position = __FIXED_MULT((lineFieldB.x - lineFieldA.x), (ballSideToCheck.y - lineFieldA.y)) - __FIXED_MULT((lineFieldB.y - lineFieldA.y), (ballSideToCheck.x - lineFieldA.x));
 
 	if(0 > position)
