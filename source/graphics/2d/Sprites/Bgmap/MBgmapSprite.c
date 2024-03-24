@@ -12,7 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-
 #include <BgmapTextureManager.h>
 #include <Camera.h>
 #include <Optics.h>

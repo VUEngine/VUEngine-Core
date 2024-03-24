@@ -348,13 +348,41 @@
 										"flip": {
 											"type": "object",
 											"properties": {
-												"horizontal": {
+												"x": {
 													"type": "boolean",
 													"default": false
 												},
-												"vertical": {
+												"y": {
 													"type": "boolean",
 													"default": false
+												}
+											}
+										},
+										"repeat": {
+											"type": "object",
+											"properties": {
+												"mode": {
+													"type": "string",
+													"default": "1x1"
+												},
+												"x": {
+													"type": "boolean",
+													"default": false
+												},
+												"y": {
+													"type": "boolean",
+													"default": false
+												},
+												"size": {
+													"type": "object",
+													"properties": {
+														"x": {
+															"type": "number"
+														},
+														"y": {
+															"type": "number"
+														}
+													}
 												}
 											}
 										}
@@ -535,9 +563,6 @@
 						"type": "string",
 						"default": "Bgmap"
 					},
-					"customClass": {
-						"type": "string"
-					},
 					"useZDisplacementInProjection": {
 						"type": "boolean",
 						"default": false
@@ -563,6 +588,7 @@
 	},
 	"icon": "fa fa-id-card-o",
 	"templates": [
+		"EntityImageData",
 		"EntitySpec"
 	]
 }
