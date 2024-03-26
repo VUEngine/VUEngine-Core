@@ -120,7 +120,7 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	}
 	else
 	{
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset);
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, kTexturePendingWriting < status && kTextureFrameChanged >= status, this->xOffset, this->yOffset, charSetOffset, 0);
 	}
 
 	if(kTexturePendingRewriting == status)
@@ -149,6 +149,7 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 
 	int16 currentXOffset = xOffset;
 	int16 currentYOffset = yOffset;
+	int16 charSetOffsetDelta = CharSet::isOptimized(this->charSet) ? 0 : this->textureSpec->cols * this->textureSpec->rows;
 
 	this->mapDisplacement = 0;
 
@@ -156,9 +157,9 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset);
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, frame);
 
-		charSetOffset += this->textureSpec->cols * this->textureSpec->rows;
+		charSetOffset += charSetOffsetDelta;
 
 		currentXOffset += this->textureSpec->cols;
 
@@ -234,20 +235,20 @@ static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HW
  *
  * @private
  */
-void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset)
+void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame)
 {
 	if((0 > xOffset) || (0 > yOffset))
 	{
 		return;
 	}
 
+	int16 cols = this->textureSpec->cols;
+	int16 rows = this->textureSpec->rows;
 	HWORD* offsetDisplacement = (HWORD*)__BGMAP_SEGMENT(this->segment) + xOffset + (yOffset << 6);
-	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement;
+	const HWORD* mapDisplacement = (HWORD*)this->textureSpec->map + this->mapDisplacement + cols * rows * frame;
 	int32 counter = forceFullRewrite ? -1 : maximumTextureRowsToWrite;
 	uint16 flip = ((this->horizontalFlip << 1) | this->verticalFlip) << 12;
 	int8 remainingRowsToBeWritten = this->remainingRowsToBeWritten;
-	int16 cols = this->textureSpec->cols;
-	int16 rows = this->textureSpec->rows;
 	uint16 offset = charSetOffset | (this->palette << 14);
 
 	if(forceFullRewrite)
