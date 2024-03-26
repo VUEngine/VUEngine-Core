@@ -26,10 +26,13 @@
 	{%- for sprite in item.components.sprites -%}
 		{%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 		{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
-		{%- if (item.sprites.type == 'Bgmap' and sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
+		{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not item.components.animations.length -%}
+			{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
+			{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
+		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
 			{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
 			{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
-		{%- elseif (item.sprites.type == 'Bgmap' and sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
+		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
 			{%- set spriteClass = 'MBgmapSprite' -%}
 			{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 		{%- elseif item.components.animations.length -%}
@@ -99,10 +102,13 @@
 
 {%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 {%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
-{%- if (item.sprites.type == 'Bgmap' and sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
+{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not item.components.animations.length -%}
+	{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
+	{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
+{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
 	{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
 	{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
-{%- elseif (item.sprites.type == 'Bgmap' and sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
+{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
 	{%- set spriteClass = 'MBgmapSprite' -%}
 	{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
 {%- elseif item.components.animations.length -%}
@@ -186,6 +192,8 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	// number of frames
 	{%- if item.components.animations.length and item.animations.multiframe %}
 	{{ item.animations.totalFrames }},
+	{%- elseif spriteClass == 'FrameBlendBgmapSprite' %}
+	2,
 	{%- else %}
 	1,
 	{%- endif %}
@@ -214,13 +222,15 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 
 {{ spriteClass }}ROMSpec {{ spriteName }}SpriteSpec =
 {
-	{% if spriteAllocatorClass == 'MBgmapSprite' -%}
+	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
 	{
-	{% endif -%}
-	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' -%}
+	{%- endif %}
+	{%- if spriteAllocatorClass == 'MBgmapSprite' %}
 	{
-	{% endif -%}
-
+	{%- endif %}
+	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' %}
+	{
+	{%- endif %}
 	{
 		// sprite's type
 		__TYPE({{ spriteAllocatorClass }}),
@@ -259,6 +269,9 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 	__WORLD_{{ sprite.displays }},
 	{%- endif %}
 
+	{%- if spriteClass == 'FrameBlendBgmapSprite' %}
+	}
+	{%- endif %}
 	{%- if spriteAllocatorClass == 'MBgmapAnimatedSprite' %}
 	}
 	{%- endif %}
@@ -422,6 +435,7 @@ WireframeROMSpec* const {{ sanitizedSpecName }}WireframeSpecs[] =
 
 {#- PRINT COLLIDERS -#}
 {%- if item.inGameType != 'None' and item.components.colliders.length %}
+
 
 {{ macros.sectionHeader('Colliders') }}
 
