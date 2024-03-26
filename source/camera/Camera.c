@@ -177,6 +177,11 @@ void Camera::focus(bool checkIfFocusEntityIsMoving)
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
+	if(NULL == CameraMovementManager::getFocusEntity(this->cameraMovementManager))
+	{
+		return;
+	}
+
 	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
 
 	this->position = Vector3D::sum(this->position, this->displacement);
