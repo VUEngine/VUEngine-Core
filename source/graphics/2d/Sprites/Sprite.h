@@ -192,6 +192,7 @@ abstract class Sprite : VisualComponent
 	virtual void forceShow();
 	virtual Scale getScale();
 	virtual void processEffects();
+	virtual void configureMultiframe(uint16 frame);
 	virtual int16 doRender(int16 index) = 0;
 	virtual void writeAnimation();
 	virtual void print(int32 x, int32 y);

@@ -595,7 +595,7 @@ static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
 		{
 			return textureSpec->numberOfFrames * textureSpec->cols;
 		}
-		
+
 		return maximumNumberOfFrames * textureSpec->cols;	
 	}
 
@@ -616,11 +616,11 @@ static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
 
 	if(!Texture::isSpecSingleFrame(textureSpec))
 	{
-		uint32 allocableCols = Texture::getTotalCols(textureSpec);
-		int32 remainingCols = textureSpec->numberOfFrames * textureSpec->cols - allocableCols;
-		
+		int16 allocableFrames = 64 / textureSpec->cols;
+		int16 neededRows = __FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
+
 		// return the total number of chars
-		return textureSpec->rows + textureSpec->rows * (remainingCols / 64);
+		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
 	}
 
 	return textureSpec->rows;

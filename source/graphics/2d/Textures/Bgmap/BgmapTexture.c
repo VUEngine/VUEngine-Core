@@ -147,9 +147,11 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 		return;
 	}
 
+	bool isCharSetOptimized = CharSet::isOptimized(this->charSet);
+
 	int16 currentXOffset = xOffset;
 	int16 currentYOffset = yOffset;
-	int16 charSetOffsetDelta = CharSet::isOptimized(this->charSet) ? 0 : this->textureSpec->cols * this->textureSpec->rows;
+	int16 charSetOffsetDelta = isCharSetOptimized ? 0 : this->textureSpec->cols * this->textureSpec->rows;
 
 	this->mapDisplacement = 0;
 
@@ -157,13 +159,13 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 	{
 		this->remainingRowsToBeWritten = this->textureSpec->rows;
 
-		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, frame);
+		BgmapTexture::writeFrame(this, maximumTextureRowsToWrite, true, currentXOffset, currentYOffset, charSetOffset, isCharSetOptimized ? frame : 0);
 
 		charSetOffset += charSetOffsetDelta;
 
 		currentXOffset += this->textureSpec->cols;
 
-		if(64 <= currentXOffset)
+		if(64 <= currentXOffset + this->textureSpec->cols)
 		{
 			currentXOffset = xOffset;
 			currentYOffset += this->textureSpec->rows;

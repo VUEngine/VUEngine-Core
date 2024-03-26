@@ -114,6 +114,10 @@ void Sprite::processEffects()
 {
 }
 
+void Sprite::configureMultiframe(uint16 frame __attribute__((unused)))
+{
+}
+
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,

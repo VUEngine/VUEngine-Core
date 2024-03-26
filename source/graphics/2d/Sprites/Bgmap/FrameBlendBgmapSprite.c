@@ -71,9 +71,5 @@ void FrameBlendBgmapSprite::swapFrame()
 {
 	this->actualFrame = 0 == this->actualFrame ? 1 : 0;
 
-	int16 mx = BgmapTexture::getXOffset(this->texture) + Texture::getCols(this->texture) * this->actualFrame;
-	int16 my = BgmapTexture::getYOffset(this->texture) + Texture::getRows(this->texture) * (mx / 64);
-	this->bgmapTextureSource.mx = __MODULO(mx, 64) << 3;
-	this->bgmapTextureSource.my = my << 3;
-	this->rendered = false;
+	FrameBlendBgmapSprite::configureMultiframe(this, this->actualFrame);
 }

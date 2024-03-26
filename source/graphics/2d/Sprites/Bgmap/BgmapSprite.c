@@ -416,6 +416,25 @@ int16 BgmapSprite::doRender(int16 index)
 	return index;
 }
 
+void BgmapSprite::configureMultiframe(uint16 frame)
+{
+	int16 mx = BgmapTexture::getXOffset(this->texture);
+	int16 my = BgmapTexture::getYOffset(this->texture);
+	
+	int16 cols = Texture::getCols(this->texture);
+
+	int16 allocableFrames = (64 - mx) / cols;
+	int16 usableCollsPerRow = allocableFrames * cols;
+	int16 usedCollsPerRow = frame * cols;
+
+	int16 col = usedCollsPerRow % usableCollsPerRow;
+	int16 row = Texture::getRows(this->texture) * (frame / allocableFrames);
+
+	this->bgmapTextureSource.mx = mx + (col << 3);
+	this->bgmapTextureSource.my = my + (row << 3);
+	this->rendered = false;
+}
+
 void BgmapSprite::processEffects()
 {
 	// set the world size according to the zoom
