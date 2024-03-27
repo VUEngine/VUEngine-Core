@@ -420,7 +420,6 @@ void GameState::transform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	// then transformation loaded entities
 	Stage::transform(this->stage, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
 }
 

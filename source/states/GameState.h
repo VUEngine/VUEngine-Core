@@ -70,6 +70,7 @@ class GameState : State
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);
+	void transform();
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	void pauseMessaging(bool pause);
@@ -92,7 +93,6 @@ class GameState : State
 
 	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();
-	virtual void transform();
 	virtual bool isVersusMode();
 	virtual bool stream();
 

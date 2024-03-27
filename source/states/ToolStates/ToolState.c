@@ -43,6 +43,7 @@ void ToolState::constructor()
 	Base::constructor();
 
 	this->tool = NULL;
+	this->transform = false;
 }
 
 /**
@@ -121,13 +122,3 @@ void ToolState::processUserInput(const UserInput* userInput)
 		Tool::processUserInput(this->tool, userInput->releasedKey);
 	}
 }
-
-/**
- * Transform
- *
- */
-void ToolState::transform()
-{
-}
-
-
