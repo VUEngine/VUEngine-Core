@@ -165,7 +165,7 @@ void FrameRate::print(int32 col, int32 row)
 #ifdef __UNLOCK_FPS
 	Printing printing = Printing::getInstance();
 	Printing::int32(printing, this->FPS, col, row, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, col + 5, row, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, col + 7, row, NULL);
 #else
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS   /   ", col, row, NULL);
