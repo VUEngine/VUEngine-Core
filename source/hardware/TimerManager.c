@@ -469,15 +469,14 @@ void TimerManager::nextSecondStarted()
 void TimerManager::printStatus(int32 x, int32 y)
 {
 	PRINT_TEXT("TIMER STATUS", x, y++);
-
-	PRINT_TEXT("Inter./sec.:          ", x, ++y);
-	PRINT_INT(this->interruptsPerSecond, x + 17, y);
-	PRINT_TEXT("Inter./frm:           ", x, ++y);
-	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 17, y);
-	PRINT_TEXT("Aver. us/inter.:      ", x, ++y);
-	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y);
-	PRINT_TEXT("Real us/inter.:       ", x, ++y);
-	PRINT_INT(this->microsecondsPerInterrupt, x + 17, y);
+	PRINT_TEXT("Inter./sec.:          ", x, y);
+	PRINT_INT(this->interruptsPerSecond, x + 17, y++);
+	PRINT_TEXT("Inter./frm:           ", x, y);
+	PRINT_INT(this->interruptsPerSecond / __TARGET_FPS, x + 17, y++);
+	PRINT_TEXT("Aver. us/inter.:      ", x, y);
+	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y++);
+	PRINT_TEXT("Real us/inter.:       ", x, y);
+	PRINT_INT(this->microsecondsPerInterrupt, x + 17, y++);
 }
 #endif
 
