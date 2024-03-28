@@ -169,7 +169,7 @@ void SpriteManager::reset()
 
 	int32 i = 0;
 	// clean OBJ memory
-	for(; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	for(; i < __TOTAL_OBJECTS; i++)
 	{
 		_vipRegisters[__SPT3 - i] = 0;
 		_objectAttributesCache[i].jx = 0;

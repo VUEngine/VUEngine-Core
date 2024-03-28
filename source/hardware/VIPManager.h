@@ -137,7 +137,7 @@ typedef struct ObjectAttributes
 
 // pointers to access the VRAM base address
 extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
-extern ObjectAttributes _objectAttributesCache[1024];
+extern ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS];
 
 static WorldAttributes* const _worldAttributesBaseAddress		=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
 static ObjectAttributes* const	_objectAttributesBaseAddress	=	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress

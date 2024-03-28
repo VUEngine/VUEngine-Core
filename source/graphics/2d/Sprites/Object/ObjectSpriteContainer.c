@@ -392,13 +392,13 @@ int32 ObjectSpriteContainer::getTotalPixels()
 
 static void ObjectSpriteContainer::reset()
 {
-	for(int32 i = __AVAILABLE_CHAR_OBJECTS - 1; 0 <= i; i--)
+	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
 	{
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 	}
 
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
 
 	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
 	{
@@ -409,7 +409,7 @@ static void ObjectSpriteContainer::reset()
 static void ObjectSpriteContainer::prepareForRendering()
 {
 	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __AVAILABLE_CHAR_OBJECTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
 
 }
 
@@ -432,11 +432,11 @@ static void ObjectSpriteContainer::writeDRAM()
 	}
 
 	CACHE_RESET;
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__AVAILABLE_CHAR_OBJECTS - _objectIndex) >> 2);
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2);
 
 #ifdef __SHOW_SPRITES_PROFILING
 	extern int32 _writtenObjectTiles;
-	_writtenObjectTiles = __AVAILABLE_CHAR_OBJECTS - _objectIndex;
+	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
 #endif
 }
 

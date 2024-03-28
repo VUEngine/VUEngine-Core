@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
-ObjectAttributes _objectAttributesCache[1024] __attribute__((section(".dram_bss")));
+ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(".dram_bss")));
 
 volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = (uint16*)0x0005F800;
 uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
@@ -605,7 +605,7 @@ void VIPManager::clearScreen()
 		_worldAttributesBaseAddress[i].ovr = 0;
 	}
 
-	for(int32 i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	for(int32 i = 0; i < __TOTAL_OBJECTS; i++)
 	{
 		_objectAttributesCache[i].jx = 0;
 		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
