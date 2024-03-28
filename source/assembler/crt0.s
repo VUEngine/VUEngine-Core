@@ -257,7 +257,7 @@ __interrupt_handler:
 	.global	__interrupt_handler_prolog
 
 __interrupt_handler_prolog:
-	addi	-0x0050,sp,sp
+	addi	-0x0078,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
 	st.w	r19,0x0008[sp]
@@ -274,12 +274,22 @@ __interrupt_handler_prolog:
 	st.w	r8,0x0034[sp]
 	st.w	r7,0x0038[sp]
 	st.w	r6,0x003c[sp]
-	st.w	r2,0x0040[sp]
-	st.w	r1,0x0044[sp]
+	st.w	r29,0x0040[sp]
+	st.w	r28,0x0044[sp]
+	st.w	r27,0x0048[sp]
+	st.w	r26,0x004c[sp]
+	st.w	r25,0x0050[sp]
+	st.w	r24,0x0054[sp]
+	st.w	r23,0x0058[sp]
+	st.w	r22,0x005c[sp]
+	st.w	r21,0x0060[sp]
+	st.w	r20,0x0064[sp]
+	st.w	r2,0x0068[sp]
+	st.w	r1,0x006c[sp]
 	stsr	eipc,r1
-	st.w	r1,0x0048[sp]
+	st.w	r1,0x0070[sp]
 	stsr	eipsw,r1
-	st.w	r1,0x004c[sp]
+	st.w	r1,0x0074[sp]
 	movhi	hi(_keyVector),r0,r1
 	movea	lo(_keyVector),r1,r1
 	stsr	sr5,r6
@@ -306,13 +316,23 @@ __interrupt_handler_epilogue:
 	ld.w	0x0034[sp],r8
 	ld.w	0x0038[sp],r7
 	ld.w	0x003c[sp],r6
-	ld.w	0x0040[sp],r2
-	ld.w	0x0048[sp],r1
+	ld.w	0x0040[sp],r29
+	ld.w	0x0044[sp],r28
+	ld.w	0x0048[sp],r27
+	ld.w	0x004c[sp],r26
+	ld.w	0x0050[sp],r25
+	ld.w	0x0054[sp],r24
+	ld.w	0x0058[sp],r23
+	ld.w	0x005c[sp],r22
+	ld.w	0x0060[sp],r21
+	ld.w	0x0064[sp],r20
+	ld.w	0x0068[sp],r2
+	ld.w	0x0070[sp],r1
 	ldsr	r1,eipc
-	ld.w	0x004c[sp],r1
+	ld.w	0x0074[sp],r1
 	ldsr	r1,eipsw
-	ld.w	0x0044[sp],r1
-	addi	0x0050,sp,sp
+	ld.w	0x006c[sp],r1
+	addi	0x0078,sp,sp
 	reti
 
 __zero_exception:
