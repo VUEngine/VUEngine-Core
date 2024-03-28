@@ -36,23 +36,17 @@
  * Class constructor
  *
  * @param particleSpec	Spec of the Particle
- * @param spriteSpec
- * @param lifeSpan
- * @param mass
  */
 
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator __attribute__((unused)))
+void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)), ParticleSystem creator __attribute__((unused)))
 {
 	// construct base Container
 	Base::constructor();
 
-	this->lifeSpan = lifeSpan;
+	this->lifeSpan = 0;
 	this->sprite = NULL;
 	this->wireframe = NULL;
 	this->expired = false;
-
-	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
-	Particle::addWireframe(this, wireframeSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
 }
 
 /**
@@ -84,18 +78,13 @@ void Particle::destructor()
  *
  * @private
  */
-void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::addSprite(const SpriteSpec* spriteSpec)
 {
-	if(NULL != spriteSpec)
+	if(NULL != spriteSpec && NULL == this->sprite)
 	{
 		// call the appropriate allocator to support inheritance
 		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, SpatialObject::safeCast(this));
 
-		if(NULL != animationName && NULL != animationFunctions)
-		{
-			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
-		}
-		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
 	}
 }
@@ -105,9 +94,9 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
  *
  * @private
  */
-void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions __attribute__((unused)), const char* animationName __attribute__((unused)))
+void Particle::addWireframe(const WireframeSpec* wireframeSpec)
 {
-	if(NULL != wireframeSpec)
+	if(NULL != wireframeSpec && NULL == this->wireframe)
 	{
 		// call the appropriate allocator to support inheritance
 		this->wireframe = ((Wireframe (*)(WireframeSpec*, SpatialObject)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec, SpatialObject::safeCast(this));
@@ -265,8 +254,9 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
  */
 void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	Particle::addSprite(this, spriteSpec, animationFunctions, animationName);
-	Particle::addWireframe(this, wireframeSpec, animationFunctions, animationName);
+	Particle::addSprite(this, spriteSpec);
+	Particle::addWireframe(this, wireframeSpec);
+	Particle::changeAnimation(this, animationFunctions, animationName, true);
 }
 
 /**
@@ -300,7 +290,7 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
+void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
 	if(Particle::overrides(this, reset))
 	{
@@ -326,6 +316,8 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		this->transformation.position = *position;
 	}
 
+	Particle::addSprite(this, spriteSpec);
+	Particle::addWireframe(this, wireframeSpec);
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
 

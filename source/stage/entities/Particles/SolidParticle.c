@@ -42,14 +42,12 @@ friend class VirtualNode;
  * Class constructor
  *
  * @param solidParticleSpec	Spec of the SolidParticle
- * @param spriteSpec
- * @param lifeSpan
- * @param mass
+ * @param creator		Owner Particle System
  */
-void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, ParticleSystem creator)
 {
 	// construct base Container
-	Base::constructor(&solidParticleSpec->physicalParticleSpec, spriteSpec, wireframeSpec, lifeSpan, creator);
+	Base::constructor(&solidParticleSpec->physicalParticleSpec, creator);
 
 	this->creator = creator;
 	this->solidParticleSpec = solidParticleSpec;

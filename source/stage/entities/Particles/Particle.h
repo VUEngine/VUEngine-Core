@@ -75,10 +75,10 @@ class Particle : SpatialObject
 	bool transform;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator);
+	void constructor(const ParticleSpec* particleSpec, ParticleSystem creator);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
-	void setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
+	void setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
 	void expire();
 	void hide();
 	void show();

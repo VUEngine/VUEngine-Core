@@ -363,11 +363,11 @@ bool ParticleSystem::recycleParticle()
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-				Particle::setup(particle, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 			}
 			else
 			{
-				Particle::setup(particle, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 			}
 
 			if(ParticleSystem::overrides(this, particleRecycled))
@@ -543,19 +543,19 @@ void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused))
  */
 Particle ParticleSystem::spawnParticle()
 {
-	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
-
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, this);
+	Particle particle = ((Particle (*)(const ParticleSpec*, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, this);
+
+	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-	Particle::setPosition(particle, &position);
+	Vector3D force = Vector3D::zero();
 
 	if(this->applyForceToParticles)
 	{
-		Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-		
-		Particle::applySustainedForce(particle, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType);
+		force = ParticleSystem::getParticleSpawnForce(this);
 	}
+
+	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
 	{

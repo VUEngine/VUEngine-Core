@@ -34,14 +34,12 @@
  * Class constructor
  *
  * @param particleSpec	Spec of the PhysicalParticle
- * @param spriteSpec
- * @param lifeSpan
- * @param mass
+ * @param creator		Owner Particle System
  */
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator)
 {
 	// construct base Container
-	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, wireframeSpec, lifeSpan, creator);
+	Base::constructor(&physicalParticleSpec->particleSpec, creator);
 
 	this->physicalParticleSpec = physicalParticleSpec;
 	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
