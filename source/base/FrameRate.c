@@ -126,7 +126,7 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 
 #ifdef __UNLOCK_FPS
 #define __PRINT_FRAMERATE
-#define __PRINT_FRAMERATE_AT_X		30
+#define __PRINT_FRAMERATE_AT_X		27
 #define __PRINT_FRAMERATE_AT_Y		0
 #endif
 

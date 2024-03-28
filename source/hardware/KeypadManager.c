@@ -109,8 +109,15 @@ int32 KeypadManager::isEnabled()
  */
 UserInput KeypadManager::captureUserInput()
 {
+#ifdef __UNLOCK_FPS
+	if(*_readingStatus & __S_STAT)
+	{
+		return;
+	}
+#else
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
+#endif
 
 	// now read the keys
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
