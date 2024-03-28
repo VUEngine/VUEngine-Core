@@ -142,7 +142,8 @@
 	},
 	"sprite": {
 		"hackBgmapSpriteHeight": true,
-		"totalLayers": 32
+		"totalLayers": 32,
+		"totalObjects": 1024
 	},
 	"sram": {
 		"totalSram": 8192

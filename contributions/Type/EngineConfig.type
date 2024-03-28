@@ -503,6 +503,11 @@
 						"default": 32,
 						"minimum": 1
 					},
+					"totalObjects": {
+						"type": "integer",
+						"default": 1024,
+						"minimum": 1
+					},
 					"hackBgmapSpriteHeight": {
 						"type": "boolean",
 						"default": true
@@ -1114,6 +1119,10 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/sprite/properties/totalLayers"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/sprite/properties/totalObjects"
 							},
 							{
 								"type": "Control",
