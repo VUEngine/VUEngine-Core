@@ -112,7 +112,7 @@ UserInput KeypadManager::captureUserInput()
 #ifdef __UNLOCK_FPS
 	if(*_readingStatus & __S_STAT)
 	{
-		return;
+		return (UserInput){0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
 	}
 #else
 	// wait for keypad to stabilize
