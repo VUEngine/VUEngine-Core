@@ -1180,11 +1180,6 @@ void Stage::setupSounds()
 			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
 		}
 
-		if(Sound::hasPCMTracks(sound))
-		{
-			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNonVIPMultiplexedInterrupts);
-		}
-
 		if(!isDeleted(sound))
 		{
 			if(isDeleted(this->sounds))
