@@ -372,8 +372,6 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 					{
 						CACHE_DISABLE;
 						CACHE_CLEAR;
-
-						SoundManager::startPCMPlayback(SoundManager::getInstance());
 					}
 				}	
 			}
