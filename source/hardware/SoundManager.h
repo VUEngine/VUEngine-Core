@@ -99,7 +99,6 @@ singleton class SoundManager : ListenerObject
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_WAVEFORMS];
 	uint32 targetPCMUpdates;
-	uint32 elapsedMicrosecondsPerSecond;
 	uint16 pcmTargetPlaybackFrameRate;
 	uint16 MIDIPlaybackCounterPerInterrupt;
 	bool lock;
@@ -124,13 +123,11 @@ singleton class SoundManager : ListenerObject
 	void releaseSound(Sound sound);
 	void releaseChannels(VirtualList channels);
 	void deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt);
-	void startPCMPlayback();
 	bool isPlayingSound(const SoundSpec* soundSpec);
 
 	void lock();
 	void unlock();
 
-	void updateFrameRate();
 	void print();
 	void printPlaybackTime();
 }
