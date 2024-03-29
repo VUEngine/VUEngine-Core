@@ -757,10 +757,9 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
 		}
 #ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::printStatus(this->timerManager, 1, 10);
+		TimerManager::printStatus(this->timerManager, 1, 0);
 		TimerManager::nextSecondStarted(this->timerManager);
 #endif
-		SoundManager::updateFrameRate(this->soundManager);
 
 		totalTime = 0;
 
