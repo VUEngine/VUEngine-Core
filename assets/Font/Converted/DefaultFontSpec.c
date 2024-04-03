@@ -13,7 +13,7 @@
 //                                              DECLARATIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
-const uint32 DefaultFontTiles[1028] __attribute__((aligned(4))) =
+const uint32 DefaultFontTiles[] __attribute__((aligned(4))) =
 {
     0x00000000,
     0x04450441,0x04510445,0x04410451,0x00001441,0x0003C3FF,0x2AA30AA3,0xAAA3AAA3,0xFFFF0003,

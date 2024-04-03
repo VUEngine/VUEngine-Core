@@ -3,10 +3,6 @@
 	"schema": {
 		"title": "Rumble Effect",
 		"properties": {
-			"name": {
-				"type": "string",
-				"default": ""
-			},
 			"effect": {
 				"type": "integer",
 				"default": 0,

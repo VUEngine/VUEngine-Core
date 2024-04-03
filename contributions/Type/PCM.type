@@ -3,10 +3,6 @@
 	"schema": {
 		"title": "PCM Conversion",
 		"properties": {
-			"name": {
-				"type": "string",
-				"default": ""
-			},
 			"sourceFile": {
 				"type": "string",
 				"default": ""

@@ -3,10 +3,6 @@
 	"schema": {
 		"title": "Font",
 		"properties": {
-			"name": {
-				"type": "string",
-				"default": ""
-			},
 			"offset": {
 				"type": "integer",
 				"default": 0,

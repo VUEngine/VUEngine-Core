@@ -3,10 +3,6 @@
 	"schema": {
 		"title": "Brightness Repeat",
 		"properties": {
-			"name": {
-				"type": "string",
-				"default": ""
-			},
 			"description": {
 				"type": "string",
 				"default": ""

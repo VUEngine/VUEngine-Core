@@ -13,8 +13,9 @@
 {{ macros.sectionHeader('Declarations') }}
 
 {% if project.items.RumbleEffect %}
-{%- for rumbleEffect in project.items.RumbleEffect | values | unique('name') | sort(attribute='name') -%}
-extern RumbleEffectSpec {{ rumbleEffect.name | sanitizeSpecName }}RumbleEffectSpec;
+{%- for rumbleEffect in project.items.RumbleEffect | values | unique('_fileUri') | sort(attribute='_fileUri') -%}
+{%- set sanitizedSpecName = rumbleEffect._fileUri | basename(false) | sanitizeSpecName -%}
+extern RumbleEffectSpec {{ sanitizedSpecName }}RumbleEffectSpec;
 {% endfor -%}
 {% endif %}
 

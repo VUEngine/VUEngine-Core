@@ -1,3 +1,5 @@
+{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
+
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.c.nj') %}
 
@@ -8,7 +10,7 @@
 
 {{ macros.sectionHeader('Definitions') }}
 
-BrightnessRepeatROMSpec {{ item.name | sanitizeSpecName }}BrightnessRepeatSpec =
+BrightnessRepeatROMSpec {{ sanitizedSpecName }}BrightnessRepeatSpec =
 {
 	// mirror spec?
 	{% if item.mirror %}true{% else %}false{% endif %},

@@ -2,7 +2,6 @@
     "_id": "HJzLvhLSpJs16gla",
     "description": "The default brightness repeat configuration as provided by Nintendo.",
     "mirror": true,
-    "name": "Default",
     "values": [
         1,
         1,

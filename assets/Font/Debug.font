@@ -2506,7 +2506,6 @@
         ]
     ],
     "compression": "none",
-    "name": "Debug",
     "offset": 45,
     "section": "rom",
     "size": {

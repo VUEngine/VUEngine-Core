@@ -2,7 +2,6 @@
 	"_id": "8pDwzeqM8YmSep1h",
 	"description": "The default column table as provided by Nintendo.",
 	"mirror": false,
-	"name": "Default",
 	"values": [
 		{
 			"repeat": 16,

@@ -3449,7 +3449,6 @@
         ]
     ],
     "compression": "none",
-    "name": "Profiler",
     "offset": 46,
     "section": "rom",
     "size": {
