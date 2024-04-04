@@ -1,4 +1,4 @@
-{%- set sanitizedSpecName = item.name | sanitizeSpecName -%}
+{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
 {%- set tilesData = [] -%}
 {%- set block = '' -%}

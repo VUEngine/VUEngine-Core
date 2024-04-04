@@ -8,8 +8,9 @@
 {{ macros.sectionHeader('Declarations') }}
 
 {% if project.items.WaveForm %}
-{%- for waveForm in project.items.WaveForm | values | unique('name') | sort(attribute='name') -%}
-extern const int8 {{ waveForm.name | sanitizeSpecName }}WaveForm[];
+{%- for waveForm in project.items.WaveForm | values | unique('_fileUri') | sort(attribute='_fileUri') -%}
+{%- set sanitizedSpecName = waveForm._fileUri | basename(false) | sanitizeSpecName -%}
+extern const int8 {{ sanitizedSpecName }}WaveForm[];
 {% endfor -%}
 {% endif %}
 

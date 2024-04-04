@@ -11370,7 +11370,6 @@
         ]
     ],
     "compression": "none",
-    "name": "Default",
     "offset": 0,
     "section": "rom",
     "size": {

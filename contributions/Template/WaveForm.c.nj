@@ -1,9 +1,11 @@
+{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
+
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.c.nj') %}
 
 {{ macros.sectionHeader('Definitions') }}
 
-const int8 {{ item.name | sanitizeSpecName }}WaveForm[] =
+const int8 {{ sanitizedSpecName }}WaveForm[] =
 {
 	{% for value in item.values -%}
 	{%- if value - 1 < 10 -%}{{ ' ' }} {%- endif -%}

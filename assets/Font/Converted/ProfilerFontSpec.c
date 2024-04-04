@@ -13,7 +13,7 @@
 //                                              DECLARATIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
-const uint32 ProfilerFontTiles[184] __attribute__((aligned(4))) =
+const uint32 ProfilerFontTiles[] __attribute__((aligned(4))) =
 {
     0x00000000,
     0x00000000,0x55000000,0x7D007D00,0x00005500,0x55500000,0x5D5075D0,0x75D05750,0x00005550,

@@ -3,10 +3,6 @@
 	"schema": {
 		"title": "WaveForm",
 		"properties": {
-			"name": {
-				"type": "string",
-				"default": ""
-			},
 			"values": {
 				"type": "array",
 				"items": {
