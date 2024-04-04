@@ -83,7 +83,7 @@ then
 	exit 0
 fi
 
-className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
+className=`grep -m 1 -e '^.*::[ 	]*destructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
 isStaticClass=false
 isExtensionClass=false
 
@@ -101,7 +101,7 @@ fi
 if [ -z "$className" ];
 then
 	# Maybe it is a static class
-	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+	className=`grep -o -m 1 -e '^static[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 
 	if [ -z "$className" ];
 	then
@@ -180,18 +180,22 @@ fi
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
+fileName=$className
+
 if [ -z "$className" ];
 then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
+		fileName=`sed -e 's#^.*source[s]*/\(.*$\)#\1#g' <<< $INPUT_FILE`
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
+			fileName=`sed -e 's#^.*object[s]*/\(.*$\)#\1#g' <<< $INPUT_FILE`
 		fi
 	fi
+
+	echo "Compiling file: $fileName"
 fi
 
 if [ ! -s $OUTPUT_FILE ];
@@ -224,19 +228,19 @@ else
 	baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
 fi
 
-if [ -z "$baseClassName" ];
-then
-	clean_up
-	if [ -z "${INPUT_FILE##*source*}" ];
-	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
-	else
-		if [ -z "${INPUT_FILE##*object*}" ];
-		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
-		fi
-	fi
-fi
+#if [ -z "$baseClassName" ];
+#then
+#	clean_up
+#	if [ -z "${INPUT_FILE##*source*}" ];
+#	then
+#		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file 3:  \1#g' <<< $INPUT_FILE`"
+#	else
+#		if [ -z "${INPUT_FILE##*object*}" ];
+#		then
+#			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file 4:  \1#g' <<< $INPUT_FILE`"
+#		fi
+#	fi
+#fi
 
 if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
@@ -256,14 +260,13 @@ sed -i.b 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 anyMethodVirtualized=false
 
 # Replace calls to base class methods
-NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwnedToApply.txt"
+NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$fileName"MethodsOwnedToApply.txt"
 if [ -f $NORMAL_METHODS_FILE ];
 then
 	rm -f $NORMAL_METHODS_FILE
 fi
 
-
-VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtualToApply.txt"
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$fileName"MethodsVirtualToApply.txt"
 if [ -f $VIRTUAL_METHODS_FILE ];
 then
 	rm -f $VIRTUAL_METHODS_FILE
@@ -272,7 +275,7 @@ fi
 classHasNormalMethods=
 classHasVirtualMethods=
 
-#echo $referencedClassesNames
+#echo "referencedClassesNames $referencedClassesNames"
 
 # Generate a dictionary of all virtual methods to replace on file
 for referencedClassName in $referencedClassesNames
@@ -322,8 +325,6 @@ then
 	#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
 	#		printProgressID=`echo $!`
 		awk -f $ENGINE_HOME/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
-		# This wait seems to help, specially in Windows, to not miss some replacements
-		sleep 0.001
 		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 	#		disown $printProgressID
 	#		kill $printProgressID
