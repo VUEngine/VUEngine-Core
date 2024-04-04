@@ -176,10 +176,6 @@
 
 {{ macros.sectionHeader('Frame rate control') }}
 
-// when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired
-// beforethe current game frame is done
-{% if config.frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
-
 // timer resolution
 #define __TIMER_RESOLUTION											{{ config.frameRate.timerResolution }}
 

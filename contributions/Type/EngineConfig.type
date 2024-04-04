@@ -149,11 +149,6 @@
 			"frameRate": {
 				"type": "object",
 				"properties": {
-					"forceVipSync": {
-						"type": "boolean",
-						"description": "When defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired before the current game frame is done.",
-						"default": false
-					},
 					"frameCycle": {
 						"type": "integer"
 					},
@@ -805,10 +800,6 @@
 					{
 						"type": "VerticalLayout",
 						"elements": [
-							{
-								"type": "Control",
-								"scope": "#/properties/frameRate/properties/forceVipSync"
-							},
 							{
 								"type": "Control",
 								"scope": "#/properties/frameRate/properties/frameCycle"
