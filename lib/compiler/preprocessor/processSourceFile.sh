@@ -322,6 +322,8 @@ then
 	#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
 	#		printProgressID=`echo $!`
 		awk -f $ENGINE_HOME/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+		# This wait seems to help, specially in Windows, to not miss some replacements
+		sleep 0.001
 		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 	#		disown $printProgressID
 	#		kill $printProgressID
