@@ -15,7 +15,7 @@
 //											 DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-// quick, easy types
+// Quick, easy types
 typedef unsigned char 		uint8;
 typedef unsigned short 		uint16;
 typedef unsigned int 		uint32;
@@ -30,12 +30,12 @@ typedef uint8		 		BYTE;
 typedef uint16		 		HWORD;
 typedef uint32		 		WORD;
 
-// define of boolean type
+// Define of boolean type
 typedef uint8				bool;
 enum { false, true };
 
 
-// fixed point macros
+// Fixed point macros
 #define fix7_9											int16
 #define fix7_9_ext										int32
 #define fix13_3											int16
@@ -70,7 +70,7 @@ enum { false, true };
 #define fixed_ext_t										fix7_9_ext
 #endif
 
-// brightness setting
+// Brightness setting
 typedef struct Brightness
 {
 	uint8 darkRed;
@@ -79,7 +79,7 @@ typedef struct Brightness
 
 } Brightness;
 
-// spatial size
+// Spatial size
 typedef struct Size
 {
 	fixed_t x;
@@ -88,7 +88,7 @@ typedef struct Size
 
 } Size;
 
-// size in pixels
+// Size in pixels
 typedef struct PixelSize
 {
 	uint16 x;
@@ -98,7 +98,7 @@ typedef struct PixelSize
 } PixelSize;
 
 
-// spatial position
+// 3D Spatial position
 typedef struct Vector3D
 {
 	fixed_t x;
@@ -107,7 +107,7 @@ typedef struct Vector3D
 
 } Vector3D;
 
-// spatial position
+// 2D Spatial position
 typedef struct Vector2D
 {
 	fixed_t x;
@@ -115,7 +115,7 @@ typedef struct Vector2D
 
 } Vector2D;
 
-// used to represent a screen position with parallax info
+// Represents a screen position with parallax info
 typedef struct PixelVector
 {
 	int16 x;
@@ -125,7 +125,7 @@ typedef struct PixelVector
 
 } PixelVector;
 
-// used to represent a screen position with z sorting displacement info
+// Represents a screen position with z sorting displacement info
 typedef struct ScreenPixelVector
 {
 	int16 x;
@@ -137,6 +137,7 @@ typedef struct ScreenPixelVector
 } ScreenPixelVector;
 
 
+// General purpose flags for each axis
 typedef struct Vector3DFlag
 {
 	bool x;
@@ -145,8 +146,7 @@ typedef struct Vector3DFlag
 
 } Vector3DFlag;
 
-
-// movement type flag vector
+// Movement type flag vector
 typedef struct MovementType
 {
 	int8 x;
@@ -155,6 +155,7 @@ typedef struct MovementType
 
 } MovementType;
 
+// 3D Spatial rotation (subject to gimbal lock)
 typedef struct Rotation
 {
 	// rotation around x axis
@@ -168,20 +169,31 @@ typedef struct Rotation
 
 } Rotation;
 
+// Represents a rotation around each axis (subject to gimbal lock)
 typedef struct PixelRotation
 {
-	// rotation around x axis
+	// Rotation around the x axis
 	int16 x;
-
-	// rotation around y axis
+	// Rotation around the y axis
 	int16 y;
-
-	// rotation around z axis
+	// Rotation around the z axis
 	int16 z;
 
 } PixelRotation;
 
-// spatial direction vector
+// Represents a rotation around each axis (subject to gimbal lock)
+typedef struct ScreenPixelRotation
+{
+	// Rotation around the x axis
+	int16 x;
+	// Rotation around the y axis
+	int16 y;
+	// Rotation around the z axis
+	int16 z;
+
+} ScreenPixelRotation;
+
+// Spatial direction vector
 typedef struct NormalizedDirection
 {
 	int8 x;
@@ -190,7 +202,7 @@ typedef struct NormalizedDirection
 
 } NormalizedDirection;
 
-// engine's optical values structure
+// Engine's optical values structure
 typedef struct Optical
 {
 	uint16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
@@ -224,8 +236,7 @@ typedef struct PixelOptical
 
 } PixelOptical;
 
-
-// define a 2d point
+// Defines a 2D point
 typedef struct Point
 {
 	int16 x;
@@ -233,7 +244,7 @@ typedef struct Point
 
 } Point;
 
-// define a 2d point in screen space
+// Defines a 2D point in screen space
 typedef struct Pixel
 {
 	uint16 x;
@@ -241,7 +252,7 @@ typedef struct Pixel
 
 } Pixel;
 
-// scaling factor
+// Scaling factor
 typedef struct Scale
 {
 	fix7_9 x;
@@ -249,6 +260,18 @@ typedef struct Scale
 	fix7_9 z;
 
 } Scale;
+
+// Represents the scale over each axis (axis aligend)
+typedef struct ScreenPixelScale
+{
+	// Scale over the x axis
+	float x;
+	// Scale over the y axis
+	float y;
+	// Scale over the z axis
+	float z;
+
+} ScreenPixelScale;
 
 // used to represent the m coordinates of the bgmaps
 typedef struct BgmapTextureSource

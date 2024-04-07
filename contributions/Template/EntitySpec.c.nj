@@ -531,7 +531,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{&{{ childEntity.name | sanitizeSpecName }}EntitySpec, { {{ child.onScreenPosition.x }}, {{ child.onScreenPosition.y }}, {{ child.onScreenPosition.z }}, {{ child.onScreenPosition.parallax }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
 	{%- endif %}
 	{%- endfor %}
-	{NULL, {0,0,0,0}, 0, NULL, NULL, NULL, false},
+	{NULL, {0, 0, 0, 0}, {0, 0, 0}, {1, 1, 1}, 0, NULL, NULL, NULL, false},
 };
 {%- endif %}
 

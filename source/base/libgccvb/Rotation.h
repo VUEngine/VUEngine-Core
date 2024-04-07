@@ -40,6 +40,7 @@ static class Rotation : Object
 	static inline Rotation scalarDivision(Rotation rotation, int16 scalar);
 	static inline Rotation getRelativeToCamera(Rotation rotation);
 	static inline Rotation getFromPixelRotation(PixelRotation pixelRotation);
+	static inline Rotation getFromScreenPixelRotation(ScreenPixelRotation pixelRotation);
 	static inline bool areEqual(Rotation a, Rotation b);
 	static void print(Rotation rotation, int32 x, int32 y);
 }
@@ -139,6 +140,11 @@ static inline Rotation Rotation::getRelativeToCamera(Rotation rotation)
 static inline Rotation Rotation::getFromPixelRotation(PixelRotation pixelRotation)
 {
 	return Rotation::clamp(__I_TO_FIXED_EXT(pixelRotation.x), __I_TO_FIXED_EXT(pixelRotation.y), __I_TO_FIXED_EXT(pixelRotation.z));
+}
+
+static inline Rotation Rotation::getFromScreenPixelRotation(ScreenPixelRotation screenPixelRotation)
+{
+	return Rotation::clamp(__I_TO_FIXED_EXT(screenPixelRotation.x), __I_TO_FIXED_EXT(screenPixelRotation.y), __I_TO_FIXED_EXT(screenPixelRotation.z));
 }
 
 static inline bool Rotation::areEqual(Rotation a, Rotation b)

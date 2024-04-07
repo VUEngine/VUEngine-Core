@@ -80,11 +80,17 @@ typedef const EntitySpec EntityROMSpec;
 // an entity associated with a position
 typedef struct PositionedEntity
 {
-	// pointer to the entity spec in ROM
+	// Pointer to the entity spec in ROM
 	EntitySpec* entitySpec;
 
-	// position in the screen coordinates
+	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
+
+	// Rotation in screen coordinares
+	ScreenPixelRotation onScreenRotation;
+
+	// Scale in screen coordinares
+	ScreenPixelScale onScreenScale;
 
 	// entity's id
 	int16 id;

@@ -1184,9 +1184,12 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
 
-	// set spatial position
 	Entity::setLocalPosition(entity, &position);
+	Entity::setLocalRotation(entity, &rotation);
+	Entity::setLocalScale(entity, &scale);
 
 	// add children if defined
 	if(NULL != positionedEntity->childrenSpecs)
@@ -1253,9 +1256,12 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	NM_ASSERT(!isDeleted(entity), "Entity::loadEntityDeferred: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
 
-	// set spatial position
 	Entity::setLocalPosition(entity, &position);
+	Entity::setLocalRotation(entity, &rotation);
+	Entity::setLocalScale(entity, &scale);
 
 	// add children if defined
 	if(positionedEntity->childrenSpecs)
@@ -1292,18 +1298,12 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 
 	PixelVector pixelPosition = NULL != position ? PixelVector::getFromVector3D(*position, 0) : PixelVector::zero();
 
-	ScreenPixelVector screenPixelVector =
-	{
-		pixelPosition.x,
-		pixelPosition.y,
-		pixelPosition.z,
-		0
-	};
-
 	PositionedEntity positionedEntity =
 	{
 		(EntitySpec*)entitySpec,
-		screenPixelVector,
+		{pixelPosition.x, pixelPosition.y, pixelPosition.z, 0},
+		{0, 0, 0},
+		{1, 1, 1},
 		this->internalId + Entity::getChildCount(this),
 		(char*)name,
 		NULL,
