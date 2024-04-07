@@ -411,7 +411,7 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 	{
 		__PIXELS_TO_METERS(screenPixelVector.x),
 		__PIXELS_TO_METERS(screenPixelVector.y),
-		__PIXELS_TO_METERS(screenPixelVector.z + screenPixelVector.zDisplacement)
+		__PIXELS_TO_METERS(screenPixelVector.z)
 	};
 }
 

@@ -863,8 +863,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 		{
 			__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH,
 			__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT,
-			__METERS_TO_PIXELS(cameraPosition.z),
-			0
+			__METERS_TO_PIXELS(cameraPosition.z)
 		};
 
 		PositionedEntity DUMMY_ENTITY =

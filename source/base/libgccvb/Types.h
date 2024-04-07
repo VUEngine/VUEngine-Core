@@ -132,7 +132,6 @@ typedef struct ScreenPixelVector
 	int16 y;
 	// it is used for WORLD sorting and having micromanagement allows for easier sorting
 	int16 z;
-	int16 zDisplacement;
 
 } ScreenPixelVector;
 

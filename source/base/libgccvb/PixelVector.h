@@ -84,7 +84,7 @@ static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVecto
 	{
 		screenPixelVector.x,
 		screenPixelVector.y,
-		screenPixelVector.z + screenPixelVector.zDisplacement,
+		screenPixelVector.z,
 		parallax
 	};
 }

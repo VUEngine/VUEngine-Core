@@ -1065,7 +1065,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
 		{
 			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
 			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
+			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
 			return &position;
 		}
 
@@ -1074,7 +1074,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
 			Vector3D concatenatedEnvironmentPosition = environmentPosition;
 			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
 			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
+			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
 
 			Vector3D* position = Entity::calculateGlobalPositionFromSpecByName(childrenSpecs[i].childrenSpecs, concatenatedEnvironmentPosition, childName);
 
@@ -1301,7 +1301,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 	PositionedEntity positionedEntity =
 	{
 		(EntitySpec*)entitySpec,
-		{pixelPosition.x, pixelPosition.y, pixelPosition.z, 0},
+		{pixelPosition.x, pixelPosition.y, pixelPosition.z},
 		{0, 0, 0},
 		{1, 1, 1},
 		this->internalId + Entity::getChildCount(this),
