@@ -117,8 +117,33 @@
 										},
 										"z": {
 											"type": "number"
+										}
+									}
+								},
+								"onScreenRotation": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
 										},
-										"zDisplacement": {
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								},
+								"onScreenScale": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
 											"type": "number"
 										}
 									}
@@ -578,9 +603,7 @@
 				}
 			}
 		},
-		"required": [
-			"name"
-		]
+		"required": []
 	},
 	"uiSchema": {
 		"type": "EntityEditor",

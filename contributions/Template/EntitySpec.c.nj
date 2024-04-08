@@ -528,7 +528,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{%- for child in item.components.children -%}
 	{%- set childEntity = project.items.Entity[child.itemId] -%}
 	{%- if childEntity is defined %}
-	{&{{ childEntity.name | sanitizeSpecName }}EntitySpec, { {{ child.onScreenPosition.x }}, {{ child.onScreenPosition.y }}, {{ child.onScreenPosition.z }}, {{ child.onScreenPosition.parallax }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
+	{&{{ childEntity._fileUri | basename(false) | sanitizeSpecName }}EntitySpec, { {{ child.onScreenPosition.x }}, {{ child.onScreenPosition.y }}, {{ child.onScreenPosition.z }} }, { {{ child.onScreenRotation.x }}, {{ child.onScreenRotation.y }}, {{ child.onScreenRotation.z }} }, { {{ child.onScreenScale.x }}, {{ child.onScreenScale.y }}, {{ child.onScreenScale.z }} }, 0, {% if child.name != '' %}"{{ child.name }}"{% else %}NULL{% endif %}, NULL, {% if child.extraInfo != '' %}(void*)"{{ child.extraInfo }}"{% else %}NULL{% endif %}, {{ child.loadRegardlessOfPosition }}},
 	{%- endif %}
 	{%- endfor %}
 	{NULL, {0, 0, 0}, {0, 0, 0}, {1, 1, 1},  0, NULL, NULL, NULL, false},
