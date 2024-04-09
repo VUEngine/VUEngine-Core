@@ -3,10 +3,10 @@
 {%- else -%}
 	{%- set config = project.items.EngineConfig.engine -%}
 {%- endif -%}
-{%- if project.items.Compiler.project is defined -%}
-	{%- set compiler = project.items.Compiler.project -%}
+{%- if project.items.CompilerConfig.project is defined -%}
+	{%- set compiler = project.items.CompilerConfig.project -%}
 {%- else -%}
-	{%- set compiler = project.items.Compiler.engine -%}
+	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
 {%- import 'templates/partials/macros.nj' as macros -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
@@ -261,7 +261,7 @@
 
 // total number of bgmap segments
 {%- set dramLength = compiler.memorySections.dram.length %}
-{%- set bgmapEndAddress = ((compiler.memorySections.dram.origin | hexToInt) + dramLength*1024) %}
+{%- set bgmapEndAddress = ((compiler.memorySections.dram.origin | hexToInt) - dramLength * 1024) %}
 {%- set bgmapStartAddress = ("0x20000") | hexToInt %}
 #define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 							{{ ((bgmapEndAddress - bgmapStartAddress) / 8192 - 0.5) | round }}
 

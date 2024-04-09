@@ -1,16 +1,16 @@
-{%- if project.items.Compiler.project is defined -%}
-	{%- set compiler = project.items.Compiler.project -%}
+{%- if project.items.CompilerConfig.project is defined -%}
+	{%- set compiler = project.items.CompilerConfig.project -%}
 {%- else -%}
-	{%- set compiler = project.items.Compiler.engine -%}
+	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
-{%- set plugins = project.items.GameConfig.project.plugins -%}
+{%- set plugins = project.items.GameConfig.project.plugins | default([]) -%}
 {% include('templates/partials/fileHeader/fileHeader.make.nj') %}
 
 # VUEngine plugins which the project uses
-PLUGINS 						= {% if plugins is defined -%}{{ plugins | keys | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}{%- endif %}
+PLUGINS							= {{ plugins | keys | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}
 
 # Compiler's output
-COMPILER_OUTPUT					= {{ compiler.output }}
+COMPILER_OUTPUT					= c
 
 # Optimization level
 # Do not use O3 for multiplayer games, it causes unexpected out of sync behaviour when framerate drops
@@ -36,8 +36,8 @@ USE_PROLOG_FUNCTIONS			= {% if compiler.prologFunctions %}1{% else %}0{% endif %
 # taking into account that the Param Table's last address normally is 0x0003D800, where
 # the WORLD attributes start.
 
-# valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
-MEMORY_POOL_SECTION			 		= {{ compiler.memoryUsage.memoryPool }}
+# valid options are [/.data/.sdata/.dram_data/.sram_data]
+MEMORY_POOL_SECTION					= {{ compiler.memoryUsage.memoryPool }}
 # valid options are [/.bss/.sbss/.dram_bss/.sram_bss]
 NON_INITIALIZED_GLOBAL_DATA_SECTION	= {{ compiler.memoryUsage.uninitializedData }}
 # valid options are [/.data/.sdata/.dram_data/.sram_data]
