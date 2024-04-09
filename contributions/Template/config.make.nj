@@ -9,9 +9,6 @@
 # VUEngine plugins which the project uses
 PLUGINS							= {{ plugins | keys | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}
 
-# Compiler's output
-COMPILER_OUTPUT					= c
-
 # Optimization level
 OPTIMIZATION					= {{ compiler.optimization }}
 
