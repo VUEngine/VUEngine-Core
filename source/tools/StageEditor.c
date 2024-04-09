@@ -346,10 +346,12 @@ void StageEditor::getCollider()
 	{
 		this->collider = Collider::safeCast(new Box(SpatialObject::safeCast(entity), NULL));
 
+/*
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
 		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+*/
 		Collider::setReady(this->collider, false);
 	}
 }
@@ -369,13 +371,14 @@ void StageEditor::positionCollider()
 
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 	Entity::showColliders(entity);
-
+/*
 	if(!Entity::hasColliders(entity) && this->collider)
 	{
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 		Collider::transform(this->collider, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 		Collider::show(this->collider);
 	}
+*/
 }
 
 /**
@@ -859,17 +862,12 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 
 		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
 
-		ScreenPixelVector position =
-		{
-			__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH,
-			__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT,
-			__METERS_TO_PIXELS(cameraPosition.z)
-		};
-
 		PositionedEntity DUMMY_ENTITY =
 		{
 			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entitySpec,
-			position,
+			{__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH, __METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT, __METERS_TO_PIXELS(cameraPosition.z)},
+			{0, 0, 0},
+			{1, 1, 1},
 			0,
 			NULL,
 			NULL,
