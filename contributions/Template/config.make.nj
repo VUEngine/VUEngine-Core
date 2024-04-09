@@ -13,7 +13,6 @@ PLUGINS							= {{ plugins | keys | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | saf
 COMPILER_OUTPUT					= c
 
 # Optimization level
-# Do not use O3 for multiplayer games, it causes unexpected out of sync behaviour when framerate drops
 OPTIMIZATION					= {{ compiler.optimization }}
 
 # Frame pointer's usage

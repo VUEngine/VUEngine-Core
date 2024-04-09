@@ -588,7 +588,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			NULL,
 			{%- endif %}
 
-			// collider colliders
+			// colliders
 			{%- if item.inGameType != 'None' and item.components.colliders.length %}
 			(ColliderSpec*){{ sanitizedSpecName }}ColliderSpecs,
 			{%- else %}
