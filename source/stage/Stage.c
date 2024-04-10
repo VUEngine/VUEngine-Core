@@ -988,7 +988,7 @@ VirtualList Stage::getSounds()
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
-	if(!VUEngine::isInSpecialMode(_vuEngine))
+	if(!VUEngine::isInToolState(_vuEngine))
 	{
 		EntityFactory::showStatus(this->entityFactory, 25, 3);
 	}

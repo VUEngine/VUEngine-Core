@@ -317,6 +317,10 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
+#ifdef __TOOLS
+	this->isToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
+#endif
+
 	HardwareManager::displayOff(HardwareManager::getInstance());
 	HardwareManager::disableRendering(HardwareManager::getInstance());
 
@@ -371,6 +375,10 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 		MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(currentGameState));
 		MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 	}
+
+#ifdef __TOOLS
+	this->isToolStateTransition = NULL != __GET_CAST(ToolState, currentGameState);
+#endif
 
 	return false;
 }
@@ -456,30 +464,24 @@ void VUEngine::reset(bool resetSounds)
 }
 
 #ifdef __TOOLS
-void VUEngine::openTool(ToolState toolState)
+void VUEngine::toggleTool(ToolState toolState)
 {
-	if(VUEngine::isInToolState(this, toolState))
+	if(VUEngine::isInState(this, GameState::safeCast(toolState)))
 	{
-		this->isToolStateTransition = true;
-		StateMachine::popState(this->stateMachine);
-		this->isToolStateTransition = false;
+		VUEngine::removeState(this, GameState::safeCast(toolState));
 	}
 	else
 	{
-		if(VUEngine::isInSpecialMode(this))
+		if(VUEngine::isInToolState(this))
 		{
-			this->isToolStateTransition = true;
-			StateMachine::popState(this->stateMachine);
-			this->isToolStateTransition = false;
+			VUEngine::removeState(this, GameState::safeCast(toolState));
 		}
 
-		this->isToolStateTransition = true;
-		StateMachine::pushState(this->stateMachine, State::safeCast(toolState));
-		this->isToolStateTransition = false;
+		VUEngine::addState(this, GameState::safeCast(toolState));
 	}
 }
 
-bool VUEngine::checkIfOpenTool(const UserInput* userInput)
+bool VUEngine::checkIfToggleTool(const UserInput* userInput)
 {
 	ToolState engineToolStates[] =
 	{
@@ -499,7 +501,7 @@ bool VUEngine::checkIfOpenTool(const UserInput* userInput)
 		// check code to access special feature
 		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
 		{
-			VUEngine::openTool(this, engineToolStates[i]);
+			VUEngine::toggleTool(this, engineToolStates[i]);
 			return true;
 		}
 	}
@@ -513,7 +515,7 @@ bool VUEngine::checkIfOpenTool(const UserInput* userInput)
 		// check code to access special feature
 		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
 		{
-			VUEngine::openTool(this, _userToolStates[i]);
+			VUEngine::toggleTool(this, _userToolStates[i]);
 			return true;
 		}
 	}
@@ -543,7 +545,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	UserInput userInput = KeypadManager::captureUserInput(this->keypadManager);
 	
 #ifdef __TOOLS
-	if(VUEngine::checkIfOpenTool(this, &userInput))
+	if(VUEngine::checkIfToggleTool(this, &userInput))
 	{
 		return;
 	}
@@ -584,16 +586,6 @@ void VUEngine::dispatchDelayedMessages()
 // update game's logic subsystem
 GameState VUEngine::updateLogic(GameState currentGameState)
 {
-#ifdef __TOOLS
-	if(!VUEngine::isInSpecialMode(this))
-	{
-#endif
-	// it is the update cycle
-	ASSERT(this->stateMachine, "VUEngine::update: no state machine");
-#ifdef __TOOLS
-	}
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_LOGIC;
 #endif
@@ -644,7 +636,7 @@ void VUEngine::focusCamera()
 #endif
 
 #ifdef __TOOLS
-	if(!VUEngine::isInSpecialMode(this))
+	if(!VUEngine::isInToolState(this))
 	{
 #endif
 		// position the camera
@@ -714,7 +706,7 @@ bool VUEngine::stream(GameState gameState)
 void VUEngine::updateFrameRate()
 {
 #ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this))
+	if(VUEngine::isInToolState(this))
 	{
 		return;
 	}
@@ -765,7 +757,7 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 
 #ifdef __SHOW_STREAMING_PROFILING
 
-		if(!VUEngine::isInSpecialMode(this))
+		if(!VUEngine::isInToolState(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 			Stage::showStreamingProfiling(VUEngine::getStage(this), 1, 1);
@@ -788,7 +780,7 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #endif
 
 #ifdef __SHOW_MEMORY_POOL_STATUS
-		if(!VUEngine::isInSpecialMode(this))
+		if(!VUEngine::isInToolState(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 
@@ -801,7 +793,7 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #endif
 
 #ifdef __SHOW_STACK_OVERFLOW_ALERT
-		if(!VUEngine::isInSpecialMode(this))
+		if(!VUEngine::isInToolState(this))
 		{
 			Printing::resetCoordinates(Printing::getInstance());
 			HardwareManager::printStackStatus((__SCREEN_WIDTH_IN_CHARS) - 25, 0, false);
@@ -970,46 +962,46 @@ void VUEngine::setGameFrameRate(uint16 gameFrameRate)
 }
 
 #ifdef __TOOLS
-bool VUEngine::isInToolState(ToolState toolState)
+bool VUEngine::isInState(GameState gameState)
 {
-	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(toolState);
+	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(gameState);
 }
 
 bool VUEngine::isInDebugMode()
 {
-	return StateMachine::getCurrentState(this->stateMachine) == (State)DebugState::getInstance();
+	return VUEngine::isInState(this, GameState::safeCast(DebugState::getInstance()));
 }
 
 bool VUEngine::isInStageEditor()
 {
-	return StateMachine::getCurrentState(this->stateMachine) == (State)StageEditorState::getInstance();
+	return VUEngine::isInState(this, GameState::safeCast(StageEditorState::getInstance()));
 }
 
 bool VUEngine::isInAnimationInspector()
 {
-	return StateMachine::getCurrentState(this->stateMachine) == (State)AnimationInspectorState::getInstance();
+	return VUEngine::isInState(this, GameState::safeCast(AnimationInspectorState::getInstance()));
 }
 
 bool VUEngine::isInSoundTest()
 {
-	return StateMachine::getCurrentState(this->stateMachine) == (State)SoundTestState::getInstance();
+	return VUEngine::isInState(this, GameState::safeCast(SoundTestState::getInstance()));
 }
 #endif
 
 
 // whether if a special mode is active
-bool VUEngine::isInSpecialMode()
+bool VUEngine::isInToolState()
 {
-	int32 isInSpecialMode = false;
+	int32 isInToolState = false;
 
 #ifdef __TOOLS
-	isInSpecialMode |= VUEngine::isInDebugMode(this);
-	isInSpecialMode |= VUEngine::isInStageEditor(this);
-	isInSpecialMode |= VUEngine::isInAnimationInspector(this);
-	isInSpecialMode |= VUEngine::isInSoundTest(this);
+	isInToolState |= VUEngine::isInDebugMode(this);
+	isInToolState |= VUEngine::isInStageEditor(this);
+	isInToolState |= VUEngine::isInAnimationInspector(this);
+	isInToolState |= VUEngine::isInSoundTest(this);
 #endif
 
-	return isInSpecialMode;
+	return isInToolState;
 }
 
 // whether if a special mode is being started
@@ -1034,7 +1026,7 @@ StateMachine VUEngine::getStateMachine()
 Stage VUEngine::getStage()
 {
 #ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this))
+	if(VUEngine::isInToolState(this))
 	{
 		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
@@ -1048,7 +1040,7 @@ Stage VUEngine::getStage()
 UIContainer VUEngine::getUIContainer()
 {
 #ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this))
+	if(VUEngine::isInToolState(this))
 	{
 		return GameState::getUIContainer(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
@@ -1068,7 +1060,7 @@ GameState VUEngine::getCurrentState()
 PhysicalWorld VUEngine::getPhysicalWorld()
 {
 #ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this))
+	if(VUEngine::isInToolState(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getPhysicalWorld(state);
@@ -1082,7 +1074,7 @@ PhysicalWorld VUEngine::getPhysicalWorld()
 CollisionManager VUEngine::getCollisionManager()
 {
 #ifdef __TOOLS
-	if(VUEngine::isInSpecialMode(this))
+	if(VUEngine::isInToolState(this))
 	{
 		State state = StateMachine::getPreviousState(this->stateMachine);
 		return isDeleted(state) ? NULL : GameState::getCollisionManager(state);

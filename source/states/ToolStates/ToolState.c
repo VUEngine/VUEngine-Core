@@ -44,6 +44,7 @@ void ToolState::constructor()
 
 	this->tool = NULL;
 	this->transform = false;
+	this->stream = false;
 }
 
 /**

@@ -251,6 +251,9 @@ void KeypadManager::reset()
  */
 void KeypadManager::registerInput(uint16 inputToRegister)
 {
+#ifdef __TOOLS
+	inputToRegister = __KEY_PRESSED | __KEY_RELEASED | __KEY_HOLD;
+#endif
 	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;

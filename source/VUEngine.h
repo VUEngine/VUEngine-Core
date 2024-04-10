@@ -126,7 +126,7 @@ singleton class VUEngine : ListenerObject
 	bool isEnteringToolState();
 	bool isExitingToolState();
 	bool isPaused();
-	bool isInSpecialMode();
+	bool isInToolState();
 	void pause(GameState pauseState);
 	void printClassSizes(int32 x, int32 y);
 	void reset(bool resetSounds);
