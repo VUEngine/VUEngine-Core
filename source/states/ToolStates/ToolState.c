@@ -67,6 +67,7 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
 	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+	GameState::startClocks(this);
 
 	this->stream = false;
 	this->transform = false;
