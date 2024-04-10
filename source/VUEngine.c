@@ -227,7 +227,7 @@ void VUEngine::debug()
 // set game's initial state
 void VUEngine::start(GameState currentGameState)
 {
-	ASSERT(state, "VUEngine::start: initial state is NULL");
+	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
 
 	// Initialize VPU and turn off the brightness
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());

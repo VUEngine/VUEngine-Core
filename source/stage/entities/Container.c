@@ -438,7 +438,7 @@ Transformation Container::getEnvironmentTransform()
 void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* localTransformation)
 {
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
-	ASSERT(transformation, "Container::concatenateTransform: null transformation");
+	ASSERT(localTransformation, "Container::concatenateTransform: null localTransformation");
 
 	// tranlate position
 	concatenatedTransformation->position = Vector3D::sum(concatenatedTransformation->position, localTransformation->position);

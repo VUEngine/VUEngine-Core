@@ -3,7 +3,7 @@
 {%- else -%}
 	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
-{%- set plugins = project.items.GameConfig.project.plugins | default([]) -%}
+{%- set plugins = project.items.GameConfig.project.plugins | default({}) -%}
 {% include('templates/partials/fileHeader/fileHeader.make.nj') %}
 
 # VUEngine plugins which the project uses

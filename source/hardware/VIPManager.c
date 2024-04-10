@@ -476,7 +476,7 @@ void VIPManager::applyPostProcessingEffects()
 	}
 }
 
-void VIPManager::setFrameCycle(uint8 frameCycle)
+void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 {
 #ifndef __DEBUG
 	this->frameCycle = frameCycle;
