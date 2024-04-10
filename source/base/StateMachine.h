@@ -66,6 +66,7 @@ class StateMachine : ListenerObject
 	bool hasStateInTheStack(State state);
 	VirtualList getStateStack();
 	State getCurrentState();
+	State getNextState();
 	State getPreviousState();
 	int32 getStackSize();
 	override bool handleMessage(Telegram telegram);

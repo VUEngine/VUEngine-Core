@@ -447,6 +447,16 @@ State StateMachine::getCurrentState()
 }
 
 /**
+ * Retrieve the next state
+ *
+ * @return				Current state
+ */
+State StateMachine::getNextState()
+{
+	return this->nextState;
+}
+
+/**
  * Get the second state from the top of the stack
  *
  * @return				Second state in the stack
