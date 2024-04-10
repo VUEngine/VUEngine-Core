@@ -43,8 +43,6 @@ void ToolState::constructor()
 	Base::constructor();
 
 	this->tool = NULL;
-	this->transform = false;
-	this->stream = false;
 }
 
 /**
@@ -69,6 +67,11 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
 	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+
+	this->stream = false;
+	this->transform = false;
+	this->updatePhysics = false;
+	this->processCollisions = false;
 
 	if(!isDeleted(this->tool))
 	{

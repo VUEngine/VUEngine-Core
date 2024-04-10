@@ -244,6 +244,10 @@ void VUEngine::start(GameState currentGameState)
 
 void VUEngine::setState(GameState gameState)
 {
+#ifdef __TOOLS
+	this->isToolStateTransition = false;
+#endif
+
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
@@ -252,6 +256,10 @@ void VUEngine::setState(GameState gameState)
 
 void VUEngine::changeState(GameState gameState)
 {
+#ifdef __TOOLS
+	this->isToolStateTransition = false;
+#endif
+
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, kEventStateMachineWillSwapState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineSwapedState);
@@ -260,6 +268,10 @@ void VUEngine::changeState(GameState gameState)
 
 void VUEngine::addState(GameState gameState)
 {
+#ifdef __TOOLS
+	this->isToolStateTransition = false;
+#endif
+
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, kEventStateMachineWillPushState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePushedState);
@@ -268,6 +280,10 @@ void VUEngine::addState(GameState gameState)
 
 void VUEngine::removeState(GameState gameState)
 {
+#ifdef __TOOLS
+	this->isToolStateTransition = false;
+#endif
+
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState);
