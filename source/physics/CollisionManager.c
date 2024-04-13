@@ -198,35 +198,39 @@ uint32 CollisionManager::update(Clock clock)
 			this->lastCycleCheckProducts++;
 #endif
 
-			if(0 == (collider->layersToIgnore & colliderToCheck->layers))
+			if(0 != (collider->layersToIgnore & colliderToCheck->layers))
 			{
-				if(collider->owner == colliderToCheck->owner)
-				{
-					continue;
-				}
+				continue;
+			}
 
-				fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
+			if(collider->owner == colliderToCheck->owner)
+			{
+				continue;
+			}
 
-				if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) >= distanceVectorSquareLength)
-				{
+			fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(Vector3D::get(colliderToCheck->transformation->position, colliderPosition));
+
+			if(__FIXED_SQUARE(__COLLIDER_MAXIMUM_SIZE) < distanceVectorSquareLength)
+			{
+				continue;
+			}
+
 #ifdef __SHOW_PHYSICS_PROFILING
-					this->lastCycleCollisionChecks++;
+			this->lastCycleCollisionChecks++;
 #endif
 
 #ifdef __SHOW_PHYSICS_PROFILING
-					// check if colliders overlap
-					if(kNoCollision != Collider::collides(collider, colliderToCheck))
-					{
-						this->lastCycleCollisions++;
-					}
+			// check if colliders overlap
+			if(kNoCollision != Collider::collides(collider, colliderToCheck))
+			{
+				this->lastCycleCollisions++;
+			}
 #else
-					Collider::collides(collider, colliderToCheck);
+			Collider::collides(collider, colliderToCheck);
 #endif
-					if(this->dirty)
-					{
-						node = this->colliders->head;
-					}
-				}
+			if(this->dirty)
+			{
+				node = this->colliders->head;
 			}
 		}
 	}
