@@ -18,7 +18,6 @@
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <EntityFactory.h>
 #include <MBgmapSprite.h>
 #include <Mesh.h>

@@ -15,7 +15,6 @@
 #include <Ball.h>
 #include <Body.h>
 #include <CollisionManager.h>
-#include <DebugUtilities.h>
 #include <Collider.h>
 #include <Telegram.h>
 #include <VirtualList.h>

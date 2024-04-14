@@ -16,7 +16,6 @@
 
 #include <AnimationController.h>
 #include <BgmapTexture.h>
-#include <DebugUtilities.h>
 #include <Texture.h>
 #include <VIPManager.h>
 

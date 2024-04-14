@@ -14,7 +14,6 @@
 
 #include <CollisionHelper.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Printing.h>

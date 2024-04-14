@@ -14,7 +14,6 @@
 
 #include <Body.h>
 #include <Camera.h>
-#include <DebugUtilities.h>
 #include <PhysicalWorld.h>
 #include <Collider.h>
 #include <State.h>

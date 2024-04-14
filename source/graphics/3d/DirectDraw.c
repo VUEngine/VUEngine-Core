@@ -14,7 +14,6 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <VIPManager.h>
 
 #include "DirectDraw.h"

@@ -16,7 +16,6 @@
 #include <Debug.h>
 #endif
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Mem.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>

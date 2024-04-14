@@ -14,7 +14,6 @@
 
 #include <CollisionManager.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Entity.h>
 #include <Printing.h>
 #include <SpriteManager.h>

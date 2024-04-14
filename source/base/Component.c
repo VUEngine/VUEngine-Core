@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <SpatialObject.h>
 
 #include "Component.h"

@@ -19,7 +19,6 @@
 #include <Camera.h>
 #include <CollisionManager.h>
 #include <Debug.h>
-#include <DebugUtilities.h>
 #include <Entity.h>
 #include <GameState.h>
 #include <KeypadManager.h>

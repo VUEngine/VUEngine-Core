@@ -25,7 +25,6 @@
 #include <CollisionManager.h>
 #include <DebugConfig.h>
 #include <DebugState.h>
-#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <CollisionManager.h>
 #include <FrameRate.h>

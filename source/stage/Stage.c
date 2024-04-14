@@ -19,7 +19,6 @@
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Entity.h>
 #include <EntityFactory.h>
 #include <HardwareManager.h>

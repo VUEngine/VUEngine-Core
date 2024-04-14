@@ -16,7 +16,6 @@
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
 #include <Clock.h>
-#include <DebugUtilities.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>

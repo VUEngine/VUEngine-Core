@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Mem.h>
 #include <ObjectSprite.h>
 #include <ObjectTexture.h>
