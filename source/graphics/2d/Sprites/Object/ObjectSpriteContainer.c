@@ -371,8 +371,8 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->firstObjectIndex - this->lastObjectIndex, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->lastObjectIndex, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::getDigitsCount(this->firstObjectIndex), y, NULL);
-	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Utilities::getDigitsCount(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing::text(Printing::getInstance(), "-", x  + 18 + Math::getDigitsCount(this->firstObjectIndex), y, NULL);
+	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Math::getDigitsCount(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);

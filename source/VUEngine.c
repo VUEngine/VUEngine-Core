@@ -127,9 +127,6 @@ void VUEngine::constructor()
 	this->frameRate = NULL;
 	this->soundManager = NULL;
 
-	Utilities::setClock(this->clock);
-	Utilities::setKeypadManager(this->keypadManager);
-
 #ifdef __TOOLS
 	DebugState::getInstance();
 	StageEditorState::getInstance();
@@ -852,7 +849,7 @@ void VUEngine::run(GameState currentGameState)
 #endif
 
 		// Generate random seed
-		_gameRandomSeed = Utilities::randomSeed();
+		_gameRandomSeed = Math::randomSeed();
 
 		// process user's input
 		VUEngine::processUserInput(this, currentGameState);

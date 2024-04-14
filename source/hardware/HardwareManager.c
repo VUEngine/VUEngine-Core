@@ -139,7 +139,7 @@ static void HardwareManager::checkMemoryMap()
 		Printing::text(Printing::getInstance(), "Increase the dram section in the vb.ld file", 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "Missing space: ", 1, ++y, NULL);
 		Printing::int32(Printing::getInstance(), missingSpace, 17, y, NULL);
-		Printing::text(Printing::getInstance(), "Bytes ", 17 + Utilities::getDigitsCount(missingSpace) + 1, y++, NULL);
+		Printing::text(Printing::getInstance(), "Bytes ", 17 + Math::getDigitsCount(missingSpace) + 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "WORLD space: ", 1, ++y, NULL);
 		Printing::hex(Printing::getInstance(), (uint32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "DRAM start: ", 1, ++y, NULL);
@@ -150,7 +150,7 @@ static void HardwareManager::checkMemoryMap()
 		Printing::hex(Printing::getInstance(), recommendedDramStart, 25, y, 4, NULL);
 		Printing::text(Printing::getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
 		Printing::int32(Printing::getInstance(), recommendedDramSize, 25, y, NULL);
-		Printing::text(Printing::getInstance(), "Bytes ", 25 + Utilities::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
+		Printing::text(Printing::getInstance(), "Bytes ", 25 + Math::getDigitsCount(recommendedDramSize) + 1, y++, NULL);
 		Printing::text(Printing::getInstance(), "Maximum BGMAP segments: ", 1, ++y, NULL);
 		Printing::int32(Printing::getInstance(), recommendedBgmapSegments, 25, y, NULL);
 
@@ -429,9 +429,9 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 
 	if(resumed)
 	{
-		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities::getDigitsCount(room) + 13)
+		if((__SCREEN_WIDTH_IN_CHARS) < x + Math::getDigitsCount(room) + 13)
 		{
-			x = (__SCREEN_WIDTH_IN_CHARS) - Utilities::getDigitsCount(room) - 13;
+			x = (__SCREEN_WIDTH_IN_CHARS) - Math::getDigitsCount(room) - 13;
 		}
 
 		Printing::text(Printing::getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
@@ -439,9 +439,9 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 	}
 	else
 	{
-		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities::getDigitsCount(room) + 15)
+		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Math::getDigitsCount(room) + 15)
 		{
-			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities::getDigitsCount(room) - 11;
+			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Math::getDigitsCount(room) - 11;
 		}
 
 		Printing::text(Printing::getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);

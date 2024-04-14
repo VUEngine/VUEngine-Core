@@ -1233,7 +1233,7 @@ void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 	uint32 minutes = seconds / 60;
 	seconds = seconds - minutes * 60;
 
-	int32 minutesDigits = Utilities::getDigitsCount(minutes);
+	int32 minutesDigits = Math::getDigitsCount(minutes);
 
 	PRINT_INT(minutes, x, y);
 	PRINT_TEXT(":", x + minutesDigits, y);

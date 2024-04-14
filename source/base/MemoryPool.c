@@ -226,7 +226,7 @@ void MemoryPool::printDetailedUsage(int32 x, int32 y)
 		Printing::int32(printing, totalUsedBlocks, x + 10, y, NULL);
 
 		int32 usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
-		Printing::int32(printing, usedBlocksPercentage, x + 17 - Utilities::getDigitsCount(usedBlocksPercentage), y, NULL);
+		Printing::int32(printing, usedBlocksPercentage, x + 17 - Math::getDigitsCount(usedBlocksPercentage), y, NULL);
 		Printing::text(printing, "% ", x + 17, y, NULL);
 
 		totalUsedBlocks = 0 ;
@@ -235,13 +235,13 @@ void MemoryPool::printDetailedUsage(int32 x, int32 y)
 	++y;
 	uint32 poolSize = MemoryPool::getPoolSize(this);
 	Printing::text(printing, "Pool size: ", x, ++y, NULL);
-	Printing::int32(printing, poolSize, x + 18 - Utilities::getDigitsCount(poolSize), y, NULL);
+	Printing::int32(printing, poolSize, x + 18 - Math::getDigitsCount(poolSize), y, NULL);
 
 	Printing::text(printing, "Pool usage: ", x, ++y, NULL);
-	Printing::int32(printing, totalUsedBytes, x + 18 - Utilities::getDigitsCount(totalUsedBytes), y++, NULL);
+	Printing::int32(printing, totalUsedBytes, x + 18 - Math::getDigitsCount(totalUsedBytes), y++, NULL);
 
 	uint32 usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing::int32(printing, usedBytesPercentage, x + 17 - Utilities::getDigitsCount(usedBytesPercentage), y, NULL);
+	Printing::int32(printing, usedBytesPercentage, x + 17 - Math::getDigitsCount(usedBytesPercentage), y, NULL);
 	Printing::text(printing, "% ", x + 17, y++, NULL);
 }
 #endif
@@ -267,7 +267,7 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 	Printing::text(printing, "MEMORY:", x, y, NULL);
 	uint32 poolSize = MemoryPool::getPoolSize(MemoryPool::getInstance());
 	Printing::text(printing, "Total: ", x, ++y, NULL);
-	Printing::int32(printing, poolSize, x + 12 - Utilities::getDigitsCount(poolSize), y, NULL);
+	Printing::int32(printing, poolSize, x + 12 - Math::getDigitsCount(poolSize), y, NULL);
 
 	for(y += 2, pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -289,7 +289,7 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
 			Printing::int32(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
-			Printing::int32(printing, usedBlocksPercentage, x + 7 - Utilities::getDigitsCount(usedBlocksPercentage), y, NULL);
+			Printing::int32(printing, usedBlocksPercentage, x + 7 - Math::getDigitsCount(usedBlocksPercentage), y, NULL);
 			Printing::text(printing, "% ", x + 7, y++, NULL);
 		}
 
@@ -298,10 +298,10 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 
 	y = originalY;
 	int32 usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing::int32(printing, usedBytesPercentage, x + 11 - Utilities::getDigitsCount(usedBytesPercentage), y, NULL);
+	Printing::int32(printing, usedBytesPercentage, x + 11 - Math::getDigitsCount(usedBytesPercentage), y, NULL);
 	Printing::text(printing, "% ", x + 11, y++, NULL);
 	Printing::text(printing, "Used: ", x, ++y, NULL);
-	Printing::int32(printing, totalUsedBytes, x + 12 - Utilities::getDigitsCount(totalUsedBytes), y++, NULL);
+	Printing::int32(printing, totalUsedBytes, x + 12 - Math::getDigitsCount(totalUsedBytes), y++, NULL);
 }
 #endif
 

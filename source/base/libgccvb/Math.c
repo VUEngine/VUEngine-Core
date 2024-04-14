@@ -96,9 +96,18 @@ const int16 _sinLut[] =
 #define __TOTAL_ENTRIES 		(__SIN_LUT_ENTRIES)
 
 
+uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 28437657; /* Seed value */
+uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+
+
 //---------------------------------------------------------------------------------------------------------
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
+
+static void Math::resetRandomSeed()
+{
+	_seed = 7; /* Seed value */
+}
 
 static int32 Math::powerFast(int32 base, int32 power)
 {

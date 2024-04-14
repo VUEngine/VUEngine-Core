@@ -399,7 +399,7 @@ void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint
 {
 	MessageDispatcher::dispatchMessage
 	(
-		delay + (randomDelay ? Utilities::random(Utilities::randomSeed(), randomDelay) : 0), 
+		delay + (randomDelay ? Math::random(Math::randomSeed(), randomDelay) : 0), 
 		ListenerObject::safeCast(this), 
 		ListenerObject::safeCast(receiver), 
 		message, 

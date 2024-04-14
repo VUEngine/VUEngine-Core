@@ -42,7 +42,7 @@ void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleS
 	Base::constructor(&physicalParticleSpec->particleSpec, creator);
 
 	this->physicalParticleSpec = physicalParticleSpec;
-	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
+	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
 	PhysicalProperties physicalProperties = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &physicalProperties, physicalParticleSpec->axisSubjectToGravity);
 }
@@ -129,7 +129,7 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
  */
 void PhysicalParticle::changeMass()
 {
-	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
+	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
 }
 
 /**

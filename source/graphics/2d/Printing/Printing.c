@@ -500,7 +500,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 
 	// Get integral part
 	int32 floorValue = ((int32)(value * 10)) / 10;
-	char* integer = Utilities::itoa(floorValue, 10, Utilities::getDigitsCount(floorValue));
+	char* integer = Utilities::itoa(floorValue, 10, Math::getDigitsCount(floorValue));
 
 	// Save it right away
 	for(int32 j = 0; integer[j];)
@@ -518,7 +518,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 	decimalValue *= decMultiplier; 
 
 	int32 zeros = 0;
-	int32 flooredDecimalValue = (int32)Utilities::floor(decimalValue);
+	int32 flooredDecimalValue = (int32)Math::floor(decimalValue);
 
 	while(10 <= decMultiplier)
 	{
@@ -543,7 +543,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 		}
 		else
 		{
-			int32 totalDecimalDigits = Utilities::getDigitsCount(roundedDecimalValue);
+			int32 totalDecimalDigits = Math::getDigitsCount(roundedDecimalValue);
 
 			char* decimalString = Utilities::itoa((int32)(decimalValue * 10) / 10, 10, totalDecimalDigits);
 
