@@ -401,6 +401,8 @@ void Sprite::scale()
 	(
 		!this->transformed
 		||
+		this->position.z != this->transformation->position.z
+		||
 		this->scale.x != this->transformation->scale.x
 		||
 		this->scale.y != this->transformation->scale.y
