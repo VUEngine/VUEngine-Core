@@ -62,7 +62,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
-	this->scale = Scale::unit();
+	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
 	this->transformed = false;
 	this->displacement = PixelVector::zero();
 }
@@ -254,12 +254,20 @@ void Sprite::position()
 
 #ifdef __SPRITE_ROTATE_IN_3D
 	PixelVector position = Vector3D::transformToPixelVector(this->transformation->position);
+
+	if(position.z != this->position.z)
+	{
+		this->scale.x = this->scale.y = 0;
+	}
+
 #else
 	PixelVector position = Vector3D::projectToPixelVector(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
 
 	if(position.z != this->position.z)
 	{
 		position.parallax = Optics::calculateParallax(this->transformation->position.z);
+
+		this->scale.x = this->scale.y = 0;
 	}
 #endif
 
@@ -401,21 +409,23 @@ void Sprite::scale()
 	(
 		!this->transformed
 		||
-		this->position.z != this->transformation->position.z
+		0 >= this->scale.x
+		||
+		0 >= this->scale.y
 		||
 		this->scale.x != this->transformation->scale.x
 		||
 		this->scale.y != this->transformation->scale.y
-		||
-		this->scale.z != this->transformation->scale.z
 	)
 	{
-		this->scale = this->transformation->scale;
+		this->scale.x = this->transformation->scale.x;
+		this->scale.y = this->transformation->scale.y;
+
 		this->rendered = false;
 
 		if(Sprite::overrides(this, setScale))
 		{
-			Scale scale = this->scale;
+			PixelScale scale = this->scale;
 
 			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
 			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
@@ -436,7 +446,7 @@ void Sprite::scale()
 	}
 }
 
-void Sprite::setScale(const Scale* scale __attribute__((unused)))
+void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 {
 	this->rendered = false;
 }

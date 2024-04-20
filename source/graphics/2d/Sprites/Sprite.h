@@ -115,7 +115,7 @@ abstract class Sprite : VisualComponent
 	// World layer where to render the texture
 	int16 index;
 	// Scale cache
-	Scale scale;
+	PixelScale scale;
 	// Head spec for world entry setup
 	uint16 head;
 	// Texture's half width
@@ -185,7 +185,7 @@ abstract class Sprite : VisualComponent
 	void setPosition(const PixelVector* position);
 	const PixelVector* getPosition();
 	virtual void setRotation(const Rotation* rotation);
-	virtual void setScale(const Scale* scale);
+	virtual void setScale(const PixelScale* scale);
 	virtual void registerWithManager() = 0;
 	virtual void unregisterWithManager() = 0;
 	virtual void hideForDebug();

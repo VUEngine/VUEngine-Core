@@ -107,7 +107,7 @@ class BgmapSprite : Sprite
 	override void configureMultiframe(uint16 frame);
 	override void setRotation(const Rotation* rotation);
 	override Scale getScale();
-	override void setScale(const Scale* scale);
+	override void setScale(const PixelScale* scale);
 	override int32 getTotalPixels();
 }
 

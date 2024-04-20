@@ -259,6 +259,13 @@ typedef struct Scale
 
 } Scale;
 
+typedef struct PixelScale
+{
+	fix7_9 x;
+	fix7_9 y;
+
+} PixelScale;
+
 // Represents the scale over each axis (axis aligend)
 typedef struct ScreenPixelScale
 {

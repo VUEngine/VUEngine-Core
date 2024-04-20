@@ -251,7 +251,7 @@ void BgmapSprite::setRotation(const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite::setScale(const Scale* scale)
+void BgmapSprite::setScale(const PixelScale* scale)
 {
 	if(NULL == scale)
 	{
@@ -282,7 +282,7 @@ void BgmapSprite::setScale(const Scale* scale)
  * @memberof			BgmapSprite
  * @private
  */
-void BgmapSprite::calculateSize(const Scale* scale)
+void BgmapSprite::calculateSize(const PixelScale* scale)
 {
 	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
 		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
