@@ -72,11 +72,11 @@
  */
 typedef struct UserInput
 {
-	/// Currently pressed key(s)
+	/// All pressed key(s)
 	uint16 allKeys;
-	/// Currently pressed key(s)
+	/// Pressed key(s) just in the last cycle
 	uint16 pressedKey;
-	/// Released key(s)
+	/// Released key(s) just in the last cycle
 	uint16 releasedKey;
 	/// Held key(s)
 	uint16 holdKey;
