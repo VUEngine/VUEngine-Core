@@ -464,5 +464,15 @@ static inline float Math::floor(float x)
 	return (float)((long)(x * 2 + 0.5f) >> 1);
 }
 
+static inline int32 Math::min(int32 x, int32 y)
+{
+	return x < y ? x : y;
+}
+
+static inline int32 Math::max(int32 x, int32 y)
+{
+	return x > y ? x : y;
+}
+
 
 #endif
