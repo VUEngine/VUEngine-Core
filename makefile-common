@@ -126,44 +126,51 @@ ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_N
 ENGINE_CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(ENGINE_CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
 CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
 ENGINE_LIBRARY_FILE= $(GAME_HOME)/build/lib$(ENGINE_NAME).a
-ENGINE_LIBRARY_FILE_EXISTS = $(shell [ -e $(ENGINE_LIBRARY_FILE) ] && echo 1 || echo 0 )
 
 # A very ugly hack
-ifeq ($(ENGINE_LIBRARY_FILE_EXISTS), 0)
 ifeq ($(ENGINE_CLASSES_HIERARCHY_FILE_EXISTS), 0)
 preprocessEngine:
-	@$(MAKE) --no-print-directory preprocessClasses																							\
-					-f $(ENGINE_HOME)/makefile																										\
-					-e NAME=$(ENGINE_NAME)																											\
-					-e GAME_NAME=$(GAME_NAME)																										\
-					-e GAME_HOME=$(GAME_HOME)																										\
-					-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																				\
-					-e COMPONENTS=$(COMPONENTS)																										\
-					-e MAKE_JOBS=$(MAKE_JOBS)
-else
-ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
-MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
-MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
-ifeq ($(MUST_PREPROCESS_ENGINE), 1)
-preprocessEngine:
-	@$(MAKE) --no-print-directory preprocessClasses																							\
+	@-$(foreach DUMMY, "1",	 																														\
+		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
+			$(MAKE) --no-print-directory preprocessClasses																							\
 				-f $(ENGINE_HOME)/makefile																											\
 				-e NAME=$(ENGINE_NAME)																												\
 				-e GAME_NAME=$(GAME_NAME)																											\
 				-e GAME_HOME=$(GAME_HOME)																											\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e COMPONENTS=$(COMPONENTS)																											\
-				-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)												\
-				-e MAKE_JOBS=$(MAKE_JOBS)
+				-e MAKE_JOBS=$(MAKE_JOBS);																											\
+		else																																		\
+			echo "Preprocessing (skip) $(ENGINE_NAME)";																								\
+		fi;																																			\
+	)
+else
+ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
+MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
+MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
+ifeq ($(MUST_PREPROCESS_ENGINE), 1)
+preprocessEngine:
+	@-$(foreach DUMMY, "1",	 																														\
+		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
+			$(MAKE) --no-print-directory preprocessClasses																							\
+				-f $(ENGINE_HOME)/makefile																											\
+				-e NAME=$(ENGINE_NAME)																												\
+				-e GAME_NAME=$(GAME_NAME)																											\
+				-e GAME_HOME=$(GAME_HOME)																											\
+				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
+				-e COMPONENTS=$(COMPONENTS)																											\
+				-e MAKE_JOBS=$(MAKE_JOBS)																											\
+				-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR);											\
+		else																																		\
+			echo "Preprocessing (skip) $(ENGINE_NAME)";																								\
+		fi;																																			\
+	)
 else
 preprocessEngine:
 endif
 else
 preprocessEngine:
 endif
-endif
-else
-preprocessEngine:
 endif
 
 computeComponentsToBuild:
@@ -184,7 +191,7 @@ preprocessPlugins:
 	@-$(foreach PLUGIN, $(PLUGINS),							 																						\
 		$(eval PLUGIN_FILE=$(GAME_HOME)/build/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))														\
 		if [ ! -f $(PLUGIN_FILE).a ]; then 																											\
-			if ! grep -s -q $(PLUGIN) $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt; then 											\
+			if ! grep -s -q $(PLUGIN) $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt; then 										\
 				$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																	\
 				$(MAKE) --no-print-directory preprocessClasses																						\
 					-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )		\
@@ -196,6 +203,9 @@ preprocessPlugins:
 					-e PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR=$(PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR)											\
 					-e COMPONENTS=$(COMPONENTS);																									\
 			fi;																																		\
+		else																																		\
+			$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																	\
+			echo "Preprocessing (skip) $(PLUGIN_CLEAN_NAME)";																						\
 		fi;																																			\
 	)
 
@@ -235,7 +245,7 @@ compile:
 
 engine:
 	@-$(foreach DUMMY, "1",	 																														\
-		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																											\
+		if [ ! -f $(ENGINE_LIBRARY_FILE) ]; then 																									\
 			$(MAKE) --no-print-directory	 																										\
 				$(GAME_HOME)/build/lib$(ENGINE_NAME).a																								\
 				-f $(ENGINE_HOME)/makefile																											\
@@ -247,6 +257,8 @@ engine:
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e COMPONENTS=$(COMPONENTS)																											\
 				-e MAKE_JOBS=$(MAKE_JOBS);																											\
+		else																																		\
+			echo "Building (skip) $(ENGINE_NAME)";																									\
 		fi;																																			\
 	)
 
@@ -266,6 +278,9 @@ plugins:
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e COMPONENTS=$(COMPONENTS)																											\
 				-e MAKE_JOBS=$(MAKE_JOBS);																											\
+		else																																		\
+			$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																	\
+			echo "Building (skip) $(PLUGIN_CLEAN_NAME)";																							\
 		fi;																																			\
 	)																																				\
 
