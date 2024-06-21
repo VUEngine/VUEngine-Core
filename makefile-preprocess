@@ -15,7 +15,6 @@ H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
-#D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 
 # Class setup file
 SETUP_CLASSES = $(BASENAME)SetupClasses
