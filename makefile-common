@@ -116,11 +116,12 @@ preprocessClasses: dirs objectsFiles $(PREPROCESS_ENGINE) preprocessPlugins prin
 printClassPreprocessingInfo:
 	@echo
 	@$(shell echo $(NAME) >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt)
+	@$(shell echo $(NAME) >> $(WORKING_FOLDER)/traces/$(BUILD_MODE)/compiledComponents.txt)
 	@$(shell sort -u $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt.tmp)
+	@$(shell sort -u $(WORKING_FOLDER)/traces/$(BUILD_MODE)/compiledComponents.txt > $(WORKING_FOLDER)/traces/$(BUILD_MODE)/compiledComponents.txt.tmp)
 	@$(eval PREPROCESSED_COMPONENTS=$(shell wc -l < $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt))
+	@$(eval COMPILED_COMPONENTS=$(shell wc -l < $(WORKING_FOLDER)/traces/$(BUILD_MODE)/compiledComponents.txt))
 	@echo "Preprocessing $(BASENAME)"
-#	@echo "($(PREPROCESSED_COMPONENTS)/$(COMPONENTS)) Preprocessing $(BASENAME)"
-#	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
 ENGINE_CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(ENGINE_CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
@@ -204,8 +205,10 @@ preprocessPlugins:
 					-e COMPONENTS=$(COMPONENTS);																									\
 			fi;																																		\
 		else																																		\
-			$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																	\
-			echo "Preprocessing (skip) $(PLUGIN_CLEAN_NAME)";																						\
+			if ! grep -s -q $(PLUGIN) $(WORKING_FOLDER)/traces/$(BUILD_MODE)/preprocessedComponents.txt; then 										\
+				$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																\
+				echo "Preprocessing (skip) $(PLUGIN_CLEAN_NAME)";																					\
+			fi;																																		\
 		fi;																																			\
 	)
 
@@ -279,8 +282,10 @@ plugins:
 				-e COMPONENTS=$(COMPONENTS)																											\
 				-e MAKE_JOBS=$(MAKE_JOBS);																											\
 		else																																		\
-			$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																	\
-			echo "Building (skip) $(PLUGIN_CLEAN_NAME)";																							\
+			if ! grep -s -q $(PLUGIN) $(WORKING_FOLDER)/traces/$(BUILD_MODE)/compiledComponents.txt; then 										\
+				$(eval PLUGIN_CLEAN_NAME=$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																\
+				echo "Building (skip) $(PLUGIN_CLEAN_NAME)";																						\
+			fi;																																		\
 		fi;																																			\
 	)																																				\
 
