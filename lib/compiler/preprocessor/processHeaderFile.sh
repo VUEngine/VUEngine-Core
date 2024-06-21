@@ -216,6 +216,10 @@ do
 		GAME_NAME="$2"
 		shift # past argument
 		;;
+		-m)
+		GAME_HOME="$2"
+		shift
+		;;
 	esac
 
 	shift
@@ -333,7 +337,7 @@ then
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -m $GAME_HOME -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
 			else
 				mustBeReprocessed=true
 			fi
@@ -554,7 +558,8 @@ echo "Starting computation of dependencies on caller $CALLER with search path $s
 
 if [ ! -z "$baseClassesNames" ];
 then
-	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
+	OUTPUT_FILE_CLEAN=`echo $OUTPUT_FILE | sed -e "s@"$GAME_HOME"@@g"| sed -e "s@/build/@@g" | sed -e "s@build/@@g"` 
+	echo "$GAME_HOME/build/$OUTPUT_FILE_CLEAN: \\" > $CLASS_DEPENDENCIES_FILE
 fi
 
 # Get base classes' methods
