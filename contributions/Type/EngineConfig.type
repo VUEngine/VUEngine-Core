@@ -1210,5 +1210,12 @@
 	"icon": "fa fa-sliders",
 	"templates": [
 		"Config"
+	],
+	"delete": [
+		"build/libcore.a",
+		"build/working/libraries/release/libcore-release.a",
+		"build/working/libraries/beta/libcore-beta.a",
+		"build/working/libraries/tools/libcore-tools.a",
+		"build/working/libraries/debug/libcore-debug.a"
 	]
 }
