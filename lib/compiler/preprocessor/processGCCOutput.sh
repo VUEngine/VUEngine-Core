@@ -75,6 +75,11 @@ done
 replacement=$NAME_HOME
 pattern=^.*build/working/objects/[a-z][a-z]*/$NAME
 
-sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
+if [[ $PLUGINS_PATH == *"/mnt/"* ]]; then
+	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT | sed -E 's@/mnt/([A-z]+)/@\1:/@g' | sed -e 's@/@\\@g'
+else
+	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
+fi
+
 echo 
 rm -f $GCC_OUTPUT
