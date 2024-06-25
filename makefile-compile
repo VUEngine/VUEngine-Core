@@ -179,7 +179,7 @@ $(WORKING_FOLDER)/assets/$(NAME)/%.o: $(MY_HOME)/%.c
 	@$(eval RELATIVE_OBJECT_FILE=$(shell echo $(OBJECT_FILE) | sed -E "s@$(GAME_HOME)@@g"))
 	@$(eval HASH_OBJECT=$(shell echo $(RELATIVE_OBJECT_FILE) | shasum | cut -d' ' -f1))
 	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/assets/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c -c $< -o $@
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS_FOR_ASSETS) -x c -c $< -o $@ 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
 	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/assets/$(NAME)/hashes/$(HASH_OBJECT).o
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/assets/$(NAME)/$*.dd > $(WORKING_FOLDER)/assets/$(NAME)/$*.d
 
