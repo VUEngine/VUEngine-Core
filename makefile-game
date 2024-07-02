@@ -60,6 +60,7 @@ printPreBuildingInfo:
 
 deleteLibraries:
 ifeq ($(BUILD_ALL), 1)
+	@rm -f $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/*.a
 	@rm -f $(PLUGINS_PATH)/*.a
 endif
 	@rm -f $(TARGET).elf
