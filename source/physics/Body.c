@@ -46,7 +46,6 @@ friend class VirtualNode;
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-//#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIXED(0.9f)
 #ifndef __STOP_VELOCITY_THRESHOLD
 #define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(1)
 #endif
