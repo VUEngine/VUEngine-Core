@@ -242,7 +242,7 @@
 		{																								\
 			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
-			*(tempPointer) = (void (*)())&NewMethod;													\
+			*(tempPointer) = (void (*)())NewMethod;													\
 		}
 
 // configure class's vtable
