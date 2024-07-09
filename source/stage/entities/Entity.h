@@ -86,10 +86,10 @@ typedef struct PositionedEntity
 	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
 
-	// Rotation in screen coordinares
+	// Rotation in screen coordinates
 	ScreenPixelRotation onScreenRotation;
 
-	// Scale in screen coordinares
+	// Scale in screen coordinates
 	ScreenPixelScale onScreenScale;
 
 	// entity's id
