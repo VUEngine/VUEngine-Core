@@ -309,7 +309,7 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 	// TOOD: the preprocessor does't catch properly this override check with Particle 	
 	if(SpatialObject::overrides(this, setPosition))
 	{
-		SpatialObject::setPosition(this, position);
+		Particle::setPosition(this, position);
 	}
 	else
 	{
