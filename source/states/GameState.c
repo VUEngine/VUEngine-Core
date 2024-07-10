@@ -294,9 +294,11 @@ bool GameState::processUserInputRegardlessOfInput()
  * @param telegram		Message wrapper
  * @return 				True if no further processing of the message is required
  */
-bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram)
+bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
-	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
+	return false;
+	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
+//	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
 }
 
 /**
