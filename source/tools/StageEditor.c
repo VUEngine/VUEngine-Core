@@ -816,7 +816,7 @@ void StageEditor::showSelectedUserObject()
 		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
-		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+		PixelScale spriteScale = {1, 1};
 		Sprite::setPosition(this->userObjectSprite, &spritePosition);
 		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
 		Sprite::setScale(this->userObjectSprite, &spriteScale);
