@@ -128,7 +128,7 @@ void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManage
 {
 	if(this->cameraMovementManager != cameraMovementManager)
 	{
-		if(this->cameraMovementManager)
+		if(!isDeleted(this->cameraMovementManager))
 		{
 			delete this->cameraMovementManager;
 		}
@@ -146,7 +146,7 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
 	if(this->cameraEffectManager != cameraEffectManager)
 	{
-		if(this->cameraEffectManager)
+		if(!isDeleted(this->cameraEffectManager))
 		{
 			delete this->cameraEffectManager;
 		}
