@@ -193,11 +193,11 @@ $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.c
 	@rm -f $(OBJECT_FILE)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $(RAW_SOURCE_FILE) -o $(SOURCE_FILE) -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) && \
 		$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC)) \
-        	$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -c $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)" && \
-		sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp && \
-		sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd && \
-		sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d && \
-		cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
+        	$(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -c $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp
+	@sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd
+	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/$*.d
+	@cp $(OBJECT_FILE) $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)/$(HASH_OBJECT).o
 
 # Compile assembler files
 $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)/%.o: $(MY_HOME)/%.s
