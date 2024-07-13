@@ -11,8 +11,9 @@ HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
-H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+WORKING_FOLDER_CLEAR = $(GAME_HOME)/$(shell echo $(WORKING_FOLDER) | sed -e 's@'"$(GAME_HOME)"/'@@g')
+H_FILES_TEMP = $(shell echo $(HEADERS) | sed -e 's@'"$(WORKING_FOLDER)"/'@@g' -e 's@'"$(MY_HOME)"/'@@g')
+H_FILES = $(addprefix $(WORKING_FOLDER_CLEAR)/headers/$(NAME)/, $(H_FILES_TEMP:.h=.h))
 
 D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 
@@ -28,7 +29,7 @@ PLUGINS_ARGUMENT=$(addprefix -l , $(PLUGINS:.=.))
 # Override makefile's below dependencies for header files so proper propagation of changes in base classes are catched up
 -include $(D_FILES)
 
-$(WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
+$(WORKING_FOLDER_CLEAR)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -e $(ENGINE_HOME) -i $< -o $@ -m $(GAME_HOME) -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(PLUGINS_FOLDER) -u $(USER_PLUGINS_FOLDER) -g makefile -x $(GAME_NAME) $(PLUGINS_ARGUMENT)
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
@@ -36,5 +37,4 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 
 phony:
 	@echo > /dev/null
-#	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/classes/dependencies/$(BASENAME).dependencies.txt )
 
