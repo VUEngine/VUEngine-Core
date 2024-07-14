@@ -196,6 +196,10 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		return object;
 	}
 
+#ifndef __DEBUG
+	HardwareManager::resumeInterrupts();
+#endif
+
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }
 
