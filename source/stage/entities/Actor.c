@@ -427,7 +427,7 @@ bool Actor::handleMessage(Telegram telegram)
 		// retrieve message
 		int32 message = Telegram::getMessage(telegram);
 
-		if(this->body && Body::isActive(this->body))
+		if(this->body)
 		{
 			switch(message)
 			{

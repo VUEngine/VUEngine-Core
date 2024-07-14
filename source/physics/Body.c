@@ -129,7 +129,6 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->totalFrictionCoefficient = 0;
 	this->frictionForceMagnitude = 0;
 
-	this->active = true;
 	this->awake = false;
 	this->sendMessages = true;
 	this->axisSubjectToGravity = axisSubjectToGravity;
@@ -149,7 +148,6 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->maximumVelocity 		= physicalProperties->maximumVelocity;
 	this->maximumSpeed 			= physicalProperties->maximumSpeed;
 	this->speed 				= 0;
-	this->clearExternalForce 	= __NO_AXIS;
 	this->skipCycles 			= 0;
 	this->skipedCycles 			= 0;
 
@@ -391,8 +389,6 @@ uint8 Body::applyForce(const Vector3D* force)
 		Body::awake(this, axisOfExternalForce);
 	}
 
-	this->clearExternalForce |= axisOfExternalForce;
-
 	return axisOfExternalForce;
 }
 
@@ -421,13 +417,13 @@ void Body::applySustainedForce(const Vector3D* force)
 {
 	ASSERT(force, "Body::applySustainedForce: null force");
 
-	this->clearExternalForce = ~Body::applyForce(this, force);
+	Body::applyForce(this, force);
 }
 
 // update movement
 void Body::update(uint16 cycle)
 {
-	if(!this->active || !this->awake)
+	if(!this->awake)
 	{
 		return;
 	}
@@ -806,18 +802,6 @@ void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 	this->axisSubjectToGravity = axisSubjectToGravity;
 }
 
-// set active
-void Body::setActive(bool active)
-{
-	this->active = active;
-}
-
-// is active?
-bool Body::isActive()
-{
-	return this->active;
-}
-
 // retrieve position
 const Vector3D* Body::getPosition()
 {
@@ -1153,14 +1137,13 @@ bool Body::reachedMaximumSpeedpeed()
 // retrieve state
 bool Body::isAwake()
 {
-	return this->awake && this->active;
+	return this->awake;
 }
 
 // awake body
 void Body::awake(uint16 axisOfAwakening)
 {
 	this->awake = true;
-	this->active = true;
 
 	if(this->sendMessages)
 	{
@@ -1197,7 +1180,7 @@ void Body::sleep()
 // is it moving?
 uint16 Body::getMovementOnAllAxis()
 {
-	if(!this->awake || !this->active)
+	if(!this->awake)
 	{
 		return __NO_AXIS;
 	}
@@ -1406,8 +1389,6 @@ void Body::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "BODY", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Active:", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), this->active ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 
