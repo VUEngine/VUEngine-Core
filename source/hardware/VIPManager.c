@@ -235,7 +235,7 @@ void VIPManager::disableInterrupts()
 /**
  * Set multiplexed interrupts
  */
-void VIPManager::enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts __attribute__((unused)))
+void VIPManager::enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts __attribute__((unused)))
 {
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = enabledMultiplexedInterrupts;
@@ -260,8 +260,13 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
-	if(kVIPNoMultiplexedInterrupts < _vipManager->enabledMultiplexedInterrupts)
+	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
 	{
+		if(kVIPOnlyVIPMultiplexedInterrupts == _vipManager->enabledMultiplexedInterrupts)
+		{
+			HardwareManager::setInterruptLevel(_vipManager->enabledMultiplexedInterrupts);
+		}
+
 		HardwareManager::enableMultiplexedInterrupts();
 	}
 
@@ -275,9 +280,14 @@ static void VIPManager::interruptHandler()
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
-	if(kVIPNoMultiplexedInterrupts < _vipManager->enabledMultiplexedInterrupts)
+	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
 	{
 		HardwareManager::disableMultiplexedInterrupts();
+
+		if(kVIPOnlyVIPMultiplexedInterrupts == _vipManager->enabledMultiplexedInterrupts)
+		{
+			HardwareManager::setInterruptLevel(0);
+		}
 	}
 
 	// enable interrupts
@@ -344,7 +354,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				else
 				{
 					// Listen for the end of drawing operations
-					if(!(__XPEND & interrupt) && kVIPAllMultiplexedInterrupts <= this->enabledMultiplexedInterrupts)
+					if(!(__XPEND & interrupt) && 0 != (kVIPAllMultiplexedInterrupts & this->enabledMultiplexedInterrupts))
 					{
 						VIPManager::enableInterrupts(this, __XPEND);
 					}
@@ -401,7 +411,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #endif
 
 					// Allow game start interrupt because the frame buffers can change mid drawing
-					if(!(__GAMESTART & interrupt) && kVIPAllMultiplexedInterrupts <= this->enabledMultiplexedInterrupts)
+					if(!(__GAMESTART & interrupt) && 0 != (kVIPGameStartMultiplexedInterrupts & this->enabledMultiplexedInterrupts))
 					{
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
