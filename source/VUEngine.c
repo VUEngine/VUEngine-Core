@@ -794,8 +794,6 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 #ifdef __SHOW_MEMORY_POOL_STATUS
 		if(!VUEngine::isInToolState(this))
 		{
-			Printing::resetCoordinates(Printing::getInstance());
-
 #ifdef __SHOW_DETAILED_MEMORY_POOL_STATUS
 			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
 #else

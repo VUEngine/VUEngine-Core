@@ -264,6 +264,8 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 
 	Printing printing = Printing::getInstance();
 
+	Printing::resetCoordinates(printing);
+
 	Printing::text(printing, "MEMORY:", x, y, NULL);
 	uint32 poolSize = MemoryPool::getPoolSize(MemoryPool::getInstance());
 	Printing::text(printing, "Total: ", x, ++y, NULL);
