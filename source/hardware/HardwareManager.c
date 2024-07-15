@@ -262,6 +262,7 @@ bool HardwareManager::isDrawingAllowed()
  */
 void HardwareManager::startDrawing()
 {
+	VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
 	VIPManager::startDrawing(VIPManager::getInstance());
 }
 
