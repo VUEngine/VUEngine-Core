@@ -445,7 +445,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					// right display freezes
 					while(_vipRegisters[__XPSTTS] & __XPBSYR);
 #else
-					VIPManager::stopDrawingis);
+					VIPManager::stopDrawing(this);
 #endif
 
 					// Allow game start interrupt because the frame buffers can change mid drawing
@@ -472,7 +472,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __RELEASE
 					_vipRegisters[__XPCTRL] |= __XPEN;
 #else
-					VIPManager::startDrawingthis);
+					VIPManager::startDrawing(this);
 #endif
 				}
 
