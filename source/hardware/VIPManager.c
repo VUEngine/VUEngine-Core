@@ -181,7 +181,7 @@ void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 void VIPManager::turnDisplayOn()
 {
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = (_vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP)) & ~__LOCK;
+	_vipRegisters[__DPCTRL] = (__SYNCE | __RE | __DISP) & ~__LOCK;
 }
 
 /**
