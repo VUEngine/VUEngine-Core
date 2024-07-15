@@ -297,8 +297,8 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
+	HardwareManager::stopDrawing(HardwareManager::getInstance());
 
 	// Clean the game's stack
 	// pop states until the stack is empty
@@ -333,8 +333,8 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
+	HardwareManager::stopDrawing(HardwareManager::getInstance());
 
 	return false;
 }
@@ -350,8 +350,8 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
+	HardwareManager::stopDrawing(HardwareManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -376,8 +376,8 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
+	HardwareManager::stopDrawing(HardwareManager::getInstance());
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -419,8 +419,8 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	// Make sure everything is properly rendered
 	SpriteManager::prepareAll(this->spriteManager);
 
-	HardwareManager::enableRendering(HardwareManager::getInstance());
-	HardwareManager::displayOn(HardwareManager::getInstance());
+	HardwareManager::startDrawing(HardwareManager::getInstance());
+	HardwareManager::turnDisplayOn(HardwareManager::getInstance());
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);

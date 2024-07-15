@@ -275,7 +275,6 @@ singleton class VIPManager : ListenerObject
 	uint16 customInterrupts;
 	uint16 currrentInterrupt;
 	uint16 gameFrameDuration;
-	uint8 frameCycle;
 	bool processingGAMESTART;
 	bool processingXPEND;
 	volatile bool frameStartedDuringXPEND;
@@ -287,13 +286,13 @@ singleton class VIPManager : ListenerObject
 	void reset();
 	void setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing);
 	void enableCustomInterrupts(uint16 customInterrupts);
-	void enableDrawing();
-	void disableDrawing();
+	void startDrawing();
+	void stopDrawing();
 	void enableInterrupts(uint16 interruptCode);
 	void disableInterrupts();
 	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
-	void displayOn();
-	void displayOff();
+	void turnDisplayOn();
+	void turnDisplayOff();
 	void setupPalettes(PaletteConfig* paletteConfig);
 	void upBrightness();
 	void lowerBrightness();

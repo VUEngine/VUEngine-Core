@@ -911,7 +911,7 @@ void SpriteManager::prepareAll()
 	bool deferTextureUpdating = this->deferTextureUpdating;
 
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::stopDrawing(HardwareManager::getInstance());
 
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(this, false);
@@ -939,7 +939,7 @@ void SpriteManager::prepareAll()
 	if(isDrawingAllowed)
 	{
 		// Restore drawing
-		HardwareManager::enableRendering(HardwareManager::getInstance());
+		HardwareManager::startDrawing(HardwareManager::getInstance());
 	}
 
 	this->deferTextureUpdating = deferTextureUpdating;

@@ -235,17 +235,17 @@ void HardwareManager::clearScreen()
 /**
  * Turn the displays on
  */
-void HardwareManager::displayOn()
+void HardwareManager::turnDisplayOn()
 {
-	VIPManager::displayOn(VIPManager::getInstance());
+	VIPManager::turnDisplayOn(VIPManager::getInstance());
 }
 
 /**
  * Turn the displays off
  */
-void HardwareManager::displayOff()
+void HardwareManager::turnDisplayOff()
 {
-	VIPManager::displayOff(VIPManager::getInstance());
+	VIPManager::turnDisplayOff(VIPManager::getInstance());
 }
 
 /**
@@ -258,24 +258,20 @@ bool HardwareManager::isDrawingAllowed()
 }
 
 /**
- * Disable rendering
+ * Enable drawing
  */
-void HardwareManager::disableRendering()
+void HardwareManager::startDrawing()
 {
-	// disable interrupt
-	VIPManager::disableInterrupts(VIPManager::getInstance());
-	VIPManager::disableDrawing(VIPManager::getInstance());
+	VIPManager::startDrawing(VIPManager::getInstance());
 }
 
 /**
- * Enable rendering
+ * Disable drawing
  */
-void HardwareManager::enableRendering()
+void HardwareManager::stopDrawing()
 {
-	// turn on display
-	VIPManager::displayOn(VIPManager::getInstance());
-	VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
-	VIPManager::enableDrawing(VIPManager::getInstance());
+	// disable interrupt
+	VIPManager::stopDrawing(VIPManager::getInstance());
 }
 
 /**

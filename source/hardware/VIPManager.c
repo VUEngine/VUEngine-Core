@@ -157,6 +157,42 @@ void VIPManager::setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing)
 	this->skipFrameBuffersProcessing = skipFrameBuffersProcessing;
 }
 
+void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
+{
+#ifdef __DEBUG
+	frameCycle = 2;
+#else
+	if(3 < frameCycle)
+	{
+		frameCycle = 3;
+	}
+#endif
+
+
+
+	this->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << frameCycle;
+
+	_vipRegisters[__FRMCYC] = frameCycle;
+}
+
+/**
+ * Turn on the displays
+ */
+void VIPManager::turnDisplayOn()
+{
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__DPCTRL] = (_vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP)) & ~__LOCK;
+}
+
+/**
+ * Turn off the displays
+ */
+void VIPManager::turnDisplayOff()
+{
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__DPCTRL] = 0;
+}
+
 void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
 {
 	this->customInterrupts = customInterrupts;
@@ -165,7 +201,7 @@ void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
 /**
  * Allow VIP's drawing process to start
  */
-void VIPManager::enableDrawing()
+void VIPManager::startDrawing()
 {
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] |= __XPEN;
@@ -174,8 +210,10 @@ void VIPManager::enableDrawing()
 /**
  * Disallow VIP's drawing process to start
  */
-void VIPManager::disableDrawing()
+void VIPManager::stopDrawing()
 {
+	VIPManager::disableInterrupts(this);
+
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
@@ -407,7 +445,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					// right display freezes
 					while(_vipRegisters[__XPSTTS] & __XPBSYR);
 #else
-					VIPManager::disableDrawing(this);
+					VIPManager::stopDrawingis);
 #endif
 
 					// Allow game start interrupt because the frame buffers can change mid drawing
@@ -434,7 +472,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __RELEASE
 					_vipRegisters[__XPCTRL] |= __XPEN;
 #else
-					VIPManager::enableDrawing(this);
+					VIPManager::startDrawingthis);
 #endif
 				}
 
@@ -486,47 +524,6 @@ void VIPManager::applyPostProcessingEffects()
 	}
 }
 
-void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
-{
-#ifndef __DEBUG
-	this->frameCycle = frameCycle;
-#else
-	this->frameCycle = 2;
-#endif
-
-
-	if(3 < this->frameCycle)
-	{
-		this->frameCycle = 3;
-	}
-
-	this->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << this->frameCycle;
-
-	VIPManager::displayOn(this);
-}
-
-/**
- * Turn on the displays
- */
-void VIPManager::displayOn()
-{
-	_vipRegisters[__REST] = 0;
-	_vipRegisters[__FRMCYC] = this->frameCycle;
-	_vipRegisters[__DPCTRL] = (_vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP)) & ~__LOCK;
-}
-
-/**
- * Turn off the displays
- */
-void VIPManager::displayOff()
-{
-	_vipRegisters[__REST] = 0;
-	_vipRegisters[__XPCTRL] = 0;
-	_vipRegisters[__DPCTRL] = 0;
-	_vipRegisters[__FRMCYC] = 3;
-
-	VIPManager::disableInterrupts(this);
-}
 
 /**
  * Setup the palettes

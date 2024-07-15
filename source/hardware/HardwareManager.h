@@ -74,11 +74,11 @@ singleton class HardwareManager : Object
 	static void printStackStatus(int32 x, int32 y, bool resumed);
 	void clearScreen();
 	void disableKeypad();
-	void disableRendering();
-	void displayOff();
-	void displayOn();
+	void turnDisplayOff();
+	void turnDisplayOn();
+	void startDrawing();
+	void stopDrawing();
 	void enableKeypad();
-	void enableRendering();
 	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
 	void lowerBrightness();
 	void print(int32 x, int32 y);
