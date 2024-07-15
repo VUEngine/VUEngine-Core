@@ -181,7 +181,7 @@ void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 void VIPManager::turnDisplayOn()
 {
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = (__SYNCE | __RE | __DISP) & ~__LOCK;
+	_vipRegisters[__DPCTRL] = (__SYNCE | __DISP) & ~__LOCK;
 }
 
 /**
@@ -489,6 +489,8 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				this->scanErrorCounter++;
 				VIPManager::fireEvent(this, kEventVIPManagerScanError);
+
+				Error::triggerException("VIPManager::servo error", NULL);		
 				break;
 #endif
 		}
