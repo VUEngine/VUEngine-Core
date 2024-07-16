@@ -166,7 +166,7 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 				va_arg(args, int32),
 				va_arg(args, Brightness*),
 				va_arg(args, int32),
-				va_arg(args, void*),
+				va_arg(args, EventListener),
 				va_arg(args, ListenerObject)
 			);
 			break;

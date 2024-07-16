@@ -60,8 +60,8 @@
 																										\
 			/*  */																						\
 			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
-			_singletonWrapper ## ClassName.objectMemoryFootprint = __OBJECT_MEMORY_FOOT_PRINT;			\
-																										\
+			_singletonWrapper ## ClassName.objectMemoryFootprint =  									\
+				(__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;												\
 			/* set the vtable pointer */																\
 			instance->vTable = &ClassName ## _vTable;													\
 																										\
