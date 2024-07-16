@@ -169,14 +169,15 @@
 		/* call derived implementation */																\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)								\
 
-#define __VIRTUAL_CALL_COMMA_HELPER(...) ,##__VA_ARGS__
+#define __VIRTUAL_CALL_FIRST_HELPER(object, ...) object
+#define __VIRTUAL_CALL_(...) __VIRTUAL_CALL_FIRST_HELPER(__VA_ARGS__, throwaway)
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
-#define __VIRTUAL_CALL(ClassName, MethodName, object, ...)												\
+#define __VIRTUAL_CALL(ClassName, MethodName, ...)														\
 																										\
-		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))							\
+		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_(__VA_ARGS__)))))->MethodName))		\
 		(																								\
-			__SAFE_CAST(ClassName, object) __VIRTUAL_CALL_COMMA_HELPER(__VA_ARGS__)						\
+			(ClassName)__VA_ARGS__																		\
 		)
 
 // call the base's method
