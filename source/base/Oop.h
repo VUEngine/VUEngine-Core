@@ -25,13 +25,6 @@
 #define __OBFUSCATE_NAME(value)			(#value)
 #endif
 
-// define the class's allocator declaration
-#define __CLASS_NEW_DECLARE(ClassName, ...)																\
-																										\
-		/* define the method */																			\
-		ClassName ClassName ## _new(__VA_ARGS__)
-
-
 #ifndef __RELEASE
 #undef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #else
@@ -170,14 +163,14 @@
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)								\
 
 #define __VIRTUAL_CALL_FIRST_HELPER(object, ...) object
-#define __VIRTUAL_CALL_(...) __VIRTUAL_CALL_FIRST_HELPER(__VA_ARGS__, throwaway)
+#define __VIRTUAL_CALL_OBJECT(...) __VIRTUAL_CALL_FIRST_HELPER(__VA_ARGS__, throwaway)
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
-#define __VIRTUAL_CALL(ClassName, MethodName, ...)														\
-																										\
-		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_(__VA_ARGS__)))))->MethodName))		\
-		(																								\
-			(ClassName)__VA_ARGS__																		\
+#define __VIRTUAL_CALL(ClassName, MethodName, ...)																\
+																												\
+		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_OBJECT(__VA_ARGS__)))))->MethodName))		\
+		(																										\
+			(ClassName)__VA_ARGS__																				\
 		)
 
 // call the base's method
@@ -201,7 +194,7 @@
 																										\
 		/* try to up cast object */																		\
 		(void (*)())&ClassName ## _ ## MethodName != 													\
-			(void*)__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
+			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
 
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
@@ -460,7 +453,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_CONSTRUCTED				2
 
 // defines a singleton (unique instance of a class)
-#define __SINGLETON(ClassName, ...)																		\
+#define __SINGLETON(ClassName)																			\
 																										\
 		/* declare the static instance */																\
 		typedef struct SingletonWrapper ## ClassName													\
@@ -540,7 +533,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		/* define allocator */																			\
-		__CLASS_NEW_DEFINITION(ClassName)																\
+		__CLASS_NEW_DEFINITION(ClassName, void)															\
 		__CLASS_NEW_END(ClassName, this);																\
 																										\
 		/* a flag to know when to allow construction */													\

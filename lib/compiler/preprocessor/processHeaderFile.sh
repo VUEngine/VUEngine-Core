@@ -783,7 +783,9 @@ fi
 #echo "" >> $TEMPORAL_FILE
 if [ "$isExtensionClass" = true ];
 then
-	echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+	echo
+#   Causes redefinition warning	
+#	echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
 else
 	if [ ! "$isStaticClass" = true ]
 	then

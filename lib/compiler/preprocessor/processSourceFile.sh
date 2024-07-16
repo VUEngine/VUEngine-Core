@@ -392,7 +392,7 @@ then
 			allocatorParameters=`sed -e 's#\(.*\),#\1#' <<< "$allocatorParameters"`
 
 			if [ -z "$allocatorParameters" ];then
-				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className)"
+				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, void)"
 				classDefinition=$classDefinition"__CLASS_NEW_END($className, this);"
 			else
 				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
