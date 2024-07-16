@@ -150,6 +150,7 @@ void VIPManager::reset()
 #endif
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
+	VIPManager::setupColumnTable(this, NULL);
 }
 
 void VIPManager::setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing)

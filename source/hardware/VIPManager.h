@@ -248,7 +248,7 @@ enum MultiplexedInterrupts
 	kVIPXpendMultiplexedInterrupts					= 1 << 2,
 	kVIPOnlyVIPMultiplexedInterrupts				= kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
 	kVIPOnlyNonVIPMultiplexedInterrupts				= 1 << 3,
-	kVIPAllMultiplexedInterrupts					= 0xFFFFFFFF,
+	kVIPAllMultiplexedInterrupts					= 0x7FFFFFFF,
 };
 
 

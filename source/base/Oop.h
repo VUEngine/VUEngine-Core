@@ -70,7 +70,7 @@
 			this->vTable = (void*)&ClassName ## _vTable;												\
 																										\
 			/* construct the object */																	\
-			ClassName ## _constructor(this, ##__VA_ARGS__);												\
+			ClassName ## _constructor(__VA_ARGS__);														\
 																										\
 			ASSERT(this->vTable == &ClassName ## _vTable,												\
 				__MAKE_STRING(ClassName) "::new: vTable not set properly");								\
@@ -155,7 +155,7 @@
 #define __CONSTRUCT_BASE(BaseClass, ...)																\
 																										\
 		/* call base's constructor */																	\
-		BaseClass ## _constructor(__SAFE_CAST(BaseClass, this), ##__VA_ARGS__);							\
+		BaseClass ## _constructor((BaseClass)__VA_ARGS__);												\
 
 // must always call base class's destructor
 #define __DESTROY_BASE																					\
@@ -180,11 +180,11 @@
 		)
 
 // call the base's method
-#define __CALL_BASE_METHOD(BaseClassName, MethodName, object, ...)										\
+#define __CALL_BASE_METHOD(BaseClassName, MethodName, ...)												\
 																										\
 		BaseClassName ## _vTable.MethodName																\
 		(																								\
-			__SAFE_CAST(BaseClassName, object), ##__VA_ARGS__											\
+			(BaseClassName)__VA_ARGS__																	\
 		)
 
 #ifdef __DEBUG
@@ -227,7 +227,7 @@
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\
 																										\
 		/* define a virtual method pointer */															\
-		ReturnType (*MethodName)(ClassName, ##__VA_ARGS__)												\
+		ReturnType (*MethodName)(__VA_ARGS__)															\
 
 // override a virtual method
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)												\
@@ -307,13 +307,13 @@
 		struct ClassName ## _vTable 																	\
 		{																								\
 			/* all destructors are virtual */															\
-			__VIRTUAL_DEC(ClassName, void, destructor);													\
+			__VIRTUAL_DEC(ClassName, void, destructor, ClassName);										\
 																										\
 			/* get super class method */																\
-			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass);										\
+			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass, ClassName);							\
 																										\
 			/* all destructors are virtual */															\
-			__VIRTUAL_DEC(ClassName, const char*, getClassName);										\
+			__VIRTUAL_DEC(ClassName, const char*, getClassName, ClassName);								\
 																										\
 			/* insert class's virtual methods names */													\
 			ClassName ## _METHODS(ClassName)															\
@@ -325,16 +325,13 @@
 // forward declare a class
 #define __FORWARD_CLASS(ClassName)																		\
 		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
+		typedef struct ClassName ## _str* ClassName														\
 
 /* typedef for RTTI */
 typedef void* (*(*ClassPointer)(void*))(void*);
 
 // declare a class
 #define __CLASS(ClassName)																				\
-																										\
-		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
 																										\
 		/* declare vtable */																			\
 		__VTABLE(ClassName);																			\
@@ -543,7 +540,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																										\
 		/* define allocator */																			\
 		__CLASS_NEW_DEFINITION(ClassName)																\
-		__CLASS_NEW_END(ClassName);																		\
+		__CLASS_NEW_END(ClassName, this);																\
 																										\
 		/* a flag to know when to allow construction */													\
 		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\

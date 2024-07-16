@@ -94,7 +94,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 class PrintingSprite;
-typedef struct ColumnTableSpec ColumnTableSpec;
 
 
 /**

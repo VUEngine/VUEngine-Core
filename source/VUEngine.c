@@ -449,7 +449,6 @@ void VUEngine::reset(bool resetSounds)
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
 	HardwareManager::clearScreen(HardwareManager::getInstance());
-	HardwareManager::setupColumnTable(HardwareManager::getInstance(), NULL);
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers

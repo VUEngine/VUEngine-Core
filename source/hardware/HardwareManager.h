@@ -46,7 +46,6 @@ static uint8* const _hardwareRegisters =			(uint8*)0x02000000;
 extern bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
-typedef struct ColumnTableSpec ColumnTableSpec;
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -83,7 +82,6 @@ singleton class HardwareManager : Object
 	void lowerBrightness();
 	void print(int32 x, int32 y);
 	void setInterruptVectors();
-	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
 	bool isDrawingAllowed();
 

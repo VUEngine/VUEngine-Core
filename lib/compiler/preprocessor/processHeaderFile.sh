@@ -626,7 +626,7 @@ echo "Computing final header text on caller $CALLER"  >> $CLASS_LOG_FILE
 methodDeclarations=`sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#' <<< "$methods"`
 
 #echo "."
-virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
+virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,ClassName,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
 #echo "."
 virtualMethodOverrides=$virtualMethodOverrides" "`grep -e "<override>\|<virtual>" <<< "$methodDeclarations" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
 #echo "."
@@ -787,6 +787,10 @@ then
 else
 	if [ ! "$isStaticClass" = true ]
 	then
+		echo "#ifndef FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "#define FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+		echo "#endif" >> $TEMPORAL_FILE
 		echo "__CLASS($className);" >> $TEMPORAL_FILE
 	fi
 fi
@@ -832,7 +836,12 @@ tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
 #sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 #sed -i.b 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 #sed -i.b 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
-sed 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/static[ 	]inline[ 	]/inline /g; s/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
+		echo "#ifndef FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "#define FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+		echo "#endif" >> $TEMPORAL_FILE
+
+sed 's@^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;@#ifndef FORWARD_DECLARE_\1\n #define FORWARD_DECLARE_\1\n __FORWARD_CLASS(\1);\n #endif\n@; s@\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)@\1_\2@g; s/static[ 	]inline[ 	]/inline /g; s/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 echo "Writing class hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
 

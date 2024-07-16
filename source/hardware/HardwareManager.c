@@ -292,16 +292,6 @@ void HardwareManager::lowerBrightness()
 }
 
 /**
- * Setup the column table
- *
- * @param columnTableSpec		Spec to use
- */
-void HardwareManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
-{
-	VIPManager::setupColumnTable(VIPManager::getInstance(), columnTableSpec);
-}
-
-/**
  * Enable user input processing
  */
 void HardwareManager::enableKeypad()
