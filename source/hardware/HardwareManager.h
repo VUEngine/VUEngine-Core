@@ -93,8 +93,10 @@ static inline void HardwareManager::halt()
 	// Make sure that I don't halt forever
 	HardwareManager::enableInterrupts();
 
-    static const long code = 0x181F6800L;
-    ((void(*)())&code)();
+	asm("halt"::);
+	// This causes a compiler's warning
+//	static const long code = 0x181F6800L;
+//	((void(*)())&code)();
 }
 
 /**
