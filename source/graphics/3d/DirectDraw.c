@@ -302,7 +302,7 @@ static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y,
 static void DirectDraw::drawBlackPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax)
 {
 	uint16 yHelper = y >> 2;
-	uint8 pixel = ~(0b11 << ((y & 3) << 1));
+	uint8 pixel = ~(3 << ((y & 3) << 1));
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
