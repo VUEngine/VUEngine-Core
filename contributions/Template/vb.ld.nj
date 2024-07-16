@@ -44,14 +44,14 @@ SECTIONS
 		PROVIDE (__expDataEnd = .);
 	} >exp = 0xFF
 
-	.text __textVma :
+	.text __textVma : SUBALIGN(4)
 	{
 		PROVIDE (__textStart = .);
 		*(.text*)
 		PROVIDE (__textEnd = .);
 	} >rom = 0xFF
 
-	.rodata :
+	.rodata : SUBALIGN(4)
 	{
 		PROVIDE (__stringsStart = .);
 		*(.strings*)
@@ -63,7 +63,7 @@ SECTIONS
 
 	/* Ram memory */
 	__dataLma = .;
-	.sdata __dataVma : AT(__dataLma)
+	.sdata __dataVma : AT(__dataLma) SUBALIGN(4)
 	{
 		PROVIDE (__dataStart = .);
 		PROVIDE (__gp = . + 0x8000);
@@ -76,7 +76,7 @@ SECTIONS
 		PROVIDE (__dataEnd = .);
 	} >wram = 0xFF
 
-	.dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
+	.dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata)) SUBALIGN(4)
 	{
 		PROVIDE (__dramDirtyStart = .);
 		*(.dram_dirty*)
@@ -92,21 +92,21 @@ SECTIONS
 		PROVIDE (__sramDataEnd = .);
 	} >sram = 0xFF
 
-	.sbss (NOLOAD):
+	.sbss (NOLOAD): SUBALIGN(4)
 	{
 		PROVIDE (__bssStart = .);
 		*(.sbss*)
 		*(.scommon*)
 	} >wram = 0xFF
 
-	.bss (NOLOAD):
+	.bss (NOLOAD): SUBALIGN(4)
 	{
 		*(.bss*)
 		*(COMMON)
 		PROVIDE (__bssEnd = .);
 	} >wram = 0xFF
 
-	.dram_bss (NOLOAD): AT(__dramDataEnd)
+	.dram_bss (NOLOAD): AT(__dramDataEnd) SUBALIGN(4)
 	{
 		PROVIDE(__dramBssStart = .);
 		*(.dram_bss*)
