@@ -19,6 +19,7 @@
 #include <CharSet.h>
 #include <Entity.h>
 #include <EntityFactory.h>
+#include <Printing.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
 #include <Texture.h>
@@ -30,8 +31,6 @@
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-typedef struct FontSpec FontSpec;
 
 typedef struct Streaming
 {
