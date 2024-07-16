@@ -654,8 +654,8 @@ void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 	// write column table
 	for(i = 0; i < 256; i++)
 	{
-		value = (columnTableSpec->mirror && (i > 127))
-			? columnTableSpec->columnTable[255 - i]
+		value = (columnTableSpec->mirror && (i > (__COLUMN_TABLE_ENTRIES / 2 - 1)))
+			? columnTableSpec->columnTable[(__COLUMN_TABLE_ENTRIES - 1) - i]
 			: columnTableSpec->columnTable[i];
 
 		_columnTableBaseAddressLeft[i] = value;
@@ -717,8 +717,8 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpe
 	// write repeat values to column table
 	for(int16 i = 0; i < 96; i++)
 	{
-		int16 value = (brightnessRepeatSpec->mirror && (i > 47))
-			? brightnessRepeatSpec->brightnessRepeat[95 - i] << 8
+		int16 value = (brightnessRepeatSpec->mirror && (i > (__BRIGHTNESS_REPEAT_ENTRIES / 2 - 1)))
+			? brightnessRepeatSpec->brightnessRepeat[__BRIGHTNESS_REPEAT_ENTRIES - 1 - i] << 8
 			: brightnessRepeatSpec->brightnessRepeat[i] << 8;
 
 		_columnTableBaseAddressLeft[leftCta - i] = (_columnTableBaseAddressLeft[leftCta - i] & 0xff) | value;

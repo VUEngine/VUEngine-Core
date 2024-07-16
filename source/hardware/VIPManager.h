@@ -177,6 +177,9 @@ extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_A
 extern uint32 _dramDirtyStart;
 #define __PARAM_TABLE_END 		((uint32)&_dramDirtyStart)
 
+#define __COLUMN_TABLE_ENTRIES			256
+#define __BRIGHTNESS_REPEAT_ENTRIES		96
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
@@ -189,7 +192,7 @@ typedef struct ColumnTableSpec
 	bool mirror;
 
 	// column table spec
-	BYTE columnTable[];
+	BYTE columnTable[__COLUMN_TABLE_ENTRIES];
 
 } ColumnTableSpec;
 
@@ -202,7 +205,7 @@ typedef struct BrightnessRepeatSpec
 	bool mirror;
 
 	// brightness repeat values
-	uint8 brightnessRepeat[];
+	uint8 brightnessRepeat[__BRIGHTNESS_REPEAT_ENTRIES];
 
 } BrightnessRepeatSpec;
 

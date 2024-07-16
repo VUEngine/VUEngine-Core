@@ -141,16 +141,16 @@ void Profiler::initialize()
 
 	this->initialized = true;
 	/**/
-	_vipRegisters[__GPLT0] = 0b01010000;
-	_vipRegisters[__GPLT1] = 0b01010000;
-	_vipRegisters[__GPLT2] = 0b01010000;
-	_vipRegisters[__GPLT3] = 0b01010000;
-	_vipRegisters[__JPLT0] = 0b01010000;
-	_vipRegisters[__JPLT1] = 0b01010000;
-	_vipRegisters[__JPLT2] = 0b01010000;
-	_vipRegisters[__JPLT3] = 0b01010000;
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x50;
+	_vipRegisters[__GPLT3] = 0x50;
+	_vipRegisters[__JPLT0] = 0x50;
+	_vipRegisters[__JPLT1] = 0x50;
+	_vipRegisters[__JPLT2] = 0x50;
+	_vipRegisters[__JPLT3] = 0x50;
 
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0b11100000;
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE0;
 	/**/
 }
 
