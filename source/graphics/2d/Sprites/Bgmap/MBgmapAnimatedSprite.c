@@ -12,27 +12,27 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBgmapAnimatedSprite.h>
 
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
+#include <DebugConfig.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "MBgmapAnimatedSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-void MBgmapAnimatedSprite::constructor(const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec, ListenerObject owner)
+void MBgmapAnimatedSprite::constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
 {
-	Base::constructor(&mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec, owner);
+	Base::constructor(owner, &mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec);
 
 	ASSERT(this->texture, "MBgmapAnimatedSprite::constructor: null texture");
 
-	MBgmapAnimatedSprite::createAnimationController(this, mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec, owner);
+	MBgmapAnimatedSprite::createAnimationController(this, mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec.textureSpecs[0]->charSetSpec);
 }
 
 void MBgmapAnimatedSprite::destructor()
@@ -62,7 +62,7 @@ void MBgmapAnimatedSprite::writeAnimation()
 
 	if(Texture::isMultiframe(this->texture))
 	{
-		MBgmapAnimatedSprite::setFrame(this, AnimationController::getActualFrameIndex(this->animationController));
+		MBgmapAnimatedSprite::configureMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
 		MBgmapAnimatedSprite::invalidateParamTable(this);
 	}
 	else
@@ -71,7 +71,7 @@ void MBgmapAnimatedSprite::writeAnimation()
 	}
 }
 
-void MBgmapAnimatedSprite::setFrame(uint16 frame)
+void MBgmapAnimatedSprite::configureMultiframe(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture);
 	int16 my = BgmapTexture::getYOffset(this->texture);
@@ -79,5 +79,4 @@ void MBgmapAnimatedSprite::setFrame(uint16 frame)
 	int32 frameColumn = Texture::getCols(this->texture) * frame;
 	this->bgmapTextureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
 	this->bgmapTextureSource.my = (my + (frameColumn % totalColumns)) << 3;
-	this->renderFlag = true;
 }

@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DirectDraw.h>
-#include <DebugUtilities.h>
 #include <Math.h>
 #include <Optics.h>
 #include <WireframeManager.h>
@@ -30,13 +29,10 @@
  *
  * @private
  */
-void Line::constructor(LineSpec* lineSpec)
+void Line::constructor(SpatialObject owner, LineSpec* lineSpec)
 {
 	// construct base object
-	Base::constructor(&lineSpec->wireframeSpec);
-
-	((LineSpec*)this->wireframeSpec)->a = lineSpec->a;
-	((LineSpec*)this->wireframeSpec)->b = lineSpec->b;
+	Base::constructor(owner, &lineSpec->wireframeSpec);
 
 	this->a = PixelVector::zero();
 	this->b = PixelVector::zero();
@@ -55,25 +51,27 @@ void Line::destructor()
 /**
  * Render
  */
-void Line::render()
+bool Line::render()
 {
-	Vector3D position = Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b);
+	Vector3D position = Vector3D::sum(this->transformation->position, ((LineSpec*)this->componentSpec)->wireframeSpec.displacement);
 
 	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
 	Sphere::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
 	{
-		return;
+		return false;
 	}
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->wireframeSpec)->a, _previousCameraPosition);
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-	this->a = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+	Vector3D a = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->a);
+	a = Vector3D::rotate(a, _previousCameraInvertedRotation);
+	this->a = Vector3D::projectToPixelVector(a, Optics::calculateParallax(a.z));
 
-	relativePosition = Vector3D::sub(((LineSpec*)this->wireframeSpec)->b, _previousCameraPosition);
-	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
-	this->b = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
+	Vector3D b = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->b);
+	b = Vector3D::rotate(b, _previousCameraInvertedRotation);
+	this->b = Vector3D::projectToPixelVector(b, Optics::calculateParallax(b.z));
+
+	return true;
 }
 
 /**
@@ -81,24 +79,18 @@ void Line::render()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Line::draw()
+bool Line::draw()
 {
-	DirectDraw::drawColorLine
+	bool drawn = DirectDraw::drawColorLine
 	(
 		this->a,
 		this->b,
 		this->color,
-		0,
-		false
+		this->bufferIndex,
+		this->interlaced
 	);
-/*
-	DirectDraw::drawColorLine
-	(
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b)), 0),
-		PixelVector::getFromVector3D(Vector3D::getRelativeToCamera(Vector3D::sum(Vector3D::intermediate(((LineSpec*)this->wireframeSpec)->a, ((LineSpec*)this->wireframeSpec)->b), this->normal)), 0),
-		__COLOR_BRIGHT_RED,
-		0,
-		false
-	);
-	*/
+
+	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;	
 }

@@ -12,18 +12,17 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapSprite.h>
-
 #include <Affine.h>
 #include <BgmapTexture.h>
 #include <BgmapTextureManager.h>
 #include <Camera.h>
+#include <DebugConfig.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "BgmapSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,9 +46,9 @@ friend class BgmapTexture;
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner)
+void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec)
 {
-	Base::constructor((SpriteSpec*)&bgmapSpriteSpec->spriteSpec, owner);
+	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
 
 	// create the texture
 	if(NULL != bgmapSpriteSpec->spriteSpec.textureSpec)
@@ -75,9 +74,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 		this->bgmapTextureSource.mp = 0;
 	}
 
-	this->rotation = Rotation::zero();
-	this->scale = Scale::unit();
-
 	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
 	this->param = 0;
@@ -102,11 +98,6 @@ void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerOb
 void BgmapSprite::destructor()
 {
 	BgmapSprite::removeFromCache(this);
-	
-	if(this->registered)
-	{
-		SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
-	}
 
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
@@ -115,6 +106,24 @@ void BgmapSprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Register
+ *
+ */
+void BgmapSprite::registerWithManager()
+{
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+}
+
+/**
+ * Unegister
+ *
+ */
+void BgmapSprite::unregisterWithManager()
+{
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
 }
 
 void BgmapSprite::removeFromCache()
@@ -136,9 +145,11 @@ bool BgmapSprite::hasSpecialEffects()
  *
  * @param eventFirer
  */
-void BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
+
+	return true;
 }
 
 void BgmapSprite::releaseTexture()
@@ -175,32 +186,7 @@ void BgmapSprite::releaseTexture()
 Scale BgmapSprite::getScale()
 {
 	// return the scale
-	return this->scale;
-}
-
-/**
- * Calculate with and height
- *
- * @memberof			BgmapSprite
- * @private
- */
-void BgmapSprite::computeDimensions()
-{
-	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation.y))),
-		__FIXED_MULT(
-			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-			__FIX7_9_TO_FIXED(this->scale.x)
-		)
-	))) + 1;
-
-	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->rotation.x))),
-		__FIXED_MULT(
-			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-			__FIX7_9_TO_FIXED(this->scale.y)
-		)
-	))) + 1;
+	return this->transformation->scale;
 }
 
 /**
@@ -209,20 +195,18 @@ void BgmapSprite::computeDimensions()
  * @memberof			BgmapSprite
  * @public
  *
- * @param rotation		Rotation
  */
-void BgmapSprite::rotate(const Rotation* rotation)
+void BgmapSprite::setRotation(const Rotation* rotation)
 {
-	Base::rotate(this, rotation);
-	
+	if(NULL == rotation)
+	{
+		return;
+	}
+
+	this->rotation = *rotation;
+
 	if(0 < this->param)
 	{
-		this->rotation = *rotation;
-
-		if(!isDeleted(this->texture))
-		{
-			BgmapSprite::computeDimensions(this);
-		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
@@ -259,7 +243,7 @@ void BgmapSprite::rotate(const Rotation* rotation)
 }
 
 /**
- * Resize
+ * Set scale
  *
  * @memberof			BgmapSprite
  * @public
@@ -267,28 +251,22 @@ void BgmapSprite::rotate(const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite::resize(Scale scale, fixed_t z)
+void BgmapSprite::setScale(const PixelScale* scale)
 {
+	if(NULL == scale)
+	{
+		return;
+	}
+
 	if(__WORLD_AFFINE & this->head)
 	{
-		NM_ASSERT(0 < scale.x, "BgmapSprite::resize: 0 scale x");
-		NM_ASSERT(0 < scale.y, "BgmapSprite::resize: 0 scale y");
-
-		fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(z, true));
-
-		ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
-
-		this->scale.x = __FIX7_9_MULT(scale.x, ratio);
-		this->scale.y = __FIX7_9_MULT(scale.y, ratio);
-
-		NM_ASSERT(0 < this->scale.x, "BgmapSprite::resize: null scale x");
-		NM_ASSERT(0 < this->scale.y, "BgmapSprite::resize: null scale y");
+		this->rendered = false;
+		this->scale = *scale;
 
 		if(!isDeleted(this->texture))
 		{
 			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			BgmapSprite::computeDimensions(this);
+			BgmapSprite::calculateSize(this, scale);
 		}
 
 		if(0 < this->param)
@@ -296,10 +274,31 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
 	}
-	else
-	{
-		Base::resize(this, scale, z);
-	}
+}
+
+/**
+ * Calculate with and height
+ *
+ * @memberof			BgmapSprite
+ * @private
+ */
+void BgmapSprite::calculateSize(const PixelScale* scale)
+{
+	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+			__FIX7_9_TO_FIXED(scale->x)
+		)
+	))) + 1;
+
+	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
+		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
+		__FIXED_MULT(
+			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+			__FIX7_9_TO_FIXED(scale->y)
+		)
+	))) + 1;
 }
 
 /**
@@ -308,9 +307,9 @@ void BgmapSprite::resize(Scale scale, fixed_t z)
  * @memberof		BgmapSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 BgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
 
@@ -417,6 +416,25 @@ int16 BgmapSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
 	return index;
 }
 
+void BgmapSprite::configureMultiframe(uint16 frame)
+{
+	int16 mx = BgmapTexture::getXOffset(this->texture);
+	int16 my = BgmapTexture::getYOffset(this->texture);
+	
+	int16 cols = Texture::getCols(this->texture);
+
+	int16 allocableFrames = (64 - mx) / cols;
+	int16 usableCollsPerRow = allocableFrames * cols;
+	int16 usedCollsPerRow = frame * cols;
+
+	int16 col = usedCollsPerRow % usableCollsPerRow;
+	int16 row = Texture::getRows(this->texture) * (frame / allocableFrames);
+
+	this->bgmapTextureSource.mx = mx + (col << 3);
+	this->bgmapTextureSource.my = my + (row << 3);
+	this->rendered = false;
+}
+
 void BgmapSprite::processEffects()
 {
 	// set the world size according to the zoom
@@ -492,19 +510,6 @@ void BgmapSprite::setMode(uint16 display, uint16 mode)
 	}
 
 	this->head &= ~__WORLD_END;
-}
-
-/**
- * Register
- *
- * @param position		
- */
-void BgmapSprite::registerWithManager()
-{
-	if(!this->registered)
-	{
-		this->registered = SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
-	}
 }
 
 /**

@@ -14,10 +14,10 @@
 
 #include <string.h>
 
+#include <Behavior.h>
 #include <BgmapSprite.h>
 #include <CollisionManager.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <EntityFactory.h>
 #include <MBgmapSprite.h>
 #include <Mesh.h>
@@ -37,8 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-static int16 _visibilityPadding __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,11 +47,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-static void Entity::setVisibilityPadding(int16 visibilityPadding)
-{
-	_visibilityPadding = visibilityPadding;
-}
 
 /**
  * Class constructor
@@ -68,9 +61,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	// construct base Container
 	Base::constructor(name);
 
-	this->transform = Entity::overrides(this, transform);
-	this->synchronizeGraphics = Entity::overrides(this, synchronizeGraphics);
-
 	// set the ids
 	this->internalId = internalId;
 
@@ -79,17 +69,14 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 
 	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
-	this->shapes = NULL;
+	this->colliders = NULL;
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 	this->wireframes = NULL;
-	this->inCameraRange = true;
+	this->behaviors = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
-
-	this->invalidateGraphics = 0;
-	this->transformColliders = true;
 	this->allowCollisions = true;
 }
 
@@ -170,25 +157,25 @@ void Entity::setSpec(void* entitySpec)
 }
 
 /**
- * Destroy shapes
+ * Destroy colliders
  *
  * @private
  */
 void Entity::destroyColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		ASSERT(!isDeleted(this->shapes), "Entity::setSpec: dead shapes");
+		ASSERT(!isDeleted(this->colliders), "Entity::setSpec: dead colliders");
 
 		CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
 
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			CollisionManager::destroyCollider(collisionManager, Collider::safeCast(node->data));
 		}
 
-		delete this->shapes;
-		this->shapes = NULL;
+		delete this->colliders;
+		this->colliders = NULL;
 	}
 }
 
@@ -238,11 +225,41 @@ void Entity::addBehaviors(BehaviorSpec** behaviorSpecs, bool destroyOldBehaviors
 	}
 
 	// go through n behaviors in entity's spec
-	for(int32 i = 0; behaviorSpecs[i]; i++)
+	for(int32 i = 0; NULL != behaviorSpecs[i]; i++)
 	{
-		Entity::addBehavior(this, Behavior::create(behaviorSpecs[i]));
+		Entity::addBehavior(this, behaviorSpecs[i]);
 		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: behavior not created");
 	}
+}
+
+/**
+ * Add a behavior
+ *
+ * @private
+ * @param wireframeSpec		Behavior spec
+ */
+Behavior Entity::addBehavior(BehaviorSpec* behaviorSpec)
+{
+	if(NULL == behaviorSpec)
+	{
+		return NULL;
+	}
+
+	if(NULL == this->behaviors)
+	{
+		this->behaviors = new VirtualList();
+	}
+
+	Behavior behavior = Behavior::create(SpatialObject::safeCast(this), behaviorSpec);
+
+	NM_ASSERT(!isDeleted(behavior), "Entity::addBehavior: behavior not created");
+
+	if(!isDeleted(behavior))
+	{
+		VirtualList::pushBack(this->behaviors, behavior);
+	}
+
+	return behavior;
 }
 
 /**
@@ -267,7 +284,7 @@ void Entity::destroyBehaviors()
  */
 bool Entity::createSprites()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
 	if(NULL == this->sprites)
 	{
@@ -292,11 +309,6 @@ void Entity::addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites)
 	if(destroyOldSprites)
 	{
 		Entity::destroySprites(this);
-	}
-
-	if(NULL == this->sprites)
-	{
-		this->sprites = new VirtualList();
 	}
 
 	SpriteManager spriteManager = SpriteManager::getInstance();
@@ -324,15 +336,13 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		this->sprites = new VirtualList();
 	}
 
-	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, ListenerObject::safeCast(this));
+	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
 
 	if(!isDeleted(sprite))
 	{
 		VirtualList::pushBack(this->sprites, sprite);
-		this->synchronizeGraphics = true;
-		this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	}
 
 	return sprite;
@@ -392,7 +402,7 @@ void Entity::destroySprites()
  */
 bool Entity::createWireframes()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
 	if(NULL == this->wireframes)
 	{
@@ -418,11 +428,6 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 	if(destroyOldWireframes)
 	{
 		Entity::destroyWireframes(this);
-	}
-
-	if(NULL == this->wireframes)
-	{
-		this->wireframes = new VirtualList();
 	}
 
 	WireframeManager wireframeManager = WireframeManager::getInstance();
@@ -456,15 +461,13 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
 		this->wireframes = new VirtualList();
 	}
 
-	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec);
+	Wireframe wireframe = WireframeManager::createWireframe(wireframeManager, wireframeSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(wireframe), "Entity::addWireframe: wireframe not created");
 
 	if(!isDeleted(wireframe))
 	{
-		Wireframe::setup(wireframe, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), this->hidden);
 		VirtualList::pushBack(this->wireframes, wireframe);
-		this->synchronizeGraphics = true;
 	}
 
 	return wireframe;
@@ -479,7 +482,7 @@ void Entity::destroyWireframes()
 {
 	if(NULL != this->wireframes)
 	{
-		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead shapes");
+		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead colliders");
 
 		WireframeManager wireframeManager = WireframeManager::getInstance();
 
@@ -494,29 +497,29 @@ void Entity::destroyWireframes()
 }
 
 /**
- * Add shapes
+ * Add colliders
  */
 bool Entity::createColliders()
 {
-	// this method can be called multiple times so only add shapes
+	// this method can be called multiple times so only add colliders
 	// if not already done
-	if(NULL == this->shapes)
+	if(NULL == this->colliders)
 	{
-		Entity::addColliders(this, this->entitySpec->shapeSpecs, true);
+		Entity::addColliders(this, this->entitySpec->colliderSpecs, true);
 	}
 
-	return NULL != this->shapes;
+	return NULL != this->colliders;
 }
 
 /**
- * Add shapes from a list of specs
+ * Add colliders from a list of specs
  *
  * @private
- * @param shapeSpecs		List of shapes
+ * @param colliderSpecs		List of colliders
  */
-void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
+void Entity::addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders)
 {
-	if(NULL == shapeSpecs)
+	if(NULL == colliderSpecs)
 	{
 		return;
 	}
@@ -526,17 +529,12 @@ void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
 		Entity::destroyColliders(this);
 	}
 
-	if(NULL == this->shapes)
-	{
-		this->shapes = new VirtualList();
-	}
-
 	CollisionManager collisionManager = VUEngine::getCollisionManager(_vuEngine);
 
 	// go through n sprites in entity's spec
-	for(int32 i = 0; NULL != shapeSpecs[i].allocator; i++)
+	for(int32 i = 0; NULL != colliderSpecs[i].allocator; i++)
 	{
-		Entity::addCollider(this, &shapeSpecs[i], collisionManager);
+		Entity::addCollider(this, &colliderSpecs[i], collisionManager);
 	}
 }
 
@@ -546,9 +544,9 @@ void Entity::addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders)
  * @private
  * @param wireframeSpec		Wireframe spec
  */
-Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager)
+Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager)
 {
-	if(NULL == shapeSpec)
+	if(NULL == colliderSpec)
 	{
 		return NULL;
 	}
@@ -558,19 +556,18 @@ Collider Entity::addCollider(ColliderSpec* shapeSpec, CollisionManager collision
 		collisionManager = VUEngine::getCollisionManager(_vuEngine);
 	}
 
-	if(NULL == this->shapes)
+	if(NULL == this->colliders)
 	{
-		this->shapes = new VirtualList();
+		this->colliders = new VirtualList();
 	}
 
-	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), shapeSpec);
+	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
 
 	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
 
 	if(!isDeleted(collider))
 	{
-		VirtualList::pushBack(this->shapes, collider);
-		this->transformColliders = true;
+		VirtualList::pushBack(this->colliders, collider);
 	}
 
 	return collider;
@@ -587,9 +584,9 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 {
 	PixelVector pixelGlobalPosition = PixelVector::getFromVector3D(environmentPosition, 0);
 
-	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
-	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
-	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->transformation.localPosition.z);
+	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->localTransformation.position.x);
+	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->localTransformation.position.y);
+	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->localTransformation.position.z);
 
 	int16 left = 0;
 	int16 right = 0;
@@ -759,9 +756,9 @@ void Entity::calculateSize(bool force)
 
 	Vector3D centerDisplacement =
 	{
-		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->transformation.localPosition.x,
-		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->transformation.localPosition.y,
-		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
+		__PIXELS_TO_METERS((pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->localTransformation.position.x,
+		__PIXELS_TO_METERS((pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->localTransformation.position.y,
+		__PIXELS_TO_METERS((pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->localTransformation.position.z
 	};
 
 	if(0 != (centerDisplacement.x | centerDisplacement.y | centerDisplacement.z))
@@ -1067,7 +1064,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
 		{
 			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
 			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
+			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
 			return &position;
 		}
 
@@ -1076,7 +1073,7 @@ static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct Posi
 			Vector3D concatenatedEnvironmentPosition = environmentPosition;
 			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
 			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
-			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
+			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z);
 
 			Vector3D* position = Entity::calculateGlobalPositionFromSpecByName(childrenSpecs[i].childrenSpecs, concatenatedEnvironmentPosition, childName);
 
@@ -1186,9 +1183,12 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
 
-	// set spatial position
 	Entity::setLocalPosition(entity, &position);
+	Entity::setLocalRotation(entity, &rotation);
+	Entity::setLocalScale(entity, &scale);
 
 	// add children if defined
 	if(NULL != positionedEntity->childrenSpecs)
@@ -1200,8 +1200,6 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	{
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
-
-	Entity::createComponents(entity);
 
 	return entity;
 }
@@ -1257,9 +1255,12 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	NM_ASSERT(!isDeleted(entity), "Entity::loadEntityDeferred: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Rotation rotation = Rotation::getFromScreenPixelRotation(positionedEntity->onScreenRotation);
+	Scale scale = Scale::getFromScreenPixelScale(positionedEntity->onScreenScale);
 
-	// set spatial position
 	Entity::setLocalPosition(entity, &position);
+	Entity::setLocalRotation(entity, &rotation);
+	Entity::setLocalScale(entity, &scale);
 
 	// add children if defined
 	if(positionedEntity->childrenSpecs)
@@ -1296,18 +1297,12 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 
 	PixelVector pixelPosition = NULL != position ? PixelVector::getFromVector3D(*position, 0) : PixelVector::zero();
 
-	ScreenPixelVector screenPixelVector =
-	{
-		pixelPosition.x,
-		pixelPosition.y,
-		pixelPosition.z,
-		0
-	};
-
 	PositionedEntity positionedEntity =
 	{
 		(EntitySpec*)entitySpec,
-		screenPixelVector,
+		{pixelPosition.x, pixelPosition.y, pixelPosition.z},
+		{0, 0, 0},
+		{1, 1, 1},
 		this->internalId + Entity::getChildCount(this),
 		(char*)name,
 		NULL,
@@ -1387,198 +1382,12 @@ uint32 Entity::areAllChildrenReady()
 }
 
 /**
- * Set collider's position
- *
- * @private
- */
-void Entity::transformCollider(Collider collider, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, int32 shapeSpecIndex)
-{
-	if(!isDeleted(collider))
-	{
-		if(NULL != this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && NULL != this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
-    	{
-			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-
-			Vector3D shapeDisplacement = Vector3D::rotate(Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement), this->transformation.localRotation);
-
-			Vector3D shapePosition = Vector3D::sum(*myPosition, shapeDisplacement);
-
-			Rotation shapeRotation = Rotation::sum(*myRotation, Rotation::getFromPixelRotation(shapeSpecs[shapeSpecIndex].pixelRotation));
-
-			Scale shapeScale = Scale::product(*myScale, shapeSpecs[shapeSpecIndex].scale);
-
-			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
-
-			Collider::transform(collider, &shapePosition, &shapeRotation, &shapeScale, &size);
-		}
-		else
-		{
-			Collider::transform(collider, myPosition, myRotation, myScale, &this->size);
-		}
-	}
-}
-
-/**
- * Set collider's position
- *
- * @private
- */
-void Entity::transformColliders()
-{
-	if(!isDeleted(this->shapes) && this->transformColliders)
-	{
-		// setup collider
-		const Vector3D* myPosition = Entity::getPosition(this);
-		const Rotation* myRotation = Entity::getRotation(this);
-		const Scale* myScale = Entity::getScale(this);
-
-		if(this->entitySpec->shapeSpecs)
-    	{
-			const ColliderSpec* shapeSpecs = this->entitySpec->shapeSpecs;
-			int32 i = 0;
-
-			for(VirtualNode node = this->shapes->head; node && shapeSpecs[i].allocator; node = node->next, i++)
-			{
-				Collider collider = Collider::safeCast(node->data);
-
-				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, i);
-			}
-		}
-		else
-		{
-			for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
-			{
-				Collider collider = Collider::safeCast(node->data);
-
-				Entity::transformCollider(this, collider, myPosition, myRotation, myScale, -1);
-			}
-		}
-	}
-}
-
-bool Entity::transformColliderAtSpecIndex(int32 shapeSpecIndex)
-{
-	if(NULL == this->entitySpec->shapeSpecs)
-	{
-		return false;
-	}
-
-	if(NULL == this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
-	{
-		return false;
-	}
-
-	if(this->shapes && 0 <= shapeSpecIndex && NULL != VirtualList::begin(this->shapes))
-	{
-		Collider collider = Collider::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
-
-		if(!isDeleted(collider))
-		{
-			Entity::transformCollider(this, collider, Entity::getPosition(this), Entity::getRotation(this), Entity::getScale(this), shapeSpecIndex);
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-/**
  * Process extra info in initialization
  *
  * @param extraInfo
  */
 void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {
-}
-
-void Entity::updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection)
-{
-	updatePosition |= updateRotation;
-	updatePosition |= updateProjection;
-	updateScale |= updateRotation;	
-
-	if(this->entitySpec->useZDisplacementInProjection)
-	{
-		Entity::perSpriteUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-	else
-	{
-		Entity::condensedUpdateSprites(this, updatePosition, updateScale, updateRotation);
-	}
-}
-
-void Entity::perSpriteUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			Vector3D position = relativeGlobalPosition;
-			position.z += __PIXELS_TO_METERS(Sprite::getDisplacement(sprite)->z);
-
-			PixelVector projectedPosition = Vector3D::projectToPixelVector(position, Optics::calculateParallax(position.z));
-			projectedPosition.z = __METERS_TO_PIXELS(relativeGlobalPosition.z);
-
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &projectedPosition);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.globalRotation);
-		}
-		
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
-}
-
-void Entity::condensedUpdateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation)
-{
-	if(isDeleted(this->sprites))
-	{
-		return;
-	}
-
-	Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.globalPosition), *_cameraInvertedRotation);
-	PixelVector position = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
-
-	for(VirtualNode node = this->sprites->head; NULL != node ; node = node->next)
-	{
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		if(updatePosition)
-		{
-			// update sprite's 2D position
-			Sprite::setPosition(sprite, &position);
-		}
-
-		if(updateRotation)
-		{
-			// update sprite's 2D rotation
-			Sprite::rotate(sprite, &this->transformation.globalRotation);
-		}
-
-		if(updateScale)
-		{
-			// calculate the scale
-			Sprite::resize(sprite, this->transformation.globalScale, relativeGlobalPosition.z);
-		}
-	}
 }
 
 void Entity::createComponents()
@@ -1608,109 +1417,11 @@ void Entity::initialTransform(const Transformation* environmentTransform)
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform);
 
-	Entity::synchronizeGraphics(this);
-	Entity::transformColliders(this);
+	Entity::createComponents(this);
 
 	if(this->hidden)
 	{
 		Entity::hide(this);
-	}
-}
-
-/**
- * Transform class
- *
- * @param environmentTransform
- */
-void Entity::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
-{
-	uint8 invalidateGraphics = 0;
-
-	invalidateGraphics = invalidateTransformationFlag | this->invalidateGlobalTransformation;
-	
-	if(this->invalidateGlobalTransformation)
-	{
-		Base::transform(this, environmentTransform, invalidateTransformationFlag);
-
-		Entity::transformColliders(this);
-	}
-	else if(NULL != this->children)
-	{
-		Entity::transformChildren(this, invalidateTransformationFlag);
-	}
-	
-	this->invalidateGraphics |= invalidateGraphics;
-}
-
-/**
- * Set global position
- */
-void Entity::setPosition(const Vector3D* position)
-{
-	Base::setPosition(this, position);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set global rotation
- */
-void Entity::setRotation(const Rotation* rotation)
-{
-	Base::setRotation(this, rotation);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set local position
- */
-void Entity::setLocalPosition(const Vector3D* position)
-{
-	Base::setLocalPosition(this, position);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Set local rotation
- */
-void Entity::setLocalRotation(const Rotation* rotation)
-{
-	Base::setLocalRotation(this, rotation);
-
-	Entity::transformColliders(this);
-}
-
-/**
- * Update visual representation
- */
-void Entity::synchronizeGraphics()
-{
-#ifndef __RELEASE	
-	if(!this->transformed)
-	{
-		return;
-	}
-#endif
-
-	if(NULL != this->children)
-	{
-		Base::synchronizeGraphics(this);
-	}
-
-	if(!isDeleted(this->sprites))
-	{
-		Entity::updateSprites(this, this->invalidateGraphics & __INVALIDATE_POSITION, this->invalidateGraphics & __INVALIDATE_SCALE, this->invalidateGraphics & __INVALIDATE_ROTATION, this->invalidateGraphics & __INVALIDATE_PROJECTION);
-	}
-
-	this->invalidateGraphics = false;
-
-	this->inCameraRange = this->dontStreamOut;
-
-	if(!this->inCameraRange)
-	{
-		Entity::computeIfInCameraRange(this, _visibilityPadding, true);
 	}
 }
 
@@ -1725,23 +1436,13 @@ EntitySpec* Entity::getSpec()
 }
 
 /**
- * Retrieve rotation
+ * Retrieve size
  *
- * @return		Global rotation
+ * @return		Size
  */
-const Rotation* Entity::getRotation()
+const Size* Entity::getSize()
 {
-	return &this->transformation.globalRotation;
-}
-
-/**
- * Retrieve scale
- *
- * @return		Global position
- */
-const Scale* Entity::getScale()
-{
-	return &this->transformation.globalScale;
+	return &this->size;
 }
 
 /**
@@ -1764,14 +1465,55 @@ VirtualList Entity::getWireframes()
 	return this->wireframes;
 }
 
+bool Entity::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
+{
+	if(!isDeleted(this->behaviors) && !isDeleted(behaviors))
+	{
+		for(VirtualNode node = this->behaviors->head; NULL != node; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(!classPointer || Object::getCast(behavior, classPointer, NULL))
+			{
+				VirtualList::pushBack(behaviors, behavior);
+			}
+		}
+
+		if(NULL != behaviors->head)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Handles incoming messages
  *
  * @param telegram
  * @return			True if successfully processed, false otherwise
  */
-bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
+bool Entity::handlePropagatedMessage(int32 message)
 {
+	switch(message)
+	{
+		case kMessageReleaseVisualComponents:
+
+			Entity::destroySprites(this);
+			Entity::destroyWireframes(this);
+			break;
+
+		case kMessageReloadVisualComponents:
+
+			if(NULL != this->entitySpec)
+			{
+				Entity::createSprites(this);
+				Entity::createWireframes(this);
+			}
+			break;
+	}
+
 	return false;
 }
 
@@ -1827,58 +1569,15 @@ void Entity::setSize(Size size)
 	this->size = size;
 }
 
-bool Entity::isPixelPositionWithinScreenSpace(PixelVector pixelPosition, int32 pad)
-{
-	PixelSize pixelSize = PixelSize::getFromSize(this->size);
-
-	int16 halfWidth	= pixelSize.x >> 1;
-	int16 halfHeight = pixelSize.y >> 1;
-	int16 halfDepth	= pixelSize.z >> 1;
-
-	int32 x = pixelPosition.x;
-	int32 y = pixelPosition.y;
-	int32 z = pixelPosition.z;
-
-	pad += __ABS(z);
-
-	// check x visibility
-	if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
-	{
-		return false;
-	}
-
-	// check y visibility
-	if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
-	{
-		return false;
-	}
-
-	// check z visibility
-	if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
-	{
-		return false;
-	}
-
-	return true;
-}
-
 /**
- * Whether it is visible
+ * Check whether it is visible
  *
- * @param pad
  * @param recursive
  * @return			Boolean if visible
  */
-bool Entity::isInCameraRange()
+bool Entity::isInCameraRange(int16 padding, bool recursive)
 {
-	return this->inCameraRange;
-}
-
-void Entity::computeIfInCameraRange(int32 pad, bool recursive)
-{
-	this->inCameraRange = false;
-
-	if(NULL != this->sprites && NULL != this->sprites->head)
+	if(!this->hidden && NULL != this->sprites && NULL != this->sprites->head)
 	{
 		for(VirtualNode spriteNode = this->sprites->head; NULL != spriteNode; spriteNode = spriteNode->next)
 		{
@@ -1886,78 +1585,62 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 
 			if(Sprite::isVisible(sprite))
 			{
-				this->inCameraRange = true;
-				return;
-			}
-
-			if(Entity::isPixelPositionWithinScreenSpace(this, Sprite::getDisplacedPosition(sprite), pad))
-			{
-				this->inCameraRange = true;
-				return;
+				return true;
 			}
 		}
 	}
-	else if(NULL != this->wireframes && NULL != this->wireframes->head)
+
+	// when DirectDraw draws at least a pixel
+	if(!this->hidden && NULL != this->wireframes && NULL != this->wireframes->head)
 	{
 		for(VirtualNode wireframeNode = this->wireframes->head; NULL != wireframeNode; wireframeNode = wireframeNode->next)
 		{
 			Wireframe wireframe = Wireframe::safeCast(wireframeNode->data);
-/*
-			// TODO: implement a bool flag in the wireframe that is raised
-			// when DirectDraw draws at least a pixel
+
 			if(Wireframe::isVisible(wireframe))
 			{
-				this->inCameraRange = true;
-				return;
-			}
-*/
-			if(Entity::isPixelPositionWithinScreenSpace(this, Wireframe::getPixelPosition(wireframe), pad))
-			{
-				this->inCameraRange = true;
-				return;
+				return true;
 			}
 		}
 	}
-	else
+
+	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
+
+	if(NULL != this->centerDisplacement)
 	{
-		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
-
-		if(NULL != this->centerDisplacement)
-		{
-			position3D = Vector3D::sum(position3D, *this->centerDisplacement);
-		}
-
-		position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
-		PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
-
-		PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
-
-		size.x = __ABS(size.x);
-		size.y = __ABS(size.y);
-		size.z = __ABS(size.z);
-
-		this->inCameraRange = true;
-
-		int32 helperPad = pad + (0 < position2D.z ? position2D.z : 0);
-
-		// check x visibility
-		if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
-		{
-			this->inCameraRange = false;
-		}
-		// check y visibility
-		else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
-		{
-			this->inCameraRange = false;
-		}
-		// check z visibility
-		else if(position2D.z + size.z < _cameraFrustum->z0 - pad || position2D.z - size.z > _cameraFrustum->z1 + pad)
-		{
-			this->inCameraRange = false;
-		}
+		position3D = Vector3D::sum(position3D, *this->centerDisplacement);
 	}
 
-	if(!this->inCameraRange && recursive && NULL != this->children)
+	position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
+	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
+
+	PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
+
+	size.x = __ABS(size.x);
+	size.y = __ABS(size.y);
+	size.z = __ABS(size.z);
+
+	bool inCameraRange = true;
+
+	int32 helperPad = padding + (0 < position2D.z ? position2D.z : 0);
+
+	// check x visibility
+	if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
+	{
+		inCameraRange = false;
+	}
+	// check y visibility
+	else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
+	{
+		inCameraRange = false;
+	}
+	// check z visibility
+	else if(position2D.z + size.z < _cameraFrustum->z0 - padding || position2D.z - size.z > _cameraFrustum->z1 + padding)
+	{
+		inCameraRange = false;
+	}
+
+	if(!inCameraRange && recursive && NULL != this->children)
 	{
 		for(VirtualNode childNode = this->children->head; childNode; childNode = childNode->next)
 		{
@@ -1968,25 +1651,24 @@ void Entity::computeIfInCameraRange(int32 pad, bool recursive)
 				continue;
 			}
 
-			Entity::computeIfInCameraRange(child, pad, true);
-
-			if(Entity::isInCameraRange(child))
+			if(Entity::isInCameraRange(child, padding, true))
 			{
-				this->inCameraRange = true;
-				break;
+				return true;
 			}
 		}
 	}
+
+	return inCameraRange;
 }
 
 /**
- * Retrieve shapes list
+ * Retrieve colliders list
  *
  * @return		Entity's Collider list
  */
 VirtualList Entity::getColliders()
 {
-	return this->shapes;
+	return this->colliders;
 }
 
 /**
@@ -2067,22 +1749,12 @@ void Entity::resume()
 		Entity::createSprites(this);
 		Entity::createWireframes(this);
 	}
-	else
-	{
-		// force update sprites on next game's cycle
-		this->invalidateGraphics = this->invalidateGlobalTransformation;
-	}
 
 	if(this->hidden)
 	{
 		// Force syncronization even if hidden
 		this->hidden = false;
-		Entity::synchronizeGraphics(this);
 		Entity::hide(this);
-	}
-	else
-	{
-		Entity::synchronizeGraphics(this);
 	}
 }
 
@@ -2128,7 +1800,7 @@ fixed_t Entity::getFrictionCoefficient()
 }
 
 /**
- * Propagate that movement started to the shapes
+ * Propagate that movement started to the colliders
  *
  *@para Active status
  */
@@ -2136,9 +1808,9 @@ void Entity::activeCollisionChecks(bool active)
 {
 	this->allowCollisions |= active;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -2148,14 +1820,14 @@ void Entity::activeCollisionChecks(bool active)
 }
 
 /**
- * Set whether shapes must register shapes against which they have collided
+ * Set whether colliders must register colliders against which they have collided
  * in order to receive update and exit collision notifications
  */
 void Entity::registerCollisions(bool value)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -2165,15 +1837,15 @@ void Entity::registerCollisions(bool value)
 }
 
 /**
- * Propagate active status to the shapes
+ * Propagate active status to the colliders
  */
 void Entity::allowCollisions(bool value)
 {
 	this->allowCollisions = value;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -2192,18 +1864,18 @@ bool Entity::doesAllowCollisions()
 
 
 /**
- * Returns whether I have collision shapes or not
+ * Returns whether I have collision colliders or not
  */
 bool Entity::hasColliders()
 {
-	return NULL != this->shapes && 0 < VirtualList::getSize(this->shapes);
+	return NULL != this->colliders && 0 < VirtualList::getSize(this->colliders);
 }
 
 void Entity::showColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider::show(node->data);
 		}
@@ -2212,9 +1884,9 @@ void Entity::showColliders()
 
 void Entity::hideColliders()
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider::hide(node->data);
 		}
@@ -2245,10 +1917,10 @@ void Entity::setNormalizedDirection(NormalizedDirection normalizedDirection)
 
 	Rotation rotation =
 	{
-		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->transformation.localRotation.x,
-		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->transformation.localRotation.y,
-		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transformation.localRotation.z,
-		this->transformation.localRotation.z,
+		__UP == normalizedDirection.y ? __HALF_ROTATION_DEGREES : __DOWN == normalizedDirection.y ? 0 : this->localTransformation.rotation.x,
+		__LEFT == normalizedDirection.x ? __HALF_ROTATION_DEGREES : __RIGHT == normalizedDirection.x ? 0 : this->localTransformation.rotation.y,
+		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->localTransformation.rotation.z,
+		this->localTransformation.rotation.z,
 	};
 
 	Entity::setLocalRotation(this, &rotation);
@@ -2266,17 +1938,17 @@ NormalizedDirection Entity::getNormalizedDirection()
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.y))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.y))
 	{
 		normalizedDirection.x = __LEFT;
 	}
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.x))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.x))
 	{
 		normalizedDirection.y = __UP;
 	}
 
-	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.globalRotation.z))
+	if(__QUARTER_ROTATION_DEGREES < __ABS(this->transformation.rotation.z))
 	{
 		normalizedDirection.z = __NEAR;
 	}
@@ -2291,19 +1963,19 @@ NormalizedDirection Entity::getNormalizedDirection()
  */
 uint32 Entity::getCollidersLayers()
 {
-	uint32 shapesLayers = 0;
+	uint32 collidersLayers = 0;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayers |= Collider::getLayers(collider);
+			collidersLayers |= Collider::getLayers(collider);
 		}
 	}
 
-	return shapesLayers;
+	return collidersLayers;
 }
 
 /**
@@ -2313,9 +1985,9 @@ uint32 Entity::getCollidersLayers()
  */
 void Entity::setCollidersLayers(uint32 layers)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
@@ -2331,19 +2003,19 @@ void Entity::setCollidersLayers(uint32 layers)
  */
 uint32 Entity::getCollidersLayersToIgnore()
 {
-	uint32 shapesLayersToIgnore = 0;
+	uint32 collidersLayersToIgnore = 0;
 
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			shapesLayersToIgnore |= Collider::getLayersToIgnore(collider);
+			collidersLayersToIgnore |= Collider::getLayersToIgnore(collider);
 		}
 	}
 
-	return shapesLayersToIgnore;
+	return collidersLayersToIgnore;
 }
 
 /**
@@ -2353,9 +2025,9 @@ uint32 Entity::getCollidersLayersToIgnore()
  */
 void Entity::setCollidersLayersToIgnore(uint32 layersToIgnore)
 {
-	if(NULL != this->shapes)
+	if(NULL != this->colliders)
 	{
-		for(VirtualNode node = this->shapes->head; NULL != node; node = node->next)
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
 

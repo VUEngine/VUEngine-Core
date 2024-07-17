@@ -35,6 +35,7 @@ static class Scale : Object
 	static inline Scale division(Scale a, Scale b);
 	static inline Scale scalarProduct(Scale scale, int16 scalar);
 	static inline Scale scalarDivision(Scale scale, int16 scalar);
+	static inline Scale getFromScreenPixelScale(ScreenPixelScale screenPixelScale);
 	static inline bool areEqual(Scale a, Scale b);
 	static void print(Scale scale, int32 x, int32 y);
 }
@@ -96,6 +97,11 @@ static inline Scale Scale::scalarDivision(Scale scale, fix7_9 scalar)
 	}
 
 	return Scale::zero();
+}
+
+static inline Scale Scale::getFromScreenPixelScale(ScreenPixelScale screenPixelScale)
+{
+	return (Scale){__F_TO_FIX7_9(screenPixelScale.x), __F_TO_FIX7_9(screenPixelScale.y), __F_TO_FIX7_9(screenPixelScale.z)};
 }
 
 static inline bool Scale::areEqual(Scale a, Scale b)

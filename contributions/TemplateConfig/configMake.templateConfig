@@ -1,0 +1,10 @@
+{
+	"targets": [{
+		"path": "config.make",
+		"root": "project"
+	}],
+	"template": "contributions/Template/config.make.nj",
+	"events": [{
+		"type": "installedPluginsChanged"
+	}]
+}

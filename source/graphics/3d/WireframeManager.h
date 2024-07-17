@@ -33,7 +33,6 @@ singleton class WireframeManager : ListenerObject
 	volatile bool stopDrawing;
 	bool evenFrame;
 	bool disabled;
-	bool lockWireframeList;
 	uint8 renderedWireframes;
 	uint8 drawnWireframes;
 	
@@ -46,7 +45,7 @@ singleton class WireframeManager : ListenerObject
 	void draw();
 	void render();
 	void print(int32 x, int32 y);
-	Wireframe createWireframe(WireframeSpec* wireframeSpec);
+	Wireframe createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner);
 	void destroyWireframe(Wireframe wireframe);
 	Wireframe registerWireframe(Wireframe wireframe);
 	Wireframe unregisterWireframe(Wireframe wireframe);
@@ -55,6 +54,7 @@ singleton class WireframeManager : ListenerObject
 	void disable();
 	void hideWireframes();
 	void showWireframes();	
+	bool hasWireframes();	
 }
 
 extern Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;

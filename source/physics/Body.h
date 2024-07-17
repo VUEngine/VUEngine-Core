@@ -131,16 +131,12 @@ class Body : ListenerObject
 	// shift elapsed time
 	int8 skipCycles;
 	int8 skipedCycles;
-	// raise flag to make the body active
-	bool active;
 	// raise flag to update body's physics
 	bool awake;
 	// Flag to enable messages
 	bool sendMessages;
 	// Delete flag
 	bool destroy;
-	// flag to clear the external force after each update
-	bool clearExternalForce;
 	// flag that determines the logic for stoping the body
 	bool movesIndependentlyOnEachAxis;
 
@@ -177,14 +173,12 @@ class Body : ListenerObject
 	fixed_t getSpeed();
 	fixed_ext_t getSpeedSquare();
 	void modifyVelocity(const Vector3D* multiplier);
-	bool isActive();
 	bool isAwake();
 	bool reachedMaximumSpeed();
 	uint16 getMovementOnAllAxis();
 	void setMovementType(int32 movementType, uint16 axis);
 	void moveAccelerated(uint16 axis);
-	void moveUniformly(Vector3D velocity);
-	void setActive(bool active);
+	void moveUniformly(const Vector3D* velocity);
 	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
 	void setBounciness(fixed_t bounciness);
 	void setSkipCycles(int8 skipCycles);

@@ -30,11 +30,8 @@ singleton class CharSetManager : Object
 {
 	// Charsets defined
 	VirtualList charSets;
-	// Charsets pending writing
-	VirtualList charSetsPendingWriting;
 	// Next offset to be reclaimed
 	uint16 freedOffset;
-	bool preventDefragmentation;
 
 	/// @publicsection
 	static CharSetManager getInstance();
@@ -44,7 +41,7 @@ singleton class CharSetManager : Object
 	bool releaseCharSet(CharSet charSet);
 	void defragment();
 	void writeCharSets();
-	bool writeCharSetsProgressively();
+	bool defragmentProgressively();
 	int32 getTotalUsedChars();
 	int32 getTotalFreeChars();
 	int32 getTotalCharSets();

@@ -1,0 +1,1221 @@
+{
+	"file": "EngineConfig",
+	"schema": {
+		"title": "Engine Config",
+		"properties": {
+			"affine": {
+				"type": "object",
+				"properties": {
+					"maxRowsPerCall": {
+						"type": "integer",
+						"description": "The maximum number of rows to write on each call to affine calculation functions.",
+						"default": 16
+					},
+					"maxScale": {
+						"type": "integer",
+						"description": "The maximum possible scale. Affects param table allocation space.",
+						"default": 2
+					}
+				}
+			},
+			"animation": {
+				"type": "object",
+				"properties": {
+					"maxAnimationFunctionNameLength": {
+						"type": "integer",
+						"description": "The maximum length of an animation function name.",
+						"default": 16
+					},
+					"maxFramesPerAnimationFunction": {
+						"type": "integer",
+						"description": "The maximum number of frames per animation function.",
+						"default": 16
+					}
+				}
+			},
+			"brightness": {
+				"type": "object",
+				"properties": {
+					"brightRed": {
+						"type": "integer",
+						"default": 128
+					},
+					"mediumRed": {
+						"type": "integer",
+						"default": 64
+					},
+					"darkRed": {
+						"type": "integer",
+						"default": 32
+					},
+					"fadeDelay": {
+						"type": "integer",
+						"default": 16
+					},
+					"fadeIncrement": {
+						"type": "integer",
+						"default": 1
+					}
+				}
+			},
+			"chars": {
+				"type": "object",
+				"properties": {
+					"totalChars": {
+						"type": "integer",
+						"description": "The total number of available chars in char memory",
+						"default": 2048
+					}
+				}
+			},
+			"communications": {
+				"type": "object",
+				"properties": {
+					"enable": {
+						"type": "boolean",
+						"description": "Enable communications at the start of the game, e.g. for link play.",
+						"default": false
+					}
+				}
+			},
+			"debug": {
+				"type": "object",
+				"properties": {
+					"alertVipOvertime": {
+						"type": "boolean",
+						"default": false
+					},
+					"dimmForProfiling": {
+						"type": "boolean",
+						"default": false
+					},
+					"enableProfiler": {
+						"type": "boolean",
+						"default": false
+					},
+					"printFramerate": {
+						"type": "boolean",
+						"default": false
+					},
+					"profileStreaming": {
+						"type": "boolean",
+						"default": false
+					},
+					"showDetailedMemoryPoolStatus": {
+						"type": "boolean",
+						"default": false
+					},
+					"showMemoryPoolStatus": {
+						"type": "boolean",
+						"default": false
+					},
+					"showStackOverflowAlert": {
+						"type": "boolean",
+						"default": false
+					},
+					"showStreamingProfiling": {
+						"type": "boolean",
+						"default": false
+					},
+					"stackHeadroom": {
+						"type": "integer",
+						"default": 1000
+					}
+				}
+			},
+			"exceptions": {
+				"type": "object",
+				"properties": {
+					"position": {
+						"type": "object",
+						"description": "The camera coordinates for the output of exceptions.",
+						"properties": {
+							"x": {
+								"type": "integer",
+								"default": 0,
+								"maximum": 47,
+								"minimum": 0
+							},
+							"y": {
+								"type": "integer",
+								"default": 0,
+								"maximum": 27,
+								"minimum": 0
+							}
+						}
+					}
+				}
+			},
+			"frameRate": {
+				"type": "object",
+				"properties": {
+					"frameCycle": {
+						"type": "integer"
+					},
+					"runDelayedMessagesAtHalfFrameRate": {
+						"type": "boolean",
+						"description": "Define to dispatch the delayed messages every other game frame cycle.",
+						"default": false
+					},
+					"timerResolution": {
+						"type": "integer",
+						"default": 10
+					}
+				}
+			},
+			"game": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"key": {
+							"type": "string",
+							"default": ""
+						},
+						"type": {
+							"type": "string",
+							"oneOf": [
+								{
+									"const": "text",
+									"title": "Text"
+								},
+								{
+									"const": "number",
+									"title": "Number"
+								},
+								{
+									"const": "boolean",
+									"title": "Boolean"
+								},
+								{
+									"const": "constant",
+									"title": "Constant"
+								}
+							],
+							"default": "text"
+						},
+						"value": {
+							"type": "string",
+							"default": ""
+						}
+					}
+				}
+			},
+			"math": {
+				"type": "object",
+				"properties": {
+					"fixedPointPrecision": {
+						"type": "integer",
+						"default": 6
+					}
+				}
+			},
+			"memoryPools": {
+				"type": "object",
+				"properties": {
+					"cleanUp": {
+						"type": "boolean",
+						"description": "Enabling clean-up will reset each byte of each free block to 0 on resetting the game. Use only for debugging! Proper object's initialization must make this macro unnecessary.",
+						"default": false
+					},
+					"warningThreshold": {
+						"type": "integer",
+						"description": "Percentage above which the memory pool's status shows the pool usage.",
+						"default": 85,
+						"minimum": 1,
+						"maximum": 100
+					},
+					"pools": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"objects": {
+									"type": "integer",
+									"default": 1,
+									"minimum": 1
+								},
+								"size": {
+									"type": "integer",
+									"default": 1,
+									"minimum": 1
+								}
+							}
+						},
+						"default": [
+							{
+								"objects": 450,
+								"size": 16
+							},
+							{
+								"objects": 700,
+								"size": 20
+							},
+							{
+								"objects": 350,
+								"size": 28
+							},
+							{
+								"objects": 30,
+								"size": 40
+							},
+							{
+								"objects": 60,
+								"size": 68
+							},
+							{
+								"objects": 50,
+								"size": 80
+							},
+							{
+								"objects": 40,
+								"size": 108
+							},
+							{
+								"objects": 40,
+								"size": 116
+							},
+							{
+								"objects": 10,
+								"size": 140
+							},
+							{
+								"objects": 10,
+								"size": 152
+							}
+						]
+					}
+				}
+			},
+			"optics": {
+				"type": "object",
+				"properties": {
+					"baseFactor": {
+						"type": "integer",
+						"default": 32,
+						"minimum": 0
+					},
+					"cameraMinimumDisplacementPixelsPower": {
+						"type": "integer",
+						"default": 1,
+						"minimum": 0
+					},
+					"cameraNearPlane": {
+						"type": "integer",
+						"default": 0
+					},
+					"horizontalViewPointCenter": {
+						"type": "integer",
+						"default": 192,
+						"minimum": 0
+					},
+					"maximumXViewDistance": {
+						"type": "integer",
+						"default": 2048,
+						"minimum": 0
+					},
+					"maximumYViewDistance": {
+						"type": "integer",
+						"default": 4096,
+						"minimum": 0
+					},
+					"parallaxCorrectionFactor": {
+						"type": "integer",
+						"default": 4,
+						"minimum": 0
+					},
+					"scalingModifierFactor": {
+						"type": "integer",
+						"default": 1,
+						"minimum": 0
+					},
+					"screenDepth": {
+						"type": "integer",
+						"default": 2048,
+						"minimum": 0
+					},
+					"screenHeight": {
+						"type": "integer",
+						"default": 224,
+						"minimum": 0
+					},
+					"screenWidth": {
+						"type": "integer",
+						"default": 384,
+						"minimum": 0
+					},
+					"verticalViewPointCenter": {
+						"type": "integer",
+						"default": 112,
+						"minimum": 0
+					},
+					"useLegacyCoordinateProjection": {
+						"type": "boolean",
+						"default": false
+					}
+				}
+			},
+			"palettes": {
+				"type": "object",
+				"properties": {
+					"bgMapPalette0": {
+						"type": "string",
+						"default": "11100100"
+					},
+					"bgMapPalette1": {
+						"type": "string",
+						"default": "11100000"
+					},
+					"bgMapPalette2": {
+						"type": "string",
+						"default": "10010000"
+					},
+					"bgMapPalette3": {
+						"type": "string",
+						"default": "01010000"
+					},
+					"objectPalette0": {
+						"type": "string",
+						"default": "11100100"
+					},
+					"objectPalette1": {
+						"type": "string",
+						"default": "11100000"
+					},
+					"objectPalette2": {
+						"type": "string",
+						"default": "10010000"
+					},
+					"objectPalette3": {
+						"type": "string",
+						"default": "01010000"
+					},
+					"printingPalette": {
+						"type": "integer",
+						"description": "The BGMap palette that shall be used for text on the printing layer.",
+						"default": 0,
+						"maximum": 3,
+						"minimum": 0
+					}
+				}
+			},
+			"physics": {
+				"type": "object",
+				"properties": {
+					"angleToPreventColliderDisplacement": {
+						"type": "integer",
+						"description": "Minimum angle to allow movement when colliding against another object.",
+						"default": 10,
+						"minimum": 0,
+						"maximum": 128
+					},
+					"bodiesToCheckForGravity": {
+						"type": "integer",
+						"description": "Number of bodies to check for gravity on each cycle.",
+						"default": 10,
+						"minimum": 0
+					},
+					"frictionForceFactorPower": {
+						"type": "integer",
+						"default": 2,
+						"minimum": 0
+					},
+					"gravity": {
+						"type": "integer",
+						"default": 10,
+						"minimum": 0,
+						"maximum": 100
+					},
+					"highPrecision": {
+						"type": "boolean",
+						"default": false
+					},
+					"maximumBouncinessCoefficient": {
+						"type": "integer",
+						"description": "The maximum allowed bounciness coefficient.",
+						"default": 1,
+						"minimum": 0
+					},
+					"maximumFrictionCoefficient": {
+						"type": "integer",
+						"description": "The maximum allowed friction coefficient.",
+						"default": 1,
+						"minimum": 0,
+						"maximum": 256
+					},							
+					"stopBouncingVelocityThreshold": {
+						"type": "integer",
+						"default": 48,
+						"minimum": 0
+					},
+					"stopVelocityThreshold": {
+						"type": "integer",
+						"default": 8,
+						"minimum": 0
+					},
+					"timeElapsedDivisor": {
+						"type": "integer",
+						"description": "Divisor to speed up physics simulations. Bigger number equals faster computations.",
+						"default": 2,
+						"minimum": 0
+					}
+				}
+			},
+			"random": {
+				"type": "object",
+				"properties": {
+					"addUserInputAndTimeToRandomSeed": {
+						"type": "boolean",
+						"default": false
+					},
+					"seedCycles": {
+						"type": "integer",
+						"default": 2,
+						"minimum": 1
+					}
+				}
+			},
+			"sound": {
+				"type": "object",
+				"properties": {
+					"earDisplacement": {
+						"type": "integer",
+						"default": 384,
+						"minimum": 0
+					},
+					"stereoAttenuationDistance": {
+						"type": "integer",
+						"default": 2048,
+						"minimum": 0
+					}
+				}
+			},
+			"sprite": {
+				"type": "object",
+				"properties": {
+					"totalLayers": {
+						"type": "integer",
+						"default": 32,
+						"minimum": 1,
+						"maximum": 32
+					},
+					"totalObjects": {
+						"type": "integer",
+						"default": 1024,
+						"minimum": 1,
+						"maximum": 1024
+					},
+					"hackBgmapSpriteHeight": {
+						"type": "boolean",
+						"default": true
+					}
+				}
+			},
+			"sram": {
+				"type": "object",
+				"properties": {
+					"totalSram": {
+						"type": "integer",
+						"description": "The amount of available SRAM space, in bytes. The Virtual Boy allows up to 16 MB, but most cartridges support only 8 kb of SRAM.",
+						"default": 8192,
+						"minimum": 0
+					}
+				}
+			},
+			"texture": {
+				"type": "object",
+				"properties": {
+					"bgmapsPerSegments": {
+						"type": "integer",
+						"description": "Number of BGMap specs in each BGMap segment.",
+						"default": 14,
+						"minimum": 0
+					},
+					"printing": {
+						"type": "object",
+						"properties": {
+							"offset": {
+								"type": "object",
+								"properties": {
+									"x": {
+										"type": "integer",
+										"default": 0,
+										"minimum": 0
+									},
+									"y": {
+										"type": "integer",
+										"default": 0,
+										"minimum": 0
+									},
+									"parallax": {
+										"type": "integer",
+										"default": 0,
+										"minimum": 0
+									}
+								}
+							},
+							"printableArea": {
+								"type": "integer",
+								"default": 1792,
+								"minimum": 0
+							}
+						}
+					},
+					"paramTableSegments": {
+						"type": "integer",
+						"description": "Number of segments for param tables.",
+						"default": 1,
+						"minimum": 0
+					}
+				}
+			},
+			"wireframes": {
+				"type": "object",
+				"properties": {
+					"sort": {
+						"type": "boolean",
+						"default": true
+					},
+					"interlacedThreshold": {
+						"type": "integer",
+						"description": "The distance to start interlacing wireframe graphics.",
+						"default": 4096,
+						"maximum": 8191,
+						"minimum": 512
+					}
+				}	
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "Categorization",
+		"elements": [
+			{
+				"type": "Category",
+				"label": "Affine",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/affine/properties/maxRowsPerCall"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/affine/properties/maxScale"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Animation",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/animation/properties/maxAnimationFunctionNameLength"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/animation/properties/maxFramesPerAnimationFunction"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Brightness",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"scope": "#/properties/brightness/properties/brightRed"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/brightness/properties/mediumRed"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/brightness/properties/darkRed"
+									}
+								]
+							},
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"scope": "#/properties/brightness/properties/fadeDelay"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/brightness/properties/fadeIncrement"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Chars",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/chars/properties/totalChars"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Communications",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/communications/properties/enable"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Debug",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/debug/properties/alertVipOvertime"
+							},
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/enableProfiler"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/dimmForProfiling"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/profileStreaming"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/showStreamingProfiling"
+									}
+								]
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/debug/properties/printFramerate"
+							},
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/showMemoryPoolStatus"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/showDetailedMemoryPoolStatus"
+									}
+								]
+							},
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/stackHeadroom"
+									},
+									{
+										"type": "Control",
+										"scope": "#/properties/debug/properties/showStackOverflowAlert"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Exceptions",
+				"elements": [
+					{
+						"type": "Group",
+						"label": "Position",
+						"elements": [
+							{
+								"type": "HorizontalLayout",
+								"elements": [
+									{
+										"type": "Control",
+										"label": false,
+										"scope": "#/properties/exceptions/properties/position/properties/x"
+									},
+									{
+										"type": "Control",
+										"label": false,
+										"scope": "#/properties/exceptions/properties/position/properties/y"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "FrameRate",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/frameRate/properties/frameCycle"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/frameRate/properties/runDelayedMessagesAtHalfFrameRate"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/frameRate/properties/timerResolution"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Game specific Macros",
+				"elements": [
+					{
+						"type": "Control",
+						"scope": "#/properties/game"
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Math",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/math/properties/fixedPointPrecision"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "MemoryPools",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryPools/properties/cleanUp"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryPools/properties/warningThreshold"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/memoryPools/properties/pools"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Optics",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/baseFactor"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/cameraMinimumDisplacementPixelsPower"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/cameraNearPlane"
+							},
+							{
+								"type": "Group",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/maximumXViewDistance",
+												"label": "X"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/maximumYViewDistance",
+												"label": "Y"
+											}
+										]
+									}
+								],
+								"label": "Maximum View Distance"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/parallaxCorrectionFactor"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/scalingModifierFactor"
+							},
+							{
+								"type": "Group",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/horizontalViewPointCenter",
+												"label": "Horizontal"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/verticalViewPointCenter",
+												"label": "Vertical"
+											}
+										]
+									}
+								],
+								"label": "View Point Center"
+							},
+							{
+								"type": "Group",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/screenWidth",
+												"label": "Width"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/screenHeight",
+												"label": "Height"
+											},
+											{
+												"type": "Control",
+												"scope": "#/properties/optics/properties/screenDepth",
+												"label": "Depth"
+											}
+										]
+									}
+								],
+								"label": "Screen Size"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/optics/properties/useLegacyCoordinateProjection"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Palettes",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/bgMapPalette0",
+								"label": "BGMap Palette 0"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/bgMapPalette1",
+								"label": "BGMap Palette 1"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/bgMapPalette2",
+								"label": "BGMap Palette 2"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/bgMapPalette3",
+								"label": "BGMap Palette 3"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/objectPalette0",
+								"label": "Object Palette 0"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/objectPalette1",
+								"label": "Object Palette 1"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/objectPalette2",
+								"label": "Object Palette 2"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/objectPalette3",
+								"label": "Object Palette 3"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/palettes/properties/printingPalette",
+								"label": "Printing Palette"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Physics",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/bodiesToCheckForGravity"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/frictionForceFactorPower"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/gravity"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/maximumBouncinessCoefficient"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/stopBouncingVelocityThreshold"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/stopVelocityThreshold"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/timeElapsedDivisor"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Random",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/random/properties/addUserInputAndTimeToRandomSeed"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/random/properties/seedCycles"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Sound",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/sound/properties/earDisplacement",
+								"label": "Ear Displacement"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/sound/properties/stereoAttenuationDistance",
+								"label": "Vertical"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Sprite",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/sprite/properties/totalLayers"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/sprite/properties/totalObjects"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/sprite/properties/hackBgmapSpriteHeight"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "SRAM",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/sram/properties/totalSram",
+								"label": "Total SRAM"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Texture",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/texture/properties/bgmapsPerSegments"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/texture/properties/paramTableSegments"
+							},
+							{
+								"type": "Group",
+								"label": "Printing Area Offset (x, y, parallax)",
+								"elements": [
+									{
+										"type": "HorizontalLayout",
+										"elements": [
+											{
+												"type": "Control",
+												"label": false,
+												"scope": "#/properties/texture/properties/printing/properties/offset/properties/x"
+											},
+											{
+												"type": "Control",
+												"label": false,
+												"scope": "#/properties/texture/properties/printing/properties/offset/properties/y"
+											},
+											{
+												"type": "Control",
+												"label": false,
+												"scope": "#/properties/texture/properties/printing/properties/offset/properties/parallax"
+											}
+										]
+									}
+								]
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/texture/properties/printing/properties/printableArea"
+							}
+						]
+					}
+				]
+			},
+			{
+				"type": "Category",
+				"label": "Wireframes",
+				"elements": [
+					{
+						"type": "VerticalLayout",
+						"elements": [
+							{
+								"type": "Control",
+								"scope": "#/properties/wireframes/properties/sort"
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"icon": "fa fa-sliders",
+	"templates": [
+		"Config"
+	],
+	"delete": [
+		"build/libcore.a",
+		"build/working/libraries/release/libcore-release.a",
+		"build/working/libraries/beta/libcore-beta.a",
+		"build/working/libraries/tools/libcore-tools.a",
+		"build/working/libraries/debug/libcore-debug.a"
+	]
+}

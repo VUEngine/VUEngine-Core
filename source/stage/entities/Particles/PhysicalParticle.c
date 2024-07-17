@@ -34,17 +34,15 @@
  * Class constructor
  *
  * @param particleSpec	Spec of the PhysicalParticle
- * @param spriteSpec
- * @param lifeSpan
- * @param mass
+ * @param creator		Owner Particle System
  */
-void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator)
+void PhysicalParticle::constructor(const PhysicalParticleSpec* physicalParticleSpec, ParticleSystem creator)
 {
 	// construct base Container
-	Base::constructor(&physicalParticleSpec->particleSpec, spriteSpec, wireframeSpec, lifeSpan, creator);
+	Base::constructor(&physicalParticleSpec->particleSpec, creator);
 
 	this->physicalParticleSpec = physicalParticleSpec;
-	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
+	fixed_t mass = this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0);
 	PhysicalProperties physicalProperties = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(VUEngine::getPhysicalWorld(_vuEngine), SpatialObject::safeCast(this), &physicalProperties, physicalParticleSpec->axisSubjectToGravity);
 }
@@ -85,14 +83,6 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
 }
 
 /**
- * Transform
- */
-void PhysicalParticle::transform()
-{
-	this->position = *Body::getPosition(this->body);
-}
-
-/**
  * Add force
  *
  * @param force
@@ -125,7 +115,7 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
 			acceleration.z
 		};
 
-		Body::moveUniformly(this->body, velocity);
+		Body::moveUniformly(this->body, &velocity);
 	}
 	else
 	{
@@ -139,7 +129,7 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
  */
 void PhysicalParticle::changeMass()
 {
-	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Utilities::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
+	Body::setMass(this->body, this->physicalParticleSpec->minimumMass + (this->physicalParticleSpec->massDelta ? Math::random(_gameRandomSeed, this->physicalParticleSpec->massDelta) : 0));
 }
 
 /**
@@ -151,7 +141,10 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 {
 	ASSERT(this->body, "Particle::setPosition: null body");
 
-	Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+	if(Body::getPosition(this->body) != position)
+	{
+		Body::setPosition(this->body, position, SpatialObject::safeCast(this));
+	}
 
 	Base::setPosition(this, position);
 }

@@ -43,7 +43,7 @@ TARGET = $(WORKING_FOLDER)/$(TARGET_FILE)-$(TYPE)
 # define the engine
 VUENGINE = $(BUILD_DIR)/lib$(ENGINE_NAME).a
 
-all: printPreBuildingInfo dirs postDirCleanUp preprocessClasses engine plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
+all: printPreBuildingInfo dirs deleteLibraries postDirCleanUp preprocessClasses engine plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
 	@echo
@@ -57,7 +57,13 @@ printPreBuildingInfo:
 	@echo
 	@echo "Checking dirs..."
 	@echo
+
+deleteLibraries:
+ifeq ($(BUILD_ALL), 1)
 	@rm -f $(WORKING_FOLDER)/libraries/$(BUILD_MODE)/*.a
+	@rm -f $(BUILD_DIR)/*.a
+endif
+	@rm -f $(TARGET).elf
 
 postDirCleanUp:
 #	@echo "Finding total number of components"
@@ -126,7 +132,3 @@ $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) 
 	@echo
 	@du -h build/*.a
 	@echo
-
-deleteLibraries:
-	@rm -f $(PLUGINS_PATH)/*.a
-

@@ -46,7 +46,6 @@ friend class VirtualNode;
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-//#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIXED(0.9f)
 #ifndef __STOP_VELOCITY_THRESHOLD
 #define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(1)
 #endif
@@ -130,7 +129,6 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->totalFrictionCoefficient = 0;
 	this->frictionForceMagnitude = 0;
 
-	this->active = true;
 	this->awake = false;
 	this->sendMessages = true;
 	this->axisSubjectToGravity = axisSubjectToGravity;
@@ -150,7 +148,6 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->maximumVelocity 		= physicalProperties->maximumVelocity;
 	this->maximumSpeed 			= physicalProperties->maximumSpeed;
 	this->speed 				= 0;
-	this->clearExternalForce 	= __NO_AXIS;
 	this->skipCycles 			= 0;
 	this->skipedCycles 			= 0;
 
@@ -311,21 +308,21 @@ void Body::moveAccelerated(uint16 axis)
 }
 
 // set movement type to uniform
-void Body::moveUniformly(Vector3D velocity)
+void Body::moveUniformly(const Vector3D* velocity)
 {
 	uint16 axisOfUniformMovement = 0;
 
-	if(0 != velocity.x)
+	if(0 != velocity->x)
 	{
 		axisOfUniformMovement |= __X_AXIS;
 	}
 
-	if(0 != velocity.y)
+	if(0 != velocity->y)
 	{
 		axisOfUniformMovement |= __Y_AXIS;
 	}
 
-	if(0 != velocity.z)
+	if(0 != velocity->z)
 	{
 		axisOfUniformMovement |= __Z_AXIS;
 	}
@@ -335,10 +332,10 @@ void Body::moveUniformly(Vector3D velocity)
 		Body::setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
 		Body::awake(this, axisOfUniformMovement);
 
-		this->velocity = velocity;
-		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(velocity.x);
-		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(velocity.y);
-		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(velocity.z);
+		this->velocity = *velocity;
+		this->internalVelocity.x = __FIXED_TO_FIX7_9_EXT(this->velocity.x);
+		this->internalVelocity.y = __FIXED_TO_FIX7_9_EXT(this->velocity.y);
+		this->internalVelocity.z = __FIXED_TO_FIX7_9_EXT(this->velocity.z);
 
 		Body::clampVelocity(this, false);
 	}
@@ -392,8 +389,6 @@ uint8 Body::applyForce(const Vector3D* force)
 		Body::awake(this, axisOfExternalForce);
 	}
 
-	this->clearExternalForce |= axisOfExternalForce;
-
 	return axisOfExternalForce;
 }
 
@@ -422,13 +417,13 @@ void Body::applySustainedForce(const Vector3D* force)
 {
 	ASSERT(force, "Body::applySustainedForce: null force");
 
-	this->clearExternalForce = ~Body::applyForce(this, force);
+	Body::applyForce(this, force);
 }
 
 // update movement
 void Body::update(uint16 cycle)
 {
-	if(!this->active || !this->awake)
+	if(!this->awake)
 	{
 		return;
 	}
@@ -463,12 +458,18 @@ void Body::update(uint16 cycle)
 		movementResult = Body::updateMovement(this, cycle);
 	}
 
+	if(!isDeleted(this->owner))
+	{
+		SpatialObject::setPosition(this->owner, &this->position);
+		SpatialObject::setDirection(this->owner, &this->direction);
+	}
+
 	// if stopped on any axis
 	if(0 != movementResult.axisStoppedMovement)
 	{
 		Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(0 != movementResult.axisStoppedMovement && this->sendMessages)
+		if(!isDeleted(this->owner) && 0 != movementResult.axisStoppedMovement && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &movementResult.axisStoppedMovement);
 		}
@@ -519,7 +520,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	// and if the velocity minimum threshold is not reached
 	if(0 != previousVelocity.x && 0 == this->externalForce.x && 0 == this->gravity.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && !this->accelerating.x) || (0 > movementChange.x))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (0 == this->externalForce.x && 0 == this->accelerating.x) || (0 > movementChange.x))
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
@@ -527,7 +528,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.y && 0 == this->externalForce.y && 0 == this->gravity.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && !this->accelerating.y) || (0 > movementChange.y))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (0 == this->externalForce.y && 0 == this->accelerating.y) || (0 > movementChange.y))
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
@@ -535,7 +536,7 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	if(0 != previousVelocity.z && 0 == this->externalForce.z && 0 == this->gravity.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && !this->accelerating.z) || (0 > movementChange.z))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (0 == this->externalForce.z && 0 == this->accelerating.z) || (0 > movementChange.z))
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
 		}
@@ -656,8 +657,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 // update movement over axis
 MovementResult Body::updateMovement(uint16 cycle)
 {
-	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D::scalarProduct(this->direction, -__FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER)));
+	this->friction = Vector3D::scalarProduct(this->direction, -this->frictionForceMagnitude);
 
 	Vector3D previousVelocity = this->velocity;
 
@@ -800,18 +800,6 @@ uint16 Body::getAxisSubjectToGravity()
 void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 {
 	this->axisSubjectToGravity = axisSubjectToGravity;
-}
-
-// set active
-void Body::setActive(bool active)
-{
-	this->active = active;
-}
-
-// is active?
-bool Body::isActive()
-{
-	return this->active;
 }
 
 // retrieve position
@@ -1052,6 +1040,8 @@ void Body::computeTotalFrictionCoefficient()
 	{
 		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
+
+	Body::computeFrictionForceMagnitude(this);
 }
 
 Vector3D Body::getWeight()
@@ -1093,6 +1083,9 @@ void Body::computeFrictionForceMagnitude()
 			}
 		}
 	}
+
+	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
+	this->frictionForceMagnitude = __FIXED_MULT(this->frictionForceMagnitude, __I_TO_FIXED(1 << __FRICTION_FORCE_FACTOR_POWER));
 }
 
 // set friction
@@ -1144,14 +1137,13 @@ bool Body::reachedMaximumSpeedpeed()
 // retrieve state
 bool Body::isAwake()
 {
-	return this->awake && this->active;
+	return this->awake;
 }
 
 // awake body
 void Body::awake(uint16 axisOfAwakening)
 {
 	this->awake = true;
-	this->active = true;
 
 	if(this->sendMessages)
 	{
@@ -1172,7 +1164,7 @@ void Body::awake(uint16 axisOfAwakening)
 			dispatchMessage |= (__Z_AXIS & axisOfAwakening);
 		}
 
-		if(dispatchMessage)
+		if(!isDeleted(this->owner) && dispatchMessage)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStartedMoving, &axisOfAwakening);
 		}
@@ -1188,7 +1180,7 @@ void Body::sleep()
 // is it moving?
 uint16 Body::getMovementOnAllAxis()
 {
-	if(!this->awake || !this->active)
+	if(!this->awake)
 	{
 		return __NO_AXIS;
 	}
@@ -1343,7 +1335,7 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	{
 		uint16 axisOfStopping = Body::stopMovement(this, movementResult.axisStoppedMovement);
 
-		if(__NO_AXIS != axisOfStopping && this->sendMessages)
+		if(!isDeleted(this->owner) && __NO_AXIS != axisOfStopping && this->sendMessages)
 		{
 			MessageDispatcher::dispatchMessage(0, ListenerObject::safeCast(this), ListenerObject::safeCast(this->owner), kMessageBodyStopped, &axisOfStopping);
 		}
@@ -1358,6 +1350,13 @@ void Body::bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, f
 	if(!Body::getMovementOnAllAxis(this))
 	{
 		Body::sleep(this);
+	}
+	else
+	{
+		if(!isDeleted(this->owner))
+		{
+			SpatialObject::setDirection(this->owner, &this->direction);
+		}
 	}
 }
 
@@ -1390,8 +1389,6 @@ void Body::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "BODY", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Active:", x, ++y, NULL);
-	Printing::text(Printing::getInstance(), this->active ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 8, y++, NULL);
 

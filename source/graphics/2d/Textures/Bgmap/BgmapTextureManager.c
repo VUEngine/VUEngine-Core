@@ -108,8 +108,6 @@ void BgmapTextureManager::reset()
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
 	}
-
-	this->deferTextureUpdate = false;
 }
 
 /*
@@ -123,7 +121,7 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 	if(NULL != textureSpecs)
 	{
 		VirtualList sortedTextureSpecs = new VirtualList();
-		VirtualList recyclableTextures = new VirtualList();
+		VirtualList preloadedTextures = new VirtualList();
 
 		for(int16 i = 0; NULL != textureSpecs[i]; i++)
 		{
@@ -168,6 +166,8 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 			}
 		}
 
+		// Must not release the texture just after loading them so
+		// the recyclable ones are not recycled immediately
 		for(VirtualNode node = sortedTextureSpecs->head; NULL != node; node = node->next)
 		{
 			TextureSpec* textureSpec = (TextureSpec*)node->data;
@@ -175,29 +175,17 @@ void BgmapTextureManager::loadTextures(const TextureSpec** textureSpecs)
 			BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(this, textureSpec, 0, false, __WORLD_1x1);
 
 			NM_ASSERT(!isDeleted(bgmapTexture), "BgmapTextureManager::loadTextures: failed to load bgmapTexture");
-
-			if(textureSpec->recyclable)
-			{
-#ifndef __RELEASE
-				Texture::write(bgmapTexture, -1);
-#endif
-				VirtualList::pushBack(recyclableTextures, bgmapTexture);
-			}
-			else
-			{
-				Texture::write(bgmapTexture, -1);
-				Texture::releaseCharSet(bgmapTexture);
-			}
+			VirtualList::pushBack(preloadedTextures, bgmapTexture);
 		}
 
 		delete sortedTextureSpecs;
 
-		for(VirtualNode node = VirtualList::begin(recyclableTextures); NULL != node; node = node->next)
+		for(VirtualNode node = VirtualList::begin(preloadedTextures); NULL != node; node = node->next)
 		{
 			BgmapTextureManager::releaseTexture(this, BgmapTexture::safeCast(node->data));
 		}
 
-		delete recyclableTextures;
+		delete preloadedTextures;
 	}
 }
 
@@ -357,43 +345,9 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	// if no one is using the texture anymore
-	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
+	if(!isDeleted(bgmapTexture))
 	{
-		BgmapTexture::releaseCharSet(bgmapTexture);
-	}
-}
-
-/**
- * Update textures
- *
- * @public
- * @param value			Boolean flag
- */
-void BgmapTextureManager::setDeferTextureUpdate(bool value)
-{
-	this->deferTextureUpdate = value;
-}
-
-/**
- * Update textures
- *
- * @public
- */
-void BgmapTextureManager::updateTextures(int16 maximumTextureRowsToWrite)
-{
-	for(VirtualNode node = this->bgmapTextures->head; NULL != node; node = node->next)
-	{
-		Texture texture = Texture::safeCast(node->data);
-
-		if(kTextureWritten != texture->status && texture->update)
-		{
-			texture->update = !Texture::update(texture, maximumTextureRowsToWrite);
-
-			if(this->deferTextureUpdate)
-			{
-				break;
-			}
-		}
+		BgmapTexture::decreaseUsageCount(bgmapTexture);
 	}
 }
 
@@ -498,6 +452,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTexture
 	// create new texture and register it
 	BgmapTexture bgmapTexture = new BgmapTexture(bgmapTextureSpec, id);
 	BgmapTexture::setSegment(bgmapTexture, segment);
+	BgmapTexture::setOffsets(bgmapTexture, BgmapTextureManager::getXOffset(this, id), BgmapTextureManager::getYOffset(this, id));
 
 	VirtualList::pushBack(this->bgmapTextures, bgmapTexture);
 
@@ -646,6 +601,7 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 	Printing::setPrintingBgmapSegment(Printing::getInstance(), this->printingBgmapSegment);
 }
 
+#ifndef __SHIPPING
 /**
  * Print manager's status
  *
@@ -714,3 +670,4 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
 	Printing::int32(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
 }
+#endif

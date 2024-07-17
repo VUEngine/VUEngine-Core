@@ -22,8 +22,6 @@
 //											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __AVAILABLE_CHAR_OBJECTS	1024
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -42,8 +40,6 @@ class ObjectSpriteContainer : Sprite
 	int32 lastObjectIndex;
 	// spt index
 	int32 spt;
-	// semaphore to prevent manipulation of VirtualList during interrupt
-	bool lockSpritesLists;
 	// flag to override to show / hide sprites
 	bool hideSprites;
 
@@ -66,16 +62,16 @@ class ObjectSpriteContainer : Sprite
 	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);
 	void hideSprites(ObjectSprite spareSprite);
-	void renderSprites(bool evenFrame);
+	void renderSprites(bool evenFrame, bool updateAnimations);
 
 	override void registerWithManager();
+	override void unregisterWithManager();
 	override void hideForDebug();
 	override void forceShow();
-	override int16 doRender(int16 index, bool evenFrame);
-	override bool writeTextures(int16 maximumTextureRowsToWrite);
+	override int16 doRender(int16 index);
 	override void print(int32 x, int32 y);
 	override int32 getTotalPixels();
-	override void invalidateRenderFlag();
+	override void invalidateRendering();
 }
 
 

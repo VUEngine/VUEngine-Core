@@ -25,13 +25,6 @@
 #define __OBFUSCATE_NAME(value)			(#value)
 #endif
 
-// define the class's allocator declaration
-#define __CLASS_NEW_DECLARE(ClassName, ...)																\
-																										\
-		/* define the method */																			\
-		ClassName ClassName ## _new(__VA_ARGS__)
-
-
 #ifndef __RELEASE
 #undef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
 #else
@@ -70,7 +63,7 @@
 			this->vTable = (void*)&ClassName ## _vTable;												\
 																										\
 			/* construct the object */																	\
-			ClassName ## _constructor(this, ##__VA_ARGS__);												\
+			ClassName ## _constructor(__VA_ARGS__);														\
 																										\
 			ASSERT(this->vTable == &ClassName ## _vTable,												\
 				__MAKE_STRING(ClassName) "::new: vTable not set properly");								\
@@ -103,6 +96,8 @@
 	{																									\
 		void* object = (void*)objectToDelete;															\
 																										\
+		HardwareManager_suspendInterrupts();															\
+																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
@@ -120,11 +115,15 @@
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}																								\
 																										\
+		HardwareManager_resumeInterrupts();																\
+																										\
 	}
 #else
 #define __DELETE(objectToDelete)																		\
 	{																									\
 		void* object = (void*)objectToDelete;															\
+																										\
+		HardwareManager_suspendInterrupts();															\
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(uint16*)((uint32)object - __DYNAMIC_STRUCT_PAD))				\
 		{																								\
@@ -139,6 +138,8 @@
 			NM_ASSERT(false, "Oop: deleting something not dynamically allocated");						\
 		}																								\
 																										\
+		HardwareManager_resumeInterrupts();																\
+																										\
 	}
 #endif
 
@@ -147,7 +148,7 @@
 #define __CONSTRUCT_BASE(BaseClass, ...)																\
 																										\
 		/* call base's constructor */																	\
-		BaseClass ## _constructor(__SAFE_CAST(BaseClass, this), ##__VA_ARGS__);							\
+		BaseClass ## _constructor((BaseClass)__VA_ARGS__);												\
 
 // must always call base class's destructor
 #define __DESTROY_BASE																					\
@@ -161,22 +162,23 @@
 		/* call derived implementation */																\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)								\
 
-#define __VIRTUAL_CALL_COMMA_HELPER(...) ,##__VA_ARGS__
+#define __VIRTUAL_CALL_FIRST_HELPER(object, ...) object
+#define __VIRTUAL_CALL_OBJECT(...) __VIRTUAL_CALL_FIRST_HELPER(__VA_ARGS__, throwaway)
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
-#define __VIRTUAL_CALL(ClassName, MethodName, object, ...)												\
-																										\
-		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))							\
-		(																								\
-			__SAFE_CAST(ClassName, object) __VIRTUAL_CALL_COMMA_HELPER(__VA_ARGS__)						\
+#define __VIRTUAL_CALL(ClassName, MethodName, ...)																\
+																												\
+		((((struct ClassName ## _vTable*)((*((void**)__VIRTUAL_CALL_OBJECT(__VA_ARGS__)))))->MethodName))		\
+		(																										\
+			(ClassName)__VA_ARGS__																				\
 		)
 
 // call the base's method
-#define __CALL_BASE_METHOD(BaseClassName, MethodName, object, ...)										\
+#define __CALL_BASE_METHOD(BaseClassName, MethodName, ...)												\
 																										\
 		BaseClassName ## _vTable.MethodName																\
 		(																								\
-			__SAFE_CAST(BaseClassName, object), ##__VA_ARGS__											\
+			(BaseClassName)__VA_ARGS__																	\
 		)
 
 #ifdef __DEBUG
@@ -192,7 +194,7 @@
 																										\
 		/* try to up cast object */																		\
 		(void (*)())&ClassName ## _ ## MethodName != 													\
-			(void*)__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
+			(void (*)())__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)
 
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
@@ -219,7 +221,7 @@
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\
 																										\
 		/* define a virtual method pointer */															\
-		ReturnType (*MethodName)(ClassName, ##__VA_ARGS__)												\
+		ReturnType (*MethodName)(__VA_ARGS__)															\
 
 // override a virtual method
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)												\
@@ -234,7 +236,7 @@
 		{																								\
 			/* use a temporary pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassName ## _vTable.MethodName;					\
-			*(tempPointer) = (void (*)())&NewMethod;													\
+			*(tempPointer) = (void (*)())NewMethod;													\
 		}
 
 // configure class's vtable
@@ -299,13 +301,13 @@
 		struct ClassName ## _vTable 																	\
 		{																								\
 			/* all destructors are virtual */															\
-			__VIRTUAL_DEC(ClassName, void, destructor);													\
+			__VIRTUAL_DEC(ClassName, void, destructor, ClassName);										\
 																										\
 			/* get super class method */																\
-			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass);										\
+			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass, ClassName);							\
 																										\
 			/* all destructors are virtual */															\
-			__VIRTUAL_DEC(ClassName, const char*, getClassName);										\
+			__VIRTUAL_DEC(ClassName, const char*, getClassName, ClassName);								\
 																										\
 			/* insert class's virtual methods names */													\
 			ClassName ## _METHODS(ClassName)															\
@@ -317,16 +319,13 @@
 // forward declare a class
 #define __FORWARD_CLASS(ClassName)																		\
 		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
+		typedef struct ClassName ## _str* ClassName														\
 
 /* typedef for RTTI */
 typedef void* (*(*ClassPointer)(void*))(void*);
 
 // declare a class
 #define __CLASS(ClassName)																				\
-																										\
-		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
 																										\
 		/* declare vtable */																			\
 		__VTABLE(ClassName);																			\
@@ -454,7 +453,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 #define __SINGLETON_CONSTRUCTED				2
 
 // defines a singleton (unique instance of a class)
-#define __SINGLETON(ClassName, ...)																		\
+#define __SINGLETON(ClassName)																			\
 																										\
 		/* declare the static instance */																\
 		typedef struct SingletonWrapper ## ClassName													\
@@ -485,7 +484,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 																										\
 			/*  */																						\
 			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
-			_singletonWrapper ## ClassName.objectMemoryFootprint = __OBJECT_MEMORY_FOOT_PRINT;			\
+			_singletonWrapper ## ClassName.objectMemoryFootprint = 										\
+				(__OBJECT_MEMORY_FOOT_PRINT << 16) | -1;												\
 																										\
 			/* set the vtable pointer */																\
 			instance->vTable = &ClassName ## _vTable;													\
@@ -533,8 +533,8 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 		static ClassName _instance ## ClassName __NON_INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		/* define allocator */																			\
-		__CLASS_NEW_DEFINITION(ClassName)																\
-		__CLASS_NEW_END(ClassName);																		\
+		__CLASS_NEW_DEFINITION(ClassName, void)															\
+		__CLASS_NEW_END(ClassName, this);																\
 																										\
 		/* a flag to know when to allow construction */													\
 		static int8 _singletonConstructed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE					\

@@ -68,18 +68,14 @@ typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 class MBgmapSprite : BgmapSprite
 {
 	VirtualList textures;
-	// pinter to spec
-	const MBgmapSpriteSpec* mBgmapSpriteSpec;
 	// to speed up rendering
-	uint32 textureXOffset;
+	uint16 textureXOffset;
 	// to speed up rendering
-	uint32 textureYOffset;
+	uint16 textureYOffset;
 
 	/// @publicsection
-	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, ListenerObject owner);
-	override int16 doRender(int16 index, bool evenFrame);
-	override void resize(Scale scale, fixed_t z);
-	override bool writeTextures(int16 maximumTextureRowsToWrite);
+	void constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
+	override int16 doRender(int16 index);
 }
 
 

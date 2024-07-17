@@ -154,12 +154,6 @@ void AnimationInspector::destructor()
  */
 void AnimationInspector::update()
 {
-	if(this->gameState && this->animatedSprite)
-	{
-		Sprite::updateAnimation(this->animatedSprite);
-		Sprite::update(this->animatedSprite);
-		Sprite::processEffects(this->animatedSprite);
-	}
 }
 
 /**
@@ -170,6 +164,17 @@ void AnimationInspector::update()
 void AnimationInspector::show()
 {
 	Printing::clear(Printing::getInstance());
+
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+		Printing::text(Printing::getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
+		Printing::text(Printing::getInstance(), "             ", 39, 2, NULL);
+		Printing::text(Printing::getInstance(), "             ", 39, 3, NULL);
+		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		return;
+	}
 
 	this->animatedSprite = NULL;
 
@@ -212,6 +217,13 @@ void AnimationInspector::show()
  */
 void AnimationInspector::hide()
 {
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		Printing::text(Printing::getInstance(), "No animations found", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userAnimatedEntities global variable", 1, 6, NULL);
+		return;
+	}
+
 	Printing::clear(Printing::getInstance());
 
 	AnimationInspector::removePreviousSprite(this);
@@ -315,6 +327,11 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 		return;
 	}
 
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		return;
+	}
+
 	if(pressedKey & K_B)
 	{
 		this->mode--;
@@ -364,7 +381,8 @@ void AnimationInspector::processUserInput(uint16 pressedKey)
 void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
-	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
+
+	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -391,7 +409,8 @@ void AnimationInspector::selectAnimatedEntity(uint32 pressedKey)
 void AnimationInspector::selectSprite(uint32 pressedKey)
 {
 	int32 userAnimatedEntitiesCount = 0;
-	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
+
+	for(; NULL != _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntitySpec; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -711,6 +730,11 @@ void AnimationInspector::printAnimationConfig()
  */
 void AnimationInspector::loadAnimationFunction()
 {
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		return;
+	}
+
 	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
 	const AnimationFunction* animationFunction = this->animationFunctions[OptionsSelector::getSelectedOption(this->animationsSelector)];
@@ -735,6 +759,11 @@ void AnimationInspector::loadAnimationFunction()
  */
 void AnimationInspector::createSprite()
 {
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		return;
+	}
+
 	AnimationInspector::removePreviousSprite(this);
 
 	Vector3D position = *_cameraPosition;
@@ -747,7 +776,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, NULL));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
@@ -759,11 +788,11 @@ void AnimationInspector::createSprite()
 	Sprite::processEffects(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
-	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+	PixelScale spriteScale = {1, 1};
 
 	Sprite::setPosition(this->animatedSprite, &spritePosition);
-	Sprite::rotate(this->animatedSprite, &spriteRotation);
-	Sprite::resize(this->animatedSprite, spriteScale, spritePosition.z);
+	Sprite::setRotation(this->animatedSprite, &spriteRotation);
+	Sprite::setScale(this->animatedSprite, &spriteScale);
 	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->writeAnimationFrame = true;
@@ -781,7 +810,7 @@ void AnimationInspector::createSprite()
  */
 void AnimationInspector::createSpriteSelector()
 {
-	if(this->spriteSelector)
+	if(!isDeleted(this->spriteSelector))
 	{
 		delete this->spriteSelector;
 	}
@@ -791,7 +820,8 @@ void AnimationInspector::createSpriteSelector()
 	VirtualList spriteIndexes = new VirtualList();
 
 	int32 i = 0;
-	while(_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[i])
+	
+	while(NULL != _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->entitySpec.spriteSpecs[i])
 	{
 		Option* option = new Option;
 		option->value = NULL;
@@ -812,6 +842,11 @@ void AnimationInspector::createSpriteSelector()
  */
 void AnimationInspector::createAnimationsSelector()
 {
+	if(NULL == _userAnimatedEntities[0].animatedEntitySpec)
+	{
+		return;
+	}
+
 	this->animationFunctions = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntitySpec->animationFunctions;
 
 	if(this->animationFunctions)
@@ -922,12 +957,14 @@ void AnimationInspector::createFrameEditionSelector()
  * @private
  * @param eventFirer		AnimationController
  */
-void AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
+bool AnimationInspector::onAnimationComplete(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{
 		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
 	}
+
+	return true;
 }
 
 #endif

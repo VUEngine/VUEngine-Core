@@ -15,14 +15,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <Component.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-class Container;
+class Entity;
 
 // defines an entity in ROM memory
 typedef struct BehaviorSpec
@@ -43,21 +43,17 @@ typedef const BehaviorSpec BehaviorROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup base
-abstract class Behavior : ListenerObject
+abstract class Behavior : Component
 {
 	bool enabled;
 
-	void constructor(const BehaviorSpec* behaviorSpec);
+	static Behavior create(SpatialObject owner, const BehaviorSpec* behaviorSpec);
+
+	void constructor(SpatialObject owner, const BehaviorSpec* behaviorSpec);
 
 	bool isEnabled();
 	void setEnabled(bool value);
 
-	static Behavior create(const BehaviorSpec* behaviorSpec);
-
-	virtual void start(Container owner);
-	virtual void update(Container owner);
-	virtual void pause(Container owner);
-	virtual void resume(Container owner);
 }
 
 

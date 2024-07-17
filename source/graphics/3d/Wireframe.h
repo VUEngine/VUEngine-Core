@@ -15,7 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ListenerObject.h>
+#include <VisualComponent.h>
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S MACROS
@@ -53,35 +53,25 @@ typedef const WireframeSpec WireframeROMSpec;
 
 
 /// @ingroup graphics-3d
-abstract class Wireframe : ListenerObject
+abstract class Wireframe : VisualComponent
 {
-	PixelVector center;
 	Vector3D displacement;
-	WireframeSpec* wireframeSpec;
-	const Vector3D* position;
-	const Rotation* rotation;
-	const Scale* scale;
 	fixed_ext_t squaredDistanceToCamera;
+	bool drawn;
 	bool interlaced;
 	uint8 color;
 	uint8 bufferIndex;
-	uint8 show;
-	uint8 transparent;
-	bool draw;
 
 	/// @publicsection
-	void constructor(WireframeSpec* wireframeSpec);
-	void setTransparent(bool transparent);
-	void hide();
-	void show();
+	void constructor(SpatialObject owner, WireframeSpec* wireframeSpec);
 	void setupRenderingMode(const Vector3D* relativePosition);
 	void setDisplacement(const Vector3D* displacement);
+	bool isVisible();
 	PixelVector getPixelPosition();
 
-	virtual void draw() = 0;
-	virtual void render();
+	virtual bool draw() = 0;
+	virtual bool render();
 	virtual VirtualList getVertices();
-	virtual void setup(const Vector3D* position, const Rotation* rotation, const Scale* scale, bool hidden);
 	virtual PixelRightBox getPixelRightBox();
 }
 

@@ -18,6 +18,7 @@
 #include <State.h>
 #include <KeypadManager.h>
 #include <Stage.h>
+#include <UIContainer.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,8 +41,8 @@ class GameState : State
 	CollisionManager collisionManager;
 	// a pointer to the game's stage
 	Stage stage;
-	// flag to allow streaming
-	int32 canStream;
+	// the ui container
+	UIContainer uiContainer;
 	// must save to allow pause
 	Vector3D cameraPosition;
 	// clock for messaging
@@ -53,7 +54,6 @@ class GameState : State
 	// Flags to disable some processes
 	bool stream;
 	bool transform;
-	bool synchronizeGraphics;
 	bool updatePhysics;
 	bool processCollisions;
 
@@ -64,11 +64,13 @@ class GameState : State
 	PhysicalWorld getPhysicalWorld();
 	Clock getPhysicsClock();
 	Stage getStage();
+	UIContainer getUIContainer();
 	Clock getUpdateClock();
 	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn);
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);
+	void transform();
 	uint32 processCollisions();
 	void pausePhysics(bool pause);
 	void pauseMessaging(bool pause);
@@ -89,10 +91,8 @@ class GameState : State
 	void hideEntityWithName(const char* entityName);
 	void showEntityWithName(const char* entityName);
 
-	virtual void synchronizeGraphics();
 	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();
-	virtual void transform();
 	virtual bool isVersusMode();
 	virtual bool stream();
 

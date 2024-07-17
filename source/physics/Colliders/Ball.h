@@ -31,9 +31,8 @@ class Ball : Collider
 	/// @publicsection
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 	
-	void constructor(SpatialObject owner, const ColliderSpec* shapeSpec);
-	override void transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override void testForCollision(Collider collider, Vector3D displacement, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
+	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }

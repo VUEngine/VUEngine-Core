@@ -96,12 +96,14 @@ void CameraMovementManager::setFocusEntity(Entity focusEntity)
 	}
 }
 
-void CameraMovementManager::onFocusEntityDeleted(ListenerObject eventFirer)
+bool CameraMovementManager::onFocusEntityDeleted(ListenerObject eventFirer)
 {
 	if(ListenerObject::safeCast(this->focusEntity) == eventFirer)
 	{
 		CameraMovementManager::setFocusEntity(this, NULL);
 	}
+
+	return false;
 }
 
 const Vector3D* CameraMovementManager::getFocusEntityPositionDisplacement()
@@ -126,27 +128,20 @@ void CameraMovementManager::setFocusEntityPositionDisplacement(const Vector3D* f
  *
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving __attribute__ ((unused)))
+Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving __attribute__ ((unused)))
 {
 	if(isDeleted(camera))
 	{
-		return;
+		return Vector3D::zero();
 	}
 
-	// if focusEntity is defined
-	Entity focusEntity = Camera::getFocusEntity(camera);
-
-	if(isDeleted(focusEntity))// || !Entity::isTransformed(focusEntity))
+	if(isDeleted(this->focusEntity))
 	{
-		return;
+		this->lastCameraDisplacement = Vector3D::zero();
+		return Camera::getPosition(camera);
 	}
 
-	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(focusEntity);
-
-	if(NULL == this->focusEntityPosition)
-	{
-		this->focusEntityPosition = Entity::getPosition(focusEntity);
-	}
+	NormalizedDirection normalizedDirection = Entity::getNormalizedDirection(this->focusEntity);
 
 	// calculate the target position
 	Vector3D cameraNewPosition =
@@ -156,15 +151,9 @@ void CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMoving
 		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
-#ifndef __RELEASE
-	Vector3D currentCameraPosition = Camera::getPosition(camera);
-	Camera::setPosition(camera, cameraNewPosition, true);
-	this->lastCameraDisplacement = Vector3D::sub(Camera::getPosition(camera), currentCameraPosition);
-#else
-	Vector3D currentCameraPosition = *_cameraPosition;
-	Camera::setPosition(camera, cameraNewPosition, true);
-	this->lastCameraDisplacement = Vector3D::sub(*_cameraPosition, currentCameraPosition);
-#endif
+	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, *_cameraPosition);
+
+	return cameraNewPosition;
 }
 
 /**

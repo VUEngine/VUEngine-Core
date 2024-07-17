@@ -83,7 +83,7 @@ then
 	exit 0
 fi
 
-className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
+className=`grep -m 1 -e '^.*::[ 	]*destructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
 isStaticClass=false
 isExtensionClass=false
 
@@ -101,7 +101,7 @@ fi
 if [ -z "$className" ];
 then
 	# Maybe it is a static class
-	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+	className=`grep -o -m 1 -e '^static[ 	]*.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 
 	if [ -z "$className" ];
 	then
@@ -180,18 +180,22 @@ fi
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
+fileName=$className
+
 if [ -z "$className" ];
 then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
+		fileName=`sed -e 's#^.*source[s]*/\(.*$\)#\1#g' <<< $INPUT_FILE`
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
+			fileName=`sed -e 's#^.*object[s]*/\(.*$\)#\1#g' <<< $INPUT_FILE`
 		fi
 	fi
+
+	echo "Compiling file: $fileName"
 fi
 
 if [ ! -s $OUTPUT_FILE ];
@@ -224,19 +228,19 @@ else
 	baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
 fi
 
-if [ -z "$baseClassName" ];
-then
-	clean_up
-	if [ -z "${INPUT_FILE##*source*}" ];
-	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
-	else
-		if [ -z "${INPUT_FILE##*object*}" ];
-		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
-		fi
-	fi
-fi
+#if [ -z "$baseClassName" ];
+#then
+#	clean_up
+#	if [ -z "${INPUT_FILE##*source*}" ];
+#	then
+#		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file 3:  \1#g' <<< $INPUT_FILE`"
+#	else
+#		if [ -z "${INPUT_FILE##*object*}" ];
+#		then
+#			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file 4:  \1#g' <<< $INPUT_FILE`"
+#		fi
+#	fi
+#fi
 
 if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
@@ -256,14 +260,13 @@ sed -i.b 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 anyMethodVirtualized=false
 
 # Replace calls to base class methods
-NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwnedToApply.txt"
+NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$fileName"MethodsOwnedToApply.txt"
 if [ -f $NORMAL_METHODS_FILE ];
 then
 	rm -f $NORMAL_METHODS_FILE
 fi
 
-
-VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtualToApply.txt"
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$fileName"MethodsVirtualToApply.txt"
 if [ -f $VIRTUAL_METHODS_FILE ];
 then
 	rm -f $VIRTUAL_METHODS_FILE
@@ -272,7 +275,7 @@ fi
 classHasNormalMethods=
 classHasVirtualMethods=
 
-#echo $referencedClassesNames
+#echo "referencedClassesNames $referencedClassesNames"
 
 # Generate a dictionary of all virtual methods to replace on file
 for referencedClassName in $referencedClassesNames
@@ -369,7 +372,7 @@ then
 	if [ ! -z "${classModifiers##*static *}" ] ;
 	then
 
-		classDefinition="__CLASS_DEFINITION($className, $baseClassName); $prototypes"
+		classDefinition="__CLASS_DEFINITION($className, $baseClassName) $prototypes"
 
 		# Add allocator if it is not abstract nor a singleton class
 		if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
@@ -389,11 +392,11 @@ then
 			allocatorParameters=`sed -e 's#\(.*\),#\1#' <<< "$allocatorParameters"`
 
 			if [ -z "$allocatorParameters" ];then
-				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className)"
-				classDefinition=$classDefinition"__CLASS_NEW_END($className);"
+				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, void)"
+				classDefinition=$classDefinition"__CLASS_NEW_END($className, this);"
 			else
 				classDefinition=$classDefinition"__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
-				classDefinition=$classDefinition"__CLASS_NEW_END($className, $allocatorArguments);"
+				classDefinition=$classDefinition"__CLASS_NEW_END($className, this, $allocatorArguments);"
 			fi
 		else
 			if [ -z "${classModifiers##*singleton *}" ];
@@ -440,7 +443,7 @@ then
 	classDefinition=`echo "/*CLASS_IN_FILE($className)*/$classDefinition" | tr -d "\r\n"`
 	firstMethodDeclarationLine=$((firstMethodDeclarationLine))
 	orig=$'\n'; replace=$'\\\n'
-	sed -i.b "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace};&@" $OUTPUT_FILE 
+	sed -i.b "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace}&@" $OUTPUT_FILE 
 #	sed -i.b 's/<$>/\'$'\n/g' $OUTPUT_FILE
 fi
 
@@ -454,7 +457,7 @@ fi
 #sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" 
 #sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_evolve(\(.*\))#__INSTANCE_EVOLVE_TO(\1, \2)#g" $OUTPUT_FILE
 
-sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g; s#,[ 	]*);#);#; s#Base_destructor()#__DESTROY_BASE#g; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
+sed -i.b "s#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#; s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,this,\1#g; s#,[ 	]*);#);#; s#Base_destructor()#__DESTROY_BASE#g; s#Base_\([A-z][A-z0-0][A-z0-0]*\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE 
 
 sed -i.b "s#\([A-z][A-z0-0][A-z0-0]*\)_mutateMethod(\(.*\), \(.*\))#__CLASS_MUTATE_METHOD(\1, \2, \3)#g" $OUTPUT_FILE
 

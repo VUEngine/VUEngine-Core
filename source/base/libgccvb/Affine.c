@@ -18,7 +18,6 @@
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 
-#include <DebugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,10 +31,10 @@ extern double fabs (double);
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixed_t y, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Scale* scale, const Rotation* rotation)
+static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixed_t y, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const PixelScale* scale, const Rotation* rotation)
 {
-	NM_ASSERT(scale->x, "Affine::applyAll: 0 x scale");
-	NM_ASSERT(scale->y, "Affine::applyAll: 0 y scale");
+	NM_ASSERT(0 < scale->x, "Affine::applyAll: 0 >= x scale");
+	NM_ASSERT(0 < scale->y, "Affine::applyAll: 0 >= y scale");
 
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIX7_9_TO_FIXED(scale->x));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIX7_9_TO_FIXED(scale->y));
@@ -152,7 +151,7 @@ PRINT_INT(lastRow, 1, 16);
 //PRINT_INT(__METERS_TO_PIXELS(_optical->scalingFactor), 1, 15);
 */
 
-		for(;counter && i <= lastRow; i++, counter--)
+		for(; 0!= counter && i <= lastRow; i++, counter--)
 		{
 			if(0 == scaleX)
 			{
@@ -237,7 +236,7 @@ PRINT_INT(lastRow, 1, 16);
 	}
 	else
 	{
-		for(;counter && i <= lastRow; i++, counter--)
+		for(; 0!= counter && i <= lastRow; i++, counter--)
 		{
 			affine[i].pb_y = __FIXED_TO_FIX13_3(__FIXED_MULT(__I_TO_FIXED(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 			affine[i].parallax = fixedAffineMatrix.parallax;

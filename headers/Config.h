@@ -122,12 +122,6 @@
 //											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
-/* If defined, when the VIP's GAMESTART interrupt is fired before
- * the current game frame is done, the engine skips to the next
- * game frame.
- */
-#undef __FORCE_VIP_SYNC
-
 // Timer resolution
 #define __TIMER_RESOLUTION						10
 
@@ -346,15 +340,15 @@
 #define __PRINTING_PALETTE						0
 
 // Default palette values, actual values are set in stage specs
-#define __BGMAP_PALETTE_0						0b11100100
-#define __BGMAP_PALETTE_1						0b11100000
-#define __BGMAP_PALETTE_2						0b10010000
-#define __BGMAP_PALETTE_3						0b01010000
+#define __BGMAP_PALETTE_0						0xE4
+#define __BGMAP_PALETTE_1						0xE0
+#define __BGMAP_PALETTE_2						0x90
+#define __BGMAP_PALETTE_3						0x50
 
-#define __OBJECT_PALETTE_0						0b11100100
-#define __OBJECT_PALETTE_1						0b11100000
-#define __OBJECT_PALETTE_2						0b10010000
-#define __OBJECT_PALETTE_3						0b01010000
+#define __OBJECT_PALETTE_0						0xE4
+#define __OBJECT_PALETTE_1						0xE0
+#define __OBJECT_PALETTE_2						0x90
+#define __OBJECT_PALETTE_3						0x50
 
 
 //---------------------------------------------------------------------------------------------------------

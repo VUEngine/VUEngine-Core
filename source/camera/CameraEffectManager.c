@@ -166,7 +166,7 @@ void CameraEffectManager::startEffect(int32 effect, va_list args)
 				va_arg(args, int32),
 				va_arg(args, Brightness*),
 				va_arg(args, int32),
-				va_arg(args, void*),
+				va_arg(args, EventListener),
 				va_arg(args, ListenerObject)
 			);
 			break;
@@ -258,7 +258,7 @@ void CameraEffectManager::fxFadeStart(int32 effect, int32 delay)
  * @param callback			Callback to execute after the fading is complete
  * @param callbackScope		Scope (class) of the callback to execute
  */
-void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, void (*callback)(ListenerObject, ListenerObject), ListenerObject callbackScope)
+void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness* targetBrightness, int32 delayBetweenSteps, EventListener callback, ListenerObject callbackScope)
 {
 	// stop previous effect
 	CameraEffectManager::stopEffect(this, kFadeTo);

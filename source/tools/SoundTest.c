@@ -157,8 +157,8 @@ void SoundTest::printGUI(bool clearScreen)
 
 	uint16 totalSounds = SoundTest::getTotalSounds(this);
 
-	int32 selectedSoundDigits = Utilities::getDigitsCount(this->selectedSound + 1);
-	int32 totalSoundsDigits = Utilities::getDigitsCount(totalSounds);
+	int32 selectedSoundDigits = Math::getDigitsCount(this->selectedSound + 1);
+	int32 totalSoundsDigits = Math::getDigitsCount(totalSounds);
 	Printing::int32(printing, this->selectedSound + 1, 1 + 1, 2, NULL);
 	Printing::text(printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
 	Printing::int32(printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
@@ -438,21 +438,25 @@ void SoundTest::loadSound()
 	SoundTest::printGUI(this, false);
 }
 
-void SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
+bool SoundTest::onSoundFinish(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(!isDeleted(this->sound))
 	{
 		Sound::printPlaybackTime(this->sound, 24, 8);
 		Sound::printPlaybackProgress(this->sound, 1, 6);
 	}
+
+	return true;
 }
 
-void SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
+bool SoundTest::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	if(Sound::safeCast(eventFirer) == this->sound)
 	{
-		this->sound = NULL;
+		this->sound = NULL;		
 	}
+
+	return false;
 }
 
 void SoundTest::printTimer()

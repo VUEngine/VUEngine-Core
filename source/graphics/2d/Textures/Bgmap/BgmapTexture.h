@@ -49,12 +49,15 @@ class BgmapTexture : Texture
 	int8 segment;
 	// Remaining rows to be written
 	int8 remainingRowsToBeWritten;
-	// flip flag
-	bool horizontalFlip : 1;
-	bool verticalFlip : 1;
+	int16 xOffset;
+	int16 yOffset;
+	// flip flags
+	bool horizontalFlip;
+	bool verticalFlip;
 
 	void constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id);
 	int8 getRemainingRowsToBeWritten();
+	void setOffsets(int16 xOffset, int16 yOffset);
 	int16 getXOffset();
 	int16 getYOffset();
 	int8 getSegment();

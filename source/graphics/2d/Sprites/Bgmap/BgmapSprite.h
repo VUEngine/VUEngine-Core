@@ -76,39 +76,38 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	// bgmap's source coordinates
-	BgmapTextureSource bgmapTextureSource;
+	// The unusual order of the attributes is to optimize data packing as much as possible
 	// param table offset
 	int16 paramTableRow;
-	// angle with respect to each axis (indexes for the _sinLut array)
-	Rotation rotation;
-	// scale
-	Scale scale;
-	// pointer to function that implements the param table based effects
-	ParamTableEffectMethod applyParamTableEffect;
 	// param table offset
 	uint32 param;
+	// pointer to function that implements the param table based effects
+	ParamTableEffectMethod applyParamTableEffect;
+	// bgmap's source coordinates
+	BgmapTextureSource bgmapTextureSource;
 
 	/// @publicsection
-	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
 	void setMode(uint16 display, uint16 mode);
 	void invalidateParamTable();
 	int16 getParamTableRow();
 	uint32 getParam();
 	void setParam(uint32 param);
-	void putChar(Point* texturePixel, uint32* newChar);
-	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-	void onTextureRewritten(ListenerObject eventFirer);
+	void putChar(const Point* texturePixel, const uint32* newChar);
+	void putPixel(const Point* texturePixel, const Point* charSetPixel, BYTE newPixelColor);
+	bool onTextureRewritten(ListenerObject eventFirer);
 	void applyAffineTransformations();
 	void applyHbiasEffects();
 	bool hasSpecialEffects();
 
-	override int16 doRender(int16 index, bool evenFrame);
-	override void processEffects();
-	override void rotate(const Rotation* rotation);
-	override Scale getScale();
-	override void resize(Scale scale, fixed_t z);
 	override void registerWithManager();
+	override void unregisterWithManager();
+	override int16 doRender(int16 index);
+	override void processEffects();
+	override void configureMultiframe(uint16 frame);
+	override void setRotation(const Rotation* rotation);
+	override Scale getScale();
+	override void setScale(const PixelScale* scale);
 	override int32 getTotalPixels();
 }
 

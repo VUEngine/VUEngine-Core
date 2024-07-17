@@ -29,6 +29,7 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+class Behavior;
 class Entity;
 class EntityFactory;
 class Telegram;
@@ -58,8 +59,8 @@ typedef struct EntitySpec
 	/// wireframees
 	WireframeSpec** wireframeSpecs;
 
-	/// collision shapes
-	ColliderSpec* shapeSpecs;
+	/// collision colliders
+	ColliderSpec* colliderSpecs;
 
 	/// pixelSize
 	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
@@ -79,11 +80,17 @@ typedef const EntitySpec EntityROMSpec;
 // an entity associated with a position
 typedef struct PositionedEntity
 {
-	// pointer to the entity spec in ROM
+	// Pointer to the entity spec in ROM
 	EntitySpec* entitySpec;
 
-	// position in the screen coordinates
+	// Position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
+
+	// Rotation in screen coordinates
+	ScreenPixelRotation onScreenRotation;
+
+	// Scale in screen coordinates
+	ScreenPixelScale onScreenScale;
 
 	// entity's id
 	int16 id;
@@ -107,10 +114,6 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 /// @ingroup stage-entities
 class Entity : Container
 {
-	// Flag used to know if the entity is within the camera reach
-	bool inCameraRange;
-	// Flag to prevent transforming the shapes during the transformation phase
-	bool transformColliders;
 	// Flag to signal if collisions are allowed
 	bool allowCollisions;
 	// Entity's internal id, set by the engine
@@ -119,12 +122,14 @@ class Entity : Container
 	Size size;
 	// Entity factory
 	EntityFactory entityFactory;
-	// sprites list
+	// components list
 	VirtualList sprites;
 	// Colliders for collision detection
-	VirtualList shapes;
+	VirtualList colliders;
 	// wireframes
 	VirtualList wireframes;
+	// Bahaviors list
+	VirtualList behaviors;
 	// Entity's spec
 	EntitySpec* entitySpec;
 	// Center displacement
@@ -136,7 +141,6 @@ class Entity : Container
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, int16 internalId);
 	static PixelRightBox getBoundingBoxFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
-	static void setVisibilityPadding(int16 visibilityPadding);
 
 	void constructor(EntitySpec* entitySpec, int16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenSpecs);
@@ -149,8 +153,9 @@ class Entity : Container
 	void addSprites(SpriteSpec** spriteSpecs, bool destroyOldSprites);
 	Wireframe addWireframe(WireframeSpec* wireframeSpec, WireframeManager wireframeManager);
 	void addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWireframes);
-	Collider addCollider(ColliderSpec* shapeSpec, CollisionManager collisionManager);
-	void addColliders(ColliderSpec* shapeSpecs, bool destroyOldColliders);
+	Collider addCollider(ColliderSpec* colliderSpec, CollisionManager collisionManager);
+	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
+	Behavior addBehavior(BehaviorSpec* behaviorSpec);
 	void destroySprites();
 	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -164,7 +169,7 @@ class Entity : Container
 	int16 getInternalId();
 	VirtualList getSprites();
 	VirtualList getWireframes();
-	void transformColliders();
+	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	void setAnimation(void (*animation)());
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
@@ -179,12 +184,11 @@ class Entity : Container
 	uint32 getCollidersLayersToIgnore();
 	void setCollidersLayersToIgnore(uint32 layersToIgnore);
 	bool isSpriteVisible(Sprite sprite, int32 pad);
-	bool isInCameraRange();
 	VirtualList getColliders();
 	void updateSprites(uint32 updatePosition, uint32 updateScale, uint32 updateRotation, uint32 updateProjection);
 	void setSpec(void* entitySpec);
 	void setSize(Size size);
-	void computeIfInCameraRange(int32 pad, bool recursive);
+	bool isInCameraRange(int16 padding, bool recursive);
 
 	virtual void setNormalizedDirection(NormalizedDirection normalizedDirection);
 	virtual void setExtraInfo(void* extraInfo);
@@ -193,16 +197,9 @@ class Entity : Container
 	override void addChild(Container child);
 	override void createComponents();
 	override void initialTransform(const Transformation* environmentTransform);
-	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void setPosition(const Vector3D* position);
-	override void setRotation(const Rotation* rotation);
-	override void setLocalPosition(const Vector3D* position);
-	override void setLocalRotation(const Rotation* rotation);
 	override void setTransparent(uint8 transparent);
-	override void synchronizeGraphics();
-	override bool handleMessage(Telegram telegram);
-	override const Rotation* getRotation();
-	override const Scale* getScale();
+	override bool handlePropagatedMessage(int32 message);
+	override const Size* getSize();
 	override fixed_t getWidth();
 	override fixed_t getHeight();
 	override fixed_t getDepth();

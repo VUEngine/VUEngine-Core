@@ -48,8 +48,6 @@ friend class VirtualNode;
 void ObjectTextureManager::constructor()
 {
 	Base::constructor();
-
-	this->objectTextures = new VirtualList();
 }
 
 /**
@@ -58,9 +56,6 @@ void ObjectTextureManager::constructor()
 void ObjectTextureManager::destructor()
 {
 	ObjectTextureManager::reset(this);
-
-	delete this->objectTextures;
-	this->objectTextures = NULL;
 
 	// allow a new construct
 	Base::destructor();
@@ -71,7 +66,6 @@ void ObjectTextureManager::destructor()
  */
 void ObjectTextureManager::reset()
 {
-	VirtualList::deleteData(this->objectTextures);
 }
 
 /**
@@ -95,12 +89,7 @@ ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureS
 
 	ObjectTexture objectTexture = new ObjectTexture(objectTextureSpec, textureNextId++);
 
-	if(kTextureWritten != objectTexture->status)
-	{
-		ObjectTexture::prepare(objectTexture);
-	}
-
-	VirtualList::pushBack(this->objectTextures, objectTexture);
+	ObjectTexture::prepare(objectTexture);
 
 	return objectTexture;
 }
@@ -114,25 +103,5 @@ void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
 {
 	NM_ASSERT(!isDeleted(objectTexture), "ObjectTextureManager::releaseTexture: trying to release an invalid objectTexture");
 
-	VirtualList::removeElement(this->objectTextures, objectTexture);
-
 	delete objectTexture;
-}
-
-/**
- * Update textures
- *
- * @public
- */
-void ObjectTextureManager::updateTextures(int16 maximumTextureRowsToWrite)
-{
-	for(VirtualNode node = this->objectTextures->head; NULL != node; node = node->next)
-	{
-		Texture texture = Texture::safeCast(node->data);
-
-		if(texture->update)
-		{
-			texture->update = !Texture::update(texture, maximumTextureRowsToWrite);
-		}
-	}
 }

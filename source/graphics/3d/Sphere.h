@@ -42,21 +42,21 @@ typedef const SphereSpec SphereROMSpec;
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
-	// Radious
+	PixelVector center;
 	fixed_t radius;
 	uint16 scaledRadius;
 	bool drawCenter;
 
 	/// @publicsection
-	void constructor(SphereSpec* sphereSpec);
+	void constructor(SpatialObject owner, SphereSpec* sphereSpec);
 	PixelVector getCenter();
 	fixed_t getRadius();
 	void setCenter(PixelVector center);
 	void setRadius(fixed_t radius);
 	void setRadiusScale(fixed_t radiusScale);
 
-	override void render();
-	override void draw();
+	override bool render();
+	override bool draw();
 }
 
 

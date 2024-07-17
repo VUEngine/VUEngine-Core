@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSet.h>
-#include <DebugUtilities.h>
 #include <Printing.h>
 #include <VirtualList.h>
 
@@ -53,9 +52,7 @@ void CharSetManager::constructor()
 	Base::constructor();
 
 	this->charSets = new VirtualList();
-	this->charSetsPendingWriting = new VirtualList();
 	this->freedOffset = 1;
-	this->preventDefragmentation = false;
 }
 
 /**
@@ -68,9 +65,6 @@ void CharSetManager::destructor()
 	delete this->charSets;
 	this->charSets = NULL;
 
-	delete this->charSetsPendingWriting;
-	this->charSetsPendingWriting = NULL;
-
 	// allow a new construct
 	Base::destructor();
 }
@@ -80,17 +74,12 @@ void CharSetManager::destructor()
  */
 void CharSetManager::reset()
 {
-	this->preventDefragmentation = true;
-
 	if(this->charSets)
 	{
 		VirtualList::deleteData(this->charSets);
 	}
 
-	VirtualList::clear(this->charSetsPendingWriting);
-
 	this->freedOffset = 1;
-	this->preventDefragmentation = false;
 }
 
 
@@ -192,10 +181,7 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	if(CharSet::decreaseUsageCount(charSet))
 	{
-		this->preventDefragmentation = true;
-
 		VirtualList::removeElement(this->charSets, charSet);
-		VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 
 		uint32 offset = CharSet::getOffset(charSet);
 
@@ -205,8 +191,6 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 		}
 
 		delete charSet;
-
-		this->preventDefragmentation = false;
 
 		return true;
 	}
@@ -228,8 +212,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
-	this->preventDefragmentation = true;
-
 	uint16 offset = NULL != this->charSets->head ? 0 : 1;
 
 	if(NULL != this->charSets->head)
@@ -243,9 +225,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 		CharSet charSet = new CharSet(charSetSpec, offset);
 
 		VirtualList::pushBack(this->charSets, charSet);
-		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
 
-		this->preventDefragmentation = false;
 		return charSet;
 	}
 
@@ -256,9 +236,7 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 		CharSet charSet = new CharSet(charSetSpec, __CHAR_MEMORY_TOTAL_CHARS - charSetSpec->numberOfChars);
 
 		VirtualList::pushBack(this->charSets, charSet);
-		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
 
-		this->preventDefragmentation = false;
 		return charSet;		
 	}
 #endif
@@ -285,8 +263,6 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
  */
 void CharSetManager::writeCharSets()
 {
-	this->preventDefragmentation = true;
-
 	CharSetManager::defragment(this);
 
 	VirtualNode node = this->charSets->head;
@@ -295,40 +271,6 @@ void CharSetManager::writeCharSets()
 	{
 		CharSet::write(node->data);
 	}
-
-	VirtualList::clear(this->charSetsPendingWriting);
-
-	this->preventDefragmentation = false;
-}
-
-/**
- * Write char sets pending writing
- */
-bool CharSetManager::writeCharSetsProgressively()
-{
-	if(this->preventDefragmentation)
-	{
-		return false;
-	}
-
-	CharSet charSet = VirtualList::front(this->charSetsPendingWriting);
-
-	if(!isDeleted(charSet))
-	{
-		if(kCharSetWritten != charSet->status)
-		{
-			CharSet::write(charSet);
-		}
-
-		VirtualList::popFront(this->charSetsPendingWriting);
-		return true;
-	}
-	else
-	{
-		NM_ASSERT(0 == VirtualList::front(this->charSetsPendingWriting), "CharSetManager::writeCharSetsProgressively: null charset in list");
-	}
-
-    return CharSetManager::defragmentProgressively(this);
 }
 
 /**
@@ -336,14 +278,10 @@ bool CharSetManager::writeCharSetsProgressively()
  */
 void CharSetManager::defragment()
 {
-	this->preventDefragmentation = true;
-	
 	while(1 < this->freedOffset)
 	{
 		CharSetManager::defragmentProgressively(this);
 	}
-
-	this->preventDefragmentation = false;
 }
 
 /**
@@ -371,14 +309,6 @@ bool CharSetManager::defragmentProgressively()
 				uint16 newOffset = this->freedOffset;
 				this->freedOffset += CharSet::getNumberOfChars(charSet);
 				CharSet::setOffset(charSet, newOffset);
-
-				if(!VirtualList::find(this->charSetsPendingWriting, charSet))
-				{
-					VirtualList::pushBack(this->charSetsPendingWriting, charSet);
-				}
-
-				CharSet::rewrite(charSet);
-
 				return true;
 			}
 			else if(this->freedOffset == offset)
@@ -432,6 +362,7 @@ int32 CharSetManager::getTotalCharSets()
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
+#ifndef __SHIPPING
 void CharSetManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
@@ -443,4 +374,4 @@ void CharSetManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
-
+#endif

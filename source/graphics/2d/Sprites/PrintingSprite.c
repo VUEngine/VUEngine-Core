@@ -41,12 +41,11 @@
  * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void PrintingSprite::constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner)
+void PrintingSprite::constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec)
 {
-	Base::constructor(&printingSpriteSpec->bgmapSpriteSpec, owner);
+	Base::constructor(owner, &printingSpriteSpec->bgmapSpriteSpec);
 
 	PrintingSprite::reset(this);
-	PrintingSprite::registerWithManager(this);
 }
 
 /**
@@ -78,7 +77,7 @@ void PrintingSprite::setPrintingBgmapSegment(int8 printingBgmapSegment)
  *
  * @param evenFrame
  */
-int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 PrintingSprite::doRender(int16 index)
 {
 	WorldAttributes* worldPointer = &_worldAttributesCache[index];
 
@@ -97,8 +96,6 @@ int16 PrintingSprite::doRender(int16 index, bool evenFrame __attribute__((unused
 
 void PrintingSprite::reset()
 {
-	this->positioned = true;
-
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.parallax = 0;

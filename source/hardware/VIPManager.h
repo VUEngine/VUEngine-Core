@@ -137,7 +137,7 @@ typedef struct ObjectAttributes
 
 // pointers to access the VRAM base address
 extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
-extern ObjectAttributes _objectAttributesCache[1024];
+extern ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS];
 
 static WorldAttributes* const _worldAttributesBaseAddress		=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
 static ObjectAttributes* const	_objectAttributesBaseAddress	=	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress
@@ -177,6 +177,9 @@ extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_A
 extern uint32 _dramDirtyStart;
 #define __PARAM_TABLE_END 		((uint32)&_dramDirtyStart)
 
+#define __COLUMN_TABLE_ENTRIES			256
+#define __BRIGHTNESS_REPEAT_ENTRIES		96
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
@@ -189,7 +192,7 @@ typedef struct ColumnTableSpec
 	bool mirror;
 
 	// column table spec
-	BYTE columnTable[];
+	BYTE columnTable[__COLUMN_TABLE_ENTRIES];
 
 } ColumnTableSpec;
 
@@ -202,7 +205,7 @@ typedef struct BrightnessRepeatSpec
 	bool mirror;
 
 	// brightness repeat values
-	uint8 brightnessRepeat[];
+	uint8 brightnessRepeat[__BRIGHTNESS_REPEAT_ENTRIES];
 
 } BrightnessRepeatSpec;
 
@@ -243,10 +246,14 @@ typedef struct PaletteConfig
 
 enum MultiplexedInterrupts
 {
-	kVIPNoMultiplexedInterrupts = 0,
-	kVIPAllMultiplexedInterrupts,
-	kVIPNonVIPMultiplexedInterrupts
+	kVIPNoMultiplexedInterrupts 					= 1 << 0,
+	kVIPGameStartMultiplexedInterrupts				= 1 << 1,
+	kVIPXpendMultiplexedInterrupts					= 1 << 2,
+	kVIPOnlyVIPMultiplexedInterrupts				= kVIPGameStartMultiplexedInterrupts | kVIPXpendMultiplexedInterrupts,
+	kVIPOnlyNonVIPMultiplexedInterrupts				= 1 << 3,
+	kVIPAllMultiplexedInterrupts					= 0x7FFFFFFF,
 };
+
 
 class SpatialObject;
 
@@ -263,6 +270,7 @@ singleton class VIPManager : ListenerObject
 	VirtualList postProcessingEffects;
 	uint32 totalMilliseconds;
 	uint32 currentDrawingFrameBufferSet;
+	uint32 enabledMultiplexedInterrupts;
 	uint16 multiplexedGAMESTARTCounter;
 	uint16 multiplexedXPENDCounter;
 	uint16 timeErrorCounter;
@@ -270,12 +278,8 @@ singleton class VIPManager : ListenerObject
 	uint16 customInterrupts;
 	uint16 currrentInterrupt;
 	uint16 gameFrameDuration;
-	uint8 frameCycle;
-	uint8 enabledMultiplexedInterrupts;
 	bool processingGAMESTART;
 	bool processingXPEND;
-	bool logicEnded;
-	bool drawingEnded;
 	volatile bool frameStartedDuringXPEND;
 	bool skipFrameBuffersProcessing;
 
@@ -285,13 +289,13 @@ singleton class VIPManager : ListenerObject
 	void reset();
 	void setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing);
 	void enableCustomInterrupts(uint16 customInterrupts);
-	void enableDrawing();
-	void disableDrawing();
+	void startDrawing();
+	void stopDrawing();
 	void enableInterrupts(uint16 interruptCode);
 	void disableInterrupts();
-	void enableMultiplexedInterrupts(uint8 enabledMultiplexedInterrupts);
-	void displayOn();
-	void displayOff();
+	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
+	void turnDisplayOn();
+	void turnDisplayOff();
 	void setupPalettes(PaletteConfig* paletteConfig);
 	void upBrightness();
 	void lowerBrightness();
@@ -309,7 +313,6 @@ singleton class VIPManager : ListenerObject
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffects();
 	void registerCurrentDrawingFrameBufferSet();
-	bool isRenderingPending();
 	bool isDrawingAllowed();
 	bool hasFrameStartedDuringXPEND();	
 	uint16 getGameFrameDuration();

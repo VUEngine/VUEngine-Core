@@ -14,7 +14,6 @@
 
 #include <Camera.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <DirectDraw.h>
 #include <Printing.h>
 #include <VirtualList.h>
@@ -22,7 +21,6 @@
 #include <Wireframe.h>
 
 #include "WireframeManager.h"
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -67,7 +65,6 @@ void WireframeManager::constructor()
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
-	this->lockWireframeList = false;
 	this->renderedWireframes = 0;
 	this->drawnWireframes = 00;
 
@@ -94,9 +91,11 @@ void WireframeManager::destructor()
 	Base::destructor();
 }
 
-void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{					
+bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
+{
 	this->stopDrawing = true;
+
+	return true;
 }
 
 /**
@@ -104,14 +103,14 @@ void WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
  *
  * @param wireframeSpec	Wireframe spec
  */
-Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec)
+Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner)
 {
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(WireframeSpec*))wireframeSpec->allocator)(wireframeSpec);
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
 	if(WireframeManager::registerWireframe(this, wireframe) == wireframe)
 	{
@@ -139,11 +138,7 @@ Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
 
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		this->lockWireframeList = true;
-
 		VirtualList::pushBack(this->wireframes, wireframe);
-
-		this->lockWireframeList = false;
 
 		return wireframe;
 	}
@@ -188,9 +183,7 @@ Wireframe WireframeManager::unregisterWireframe(Wireframe wireframe)
 		return NULL;
 	}
 
-	this->lockWireframeList = true;
 	bool result = VirtualList::removeElement(this->wireframes, wireframe);
-	this->lockWireframeList = false;
 
 	return result ? wireframe : NULL;
 }
@@ -204,7 +197,6 @@ void WireframeManager::reset()
 	
 	VirtualList::clear(this->wireframes);
 	this->disabled = false;
-	this->lockWireframeList = false;
 
 	_previousCameraPosition = *_cameraPosition;
 	_previousCameraPositionBuffer = _previousCameraPosition;
@@ -269,11 +261,6 @@ void WireframeManager::render()
 		return;
 	}
 
-	// UI graphics synchronization involves moving the camera
-	// which can mess rendering if the VIP's XPEND interrupt 
-	// happens when the camera is modified
-	Camera::suspendUIGraphicsSynchronization(Camera::getInstance());
-
 	this->stopRendering = false;
 
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
@@ -282,22 +269,23 @@ void WireframeManager::render()
 	this->renderedWireframes = 0;
 #endif
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame))
+		wireframe->rendered = false;
+
+		if((__HIDE == wireframe->show) || (wireframe->transparent & this->evenFrame) || __NON_TRANSFORMED == wireframe->transformation->invalid)
 		{
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			wireframe->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
+
 			continue;
 		}
 
-		Wireframe::render(wireframe);
-
-		wireframe->draw = true;
+		wireframe->rendered = Wireframe::render(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
 		if(__COLOR_BLACK != wireframe->color)
@@ -312,10 +300,7 @@ void WireframeManager::render()
 #endif
 
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
-	if(!this->lockWireframeList)
-	{
-		WireframeManager::sortProgressively(this);
-	}
+	WireframeManager::sortProgressively(this);
 #endif
 
 	_previousCameraPosition = _previousCameraPositionBuffer;
@@ -323,9 +308,6 @@ void WireframeManager::render()
 
 	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
 	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
-
-
-	Camera::resumeUIGraphicsSynchronization(Camera::getInstance());
 }
 
 /**
@@ -346,12 +328,14 @@ void WireframeManager::draw()
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 
-	// check the shapes
+	// check the colliders
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		if(!wireframe->draw || __COLOR_BLACK == wireframe->color)
+		wireframe->drawn = false;
+
+		if(!wireframe->rendered || __COLOR_BLACK == wireframe->color)
 		{
 			continue;
 		}
@@ -361,7 +345,7 @@ void WireframeManager::draw()
 			continue;
 		}
 
-		Wireframe::draw(wireframe);
+		wireframe->drawn = Wireframe::draw(wireframe);
 
 #ifdef __PROFILE_WIREFRAMES
 		this->drawnWireframes++;
@@ -385,6 +369,7 @@ void WireframeManager::disable()
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */
+#ifndef __SHIPPING
 void WireframeManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "WIREFRAME MANAGER", x, y++, NULL);
@@ -396,6 +381,7 @@ void WireframeManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Drawn: ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 17, y++, NULL);
 }
+#endif
 
 void WireframeManager::hideWireframes()
 {
@@ -415,4 +401,9 @@ void WireframeManager::showWireframes()
 
 		Wireframe::show(wireframe);
 	}
+}
+
+bool WireframeManager::hasWireframes()
+{
+	return NULL != this->wireframes && NULL != this->wireframes->head;
 }

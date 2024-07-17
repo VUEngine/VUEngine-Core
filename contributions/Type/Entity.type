@@ -1,0 +1,621 @@
+{
+	"enabled": true,
+	"file": ".entity",
+	"schema": {
+		"title": "Entity",
+		"properties": {
+			"extraProperties": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean",
+						"default": false
+					},
+					"extraInfo": {
+						"type": "string"
+					},
+					"pixelSize": {
+						"type": "object",
+						"properties": {
+							"x": {
+								"type": "number",
+								"minimum": 0
+							},
+							"y": {
+								"type": "number",
+								"minimum": 0
+							},
+							"z": {
+								"type": "number",
+								"minimum": 0
+							}
+						}
+					},
+					"customAllocator": {
+						"type": "string"
+					}
+				}
+			},
+			"animations": {
+				"type": "object",
+				"properties": {
+					"default": {
+						"type": "number"
+					},
+					"totalFrames": {
+						"type": "integer",
+						"minimum": 1,
+						"default": 1
+					},
+					"multiframe": {
+						"type": "boolean",
+						"default": false
+					}
+				}
+			},
+			"components": {
+				"type": "object",
+				"properties": {
+					"animations": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"cycles": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 255,
+									"default": 8
+								},
+								"callback": {
+									"type": "string"
+								},
+								"loop": {
+									"type": "boolean",
+									"default": true
+								},
+								"frames": {
+									"type": "array",
+									"items": {
+										"type": "integer",
+										"minimum": 0
+									}
+								}
+							}
+						}
+					},
+					"behaviors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"children": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"itemId": {
+									"type": "string"
+								},
+								"onScreenPosition": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								},
+								"onScreenRotation": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								},
+								"onScreenScale": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								},
+								"name": {
+									"type": "string"
+								},
+								"children": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"extraInfo": {
+									"type": "string"
+								},
+								"loadRegardlessOfPosition": {
+									"type": "boolean",
+									"default": false
+								}
+							}
+						}
+					},
+					"colliders": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"default": "Ball"
+								},
+								"pixelSize": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"minimum": 1,
+											"default": 32
+										},
+										"y": {
+											"type": "number",
+											"minimum": 1,
+											"default": 32
+										},
+										"z": {
+											"type": "number",
+											"minimum": 1,
+											"default": 32
+										}
+									}
+								},
+								"displacement": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										},
+										"parallax": {
+											"type": "number"
+										}
+									}
+								},
+								"rotation": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								},
+								"scale": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number",
+											"default": 1
+										},
+										"y": {
+											"type": "number",
+											"default": 1
+										},
+										"z": {
+											"type": "number",
+											"default": 1
+										}
+									}
+								},
+								"checkForCollisions": {
+									"type": "boolean",
+									"default": false
+								},
+								"layers": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"layersToCheck": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"scripts": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"function": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"sprites": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"_imageData": {
+									"type": "integer",
+									"default": 0
+								},
+								"name": {
+									"type": "string"
+								},
+								"sourceType": {
+									"type": "string",
+									"default": "image"
+								},
+								"bgmapMode": {
+									"type": "string",
+									"default": "Bgmap"
+								},
+								"colorMode": {
+									"type": "number",
+									"default": 0,
+									"min": 0,
+									"max": 1
+								},
+								"displayMode": {
+									"type": "string",
+									"default": "Mono"
+								},
+								"displays": {
+									"type": "string",
+									"default": "ON"
+								},
+								"transparency": {
+									"type": "string",
+									"default": "None"
+								},
+								"displacement": {
+									"type": "object",
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										},
+										"parallax": {
+											"type": "number"
+										}
+									}
+								},
+								"manipulationFunction": {
+									"type": "string"
+								},
+								"texture": {
+									"type": "object",
+									"properties": {
+										"files": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"files2": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"padding": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												},
+												"y": {
+													"type": "integer",
+													"maximum": 255,
+													"minimum": 0
+												}
+											}
+										},
+										"palette": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 3
+										},
+										"recycleable": {
+											"type": "boolean",
+											"default": false
+										},
+										"flip": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "boolean",
+													"default": false
+												},
+												"y": {
+													"type": "boolean",
+													"default": false
+												}
+											}
+										},
+										"repeat": {
+											"type": "object",
+											"properties": {
+												"mode": {
+													"type": "string",
+													"default": "1x1"
+												},
+												"x": {
+													"type": "boolean",
+													"default": false
+												},
+												"y": {
+													"type": "boolean",
+													"default": false
+												},
+												"size": {
+													"type": "object",
+													"properties": {
+														"x": {
+															"type": "number"
+														},
+														"y": {
+															"type": "number"
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								"section": {
+									"type": "string",
+									"default": "rom"
+								},
+								"compression": {
+									"type": "string",
+									"default": "none"
+								}
+							}
+						}
+					},
+					"wireframes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"wireframe": {
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string",
+											"default": "Sphere"
+										},
+										"displacement": {
+											"type": "object",
+											"properties": {
+												"x": {
+													"type": "number"
+												},
+												"y": {
+													"type": "number"
+												},
+												"z": {
+													"type": "number"
+												}
+											}
+										},
+										"color": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 3,
+											"default": 3
+										},
+										"transparent": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 2,
+											"default": 0
+										},
+										"interlaced": {
+											"type": "boolean",
+											"default": false
+										}
+									}
+								},
+								"segments": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"fromVertex": {
+												"type": "object",
+												"properties": {
+													"x": {
+														"type": "number"
+													},
+													"y": {
+														"type": "number"
+													},
+													"z": {
+														"type": "number"
+													},
+													"parallax": {
+														"type": "number"
+													}
+												}
+											},
+											"toVertex": {
+												"type": "object",
+												"properties": {
+													"x": {
+														"type": "number"
+													},
+													"y": {
+														"type": "number"
+													},
+													"z": {
+														"type": "number"
+													},
+													"parallax": {
+														"type": "number"
+													}
+												}
+											}
+										}
+									}
+								},
+								"length": {
+									"type": "integer",
+									"default": 32
+								},
+								"radius": {
+									"type": "integer",
+									"default": 32
+								},
+								"drawCenter": {
+									"type": "boolean",
+									"default": true
+								}
+							}
+						}
+					}
+				}
+			},
+			"inGameType": {
+				"type": "string",
+				"default": "None"
+			},
+			"physics": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean",
+						"default": false
+					},
+					"mass": {
+						"type": "number"
+					},
+					"friction": {
+						"type": "number"
+					},
+					"bounciness": {
+						"type": "number"
+					},
+					"maximumSpeed": {
+						"type": "number"
+					},
+					"maximumVelocity": {
+						"type": "object",
+						"properties": {
+							"x": {
+								"type": "number"
+							},
+							"y": {
+								"type": "number"
+							},
+							"z": {
+								"type": "number"
+							}
+						}
+					},
+					"gravityAxes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"rotationAxes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"sprites": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"default": "Bgmap"
+					},
+					"useZDisplacementInProjection": {
+						"type": "boolean",
+						"default": false
+					},
+					"sharedTiles": {
+						"type": "boolean",
+						"default": true
+					},
+					"optimizedTiles": {
+						"type": "boolean",
+						"default": true
+					}
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "EntityEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-id-card-o",
+	"templates": [
+		"EntityImageData",
+		"EntitySpec"
+	]
+}

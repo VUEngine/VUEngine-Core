@@ -250,10 +250,18 @@ void Printing::setDirection(uint8 value)
 	}
 }
 
-void Printing::onFontCharSetRewritten(ListenerObject eventFirer __attribute__((unused)))
+bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
 {
-	Printing::fireEvent(this, kEventFontRewritten);
-	NM_ASSERT(!isDeleted(this), "Printing::onFontCharSetRewritten: deleted this during kEventFontRewritten");
+	CharSet charSet = CharSet::safeCast(eventFirer);
+
+	if(!isDeleted(charSet))
+	{
+		CharSet::write(charSet);
+		Printing::fireEvent(this, kEventFontRewritten);
+		NM_ASSERT(!isDeleted(this), "Printing::onFontCharChangedOffset: deleted this during kEventFontRewritten");
+	}
+
+	return true;
 }
 
 void Printing::loadFonts(FontSpec** fontSpecs)
@@ -291,7 +299,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 				{
 					fontData->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec);
 
-					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+					CharSet::addEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
 				}
 			}
 		}
@@ -317,10 +325,7 @@ void Printing::setFontPage(const char* font, uint16 page)
 		return;
 	}
 
-	if(CharSet::setFrame(fontData->charSet, page))
-	{
-		CharSet::write(fontData->charSet);
-	}
+	CharSet::setFrame(fontData->charSet, page);
 }
 
 void Printing::loadDebugFont()
@@ -376,7 +381,7 @@ void Printing::releaseFonts()
 		{
 			if(!isDeleted(fontData->charSet))
 			{
-				CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::removeEventListener(fontData->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
 
 				while(!CharSetManager::releaseCharSet(CharSetManager::getInstance(), fontData->charSet));
 			}
@@ -428,7 +433,7 @@ FontData* Printing::getFontByName(const char* font)
 			{
 				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
 
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharSetRewritten, kEventCharSetRewritten);
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
 			}
 		}
 	}
@@ -495,7 +500,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 
 	// Get integral part
 	int32 floorValue = ((int32)(value * 10)) / 10;
-	char* integer = Utilities::itoa(floorValue, 10, Utilities::getDigitsCount(floorValue));
+	char* integer = Utilities::itoa(floorValue, 10, Math::getDigitsCount(floorValue));
 
 	// Save it right away
 	for(int32 j = 0; integer[j];)
@@ -513,7 +518,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 	decimalValue *= decMultiplier; 
 
 	int32 zeros = 0;
-	int32 flooredDecimalValue = (int32)Utilities::floor(decimalValue);
+	int32 flooredDecimalValue = (int32)Math::floor(decimalValue);
 
 	while(10 <= decMultiplier)
 	{
@@ -538,7 +543,7 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 		}
 		else
 		{
-			int32 totalDecimalDigits = Utilities::getDigitsCount(roundedDecimalValue);
+			int32 totalDecimalDigits = Math::getDigitsCount(roundedDecimalValue);
 
 			char* decimalString = Utilities::itoa((int32)(decimalValue * 10) / 10, 10, totalDecimalDigits);
 
@@ -764,7 +769,7 @@ void Printing::render(uint8 textLayer)
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::doRender(this->activePrintingSprite, textLayer, false);
+		PrintingSprite::doRender(this->activePrintingSprite, textLayer);
 	}
 }
 

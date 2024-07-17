@@ -13,7 +13,6 @@
 //                                               DEFINITIONS                                               
 //---------------------------------------------------------------------------------------------------------
 
-// The default column table as provided by Nintendo
 ColumnTableROMSpec DefaultColumnTableSpec =
 {
 	// mirror spec?

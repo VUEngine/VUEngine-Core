@@ -1,0 +1,36 @@
+{
+	"file": ".brightness",
+	"schema": {
+		"title": "Brightness Repeat",
+		"properties": {
+			"description": {
+				"type": "string",
+				"default": ""
+			},
+			"mirror": {
+				"type": "boolean",
+				"default": true
+			},
+			"values": {
+				"type": "array",
+				"items": {
+					"type": "integer",
+					"default": 1,
+					"minimum": 1,
+					"maximum": 16
+				},
+				"maxItems": 96,
+				"minItems": 48
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "BrightnessRepeatEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-sun-o",
+	"templates": [
+		"BrightnessRepeatSpec"
+	]
+}

@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DirectDraw.h>
-#include <DebugUtilities.h>
 #include <Math.h>
 #include <Optics.h>
 #include <WireframeManager.h>
@@ -30,10 +29,10 @@
  *
  * @private
  */
-void Sphere::constructor(SphereSpec* sphereSpec)
+void Sphere::constructor(SpatialObject owner, SphereSpec* sphereSpec)
 {
 	// construct base object
-	Base::constructor(&sphereSpec->wireframeSpec);
+	Base::constructor(owner, &sphereSpec->wireframeSpec);
 
 	this->center = PixelVector::zero();
 
@@ -114,22 +113,24 @@ void Sphere::setRadiusScale(fixed_t radiusScale)
 /**
  * Render
  */
-void Sphere::render()
+bool Sphere::render()
 {
-	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
-	Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::sum(*this->position, this->displacement), _previousCameraPosition), _previousCameraInvertedRotation);
+	Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition), _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 
 	Sphere::setupRenderingMode(this, &relativePosition);
 
 	if(__COLOR_BLACK == this->color)
 	{
-		return;
+		return false;
 	}
 
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, Vector3D::getScale(relativePosition.z, false)));
 	this->scaledRadius = __METERS_TO_PIXELS(__FIXED_MULT(this->radius, __1I_FIXED));
+
+	return true;
 }
 
 /**
@@ -141,11 +142,13 @@ void Sphere::render()
  *
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Sphere::draw()
+bool Sphere::draw()
 {
-	NM_ASSERT(NULL != this->position, "Sphere::render: NULL position");
+	NM_ASSERT(NULL != this->transformation, "Sphere::render: NULL transformation");
 
-	DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
+	bool drawn = false;
+
+	drawn = DirectDraw::drawColorCircumference(this->center, this->scaledRadius, this->color, this->bufferIndex, this->interlaced);
 
 	if(this->drawCenter)
 	{
@@ -153,4 +156,6 @@ void Sphere::draw()
 	}
 
 	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;
 }

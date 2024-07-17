@@ -1,0 +1,8 @@
+{
+	"targets": [{
+		"path": "Converted/${_filename}EntitySpec.c",
+		"root": "file"
+	}],
+	"template": "contributions/Template/EntitySpec.c.nj",
+	"itemSpecific": "Entity"
+}

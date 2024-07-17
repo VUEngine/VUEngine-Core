@@ -124,10 +124,16 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 			}
 		}
 
+#ifdef __UNLOCK_FPS
+#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE_AT_X		27
+#define __PRINT_FRAMERATE_AT_Y		0
+#endif
+
 #ifdef __PRINT_FRAMERATE
 #ifdef __PRINT_FRAMERATE_AT_X
 #ifdef __PRINT_FRAMERATE_AT_Y
-		if(!VUEngine::isInSpecialMode(VUEngine::getInstance()))
+		if(!VUEngine::isInToolState(VUEngine::getInstance()))
 		{
 			FrameRate::print(this, __PRINT_FRAMERATE_AT_X, __PRINT_FRAMERATE_AT_Y);
 		}
@@ -156,6 +162,11 @@ void FrameRate::update()
  */
 void FrameRate::print(int32 col, int32 row)
 {
+#ifdef __UNLOCK_FPS
+	Printing printing = Printing::getInstance();
+	Printing::int32(printing, this->FPS, col, row, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, col + 7, row, NULL);
+#else
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS   /   ", col, row, NULL);
 	Printing::int32(printing, this->FPS, col + 4, row, NULL);
@@ -164,4 +175,5 @@ void FrameRate::print(int32 col, int32 row)
 	Printing::text(printing, "AVR   /   ", col + 10, row, NULL);
 	Printing::int32(printing, this->totalFPS / this->seconds, col + 4 + 10, row, NULL);
 	Printing::int32(printing, this->unevenFPS / this->seconds, col + 7 + 10, row, NULL);
+#endif
 }

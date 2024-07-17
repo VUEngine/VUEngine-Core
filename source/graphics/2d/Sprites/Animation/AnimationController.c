@@ -117,17 +117,6 @@ int16 AnimationController::getActualFrame()
 }
 
 /**
- * Retrieve the previous frame of animation
- *
- * @publics
- * @return 		Previous frame of animation
- */
-int16 AnimationController::getPreviousFrameValue()
-{
-	return this->previousFrameValue;
-}
-
-/**
  * Set the actual frame of animation
  *
  * @public
@@ -142,7 +131,7 @@ bool AnimationController::setActualFrame(int16 actualFrame)
 		actualFrame = -1;
 	}
 
-	if(this->animationFunction && 0 <= actualFrame)
+	if(NULL != this->animationFunction && 0 <= actualFrame)
 	{
 		bool updatedActualFrame = this->actualFrame != actualFrame && 0 <= actualFrame;
 
@@ -264,11 +253,11 @@ bool AnimationController::updateAnimation()
 		// Reset frame duration
 		AnimationController::resetFrameDuration(this);
 
-		uint8 actualFrameValue = this->animationFunction->frames[this->actualFrame];
+		uint16 actualFrameValue = this->animationFunction->frames[this->actualFrame];
 
 		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
 		this->previousFrameValue = actualFrameValue;
-
+		
 		return frameValueChanged;
 	}
 

@@ -1,0 +1,14 @@
+{
+	"targets": [{
+		"path": "headers/Fonts.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/Fonts.h.nj",
+	"events": [{
+		"type": "installedPluginsChanged"
+		},
+		{
+			"type": "itemOfTypeGotDeleted",
+			"value": "Font"
+	}]
+}

@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Clock.h>
-#include <DebugUtilities.h>
 #include <Printing.h>
 #include <Telegram.h>
 #include <VirtualList.h>
@@ -195,11 +194,11 @@ void MessageDispatcher::processDiscardedMessages()
 /**
  * Dispatch the delayed messages whose delay has expired
  */
-uint32 MessageDispatcher::dispatchDelayedMessages()
+bool MessageDispatcher::dispatchDelayedMessages()
 {
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
-	uint32 messagesDispatched = false;
+	bool messagesDispatched = false;
 
 	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
 	{
@@ -398,6 +397,7 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sende
  * @private
  * @param sender	the object that originally sent the message
  */
+#ifndef __SHIPPING
 void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
 {
 	for(VirtualNode node = this->delayedMessages->head; NULL != node; node = node->next)
@@ -423,6 +423,7 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender,
 		}
 	}
 }
+#endif
 
 /**
  * Discarded all delayed messages sent to an object
@@ -491,9 +492,11 @@ bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */
+#ifndef __RELEASE
 void MessageDispatcher::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
 }
+#endif

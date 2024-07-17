@@ -64,7 +64,7 @@ class PrintingSprite : BgmapSprite
 	int8 printingBgmapSegment;
 	
 	/// @publicsection
-	void constructor(const PrintingSpriteSpec* printingSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec);
 	void reset();
 
 	void setPrintingBgmapSegment(int8 printingBgmapSegment);
@@ -77,7 +77,7 @@ class PrintingSprite : BgmapSprite
 	int16 getGY();
 	int16 getGP();
 
-	override int16 doRender(int16 index, bool evenFrame);
+	override int16 doRender(int16 index);
 }
 
 

@@ -28,6 +28,15 @@ void SpatialObject::constructor()
 {
 	// construct base object
 	Base::constructor();
+
+	// set position
+	this->transformation.position = Vector3D::zero();
+
+	// set rotation
+	this->transformation.rotation = Rotation::zero();
+
+	// set scale
+	this->transformation.scale = Scale::unit();
 }
 
 // class's destructor
@@ -74,6 +83,16 @@ fixed_t SpatialObject::getRadius()
 	return 0;
 }
 
+/**
+ * Retrieve transformation
+ *
+ * @return		Pointer to Transformation
+ */
+const Transformation* SpatialObject::getTransformation()
+{
+	return &this->transformation;
+}
+
 fixed_t SpatialObject::getWidth()
 {
 	return 0;
@@ -91,40 +110,46 @@ fixed_t SpatialObject::getDepth()
 
 const Vector3D* SpatialObject::getPosition()
 {
-	static Vector3D position =
-	{
-		0, 0, 0
-	};
-
-	return &position;
+	return &this->transformation.position;
 }
 
-void SpatialObject::setPosition(const Vector3D* position __attribute__ ((unused)))
-{}
+void SpatialObject::setPosition(const Vector3D* position)
+{
+	this->transformation.position = *position;
+}
 
 const Rotation* SpatialObject::getRotation()
 {
-	static Rotation rotation =
+	return &this->transformation.rotation;
+
+}
+
+void SpatialObject::setRotation(const Rotation* rotation)
+{
+	this->transformation.rotation = *rotation;
+}
+
+const Scale* SpatialObject::getScale()
+{
+	return &this->transformation.scale;
+}
+
+void SpatialObject::setScale(const Scale* scale)
+{
+	this->transformation.scale = *scale;
+}
+
+const Size* SpatialObject::getSize()
+{
+	static Size size =
 	{
 		0, 0, 0
 	};
 
-	return &rotation;
+	return &size;
 }
 
-void SpatialObject::setRotation(const Rotation* rotation __attribute__ ((unused)))
-{}
-
-const Scale* SpatialObject::getScale()
-{
-	static Scale scale =
-	{
-		__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9
-	};
-
-	return &scale;
-}
-void SpatialObject::setScale(const Scale* scale __attribute__ ((unused)))
+void SpatialObject::setDirection(const Vector3D* direction __attribute__ ((unused)))
 {}
 
 // get bounciness
@@ -170,14 +195,14 @@ bool SpatialObject::updateCollision(const CollisionInformation* collisionInforma
 	return false;
 }
 
-void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
+void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
-void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider shapeNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
+void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
 {}
 
 /**
- * Retrieve shapes list
+ * Retrieve colliders list
  *
  * @memberof	SpatialObject
  * @public

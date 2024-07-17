@@ -60,14 +60,14 @@ class Mesh : Wireframe
 	static PixelRightBox getPixelRightBoxFromSpec(MeshSpec* meshSpec);
 
 	/// @publicsection
-	void constructor(MeshSpec* meshSpec);
+	void constructor(SpatialObject owner, MeshSpec* meshSpec);
 	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
 	
 	override PixelRightBox getPixelRightBox();
 	override VirtualList getVertices();
-	override void draw();
-	void drawInterlaced();
-	override void render();
+	override bool draw();
+	bool drawInterlaced();
+	override bool render();
 }
 
 

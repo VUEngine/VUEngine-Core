@@ -1,0 +1,48 @@
+{
+	"file": ".ctable",
+	"schema": {
+		"title": "Column Table",
+		"properties": {
+			"description": {
+				"type": "string",
+				"default": ""
+			},
+			"mirror": {
+				"type": "boolean",
+				"default": true
+			},
+			"values": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"repeat": {
+							"type": "integer",
+							"default": 16,
+							"minimum": 1,
+							"maximum": 16
+						},
+						"time": {
+							"type": "integer",
+							"default": 16,
+							"minimum": 1,
+							"maximum": 16
+						}
+					}
+				},
+				"maxItems": 256,
+				"minItems": 128,
+				"default": []
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "ColumnTableEditor",
+		"scope": "#"
+	},
+	"icon": "fa fa-table",
+	"templates": [
+		"ColumnTableSpec"
+	]
+}

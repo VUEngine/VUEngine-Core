@@ -216,6 +216,10 @@ do
 		GAME_NAME="$2"
 		shift # past argument
 		;;
+		-m)
+		GAME_HOME="$2"
+		shift
+		;;
 	esac
 
 	shift
@@ -333,7 +337,7 @@ then
 #				echo "$baseClassName file $baseClassFile"
 #				echo "$baseClassName processedBaseClassFile $processedBaseClassFile"
 				
-				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -m $GAME_HOME -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $PLUGINS_NAME -h $HEADERS_FOLDER -p $PLUGINS_FOLDER -u $USER_PLUGINS_FOLDER -g $className -t $PREPROCESSING_WAIT_FOR_LOCK_DELAY_FACTOR $PLUGINS_ARGUMENT
 			else
 				mustBeReprocessed=true
 			fi
@@ -554,7 +558,8 @@ echo "Starting computation of dependencies on caller $CALLER with search path $s
 
 if [ ! -z "$baseClassesNames" ];
 then
-	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
+	OUTPUT_FILE_CLEAN=`echo $OUTPUT_FILE | sed -e "s@"$GAME_HOME"@@g"| sed -e "s@/build/@@g" | sed -e "s@build/@@g"` 
+	echo "$GAME_HOME/build/$OUTPUT_FILE_CLEAN: \\" > $CLASS_DEPENDENCIES_FILE
 fi
 
 # Get base classes' methods
@@ -590,8 +595,8 @@ do
 	then
 		# It needs to depend on both the original and the preprocessed base class header file
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
-#		echo " $headerFile \\" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers@g' >> $CLASS_DEPENDENCIES_FILE
-		echo " $headerFile \\" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g' >> $CLASS_DEPENDENCIES_FILE
+		preprocessedHeader=`echo "$headerFile" | sed -e 's@'"$PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/vuengine@g' | sed -e 's@'"$USER_PLUGINS_FOLDER"'@'"$WORKING_FOLDER"'/headers/user@g' | sed -e 's@'"$ENGINE_HOME"'@'"$WORKING_FOLDER"'/headers/core@g' | sed -e 's@^.*/'"$GAME_NAME"'@'"$WORKING_FOLDER"'/headers/'"$GAME_NAME"'@g'`
+		echo " $GAME_HOME/$preprocessedHeader \\" >> $CLASS_DEPENDENCIES_FILE
 	else
 		echo "$className: header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
@@ -621,7 +626,7 @@ echo "Computing final header text on caller $CALLER"  >> $CLASS_LOG_FILE
 methodDeclarations=`sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#' <<< "$methods"`
 
 #echo "."
-virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
+virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,ClassName,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
 #echo "."
 virtualMethodOverrides=$virtualMethodOverrides" "`grep -e "<override>\|<virtual>" <<< "$methodDeclarations" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
 #echo "."
@@ -778,10 +783,16 @@ fi
 #echo "" >> $TEMPORAL_FILE
 if [ "$isExtensionClass" = true ];
 then
-	echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+	echo
+#   Causes redefinition warning	
+#	echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
 else
 	if [ ! "$isStaticClass" = true ]
 	then
+		echo "#ifndef FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "#define FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+		echo "#endif" >> $TEMPORAL_FILE
 		echo "__CLASS($className);" >> $TEMPORAL_FILE
 	fi
 fi
@@ -827,7 +838,12 @@ tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
 #sed -i.b 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 #sed -i.b 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 #sed -i.b 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
-sed 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#; s#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g; s/static[ 	]inline[ 	]/inline /g; s/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
+		echo "#ifndef FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "#define FORWARD_DECLARE_$className" >> $TEMPORAL_FILE
+		echo "__FORWARD_CLASS($className);" >> $TEMPORAL_FILE
+		echo "#endif" >> $TEMPORAL_FILE
+
+sed 's@^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;@#ifndef FORWARD_DECLARE_\1\n #define FORWARD_DECLARE_\1\n __FORWARD_CLASS(\1);\n #endif\n@; s@\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)@\1_\2@g; s/static[ 	]inline[ 	]/inline /g; s/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 echo "Writing class hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
 

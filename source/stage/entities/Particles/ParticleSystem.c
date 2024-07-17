@@ -12,7 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <DebugUtilities.h>
 #include <Particle.h>
 #include <Printing.h>
 #include <Utilities.h>
@@ -48,7 +47,6 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	// construct base
 	Base::constructor((EntitySpec*)&particleSystemSpec->entitySpec, internalId, name);
 
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
 	this->particles = NULL;
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -61,6 +59,7 @@ void ParticleSystem::constructor(const ParticleSystemSpec* particleSystemSpec, i
 	this->previousGlobalPosition = (Vector3D){0, 0, 0};
 	this->selfDestroyWhenDone = false;
 	this->elapsedTime = __MILLISECONDS_PER_SECOND / __TARGET_FPS;
+	this->transformed = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
 }
@@ -262,7 +261,7 @@ void ParticleSystem::update()
 
 	ParticleSystem::processExpiredParticles(this);
 
-	if(this->invalidateGlobalTransformation && !this->transformed)
+	if(this->transformation.invalid && !this->transformed)
 	{
 		return;
 	}
@@ -358,16 +357,16 @@ bool ParticleSystem::recycleParticle()
 		if(particle->expired)
 		{
 			Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-			int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + (0 != ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) : 0);
+			int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + (0 != ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta ? Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta) : 0);
 
 			if(this->applyForceToParticles)
 			{
 				Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-				Particle::setup(particle, lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 			}
 			else
 			{
-				Particle::setup(particle, lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
+				Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, NULL, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 			}
 
 			if(ParticleSystem::overrides(this, particleRecycled))
@@ -388,21 +387,21 @@ bool ParticleSystem::recycleParticle()
  */
 Vector3D ParticleSystem::getParticleSpawnPosition()
 {
-	Vector3D position = this->transformation.globalPosition;
+	Vector3D position = this->transformation.position;
 
 	if(0 != this->spawnPositionDisplacement.x)
 	{
-		position.x += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x));
+		position.x += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x + Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.x - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.x));
 	}
 
 	if(0 != this->spawnPositionDisplacement.y)
 	{
-		position.y += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y));
+		position.y += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y + Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.y - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.y));
 	}
 
 	if(0 != this->spawnPositionDisplacement.z)
 	{
-		position.z += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z + Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z));
+		position.z += ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z + Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumRelativeSpawnPosition.z - ((ParticleSystemSpec*)this->entitySpec)->minimumRelativeSpawnPosition.z));
 	}
 
 	return position;
@@ -416,7 +415,7 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 {
 	if(((ParticleSystemSpec*)this->entitySpec)->useMovementVector)
 	{
-		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.globalPosition));
+		Vector3D direction = Vector3D::normalize(Vector3D::get(this->previousGlobalPosition, this->transformation.position));
 		fixed_t strength = (Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->minimumForce) + Vector3D::length(((ParticleSystemSpec*)this->entitySpec)->maximumForce)) >> 1;
 		return Vector3D::scalarProduct(direction, strength);
 	}
@@ -425,17 +424,17 @@ Vector3D ParticleSystem::getParticleSpawnForce()
 
 	if(0 != this->spawnForceDelta.x)
 	{
-		force.x += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.x - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x));
+		force.x += Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.x - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.x));
 	}
 
 	if(0 != this->spawnForceDelta.y)
 	{
-		force.y += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.y - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y));
+		force.y += Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.y - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.y));
 	}
 
 	if(0 != this->spawnForceDelta.z)
 	{
-		force.z += Utilities::random(Utilities::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.z - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z));
+		force.z += Math::random(Math::randomSeed(), __ABS(((ParticleSystemSpec*)this->entitySpec)->maximumForce.z - ((ParticleSystemSpec*)this->entitySpec)->minimumForce.z));
 	}
 
 	return force;
@@ -505,7 +504,7 @@ const SpriteSpec* ParticleSystem::getSpriteSpec()
 
 	if(1 < this->numberOfSpriteSpecs)
 	{
-		specIndex = Utilities::random(_gameRandomSeed, this->numberOfSpriteSpecs);
+		specIndex = Math::random(_gameRandomSeed, this->numberOfSpriteSpecs);
 	}
 
 	return (const SpriteSpec*)((ParticleSystemSpec*)this->entitySpec)->spriteSpecs[specIndex];
@@ -522,7 +521,7 @@ const WireframeSpec* ParticleSystem::getWireframeSpec()
 
 	if(1 < this->numberOfWireframeSpecs)
 	{
-		specIndex = Utilities::random(_gameRandomSeed, this->numberOfWireframeSpecs);
+		specIndex = Math::random(_gameRandomSeed, this->numberOfWireframeSpecs);
 	}
 
 	return (const WireframeSpec*)((ParticleSystemSpec*)this->entitySpec)->wireframeSpecs[specIndex];
@@ -543,19 +542,19 @@ void ParticleSystem::particleRecycled(Particle particle __attribute__ ((unused))
  */
 Particle ParticleSystem::spawnParticle()
 {
-	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
-
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, const WireframeSpec*, int32, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, this);
+	Particle particle = ((Particle (*)(const ParticleSpec*, ParticleSystem)) ((ParticleSystemSpec*)this->entitySpec)->particleSpec->allocator)(((ParticleSystemSpec*)this->entitySpec)->particleSpec, this);
+
+	int16 lifeSpan = ((ParticleSystemSpec*)this->entitySpec)->particleSpec->minimumLifeSpan + Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->lifeSpanDelta);
 	Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
-	Particle::setPosition(particle, &position);
+	Vector3D force = Vector3D::zero();
 
 	if(this->applyForceToParticles)
 	{
-		Vector3D force = ParticleSystem::getParticleSpawnForce(this);
-		
-		Particle::applySustainedForce(particle, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType);
+		force = ParticleSystem::getParticleSpawnForce(this);
 	}
+
+	Particle::setup(particle, ParticleSystem::getSpriteSpec(this), ParticleSystem::getWireframeSpec(this), lifeSpan, &position, &force, ((ParticleSystemSpec*)this->entitySpec)->movementType, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->animationFunctions, ((ParticleSystemSpec*)this->entitySpec)->particleSpec->initialAnimation, this->animationChanged);
 
 	if(ParticleSystem::overrides(this, particleSpawned))
 	{
@@ -570,9 +569,7 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag)
 {
-	this->previousGlobalPosition = this->transformation.globalPosition;
-
-	this->invalidateGraphics = __INVALIDATE_TRANSFORMATION;
+	this->previousGlobalPosition = this->transformation.position;
 
 	bool transformed = this->transformed;
 
@@ -584,8 +581,6 @@ void ParticleSystem::transform(const Transformation* environmentTransform, uint8
 	{
 		ParticleSystem::resetParticlesPositions(this);
 	}
-
-	ParticleSystem::transformParticles(this);
 }
 
 void ParticleSystem::resetParticlesPositions()
@@ -606,55 +601,6 @@ void ParticleSystem::resetParticlesPositions()
 
 		Vector3D position = ParticleSystem::getParticleSpawnPosition(this);
 		Particle::setPosition(particle, &position);
-	}
-}
-
-void ParticleSystem::transformParticles()
-{
-	if(isDeleted(this->particles))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		if(particle->expired || !particle->transform)
-		{
-			continue;
-		}
-
-		Particle::transform(particle);
-	}
-}
-
-void ParticleSystem::synchronizeGraphics()
-{
-	ASSERT(__GET_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: not a particle system");
-
-	if(ParticleSystem::isPaused(this) || isDeleted(this->particles))
-	{
-		return;
-	}
-
-	if(NULL != this->children || !this->dontStreamOut)
-	{
-		Base::synchronizeGraphics(this);
-	}
-
-	for(VirtualNode node = this->particles->head; NULL != node; node = node->next)
-	{
-		Particle particle = Particle::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(particle), "ParticleSystem::synchronizeGraphics: deleted particle");
-
-		if(particle->expired)
-		{
-			continue;
-		}
-
-		Particle::synchronizeGraphics(particle);
 	}
 }
 
@@ -776,7 +722,7 @@ void ParticleSystem::suspend()
 int32 ParticleSystem::computeNextSpawnTime()
 {
 	return ((ParticleSystemSpec*)this->entitySpec)->minimumSpawnDelay +
-			(((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta ? Utilities::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta) : 0);
+			(((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta ? Math::random(_gameRandomSeed, ((ParticleSystemSpec*)this->entitySpec)->spawnDelayDelta) : 0);
 }
 
 /**
@@ -832,7 +778,7 @@ void ParticleSystem::unpause()
 		this->nextSpawnTime = 0;
 	}
 
-	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+	this->transformation.invalid |= __INVALIDATE_POSITION;
 }
 
 bool ParticleSystem::isPaused()

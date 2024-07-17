@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
 #include <Telegram.h>
@@ -41,6 +40,10 @@ friend class VirtualList;
  */
 void ListenerObject::constructor()
 {
+#ifndef __RELEASE	
+	Base::constructor();
+#endif
+
 	this->events = NULL;
 	this->eventFirings = 0;
 }
@@ -123,6 +126,8 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -154,11 +159,13 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 			}
 		}
 
-		if(NULL == this->events->head)
+		if(NULL != this->events && NULL == this->events->head)
 		{
 			delete this->events;
 			this->events = NULL;
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -172,6 +179,8 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -203,11 +212,13 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 			}
 		}
 
-		if(NULL == this->events->head)
+		if(NULL != this->events && NULL == this->events->head)
 		{
 			delete this->events;
 			this->events = NULL;
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -221,6 +232,8 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		for(VirtualNode node = this->events->head, nextNode = NULL; NULL != node; node = nextNode)
 		{
 			nextNode = node->next;
@@ -251,11 +264,13 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 			}
 		}
 
-		if(NULL == this->events->head)
+		if(NULL != this->events && NULL == this->events->head)
 		{
 			delete this->events;
 			this->events = NULL;
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -267,6 +282,8 @@ void ListenerObject::removeAllEventListeners()
 {
 	if(NULL != this->events)
 	{
+		HardwareManager::suspendInterrupts();
+
 		if(0 == this->eventFirings)
 		{
 			VirtualList::deleteData(this->events);
@@ -287,6 +304,8 @@ void ListenerObject::removeAllEventListeners()
 				}
 			}			
 		}
+
+		HardwareManager::resumeInterrupts();
 	}
 }
 
@@ -335,7 +354,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				event->method(event->listener, this);
+				event->remove = !event->method(event->listener, this);
 
 				// safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
@@ -356,7 +375,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 		}
 		
-		if(NULL == this->events->head)
+		if(NULL != this->events && NULL == this->events->head)
 		{
 			delete this->events;
 			this->events = NULL;
@@ -380,7 +399,7 @@ void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint
 {
 	MessageDispatcher::dispatchMessage
 	(
-		delay + (randomDelay ? Utilities::random(Utilities::randomSeed(), randomDelay) : 0), 
+		delay + (randomDelay ? Math::random(Math::randomSeed(), randomDelay) : 0), 
 		ListenerObject::safeCast(this), 
 		ListenerObject::safeCast(receiver), 
 		message, 

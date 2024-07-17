@@ -12,7 +12,6 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <DebugUtilities.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
 #include <SoundManager.h>
@@ -372,8 +371,6 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 					{
 						CACHE_DISABLE;
 						CACHE_CLEAR;
-
-						SoundManager::startPCMPlayback(SoundManager::getInstance());
 					}
 				}	
 			}
@@ -1031,7 +1028,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 	// Elapsed time during PCM playback is based on the cursor, track's ticks and target Hz
 	this->mainChannel->elapsedTicks += elapsedMicroseconds;
 
- 	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
+	this->mainChannel->cursor = this->mainChannel->elapsedTicks / targetPCMUpdates;
 
 	if(this->mainChannel->cursor >= this->mainChannel->samples)
 	{
@@ -1047,11 +1044,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 		{
 			Channel* channel = (Channel*)node->data;
 
-			if(0 >= volume)
-			{
-				_soundRegistries[channel->number].SxLRV = 0;	
-			}
-			else if(__MAXIMUM_VOLUME <= volume)
+			if(__MAXIMUM_VOLUME <= volume)
 			{
 				_soundRegistries[channel->number].SxLRV = 0xFF;
 				volume -= __MAXIMUM_VOLUME;
@@ -1072,6 +1065,7 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 	CACHE_DISABLE;
 }
 
+#ifndef __SHIPPING
 void Sound::print(int32 x, int32 y)
 {
 	if(NULL == this->soundSpec)
@@ -1160,6 +1154,7 @@ void Sound::print(int32 x, int32 y)
 		}
 	}
 }
+#endif
 
 uint32 Sound::getTotalPlaybackMilliseconds(Channel* channel)
 {
@@ -1238,7 +1233,7 @@ void Sound::printTiming(uint32 seconds, int32 x, int32 y)
 	uint32 minutes = seconds / 60;
 	seconds = seconds - minutes * 60;
 
-	int32 minutesDigits = Utilities::getDigitsCount(minutes);
+	int32 minutesDigits = Math::getDigitsCount(minutes);
 
 	PRINT_INT(minutes, x, y);
 	PRINT_TEXT(":", x + minutesDigits, y);

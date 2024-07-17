@@ -65,6 +65,10 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	return object;
 #endif
 
+#ifndef __DEBUG
+	HardwareManager::suspendInterrupts();
+#endif
+
 	static int32 lp = -1;
 	static int32 sp = -1;
 
@@ -104,6 +108,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 		sp = -1;
 #ifdef __DEBUG
 		counter = 0;
+#else
+		HardwareManager::resumeInterrupts();
 #endif
 		return NULL;
 	}
@@ -153,6 +159,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 			sp = -1;
 #ifdef __DEBUG
 			counter = 0;
+#else
+			HardwareManager::resumeInterrupts();
 #endif
 			return object;
 		}
@@ -169,6 +177,8 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 #ifdef __DEBUG
 		counter = 0;
+#else
+		HardwareManager::resumeInterrupts();
 #endif
 		return NULL;
 	}
@@ -180,9 +190,15 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 #ifdef __DEBUG
 		counter = 0;
+#else
+		HardwareManager::resumeInterrupts();
 #endif
 		return object;
 	}
+
+#ifndef __DEBUG
+	HardwareManager::resumeInterrupts();
+#endif
 
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }

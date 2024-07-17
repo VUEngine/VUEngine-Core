@@ -32,6 +32,7 @@ static class PixelVector : Object
 	static inline PixelVector sub(PixelVector a, PixelVector b);
 	static inline PixelVector intermediate(PixelVector a, PixelVector b);
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
+	static inline PixelVector getFromVector2D(Vector2D vector3D, int16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, int16 parallax);
 	static inline uint32 squareLength(PixelVector vector);
 	static inline fixed_t length(PixelVector vector);
@@ -83,7 +84,18 @@ static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVecto
 	{
 		screenPixelVector.x,
 		screenPixelVector.y,
-		screenPixelVector.z + screenPixelVector.zDisplacement,
+		screenPixelVector.z,
+		parallax
+	};
+}
+
+static inline PixelVector PixelVector::getFromVector2D(Vector2D vector2D, int16 parallax)
+{
+	return (PixelVector)
+	{
+		__METERS_TO_PIXELS(vector2D.x),
+		__METERS_TO_PIXELS(vector2D.y),
+		0,
 		parallax
 	};
 }

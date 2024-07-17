@@ -12,11 +12,10 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
-
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
 #include <BgmapTexture.h>
+#include <Clock.h>
 #include <ObjectSprite.h>
 #include <Optics.h>
 #include <Printing.h>
@@ -24,7 +23,7 @@
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <DebugUtilities.h>
+#include "Sprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,9 +46,9 @@ friend class AnimationController;
  * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteSpec* spriteSpec, ListenerObject owner __attribute__((unused)))
+void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
-	Base::constructor();
+	Base::constructor(owner, spriteSpec);
 
 	// clear values
 	this->index = __NO_RENDER_INDEX;
@@ -58,15 +57,14 @@ void Sprite::constructor(const SpriteSpec* spriteSpec, ListenerObject owner __at
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->position = (PixelVector){0, 0, 0, 0};
-	this->displacement = (PixelVector){0, 0, 0, 0};
-	this->show = __SHOW;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->writeAnimationFrame = false;
-	this->positioned = false;
-	this->registered = false;
 	this->checkIfWithinScreenSpace = true;
-	this->renderFlag = false;
+	this->position = (PixelVector){0, 0, 0, 0};
+	this->rotation = Rotation::zero();
+	this->scale = (PixelScale){__1I_FIX7_9, __1I_FIX7_9};
+	this->transformed = false;
+	this->displacement = PixelVector::zero();
 }
 
 /**
@@ -87,7 +85,7 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject owner)
+void Sprite::createAnimationController(CharSetSpec* charSetSpec)
 {
     this->animationController = new AnimationController();
 
@@ -104,7 +102,7 @@ void Sprite::createAnimationController(CharSetSpec* charSetSpec, ListenerObject 
 			(
 				AnimationCoordinatorFactory::getInstance(),
 				this->animationController, 
-				owner, 
+				ListenerObject::safeCast(this->owner), 
 				charSetSpec
 			)
 		);
@@ -115,16 +113,17 @@ void Sprite::processEffects()
 {
 }
 
-int16 Sprite::render(int16 index, bool evenFrame)
+void Sprite::configureMultiframe(uint16 frame __attribute__((unused)))
 {
-	int16 previousIndex = this->index;
-	this->index = __NO_RENDER_INDEX;
+}
 
+int16 Sprite::render(int16 index, bool updateAnimation)
+{
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
 	// sprites. Don't uncomment.
 /*
-	if(__HIDE == this->show || !this->positioned)
+	if(__HIDE == this->show)
 	{
 		return __NO_RENDER_INDEX;
 	}
@@ -132,20 +131,23 @@ int16 Sprite::render(int16 index, bool evenFrame)
 
 	if(isDeleted(this->texture))
 	{
-		this->index = Sprite::doRender(this, index, evenFrame);
-
+		this->index = Sprite::doRender(this, index);
 		return this->index;
 	}
 
-	if(kTextureInvalid == this->texture->status)
+	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
 
 	if(kTexturePendingWriting == this->texture->status)
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
+
+	NM_ASSERT(!isDeleted(this->texture->charSet), "Sprite::render: null char set");
 
 	// If the client code makes these checks before calling this method,
 	// it saves on method calls quite a bit when there are lots of
@@ -156,60 +158,46 @@ int16 Sprite::render(int16 index, bool evenFrame)
 		return this->index;
 	}
 */
-	Sprite::update(this);
 
-	// Do not remove this check, it prevents sprites from loop
+	if(NULL != this->owner)
+	{
+		if(NULL != this->transformation && __NON_TRANSFORMED == this->transformation->invalid)
+		{
+			return __NO_RENDER_INDEX;
+		}
+
+		Sprite::position(this);
+		Sprite::rotate(this);
+		Sprite::scale(this);
+
+		this->transformed = true;
+	}
+
+	// Do not remove this check, it prevents sprites from looping
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))
 	{
-		return __NO_RENDER_INDEX;
+		this->index = __NO_RENDER_INDEX;
+		return this->index;
 	}
 
-	if((previousIndex == index) && !this->renderFlag)
- 	{
- 		this->index = previousIndex;
- 	}
- 	else
+	if(updateAnimation)	
 	{
- 		this->renderFlag = false;
- 		this->index = Sprite::doRender(this, index, evenFrame);
- 	}
+		Sprite::update(this);
+	}
+
+	if(!this->rendered || this->index != index)
+	{
+		this->rendered = true;
+
+ 		this->index = Sprite::doRender(this, index);
+
+#ifdef __SHOW_SPRITES_PROFILING
+		extern int32 _renderedSprites;
+		_renderedSprites++;
+#endif		
+	}
 
 	return this->index;
-}
-
-/**
- * Get scale
- *
- * @return		Scale struct
- */
-Scale Sprite::getScale()
-{
-	Scale scale =
-	{
-		__1I_FIX7_9,
-		__1I_FIX7_9,
-		__1I_FIX7_9,
-	};
-
-	// return the scale
-	return scale;
-}
-
-/**
- * Calculate zoom scaling factor
- *
- * @param scale	Scale struct to apply
- * @param z
- */
-void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute__ ((unused)))
-{
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	this->halfWidth = Texture::getCols(this->texture) << 2;
-	this->halfHeight = Texture::getRows(this->texture) << 2;
 }
 
 /**
@@ -220,23 +208,6 @@ void Sprite::resize(Scale scale __attribute__ ((unused)), fixed_t z __attribute_
 Texture Sprite::getTexture()
 {
 	return this->texture;
-}
-
-/**
- * Show
- */
-void Sprite::show()
-{
-	this->show = __SHOW;
-}
-
-/**
- * Hide
- */
-void Sprite::hide()
-{
-	this->show = __HIDE;
-	this->positioned = false;
 }
 
 /**
@@ -255,7 +226,6 @@ void Sprite::forceShow()
 void Sprite::hideForDebug()
 {
 	this->show = __HIDE;
-	this->positioned = false;
 
 	Sprite::setPosition(this, &this->position);
 }
@@ -275,11 +245,45 @@ bool Sprite::isHidden()
  *
  * @param position		3D position
  */
-void Sprite::position(const Vector3D* position)
+void Sprite::position()
 {
-	PixelVector position2D = Vector3D::transformToPixelVector(*position);
+	if(NULL == this->transformation)
+	{
+		return;
+	}
 
-	Sprite::setPosition(this, &position2D);
+#ifdef __SPRITE_ROTATE_IN_3D
+	PixelVector position = Vector3D::transformToPixelVector(this->transformation->position);
+
+	if(position.z != this->position.z)
+	{
+		this->scale.x = this->scale.y = 0;
+	}
+
+#else
+	PixelVector position = Vector3D::projectToPixelVector(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
+
+	if(position.z != this->position.z)
+	{
+		position.parallax = Optics::calculateParallax(this->transformation->position.z);
+
+		this->scale.x = this->scale.y = 0;
+	}
+#endif
+
+	if
+	(
+		!this->transformed 
+		||
+		this->position.x != position.x
+		||
+		this->position.y != position.y
+		||
+		this->position.z != position.z
+	)
+	{
+		Sprite::setPosition(this, &position);
+	}
 }
 
 /**
@@ -289,28 +293,13 @@ void Sprite::position(const Vector3D* position)
  */
 void Sprite::setPosition(const PixelVector* position)
 {
-	this->positioned = 	true;
+	if(NULL == position)
+	{
+		return;
+	}
 
 	this->position = *position;
-
-	this->renderFlag = true;
-
-	if(!this->registered)
-	{
-		Sprite::registerWithManager(this);
-	}
-}
-
-/**
- * Calculate parallax
- *
- * @param z				Z coordinate to base on the calculation
- */
-void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
-{
-	int16 parallax = Optics::calculateParallax(z);
-	this->renderFlag = this->renderFlag || this->position.parallax != parallax;
-	this->position.parallax = parallax;
+	this->rendered = false;
 }
 
 /**
@@ -321,6 +310,28 @@ void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
 const PixelVector* Sprite::getPosition()
 {
 	return (const PixelVector*)&this->position;
+}
+
+
+/**
+ * Get displacement
+ *
+ * @return
+ */
+const PixelVector* Sprite::getDisplacement()
+{
+	return &this->displacement;
+}
+
+/**
+ * Set displacement
+ *
+ * @param displacement 	PixelVector
+ */
+void Sprite::setDisplacement(const PixelVector* displacement)
+{
+	this->displacement = *displacement;
+	this->rendered = false;
 }
 
 /**
@@ -342,6 +353,133 @@ PixelVector Sprite::getDisplacedPosition()
 }
 
 /**
+ * Rotate
+ *
+ * @param rotation	Rotation struct
+ */
+void Sprite::rotate()
+{
+	if(NULL == this->transformation)
+	{
+		return;
+	}
+
+	if
+	(
+		!this->transformed
+		||
+		this->rotation.x != this->transformation->rotation.x
+		||
+		this->rotation.y != this->transformation->rotation.y
+		||
+		this->rotation.z != this->transformation->rotation.z
+	)
+	{
+		Sprite::setRotation(this, &this->transformation->rotation);
+		this->rotation = this->transformation->rotation;
+		this->rendered = false;
+	}
+}
+
+void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
+{
+	this->rotation = *rotation;
+	this->rendered = false;
+}
+
+const Rotation* Sprite::getRotation()
+{
+	return &this->transformation->rotation;
+}
+
+/**
+ * Calculate zoom scaling factor
+ *
+ * @param scale	Scale struct to apply
+ * @param z
+ */
+void Sprite::scale()
+{
+	if(NULL == this->transformation)
+	{
+		return;
+	}
+
+	if
+	(
+		!this->transformed
+		||
+		0 >= this->scale.x
+		||
+		0 >= this->scale.y
+		||
+		this->scale.x != this->transformation->scale.x
+		||
+		this->scale.y != this->transformation->scale.y
+	)
+	{
+		this->scale.x = this->transformation->scale.x;
+		this->scale.y = this->transformation->scale.y;
+
+		this->rendered = false;
+
+		if(Sprite::overrides(this, setScale))
+		{
+			PixelScale scale = this->scale;
+
+			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+
+			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
+
+			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+
+			scale.x = __FIX7_9_MULT(scale.x, ratio);
+			scale.y = __FIX7_9_MULT(scale.y, ratio);
+
+			NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
+
+			Sprite::setScale(this, &scale);
+		}		
+	}
+}
+
+void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
+{
+	this->rendered = false;
+}
+
+/**
+ * Get scale
+ *
+ * @return		Scale struct
+ */
+Scale Sprite::getScale()
+{
+	Scale scale =
+	{
+		__1I_FIX7_9,
+		__1I_FIX7_9,
+		__1I_FIX7_9,
+	};
+
+	// return the scale
+	return scale;
+}
+
+/**
+ * Calculate parallax
+ *
+ * @param z				Z coordinate to base on the calculation
+ */
+void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
+{
+	this->position.parallax = Optics::calculateParallax(z);
+}
+
+/**
  * Retrieve animation controller
  *
  * @private
@@ -360,26 +498,6 @@ AnimationController Sprite::getAnimationController()
 int16 Sprite::getIndex()
 {
 	return this->index;
-}
-
-/**
- * Write textures
- *
- * @return			true it all textures are written
- */
-bool Sprite::writeTextures(int16 maximumTextureRowsToWrite)
-{
-	if(isDeleted(this->texture))
-	{
-		return true;
-	}
-
-	if(kTexturePendingWriting == this->texture->status)
-	{
-		Texture::write(this->texture, maximumTextureRowsToWrite);
-	}
-
-	return kTexturePendingWriting != this->texture->status;
 }
 
 /**
@@ -547,51 +665,6 @@ uint16 Sprite::getEffectiveHeight()
 }
 
 /**
- * Reload the sprite in BGMap memory
- */
-void Sprite::rewrite()
-{
-	if(isDeleted(this->texture))
-	{
-		return;
-	}
-
-	Texture::rewrite(this->texture);
-}
-
-/**
- * Get displacement
- *
- * @return
- */
-const PixelVector* Sprite::getDisplacement()
-{
-	return &this->displacement;
-}
-
-/**
- * Set displacement
- *
- * @param displacement 	PixelVector
- */
-void Sprite::setDisplacement(const PixelVector* displacement)
-{
-	this->displacement = *displacement;
-
-	this->renderFlag = true;
-}
-
-/**
- * Rotate
- *
- * @param rotation	Rotation struct
- */
-void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
-{
-	this->renderFlag = true;
-}
-
-/**
  * Get half width
  *
  * @return
@@ -621,10 +694,25 @@ int32 Sprite::getHalfHeight()
  */
 void Sprite::update()
 {
+	if(NULL == this->animationController)
+	{
+		return;
+	}
+
+#ifdef __RELEASE
+	if(!this->writeAnimationFrame && this->animationController->playing)
+#else
+	if(!this->writeAnimationFrame)
+#endif
+	{
+		this->writeAnimationFrame = AnimationController::updateAnimation(this->animationController);
+	}
+	
 	if(this->writeAnimationFrame)
 	{
 		Sprite::writeAnimation(this);
 		this->writeAnimationFrame = false;
+		this->rendered = false;
 	}
 }
 
@@ -664,49 +752,6 @@ bool Sprite::isWithinScreenSpace()
 }
 
 /**
- * Get Sprite's transparency mode
- *
- * @return		Transparency mode
- */
-uint8 Sprite::getTransparent()
-{
-	return this->transparent;
-}
-
-/**
- * Set Sprite transparent
- *
- * @param value	Transparency mode
- */
-void Sprite::setTransparent(uint8 value)
-{
-	this->transparent = value;
-
-	this->renderFlag = true;
-}
-
-/**
- * Animate the Sprite
- */
-bool Sprite::updateAnimation()
-{
-	bool stillAnimating = false;
-
-	if(!isDeleted(this->animationController))
-	{
-		// first animate the frame
-		this->writeAnimationFrame |= AnimationController::updateAnimation(this->animationController);
-#ifdef __RELEASE
-		stillAnimating |= this->animationController->playing;
-#else
-		stillAnimating |= AnimationController::isPlaying(this->animationController);
-#endif
-	}
-
-	return stillAnimating;
-}
-
-/**
  * Pause animation
  *
  * @param pause	Boolean
@@ -717,7 +762,6 @@ void Sprite::pause(bool pause)
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
-		this->writeAnimationFrame |= !pause;
 	}
 }
 
@@ -737,8 +781,7 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* fun
 	if(!isDeleted(this->animationController))
 	{
 		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
-		this->writeAnimationFrame |= playBackStarted;
-		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
+		this->rendered = this->rendered && !this->writeAnimationFrame;
 	}
 
 	return playBackStarted;
@@ -765,8 +808,8 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::replay(this->animationController, animationFunctions);
-		this->renderFlag = this->renderFlag || this->writeAnimationFrame;
+		AnimationController::replay(this->animationController, animationFunctions);
+		this->rendered = this->rendered && !this->writeAnimationFrame;
 
 		return this->writeAnimationFrame;
 	}
@@ -858,7 +901,7 @@ void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame |= AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else if(!isDeleted(this->texture))
 	{
@@ -1070,9 +1113,25 @@ void Sprite::print(int32 x, int32 y)
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::putChar(Point* texturePixel, uint32* newChar)
+void Sprite::addChar(const Point* texturePixel, const uint32* newChar)
 {
-	if(isDeleted(this->texture) || NULL == newChar || NULL == texturePixel)
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	Texture::addChar(this->texture, texturePixel, newChar);
+}
+
+/**
+ * Write a char directly to the Sprite's Texture
+ *
+ * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param newChar			Char to write
+ */
+void Sprite::putChar(const Point* texturePixel, const uint32* newChar)
+{
+	if(isDeleted(this->texture))
 	{
 		return;
 	}
@@ -1087,7 +1146,7 @@ void Sprite::putChar(Point* texturePixel, uint32* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
+void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(isDeleted(this->texture))
 	{
@@ -1101,9 +1160,10 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
  * Invalidate render flag
  *
  */
-void Sprite::invalidateRenderFlag()
+void Sprite::invalidateRendering()
 {
-	this->renderFlag = true;
+	this->transformed = false;
+	this->rendered = false;
 }
 
 

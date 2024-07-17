@@ -96,8 +96,7 @@ void SoundManager::constructor()
 	this->soundMIDINode = NULL;
 	this->lock = false;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
-	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
+	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackFrameRate;
 
 	_soundManager = this;
 }
@@ -247,10 +246,9 @@ void SoundManager::reset()
 	}
 
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackFrameRate;
 	this->MIDIPlaybackCounterPerInterrupt = 0;
 	this->soundMIDINode = NULL;
-	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
-	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
 
 	SoundManager::stopAllSounds(this, false, NULL);
 	SoundManager::unlock(this);
@@ -261,14 +259,6 @@ void SoundManager::deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt)
 	this->MIDIPlaybackCounterPerInterrupt = MIDIPlaybackCounterPerInterrupt;
 }
 
-void SoundManager::startPCMPlayback()
-{
-	this->elapsedMicrosecondsPerSecond = __MICROSECONDS_PER_SECOND;
-	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
-
-	//SoundManager::muteAllSounds(this, kPCM);
-}
-
 void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 {
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
@@ -277,6 +267,8 @@ void SoundManager::setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate)
 	{
 		this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
 	}
+
+	this->targetPCMUpdates = __MICROSECONDS_PER_SECOND / this->pcmTargetPlaybackFrameRate;
 }
 
 void SoundManager::flushQueuedSounds()
@@ -286,8 +278,6 @@ void SoundManager::flushQueuedSounds()
 
 void SoundManager::tryToPlayQueuedSounds()
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	for(VirtualNode node = this->queuedSounds->head; NULL != node;)
 	{
 		QueuedSound* queuedSound = (QueuedSound*)node->data;
@@ -315,6 +305,7 @@ void SoundManager::tryToPlayQueuedSounds()
 
 void SoundManager::update()
 {
+	SoundManager::purgeReleasedSoundWrappers(this);
 	SoundManager::tryToPlayQueuedSounds(this);
 }
 
@@ -338,86 +329,57 @@ bool SoundManager::isPlayingSound(const SoundSpec* soundSpec)
 /* Static because it is more performant */
 static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 {
-	_soundManager->elapsedMicrosecondsPerSecond += elapsedMicroseconds;
-
-	SoundManager::playPCMSounds(elapsedMicroseconds);
-	SoundManager::playMIDISounds(elapsedMicroseconds);
-}
-
-static void SoundManager::playMIDISounds(uint32 elapsedMicroseconds)
-{
 	VirtualNode node = _soundManager->soundsMIDI->head;
 
-	if(NULL == node)
+	if(NULL != node)
 	{
-		return;
+		if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
+		{		
+			static uint32 accumulatedElapsedMicroseconds = 0;
+			accumulatedElapsedMicroseconds += elapsedMicroseconds;
+
+			if(NULL == _soundManager->soundMIDINode)
+			{
+				_soundManager->soundMIDINode = node;
+				accumulatedElapsedMicroseconds = elapsedMicroseconds;
+			}
+
+			for(uint16 counter = _soundManager->MIDIPlaybackCounterPerInterrupt; counter-- && _soundManager->soundMIDINode;)
+			{
+				Sound::updateMIDIPlayback(Sound::safeCast(_soundManager->soundMIDINode->data), accumulatedElapsedMicroseconds);
+
+				_soundManager->soundMIDINode = _soundManager->soundMIDINode->next;
+			}
+		}
+		else
+		{
+			do
+			{
+				NM_ASSERT(NULL != node, "SoundManager::playMIDISounds: NULL node");
+				NM_ASSERT(!isDeleted(node), "SoundManager::playMIDISounds: deleted node");
+				NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
+				NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
+				Sound::updateMIDIPlayback(Sound::safeCast(node->data), elapsedMicroseconds);
+
+				node = node->next;
+			}
+			while(NULL != node);
+		}
 	}
 
-	Camera::suspendUIGraphicsSynchronization(_camera);
+	node = _soundManager->soundsPCM->head;
 
-	if(0 < _soundManager->MIDIPlaybackCounterPerInterrupt)
-	{		
-		static uint32 accumulatedElapsedMicroseconds = 0;
-		accumulatedElapsedMicroseconds += elapsedMicroseconds;
-
-		if(NULL == _soundManager->soundMIDINode)
-		{
-			_soundManager->soundMIDINode = node;
-			accumulatedElapsedMicroseconds = elapsedMicroseconds;
-		}
-
-		for(uint16 counter = _soundManager->MIDIPlaybackCounterPerInterrupt; counter-- && _soundManager->soundMIDINode;)
-		{
-			Sound::updateMIDIPlayback(Sound::safeCast(_soundManager->soundMIDINode->data), accumulatedElapsedMicroseconds);
-
-			_soundManager->soundMIDINode = _soundManager->soundMIDINode->next;
-		}
-	}
-	else
+	if(NULL != node)
 	{
+
 		do
 		{
-			NM_ASSERT(NULL != node, "SoundManager::playMIDISounds: NULL node");
-			NM_ASSERT(!isDeleted(node), "SoundManager::playMIDISounds: deleted node");
-			NM_ASSERT(NULL != node->data, "SoundManager::playMIDISounds: NULL node data");
-			NM_ASSERT(!isDeleted(node->data), "SoundManager::playMIDISounds: deleted node data");
-			Sound::updateMIDIPlayback(Sound::safeCast(node->data), elapsedMicroseconds);
+			Sound::updatePCMPlayback(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
 
 			node = node->next;
 		}
 		while(NULL != node);
-
 	}
-
-	Camera::resumeUIGraphicsSynchronization(_camera);
-}
-
-static void SoundManager::playPCMSounds(uint32 elapsedMicroseconds)
-{
-	VirtualNode node = _soundManager->soundsPCM->head;
-
-	if(NULL == node)
-	{
-		return;
-	}
-
-	HardwareManager::suspendInterrupts();
-
-	do
-	{
-		Sound::updatePCMPlayback(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
-
-		node = node->next;
-	}
-	while(NULL != node);
-
-	HardwareManager::resumeInterrupts();
-}
-
-void SoundManager::updateFrameRate()
-{
-	this->targetPCMUpdates = this->elapsedMicrosecondsPerSecond / this->pcmTargetPlaybackFrameRate;
-	this->elapsedMicrosecondsPerSecond = 0;
 }
 
 void SoundManager::rewindAllSounds(uint32 type)
@@ -1046,6 +1008,7 @@ void SoundManager::stopAllSounds(bool release, SoundSpec** excludedSounds)
 	}
 }
 
+#ifndef __SHIPPING
 void SoundManager::print()
 {
 	int32 x = 1;
@@ -1151,7 +1114,9 @@ void SoundManager::print()
 		}
 	}
 }
+#endif
 
+#ifndef __RELEASE
 void SoundManager::printWaveFormStatus(int32 x, int32 y)
 {
 	// Reset all waveforms
@@ -1163,6 +1128,7 @@ void SoundManager::printWaveFormStatus(int32 x, int32 y)
 		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
 	}
 }
+#endif
 
 #ifdef __SOUND_TEST
 void SoundManager::printPlaybackTime()

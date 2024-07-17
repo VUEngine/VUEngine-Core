@@ -17,6 +17,7 @@
 
 #include <ListenerObject.h>
 #include <CharSet.h>
+#include <TimerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -29,6 +30,8 @@
 #define PRINT_FLOAT(number, x, y)			Printing::float(Printing::getInstance(), number, x, y, 2, NULL)
 #define PRINT_HEX(number, x, y)				Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
 #define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
+#define	PRINT_TIME(x, y)					Printing::int32(Printing_getInstance(), TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance()), x, y, NULL);
+#define	PRINT_IN_GAME_TIME(x, y)			Printing::int32(Printing_getInstance(), VUEngine::getTime(VUEngine::getInstance()), x, y, NULL);
 
 // horizontal tab size in chars
 #define __TAB_SIZE					4
@@ -91,7 +94,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 class PrintingSprite;
-typedef struct ColumnTableSpec ColumnTableSpec;
 
 
 /**

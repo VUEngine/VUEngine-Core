@@ -12,15 +12,14 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ObjectSprite.h>
-
+#include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
 #include <ObjectTexture.h>
 #include <ObjectTextureManager.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
+#include "ObjectSprite.h"
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,9 +47,9 @@ friend class Texture;
  * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner)
+void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
-	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
+	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
 
 	this->head = objectSpriteSpec->display & __OBJECT_SPRITE_CHAR_SHOW_MASK;
 	this->objectSpriteContainer = NULL;
@@ -68,7 +67,7 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 
 	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
-	if(objectSpriteSpec->spriteSpec.textureSpec)
+	if(NULL != objectSpriteSpec->spriteSpec.textureSpec)
 	{
 		this->texture = Texture::safeCast(ObjectTextureManager::getTexture(ObjectTextureManager::getInstance(), (ObjectTextureSpec*)objectSpriteSpec->spriteSpec.textureSpec));
 		NM_ASSERT(this->texture, "ObjectSprite::constructor: null texture");
@@ -89,6 +88,8 @@ void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Listene
 
 	this->cols = this->halfWidth >> 2;
 	this->rows = this->halfHeight >> 2;
+
+	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
 
 /**
@@ -101,13 +102,6 @@ void ObjectSprite::destructor()
 {
 	ObjectSprite::removeFromCache(this);
 
-	// remove from sprite container before I become invalid
-	// and the VPU triggers a new render cycle
-	if(this->registered && NULL != this->objectSpriteContainer)
-	{
-		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
-	}
-
 	if(!isDeleted(this->texture))
 	{
 		Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)ObjectSprite::onTextureRewritten, kEventTextureRewritten);
@@ -119,6 +113,40 @@ void ObjectSprite::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+/**
+ * Check if assigned to a container
+ *
+ * @memberof			ObjectSprite
+ * @private
+ */
+void ObjectSprite::registerWithManager()
+{
+	if(NULL == this->objectSpriteContainer)
+	{
+		int16 z = 0;
+
+		if(NULL != this->transformation)
+		{
+			z = __METERS_TO_PIXELS(this->transformation->position.z);
+		}
+		
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), z + this->displacement.z);
+
+		NM_ASSERT(!isDeleted(this->objectSpriteContainer), "ObjectSprite::registerWithManager: couldn't get a manager");
+		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
+	}
+}
+
+void ObjectSprite::unregisterWithManager()
+{
+	if(NULL != this->objectSpriteContainer)
+	{
+		ObjectSpriteContainer::unregisterSprite(this->objectSpriteContainer, this);
+	}
+
+	this->objectSpriteContainer = NULL;
 }
 
 void ObjectSprite::removeFromCache()
@@ -147,14 +175,16 @@ void ObjectSprite::removeFromCache()
  *
  * @param eventFirer
  */
-void ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	ObjectSprite::rewrite(this);
+
+	return true;
 }
 
 void ObjectSprite::rewrite()
 {
-	if(__HIDE == this->show || !this->positioned)
+	if(__HIDE == this->show)
 	{
 		return;
 	}
@@ -167,7 +197,7 @@ void ObjectSprite::rewrite()
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
 
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
 
 	int16 jDisplacement = 0;
 
@@ -195,14 +225,15 @@ void ObjectSprite::rewrite()
  * @memberof			ObjectSprite
  * @public
  *
- * @param rotation		The rotation
  */
-void ObjectSprite::rotate(const Rotation* rotation)
+void ObjectSprite::setRotation(const Rotation* rotation)
 {
+	this->rotation = *rotation;
+
 	NormalizedDirection normalizedDirection =
 	{
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
 		__FAR,
 	};
 
@@ -248,21 +279,8 @@ void ObjectSprite::rotate(const Rotation* rotation)
 		this->halfHeight = -this->halfHeight;
 		this->yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
 	}
-}
 
-/**
- * Check if assigned to a container
- *
- * @memberof			ObjectSprite
- * @private
- */
-void ObjectSprite::registerWithManager()
-{
-	if(!this->registered && NULL == this->objectSpriteContainer && this->totalObjects)
-	{
-		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->position.z + this->displacement.z);
-		this->registered = ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
-	}
+	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
 
 /**
@@ -271,9 +289,9 @@ void ObjectSprite::registerWithManager()
  * @memberof		ObjectSprite
  * @public
  *
- * @param evenFrame
+ * @param index
  */
-int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused)))
+int16 ObjectSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
 	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::doRender: null char set");
@@ -282,7 +300,7 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 	int16 y = this->position.y - this->halfHeight + this->displacement.y - this->yDisplacementDelta;
 
 	uint16 secondWordValue = this->head | (this->position.parallax + this->displacement.parallax);
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | CharSet::getOffset(this->texture->charSet);
+	uint16 fourthWordValue = this->fourthWordValue | (CharSet::getOffset(this->texture->charSet) + this->objectTextureSource.displacement);
 
 	int16 yDisplacement = 0;
 	int16 jDisplacement = 0;
@@ -300,21 +318,18 @@ int16 ObjectSprite::doRender(int16 index, bool evenFrame __attribute__((unused))
 
 		if((unsigned)(outputY - _cameraFrustum->y0 + 8) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 + 8))
 		{
-			int16 j = 0;
-			for(; j < this->cols; j++)
+			for(int16 j = 0; j < this->cols; j++)
 			{
 				int16 objectIndex = objectIndexStart + j;
 
 				objectPointer = &_objectAttributesCache[objectIndex];
 				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
 			}
+
 			continue;
 		}
 
-		int16 j = 0;
-		int16 xDisplacement = 0;
-
-		for(; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
+		for(int16 j = 0, xDisplacement = 0; j < this->cols; j++, xDisplacement += this->xDisplacementIncrement)
 		{
 			int16 objectIndex = objectIndexStart + j;
 			objectPointer = &_objectAttributesCache[objectIndex];
@@ -355,17 +370,6 @@ int16 ObjectSprite::getTotalObjects()
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
 	return this->totalObjects;
-}
-
-/**
- * Set ObjectSpriteContainer to NULL
- *
- * @memberof				ObjectSprite
- * @public
- */
-void ObjectSprite::invalidateObjectSpriteContainer()
-{
-	this->objectSpriteContainer = NULL;
 }
 
 /**

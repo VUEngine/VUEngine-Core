@@ -66,10 +66,8 @@ void Camera::constructor()
 	this->cameraEffectManager = CameraEffectManager::getInstance();
 
 	this->position = Vector3D::zero();
-	this->positionBackup = Vector3D::zero();
-
+	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
-	this->rotationBackup = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
 
 	this->cameraFrustum.x0 = 0;
@@ -80,8 +78,6 @@ void Camera::constructor()
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 
 	this->transformationFlags = false;
-	this->synchronizingUIGraphics = false;
-	this->UISynchronizationInterruptions = 0;
 
 	PixelOptical pixelOptical =
     {
@@ -114,6 +110,16 @@ void Camera::destructor()
 }
 
 /**
+ * Get the movement manager
+ *
+ * @param cameraMovementManager	The CameraMovementManager
+ */
+CameraMovementManager Camera::getCameraMovementManager()
+{
+	return this->cameraMovementManager;
+}
+
+/**
  * Set the movement manager
  *
  * @param cameraMovementManager	The CameraMovementManager
@@ -122,7 +128,7 @@ void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManage
 {
 	if(this->cameraMovementManager != cameraMovementManager)
 	{
-		if(this->cameraMovementManager)
+		if(!isDeleted(this->cameraMovementManager))
 		{
 			delete this->cameraMovementManager;
 		}
@@ -140,7 +146,7 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
 	if(this->cameraEffectManager != cameraEffectManager)
 	{
-		if(this->cameraEffectManager)
+		if(!isDeleted(this->cameraEffectManager))
 		{
 			delete this->cameraEffectManager;
 		}
@@ -171,7 +177,14 @@ void Camera::focus(bool checkIfFocusEntityIsMoving)
 
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-	CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving);
+	if(NULL == CameraMovementManager::getFocusEntity(this->cameraMovementManager))
+	{
+		return;
+	}
+
+	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
+
+	this->position = Vector3D::sum(this->position, this->displacement);
 
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
@@ -239,7 +252,7 @@ static uint8 Camera::computeTranslationFlags(Vector3D translation)
  */
 void Camera::translate(Vector3D translation, int32 cap)
 {
-	Vector3D previousPosition = this->position;
+	Vector3D currentPosition = this->position;
 	this->position = Vector3D::sum(this->position, translation);
 
 	if(cap)
@@ -247,7 +260,7 @@ void Camera::translate(Vector3D translation, int32 cap)
 		Camera::capPosition(this);
 	}
 
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, previousPosition));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }
 
 /**
@@ -325,7 +338,7 @@ Rotation Camera::getRotation()
  */
 void Camera::setPosition(Vector3D position, bool cap)
 {
-	this->positionBackup = this->position;
+	Vector3D currentPosition = this->position;
 	this->position = position;
 
 	if(cap)
@@ -333,8 +346,7 @@ void Camera::setPosition(Vector3D position, bool cap)
 		Camera::capPosition(this);
 	}
 
-
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, this->positionBackup));
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
 }
 
 static uint8 Camera::computeRotationFlags(Rotation rotation)
@@ -374,85 +386,6 @@ void Camera::rotate(Rotation rotation)
 }
 
 /**
- * Set camera's position for UI transformation
- */
-void Camera::startUIGraphicsSynchronization()
-{
-	if(!this->synchronizingUIGraphics)
-	{
-		this->positionBackup = this->position;
-		this->rotationBackup = this->rotation;
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		this->opticalBackup = this->optical;
-		this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
-#endif
-
-		this->UISynchronizationInterruptions = 0;
-		this->synchronizingUIGraphics = true;
-
-		this->position = Vector3D::zero();
-		this->rotation = Rotation::zero();
-		this->invertedRotation = Rotation::zero();
-
-	}
-}
-
-/**
- * Set camera's position after UI transformation
- */
-void Camera::stopUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		HardwareManager::suspendInterrupts();
-
-		this->synchronizingUIGraphics = false;
-		this->position = this->positionBackup;
-		this->rotation = this->rotationBackup;
-		this->invertedRotation = Rotation::invert(this->rotation);
-#ifndef __LEGACY_COORDINATE_PROJECTION
-		this->optical = this->opticalBackup;
-#endif
-
-		this->UISynchronizationInterruptions = 0;
-		HardwareManager::resumeInterrupts();
-	}
-}
-
-void Camera::suspendUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		if(0 == this->UISynchronizationInterruptions++)
-		{
-			this->position = this->positionBackup;
-			this->rotation = this->rotationBackup;
-			this->invertedRotation = Rotation::invert(this->rotation);
-#ifndef __LEGACY_COORDINATE_PROJECTION
-			this->optical = this->opticalBackup;
-#endif
-		}
-	}
-}
-
-void Camera::resumeUIGraphicsSynchronization()
-{
-	if(this->synchronizingUIGraphics)
-	{
-		if(0 == --this->UISynchronizationInterruptions)
-		{
-			this->position = Vector3D::zero();
-			this->rotation = Rotation::zero();
-			this->invertedRotation = Rotation::zero();
-
-#ifndef __LEGACY_COORDINATE_PROJECTION
-			this->optical.cameraNearPlane = this->optical.projectionMultiplierHelper >> __PROJECTION_PRECISION_INCREMENT;
-#endif
-		}
-	}
-}
-
-/**
  * Retrieve optical config structure
  *
  * @return 		Optical config structure
@@ -484,7 +417,6 @@ void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
 	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
 	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
-	this->opticalBackup = this->optical;
 	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
 
 	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
@@ -568,12 +500,11 @@ void Camera::stopEffect(int32 effect)
 void Camera::reset()
 {
 	this->position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::zero();
 
 	this->transformationFlags = false;
-	this->synchronizingUIGraphics = false;
-	this->UISynchronizationInterruptions = 0;
 
 	Camera::resetCameraFrustum(this);
 
@@ -652,6 +583,16 @@ CameraFrustum Camera::getCameraFrustum()
 	return this->cameraFrustum;
 }
 
+Vector3D Camera::geDisplacement()
+{
+	return this->displacement;
+}
+
+void Camera::setDisplacement(Vector3D displacement)
+{
+	this->displacement = displacement;
+}
+
 /**
  * Retrieve last position displacement
  *
@@ -684,6 +625,7 @@ uint8 Camera::getTransformationFlags()
  * @param y				Row
  * @param inPixels		Whether to printing the output in pixels or not
  */
+#ifndef __SHIPPING
 void Camera::print(int32 x, int32 y, bool inPixels)
 {
 	Printing printing = Printing::getInstance();
@@ -704,3 +646,4 @@ void Camera::print(int32 x, int32 y, bool inPixels)
 	Printing::text(printing, "Rotation: ", x, ++y, NULL);
 	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
 }
+#endif

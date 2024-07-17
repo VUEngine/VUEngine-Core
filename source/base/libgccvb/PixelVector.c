@@ -21,6 +21,7 @@
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+#ifndef __SHIPPING
 static inline void PixelVector::print(PixelVector vector, int32 x, int32 y)
 {
 	PRINT_TEXT("x:    ", x, y);
@@ -33,3 +34,4 @@ static inline void PixelVector::print(PixelVector vector, int32 x, int32 y)
 	PRINT_INT(vector.z, x + 2, y + 2);
 	PRINT_INT(vector.parallax, x + 2, y + 3);
 }
+#endif

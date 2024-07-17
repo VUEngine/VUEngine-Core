@@ -326,6 +326,9 @@ extern const int16 _sinLut[];
 #define __FIXED_SQUARE(n)								__FIXED_EXT_MULT(n, n)
 #define __F_SQUARE_ROOT_OF_2							(1.47f)
 
+extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -343,6 +346,12 @@ static class Math : Object
 	static fixed_ext_t fixed_extInfinity();
 	static int32 getAngle(fix7_9 x, fix7_9 y);
 	static int32 aSin(fix7_9 sin);
+	static void resetRandomSeed();
+	static inline uint32 randomSeed();
+	static inline int32 random(uint32 seed, int32 randnums);
+	static inline int32 haveEqualSign(int32 a, int32 b);
+	static inline int32 getDigitsCount(int32 value);
+	static inline float floor(float x);
 }
 
 // retrieve the square root
@@ -389,6 +398,80 @@ static inline fixed_t Math::squareRootFixed(fixed_ext_t base)
 	return (fixed_t)__F_TO_FIXED(radicand * y);
 #endif
 #endif
+}
+
+// These real versions are due to Isaku Wada, 2002/01/09 added
+static inline int32 Math::random(uint32 seed, int32 randnums)
+{
+#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+	seed += Clock::getTime(VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
+#endif
+
+	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
+}
+
+/*
+ * Taken from https://www.youtube.com/watch?v=RzEjqJHW-NU
+ */
+static inline uint32 Math::randomSeed()
+{
+	_seed >>= 1;
+	_seed |= ((0x00000001 & (_seed ^ (_seed >> 1))) << ((sizeof(_seed) << 3) - 1));
+
+	return _seed;
+}
+
+/*
+ * Taken from Shokwav's N64 demo
+ */
+/*
+static inline uint32 Math::randomSeed()
+{
+	if(!_seed)
+	{
+		_seed = 7;
+	}
+
+	_seed ^= _seed << 13;
+	_seed ^= _seed >> 17;
+	_seed ^= _seed << 5;
+
+	return _seed;
+}
+*/
+
+static inline int32 Math::haveEqualSign(int32 a, int32 b)
+{
+	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
+}
+
+static inline int32 Math::getDigitsCount(int32 value)
+{
+	int32 size = 0;
+
+	do
+	{
+		value /= 10;
+		size++;
+	}
+	while(0 != value);
+
+	return size;
+}
+
+static inline float Math::floor(float x) 
+{
+	return (float)((long)(x * 2 + 0.5f) >> 1);
+}
+
+static inline int32 Math::min(int32 x, int32 y)
+{
+	return x < y ? x : y;
+}
+
+static inline int32 Math::max(int32 x, int32 y)
+{
+	return x > y ? x : y;
 }
 
 

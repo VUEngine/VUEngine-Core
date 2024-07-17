@@ -1,0 +1,26 @@
+{%- set messages = project.items.Messages.project -%}
+{%- import 'templates/partials/macros.nj' as macros -%}
+{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
+
+#ifndef MESSAGES_H_
+#define MESSAGES_H_
+
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <Constants.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+{% if messages.messages.length > 0 -%}
+enum Messages
+{
+	{%- for message in messages.messages | removeEmpty | sort %}
+	kMessage{{ message | sanitizeSpecName }}{% if loop.first %} = kMessageLastEngine + 1{% endif %},
+	{%- endfor %}
+};
+{%- endif %}
+
+
+#endif

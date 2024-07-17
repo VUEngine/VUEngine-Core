@@ -107,6 +107,8 @@ abstract class Texture : ListenerObject
 	// update flag
 	bool update;
 
+	static void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
+	static void reset();
 	static uint32 getTotalCols(TextureSpec* textureSpec);
 	static uint32 getTotalRows(TextureSpec* textureSpec);
 
@@ -115,12 +117,12 @@ abstract class Texture : ListenerObject
 	void setSpec(TextureSpec* textureSpec);
 	TextureSpec* getSpec();
 	void releaseCharSet();
+	bool isReady();
 	void writeHBiasMode();
 	int32 getNumberOfChars();
 	TextureSpec* getTextureSpec();
 	uint32 getNumberOfFrames();
 	CharSet getCharSet(uint32 loadIfNeeded);
-	void setCharSet(CharSet charSet);
 	uint16* getMap();
 	void setPalette(uint8 palette);
 	uint8 getPalette();
@@ -130,13 +132,14 @@ abstract class Texture : ListenerObject
 	uint8 getUsageCount();
 	void increaseUsageCount();
 	bool decreaseUsageCount();
-	void putChar(Point* texturePixel, uint32* newChar);
-	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
+	void addChar(const Point* texturePixel, const uint32* newChar);
+	void putChar(const Point* texturePixel, const uint32* newChar);
+	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 	bool isWritten();
 	void setMapDisplacement(uint32 mapDisplacement);
 	void setFrame(uint16 frame);
 	uint16 getFrame();
-	bool prepare();
+	void prepare();
 	bool update(int16 maximumTextureRowsToWrite);
 	bool isShared();
 	bool isSingleFrame();

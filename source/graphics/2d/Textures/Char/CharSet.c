@@ -48,7 +48,9 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 	// set the offset
 	this->offset = offset;
 	this->usageCount = 1;
-	this->status = kCharSetNotWritten;
+	this->written = false;
+
+	CharSet::write(this);
 }
 
 /**
@@ -139,7 +141,14 @@ void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
+	this->written = this->written && this->offset == offset;
+
 	this->offset = offset;
+
+	if(!this->written)
+	{
+		CharSet::fireEvent(this, kEventCharSetChangedOffset);
+	}
 }
 
 /**
@@ -288,37 +297,7 @@ void CharSet::write()
 			break;
 	}
 
-	if(kCharSetPendingRewritting == this->status)
-	{
-		this->status = kCharSetWritten;
-
-		// propagate event
-		CharSet::fireEvent(this, kEventCharSetRewritten);
-		NM_ASSERT(!isDeleted(this), "CharSet::rewrite: deleted this during kEventCharSetRewritten");
-
-	}
-	else
-	{
-		this->status = kCharSetWritten;
-	}
-}
-
-/**
- * Rewrite the CHARs to DRAM
- */
-void CharSet::rewrite()
-{
-	this->status = kCharSetPendingRewritting;
-}
-
-/**
- * Set displacement to add to the offset within the CHAR memory
- *
- * @param tilesDisplacement		Displacement
- */
-void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
-{
-	this->tilesDisplacement = tilesDisplacement;
+	this->written = true;
 }
 
 /**
@@ -327,13 +306,33 @@ void CharSet::setTilesDisplacement(uint32 tilesDisplacement)
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::putChar(uint32 charToReplace, uint32* newChar)
+void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
 {
 	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
 		Mem::copyWORD
 		(
 			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
+			(uint32*)newChar,
+			__UINT32S_PER_CHARS(1)
+		);
+	}
+}
+
+/**
+ * Add a single CHAR to DRAM
+ *
+ * @param charToAddTo		Index of the CHAR to overwrite
+ * @param newChar			CHAR data to write
+ */
+void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
+{
+	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
+	{
+		Mem::combineWORDs
+		(
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
+			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_CHARS(charToAddTo) + 1] + this->tilesDisplacement,
 			(uint32*)newChar,
 			__UINT32S_PER_CHARS(1)
 		);
@@ -370,7 +369,7 @@ static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, cons
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor)
 {
 	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
@@ -397,18 +396,23 @@ void CharSet::putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelC
  *
  * @param frame		ROM memory displacement multiplier
  */
-bool CharSet::setFrame(uint16 frame)
+void CharSet::setFrame(uint16 frame)
 {
-	uint32 currentTilesDisplacement = this->tilesDisplacement;
+	uint32 tilesDisplacement = 0;
 
 	if(NULL != this->charSetSpec->frameOffsets)
 	{
-		CharSet::setTilesDisplacement(this, this->charSetSpec->frameOffsets[frame] - 1);
+		tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
 	}
 	else
 	{
-		CharSet::setTilesDisplacement(this, __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame));
+		tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame);
 	}
 
-	return currentTilesDisplacement != this->tilesDisplacement;
+	if(!this->written || this->tilesDisplacement != tilesDisplacement)
+	{
+		this->tilesDisplacement = tilesDisplacement;
+
+		CharSet::write(this);
+	}
 }

@@ -51,6 +51,7 @@ then
 	exit 0
 fi
 
+
 if [ ! -d "$WORKING_FOLDER" ];
 then
 	rm -f $GCC_OUTPUT
@@ -65,15 +66,20 @@ fi
 
 for plugin in $PLUGINS;
 do
-	pattern=^.*build/[a-z][a-z]*/objects/$objects/
+	pattern=^.*build/working/objects/[a-z][a-z]*/$objects/
 	replacement=$PLUGINS_PATH/$plugin/
 	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
 replacement=$NAME_HOME
-pattern=^.*build/[a-z][a-z]*/objects/$NAME
+pattern=^.*build/working/objects/[a-z][a-z]*/$NAME
 
-sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
+if [[ $PLUGINS_PATH == *"/mnt/"* ]]; then
+	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT | sed -E 's@/mnt/([A-z]+)/@\1:/@g' | sed -e 's@/@\\@g'
+else
+	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
+fi
+
 echo 
 rm -f $GCC_OUTPUT

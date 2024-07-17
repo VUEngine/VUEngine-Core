@@ -36,26 +36,17 @@
  * Class constructor
  *
  * @param particleSpec	Spec of the Particle
- * @param spriteSpec
- * @param lifeSpan
- * @param mass
  */
 
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator __attribute__((unused)))
+void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unused)), ParticleSystem creator __attribute__((unused)))
 {
 	// construct base Container
 	Base::constructor();
 
-	this->lifeSpan = lifeSpan;
+	this->lifeSpan = 0;
 	this->sprite = NULL;
 	this->wireframe = NULL;
-	this->position = Vector3D::zero();
-	this->previousZ = 0;
 	this->expired = false;
-	this->transform = Particle::overrides(this, transform);
-
-	Particle::addSprite(this, spriteSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
-	Particle::addWireframe(this, wireframeSpec, particleSpec->animationFunctions, particleSpec->initialAnimation);
 }
 
 /**
@@ -66,14 +57,16 @@ void Particle::destructor()
 	if(!isDeleted(this->sprite))
 	{
 		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-		this->sprite = NULL;
 	}
+
+	this->sprite = NULL;
 
 	if(!isDeleted(this->wireframe))
 	{
 		delete this->wireframe;
-		this->wireframe = NULL;
 	}
+
+	this->wireframe = NULL;
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -85,18 +78,13 @@ void Particle::destructor()
  *
  * @private
  */
-void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction** animationFunctions, const char* animationName)
+void Particle::addSprite(const SpriteSpec* spriteSpec)
 {
-	if(NULL != spriteSpec)
+	if(NULL != spriteSpec && NULL == this->sprite)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, ListenerObject::safeCast(this));
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, SpatialObject::safeCast(this));
 
-		if(NULL != animationName && NULL != animationFunctions)
-		{
-			Sprite::play(this->sprite, animationFunctions, (char*)animationName, ListenerObject::safeCast(this));
-		}
-		
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
 	}
 }
@@ -106,13 +94,12 @@ void Particle::addSprite(const SpriteSpec* spriteSpec, const AnimationFunction**
  *
  * @private
  */
-void Particle::addWireframe(const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions __attribute__((unused)), const char* animationName __attribute__((unused)))
+void Particle::addWireframe(const WireframeSpec* wireframeSpec)
 {
-	if(NULL != wireframeSpec)
+	if(NULL != wireframeSpec && NULL == this->wireframe)
 	{
 		// call the appropriate allocator to support inheritance
-		this->wireframe = ((Wireframe (*)(WireframeSpec*)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec);
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, this->expired);
+		this->wireframe = ((Wireframe (*)(WireframeSpec*, SpatialObject)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec, SpatialObject::safeCast(this));
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
@@ -156,40 +143,9 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
 		{
 			behavior(this);
 		}
-
-		if(!isDeleted(this->sprite))
-		{
-			Sprite::updateAnimation(this->sprite);
-		}
 	}
 
 	return false;
-}
-
-/**
- * Update Visual Representation
- *
- * @param updateSpritePosition
- */
-void Particle::synchronizeGraphics()
-{
-	if(isDeleted(this->sprite))
-	{
-		return;
-	}
-
-	if(this->position.z != this->previousZ)
-	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this->sprite, this->position.z);
-
-		this->previousZ = this->position.z;
-	}
-
-	PixelVector position = Vector3D::transformToPixelVector(this->position);
-
-	// update sprite's 2D position
-	Sprite::setPosition(this->sprite, &position);
 }
 
 /**
@@ -227,26 +183,6 @@ void Particle::setMass(fixed_t mass __attribute__ ((unused)))
  */
 void Particle::changeMass()
 {
-}
-
-/**
- * Set position
- *
- * @param position
- */
-void Particle::setPosition(const Vector3D* position)
-{
-	this->position = *position;
-}
-
-/**
- * Retrieve position
- *
- * @return		Position of particle's body
- */
-const Vector3D* Particle::getPosition()
-{
-	return &this->position;
 }
 
 /**
@@ -314,21 +250,13 @@ bool Particle::isSubjectToGravity(Vector3D gravity __attribute__ ((unused)))
 }
 
 /**
- * Transform
- */
-void Particle::transform()
-{}
-
-/**
  * Resume
  */
 void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName)
 {
-	Particle::addSprite(this, spriteSpec, animationFunctions, animationName);
-	Particle::addWireframe(this, wireframeSpec, animationFunctions, animationName);
-
-	// Force parallax computation
-	this->previousZ = 0;
+	Particle::addSprite(this, spriteSpec);
+	Particle::addWireframe(this, wireframeSpec);
+	Particle::changeAnimation(this, animationFunctions, animationName, true);
 }
 
 /**
@@ -339,15 +267,16 @@ void Particle::suspend()
 	if(!isDeleted(this->sprite))
 	{
 		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-
-		this->sprite = NULL;
 	}
+
+	this->sprite = NULL;
 
 	if(!isDeleted(this->wireframe))
 	{
 		delete this->wireframe;
-		this->wireframe = NULL;
 	}
+
+	this->wireframe = NULL;
 }
 
 /**
@@ -361,7 +290,7 @@ void Particle::reset()
 /**
  * Setup
  */
-void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
+void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation)
 {
 	if(Particle::overrides(this, reset))
 	{
@@ -377,22 +306,20 @@ void Particle::setup(int16 lifeSpan, const Vector3D* position, const Vector3D* f
 		Particle::changeMass(this);
 	}
 
-	if(Particle::overrides(this, setPosition))
+	// TOOD: the preprocessor does't catch properly this override check with Particle 	
+	if(SpatialObject::overrides(this, setPosition))
 	{
 		Particle::setPosition(this, position);
 	}
 	else
 	{
-		this->position = *position;
+		this->transformation.position = *position;
 	}
 
+	Particle::addSprite(this, spriteSpec);
+	Particle::addWireframe(this, wireframeSpec);
 	Particle::changeAnimation(this, animationFunctions, animationName, forceAnimation);
 	Particle::setLifeSpan(this, lifeSpan);
-
-	if(!isDeleted(this->wireframe))
-	{
-		Wireframe::setup(this->wireframe, &this->position, NULL, NULL, false);
-	}
 
 	if(NULL != force)
 	{
@@ -431,7 +358,7 @@ bool Particle::isVisible()
 	}
 	else
 	{
-		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->position), *_cameraInvertedRotation);
+		Vector3D relativeGlobalPosition = Vector3D::rotate(Vector3D::getRelativeToCamera(this->transformation.position), *_cameraInvertedRotation);
 		pixelVector = Vector3D::projectToPixelVector(relativeGlobalPosition, Optics::calculateParallax(relativeGlobalPosition.z));
 	}
 

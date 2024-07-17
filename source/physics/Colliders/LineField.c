@@ -31,9 +31,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void LineField::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
+void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
-	Base::constructor(owner, shapeSpec);
+	Base::constructor(owner, colliderSpec);
 
 	this->classIndex = kColliderLineFieldIndex;
 
@@ -42,6 +42,8 @@ void LineField::constructor(SpatialObject owner, const ColliderSpec* shapeSpec)
 	this->b = Vector3D::zero();
 	this->normal = Vector3D::zero();
 	this->normalLength = __I_TO_FIX7_9(1);
+
+	LineField::computeSize(this);
 }
 
 // class's destructor
@@ -59,95 +61,97 @@ void LineField::destructor()
 	Base::destructor();
 }
 
-void LineField::transform(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
+void LineField::computeSize()
 {
-	if(NULL == position || NULL == rotation || NULL == size || NULL == scale)
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	Base::transform(this, position, rotation, scale, size);
-
 	fix7_9 normalScale = __I_TO_FIX7_9(1);
-	if(scale->x > normalScale)
+
+	if(this->transformation->scale.x > normalScale)
 	{
-		normalScale = scale->x;
+		normalScale = this->transformation->scale.x;
 	}
 
-	if(scale->y > normalScale)
+	if(this->transformation->scale.y > normalScale)
 	{
-		normalScale = scale->y;
+		normalScale = this->transformation->scale.y;
 	}
 
-	if(scale->z > normalScale)
+	if(this->transformation->scale.z > normalScale)
 	{
-		normalScale = scale->z;
+		normalScale = this->transformation->scale.z;
 	}
 
 	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
-	
-	if(0 != size->x)
+
+	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), this->transformation->rotation);	
+	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
+
+	if(0 != size.x)
 	{
-		this->a.x = size->x >> 1;
+		this->a.x = size.x >> 1;
 		this->a.y = 0;
 		this->a.z = 0;
 
-		if(0 != rotation->y)
+		if(0 != rotation.y)
 		{
-			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
-			this->a.z = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
+			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.y))));
+			this->a.z = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.y))));
 			this->a.y = 0;
 		}
-		else if(0 != rotation->z)
+		else if(0 != rotation.z)
 		{
-			this->a.x = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
-			this->a.y = __FIXED_MULT((size->x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
+			this->a.x = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.z))));
+			this->a.y = __FIXED_MULT((size.x >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.z))));
 			this->a.z = 0;
 		}
 	}
-	else if(0 != size->y)
+	else if(0 != size.y)
 	{
 		this->a.x = 0;
-		this->a.y = size->y >> 1;
+		this->a.y = size.y >> 1;
 		this->a.z = 0;
 
-		if(0 != rotation->x)
+		if(0 != rotation.x)
 		{
-			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
-			this->a.z = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
+			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.x))));
+			this->a.z = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.x))));
 			this->a.y = 0;
 		}
-		else if(0 != rotation->z)
+		else if(0 != rotation.z)
 		{
-			this->a.x = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->z))));
-			this->a.y = __FIXED_MULT((size->y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->z))));
+			this->a.x = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.z))));
+			this->a.y = __FIXED_MULT((size.y >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.z))));
 			this->a.z = 0;
 		}
 	}
-	else if(0 != size->z)
+	else if(0 != size.z)
 	{
 		this->a.x = 0;
 		this->a.y = 0;
-		this->a.z = size->z >> 1;
+		this->a.z = size.z >> 1;
 
-		if(0 != rotation->x)
+		if(0 != rotation.x)
 		{
-			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))));
-			this->a.y = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->y))));
+			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.y))));
+			this->a.y = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.y))));
 			this->a.z = 0;
 		}
-		else if(0 != rotation->y)
+		else if(0 != rotation.y)
 		{
-			this->a.x = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))));
+			this->a.x = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation.x))));
 			this->a.y = 0;
-			this->a.z = __FIXED_MULT((size->z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation->x))));
+			this->a.z = __FIXED_MULT((size.z >> 1), __FIX7_9_TO_FIXED(__SIN(__FIXED_TO_I(rotation.x))));
 		}
 	}
 
 	this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
 
-	this->a = Vector3D::sum(this->a, *position);
-	this->b = Vector3D::sum(this->b, *position);
+	this->a = Vector3D::sum(this->a, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	this->b = Vector3D::sum(this->b, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 
 	fixed_t dx = this->b.x - this->a.x;
 	fixed_t dy = this->b.y - this->a.y;
@@ -160,6 +164,11 @@ void LineField::addDisplacement(fixed_t displacement)
 {
 	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
 	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
+}
+
+Vector3D LineField::getCenter()
+{
+	return Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b));
 }
 
 static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
@@ -176,10 +185,6 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 		*min = *max;
 		*max = aux;
 	}
-}
-
-void LineField::testForCollision(Collider collider __attribute__((unused)), Vector3D displacement __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
-{
 }
 
 // configure Polyhedron
@@ -206,7 +211,7 @@ void LineField::configureWireframe()
 			__TRANSPARENCY_NONE,
 		
 			/// interlaced
-			false
+			true
 		},
 
 //		Vector3D::intermediate(this->a, this->b),
@@ -217,15 +222,13 @@ void LineField::configureWireframe()
 	};
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Line(this->lineSpec));
-
-	Wireframe::setup(this->wireframe, SpatialObject::getPosition(this->owner), NULL, NULL, false);
+	this->wireframe = Wireframe::safeCast(new Line(this->owner, this->lineSpec));
 }
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 {
-	vertexes[0] = this->a;
-	vertexes[1] = this->b;
+	vertexes[0] = Vector3D::sum(this->a, this->transformation->position);
+	vertexes[1] = Vector3D::sum(this->b, this->transformation->position);
 }
 
 Vector3D LineField::getNormal()

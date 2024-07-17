@@ -65,13 +65,15 @@ typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-object
 class ObjectSprite : Sprite
 {
+	// number of objects
+	int16 totalObjects;
+
 	// parent sprite
 	ObjectSpriteContainer objectSpriteContainer;
 	ObjectTextureSource objectTextureSource;
 
-	// number of objects
-	int16 totalObjects;
 	// cache some attributes to speed up rendering
+	uint16 fourthWordValue;
 	uint8 cols;
 	uint8 rows;
 	int8 xDisplacementIncrement;
@@ -80,16 +82,14 @@ class ObjectSprite : Sprite
 	int8 yDisplacementDelta;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteSpec* objectSpriteSpec, ListenerObject owner);
+	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 	int16 getTotalObjects();
-	void invalidateObjectSpriteContainer();
 	void resetTotalObjects();
 
-	override int16 doRender(int16 index, bool evenFrame);
-	override void rotate(const Rotation* rotation);
 	override void registerWithManager();
-	override void registerWithManager();
-	override void rewrite();
+	override void unregisterWithManager();
+	override int16 doRender(int16 index);
+	override void setRotation(const Rotation* rotation);
 	override int32 getTotalPixels();
 }
 

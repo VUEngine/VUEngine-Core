@@ -67,7 +67,6 @@ void SoundTestState::enter(void* owner __attribute__ ((unused)))
 
 	this->stream = false;
 	this->transform = false;
-	this->synchronizeGraphics = false;
 	this->updatePhysics = false;
 	this->processCollisions = false;
 }
@@ -82,7 +81,7 @@ void SoundTestState::enter(void* owner __attribute__ ((unused)))
  */
 bool SoundTestState::isKeyCombination(const UserInput* userInput)
 {
-	return ((userInput->holdKey & K_LT) && (userInput->holdKey & K_RT) && (userInput->releasedKey & K_RD));
+	return ((userInput->holdKey & K_A) && (userInput->holdKey & K_B) && (userInput->releasedKey & K_RD));
 }
 
 #endif

@@ -50,9 +50,10 @@ typedef struct PositionedEntityDescription
 	Entity entity;
 	EventListener callback;
 	int16 internalId;
+	uint8 componentIndex;
 	bool spritesCreated;
 	bool wireframesCreated;
-	bool shapesCreated;
+	bool collidersCreated;
 	bool behaviorsCreated;
 	bool transformed;
 	bool graphicsSynchronized;

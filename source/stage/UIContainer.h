@@ -46,7 +46,7 @@ class UIContainer : Container
 	void constructor(UIContainerSpec* uiContainerSpec);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity);
 	void addEntities(PositionedEntity* entities);
-	override void synchronizeGraphics();
+	void prepareToRender();
 }
 
 

@@ -1,0 +1,24 @@
+{
+	"file": "Events",
+	"schema": {
+		"title": "Events",
+		"properties": {
+			"events": {
+				"type": "array",
+				"items": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "SimpleListEditor",
+		"scope": "#/properties/events"
+	},
+	"icon": "fa fa-bullhorn",
+	"templates": [
+		"GameEvents"
+	]
+}

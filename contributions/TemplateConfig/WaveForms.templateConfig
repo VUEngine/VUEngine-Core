@@ -1,0 +1,10 @@
+{
+	"targets": [{
+		"path": "headers/WaveForms.h",
+		"root": "project"
+	}],
+	"template": "contributions/Template/WaveForms.h.nj",
+	"events": [{
+		"type": "installedPluginsChanged"
+	}]
+}

@@ -19,7 +19,6 @@
 #include <Camera.h>
 #include <CharSetManager.h>
 #include <DebugConfig.h>
-#include <DebugUtilities.h>
 #include <Entity.h>
 #include <EntityFactory.h>
 #include <HardwareManager.h>
@@ -56,24 +55,17 @@ friend class VirtualList;
 
 const Transformation neutralEnvironmentTransformation =
 {
-	// spatial local position
+	// spatial position
 	{0, 0, 0},
-
-	// spatial global position
+ 
+	// spatial rotation
 	{0, 0, 0},
-
-	// local rotation
-	{0, 0, 0},
-
-	// global rotation
-	{0, 0, 0},
-
-	// scale
+ 
+	// spatial scale
 	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 
-	// scale
-	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
-
+	// invalidty flag
+	__VALID_TRANSFORMATION
 };
 
 #ifdef __PROFILE_STREAMING
@@ -119,7 +111,6 @@ void Stage::constructor(StageSpec *stageSpec)
 
 	this->stageSpec = stageSpec;
 	this->stageEntityDescriptions = NULL;
-	this->uiContainer = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
 	this->cameraPreviousDistance = 0;
@@ -167,12 +158,6 @@ void Stage::destructor()
 	{
 		delete this->entityFactory;
 		this->entityFactory = NULL;
-	}
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
 	}
 
 	if(!isDeleted(this->stageEntityDescriptions))
@@ -358,8 +343,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// load background music
 	Stage::setupSounds(this);
 
-	Entity::setVisibilityPadding(this->streaming.loadPadding + this->streaming.unloadPadding);
-
 	if(overrideCameraPosition)
 	{
 		Camera::reset(Camera::getInstance());
@@ -377,9 +360,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// preload graphics
 	Stage::prepareGraphics(this);
 
-	// setup ui
-	Stage::setupUI(this);
-
 	// register all the entities in the stage's spec
 	Stage::registerEntities(this, positionedEntitiesToIgnore);
 
@@ -396,11 +376,6 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 	// apply transformations
 	Stage::initialTransform(this, &neutralEnvironmentTransformation);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-	}
 }
 
 void Stage::loadPostProcessingEffects()
@@ -413,15 +388,6 @@ void Stage::loadPostProcessingEffects()
 			VUEngine::pushFrontPostProcessingEffect(_vuEngine, this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
-}
-
-// retrieve size
-Size Stage::getSize()
-{
-	ASSERT(this->stageSpec, "Stage::getSize: null stageSpec");
-
-	// set world's limits
-	return Size::getFromPixelSize(this->stageSpec->level.pixelSize);
 }
 
 PixelSize Stage::getPixelSize()
@@ -448,41 +414,16 @@ PixelOptical Stage::getPixelOptical()
 	return this->stageSpec->rendering.pixelOptical;
 }
 
-// setup ui
-void Stage::setupUI()
-{
-	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
-
-	if(!isDeleted(this->uiContainer))
-	{
-		delete this->uiContainer;
-		this->uiContainer = NULL;
-	}
-
-	if(this->stageSpec->entities.uiContainerSpec.allocator)
-	{
-		// call the appropriate allocator to support inheritance
-		this->uiContainer = ((UIContainer (*)(UIContainerSpec*)) this->stageSpec->entities.uiContainerSpec.allocator)(&this->stageSpec->entities.uiContainerSpec);
-		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
-
-		// setup ui if allocated and constructed
-		if(!isDeleted(this->uiContainer))
-		{
-			// apply transformations
-			UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-		}
-	}
-}
-
-void Stage::onEntityLoaded(ListenerObject eventFirer)
+bool Stage::onEntityLoaded(ListenerObject eventFirer)
 {
 	Entity entity = Entity::safeCast(eventFirer);
 
 	if(!isDeleted(entity) && !isDeleted(this->entityLoadingListeners))
 	{
-		Entity::removeEventListeners(entity, NULL, kEventEntityLoaded);
 		Stage::alertOfLoadedEntity(this, entity);
 	}
+
+	return false;
 }
 
 void Stage::alertOfLoadedEntity(Entity entity)
@@ -633,43 +574,6 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 		delete node->data;
 		VirtualList::removeNode(this->stageEntityDescriptions, node);
-	}
-}
-
-// unload entity from the stage
-void Stage::removeChildEntity(Entity child)
-{
-	ASSERT(child, "Stage::removeChildEntity: null child");
-
-	if(!child)
-	{
-		return;
-	}
-
-	Base::removeChild(this, Container::safeCast(child), true);
-
-	int16 internalId = Entity::getInternalId(child);
-
-	VirtualNode node = this->stageEntityDescriptions->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
-		if(stageEntityDescription->internalId == internalId)
-		{
-			stageEntityDescription->internalId = -1;
-
-			// remove from list of entities that are to be loaded by the streaming,
-			// if the entity is not to be respawned
-			if(!Entity::respawn(child))
-			{
-				delete node->data;
-				VirtualList::removeNode(this->stageEntityDescriptions, node);
-			}
-
-			break;
-		}
 	}
 }
 
@@ -857,12 +761,11 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 	bool unloadedEntities = false;
 
-	// need a temporary list to remove and delete entities
 	VirtualNode node = this->children->head;
 
 	CACHE_RESET;
 
-	// check which actors must be unloaded
+	// check which entites must be unloaded
 	for(; NULL != node; node = node->next)
 	{
 		// get next entity
@@ -874,8 +777,13 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 		}
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !entity->inCameraRange)
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this))
 		{
+			if(Entity::isInCameraRange(entity, this->streaming.loadPadding + this->streaming.unloadPadding, true))
+			{
+				continue;
+			}
+
 			VirtualNode auxNode = this->stageEntityDescriptions->head;
 			StageEntityDescription* stageEntityDescription = NULL;
 
@@ -898,7 +806,16 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 			}
 
 			// unload it
-			Stage::removeChildEntity(this, entity);
+			Base::removeChild(this, Container::safeCast(entity), true);
+
+			stageEntityDescription->internalId = -1;
+
+			// remove from list of entities that are to be loaded by the streaming,
+			// if the entity is not to be respawned
+			if(!Entity::respawn(entity))
+			{
+				VirtualList::removeNode(this->stageEntityDescriptions, auxNode);
+			}
 
 			unloadedEntities = true;
 		}
@@ -1070,7 +987,7 @@ VirtualList Stage::getSounds()
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
-	if(!VUEngine::isInSpecialMode(_vuEngine))
+	if(!VUEngine::isInToolState(_vuEngine))
 	{
 		EntityFactory::showStatus(this->entityFactory, 25, 3);
 	}
@@ -1159,44 +1076,6 @@ bool Stage::streamOutAll()
 	return result;
 }
 
-// execute stage's logic
-void Stage::update()
-{
-	Base::update(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		Container::update(this->uiContainer);
-	}
-}
-
-// transformation state
-void Stage::transform(const Transformation* environmentTransform __attribute__ ((unused)), uint8 invalidateTransformationFlag)
-{
-	Base::transform(this, environmentTransform, invalidateTransformationFlag);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
-	}
-}
-
-void Stage::synchronizeGraphics()
-{
-	Base::synchronizeGraphics(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::synchronizeGraphics(this->uiContainer);
-	}
-}
-
-// retrieve ui
-UIContainer Stage::getUIContainer()
-{
-	return this->uiContainer;
-}
-
 // suspend for pause
 void Stage::suspend()
 {
@@ -1206,11 +1085,6 @@ void Stage::suspend()
 //	EntityFactory::prepareAllEntities(this->entityFactory); // It seems buggy
 
 	Base::suspend(this);
-
-	if(!isDeleted(this->uiContainer))
-	{
-		Container::suspend(this->uiContainer);
-	}
 
 	// relinquish camera focus priority
 	if(!isDeleted(this->focusEntity))
@@ -1263,12 +1137,6 @@ void Stage::resume()
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
 	// TODO: properly handle brightness and brightness repeat on resume
 
-	if(!isDeleted(this->uiContainer))
-	{
-		UIContainer::resume(this->uiContainer);
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-	}
-
 	this->entityFactory = new EntityFactory();
 }
 
@@ -1311,11 +1179,6 @@ void Stage::setupSounds()
 			sound = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, (EventListener)Stage::onSoundReleased, ListenerObject::safeCast(this));
 		}
 
-		if(Sound::hasPCMTracks(sound))
-		{
-			VIPManager::enableMultiplexedInterrupts(VIPManager::getInstance(), kVIPNonVIPMultiplexedInterrupts);
-		}
-
 		if(!isDeleted(sound))
 		{
 			if(isDeleted(this->sounds))
@@ -1333,11 +1196,13 @@ void Stage::setupSounds()
 	}
 }
 
-void Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
+bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
 	VirtualList::removeElement(this->sounds, eventFirer);
 
 	Stage::fireEvent(this, kEventSoundReleased);
+
+	return false;
 }
 
 void Stage::setupTimer()
@@ -1345,29 +1210,7 @@ void Stage::setupTimer()
 	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
 }
 
-bool Stage::handlePropagatedMessage(int32 message)
-{
-	if(!isDeleted(this->uiContainer))
-	{
-		// propagate message to ui
-		return Container::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
-	}
-
-	return false;
-}
-
-bool Stage::handlePropagatedString(const char* string)
-{
-	if(!isDeleted(this->uiContainer))
-	{
-		// propagate message to ui
-		return Container::propagateMessage(this->uiContainer, Container::onPropagatedString, string);
-	}
-
-	return false;
-}
-
-void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
+bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	if(!isDeleted(this->focusEntity) && ListenerObject::safeCast(this->focusEntity) == eventFirer)
 	{
@@ -1378,20 +1221,22 @@ void Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unuse
 	}
 
 	this->focusEntity = NULL;
+
+	return false;
 }
 
 void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::removeEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(!isDeleted(this->focusEntity))
 	{
-		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Entity::addEventListener(this->focusEntity, ListenerObject::safeCast(this), (EventListener)Stage::onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
@@ -1420,6 +1265,7 @@ VirtualList Stage::getStageEntityDescriptions()
 	return this->stageEntityDescriptions;
 }
 
+#ifndef __SHIPPING
 void Stage::showStreamingProfiling(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
@@ -1460,4 +1306,4 @@ void Stage::showStreamingProfiling(int32 x, int32 y)
 	entityFactoryHighestTime = 0;
 #endif
 }
-
+#endif

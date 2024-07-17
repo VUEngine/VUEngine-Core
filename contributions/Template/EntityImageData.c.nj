@@ -1,0 +1,22 @@
+{%- import 'templates/partials/macros.nj' as macros -%}
+{%- include('templates/partials/fileHeader/fileHeader.c.nj') -%}
+
+{%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
+
+{%- if item.components.sprites.length %}
+	{% for sprite in item.components.sprites -%}
+		{%- if not sprite._imageData | int and sprite._imageData.images.length -%}
+			{%- for imageData in sprite._imageData.images -%}
+				{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
+				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
+				{%- set section = sprite.section -%}
+
+				{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
+				{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
+				{%- include('templates/partials/image/tiles.c.nj') -%}
+				{%- include('templates/partials/image/maps.c.nj') -%}
+				{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+			{%- endfor -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}

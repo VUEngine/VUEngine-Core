@@ -25,6 +25,9 @@
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)				((n) << 4)
 
+// CHARS PER BYTE
+#define __CHARS_PER_BYTE(n)				((n) >> 4)
+
 // uint32s per CHAR
 #define __UINT32S_PER_CHARS(n)				((n) << 2)
 
@@ -71,13 +74,6 @@ typedef const CharSetSpec CharSetROMSpec;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-enum CharSetStatus
-{
-	kCharSetNotWritten = 0,
-	kCharSetPendingRewritting,
-	kCharSetWritten
-};
-
 /// @ingroup graphics-2d-textures-char
 class CharSet : ListenerObject
 {
@@ -88,7 +84,7 @@ class CharSet : ListenerObject
 	// Memory displacement
 	uint16 offset;
 	// Written flag
-	uint8 status;
+	bool written;
 	// How many textures are using me
 	uint8 usageCount;
 
@@ -105,11 +101,10 @@ class CharSet : ListenerObject
 	CharSetSpec* getCharSetSpec();
 	uint16 getNumberOfChars();
 	void write();
-	void rewrite();
-	void setTilesDisplacement(uint32 tilesDisplacement);
-	void putChar(uint32 charToReplace, uint32* newChar);
-	void putPixel(uint32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
-	bool setFrame(uint16 frame);
+	void putChar(uint32 charToReplace, const uint32* newChar);
+	void addChar(uint32 charToAddTo, const uint32* newChar);
+	void putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor);
+	void setFrame(uint16 frame);
 }
 
 

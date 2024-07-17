@@ -122,6 +122,8 @@ class ParticleSystem : Entity
 	bool selfDestroyWhenDone;
 	// Flag to prevent computing force when not necessary
 	bool applyForceToParticles;
+	// Raise flag when transformed to reset particles' positions
+	bool transformed;
 
 	/// @publicsection
 	void constructor(const ParticleSystemSpec* particleSystemSpec,  int16 internalId, const char* const name);
@@ -144,13 +146,11 @@ class ParticleSystem : Entity
 
 	override void update();
 	override void transform(const Transformation* environmentTransform, uint8 invalidateTransformationFlag);
-	override void synchronizeGraphics();
 	override void resume();
 	override void suspend();
 	override void show();
 	override void hide();
 	override void setTransparent(uint8 transparent);
-	virtual void transformParticles();
 	virtual void particleSpawned(Particle particle);
 	virtual void particleRecycled(Particle particle);
 }

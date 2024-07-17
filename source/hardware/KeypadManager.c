@@ -109,8 +109,15 @@ int32 KeypadManager::isEnabled()
  */
 UserInput KeypadManager::captureUserInput()
 {
+#ifdef __UNLOCK_FPS
+	if(*_readingStatus & __S_STAT)
+	{
+		return (UserInput){0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
+	}
+#else
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
+#endif
 
 	// now read the keys
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
@@ -244,6 +251,9 @@ void KeypadManager::reset()
  */
 void KeypadManager::registerInput(uint16 inputToRegister)
 {
+#ifdef __TOOLS
+	inputToRegister = __KEY_PRESSED | __KEY_RELEASED | __KEY_HOLD;
+#endif
 	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;
@@ -271,6 +281,7 @@ static void KeypadManager::interruptHandler()
 	Printing::hex(Printing::getInstance(), (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]), 48 - 13, 27, 8, NULL);
 }
 
+#ifndef __SHIPPING
 static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, int32 y)
 {
 	if(!userInput)
@@ -300,4 +311,4 @@ static void KeypadManager::printUserInput(const UserInput* userInput, int32 x, i
 	PRINT_TEXT("powerFlag:", x, ++y);
 	PRINT_HEX(userInput->powerFlag, x + xDisplacement, y);
 }
-
+#endif

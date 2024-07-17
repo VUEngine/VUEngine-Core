@@ -66,39 +66,31 @@ typedef const ParticleSpec ParticleROMSpec;
 class Particle : SpatialObject
 {
 	// Particle's life span in milliseconds
-	Vector3D position;
-	// To optimizize parallax computation
-	fixed_t previousZ;
+	int16 lifeSpan;
 	// sprite
 	Sprite sprite;
 	// sprite
 	Wireframe wireframe;
-	// Particle's life span in milliseconds
-	int16 lifeSpan;
 	bool expired;
 	bool transform;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, ParticleSystem creator);
+	void constructor(const ParticleSpec* particleSpec, ParticleSystem creator);
 	void setLifeSpan(int16 lifeSpan);
 	bool isVisible();
-	void setup(int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
+	void setup(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, int16 lifeSpan, const Vector3D* position, const Vector3D* force, uint32 movementType, const AnimationFunction** animationFunctions, const char* animationName, bool forceAnimation);
 	void expire();
 	void hide();
 	void show();
 	void setTransparent(uint8 transparent);
 	void resume(const SpriteSpec* spriteSpec, const WireframeSpec* wireframeSpec, const AnimationFunction** animationFunctions, const char* animationName);
 	void suspend();
-	virtual void synchronizeGraphics();
 	virtual void applySustainedForce(const Vector3D* force, uint32 movementType);
 	virtual bool update(uint32 elapsedTime, void (* behavior)(Particle particle));
-	virtual void transform();
 	virtual void reset();
 	virtual void changeMass();
 
 	override bool isSubjectToGravity(Vector3D gravity);
-	override void setPosition(const Vector3D* position);
-	override const Vector3D* getPosition();
 }
 
 

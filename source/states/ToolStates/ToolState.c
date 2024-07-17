@@ -67,6 +67,12 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
 	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(VUEngine::getStateMachine(VUEngine::getInstance()))));
+	GameState::startClocks(this);
+
+	this->stream = false;
+	this->transform = false;
+	this->updatePhysics = false;
+	this->processCollisions = false;
 
 	if(!isDeleted(this->tool))
 	{
@@ -121,20 +127,3 @@ void ToolState::processUserInput(const UserInput* userInput)
 		Tool::processUserInput(this->tool, userInput->releasedKey);
 	}
 }
-
-/**
- * Transform
- *
- */
-void ToolState::transform()
-{
-}
-
-/**
- * Sync graphics
- *
- */
-void ToolState::synchronizeGraphics()
-{
-}
-

@@ -222,7 +222,7 @@ void PhysicalWorld::update(Clock clock)
 			continue;
 		}
 
-		if(!body->active || !body->awake)
+		if(!body->awake)
 		{
 			continue;
 		}
@@ -279,10 +279,7 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 		// check if current body's owner is the same as the entity calling this method
 		if(SpatialObject::safeCast(owner) == body->owner)
 		{
-			// check if body is active, maybe a body must be removed
-			// and a new entity has been loaded in the same memory location
-			// as the owner of the found body
-			return Body::isActive(body);
+			return true;
 		}
 	}
 
@@ -385,6 +382,7 @@ fixed_t PhysicalWorld::getElapsedTime()
 	return __PHYSICS_TIME_ELAPSED;
 }
 
+#ifndef __SHIPPING
 /**
  * Print status
  *
@@ -407,3 +405,4 @@ void PhysicalWorld::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 }
+#endif

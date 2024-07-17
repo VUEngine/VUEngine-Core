@@ -36,6 +36,7 @@ static class Vector3D : Object
 	/// @publicsection
 	static inline Vector3D zero();
 	static inline Vector3D unit(uint16 axis);
+	static inline Vector3D getFrom2D(Vector2D vector2D, fixed_t z);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline Vector3D sub(Vector3D a, Vector3D b);
@@ -92,6 +93,11 @@ static inline Vector3D Vector3D::unit(uint16 axis)
 		__Y_AXIS & axis ? __I_TO_FIXED(1) : 0,
 		__Z_AXIS & axis ? __I_TO_FIXED(1) : 0
 	};
+}
+
+static inline Vector3D Vector3D::getFrom2D(Vector2D vector2D, fixed_t z)
+{
+	return (Vector3D){vector2D.x, vector2D.y, z};
 }
 
 static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
@@ -405,7 +411,7 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 	{
 		__PIXELS_TO_METERS(screenPixelVector.x),
 		__PIXELS_TO_METERS(screenPixelVector.y),
-		__PIXELS_TO_METERS(screenPixelVector.z + screenPixelVector.zDisplacement)
+		__PIXELS_TO_METERS(screenPixelVector.z)
 	};
 }
 

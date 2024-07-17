@@ -39,6 +39,8 @@ void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
 	// add entities in the spec
 	UIContainer::addEntities(this, uiContainerSpec->entities);
 
+	this->inheritEnvironment = __INHERIT_POSITION;
+
 	_camera = Camera::getInstance();
 }
 
@@ -88,13 +90,13 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 	return NULL;
 }
 
-void UIContainer::synchronizeGraphics()
+void UIContainer::prepareToRender()
 {
-	NM_ASSERT(_camera, "UIContainer::transform: null camera");
+	extern Transformation neutralEnvironmentTransformation;
 
-	Camera::startUIGraphicsSynchronization(_camera);
+	this->localTransformation.position = *_cameraPosition;
+	this->localTransformation.rotation = *_cameraInvertedRotation;
+	this->transformation.invalid = __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
 
-	Base::synchronizeGraphics(this);
-
-	Camera::stopUIGraphicsSynchronization(_camera);
+	Base::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_POSITION | __INVALIDATE_ROTATION);
 }

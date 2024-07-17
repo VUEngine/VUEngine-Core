@@ -46,7 +46,6 @@ static uint8* const _hardwareRegisters =			(uint8*)0x02000000;
 extern bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
-typedef struct ColumnTableSpec ColumnTableSpec;
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -74,16 +73,15 @@ singleton class HardwareManager : Object
 	static void printStackStatus(int32 x, int32 y, bool resumed);
 	void clearScreen();
 	void disableKeypad();
-	void disableRendering();
-	void displayOff();
-	void displayOn();
+	void turnDisplayOff();
+	void turnDisplayOn();
+	void startDrawing();
+	void stopDrawing();
 	void enableKeypad();
-	void enableRendering();
 	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
 	void lowerBrightness();
 	void print(int32 x, int32 y);
 	void setInterruptVectors();
-	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
 	bool isDrawingAllowed();
 
@@ -95,8 +93,10 @@ static inline void HardwareManager::halt()
 	// Make sure that I don't halt forever
 	HardwareManager::enableInterrupts();
 
-    static const long code = 0x181F6800L;
-    ((void(*)())&code)();
+	asm("halt"::);
+	// This causes a compiler's warning
+//	static const long code = 0x181F6800L;
+//	((void(*)())&code)();
 }
 
 /**
@@ -128,11 +128,14 @@ static inline void HardwareManager::setInterruptLevel(uint8 level)
  */
 static inline void HardwareManager::enableInterrupts()
 {
-	_enabledInterrupts = true;
-	_suspendInterruptRequest = 0;
+	if(!_enabledInterrupts || 0 != _suspendInterruptRequest)
+	{
+		_enabledInterrupts = true;
+		_suspendInterruptRequest = 0;
 
-	asm("cli");
-	HardwareManager::setInterruptLevel(0);
+		asm("cli");
+		HardwareManager::setInterruptLevel(0);
+	}
 }
 
 /**
@@ -140,11 +143,14 @@ static inline void HardwareManager::enableInterrupts()
  */
 static inline void HardwareManager::disableInterrupts()
 {
-	_enabledInterrupts = false;
-	_suspendInterruptRequest = 0;
+	if(_enabledInterrupts)
+	{
+		_enabledInterrupts = false;
+		_suspendInterruptRequest = 0;
 
-	asm("sei");
-	HardwareManager::setInterruptLevel(5);
+		asm("sei");
+		HardwareManager::setInterruptLevel(5);
+	}
 }
 
 /**

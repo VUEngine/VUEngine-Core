@@ -1,0 +1,13 @@
+{
+	"targets": [{
+		"path": "assets/Fonts.c",
+		"root": "project"
+	}],
+	"template": "contributions/Template/Fonts.c.nj",
+	"events": [{
+		"type": "installedPluginsChanged"
+	}, {
+		"type": "itemOfTypeGotDeleted",
+		"value": "Font"
+	}]
+}

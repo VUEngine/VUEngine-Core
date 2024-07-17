@@ -74,8 +74,6 @@ singleton class SpriteManager : Object
 	int32 totalPixelsDrawn;
 	// number of rows to write in affine transformations
 	int16 maximumParamTableRowsToComputePerCall;
-	// semaphore to prevent manipulation of VirtualList during interrupt
-	bool lockSpritesLists;
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
 	// next world layer
@@ -83,18 +81,19 @@ singleton class SpriteManager : Object
 	// number of rows to write in texture's writing
 	int8 texturesMaximumRowsToWrite;
 	// flag to control texture's writing deferring
-	int8 deferParamTableEffects;
-	// delay before writing again
-	int8 waitToWriteSpriteTextures;
+	bool deferTextureUpdating;
+	// flag to control param table effects deferring
+	bool deferParamTableEffects;
 	// flag to defer sorting
 	bool deferredSort;
 
 	/// @publicsection
 	static SpriteManager getInstance();
 
-	Sprite createSprite(SpriteSpec* spriteSpec, ListenerObject owner);
+	Sprite createSprite(SpriteSpec* spriteSpec, SpatialObject owner);
 	bool registerSprite(Sprite sprite, bool hasEffects);
 	void unregisterSprite(Sprite sprite, bool hasEffects);
+	void deferTextureUpdating(bool deferTextureUpdating);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void destroySprite(Sprite sprite);

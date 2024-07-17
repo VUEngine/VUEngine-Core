@@ -36,9 +36,9 @@ class Polyhedron : Wireframe
 	VirtualList vertices;
 
 	/// @publicsection
-	void constructor(PolyhedronSpec* polyhedronSpec);
+	void constructor(SpatialObject owner, PolyhedronSpec* polyhedronSpec);
 	void addVertex(fixed_t x, fixed_t y, fixed_t z);
-	override void draw();
+	override bool draw();
 }
 
 

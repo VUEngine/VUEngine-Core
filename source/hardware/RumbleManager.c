@@ -158,9 +158,11 @@ static void RumbleManager::execute()
 #endif
 }
 
-void RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
+bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ ((unused)))
 {
     this->rumbleCommandIndex = 0;
+
+	return false;
 }
 
 void RumbleManager::toggleAsync()
