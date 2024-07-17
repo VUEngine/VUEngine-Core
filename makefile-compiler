@@ -2,7 +2,7 @@
 COMPILER_VERSION = 4.7
 COMPILER_OUTPUT = c
 COMPILER_NAME = clang
-COMPILER_HOME = /home/jorgeche/Documents/work/workspaces/virtualboy/tools/compiler/llvm-v810/bin
+COMPILER_HOME = /home/jorgeche/Documents/work/workspaces/virtualboy/tools/compiler/llvm-v810-linux-main/llvm-v810/bin
 
 CC = $(COMPILER_HOME)/clang
 AS = $(COMPILER_HOME)/llvm-mc
