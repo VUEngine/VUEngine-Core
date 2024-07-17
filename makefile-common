@@ -337,10 +337,10 @@ dirs:
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/$(NAME)
-	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/objects/$(BUILD_MODE)/hashes
 	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/headers/$(NAME)/headers
-	@mkdir -p $(WORKING_FOLDER)/assets/$(NAME)/hashes
+	@mkdir -p $(WORKING_FOLDER)/assets/hashes
 	@rm -Rf $(WORKING_FOLDER)/classes/locks
 	@echo "$(OBJECTS_DIRS)" > $(DIRS_HELPER_FILE)
 	@xargs mkdir -p < $(DIRS_HELPER_FILE)
