@@ -731,7 +731,7 @@ PhysicalWorld GameState::getPhysicalWorld()
 {
 	if(NULL == this->physicalWorld)
 	{
-		this->physicalWorld = new PhysicalWorld(this->physicsClock);
+		this->physicalWorld = new PhysicalWorld();
 	}
 
 	return this->physicalWorld;
