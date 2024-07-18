@@ -168,13 +168,13 @@ bool RumbleManager::onBroadcastDataDone(ListenerObject eventFirer __attribute__ 
 void RumbleManager::toggleAsync()
 {
     this->async = !this->async;
-    RumbleManager::stopAllEffects(this);
+    RumbleManager::stopAllEffects();
 }
 
 void RumbleManager::setAsync(bool async)
 {
 	this->async = async;
-    RumbleManager::stopAllEffects(this);
+    RumbleManager::stopAllEffects();
 }
 
 void RumbleManager::setOverridePreviousEffect(bool overridePreviousEffect)
