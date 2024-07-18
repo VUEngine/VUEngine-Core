@@ -253,7 +253,7 @@
 			uint32 i = 0;																				\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
 			{																							\
-				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## ## is abstract);		\
+				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## " is abstract");		\
 			}																							\
 		}
 #ifndef __RELEASE
