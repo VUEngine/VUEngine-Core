@@ -6,7 +6,7 @@ COMPILER_HOME = /home/jorgeche/Documents/work/workspaces/virtualboy/tools/compil
 
 CC = $(COMPILER_HOME)/clang
 AS = $(COMPILER_HOME)/llvm-mc
-lu = $(COMPILER_HOME)/llvm-ar
+AR = $(COMPILER_HOME)/llvm-ar
 LD = $(COMPILER_HOME)/ld.lld
 OBJCOPY = $(COMPILER_HOME)/llvm-objcopy
 OBJDUMP = $(COMPILER_HOME)/llvm-objdump
