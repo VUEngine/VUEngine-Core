@@ -352,6 +352,7 @@ void DirectDraw::drawPoint(PixelVector point, int32 color)
 	}
 }
 
+__attribute__((always_inline))
 static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ext_t* y0, fixed_ext_t* parallax0, fixed_ext_t dx, fixed_ext_t dy, fixed_ext_t dParallax, fixed_ext_t x1, fixed_ext_t y1, fixed_ext_t parallax1)
 {
 	fixed_ext_t x = *x0;

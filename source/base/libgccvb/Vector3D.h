@@ -524,6 +524,7 @@ static inline bool Vector3D::isVectorInsideLine(Vector3D vector, Vector3D lineSt
 	);
 }
 
+__attribute__((always_inline))
 static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -540,6 +541,7 @@ static inline Vector3D Vector3D::rotateXAxis(Vector3D vector, int16 degrees)
 		};
 }
 
+__attribute__((always_inline))
 static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -556,6 +558,7 @@ static inline Vector3D Vector3D::rotateYAxis(Vector3D vector, int16 degrees)
 		};
 }
 
+__attribute__((always_inline))
 static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 {
 	fix7_9_ext cos = __FIX7_9_TO_FIX7_9_EXT(__COS(degrees));
@@ -572,6 +575,7 @@ static inline Vector3D Vector3D::rotateZAxis(Vector3D vector, int16 degrees)
 		};
 }
 
+__attribute__((always_inline))
 static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 {
 	Vector3D result = vector;

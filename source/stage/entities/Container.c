@@ -481,6 +481,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
  * @private
  * @param environmentTransformation
  */
+__attribute__((always_inline))
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransformation)
 {
 	Vector3D localPosition = this->localTransformation.position;
