@@ -204,7 +204,7 @@ void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
  */
 void VIPManager::startDrawing()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__XPCTRL] |= __XPEN;
 }
 
@@ -215,7 +215,7 @@ void VIPManager::stopDrawing()
 {
 	VIPManager::disableInterrupts(this);
 
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
 
@@ -452,11 +452,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					}
 				}
 
+				// Must not touch the video memory while the VIP is displaying
+				while(_vipRegisters[__DPSTTS] & __DPBSY);
+
 				SpriteManager::writeDRAM(_spriteManager);
 				DirectDraw::startDrawing(_directDraw);
 				WireframeManager::draw(_wireframeManager);
 				VIPManager::applyPostProcessingEffects(_vipManager);
-
 
 				this->processingXPEND = false;
 
@@ -531,7 +533,7 @@ void VIPManager::applyPostProcessingEffects()
  */
 void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
@@ -549,7 +551,7 @@ void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
  */
 void VIPManager::upBrightness()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
 	_vipRegisters[__BRTC] = 32;
@@ -560,7 +562,7 @@ void VIPManager::upBrightness()
  */
 void VIPManager::lowerBrightness()
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
 	_vipRegisters[__BRTC] = 0;
@@ -690,7 +692,7 @@ void VIPManager::useInternalColumnTable(bool useInternal)
  */
 void VIPManager::setupBrightness(Brightness* brightness)
 {
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__BRTA] = brightness->darkRed;
 	_vipRegisters[__BRTB] = brightness->mediumRed;
 	_vipRegisters[__BRTC] = brightness->brightRed - (brightness->mediumRed + brightness->darkRed);
@@ -843,7 +845,7 @@ void VIPManager::removePostProcessingEffects()
  */
 void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
-	uint16 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSYR;
+	uint16 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & __XPBSY;
 
 	if(0x0004 == currentDrawingFrameBufferSet)
 	{
@@ -877,7 +879,7 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 		return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
 	}
 
-	if(!(_vipRegisters[__XPSTTS] & __XPBSYR))
+	if(0 == (_vipRegisters[__XPSTTS] & __XPBSY))
 	{
 		return -1;
 	}

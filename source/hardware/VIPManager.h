@@ -38,13 +38,14 @@
 #define	__SCANRDY		0x0040
 #define	__DISP			0x0002	// DISPLAY ON
 #define	__DPRST			0x0001	// RESET VPU COUNTER AND WAIT __FCLK
+#define	__DPBSY			0x003C	// In the midst of displaying
 
 #define	__SBOUT			0x8000	// In FrameBuffer drawing included
 #define	__SBCOUNT		0x1F00	// Current bloc being drawn
 #define	__OVERTIME		0x0010	// Processing
-#define	__XPBSYR		0x000C	// In the midst of drawing processing reset
 #define	__XPBSY1		0x0008	// In the midst of FrameBuffer 1 picture editing
 #define	__XPBSY0		0x0004	// In the midst of FrameBuffer 0 picture editing
+#define	__XPBSY			(__XPBSY0 | __XPBSY1)	// In the midst of drawing
 #define	__XPEN			0x0002	// Start of drawing
 #define	__XPRST			0x0001	// Forcing idling
 
