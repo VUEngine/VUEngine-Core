@@ -224,7 +224,7 @@ void VIPManager::stopDrawing()
  */
 bool VIPManager::isDrawingAllowed()
 {
-	return _vipRegisters[__XPSTTS] & __XPEN ? true : false;
+	return 0 != (_vipRegisters[__XPSTTS] & __XPEN);
 }
 
 /**
