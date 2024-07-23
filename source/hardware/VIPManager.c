@@ -397,7 +397,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 					{
 						VIPManager::enableInterrupts(this, __XPEND);
 					}
-				}					
+				}
 
 				// Process game's logic
 				VUEngine::nextGameCycleStarted(_vuEngine, this->gameFrameDuration);
@@ -453,7 +453,13 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				}
 
 				// Must not touch the video memory while the VIP is displaying
-				while(_vipRegisters[__DPSTTS] & __DPBSY);
+				static int16 delay = __TARGET_FPS << 3;
+
+				if(0 >= delay--)
+				{
+					delay = __TARGET_FPS;
+					while(_vipRegisters[__DPSTTS] & __DPBSY);
+				}
 
 				SpriteManager::writeDRAM(_spriteManager);
 				DirectDraw::startDrawing(_directDraw);
