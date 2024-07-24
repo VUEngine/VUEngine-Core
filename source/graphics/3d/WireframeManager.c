@@ -326,8 +326,6 @@ void WireframeManager::draw()
 	this->drawnWireframes = 0;
 #endif
 
-	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
-
 	// check the colliders
 	for(VirtualNode node = this->wireframes->head; !this->stopDrawing && NULL != node; node = node->next)
 	{
@@ -351,6 +349,8 @@ void WireframeManager::draw()
 		this->drawnWireframes++;
 #endif
 	}
+
+	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 }
 
 void WireframeManager::enable()
