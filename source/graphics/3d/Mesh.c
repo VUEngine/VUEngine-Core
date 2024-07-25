@@ -291,11 +291,11 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		if(Vector3D::areEqual(vertex->vector, startVector))
+		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
 		{
 			newMeshSegment->fromVertex = vertex;
 		}
-		else if(Vector3D::areEqual(vertex->vector, endVector))
+		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
 		{
 			newMeshSegment->toVertex = vertex;
 		}
