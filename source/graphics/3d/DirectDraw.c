@@ -254,6 +254,7 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  */
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
+#ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
 	uint16 pixel = color << ((y & 0x7) << 1);
 
 	// calculate pixel position
@@ -285,6 +286,25 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 
 	cachedLeftData |= pixel;
 	cachedRightData |= pixel;
+#else
+	uint8 pixel = color << ((y & 0x3) << 1);
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
+
+	if(__FRAME_BUFFERS_SIZE > displacement)
+	{
+		leftBuffer[displacement] |= pixel;
+	}
+
+	displacement += parallax << 6;
+
+	if(__FRAME_BUFFERS_SIZE > displacement)
+	{
+		rightBuffer[displacement] |= pixel;
+	}
+#endif
 }
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
@@ -762,7 +782,9 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			parallaxStart += parallaxStep;
 		}
 
+#ifdef __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
 		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, -1, -1, 0, 0);
+#endif
 	}
 
 	return true;
