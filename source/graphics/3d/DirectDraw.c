@@ -254,23 +254,37 @@ static void DirectDraw::drawPixel(uint32 buffer, uint16 x, uint16 y, int32 color
  */
 static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int16 x, int16 y, int16 parallax, int32 color)
 {
-	uint8 pixel = color << ((y & 3) << 1);
+	uint16 pixel = color << ((y & 0x7) << 1);
 
 	// calculate pixel position
 	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
-	uint16 displacement = ((x - parallax) << 6) + (y >> 2);	
+	uint16 displacement = ((x - parallax) << 5) + (y >> 3);	
 
-	if(__FRAME_BUFFERS_SIZE > displacement)
+	static uint16 cachedDisplacement = __FRAME_BUFFERS_SIZE;
+
+	static uint16 cachedLeftData = 0;
+	static uint16 cachedRightData = 0;
+
+	if(displacement != cachedDisplacement)
 	{
-		leftBuffer[displacement] |= pixel;
+		if((__FRAME_BUFFERS_SIZE >> 1) > cachedDisplacement)
+		{
+			((uint16*)leftBuffer)[cachedDisplacement] = cachedLeftData;
+		}
+
+		if((__FRAME_BUFFERS_SIZE >> 1) > cachedDisplacement + (parallax << 5))
+		{
+			((uint16*)rightBuffer)[cachedDisplacement + (parallax << 5)] = cachedRightData;
+		}
+
+		cachedDisplacement = displacement;
+
+		cachedLeftData = ((uint16*)leftBuffer)[cachedDisplacement];
+		cachedRightData = ((uint16*)rightBuffer)[cachedDisplacement + (parallax << 5)];
 	}
 
-	displacement += (parallax << 6);
-
-	if(__FRAME_BUFFERS_SIZE > displacement)
-	{
-		rightBuffer[displacement] |= pixel;
-	}
+	cachedLeftData |= pixel;
+	cachedRightData |= pixel;
 }
 
 static void DirectDraw::drawColorPixelInterlaced(BYTE* buffer, int16 x, int16 y, int16 parallax, int32 color)
@@ -747,6 +761,8 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 			fromPointY += yStep;
 			parallaxStart += parallaxStep;
 		}
+
+		DirectDraw::drawColorPixel((BYTE*)leftBuffer, (BYTE*)rightBuffer, -1, -1, 0, 0);
 	}
 
 	return true;
