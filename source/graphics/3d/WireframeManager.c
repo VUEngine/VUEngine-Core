@@ -61,7 +61,6 @@ void WireframeManager::constructor()
 	Base::constructor();
 
 	this->wireframes = new VirtualList();
-	this->stopRendering = false;
 	this->stopDrawing = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 	this->disabled = false;
@@ -261,16 +260,13 @@ void WireframeManager::render()
 		return;
 	}
 
-	this->stopRendering = false;
-
 	_cameraDirection = Vector3D::rotate((Vector3D){0, 0, __1I_FIXED}, *_cameraRotation);
 
 #ifdef __PROFILE_WIREFRAMES
 	this->renderedWireframes = 0;
 #endif
 
-	// check the colliders
-	for(VirtualNode node = this->wireframes->head; NULL != node && !this->stopRendering; node = node->next)
+	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
 	{
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
@@ -295,7 +291,7 @@ void WireframeManager::render()
 #endif
 	}
 
-#ifdef __SHOW_WIREFRAMES_PROFILING
+#ifdef __PROFILE_WIREFRAMES
 	WireframeManager::print(this, 1, 1);
 #endif
 

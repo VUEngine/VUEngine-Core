@@ -155,13 +155,13 @@ void DirectDraw::startDrawing()
 	}
 #endif
 
-	if(this->drawPixels <= _directDraw->maximuDrawPixels)
+	if(this->drawPixels <= this->maximuDrawPixels)
 	{
-		_directDraw->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
+		this->maximuDrawPixels += __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY;
 
-		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < _directDraw->maximuDrawPixels)
+		if(__DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS < this->maximuDrawPixels)
 		{
-			_directDraw->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
+			this->maximuDrawPixels = __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS;
 		}
 	}
 
