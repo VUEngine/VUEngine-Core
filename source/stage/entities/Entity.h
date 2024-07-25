@@ -115,7 +115,9 @@ typedef const PositionedEntity PositionedEntityROMSpec;
 class Entity : Container
 {
 	// Flag to signal if collisions are allowed
-	bool allowCollisions;
+	bool collisionsEnabled;
+	// Flag to signal if collisions are checked
+	bool checkingCollisions;
 	// Entity's internal id, set by the engine
 	int16 internalId;
 	// Used for collisions and streaming
@@ -171,8 +173,8 @@ class Entity : Container
 	VirtualList getWireframes();
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	void setAnimation(void (*animation)());
-	void activeCollisionChecks(bool activate);
-	void allowCollisions(bool value);
+	void checkCollisions(bool activate);
+	void enableCollisions(bool value);
 	void registerCollisions(bool value);
 	bool doesAllowCollisions();
 	bool hasColliders();

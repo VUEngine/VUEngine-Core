@@ -433,9 +433,9 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kMessageBodyStartedMoving:
 
-					if(this->allowCollisions && NULL != this->colliders)
+					if(this->collisionsEnabled && NULL != this->colliders)
 					{
-						Actor::activeCollisionChecks(this, true);
+						Actor::checkCollisions(this, true);
 						return true;
 					}
 
@@ -445,7 +445,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 					if(__NO_AXIS == Body::getMovementOnAllAxis(this->body) && NULL != this->colliders)
 					{
-						Actor::activeCollisionChecks(this, false);
+						Actor::checkCollisions(this, false);
 					}
 
 					break;

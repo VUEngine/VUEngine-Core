@@ -77,7 +77,8 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 
 	// initialize to 0 for the engine to know that size must be set
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
-	this->allowCollisions = true;
+	this->collisionsEnabled = true;
+	this->checkingCollisions = true;
 }
 
 /**
@@ -1804,9 +1805,14 @@ fixed_t Entity::getFrictionCoefficient()
  *
  *@para Active status
  */
-void Entity::activeCollisionChecks(bool active)
+void Entity::checkCollisions(bool active)
 {
-	this->allowCollisions |= active;
+	this->checkingCollisions = active;
+
+	if(this->checkingCollisions && !this->collisionsEnabled)
+	{
+		this->collisionsEnabled = this->checkingCollisions;
+	}
 
 	if(NULL != this->colliders)
 	{
@@ -1814,7 +1820,7 @@ void Entity::activeCollisionChecks(bool active)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			Collider::activeCollisionChecks(collider, active);
+			Collider::checkCollisions(collider, active);
 		}
 	}
 }
@@ -1839,9 +1845,9 @@ void Entity::registerCollisions(bool value)
 /**
  * Propagate active status to the colliders
  */
-void Entity::allowCollisions(bool value)
+void Entity::enableCollisions(bool value)
 {
-	this->allowCollisions = value;
+	this->collisionsEnabled = value;
 
 	if(NULL != this->colliders)
 	{
@@ -1859,7 +1865,7 @@ void Entity::allowCollisions(bool value)
  */
 bool Entity::doesAllowCollisions()
 {
-	return this->allowCollisions;
+	return this->collisionsEnabled;
 }
 
 

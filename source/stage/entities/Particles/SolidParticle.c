@@ -79,7 +79,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 
 	// register a collider for collision detection
 	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &colliderSpec);
-	Collider::activeCollisionChecks(this->collider, true);
+	Collider::checkCollisions(this->collider, true);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
 	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
@@ -214,7 +214,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 	{
 		case kMessageBodyStartedMoving:
 
-			Collider::activeCollisionChecks(this->collider, true);
+			Collider::checkCollisions(this->collider, true);
 			return true;
 			break;
 
@@ -222,7 +222,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
 			{
-				Collider::activeCollisionChecks(this->collider, false);
+				Collider::checkCollisions(this->collider, false);
 			}
 			break;
 	}

@@ -455,7 +455,7 @@ bool Collider::isEnabled()
  *
  * @param activate
  */
-void Collider::activeCollisionChecks(bool activate)
+void Collider::checkCollisions(bool activate)
 {
 	Collider::setCheckForCollisions(this, activate);
 

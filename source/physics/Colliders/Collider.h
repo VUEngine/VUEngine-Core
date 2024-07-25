@@ -220,7 +220,7 @@ abstract class Collider : Component
 	void reset();
 	bool isEnabled();
 	bool isReady();
-	void activeCollisionChecks(bool activate);
+	void checkCollisions(bool activate);
 	void enable(bool enable);
 	void setCheckForCollisions(bool checkForCollisions);
 	void setReady(bool ready);
