@@ -123,6 +123,8 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 	GameState::pauseClocks(this);
 
 	Clock::start(this->messagingClock);
+
+	GameState::changeFrameRate(this, 25, 500);
 }
 
 /**
@@ -296,6 +298,14 @@ bool GameState::processUserInputRegardlessOfInput()
  */
 bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageRestoreFPS:
+
+			VUEngine::setGameFrameRate(VUEngine::getInstance(), __MAXIMUM_FPS);
+			break;
+	}
+
 	return false;
 	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
 //	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
@@ -814,5 +824,15 @@ void GameState::showEntityWithName(const char* entityName)
 	if(!isDeleted(entity))
 	{
 		Entity::show(entity);
+	}
+}
+
+void GameState::changeFrameRate(int16 targetFPS, int32 duration)
+{
+	VUEngine::setGameFrameRate(VUEngine::getInstance(), targetFPS);
+
+	if(0 <= duration)
+	{
+		ScreenState::sendMessageTo(this, ListenerObject::safeCast(VUEngine::getInstance()), kMessageRestoreFPS, duration + 1, 0);
 	}
 }

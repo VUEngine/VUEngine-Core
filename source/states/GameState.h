@@ -90,6 +90,7 @@ class GameState : State
 	Entity getEntityByName(const char* entityName);
 	void hideEntityWithName(const char* entityName);
 	void showEntityWithName(const char* entityName);
+	void changeFrameRate(int16 targetFPS, int32 duration);
 
 	virtual void processUserInput(const UserInput*  userInput);
 	virtual bool processUserInputRegardlessOfInput();

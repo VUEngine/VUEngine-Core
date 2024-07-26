@@ -50,6 +50,9 @@ enum MessagesTypes
 	kMessageCheckIfRemoteIsReady,
 	kMessageLastCommunicationMessage,
 
+	// Framerate
+	kMessageRestoreFPS,
+
 	// don't place messages below this
 	kMessageLastEngine
 };
