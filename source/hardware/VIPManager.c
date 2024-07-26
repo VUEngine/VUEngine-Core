@@ -111,7 +111,6 @@ void VIPManager::constructor()
 	this->scanErrorCounter = 0;
 	this->totalMilliseconds = 0;
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
-	this->syncDisplay = 2;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 
@@ -145,11 +144,6 @@ void VIPManager::reset()
 	this->processingXPEND = false;
 	this->totalMilliseconds = 0;
 	
-	if(0 < this->syncDisplay)
-	{
-		this->syncDisplay--;
-	}
-
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
 #else
@@ -458,9 +452,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 						VIPManager::enableInterrupts(this, __GAMESTART);
 					}
 				}
-
-				// Must not touch the video memory while the VIP is displaying
-				while(0 < this->syncDisplay && 0 != (_vipRegisters[__DPSTTS] & __DPBSY));
 
 				SpriteManager::writeDRAM(_spriteManager);
 				DirectDraw::startDrawing(_directDraw);

@@ -283,7 +283,6 @@ singleton class VIPManager : ListenerObject
 	bool processingXPEND;
 	volatile bool frameStartedDuringXPEND;
 	bool skipFrameBuffersProcessing;
-	int8 syncDisplay;
 
 	/// @publicsection
 	static VIPManager getInstance();
