@@ -394,8 +394,6 @@ bool SpriteManager::sortProgressively()
 {
 	bool swapped = false;
 
-	sorts = 0;
-
 	if(NULL == this->sortingSpriteNode)
 	{
 		this->sortingSpriteNode = this->sprites->head;
