@@ -300,6 +300,7 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
+#ifndef __DEBUG
 	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
 	{
 		if(kVIPOnlyVIPMultiplexedInterrupts == _vipManager->enabledMultiplexedInterrupts)
@@ -309,6 +310,7 @@ static void VIPManager::interruptHandler()
 
 		HardwareManager::enableMultiplexedInterrupts();
 	}
+#endif
 
 #ifdef __VIP_MANAGER_FIRE_INTERRUPT_EVENT
 	if(_vipManager->events)
@@ -320,6 +322,7 @@ static void VIPManager::interruptHandler()
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, _vipManager->currrentInterrupt);
 
+#ifndef __DEBUG
 	if(kVIPNoMultiplexedInterrupts != _vipManager->enabledMultiplexedInterrupts)
 	{
 		HardwareManager::disableMultiplexedInterrupts();
@@ -329,6 +332,7 @@ static void VIPManager::interruptHandler()
 			HardwareManager::setInterruptLevel(0);
 		}
 	}
+#endif
 
 	// enable interrupts
 	VIPManager::enableInterrupts(_vipManager, __GAMESTART | __XPEND);
