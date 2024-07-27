@@ -81,7 +81,6 @@ void SpriteManager::constructor()
 	Base::constructor();
 
 	this->totalPixelsDrawn = 0;
-	this->deferredSort = false;
 	this->deferTextureUpdating = false;
 
 	this->sprites = NULL;
@@ -98,6 +97,7 @@ void SpriteManager::constructor()
 	this->charSetManager = NULL;
 	this->bgmapTextureManager = NULL;
 	this->objectTextureManager = NULL;
+	this->sortingSpriteNode = NULL;
 
 	SpriteManager::reset(this);
 }
@@ -183,9 +183,9 @@ void SpriteManager::reset()
 	this->specialSprites = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
-	this->deferredSort = false;
 	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
+	this->sortingSpriteNode = NULL;
 
 	SpriteManager::stopRendering(this);
 
@@ -354,7 +354,7 @@ void SpriteManager::destroySprite(Sprite sprite)
  */
 void SpriteManager::sort()
 {
-	while(SpriteManager::sortProgressively(this, false));
+	while(SpriteManager::sortProgressively(this));
 }
 
 /**
@@ -362,8 +362,6 @@ void SpriteManager::sort()
  */
 bool SpriteManager::doRegisterSprite(Sprite sprite)
 {
-	this->deferredSort = false;
-
 	for(VirtualNode node = this->sprites->head; NULL != node; node = node->next)
 	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
@@ -377,15 +375,14 @@ bool SpriteManager::doRegisterSprite(Sprite sprite)
 			return false;
 		}
 
-		// check if z positions are swapped
-		if(sprite->position.z + sprite->displacement.z < otherSprite->position.z + otherSprite->displacement.z)
+		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
 		{
-			VirtualList::insertBefore(this->sprites, node, sprite);
+			this->sortingSpriteNode = VirtualList::insertBefore(this->sprites, node, sprite);
 			return true;
 		}
 	}
 
-	VirtualList::pushBack(this->sprites, sprite);
+	this->sortingSpriteNode = VirtualList::pushBack(this->sprites, sprite);
 
 	return true;
 }
@@ -393,14 +390,27 @@ bool SpriteManager::doRegisterSprite(Sprite sprite)
 /**
  * Deferred sorting sprites according to their z coordinate
  */
-bool SpriteManager::sortProgressively(bool deferred)
+bool SpriteManager::sortProgressively()
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->sprites->head; NULL != node && NULL != node->next; node = node->next)
-	{
-		VirtualNode nextNode = node->next;
+	sorts = 0;
 
+	if(NULL == this->sortingSpriteNode)
+	{
+		this->sortingSpriteNode = this->sprites->head;
+
+		if(NULL == this->sortingSpriteNode)
+		{
+			return false;
+		}
+	}
+
+	VirtualNode node = this->sortingSpriteNode; 
+	VirtualNode nextNode = this->sortingSpriteNode->next; 
+
+	if(NULL != node && NULL != nextNode)
+	{
 		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
 		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
 
@@ -421,11 +431,6 @@ bool SpriteManager::sortProgressively(bool deferred)
 			node = nextNode;
 
 			swapped = true;
-
-			if(deferred)
-			{
-				break;
-			}
 		}
 	}
 
@@ -435,9 +440,11 @@ bool SpriteManager::sortProgressively(bool deferred)
 		{
 			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
 
-			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, deferred);
+			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer);
 		}
 	}
+
+	this->sortingSpriteNode = this->sortingSpriteNode->next;
 
 	return swapped;
 }
@@ -511,6 +518,8 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 #ifndef __ENABLE_PROFILER
 	NM_ASSERT(!isDeleted(VirtualList::find(this->sprites, sprite)), "SpriteManager::unregisterSprite: sprite not found");
 #endif
+
+	this->sortingSpriteNode = NULL;
 
 	VirtualList::removeElement(this->sprites, sprite);
 
@@ -623,7 +632,7 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
-	this->deferredSort = !SpriteManager::sortProgressively(this, this->deferredSort);
+	SpriteManager::sortProgressively(this);
 
 	ParamTableManager::defragmentProgressively(this->paramTableManager);
 

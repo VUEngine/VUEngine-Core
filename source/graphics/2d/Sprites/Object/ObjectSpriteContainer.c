@@ -65,6 +65,7 @@ void ObjectSpriteContainer::constructor()
 	this->objectSprites = new VirtualList();
 	this->transparent = __TRANSPARENCY_NONE;
 	this->hideSprites = false;
+	this->sortingSpriteNode = NULL;
 }
 
 /**
@@ -113,20 +114,29 @@ void ObjectSpriteContainer::unregisterWithManager()
  */
 bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
-	ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
-
-#ifndef __ENABLE_PROFILER
-	NM_ASSERT(!VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::registerSprite: already registered");
-#endif
-
-	if(!isDeleted(objectSprite))
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
 	{
-		VirtualList::pushFront(this->objectSprites, objectSprite);
-		return true;
+		NM_ASSERT(!isDeleted(node->data), "SpriteManager::doRegisterSprite: NULL node's data");
+
+		ObjectSprite otherSprite = ObjectSprite::safeCast(node->data);
+
+		NM_ASSERT(otherSprite != objectSprite, "SpriteManager::doRegisterSprite: sprite already registered");
+
+		if(otherSprite == objectSprite)
+		{
+			return false;
+		}
+
+		if(objectSprite->position.z + objectSprite->displacement.z > otherSprite->position.z + otherSprite->displacement.z)
+		{
+			this->sortingSpriteNode = VirtualList::insertAfter(this->objectSprites, node, objectSprite);
+			return true;
+		}
 	}
 
-	NM_ASSERT(objectSprite, "ObjectSpriteContainer::registerSprite: null objectSprite");
-	return false;
+	this->sortingSpriteNode = VirtualList::pushFront(this->objectSprites, objectSprite);
+
+	return true;
 }
 
 /**
@@ -141,6 +151,8 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 	NM_ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::unregisterSprite: null found");
 #endif
 
+	this->sortingSpriteNode = NULL;
+
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeElement(this->objectSprites, objectSprite);
 }
@@ -150,21 +162,32 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
  *
  * @private
  */
-bool ObjectSpriteContainer::sortProgressively(bool deferred)
+bool ObjectSpriteContainer::sortProgressively()
 {
 	bool swapped = false;
 
-	for(VirtualNode node = this->objectSprites->head; NULL != node && NULL != node->next; node = node->next)
+	if(NULL == this->sortingSpriteNode)
 	{
-		VirtualNode nextNode = node->next;
+		this->sortingSpriteNode = this->objectSprites->head;
 
+		if(NULL == this->sortingSpriteNode)
+		{
+			return false;
+		}
+	}
+
+	VirtualNode node = this->sortingSpriteNode; 
+	VirtualNode nextNode = this->sortingSpriteNode->next; 
+
+	if(NULL != node && NULL != nextNode)
+	{
 		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: node's data isn't a sprite");
+		ASSERT(__GET_CAST(ObjectSprite, node->data), "ObjectSpriteContainer::sortProgressively: node's data isn't a sprite");
 
 		Sprite sprite = Sprite::safeCast(node->data);
 
 		NM_ASSERT(!isDeleted(nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data cast");
+		ASSERT(__GET_CAST(ObjectSprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data cast");
 
 		Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
@@ -178,13 +201,10 @@ bool ObjectSpriteContainer::sortProgressively(bool deferred)
 			node = nextNode;
 
 			swapped = true;
-
-			if(deferred)
-			{
-				break;
-			}
 		}
 	}
+
+	this->sortingSpriteNode = this->sortingSpriteNode->next;
 
 	return swapped;
 }

@@ -34,6 +34,8 @@ class ObjectSpriteContainer : Sprite
 {
 	// object sprites
 	VirtualList objectSprites;
+	// Node for z sorting
+	VirtualNode sortingSpriteNode;
 	// first object index
 	int32 firstObjectIndex;
 	// last rendered object index
@@ -57,7 +59,7 @@ class ObjectSpriteContainer : Sprite
 	int32 getNextFreeObjectIndex();
 	int32 getTotalUsedObjects();
 	bool hasRoomFor(int32 numberOfObjects);
-	bool sortProgressively(bool deferred);
+	bool sortProgressively();
 	void position(const Vector3D* position);
 	void unregisterSprite(ObjectSprite objectSprite);
 	void showSprites(ObjectSprite spareSprite);

@@ -70,6 +70,8 @@ singleton class SpriteManager : Object
 	VirtualList objectSpriteContainers;
 	// Sprites with special effects
 	VirtualList specialSprites;
+	// Node for z sorting
+	VirtualNode sortingSpriteNode;
 	// pixels drawn
 	int32 totalPixelsDrawn;
 	// number of rows to write in affine transformations
@@ -84,8 +86,6 @@ singleton class SpriteManager : Object
 	bool deferTextureUpdating;
 	// flag to control param table effects deferring
 	bool deferParamTableEffects;
-	// flag to defer sorting
-	bool deferredSort;
 
 	/// @publicsection
 	static SpriteManager getInstance();
