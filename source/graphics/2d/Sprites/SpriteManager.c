@@ -322,6 +322,7 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, SpatialObject owner)
 	Sprite sprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
+	Sprite::render(sprite, -1, false);
 	Sprite::registerWithManager(sprite);
 
 	return sprite;
@@ -377,7 +378,7 @@ bool SpriteManager::doRegisterSprite(Sprite sprite)
 		}
 
 		// check if z positions are swapped
-		if(sprite->position.z + sprite->displacement.z <= otherSprite->position.z + otherSprite->displacement.z)
+		if(sprite->position.z + sprite->displacement.z < otherSprite->position.z + otherSprite->displacement.z)
 		{
 			VirtualList::insertBefore(this->sprites, node, sprite);
 			return true;

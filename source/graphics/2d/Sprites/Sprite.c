@@ -135,6 +135,20 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 
+	if(NULL != this->owner)
+	{
+		if(NULL != this->transformation && __NON_TRANSFORMED == this->transformation->invalid)
+		{
+			return __NO_RENDER_INDEX;
+		}
+
+		Sprite::position(this);
+		Sprite::rotate(this);
+		Sprite::scale(this);
+
+		this->transformed = true;
+	}
+
 	if(kTextureInvalid == this->texture->status || NULL == this->texture->charSet)
 	{
 		this->index = __NO_RENDER_INDEX;
@@ -158,20 +172,6 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 		return this->index;
 	}
 */
-
-	if(NULL != this->owner)
-	{
-		if(NULL != this->transformation && __NON_TRANSFORMED == this->transformation->invalid)
-		{
-			return __NO_RENDER_INDEX;
-		}
-
-		Sprite::position(this);
-		Sprite::rotate(this);
-		Sprite::scale(this);
-
-		this->transformed = true;
-	}
 
 	// Do not remove this check, it prevents sprites from looping
 	if(this->checkIfWithinScreenSpace && !Sprite::isWithinScreenSpace(this))

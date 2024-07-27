@@ -337,6 +337,8 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		this->sprites = new VirtualList();
 	}
 
+	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addSprite: non transformed");
+
 	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
@@ -430,6 +432,8 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 	{
 		Entity::destroyWireframes(this);
 	}
+
+	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addWireframes: non transformed");
 
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
@@ -561,6 +565,8 @@ Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collis
 	{
 		this->colliders = new VirtualList();
 	}
+
+	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addCollider: non transformed");
 
 	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
 
