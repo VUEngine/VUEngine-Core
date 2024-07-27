@@ -57,8 +57,8 @@ class VirtualList : Object
 	void moveNodeAfter(VirtualNode movingNode, VirtualNode node);
 	void* popFront();
 	void* popBack();
-	int32 pushBack(const void* const data);
-	int32 pushFront(const void* const data);
+	VirtualNode pushBack(const void* const data);
+	VirtualNode pushFront(const void* const data);
 	bool removeNode(VirtualNode node);
 	void moveBefore(VirtualNode node, VirtualNode nodeToMove);
 	void moveAfter(VirtualNode node, VirtualNode nodeToMove);

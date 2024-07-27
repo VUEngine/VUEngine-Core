@@ -124,7 +124,7 @@ void VirtualList::deleteData()
  *
  * @param data
  */
-int32 VirtualList::pushFront(const void* const data)
+VirtualNode VirtualList::pushFront(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -151,7 +151,7 @@ int32 VirtualList::pushFront(const void* const data)
 
 	HardwareManager::resumeInterrupts();
 
-	return true;
+	return newNode;
 }
 
 /**
@@ -239,7 +239,7 @@ void* VirtualList::popBack()
  *
  * @param data
  */
-int32 VirtualList::pushBack(const void* const data)
+VirtualNode VirtualList::pushBack(const void* const data)
 {
 	VirtualNode newNode = new VirtualNode(data);
 
@@ -266,7 +266,7 @@ int32 VirtualList::pushBack(const void* const data)
 
 	HardwareManager::resumeInterrupts();
 
-	return true;
+	return newNode;
 }
 
 /**
