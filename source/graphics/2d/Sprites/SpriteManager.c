@@ -322,7 +322,7 @@ Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, SpatialObject owner)
 	Sprite sprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
-	Sprite::render(sprite, -1, false);
+	Sprite::render(sprite, __NO_RENDER_INDEX, false);
 	Sprite::registerWithManager(sprite);
 
 	return sprite;
