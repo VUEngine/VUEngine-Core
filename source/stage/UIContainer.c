@@ -81,6 +81,7 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 			// apply transformations
 			Transformation environmentTransform = UIContainer::getEnvironmentTransform(this);
 			Entity::initialTransform(entity, &environmentTransform);
+			Entity::createComponents(entity);
 			Entity::ready(entity, true);
 		}
 

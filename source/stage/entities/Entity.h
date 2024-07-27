@@ -198,7 +198,6 @@ class Entity : Container
 
 	override void addChild(Container child);
 	override void createComponents();
-	override void initialTransform(const Transformation* environmentTransform);
 	override void setTransparent(uint8 transparent);
 	override bool handlePropagatedMessage(int32 message);
 	override const Size* getSize();

@@ -347,6 +347,11 @@ void Container::ready(bool recursive)
 	{
 		Container::ready(childNode->data, recursive);
 	}
+
+	if(this->hidden)
+	{
+		Container::hide(this);
+	}
 }
 
 /**

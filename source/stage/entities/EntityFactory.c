@@ -221,6 +221,15 @@ uint32 EntityFactory::transformEntities()
 
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
+		if(!positionedEntityDescription->transformed)
+		{
+			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
+			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
+			positionedEntityDescription->transformed = true;
+
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
 		if(!positionedEntityDescription->spritesCreated)
 		{
 			EntitySpec* entitySpec = Entity::getSpec(positionedEntityDescription->entity);
@@ -295,15 +304,6 @@ uint32 EntityFactory::transformEntities()
 
 			positionedEntityDescription->behaviorsCreated = true;
 			positionedEntityDescription->componentIndex = 0;
-		}
-
-		if(!positionedEntityDescription->transformed)
-		{
-			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
-			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
-			positionedEntityDescription->transformed = true;
-
-			return __ENTITY_PENDING_PROCESSING;
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))

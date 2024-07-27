@@ -1328,8 +1328,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 	Transformation environmentTransform = Entity::getEnvironmentTransform(this);
 	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
 	Entity::initialTransform(childEntity, &environmentTransform);
-
-	// make ready
+	Entity::createComponents(childEntity);
 	Entity::ready(childEntity, true);
 
 	return childEntity;
@@ -1411,25 +1410,6 @@ void Entity::createComponents()
 
 	// now can calculate the size
 	Entity::calculateSize(this, false);
-}
-
-/**
- * Initial transformation
- *
- * @param environmentTransform
- * @param recursive
- */
-void Entity::initialTransform(const Transformation* environmentTransform)
-{
-	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform);
-
-	Entity::createComponents(this);
-
-	if(this->hidden)
-	{
-		Entity::hide(this);
-	}
 }
 
 /**

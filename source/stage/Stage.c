@@ -473,6 +473,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			Stage::addChild(this, Container::safeCast(entity));
 
 			Entity::initialTransform(entity, &neutralEnvironmentTransformation);
+			Entity::createComponents(entity);
 
 			entity->dontStreamOut = entity->dontStreamOut || permanent;
 			
