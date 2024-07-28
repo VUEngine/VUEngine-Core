@@ -408,7 +408,7 @@ bool SpriteManager::sortProgressively(bool complete)
 	}
 	while(complete && swapped);
 
-	if(!swapped && !isDeleted(this->objectSpriteContainers))
+	if(!isDeleted(this->objectSpriteContainers))
 	{
 		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
 		{
