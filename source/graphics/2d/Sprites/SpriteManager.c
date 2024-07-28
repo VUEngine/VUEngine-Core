@@ -98,6 +98,7 @@ void SpriteManager::constructor()
 	this->bgmapTextureManager = NULL;
 	this->objectTextureManager = NULL;
 	this->sortingSpriteNode = NULL;
+	this->completeSort = true;
 
 	SpriteManager::reset(this);
 }
@@ -186,6 +187,7 @@ void SpriteManager::reset()
 	this->deferTextureUpdating = false;
 	this->texturesMaximumRowsToWrite = -1;
 	this->sortingSpriteNode = NULL;
+	this->completeSort = true;
 
 	SpriteManager::stopRendering(this);
 
@@ -349,12 +351,84 @@ void SpriteManager::destroySprite(Sprite sprite)
 	delete sprite;
 }
 
+
+/**
+ * Deferred sorting sprites according to their z coordinate
+ */
+bool SpriteManager::sortProgressively(bool complete)
+{
+	if(NULL == this->sortingSpriteNode)
+	{
+		this->sortingSpriteNode = this->sprites->head;
+
+		if(NULL == this->sortingSpriteNode)
+		{
+			return false;
+		}
+	}
+
+	bool swapped = false;
+
+	do
+	{
+		swapped = false;
+
+		for(VirtualNode node = complete ? this->sprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; node = node->next)
+		{
+			VirtualNode nextNode = node->next;
+
+			NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
+			ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
+
+			Sprite sprite = Sprite::safeCast(node->data);
+
+			NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
+			ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
+
+			Sprite nextSprite = Sprite::safeCast(nextNode->data);
+
+			// check if z positions are swapped
+			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
+			{
+				// swap nodes' data
+				node->data = nextSprite;
+				nextNode->data = sprite;
+
+				node = nextNode;
+
+				swapped = true;
+			}
+
+			if(!complete)
+			{
+				this->sortingSpriteNode = this->sortingSpriteNode->next;
+				break;
+			}
+		}
+	}
+	while(complete && swapped);
+
+	if(!swapped && !isDeleted(this->objectSpriteContainers))
+	{
+		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
+		{
+			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer, complete);
+		}
+	}
+
+	return swapped;
+}
+
 /**
  * Sort sprites according to their z coordinate
  */
 void SpriteManager::sort()
 {
-	while(SpriteManager::sortProgressively(this));
+	while(SpriteManager::sortProgressively(this, true));
+
+	this->completeSort = true;
 }
 
 /**
@@ -385,66 +459,6 @@ bool SpriteManager::doRegisterSprite(Sprite sprite)
 	this->sortingSpriteNode = VirtualList::pushBack(this->sprites, sprite);
 
 	return true;
-}
-
-/**
- * Deferred sorting sprites according to their z coordinate
- */
-bool SpriteManager::sortProgressively()
-{
-	bool swapped = false;
-
-	if(NULL == this->sortingSpriteNode)
-	{
-		this->sortingSpriteNode = this->sprites->head;
-
-		if(NULL == this->sortingSpriteNode)
-		{
-			return false;
-		}
-	}
-
-	VirtualNode node = this->sortingSpriteNode; 
-	VirtualNode nextNode = this->sortingSpriteNode->next; 
-
-	if(NULL != node && NULL != nextNode)
-	{
-		NM_ASSERT(!isDeleted(node->data), "SpriteManager::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: node's data isn't a sprite");
-
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(Sprite, nextNode->data), "SpriteManager::sortProgressively: NULL nextNode's data cast");
-
-		Sprite nextSprite = Sprite::safeCast(nextNode->data);
-
-		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
-		{
-			// swap nodes' data
-			node->data = nextSprite;
-			nextNode->data = sprite;
-
-			node = nextNode;
-
-			swapped = true;
-		}
-	}
-
-	if(!swapped && !isDeleted(this->objectSpriteContainers))
-	{
-		for(VirtualNode node = this->objectSpriteContainers->head; NULL != node; node = node->next)
-		{
-			ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
-
-			swapped = swapped || ObjectSpriteContainer::sortProgressively(objectSpriteContainer);
-		}
-	}
-
-	this->sortingSpriteNode = this->sortingSpriteNode->next;
-
-	return swapped;
 }
 
 /**
@@ -630,7 +644,7 @@ void SpriteManager::render()
 	_renderedSprites = 0;
 #endif
 
-	SpriteManager::sortProgressively(this);
+	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
 	ParamTableManager::defragmentProgressively(this->paramTableManager);
 

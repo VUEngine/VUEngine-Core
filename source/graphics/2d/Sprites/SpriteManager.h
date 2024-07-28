@@ -86,6 +86,8 @@ singleton class SpriteManager : Object
 	bool deferTextureUpdating;
 	// flag to control param table effects deferring
 	bool deferParamTableEffects;
+	// Flag for Z sorting
+	bool completeSort;
 
 	/// @publicsection
 	static SpriteManager getInstance();

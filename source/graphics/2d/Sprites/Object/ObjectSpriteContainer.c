@@ -162,10 +162,8 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
  *
  * @private
  */
-bool ObjectSpriteContainer::sortProgressively()
+bool ObjectSpriteContainer::sortProgressively(bool complete)
 {
-	bool swapped = false;
-
 	if(NULL == this->sortingSpriteNode)
 	{
 		this->sortingSpriteNode = this->objectSprites->head;
@@ -176,35 +174,46 @@ bool ObjectSpriteContainer::sortProgressively()
 		}
 	}
 
-	VirtualNode node = this->sortingSpriteNode; 
-	VirtualNode nextNode = this->sortingSpriteNode->next; 
+	bool swapped = false;
 
-	if(NULL != node && NULL != nextNode)
+	do
 	{
-		NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(ObjectSprite, node->data), "ObjectSpriteContainer::sortProgressively: node's data isn't a sprite");
+		swapped = false;
 
-		Sprite sprite = Sprite::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(ObjectSprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data cast");
-
-		Sprite nextSprite = Sprite::safeCast(nextNode->data);
-
-		// check if z positions are swapped
-		if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+		for(VirtualNode node = complete ? this->objectSprites->head : this->sortingSpriteNode; NULL != node && NULL != node->next; node = node->next)
 		{
-			// swap nodes' data
-			node->data = nextSprite;
-			nextNode->data = sprite;
+			VirtualNode nextNode = node->next;
 
-			node = nextNode;
+			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::sortProgressively: NULL node's data");
+			ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: node's data isn't a sprite");
 
-			swapped = true;
+			Sprite sprite = Sprite::safeCast(node->data);
+
+			NM_ASSERT(!isDeleted(nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data");
+			ASSERT(__GET_CAST(Sprite, nextNode->data), "ObjectSpriteContainer::sortProgressively: NULL nextNode's data cast");
+
+			Sprite nextSprite = Sprite::safeCast(nextNode->data);
+
+			// check if z positions are swapped
+			if(nextSprite->position.z + nextSprite->displacement.z > sprite->position.z + sprite->displacement.z)
+			{
+				// swap nodes' data
+				node->data = nextSprite;
+				nextNode->data = sprite;
+
+				node = nextNode;
+
+				swapped = true;
+			}
+
+			if(!complete)
+			{
+				this->sortingSpriteNode = this->sortingSpriteNode->next;
+				break;
+			}
 		}
 	}
-
-	this->sortingSpriteNode = this->sortingSpriteNode->next;
+	while(complete && swapped);
 
 	return swapped;
 }
