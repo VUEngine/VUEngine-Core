@@ -69,7 +69,6 @@ void FrameRate::reset()
 	this->FPS = 0;
 	this->unevenFPS = 0;
 	this->gameFrameStarts = 0;
-	this->targetFPS = __TARGET_FPS;
 	this->seconds = 0;
 	this->totalFPS = 0;
 	this->totalUnevenFPS = 0;
