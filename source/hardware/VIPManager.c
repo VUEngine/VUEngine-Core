@@ -170,8 +170,6 @@ void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
 	}
 #endif
 
-
-
 	this->gameFrameDuration = (__MILLISECONDS_PER_SECOND / __MAXIMUM_FPS) << frameCycle;
 
 	_vipRegisters[__FRMCYC] = frameCycle;

@@ -123,8 +123,6 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 	GameState::pauseClocks(this);
 
 	Clock::start(this->messagingClock);
-
-	GameState::changeFrameRate(this, 25, 500);
 }
 
 /**
@@ -150,6 +148,8 @@ void GameState::execute(void* owner __attribute__ ((unused)))
  */
 void GameState::exit(void* owner __attribute__ ((unused)))
 {
+	GameState::discardMessages(this, kMessageRestoreFPS); 
+
 	this->stream = true;
 	this->transform = true;
 	this->updatePhysics = true;
@@ -296,7 +296,7 @@ bool GameState::processUserInputRegardlessOfInput()
  * @param telegram		Message wrapper
  * @return 				True if no further processing of the message is required
  */
-bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+bool GameState::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
 	switch(Telegram::getMessage(telegram))
 	{
@@ -306,6 +306,18 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
 			break;
 	}
 
+	return false;
+}
+
+/**
+ * Method called when the Game's StateMachine receives a message to be processed
+ *
+ * @param owner			StateMachine's owner
+ * @param telegram		Message wrapper
+ * @return 				True if no further processing of the message is required
+ */
+bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+{
 	return false;
 	// Not sure if necessary, but this can cause problems if no unified messages list is used and can cause unintended performance issues	
 //	return Stage::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram)) || UIContainer::propagateMessage(this->uiContainer, Container::onPropagatedMessage, Telegram::getMessage(telegram));
@@ -523,6 +535,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	SpriteManager::prepareAll(SpriteManager::getInstance());
 
 	HardwareManager::resumeInterrupts();
+
+	GameState::changeFrameRate(this, __TARGET_FPS >> 1, 100);
 }
 
 void GameState::setupStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition, bool forceNoPopIn)
@@ -833,6 +847,6 @@ void GameState::changeFrameRate(int16 targetFPS, int32 duration)
 
 	if(0 <= duration)
 	{
-		ScreenState::sendMessageTo(this, ListenerObject::safeCast(VUEngine::getInstance()), kMessageRestoreFPS, duration + 1, 0);
+		ScreenState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
 	}
 }

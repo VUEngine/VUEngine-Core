@@ -102,6 +102,7 @@ class GameState : State
 	override void exit(void* owner);
 	override void suspend(void* owner);
 	override void resume(void* owner);
+	override bool handleMessage(Telegram telegram);
 	override bool processMessage(void* owner, Telegram telegram);
 }
 
