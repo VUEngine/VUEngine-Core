@@ -669,7 +669,37 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 		else
 		{
 			// TODO: fix this hack
-			Container_transform(child, &this->transformation, invalidateTransformationFlag);				
+			// This should be a call to Container_transform, but the preprocessor makes the virtual call
+			if(0 != (__INVALIDATE_SCALE & child->transformation.invalid))
+			{
+				if(0 != (__INHERIT_SCALE & child->inheritEnvironment))
+				{
+					Container::applyEnvironmentToScale(child, &this->transformation);
+				}
+			}
+
+			if(0 != (__INVALIDATE_ROTATION & child->transformation.invalid))
+			{
+				if(0 != (__INHERIT_ROTATION & child->inheritEnvironment))
+				{
+					Container::applyEnvironmentToRotation(child, &this->transformation);
+				}
+			}
+
+			if(0 != ((__INVALIDATE_POSITION | __INVALIDATE_ROTATION) & child->transformation.invalid))
+			{
+				// apply environment transformation
+				if(0 != (__INHERIT_POSITION & child->inheritEnvironment))
+				{
+					Container::applyEnvironmentToPosition(child, &this->transformation);
+				}
+			}
+
+			// Check since the call is virtual
+			Container::transformChildren(child, invalidateTransformationFlag);
+
+			// don't update position on next transformation cycle
+			child->transformation.invalid = __VALID_TRANSFORMATION;
 		}
 	}
 }
