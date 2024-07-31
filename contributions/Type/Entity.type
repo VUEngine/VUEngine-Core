@@ -293,6 +293,27 @@
 									"type": "string",
 									"default": "image"
 								},
+								"imageProcessingSettings": {
+									"type": "object",
+									"properties": {
+										"colorDistanceFormula": {
+											"type": "string",
+											"default": "euclidean"
+										},
+										"imageQuantizationAlgorithm": {
+											"type": "string",
+											"default": "nearest"
+										},
+										"minimumColorDistanceToDither": {
+											"type": "number",
+											"default": 0
+										},
+										"serpentine": {
+											"type": "boolean",
+											"default": false
+										}
+									}
+								},
 								"bgmapMode": {
 									"type": "string",
 									"default": "Bgmap"

@@ -2,6 +2,23 @@
 {%- include('templates/partials/fileHeader/fileHeader.c.nj') -%}
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
+{%- set section = sprite.section -%}
+{%- set compression = sprite.compression -%}
+
+{%- set frameCount = item.animations.totalFrames -%}
+{%- set isAnimation = item.components.animations.length > 0 -%}
+{%- set mostSpritesOnAFile = 0 -%}
+{% for sprite in item.components.sprites -%}
+	{%- if sprite.texture.files.length > mostSpritesOnAFile -%}
+		{%- set mostSpritesOnAFile = sprite.texture.files.length -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- set isMultifileAnimation = mostSpritesOnAFile > 1 -%}
+
+{%- set isSpritesheetAnimation = false -%}
+{%- if isAnimation and not isMultifileAnimation and frameCount > 0 -%}
+	{%- set isSpritesheetAnimation = true -%}
+{%- endif -%}
 
 {%- if item.components.sprites.length %}
 	{% for sprite in item.components.sprites -%}
@@ -9,8 +26,6 @@
 			{%- for imageData in sprite._imageData.images -%}
 				{%- set tilesName = sanitizedSpecName ~ 'Entity' ~ imageData.tiles.name -%}
 				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
-				{%- set section = sprite.section -%}
-
 				{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
 				{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
 				{%- include('templates/partials/image/tiles.c.nj') -%}
