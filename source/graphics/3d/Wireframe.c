@@ -89,7 +89,15 @@ PixelRightBox Wireframe::getPixelRightBox()
 
 void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 {
-	if(NULL == ((WireframeSpec*)this->componentSpec) || __COLOR_BLACK != ((WireframeSpec*)this->componentSpec)->color)
+	if(NULL == ((WireframeSpec*)this->componentSpec))
+	{
+		this->color = __COLOR_BRIGHT_RED;
+		this->interlaced = false;
+		this->squaredDistanceToCamera = 0;
+		return;
+	}
+
+	if(__COLOR_BLACK != ((WireframeSpec*)this->componentSpec)->color)
 	{
 		this->color = ((WireframeSpec*)this->componentSpec)->color;
 		this->interlaced = ((WireframeSpec*)this->componentSpec)->interlaced;
