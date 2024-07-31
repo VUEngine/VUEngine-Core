@@ -847,6 +847,6 @@ void GameState::changeFrameRate(int16 targetFPS, int32 duration)
 
 	if(0 <= duration)
 	{
-		ScreenState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
+		GameState::sendMessageToSelf(this, kMessageRestoreFPS, duration + 1, 0);
 	}
 }
