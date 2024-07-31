@@ -28,7 +28,6 @@ class Entity;
 /// @ingroup camera
 singleton class CameraMovementManager : ListenerObject
 {
-	Vector3D lastCameraDisplacement;
 	Vector3D focusEntityPositionDisplacement;
 	Entity focusEntity;
 	const Vector3D* focusEntityPosition;

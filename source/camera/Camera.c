@@ -69,6 +69,7 @@ void Camera::constructor()
 	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::invert(this->rotation);
+	this->lastDisplacement = Vector3D::zero();
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
@@ -182,9 +183,12 @@ void Camera::focus(bool checkIfFocusEntityIsMoving)
 		return;
 	}
 
+	this->lastDisplacement = this->position;
+
 	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
 
 	this->position = Vector3D::sum(this->position, this->displacement);
+	this->lastDisplacement = Vector3D::sub(this->position, this->lastDisplacement);
 
 #ifdef __SHOW_CAMERA_STATUS
 	Camera::print(this, 1, 1, true);
@@ -503,6 +507,7 @@ void Camera::reset()
 	this->displacement = Vector3D::zero();
 	this->rotation = Rotation::zero();
 	this->invertedRotation = Rotation::zero();
+	this->lastDisplacement = Vector3D::zero();
 
 	this->transformationFlags = false;
 
@@ -600,12 +605,7 @@ void Camera::setDisplacement(Vector3D displacement)
  */
 Vector3D Camera::getLastDisplacement()
 {
-	if(NULL == this->cameraMovementManager)
-	{
-		return Vector3D::zero();
-	}
-
-	return CameraMovementManager::getLastCameraDisplacement(this->cameraMovementManager);
+	return this->lastDisplacement;
 }
 
 /**

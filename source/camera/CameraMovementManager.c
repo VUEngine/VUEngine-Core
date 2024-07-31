@@ -71,7 +71,6 @@ void CameraMovementManager::reset()
 	this->focusEntity = NULL;
 	this->focusEntityPosition = NULL;
 	this->focusEntityPositionDisplacement = Vector3D::zero();
-	this->lastCameraDisplacement = Vector3D::zero();
 }
 
 Entity CameraMovementManager::getFocusEntity()
@@ -137,7 +136,6 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 
 	if(isDeleted(this->focusEntity))
 	{
-		this->lastCameraDisplacement = Vector3D::zero();
 		return Camera::getPosition(camera);
 	}
 
@@ -151,17 +149,5 @@ Vector3D CameraMovementManager::focus(Camera camera, bool checkIfFocusEntityIsMo
 		this->focusEntityPosition->z + normalizedDirection.z * this->focusEntityPositionDisplacement.z - __HALF_SCREEN_DEPTH_METERS,
 	};
 
-	this->lastCameraDisplacement = Vector3D::sub(cameraNewPosition, *_cameraPosition);
-
 	return cameraNewPosition;
-}
-
-/**
- * Retrieve the camera's last position displacement
- *
- * @return		Last position displacement vector
- */
-Vector3D CameraMovementManager::getLastCameraDisplacement()
-{
-	return this->lastCameraDisplacement;
 }

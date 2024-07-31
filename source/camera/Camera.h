@@ -54,6 +54,7 @@ singleton class Camera : ListenerObject
 	Vector3D position;
 	// Camera position displacement
 	Vector3D displacement;
+	Vector3D lastDisplacement;
 	// Rotation
 	Rotation rotation;
 	// Backup of Camera rotation
