@@ -3,6 +3,11 @@
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
+{%- set isSpritesheetAnimation = false -%}
+{%- if item.components.animations.length and not item.animations.multiframe -%}
+	{%- set isSpritesheetAnimation = true -%}
+{%- endif -%}
+
 {#- DETERMINE ENTITY CLASS -#}
 {%- if item.extraProperties.customAllocator is defined and item.extraProperties.customAllocator != '' -%}
 	{%- set entityClass = item.extraProperties.customAllocator -%}
@@ -153,7 +158,11 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{{ item.sprites.sharedTiles }},
 
 	// whether the tiles are optimized or not
-	{{ item.sprites.optimizedTiles }},
+	{% if isSpritesheetAnimation -%}
+		false,
+	{%- else -%}
+		{{ item.sprites.optimizedTiles }},
+	{%- endif %}
 
 	// char spec
 	{{ tilesName }}Tiles,
@@ -184,7 +193,14 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{{ imageData.maps[0].width | round(0, "floor") }},
 
 	// rows (max 64)
-	{{ imageData.maps[0].height | round(0, "floor") }},
+	{% set mapHeight = imageData.maps[0].height | round(0, "floor") -%}
+	{%- if spriteClass == 'FrameBlendBgmapSprite' -%}
+		{%- set mapHeight = mapHeight / 2 | round(0, "floor") -%}
+	{%- endif -%}
+	{%- if isSpritesheetAnimation -%}
+		{%- set mapHeight = mapHeight / item.animations.totalFrames -%}
+	{%- endif -%}
+	{{ mapHeight }},
 
 	// padding for affine/hbias transformations
 	{ {{ sprite.texture.padding.x }}, {{ sprite.texture.padding.y }} },
