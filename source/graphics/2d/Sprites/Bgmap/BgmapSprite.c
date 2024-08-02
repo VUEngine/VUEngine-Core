@@ -265,8 +265,23 @@ void BgmapSprite::setScale(const PixelScale* scale)
 
 		if(!isDeleted(this->texture))
 		{
-			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			BgmapSprite::calculateSize(this, scale);
+			// add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
+				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
+				__FIXED_MULT(
+					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+					__FIX7_9_TO_FIXED(scale->x)
+				)
+			))) + 1;
+
+			this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
+				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
+				__FIXED_MULT(
+					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+					__FIX7_9_TO_FIXED(scale->y)
+				)
+			))) + 1;
+
 		}
 
 		if(0 < this->param)
@@ -274,31 +289,6 @@ void BgmapSprite::setScale(const PixelScale* scale)
 			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 		}
 	}
-}
-
-/**
- * Calculate with and height
- *
- * @memberof			BgmapSprite
- * @private
- */
-void BgmapSprite::calculateSize(const PixelScale* scale)
-{
-	this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
-		__FIXED_MULT(
-			__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-			__FIX7_9_TO_FIXED(scale->x)
-		)
-	))) + 1;
-
-	this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-		__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
-		__FIXED_MULT(
-			__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-			__FIX7_9_TO_FIXED(scale->y)
-		)
-	))) + 1;
 }
 
 /**
