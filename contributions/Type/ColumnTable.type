@@ -41,7 +41,7 @@
 		"type": "ColumnTableEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-table",
+	"icon": "codicon codicon-table",
 	"templates": [
 		"ColumnTableSpec"
 	]

@@ -29,7 +29,7 @@
 		"type": "BrightnessRepeatEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-sun-o",
+	"icon": "codicon codicon-color-mode",
 	"templates": [
 		"BrightnessRepeatSpec"
 	]

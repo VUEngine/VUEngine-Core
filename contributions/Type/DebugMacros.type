@@ -33,7 +33,7 @@
 		},
 		"required": []
 	},
-	"icon": "fa fa-bug",
+	"icon": "codicon codicon-debug",
 	"templates": [
 		"DebugConfig"
 	]

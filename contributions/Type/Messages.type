@@ -17,7 +17,7 @@
 		"type": "SimpleListEditor",
 		"scope": "#/properties/messages"
 	},
-	"icon": "fa fa-commenting-o",
+	"icon": "codicon codicon-comment",
 	"templates": [
 		"Messages"
 	]

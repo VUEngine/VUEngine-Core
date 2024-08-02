@@ -1,5 +1,4 @@
 {
-	"enabled": true,
 	"file": ".entity",
 	"schema": {
 		"title": "Entity",
@@ -634,7 +633,7 @@
 		"type": "EntityEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-id-card-o",
+	"icon": "codicon codicon-smiley",
 	"templates": [
 		"EntityImageData",
 		"EntitySpec"

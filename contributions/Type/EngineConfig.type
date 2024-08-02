@@ -1220,7 +1220,7 @@
 			}
 		]
 	},
-	"icon": "fa fa-sliders",
+	"icon": "codicon codicon-settings",
 	"templates": [
 		"Config"
 	],

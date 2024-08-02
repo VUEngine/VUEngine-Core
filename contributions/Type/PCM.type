@@ -38,7 +38,7 @@
 		"type": "PCMEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-music",
+	"icon": "codicon codicon-unmute",
 	"templates": [
 		"PCMSpec"
 	],
