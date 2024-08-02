@@ -428,6 +428,7 @@
 					},
 					"highPrecision": {
 						"type": "boolean",
+						"description": "Use bigger data type to perform physics simulations.",
 						"default": false
 					},
 					"maximumBouncinessCoefficient": {
@@ -1032,6 +1033,10 @@
 						"elements": [
 							{
 								"type": "Control",
+								"scope": "#/properties/physics/properties/angleToPreventColliderDisplacement"
+							},
+							{
+								"type": "Control",
 								"scope": "#/properties/physics/properties/bodiesToCheckForGravity"
 							},
 							{
@@ -1044,7 +1049,15 @@
 							},
 							{
 								"type": "Control",
+								"scope": "#/properties/physics/properties/highPrecision"
+							},
+							{
+								"type": "Control",
 								"scope": "#/properties/physics/properties/maximumBouncinessCoefficient"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/physics/properties/maximumFrictionCoefficient"
 							},
 							{
 								"type": "Control",
@@ -1096,7 +1109,7 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/sound/properties/stereoAttenuationDistance",
-								"label": "Vertical"
+								"label": "Stereo Atenuation"
 							}
 						]
 					}

@@ -304,7 +304,7 @@
 #define __PHYSICS_TIME_ELAPSED_DIVISOR								{{ config.physics.timeElapsedDivisor }}
 
 // define to use fix7.9 computation on Body's direction
-{% if config.physics.highPrecision %}#define{% else %}#undef{% endif %} 		__PHYSICS_HIGH_PRECISION
+{% if config.physics.highPrecision %}#define{% else %}#undef{% endif %} __PHYSICS_HIGH_PRECISION
 
 // thresholds to stop bodies
 #define __STOP_VELOCITY_THRESHOLD									__PIXELS_TO_METERS({{ config.physics.stopVelocityThreshold }})
