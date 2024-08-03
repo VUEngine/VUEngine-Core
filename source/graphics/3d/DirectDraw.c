@@ -28,7 +28,6 @@
 #define	__DIRECT_DRAW_MINIMUM_NUMBER_OF_PIXELS				1000
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_OVERHEAD		100
 #define __DIRECT_DRAW_MAXIMUM_NUMBER_OF_PIXELS_RECOVERY		100
-#define __DIRECT_DRAW_LINE_SHRINKEN_PADDING					32
 #define __FRAME_BUFFER_SIDE_BIT_INDEX						16
 #define __FRAME_BUFFER_SIDE_BIT								__RIGHT_FRAME_BUFFER_0
 #define __FLIP_FRAME_BUFFER_SIDE_BIT(a)						a ^= __FRAME_BUFFER_SIDE_BIT
@@ -57,6 +56,9 @@ uint16 _frustumWidth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_WIDT
 uint16 _frustumHeight __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_HEIGHT;
 uint16 _frustumDepth __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = __SCREEN_DEPTH;
 DirectDraw _directDraw __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
+
+uint16 _frustumWidthExtended = __SCREEN_WIDTH << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
+uint16 _frustumHeightExtended = __SCREEN_HEIGHT << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -205,6 +207,9 @@ void DirectDraw::setFrustum(CameraFrustum frustum)
 	_frustumWidth = _frustum.x1 > _frustum.x0 ? _frustum.x1 - _frustum.x0 : _frustum.x0 - _frustum.x1;
 	_frustumHeight = _frustum.y1 > _frustum.y0 ? _frustum.y1 - _frustum.y0 : _frustum.y0 - _frustum.y1;
 	_frustumDepth = _frustum.z1 > _frustum.z0 ? _frustum.z1 - _frustum.z0 : _frustum.z0 - _frustum.z1;
+
+	_frustumWidthExtended = _frustumWidth << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
+	_frustumHeightExtended = _frustumHeight << __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER;
 
 	_frustumFixedPoint = (CustomCameraFrustum)
 	{
@@ -509,7 +514,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 		{
 			return false;
 		}
-
+		
 		if(0 > xySlope * xySlopeHelper)
 		{
 			xySlopeHelper = -xySlopeHelper;
@@ -525,7 +530,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	// x0 = (y0 - y1) * (dx / dy) * xySlope / xySlope + x1
 	// x0 = (y0 - y1) * (dx / dy) * (dy / dx) / (dy / dx) + x1
 	// x0 = (y0 - y1) / (dy / dx) + x1
-	// x0 = (y0 - y1) / xySlope + x1	
+	// x0 = (y0 - y1) / xySlope + x1
 	if(_frustumFixedPoint.y0 > y)
 	{
 		y = _frustumFixedPoint.y0;
@@ -566,6 +571,7 @@ static inline bool DirectDraw::shrinkLineToScreenSpace(fixed_ext_t* x0, fixed_ex
 	{
 		return false;
 	}
+	
 	*x0 = x;
 	*y0 = y;
 	*parallax0 = parallax;
@@ -583,12 +589,12 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 	uint16 xToDeltaRight = (unsigned)(toPoint.x + toPoint.parallax - _frustum.x0);
 	uint16 yToDelta = (unsigned)(toPoint.y - _frustum.y0);
 
-	bool xFromOutside = _frustumWidth < xFromDeltaLeft && _frustumWidth < xFromDeltaRight;
-	bool yFromOutside = _frustumHeight < yFromDelta;
+	bool xFromOutside = _frustumWidthExtended < xFromDeltaLeft && _frustumWidthExtended < xFromDeltaRight;
+	bool yFromOutside = _frustumHeightExtended < yFromDelta;
 	bool zFromOutside = _frustumDepth < (unsigned)(fromPoint.z - _frustum.z0);
 
-	bool xToOutside = _frustumWidth < xToDeltaLeft && _frustumWidth < xToDeltaRight;
-	bool yToOutside = _frustumHeight < yToDelta;
+	bool xToOutside = _frustumWidthExtended < xToDeltaRight && _frustumWidthExtended < xToDeltaRight;
+	bool yToOutside = _frustumHeightExtended < yToDelta;
 	bool zToOutside = _frustumDepth < (unsigned)(toPoint.z - _frustum.z0);
 
 	bool xOutside = (xFromOutside && xToOutside) && (0 <= ((unsigned)fromPoint.x ^ (unsigned)toPoint.x));
@@ -619,7 +625,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return false;
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaLeft || _frustumWidth +__DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yFromDelta)
+	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yFromDelta)
 	{
 		totalPixelRounding = 0;
 
@@ -766,7 +772,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				fromPointY += yStep;
 				parallaxStart += parallaxStep;
 			}
-		}		
+		}
 	}
 	else
 	{
@@ -822,7 +828,7 @@ static bool DirectDraw::drawColorCircle(PixelVector center, int16 radius, int32 
 
 		DirectDraw::drawColorLine((PixelVector){center.x + x, center.y - y, center.z, center.parallax}, (PixelVector){center.x + x, center.y + y, center.z, center.parallax}, color, bufferIndex, interlaced);
 	}
-	
+
 	return true;
 }
 

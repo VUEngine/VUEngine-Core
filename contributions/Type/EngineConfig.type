@@ -587,6 +587,20 @@
 						"default": 4096,
 						"maximum": 8191,
 						"minimum": 512
+					},
+					"lineShrinkingPadding": {
+						"type": "integer",
+						"description": "Threshold before shriking lines.",
+						"default": 0,
+						"maximum": 256,
+						"minimum": 0
+					},
+					"frustumExtensionPower": {
+						"type": "integer",
+						"description": "Frustum extension power for line shriking checks.",
+						"default": 0,
+						"maximum": 4,
+						"minimum": 0
 					}
 				}	
 			}
@@ -1221,6 +1235,18 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/wireframes/properties/sort"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/wireframes/properties/interlacedThreshold"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/wireframes/properties/lineShrinkingPadding"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/wireframes/properties/frustumExtensionPower"
 							}
 						]
 					}
