@@ -506,6 +506,10 @@
 						"minimum": 1,
 						"maximum": 1024
 					},
+					"spritesRotateIn3D": {
+						"type": "boolean",
+						"default": true
+					},
 					"hackBgmapSpriteHeight": {
 						"type": "boolean",
 						"default": true
@@ -1129,6 +1133,10 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/sprite/properties/totalObjects"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/sprite/properties/spritesRotateIn3D"
 							},
 							{
 								"type": "Control",

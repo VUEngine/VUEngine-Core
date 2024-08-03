@@ -76,7 +76,7 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 	result.halfWidth = __PIXELS_TO_METERS((cameraFrustum.x1 - cameraFrustum.x0) >> 1);
 	result.halfHeight = __PIXELS_TO_METERS((cameraFrustum.y1 - cameraFrustum.y0) >> 1);
 	result.aspectRatio = __FIXED_EXT_DIV(result.halfWidth, result.halfHeight);
-	// this assumes and fov of 90 degrees (__CAMERA_FOV_DEGREES fix7_9) to speed up computations
+	// this assumes a fov of 90 degrees (__CAMERA_FOV_DEGREES fix7_9) to speed up computations
 	// fov = 1 / tan(angle / 2)
 	result.fov = __FIXED_EXT_DIV(__I_TO_FIXED_EXT(1), __FIX7_9_TO_FIXED(__FIX7_9_DIV(__SIN(__CAMERA_FOV_DEGREES >> 1), __COS(__CAMERA_FOV_DEGREES >> 1))));
 	result.aspectRatioXfov = __FIXED_MULT(result.aspectRatio, result.fov);

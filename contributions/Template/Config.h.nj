@@ -253,9 +253,11 @@
 // total number of OBJECTS
 #define __TOTAL_OBJECTS												{{ config.sprite.totalObjects }}
 
+// sprites rotation in 3D
+{% if config.sprite.spritesRotateIn3D %}#define{% else %}#undef{% endif %} __SPRITE_ROTATE_IN_3D
+
 // Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
 {% if config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
-
 
 {{ macros.sectionHeader('Texture management') }}
 
