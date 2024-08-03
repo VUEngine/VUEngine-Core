@@ -259,6 +259,7 @@
 // Account for VIP's design to draw 8 pixel when BGMAP WORLD's height is less than 8
 {% if config.sprite.hackBgmapSpriteHeight %}#define{% else %}#undef{% endif %} __HACK_BGMAP_SPRITE_HEIGHT
 
+
 {{ macros.sectionHeader('Texture management') }}
 
 // total number of bgmap segments
