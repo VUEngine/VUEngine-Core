@@ -265,7 +265,7 @@ void Sprite::position()
 
 	if(position.z != this->position.z)
 	{
-		position.parallax = Optics::calculateParallax(this->transformation->position.z);
+		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
 
 		this->scale.x = this->scale.y = 0;
 	}
