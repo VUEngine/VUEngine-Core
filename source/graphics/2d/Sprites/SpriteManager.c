@@ -316,12 +316,12 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int32 seg
  *
  * @param sprite	Sprite to create
  */
-Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, SpatialObject owner)
+Sprite SpriteManager::createSprite(const SpriteSpec* spriteSpec, SpatialObject owner)
 {
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
-	Sprite sprite = ((Sprite (*)(SpatialObject, SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
+	Sprite sprite = ((Sprite (*)(SpatialObject, const SpriteSpec*)) spriteSpec->allocator)(owner, (SpriteSpec*)spriteSpec);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	Sprite::render(sprite, __NO_RENDER_INDEX, false);

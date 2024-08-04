@@ -111,7 +111,7 @@ Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, 
 		return NULL;
 	}
 
-	Wireframe wireframe = ((Wireframe (*)(SpatialObject, WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, const WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
 	if(!isDeleted(wireframe))
 	{
