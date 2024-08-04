@@ -104,6 +104,8 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
  */
 Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner)
 {
+	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
+
 	if(NULL == wireframeSpec)
 	{
 		return NULL;
@@ -111,12 +113,10 @@ Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, Spatia
 
 	Wireframe wireframe = ((Wireframe (*)(SpatialObject, WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
-	if(WireframeManager::registerWireframe(this, wireframe) == wireframe)
+	if(!isDeleted(wireframe))
 	{
-		return wireframe;
+		return WireframeManager::registerWireframe(this, wireframe);
 	}
-
-	delete wireframe;
 
 	return NULL;
 }
@@ -128,7 +128,7 @@ Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, Spatia
  */
 Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
 {
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
 
 	if(isDeleted(wireframe))
 	{
@@ -138,11 +138,13 @@ Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
 	if(!VirtualList::find(this->wireframes, wireframe))
 	{
 		VirtualList::pushBack(this->wireframes, wireframe);
-
-		return wireframe;
+	}
+	else
+	{
+		NM_ASSERT(false, "WireframeManager::registerWireframe: already wireframe");
 	}
 
-	return NULL;
+	return wireframe;
 }
 
 /**
@@ -152,8 +154,8 @@ Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
  */
 void WireframeManager::destroyWireframe(Wireframe wireframe)
 {
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWirefram: trying to dispose dead wireframe");
-	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWirefram: trying to dispose non wireframe");
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWireframe: trying to dispose dead wireframe");
+	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWireframe: trying to dispose non wireframe");
 
 	if(isDeleted(wireframe))
 	{
@@ -165,6 +167,10 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 	if(wireframe == WireframeManager::unregisterWireframe(this, wireframe))
 	{
 		delete wireframe;
+	}
+	else
+	{
+		NM_ASSERT(false, "WireframeManager::destroyWireframe: destroying a wireframe that I don't manage");
 	}
 }
 
