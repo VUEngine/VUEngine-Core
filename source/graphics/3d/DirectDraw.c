@@ -625,7 +625,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		return false;
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yFromDelta)
+	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xFromDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yFromDelta)
 	{
 		totalPixelRounding = 0;
 
@@ -638,7 +638,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 		yFromOutside = (unsigned)_frustumFixedPoint.y1 - _frustumFixedPoint.y0 < (unsigned)(fromPointY - _frustumFixedPoint.y0);
 	}
 
-	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xToDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < xToDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKEN_PADDING < yToDelta)
+	if(_frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaLeft || _frustumWidth + __DIRECT_DRAW_LINE_SHRINKING_PADDING < xToDeltaRight || _frustumHeight + __DIRECT_DRAW_LINE_SHRINKING_PADDING < yToDelta)
 	{
 		totalPixelRounding = 0;
 

@@ -131,7 +131,7 @@
 #define __DIRECT_DRAW_INTERLACED_THRESHOLD							{% if config.wireframes.interlacedThreshold %}__PIXELS_TO_METERS({{config.wireframes.interlacedThreshold}}) {% else %}__PIXELS_TO_METERS(8191){% endif %} 
 
 // Threshold before shriking lines
-#define __DIRECT_DRAW_LINE_SHRINKEN_PADDING							{% if config.wireframes.lineShrinkingPadding %}{{config.wireframes.lineShrinkingPadding}} {% else %}0{% endif %} 
+#define __DIRECT_DRAW_LINE_SHRINKING_PADDING						{% if config.wireframes.lineShrinkingPadding %}{{config.wireframes.lineShrinkingPadding}} {% else %}0{% endif %} 
 
 // Frustum extension power for line shriking checks
 #define __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER						{% if config.wireframes.frustumExtensionPower %}{{config.wireframes.frustumExtensionPower}} {% else %}0{% endif %} 
