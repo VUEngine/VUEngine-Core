@@ -102,7 +102,7 @@ bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFire
  *
  * @param wireframeSpec	Wireframe spec
  */
-Wireframe WireframeManager::createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner)
+Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner)
 {
 	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
 

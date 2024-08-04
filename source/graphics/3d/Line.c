@@ -29,7 +29,7 @@
  *
  * @private
  */
-void Line::constructor(SpatialObject owner, LineSpec* lineSpec)
+void Line::constructor(SpatialObject owner, const LineSpec* lineSpec)
 {
 	// construct base object
 	Base::constructor(owner, &lineSpec->wireframeSpec);

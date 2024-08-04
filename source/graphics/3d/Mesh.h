@@ -60,7 +60,7 @@ class Mesh : Wireframe
 	static PixelRightBox getPixelRightBoxFromSpec(MeshSpec* meshSpec);
 
 	/// @publicsection
-	void constructor(SpatialObject owner, MeshSpec* meshSpec);
+	void constructor(SpatialObject owner, const MeshSpec* meshSpec);
 	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
 	
 	override PixelRightBox getPixelRightBox();

@@ -29,7 +29,7 @@
  *
  * @private
  */
-void Sphere::constructor(SpatialObject owner, SphereSpec* sphereSpec)
+void Sphere::constructor(SpatialObject owner, const SphereSpec* sphereSpec)
 {
 	// construct base object
 	Base::constructor(owner, &sphereSpec->wireframeSpec);

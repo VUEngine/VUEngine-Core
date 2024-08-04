@@ -45,7 +45,7 @@ class Asterisk : Wireframe
 	bool renderCycle;
 
 	/// @publicsection
-	void constructor(SpatialObject owner, AsteriskSpec* asteriskSpec);
+	void constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec);
 	override bool render();
 	override bool draw();
 }

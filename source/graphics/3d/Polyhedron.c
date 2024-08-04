@@ -37,7 +37,7 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor(SpatialObject owner, PolyhedronSpec* polyhedronSpec)
+void Polyhedron::constructor(SpatialObject owner, const PolyhedronSpec* polyhedronSpec)
 {
 	// construct base object
 	Base::constructor(owner, &polyhedronSpec->wireframeSpec);

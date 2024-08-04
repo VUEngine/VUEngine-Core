@@ -41,7 +41,7 @@ class Line : Wireframe
 	PixelVector b;
 
 	/// @publicsection
-	void constructor(SpatialObject owner, LineSpec* lineSpec);
+	void constructor(SpatialObject owner, const LineSpec* lineSpec);
 	override bool render();
 	override bool draw();
 }

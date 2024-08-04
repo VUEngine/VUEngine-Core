@@ -44,7 +44,7 @@ singleton class WireframeManager : ListenerObject
 	void draw();
 	void render();
 	void print(int32 x, int32 y);
-	Wireframe createWireframe(WireframeSpec* wireframeSpec, SpatialObject owner);
+	Wireframe createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner);
 	void destroyWireframe(Wireframe wireframe);
 	Wireframe registerWireframe(Wireframe wireframe);
 	Wireframe unregisterWireframe(Wireframe wireframe);

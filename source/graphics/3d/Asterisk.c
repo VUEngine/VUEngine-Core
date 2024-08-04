@@ -29,7 +29,7 @@
  *
  * @private
  */
-void Asterisk::constructor(SpatialObject owner, AsteriskSpec* asteriskSpec)
+void Asterisk::constructor(SpatialObject owner, const AsteriskSpec* asteriskSpec)
 {
 	// construct base object
 	Base::constructor(owner, &asteriskSpec->wireframeSpec);

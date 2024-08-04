@@ -63,7 +63,7 @@ abstract class Wireframe : VisualComponent
 	uint8 bufferIndex;
 
 	/// @publicsection
-	void constructor(SpatialObject owner, WireframeSpec* wireframeSpec);
+	void constructor(SpatialObject owner, const WireframeSpec* wireframeSpec);
 	void setupRenderingMode(const Vector3D* relativePosition);
 	void setDisplacement(const Vector3D* displacement);
 	bool isVisible();

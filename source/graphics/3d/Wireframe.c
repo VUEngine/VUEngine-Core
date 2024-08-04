@@ -36,7 +36,7 @@ friend class VirtualList;
 /**
  * Class constructor
  */
-void Wireframe::constructor(SpatialObject owner, WireframeSpec* wireframeSpec)
+void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
 	// construct base object
 	Base::constructor(owner, wireframeSpec);
