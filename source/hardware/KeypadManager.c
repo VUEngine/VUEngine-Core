@@ -84,6 +84,7 @@ void KeypadManager::enable()
 	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 	KeypadManager::flush(this);
+	this->reseted = true;
 }
 
 /**
