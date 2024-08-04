@@ -16,6 +16,7 @@
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <Wireframe.h>
+#include <WireframeManager.h>
 
 #include "Particle.h"
 
@@ -98,8 +99,7 @@ void Particle::addWireframe(const WireframeSpec* wireframeSpec)
 {
 	if(NULL != wireframeSpec && NULL == this->wireframe)
 	{
-		// call the appropriate allocator to support inheritance
-		this->wireframe = ((Wireframe (*)(WireframeSpec*, SpatialObject)) wireframeSpec->allocator)((WireframeSpec*)wireframeSpec, SpatialObject::safeCast(this));
+		this->wireframe = WireframeManager::createWireframe(WireframeManager::getInstance(), wireframeSpec, SpatialObject::safeCast(this));
 
 		NM_ASSERT(this->wireframe, "Particle::addWireframe: wireframe not created");
 	}
@@ -273,7 +273,7 @@ void Particle::suspend()
 
 	if(!isDeleted(this->wireframe))
 	{
-		delete this->wireframe;
+		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
 	}
 
 	this->wireframe = NULL;
