@@ -55,6 +55,15 @@ void Particle::constructor(const ParticleSpec* particleSpec __attribute__((unuse
  */
 void Particle::destructor()
 {
+	Particle::destroyGraphics(this);
+
+	// destroy the super Container
+	// must always be called at the end of the destructor
+	Base::destructor();
+}
+
+void Particle::destroyGraphics()
+{
 	if(!isDeleted(this->sprite))
 	{
 		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
@@ -64,14 +73,10 @@ void Particle::destructor()
 
 	if(!isDeleted(this->wireframe))
 	{
-		delete this->wireframe;
+		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
 	}
 
 	this->wireframe = NULL;
-
-	// destroy the super Container
-	// must always be called at the end of the destructor
-	Base::destructor();
 }
 
 /**
@@ -264,19 +269,7 @@ void Particle::resume(const SpriteSpec* spriteSpec, const WireframeSpec* wirefra
  */
 void Particle::suspend()
 {
-	if(!isDeleted(this->sprite))
-	{
-		SpriteManager::destroySprite(SpriteManager::getInstance(), this->sprite);
-	}
-
-	this->sprite = NULL;
-
-	if(!isDeleted(this->wireframe))
-	{
-		WireframeManager::destroyWireframe(WireframeManager::getInstance(), this->wireframe);
-	}
-
-	this->wireframe = NULL;
+	Particle::destroyGraphics(this);
 }
 
 /**
