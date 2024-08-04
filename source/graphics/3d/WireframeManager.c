@@ -162,10 +162,9 @@ void WireframeManager::destroyWireframe(Wireframe wireframe)
 		return;
 	}
 
-	Wireframe::hide(wireframe);
-
 	if(wireframe == WireframeManager::unregisterWireframe(this, wireframe))
 	{
+		Wireframe::hide(wireframe);
 		delete wireframe;
 	}
 	else
