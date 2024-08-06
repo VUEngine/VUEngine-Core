@@ -133,6 +133,7 @@ singleton class VUEngine : ListenerObject
 	void start(GameState state);
 	void unpause(GameState pauseState);
 	void wait(uint32 milliSeconds);
+	void waitForGraphics();
 	void startProfiling();
 	void resetProfiling();
 	void openTool(ToolState toolState);

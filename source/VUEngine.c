@@ -1162,6 +1162,11 @@ void VUEngine::wait(uint32 milliSeconds)
 	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
+void VUEngine::waitForGraphics()
+{
+	SpriteManager::prepareAll(SpriteManager::getInstance());
+}
+
 /**
  * Register the current save data manager. Use NULL if none.
  *
