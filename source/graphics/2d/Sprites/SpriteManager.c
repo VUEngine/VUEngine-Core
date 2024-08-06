@@ -92,15 +92,16 @@ void SpriteManager::constructor()
 	this->deferParamTableEffects = false;
 	this->evenFrame = __TRANSPARENCY_EVEN;
 
-	this->printing = NULL;
-	this->paramTableManager = NULL;
-	this->charSetManager = NULL;
-	this->bgmapTextureManager = NULL;
-	this->objectTextureManager = NULL;
+	this->printing = Printing::getInstance();
+	this->paramTableManager = ParamTableManager::getInstance();
+	this->charSetManager = CharSetManager::getInstance();
+	this->bgmapTextureManager = BgmapTextureManager::getInstance();
+	this->paramTableManager = ParamTableManager::getInstance();
+	this->objectTextureManager = ObjectTextureManager::getInstance();
+
+
 	this->sortingSpriteNode = NULL;
 	this->completeSort = true;
-
-	SpriteManager::reset(this);
 }
 
 /**
@@ -151,13 +152,6 @@ void SpriteManager::cleanUp()
 void SpriteManager::reset()
 {
 	HardwareManager::suspendInterrupts();
-
-	this->printing = Printing::getInstance();
-	this->paramTableManager = ParamTableManager::getInstance();
-	this->charSetManager = CharSetManager::getInstance();
-	this->bgmapTextureManager = BgmapTextureManager::getInstance();
-	this->paramTableManager = ParamTableManager::getInstance();
-	this->objectTextureManager = ObjectTextureManager::getInstance();
 
 	Texture::reset();
 	Printing::reset(this->printing);
@@ -566,6 +560,13 @@ int32 SpriteManager::getNumberOfSprites()
  */
 void SpriteManager::writeTextures()
 {
+	NM_ASSERT(!isDeleted(this->charSetManager), "SpriteManager::writeTextures: invalid charset manager");
+
+	if(isDeleted(this->charSetManager))
+	{
+		return;
+	}
+
 	CharSetManager::writeCharSets(this->charSetManager);
 
 	Texture::updateTextures(-1, false);

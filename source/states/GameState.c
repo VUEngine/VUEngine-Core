@@ -385,7 +385,7 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		bool streamingComplete = !stageStreamMethod(this->stage);
 
 		// Make sure all graphics are ready
-		VUEngine::prepareGraphics(this);
+		VUEngine::prepareGraphics(VUEngine::getInstance());
 
 		// Force collision purging
 		if(!isDeleted(this->collisionManager))
