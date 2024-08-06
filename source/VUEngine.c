@@ -417,7 +417,7 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	}
 
 	// Make sure everything is properly rendered
-	SpriteManager::prepareAll(this->spriteManager);
+	VUEngine::prepareGraphics(this);
 
 	HardwareManager::startDrawing(HardwareManager::getInstance());
 	HardwareManager::turnDisplayOn(HardwareManager::getInstance());
@@ -1157,14 +1157,12 @@ void VUEngine::removePostProcessingEffect(PostProcessingEffect postProcessingEff
 
 void VUEngine::wait(uint32 milliSeconds)
 {
-	ASSERT(this, "VUEngine::wait: this null");
-
 	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
-void VUEngine::waitForGraphics()
+void VUEngine::prepareGraphics()
 {
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	SpriteManager::prepareAll(this->spriteManager);
 }
 
 /**

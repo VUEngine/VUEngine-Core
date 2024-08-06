@@ -384,8 +384,8 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		// Stream in and out all relevant entities
 		bool streamingComplete = !stageStreamMethod(this->stage);
 
-		// Make sure all sprites are ready
-		SpriteManager::prepareAll(SpriteManager::getInstance());
+		// Make sure all graphics are ready
+		VUEngine::prepareGraphics(this);
 
 		// Force collision purging
 		if(!isDeleted(this->collisionManager))
@@ -531,8 +531,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// Transform everything definitively
 	GameState::transform(this);
 
-	// Make sure all sprites are ready
-	SpriteManager::prepareAll(SpriteManager::getInstance());
+	// Make sure all graphics are ready
+	VUEngine::prepareGraphics(VUEngine::getInstance());
 
 	HardwareManager::resumeInterrupts();
 
