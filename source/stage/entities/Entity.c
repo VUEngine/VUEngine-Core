@@ -79,9 +79,6 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->collisionsEnabled = true;
 	this->checkingCollisions = true;
-	static int cc = 0;
-
-	PRINT_INT(cc++, 41, 10);
 }
 
 /**
@@ -104,9 +101,6 @@ void Entity::destructor()
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
-
-	static int cc = 0;
-	PRINT_INT(cc++, 41, 11);
 }
 
 void Entity::destroyComponents()
