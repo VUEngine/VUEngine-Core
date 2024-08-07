@@ -253,7 +253,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Camera::focus(Camera::getInstance(), false);
 
 		// Force all transformations to take place again
-		GameState::initialTransform(this);
+		GameState::transform(this);
 
 		// Force all streaming right now
 		GameState::streamAll(this);
@@ -448,22 +448,6 @@ void GameState::transform()
 }
 
 /**
- * Call the initial transformation on the Stage to setup its children
- *
- * @private
- */
-void GameState::initialTransform()
-{
-	ASSERT(this->stage, "GameState::initialTransform: null stage");
-
-	extern Transformation neutralEnvironmentTransformation;
-
-	Stage::initialTransform(this->stage, &neutralEnvironmentTransformation);
-
-	UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
-}
-
-/**
  * Start a physics simulation cycle on the Stage
  */
 void GameState::updatePhysics()
@@ -526,7 +510,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	Camera::focus(Camera::getInstance(), false);
 
 	// transformation everything
-	GameState::initialTransform(this);
+	GameState::transform(this);
 
 	// Transform everything definitively
 	GameState::transform(this);
@@ -588,7 +572,7 @@ void GameState::setupUI(StageSpec* stageSpec)
 		extern Transformation neutralEnvironmentTransformation;
 	
 		// apply transformations
-		UIContainer::initialTransform(this->uiContainer, &neutralEnvironmentTransformation);
+		UIContainer::transform(this->uiContainer, &neutralEnvironmentTransformation, Camera::getTransformationFlags(_camera));
 	}
 }
 

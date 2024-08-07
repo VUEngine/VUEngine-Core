@@ -199,12 +199,12 @@ void Container::addChild(Container child)
 	// first remove from previous parent
 	if(this != child->parent)
 	{
+		Transformation environmentTransformation = Container::getEnvironmentTransform(this);
+		Container::concatenateTransform(this, &environmentTransformation, &this->transformation);
+
 		if(NULL != child->parent)
 		{
-			Container::removeChild(child->parent, child, false);
-
-			Transformation environmentTransformation = Container::getEnvironmentTransform(this);
-			Container::concatenateTransform(this, &environmentTransformation, &this->transformation);
+			Container::removeChild(child->parent, child, false);			
 			Container::changeEnvironment(child, &environmentTransformation);
 		}
 
@@ -218,6 +218,10 @@ void Container::addChild(Container child)
 
 		this->update = this->update || Container::overrides(child, update);
 		this->transform = this->transform || Container::overrides(child, transform);
+
+		// apply transformations
+		Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
+		Container::ready(child, true);
 	}
 }
 
@@ -548,47 +552,6 @@ void Container::createComponents()
  * Initial transformation
  *
  * @param environmentTransformation
- * @param recursive
- */
-void Container::initialTransform(const Transformation* environmentTransformation)
-{
-	// concatenate transformation
-	if(__INHERIT_SCALE & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToScale(this, environmentTransformation);
-	}
-
-	if(__INHERIT_ROTATION & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToRotation(this, environmentTransformation);
-	}
-
-	if((__INHERIT_POSITION | __INHERIT_ROTATION) & this->inheritEnvironment)
-	{
-		Container::applyEnvironmentToPosition(this, environmentTransformation);
-	}
-
-	Container::invalidateGlobalTransformation(this);
-
-	if(isDeleted(this->children))
-	{
-		return;
-	}
-
-	for(VirtualNode node = this->children->head; NULL != node; node = node->next)
-	{
-		Container child = Container::safeCast(node->data);
-
-		child->transformation.invalid |= this->transformation.invalid;
-
-		Container::initialTransform(child, &this->transformation);
-	}
-}
-
-/**
- * Initial transformation
- *
- * @param environmentTransformation
  * @param invalidateTransformationFlag
  */
 void Container::transform(const Transformation* environmentTransformation, uint8 invalidateTransformationFlag)
@@ -879,7 +842,6 @@ void Container::setLocalScale(const Scale* scale)
  */
 void Container::translate(const Vector3D* translation)
 {
-
 	Vector3D localPosition = Vector3D::sum(this->localTransformation.position, *translation);
 	Container::setLocalPosition(this, &localPosition);	
 }

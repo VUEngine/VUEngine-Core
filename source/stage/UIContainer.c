@@ -77,12 +77,6 @@ Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntit
 		{
 			// create the entity and add it to the world
 			UIContainer::addChild(this, Container::safeCast(entity));
-
-			// apply transformations
-			Transformation environmentTransform = UIContainer::getEnvironmentTransform(this);
-			Entity::initialTransform(entity, &environmentTransform);
-			Entity::createComponents(entity);
-			Entity::ready(entity, true);
 		}
 
 		return entity;

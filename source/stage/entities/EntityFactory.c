@@ -223,8 +223,6 @@ uint32 EntityFactory::transformEntities()
 	{
 		if(!positionedEntityDescription->transformed)
 		{
-			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
-			Entity::initialTransform(positionedEntityDescription->entity, environmentTransform);
 			positionedEntityDescription->transformed = true;
 
 			return __ENTITY_PENDING_PROCESSING;
@@ -361,9 +359,6 @@ uint32 EntityFactory::makeReadyEntities()
 
 			// Must add the child to its parent before making it ready
 			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
-
-			// call ready method
-			Entity::ready(positionedEntityDescription->entity, false);
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
 			VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);

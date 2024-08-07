@@ -337,8 +337,6 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		this->sprites = new VirtualList();
 	}
 
-	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addSprite: non transformed");
-
 	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
@@ -432,8 +430,6 @@ void Entity::addWireframes(WireframeSpec** wireframeSpecs, bool destroyOldWirefr
 	{
 		Entity::destroyWireframes(this);
 	}
-
-	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addWireframes: non transformed");
 
 	WireframeManager wireframeManager = WireframeManager::getInstance();
 
@@ -565,8 +561,6 @@ Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collis
 	{
 		this->colliders = new VirtualList();
 	}
-
-	NM_ASSERT(__NON_TRANSFORMED != this->transformation.invalid, "Entity::addCollider: non transformed");
 
 	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
 
@@ -1164,7 +1158,6 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		if(!isDeleted(entity))
 		{
 			Entity::addChild(this, Container::safeCast(entity));
-			Entity::createComponents(entity);
 		}
 	}
 }
@@ -1209,6 +1202,8 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
+	Entity::createComponents(entity);
+
 	return entity;
 }
 
@@ -1226,7 +1221,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 		return;
 	}
 
-	if(!isDeleted(this->entityFactory))
+	if(isDeleted(this->entityFactory))
 	{
 		this->entityFactory = new EntityFactory();
 	}
@@ -1321,13 +1316,6 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, co
 
 	// create the entity and add it to the world
 	Entity::addChild(this, Container::safeCast(childEntity));
-
-	// apply transformations
-	Transformation environmentTransform = Entity::getEnvironmentTransform(this);
-	Entity::concatenateTransform(this, &environmentTransform, &this->transformation);
-	Entity::initialTransform(childEntity, &environmentTransform);
-	Entity::createComponents(childEntity);
-	Entity::ready(childEntity, true);
 
 	return childEntity;
 }
@@ -1676,8 +1664,6 @@ void Entity::show()
  */
 void Entity::hide()
 {
-	// This is called from the initialTransformation method
-	// causing a call to transform that messes up the localPosition
 	Base::hide(this);
 
 	// hide all sprites

@@ -548,26 +548,6 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
 	}
 }
 
-/**
- * Initial transformation
- *
- * @memberof					Actor
- * @public
- *
- * @param environmentTransform
- * @param recursive
- */
-void Actor::initialTransform(const Transformation* environmentTransform)
-{
-	// call base class's transformation method
-	Base::initialTransform(this, environmentTransform);
-
-	if(!isDeleted(this->body))
-	{
-		Body::setPosition(this->body, &this->transformation.position, SpatialObject::safeCast(this));
-	}
-}
-
 // get bounciness
 fixed_t Actor::getBounciness()
 {

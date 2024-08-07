@@ -315,7 +315,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// apply transformations
-	Stage::initialTransform(this, &neutralEnvironmentTransformation);
+	Stage::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 }
 
 void Stage::loadPostProcessingEffects()
@@ -412,16 +412,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// create the entity and add it to the world
 			Stage::addChild(this, Container::safeCast(entity));
 
-			Entity::initialTransform(entity, &neutralEnvironmentTransformation);
-			Entity::createComponents(entity);
-
 			entity->dontStreamOut = entity->dontStreamOut || permanent;
 			
-			if(entity->parent == Container::safeCast(this))
-			{
-				Entity::ready(entity, true);
-			}
-
 			Stage::alertOfLoadedEntity(this, entity);
 		}
 
@@ -1068,7 +1060,7 @@ void Stage::resume()
 	Base::resume(this);
 
 	// apply transformations
-	Stage::initialTransform(this, &neutralEnvironmentTransformation);
+	Stage::transform(this, &neutralEnvironmentTransformation, __INVALIDATE_TRANSFORMATION);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
