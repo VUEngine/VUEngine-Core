@@ -1155,12 +1155,17 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		return;
 	}
 
+	int16 internalId = this->internalId + (!isDeleted(this->children) ? VirtualList::getSize(this->children) : 1);
+
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + i + 1);
-		ASSERT(child, "Entity::loadChildren: entity not loaded");
+		Entity entity = Entity::loadEntity(&childrenSpecs[i], internalId++);
 
-		Entity::addChild(this, Container::safeCast(child));
+		if(!isDeleted(entity))
+		{
+			Entity::addChild(this, Container::safeCast(entity));
+			Entity::createComponents(entity);
+		}
 	}
 }
 
