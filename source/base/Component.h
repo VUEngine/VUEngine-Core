@@ -38,6 +38,8 @@ abstract class Component : ListenerObject
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
+
+	ComponentSpec* getSpec();
 }
 
 

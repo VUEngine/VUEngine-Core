@@ -67,3 +67,8 @@ void Component::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+
+ComponentSpec* Component::getSpec()
+{
+	return this->componentSpec;
+}
