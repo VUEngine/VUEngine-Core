@@ -311,10 +311,7 @@ void CameraEffectManager::fxFadeAsyncStart(int32 initialDelay, const Brightness*
 void CameraEffectManager::fxFadeAsyncStop()
 {
 	// remove event listener
-	if(!isDeleted(this->fxFadeCallbackScope))
-	{
-		CameraEffectManager::removeEventListenerScopes(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
-	}
+	CameraEffectManager::removeEventListeners(this, NULL, kEventEffectFadeComplete);
 
 	// discard pending delayed messages to stop effect
 	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), kFadeTo);
@@ -492,9 +489,9 @@ void CameraEffectManager::fxFadeAsync()
 		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 #endif
 
-		if(this->fxFadeCallbackScope && !this->startingANewEffect)
+		if(!this->startingANewEffect)
 		{
-			CameraEffectManager::removeEventListenerScopes(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
+			CameraEffectManager::removeEventListenerScopes(this, NULL, kEventEffectFadeComplete);
 		}
 	}
 	else
