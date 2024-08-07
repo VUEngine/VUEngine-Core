@@ -233,86 +233,26 @@ void Stage::unpauseSounds()
 }
 
 // determine if a point is visible
-int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, const PixelVector* cameraPosition, bool forceNoPopIn)
+int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox, bool forceNoPopIn __attribute__((unused)))
 {
-	onScreenPosition.x -= cameraPosition->x;
-	onScreenPosition.y -= cameraPosition->y;
-	onScreenPosition.z -= cameraPosition->z;
-
-	Vector3D position3D = Vector3D::rotate(Vector3D::getFromScreenPixelVector(onScreenPosition), *_cameraInvertedRotation);
-	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
-
-	int32 pad = (0 < position2D.z ? position2D.z : 0);
-
-#ifndef __LEGACY_COORDINATE_PROJECTION
-	position2D = PixelVector::sum(position2D, (PixelVector){__HALF_SCREEN_WIDTH, __HALF_SCREEN_HEIGHT, 0, 0});
-#endif
-
-	if(forceNoPopIn)
+	if(NULL == pixelRightBox)
 	{
-		// check x visibility
-		if(position2D.x + pixelRightBox->x1 < pad || position2D.x + pixelRightBox->x0 > __SCREEN_WIDTH - pad)
+		PixelRightBox helperPixelRightBox =
 		{
-			return true;
-		}
+			0, 0, 0,
+			0, 0, 0
+		};
 
-		// check y visibility
-		if(position2D.y + pixelRightBox->y1 < pad || position2D.y + pixelRightBox->y0 > __SCREEN_HEIGHT - pad)
+		if(!Vector3D::isVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->streaming.loadPadding))
 		{
-			return true;
+			return false;
 		}
-
-		// check z visibility
-		if(position2D.z + pixelRightBox->z1 < pad || position2D.z + pixelRightBox->z0 > __SCREEN_DEPTH - pad)
-		{
-			return true;
-		}
-
-		return false;
 	}
 	else
 	{
-		if(NULL == pixelRightBox)
+		if(!Vector3D::isVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), *pixelRightBox, 0))
 		{
-			pad += this->streaming.loadPadding;
-
-			// check x visibility
-			if(position2D.x < _cameraFrustum->x0 - pad || position2D.x > _cameraFrustum->x1 + pad)
-			{
-				return false;
-			}
-
-			// check y visibility
-			if(position2D.y < _cameraFrustum->y0 - pad || position2D.y > _cameraFrustum->y1 + pad)
-			{
-				return false;
-			}
-
-			// check z visibility
-			if(position2D.z < _cameraFrustum->z0 - this->streaming.loadPadding || position2D.z > _cameraFrustum->z1 + this->streaming.loadPadding)
-			{
-				return false;
-			}
-		}
-		else
-		{
-			// check x visibility
-			if(position2D.x + pixelRightBox->x1 < _cameraFrustum->x0  - pad || position2D.x + pixelRightBox->x0 > _cameraFrustum->x1 + pad)
-			{
-				return false;
-			}
-
-			// check y visibility
-			if(position2D.y + pixelRightBox->y1 < _cameraFrustum->y0  - pad || position2D.y + pixelRightBox->y0 > _cameraFrustum->y1 + pad)
-			{
-				return false;
-			}
-
-			// check z visibility
-			if(position2D.z + pixelRightBox->z1 < _cameraFrustum->z0  - pad || position2D.z + pixelRightBox->z0 > _cameraFrustum->z1 + pad)
-			{
-				return false;
-			}
+			return false;
 		}
 	}
 
@@ -715,8 +655,6 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 // load all visible entities
 void Stage::loadInitialEntities()
 {
-	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
-
 	// need a temporary list to remove and delete entities
 	VirtualNode node = this->stageEntityDescriptions->head;
 
@@ -727,7 +665,7 @@ void Stage::loadInitialEntities()
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, &cameraPosition, false))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox, false))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage::doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
@@ -839,8 +777,6 @@ bool Stage::loadInRangeEntities(int32 defer)
 
 	bool loadedEntities = false;
 
-	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
-
 	CACHE_RESET;
 
 	if(this->reverseStreaming)
@@ -869,7 +805,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, this->forceNoPopIn))
 				{
 					loadedEntities = true;
 
@@ -914,7 +850,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 			if(0 > stageEntityDescription->internalId)
 			{
 				// if entity in load range
-				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, &cameraPosition, this->forceNoPopIn))
+				if(Stage::isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, stageEntityDescription->validRightBox ? &stageEntityDescription->pixelRightBox : NULL, this->forceNoPopIn))
 				{
 					loadedEntities = true;
 

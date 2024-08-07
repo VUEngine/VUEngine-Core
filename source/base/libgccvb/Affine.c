@@ -33,9 +33,6 @@ extern double fabs (double);
 
 static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixed_t y, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const PixelScale* scale, const Rotation* rotation)
 {
-	NM_ASSERT(0 < scale->x, "Affine::applyAll: 0 >= x scale");
-	NM_ASSERT(0 < scale->y, "Affine::applyAll: 0 >= y scale");
-
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIX7_9_TO_FIXED(scale->x));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIX7_9_TO_FIXED(scale->y));
 

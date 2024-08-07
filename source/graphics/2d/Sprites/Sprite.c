@@ -438,9 +438,6 @@ void Sprite::scale()
 			scale.x = __FIX7_9_MULT(scale.x, ratio);
 			scale.y = __FIX7_9_MULT(scale.y, ratio);
 
-			NM_ASSERT(0 < scale.x, "Sprite::scale: null scale x");
-			NM_ASSERT(0 < scale.y, "Sprite::scale: null scale y");
-
 			Sprite::setScale(this, &scale);
 		}		
 	}

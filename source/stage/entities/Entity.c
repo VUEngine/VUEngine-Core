@@ -79,6 +79,9 @@ void Entity::constructor(EntitySpec* entitySpec, int16 internalId, const char* c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 	this->collisionsEnabled = true;
 	this->checkingCollisions = true;
+	static int cc = 0;
+
+	PRINT_INT(cc++, 41, 10);
 }
 
 /**
@@ -101,6 +104,9 @@ void Entity::destructor()
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
+
+	static int cc = 0;
+	PRINT_INT(cc++, 41, 11);
 }
 
 void Entity::destroyComponents()
@@ -1591,38 +1597,27 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		}
 	}
 
-	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.position);
+	Vector3D position3D = this->transformation.position;
 
 	if(NULL != this->centerDisplacement)
 	{
 		position3D = Vector3D::sum(position3D, *this->centerDisplacement);
 	}
 
-	position3D = Vector3D::rotate(position3D, *_cameraInvertedRotation);
-	PixelVector position2D = PixelVector::getFromVector3D(position3D, 0);
-
-	PixelVector size = PixelVector::getFromVector3D(Vector3D::rotate((Vector3D){this->size.x >> 1, this->size.y >> 1, this->size.z >> 1}, *_cameraInvertedRotation), 0);
-
-	size.x = __ABS(size.x);
-	size.y = __ABS(size.y);
-	size.z = __ABS(size.z);
-
 	bool inCameraRange = true;
 
-	int32 helperPad = padding + (0 < position2D.z ? position2D.z : 0);
+	PixelRightBox pixelRightBox	=
+	{
+		- __METERS_TO_PIXELS(this->size.x >> 1) - padding,
+		- __METERS_TO_PIXELS(this->size.y >> 1) - padding,
+		- __METERS_TO_PIXELS(this->size.z >> 1) - padding,
 
-	// check x visibility
-	if(position2D.x + size.x < _cameraFrustum->x0 - helperPad || position2D.x - size.x > _cameraFrustum->x1 + helperPad)
-	{
-		inCameraRange = false;
-	}
-	// check y visibility
-	else if(position2D.y + size.y < _cameraFrustum->y0 - helperPad || position2D.y - size.y > _cameraFrustum->y1 + helperPad)
-	{
-		inCameraRange = false;
-	}
-	// check z visibility
-	else if(position2D.z + size.z < _cameraFrustum->z0 - padding || position2D.z - size.z > _cameraFrustum->z1 + padding)
+		__METERS_TO_PIXELS(this->size.x >> 1) + padding,
+		__METERS_TO_PIXELS(this->size.y >> 1) + padding,
+		__METERS_TO_PIXELS(this->size.z >> 1) + padding,
+	};
+
+	if(!Vector3D::isVisible(position3D, pixelRightBox, 0))
 	{
 		inCameraRange = false;
 	}
