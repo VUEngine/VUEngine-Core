@@ -1150,15 +1150,13 @@ void Entity::addChild(Container child)
  */
 void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 {
-	if(!childrenSpecs)
+	if(NULL == childrenSpecs)
 	{
 		return;
 	}
 
-	int32 i = 0;
-
 	// go through n sprites in entity's spec
-	for(; childrenSpecs[i].entitySpec; i++)
+	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
 		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + i + 1);
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
