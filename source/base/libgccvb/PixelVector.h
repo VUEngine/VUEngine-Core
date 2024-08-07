@@ -40,6 +40,7 @@ static class PixelVector : Object
 	static inline PixelVector project(Vector3D vector3D, int16 parallax);
 	static inline PixelVector getProjectionDisplacementHighPrecision(Vector3D vector3D, int16 parallax);
 	static inline PixelVector projectHighPrecision(Vector3D vector3D, int16 parallax);
+	static inline bool isVisible(PixelVector vector, PixelRightBox pixelRightBox, int16 padding);
 	static void print(PixelVector vector, int32 x, int32 y);
 }
 
@@ -174,6 +175,34 @@ static inline PixelVector PixelVector::projectHighPrecision(Vector3D vector3D, i
 	};
 
 	return PixelVector::sum(pixelVector, displacement);
+}
+
+static inline bool PixelVector::isVisible(PixelVector vector, PixelRightBox pixelRightBox, int16 padding)
+{
+	extern const CameraFrustum* _cameraFrustum;
+
+#ifndef __LEGACY_COORDINATE_PROJECTION
+	vector = PixelVector::sum(vector, (PixelVector){__HALF_SCREEN_WIDTH, __HALF_SCREEN_HEIGHT, 0, 0});
+#endif
+
+	if(vector.x + pixelRightBox.x0 > _cameraFrustum->x1 + padding || vector.x + pixelRightBox.x1 < _cameraFrustum->x0 - padding)
+	{
+		return false;
+	}
+
+	// check y visibility
+	if(vector.y + pixelRightBox.y0 > _cameraFrustum->y1 + padding || vector.y + pixelRightBox.y1 < _cameraFrustum->y0 - padding)
+	{
+		return false;
+	}
+
+	// check z visibility
+	if(vector.z + pixelRightBox.z0 > _cameraFrustum->z1 + padding || vector.z + pixelRightBox.z1 < _cameraFrustum->z0 - padding)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 
