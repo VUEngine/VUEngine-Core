@@ -1155,13 +1155,11 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		return;
 	}
 
-	// go through n sprites in entity's spec
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
 		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + i + 1);
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
-		// create the entity and add it to the world
 		Entity::addChild(this, Container::safeCast(child));
 	}
 }
@@ -1216,22 +1214,19 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
  */
 void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 {
-	ASSERT(childrenSpecs, "Entity::addChildEntitiesDeferred: null childrenSpecs");
+	ASSERT(NULL != childrenSpecs, "Entity::addChildEntitiesDeferred: null childrenSpecs");
 
-	if(!childrenSpecs)
+	if(NULL == childrenSpecs)
 	{
 		return;
 	}
 
-	if(!this->entityFactory)
+	if(!isDeleted(this->entityFactory))
 	{
 		this->entityFactory = new EntityFactory();
 	}
 
-	int32 i = 0;
-
-	// go through n sprites in entity's spec
-	for(; childrenSpecs[i].entitySpec; i++)
+	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
 		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Entity::getChildCount(this));
 	}
