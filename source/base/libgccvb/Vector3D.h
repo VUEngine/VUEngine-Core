@@ -14,11 +14,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Camera.h>
 #include <Math.h>
+#include <Object.h>
 #include <Optical.h>
 #include <Optics.h>
-#include <Camera.h>
+#include <PixelVector.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,6 +73,7 @@ static class Vector3D : Object
 	static inline Vector3D rotateYAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
+	static inline bool isVisible(Vector3D vector, PixelRightBox pixelRightBox, int16 padding);
 	static void print(Vector3D vector, int32 x, int32 y);
 	static void printRaw(Vector3D vector, int32 x, int32 y);
 }
@@ -593,5 +595,32 @@ static inline Vector3D Vector3D::rotate(Vector3D vector, Rotation rotation)
 
 	return result;
 }
+
+static inline bool Vector3D::isVisible(Vector3D vector, PixelRightBox pixelRightBox, int16 padding)
+{
+	extern const CameraFrustum* _cameraFrustum;
+	vector = Vector3D::rotate(Vector3D::getRelativeToCamera(vector), *_cameraInvertedRotation);
+	PixelVector pixelVector = Vector3D::projectToPixelVector(vector, 0);
+
+	if(pixelVector.x + pixelRightBox.x0 > _cameraFrustum->x1 + padding || pixelVector.x + pixelRightBox.x1 < _cameraFrustum->x0 - padding)
+	{
+		return false;
+	}
+
+	// check y visibility
+	if(pixelVector.y + pixelRightBox.y0 > _cameraFrustum->y1 + padding || pixelVector.y + pixelRightBox.y1 < _cameraFrustum->y0 - padding)
+	{
+		return false;
+	}
+
+	// check z visibility
+	if(pixelVector.z + pixelRightBox.z0 > _cameraFrustum->z1 + padding || pixelVector.z + pixelRightBox.z1 < _cameraFrustum->z0 - padding)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 #endif
