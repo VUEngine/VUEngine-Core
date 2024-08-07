@@ -185,7 +185,7 @@ void Container::addChild(Container child)
 	// check if child is valid
 	if(isDeleted(child))
 	{
-		ASSERT(false, "Container::addChild: adding null child");
+		NM_ASSERT(false, "Container::addChild: adding null child");
 		return;
 	}
 
@@ -657,7 +657,7 @@ void Container::transformChildren(uint8 invalidateTransformationFlag)
 			continue;
 		}
 
-		if(!child->transform && NULL == child->children && !child->transformation.invalid)
+		if(!child->transform && NULL == child->children && __VALID_TRANSFORMATION == child->transformation.invalid)
 		{
 			continue;
 		}

@@ -159,6 +159,8 @@ class Entity : Container
 	void addColliders(ColliderSpec* colliderSpecs, bool destroyOldColliders);
 	Behavior addBehavior(BehaviorSpec* behaviorSpec);
 	void destroySprites();
+	void destroyWireframes();
+	void destroyColliders();
 	void calculateSize(bool force);
 	Entity addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo);
 	uint32 areAllChildrenInstantiated();
