@@ -1284,38 +1284,23 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const EntitySpec* entitySpec, int16 internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const PositionedEntity* const positionedEntity)
 {
-	ASSERT(entitySpec, "Entity::addChildEntity: null entitySpec");
-
-	if(!entitySpec)
+	if(NULL != positionedEntity)
 	{
-		return NULL;
+		Entity entity = Entity::loadEntity(positionedEntity, this->internalId + Entity::getChildCount(this));
+		NM_ASSERT(!isDeleted(entity), "Stage::doAddChildEntity: entity not loaded");
+
+		if(!isDeleted(entity))
+		{
+			// create the entity and add it to the world
+			Entity::addChild(this, Container::safeCast(entity));
+		}
+
+		return entity;
 	}
 
-	PixelVector pixelPosition = NULL != position ? PixelVector::getFromVector3D(*position, 0) : PixelVector::zero();
-
-	PositionedEntity positionedEntity =
-	{
-		(EntitySpec*)entitySpec,
-		{pixelPosition.x, pixelPosition.y, pixelPosition.z},
-		{0, 0, 0},
-		{1, 1, 1},
-		this->internalId + Entity::getChildCount(this),
-		(char*)name,
-		NULL,
-		extraInfo,
-		false
-	};
-
-	// load child entity
-	Entity childEntity = Entity::loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
-	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
-
-	// create the entity and add it to the world
-	Entity::addChild(this, Container::safeCast(childEntity));
-
-	return childEntity;
+	return NULL;
 }
 
 /**

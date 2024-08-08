@@ -402,7 +402,7 @@ Entity Stage::addChildEntityWithId(const PositionedEntity* const positionedEntit
 // add entity to the stage
 Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), int16 internalId)
 {
-	if(positionedEntity)
+	if(NULL != positionedEntity)
 	{
 		Entity entity = Entity::loadEntity(positionedEntity, internalId);
 		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
