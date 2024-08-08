@@ -23,42 +23,50 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __RUMBLE_MAX_EFFECTS_IN_CHAIN		 10
+#define __RUMBLE_MAX_EFFECTS_IN_CHAIN				8
 
-#define __RUMBLE_CHAIN_EFFECT_0				0x00
-#define __RUMBLE_CHAIN_EFFECT_1				0x01
-#define __RUMBLE_CHAIN_EFFECT_2				0x02
-#define __RUMBLE_CHAIN_EFFECT_3				0x03
-#define __RUMBLE_CHAIN_EFFECT_4				0x04
+#define __RUMBLE_CHAIN_EFFECT_0						0x00
+#define __RUMBLE_CHAIN_EFFECT_1						0x01
+#define __RUMBLE_CHAIN_EFFECT_2						0x02
+#define __RUMBLE_CHAIN_EFFECT_3						0x03
+#define __RUMBLE_CHAIN_EFFECT_4						0x04
 
-#define __RUMBLE_FREQ_160HZ					0x00
-#define __RUMBLE_FREQ_240HZ					0x01
-#define __RUMBLE_FREQ_320HZ					0x02
-#define __RUMBLE_FREQ_400HZ					0x03
+#define __RUMBLE_FREQ_50HZ							0x04
+#define __RUMBLE_FREQ_95HZ							0x05
+#define __RUMBLE_FREQ_130HZ							0x06
+#define __RUMBLE_FREQ_160HZ							0x00
+#define __RUMBLE_FREQ_240HZ							0x01
+#define __RUMBLE_FREQ_320HZ							0x02
+#define __RUMBLE_FREQ_400HZ							0x03
 
-#define __RUMBLE_CMD_STOP					0x00
-#define __RUMBLE_CMD_MIN_EFFECT				0x01
-#define __RUMBLE_CMD_MAX_EFFECT				0x7B
-#define __RUMBLE_CMD_PLAY					0x7C
-#define __RUMBLE_CMD_CHAIN_EFFECT_0			0x80
-#define __RUMBLE_CMD_CHAIN_EFFECT_1			0x81
-#define __RUMBLE_CMD_CHAIN_EFFECT_2			0x82
-#define __RUMBLE_CMD_CHAIN_EFFECT_3			0x83
-#define __RUMBLE_CMD_CHAIN_EFFECT_4			0x84
-#define __RUMBLE_CMD_FREQ_160HZ				0x90
-#define __RUMBLE_CMD_FREQ_240HZ				0x91
-#define __RUMBLE_CMD_FREQ_320HZ				0x92
-#define __RUMBLE_CMD_FREQ_400HZ				0x93
-#define __RUMBLE_CMD_OVERDRIVE				0xA0
-#define __RUMBLE_CMD_SUSTAIN_POS			0xA1
-#define __RUMBLE_CMD_SUSTAIN_NEG			0xA2
-#define __RUMBLE_CMD_BREAK					0xA3
-#define __RUMBLE_CMD_WRITE_EFFECT_CHAIN	 	0xB0
+#define __RUMBLE_CMD_STOP							0x00
+#define __RUMBLE_CMD_MIN_EFFECT						0x01
+#define __RUMBLE_CMD_MAX_EFFECT						0x7B
+#define __RUMBLE_CMD_PLAY							0x7C
+#define __RUMBLE_CMD_CHAIN_EFFECT_0					0x80
+#define __RUMBLE_CMD_CHAIN_EFFECT_1					0x81
+#define __RUMBLE_CMD_CHAIN_EFFECT_2					0x82
+#define __RUMBLE_CMD_CHAIN_EFFECT_3					0x83
+#define __RUMBLE_CMD_CHAIN_EFFECT_4					0x84
+#define __RUMBLE_CMD_FREQ_50HZ						0x87
+#define __RUMBLE_CMD_FREQ_95HZ						0x88
+#define __RUMBLE_CMD_FREQ_130HZ						0x89
+#define __RUMBLE_CMD_FREQ_160HZ						0x90
+#define __RUMBLE_CMD_FREQ_240HZ						0x91
+#define __RUMBLE_CMD_FREQ_320HZ						0x92
+#define __RUMBLE_CMD_FREQ_400HZ						0x93
+#define __RUMBLE_CMD_OVERDRIVE						0xA0
+#define __RUMBLE_CMD_SUSTAIN_POS					0xA1
+#define __RUMBLE_CMD_SUSTAIN_NEG					0xA2
+#define __RUMBLE_CMD_BREAK							0xA3
+#define __RUMBLE_CMD_WRITE_EFFECT_CHAIN				0xB0
+#define __RUMBLE_CMD_WRITE_EFFECT_LOOPS_CHAIN		0xB1
 
-#define __RUMBLE_EFFECT_CHAIN_END		 	0xFF
+#define __RUMBLE_EFFECT_CHAIN_END				 	0xFF
 
 
-#define __RUMBLE_TOTAL_COMMANDS				10
+#define __RUMBLE_TOTAL_COMMANDS						10
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
