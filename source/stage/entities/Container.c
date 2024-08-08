@@ -214,13 +214,15 @@ void Container::addChild(Container child)
 		// add to the children list
 		VirtualList::pushBack(this->children, (void*)child);
 
-		Container::invalidateGlobalTransformation(child);
 
 		this->update = this->update || Container::overrides(child, update);
 		this->transform = this->transform || Container::overrides(child, transform);
 
-		// apply transformations
-		Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
+		if(__NON_TRANSFORMED == child->transformation.invalid || __INVALIDATE_TRANSFORMATION == child->transformation.invalid)
+		{
+			Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
+		}
+
 		Container::createComponents(child);
 		Container::ready(child, true);
 	}
