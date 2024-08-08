@@ -221,6 +221,7 @@ void Container::addChild(Container child)
 
 		// apply transformations
 		Container::transform(child, &environmentTransformation, __INVALIDATE_TRANSFORMATION);
+		Container::createComponents(child);
 		Container::ready(child, true);
 	}
 }

@@ -1202,8 +1202,6 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 		Entity::addChildEntities(entity, positionedEntity->entitySpec->childrenSpecs);
 	}
 
-	Entity::createComponents(entity);
-
 	return entity;
 }
 

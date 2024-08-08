@@ -223,6 +223,10 @@ uint32 EntityFactory::transformEntities()
 	{
 		if(!positionedEntityDescription->transformed)
 		{
+			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
+			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
+			Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
+
 			positionedEntityDescription->transformed = true;
 
 			return __ENTITY_PENDING_PROCESSING;
@@ -311,10 +315,6 @@ uint32 EntityFactory::transformEntities()
 
 			return __ENTITY_PROCESSED;
 		}
-
-		const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
-		Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
-		Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 
 		return __ENTITY_PENDING_PROCESSING;
 	}
