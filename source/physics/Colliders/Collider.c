@@ -67,6 +67,9 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 	this->layersToIgnore = colliderSpec->layersToIgnore;
 	this->otherColliders = NULL;
 	this->registerCollisions = colliderSpec->checkForCollisions;
+
+	this->position = Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(colliderSpec->displacement));
+	this->dirty = true;
 }
 
 /**
@@ -237,7 +240,7 @@ CollisionResult Collider::collides(Collider collider)
 	collisionData.collisionInformation.otherCollider = NULL;
 	collisionData.colliderNotCollidingAnymore = NULL;
 	collisionData.isImpenetrableOtherCollider = false;
-	
+
 	/*
 	{
 		// result

@@ -79,7 +79,7 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBox(Box boxA, Box box
 		boxB->normals->vectors,
 	};
 
-	Vector3D distanceVector = Vector3D::get(boxB->transformation->position, boxA->transformation->position);
+	Vector3D distanceVector = Vector3D::get(boxB->position, boxA->position);
 
  	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
@@ -159,7 +159,7 @@ static void CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall(InverseBo
 static void CollisionHelper::getSolutionVectorBetweenBallAndBall(Ball ballA, Ball ballB, SolutionVector* solutionVector)
 {
 	// Compute the distance vector backwards to avoid the need to multiply by -1 the direction
-	Vector3D distanceVector = Vector3D::get(ballB->transformation->position, ballA->transformation->position);
+	Vector3D distanceVector = Vector3D::get(ballB->position, ballA->position);
 	fixed_ext_t distanceVectorSquareLength = Vector3D::squareLength(distanceVector);
 	fixed_t radiusesLength = ballA->radius + ballB->radius;
 
@@ -208,10 +208,10 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 	// A first check should compare them and use the bigger's collider axis as the line onto which
 	// project the other collider's points
 
-	Vector3D ballSideToCheck = Vector3D::sum(ball->transformation->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
+	Vector3D ballSideToCheck = Vector3D::sum(ball->position, Vector3D::scalarProduct(lineField->normal, ball->radius));
 
-	Vector3D lineFieldA = Vector3D::sum(lineField->a, lineField->transformation->position);
-	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->transformation->position);
+	Vector3D lineFieldA = Vector3D::sum(lineField->a, lineField->position);
+	Vector3D lineFieldB = Vector3D::sum(lineField->b, lineField->position);
 
 	// Test against the bounding box first to avoid thee projection if possible
 	if(
@@ -285,7 +285,7 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 
 	Vector3D* normals = boxA->normals->vectors;
 
-	Vector3D distanceVector = Vector3D::get(boxA->transformation->position, ballB->transformation->position);
+	Vector3D distanceVector = Vector3D::get(boxA->position, ballB->position);
 
 	fixed_t minimumIntervalDistance = Math::fixedInfinity();
 
@@ -300,7 +300,7 @@ static void CollisionHelper::getSolutionVectorBetweenBoxAndBall(Box boxA, Ball b
 		fixed_t ballBMin = 0;
 		fixed_t ballBMax = 0;
 
-		Ball::project(ballB->transformation->position, ballB->radius, currentNormal, &ballBMin, &ballBMax);
+		Ball::project(ballB->position, ballB->radius, currentNormal, &ballBMin, &ballBMax);
 
 		fixed_t intervalDistance = 0;
 
@@ -387,9 +387,9 @@ static void CollisionHelper::checkIfBoxOverlapsBall(Collider colliderA, Collider
 
 	Vector3D intervalDistance =
 	{
-		boxA->transformation->position.x < ballB->transformation->position.x ? ((ballB->transformation->position.x - ballB->radius) - (boxA->transformation->position.x + boxA->rightBox.x1)) : ((boxA->transformation->position.x + boxA->rightBox.x0) - (ballB->transformation->position.x + ballB->radius)),
-		boxA->transformation->position.y < ballB->transformation->position.y ? ((ballB->transformation->position.y - ballB->radius) - (boxA->transformation->position.y + boxA->rightBox.y1)) : ((boxA->transformation->position.y + boxA->rightBox.y0) - (ballB->transformation->position.y + ballB->radius)),
-		boxA->transformation->position.z < ballB->transformation->position.z ? ((ballB->transformation->position.z - ballB->radius) - (boxA->transformation->position.z + boxA->rightBox.z1)) : ((boxA->transformation->position.z + boxA->rightBox.z0) - (ballB->transformation->position.z + ballB->radius)),
+		boxA->position.x < ballB->position.x ? ((ballB->position.x - ballB->radius) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (ballB->position.x + ballB->radius)),
+		boxA->position.y < ballB->position.y ? ((ballB->position.y - ballB->radius) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (ballB->position.y + ballB->radius)),
+		boxA->position.z < ballB->position.z ? ((ballB->position.z - ballB->radius) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (ballB->position.z + ballB->radius)),
 	};
 
 	// test for collision
@@ -410,7 +410,7 @@ static void CollisionHelper::checkIfBoxOverlapsBall(Collider colliderA, Collider
 		}
 		else
 		{
-			Vector3D distanceVector = Vector3D::get(boxA->transformation->position, ballB->transformation->position);
+			Vector3D distanceVector = Vector3D::get(boxA->position, ballB->position);
 
 			Vector3D normals[__COLLIDER_NORMALS] =
 			{
@@ -453,9 +453,9 @@ static void CollisionHelper::checkIfBoxOverlapsBox(Collider colliderA, Collider 
 
 	Vector3D intervalDistance =
 	{
-		boxA->transformation->position.x < boxB->transformation->position.x ? ((boxB->transformation->position.x + boxB->rightBox.x0) - (boxA->transformation->position.x + boxA->rightBox.x1)) : ((boxA->transformation->position.x + boxA->rightBox.x0) - (boxB->transformation->position.x + boxB->rightBox.x1)),
-		boxA->transformation->position.y < boxB->transformation->position.y ? ((boxB->transformation->position.y + boxB->rightBox.y0) - (boxA->transformation->position.y + boxA->rightBox.y1)) : ((boxA->transformation->position.y + boxA->rightBox.y0) - (boxB->transformation->position.y + boxB->rightBox.y1)),
-		boxA->transformation->position.z < boxB->transformation->position.z ? ((boxB->transformation->position.z + boxB->rightBox.z0) - (boxA->transformation->position.z + boxA->rightBox.z1)) : ((boxA->transformation->position.z + boxA->rightBox.z0) - (boxB->transformation->position.z + boxB->rightBox.z1)),
+		boxA->position.x < boxB->position.x ? ((boxB->position.x + boxB->rightBox.x0) - (boxA->position.x + boxA->rightBox.x1)) : ((boxA->position.x + boxA->rightBox.x0) - (boxB->position.x + boxB->rightBox.x1)),
+		boxA->position.y < boxB->position.y ? ((boxB->position.y + boxB->rightBox.y0) - (boxA->position.y + boxA->rightBox.y1)) : ((boxA->position.y + boxA->rightBox.y0) - (boxB->position.y + boxB->rightBox.y1)),
+		boxA->position.z < boxB->position.z ? ((boxB->position.z + boxB->rightBox.z0) - (boxA->position.z + boxA->rightBox.z1)) : ((boxA->position.z + boxA->rightBox.z0) - (boxB->position.z + boxB->rightBox.z1)),
 	};
 
 	// test for collision
@@ -478,7 +478,7 @@ static void CollisionHelper::checkIfBoxOverlapsBox(Collider colliderA, Collider 
 		}
 		else
 		{
-			Vector3D distanceVector = Vector3D::get(boxB->transformation->position, boxA->transformation->position);
+			Vector3D distanceVector = Vector3D::get(boxB->position, boxA->position);
 
 			Vector3D normals[__COLLIDER_NORMALS] =
 			{
@@ -545,9 +545,9 @@ static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider colliderA, C
 
 	Vector3D intervalDistance =
 	{
-		inverseBoxA->transformation->position.x > ballB->transformation->position.x ? ((ballB->transformation->position.x - ballB->radius) - (inverseBoxA->transformation->position.x + inverseBoxA->rightBox.x0)) : ((inverseBoxA->transformation->position.x + inverseBoxA->rightBox.x1) - (ballB->transformation->position.x + ballB->radius)),
-		inverseBoxA->transformation->position.y > ballB->transformation->position.y ? ((ballB->transformation->position.y - ballB->radius) - (inverseBoxA->transformation->position.y + inverseBoxA->rightBox.y0)) : ((inverseBoxA->transformation->position.y + inverseBoxA->rightBox.y1) - (ballB->transformation->position.y + ballB->radius)),
-		inverseBoxA->transformation->position.z > ballB->transformation->position.z ? ((ballB->transformation->position.z - ballB->radius) - (inverseBoxA->transformation->position.z + inverseBoxA->rightBox.z0)) : ((inverseBoxA->transformation->position.z + inverseBoxA->rightBox.z1) - (ballB->transformation->position.z + ballB->radius)),
+		inverseBoxA->position.x > ballB->position.x ? ((ballB->position.x - ballB->radius) - (inverseBoxA->position.x + inverseBoxA->rightBox.x0)) : ((inverseBoxA->position.x + inverseBoxA->rightBox.x1) - (ballB->position.x + ballB->radius)),
+		inverseBoxA->position.y > ballB->position.y ? ((ballB->position.y - ballB->radius) - (inverseBoxA->position.y + inverseBoxA->rightBox.y0)) : ((inverseBoxA->position.y + inverseBoxA->rightBox.y1) - (ballB->position.y + ballB->radius)),
+		inverseBoxA->position.z > ballB->position.z ? ((ballB->position.z - ballB->radius) - (inverseBoxA->position.z + inverseBoxA->rightBox.z0)) : ((inverseBoxA->position.z + inverseBoxA->rightBox.z1) - (ballB->position.z + ballB->radius)),
 	};
 
 	// test for collision
@@ -561,7 +561,7 @@ static void CollisionHelper::checkIfInverseBoxOverlapsBall(Collider colliderA, C
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		Vector3D distanceVector = Vector3D::get(inverseBoxA->transformation->position, ballB->transformation->position);
+		Vector3D distanceVector = Vector3D::get(inverseBoxA->position, ballB->position);
 
 		Vector3D normals[__COLLIDER_NORMALS] =
 		{

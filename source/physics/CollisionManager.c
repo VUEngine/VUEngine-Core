@@ -147,8 +147,7 @@ uint32 CollisionManager::update(Clock clock)
 
 	this->dirty = false;
 
-	// check the colliders
-	for(VirtualNode auxNode = this->colliders->head, auxNextNode = NULL; auxNode; auxNode = auxNextNode)
+	for(VirtualNode auxNode = this->colliders->head, auxNextNode = NULL; NULL != auxNode; auxNode = auxNextNode)
 	{
 		auxNextNode = auxNode->next;
 
@@ -167,6 +166,15 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
+		collider->dirty = true;
+	}
+
+	// check the colliders
+	for(VirtualNode auxNode = this->colliders->head; NULL != auxNode; auxNode = auxNode->next)
+	{
+		// load the current collider to check against
+		Collider collider = Collider::safeCast(auxNode->data);
+
 	#ifdef __DRAW_SHAPES
 		if(collider->enabled)
 		{
@@ -181,6 +189,12 @@ uint32 CollisionManager::update(Clock clock)
 		if(!(collider->enabled && collider->checkForCollisions) || __NON_TRANSFORMED == collider->transformation->invalid)
 		{
 			continue;
+		}
+
+		if(collider->dirty)
+		{
+			collider->position = Vector3D::sum(collider->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement));
+			collider->dirty = false;
 		}
 
 		Vector3D colliderPosition = collider->transformation->position;
@@ -219,6 +233,12 @@ uint32 CollisionManager::update(Clock clock)
 			this->lastCycleCollisionChecks++;
 #endif
 
+			if(colliderToCheck->dirty)
+			{
+				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement));
+				colliderToCheck->dirty = false;
+			}
+
 #ifdef __SHOW_PHYSICS_PROFILING
 			// check if colliders overlap
 			if(kNoCollision != Collider::collides(collider, colliderToCheck))
@@ -230,6 +250,7 @@ uint32 CollisionManager::update(Clock clock)
 #endif
 			if(this->dirty)
 			{
+				NM_ASSERT(false, "CollisionManager::update: added a collider as a response to a collision");
 				node = this->colliders->head;
 			}
 		}

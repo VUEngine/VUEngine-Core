@@ -188,6 +188,8 @@ enum ColliderClassIndexes
 /// @ingroup physics
 abstract class Collider : Component
 {
+	// Displaced position
+	Vector3D position;
 	// colliding colliders list
 	VirtualList otherColliders;
 	// layers on which this collider live
@@ -208,6 +210,8 @@ abstract class Collider : Component
 	bool destroyMe;
 	// class index 
 	uint8 classIndex;
+	// flag to compute the displaced position
+	bool dirty;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
