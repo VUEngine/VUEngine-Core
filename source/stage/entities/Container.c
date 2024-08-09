@@ -65,6 +65,7 @@ void Container::constructor(const char* const name)
 	this->hidden = false;
 	this->inheritEnvironment = __INHERIT_TRANSFORMATION;
 	this->dontStreamOut = false;
+	this->ready = false;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -224,7 +225,15 @@ void Container::addChild(Container child)
 		}
 
 		Container::createComponents(child);
-		Container::ready(child, true);
+
+		//NM_ASSERT(!child->ready, "Container::addChild: child is ready");
+
+		if(!child->ready)
+		{
+			Container::ready(child, true);
+		}
+
+		child->ready = true;
 	}
 }
 

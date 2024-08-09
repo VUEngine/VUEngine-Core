@@ -70,6 +70,8 @@ class Container : SpatialObject
 	bool transform;
 	// Flag to update sprites' attributes
 	bool dontStreamOut;
+	// Flag to prevent the same entity from getting ready multiple times
+	bool ready;
 
 	/// @publicsection
 	void constructor(const char* const name);
