@@ -51,18 +51,8 @@ void Line::destructor()
 /**
  * Render
  */
-bool Line::render()
+void Line::render(Vector3D relativePosition)
 {
-	Vector3D position = Vector3D::sum(this->transformation->position, ((LineSpec*)this->componentSpec)->wireframeSpec.displacement);
-
-	Vector3D relativePosition = Vector3D::sub(position, _previousCameraPosition);
-	Sphere::setupRenderingMode(this, &relativePosition);
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return false;
-	}
-
 	Vector3D a = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->a);
 	a = Vector3D::rotate(a, _previousCameraInvertedRotation);
 	this->a = Vector3D::projectToPixelVector(a, Optics::calculateParallax(a.z));
@@ -70,8 +60,6 @@ bool Line::render()
 	Vector3D b = Vector3D::sum(relativePosition, ((LineSpec*)this->componentSpec)->b);
 	b = Vector3D::rotate(b, _previousCameraInvertedRotation);
 	this->b = Vector3D::projectToPixelVector(b, Optics::calculateParallax(b.z));
-
-	return true;
 }
 
 /**

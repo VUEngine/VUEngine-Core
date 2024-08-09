@@ -110,6 +110,7 @@ void Ball::configureWireframe()
 
 	if(!isDeleted(this->wireframe))
 	{		
+		Sphere::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 		Sphere::setRadius(this->wireframe, this->radius);
 	}
 }

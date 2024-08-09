@@ -66,9 +66,8 @@ void Wireframe::destructor()
 /**
  * Rendered
  */
-bool Wireframe::render()
+void Wireframe::render(Vector3D relativePosition __attribute__((unused)))
 {
-	return true;
 }
 
 /**
@@ -87,14 +86,16 @@ PixelRightBox Wireframe::getPixelRightBox()
 	return (PixelRightBox){0, 0, 0, 0, 0, 0};
 }
 
-void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
+bool Wireframe::prepareForRender(Vector3D* relativePosition)
 {
+	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
+
 	if(NULL == ((WireframeSpec*)this->componentSpec))
 	{
 		this->color = __COLOR_BRIGHT_RED;
 		this->interlaced = false;
 		this->squaredDistanceToCamera = 0;
-		return;
+		return __COLOR_BLACK != this->color;
 	}
 
 	if(__COLOR_BLACK != ((WireframeSpec*)this->componentSpec)->color)
@@ -104,7 +105,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
-		return;
+		return __COLOR_BLACK != this->color;
 	}
 
 	NM_ASSERT(NULL != ((WireframeSpec*)this->componentSpec), "Wireframe::setupRenderingMode: NULL wireframeSpec");
@@ -116,7 +117,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 		this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
-		return;
+		return __COLOR_BLACK != this->color;
 	}
 
 	this->color = ((WireframeSpec*)this->componentSpec)->color;
@@ -142,7 +143,7 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
-			return;
+			return __COLOR_BLACK != this->color;
 		}
 
 		if(__FIXED_SQUARE(__PIXELS_TO_METERS(__SCREEN_WIDTH << 1)) > distanceToCamera)
@@ -158,14 +159,14 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 			this->squaredDistanceToCamera = __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA;
 #endif
 			this->color = __COLOR_BLACK;
-			return;
+			return __COLOR_BLACK != this->color;
 		}
 
 		if(__FIXED_SQUARE((__DIRECT_DRAW_INTERLACED_THRESHOLD << 1) < distanceToCamera))
 		{
 			this->color = __COLOR_BLACK;
 			this->interlaced = true;
-			return;
+			return __COLOR_BLACK != this->color;
 		}
 		else if(__FIXED_SQUARE(__DIRECT_DRAW_INTERLACED_THRESHOLD + (__DIRECT_DRAW_INTERLACED_THRESHOLD >> 1)) < distanceToCamera)
 		{
@@ -204,14 +205,13 @@ void Wireframe::setupRenderingMode(const Vector3D* relativePosition)
 #ifdef __WIREFRAME_MANAGER_SORT_FOR_DRAWING
 	this->squaredDistanceToCamera = distanceToCamera;
 #endif
+
+	return __COLOR_BLACK != this->color;
 }
 
-void Wireframe::setDisplacement(const Vector3D* displacement)
+void Wireframe::setDisplacement(Vector3D displacement)
 {
-	if(NULL != displacement)
-	{
-		this->displacement = *displacement;
-	}
+	this->displacement = displacement;
 }
 
 /**

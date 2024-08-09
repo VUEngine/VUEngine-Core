@@ -223,6 +223,11 @@ void LineField::configureWireframe()
 
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Line(this->owner, this->lineSpec));
+
+	if(!isDeleted(this->wireframe))
+	{
+		Line::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	}
 }
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])

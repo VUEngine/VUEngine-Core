@@ -64,13 +64,13 @@ abstract class Wireframe : VisualComponent
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const WireframeSpec* wireframeSpec);
-	void setupRenderingMode(const Vector3D* relativePosition);
-	void setDisplacement(const Vector3D* displacement);
+	bool prepareForRender(Vector3D* relativePosition);
+	void setDisplacement(Vector3D displacement);
 	bool isVisible();
 	PixelVector getPixelPosition();
 
 	virtual bool draw() = 0;
-	virtual bool render();
+	virtual void render(Vector3D relativePosition);
 	virtual VirtualList getVertices();
 	virtual PixelRightBox getPixelRightBox();
 }

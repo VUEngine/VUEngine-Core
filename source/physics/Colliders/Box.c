@@ -488,6 +488,8 @@ void Box::configureWireframe()
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Polyhedron(this->owner, &polyhedronSpec));
 
+	Polyhedron::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{
 		if(!this->rotationVertexDisplacement.z)

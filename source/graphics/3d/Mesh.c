@@ -330,18 +330,9 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 /**
  * Render
  */
-bool Mesh::render()
+void Mesh::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
-
-	Vector3D relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
-
-	Mesh::setupRenderingMode(this, &relativePosition);
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return false;
-	}
 
 	bool scale = (__1I_FIX7_9 != this->transformation->scale.x) + (__1I_FIX7_9 != this->transformation->scale.y) + (__1I_FIX7_9 != this->transformation->scale.z);
 	bool rotate = (0 != this->transformation->rotation.x) + (0 != this->transformation->rotation.y) + (0 != this->transformation->rotation.z);
@@ -405,8 +396,6 @@ bool Mesh::render()
 			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
 		}
 	}
-
-	return true;
 }
 
 /**

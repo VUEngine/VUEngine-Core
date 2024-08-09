@@ -286,13 +286,19 @@ void WireframeManager::render()
 			continue;
 		}
 
-		wireframe->rendered = Wireframe::render(wireframe);
+		Vector3D relativePosition = Vector3D::zero();
+		wireframe->rendered = false;
+
+		if(!Wireframe::prepareForRender(wireframe, &relativePosition))
+		{
+			continue;
+		}
+
+		Wireframe::render(wireframe, relativePosition);
+		wireframe->rendered = true;
 
 #ifdef __PROFILE_WIREFRAMES
-		if(__COLOR_BLACK != wireframe->color)
-		{
-			this->renderedWireframes++;
-		}
+		this->renderedWireframes++;
 #endif
 	}
 

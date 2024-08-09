@@ -53,23 +53,13 @@ void Asterisk::destructor()
 /**
  * Render
  */
-bool Asterisk::render()
+void Asterisk::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Asterisk::render: NULL transformation");
-
-	Vector3D relativePosition = Vector3D::sub(this->transformation->position, _previousCameraPosition);
-	Asterisk::setupRenderingMode(this, &relativePosition);
-
-	if(__COLOR_BLACK == this->color)
-	{
-		return false;
-	}
 
 	relativePosition = Vector3D::rotate(relativePosition, _previousCameraInvertedRotation);
 	this->center = Vector3D::projectToPixelVector(relativePosition, Optics::calculateParallax(relativePosition.z));
 	this->scaledLength = __METERS_TO_PIXELS(__FIXED_MULT(this->length, Vector3D::getScale(relativePosition.z, false)));
-
-	return true;
 }
 
 /**

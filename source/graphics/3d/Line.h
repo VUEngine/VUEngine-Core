@@ -42,7 +42,7 @@ class Line : Wireframe
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const LineSpec* lineSpec);
-	override bool render();
+	override void render(Vector3D relativePosition);
 	override bool draw();
 }
 
