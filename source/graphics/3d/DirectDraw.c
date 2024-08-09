@@ -996,6 +996,8 @@ static bool DirectDraw::drawSolidRhumbus(PixelVector center, int16 radius, int32
 		uint32 leftBuffer = *_currentDrawingFrameBufferSet | (bufferIndex << __FRAME_BUFFER_SIDE_BIT_INDEX);
 		uint32 rightBuffer = leftBuffer ^ __FRAME_BUFFER_SIDE_BIT;
 
+		center.parallax >>= 1;
+
 		if(0 != bufferIndex)
 		{
 			center.parallax = -center.parallax;
