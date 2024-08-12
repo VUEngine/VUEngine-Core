@@ -371,7 +371,6 @@ static void SoundManager::playSounds(uint32 elapsedMicroseconds)
 
 	if(NULL != node)
 	{
-
 		do
 		{
 			Sound::updatePCMPlayback(Sound::safeCast(node->data), elapsedMicroseconds, _soundManager->targetPCMUpdates);
