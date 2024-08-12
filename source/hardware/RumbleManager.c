@@ -238,10 +238,10 @@ static void RumbleManager::setFrequency(uint8 value)
 	
 	if(value <= __RUMBLE_FREQ_400HZ)
 	{
-		value += __RUMBLE_CMD_FREQ_160HZ;
+		value += __RUMBLE_CMD_FREQ_50HZ;
 	}
 
-	if(value >= __RUMBLE_CMD_FREQ_160HZ && value <= __RUMBLE_CMD_FREQ_400HZ)
+	if(value >= __RUMBLE_CMD_FREQ_50HZ && value <= __RUMBLE_CMD_FREQ_400HZ)
 	{
 		RumbleManager::sendCode(value);
 	}
@@ -252,6 +252,11 @@ static void RumbleManager::setOverdrive(uint8 value)
 	if(_rumbleManager->overdrive == value)
 	{
 		return;
+	}
+
+	if(__RUMBLE_MAX_OVERDRIVE < value)
+	{
+		value = __RUMBLE_MAX_OVERDRIVE;
 	}
 
 	_rumbleManager->overdrive = value;

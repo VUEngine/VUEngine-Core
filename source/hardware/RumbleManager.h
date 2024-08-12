@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __RUMBLE_MAX_EFFECTS_IN_CHAIN				8
+#define __RUMBLE_MAX_OVERDRIVE						126
 
 #define __RUMBLE_CHAIN_EFFECT_0						0x00
 #define __RUMBLE_CHAIN_EFFECT_1						0x01
