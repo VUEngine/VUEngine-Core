@@ -303,7 +303,7 @@ static void DirectDraw::drawColorPixel(BYTE* leftBuffer, BYTE* rightBuffer, int1
 		leftBuffer[displacement] |= pixel;
 	}
 
-	displacement += parallax << 6;
+	displacement += parallax << 7;
 
 	if(__FRAME_BUFFERS_SIZE > displacement)
 	{
