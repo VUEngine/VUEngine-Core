@@ -150,9 +150,6 @@ void LineField::computeSize()
 
 	this->b = Vector3D::scalarProduct(this->a, __I_TO_FIXED(-1));
 
-	this->a = Vector3D::sum(this->a, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-	this->b = Vector3D::sum(this->b, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-
 	fixed_t dx = this->b.x - this->a.x;
 	fixed_t dy = this->b.y - this->a.y;
 	fixed_t dz = this->b.z - this->a.z;
@@ -232,8 +229,8 @@ void LineField::configureWireframe()
 
 void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 {
-	vertexes[0] = Vector3D::sum(this->a, this->transformation->position);
-	vertexes[1] = Vector3D::sum(this->b, this->transformation->position);
+	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
 }
 
 Vector3D LineField::getNormal()
