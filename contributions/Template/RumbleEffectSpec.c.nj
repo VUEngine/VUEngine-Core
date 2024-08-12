@@ -41,10 +41,10 @@ RumbleEffectROMSpec {{ sanitizedSpecName }}RumbleEffectSpec =
 		255
 	{%- endif %},
 	// Overdrive
-	{% if item.overdrive >= 0 and item.overdrive <= 255 -%}
+	{% if item.overdrive >= 0 and item.overdrive <= 126 -%}
 		{{ item.overdrive }}
 	{%- else -%}
-		255
+		126
 	{%- endif %},
 	// Break
 	{% if item.break >= 0 and item.break <= 255 -%}
