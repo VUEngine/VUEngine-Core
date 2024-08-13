@@ -22,7 +22,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TIMER_COUNTER_DELTA		1
+#define __TIMER_COUNTER_DELTA		2
 
 //use with 20us timer (range = 0 to 1300)
 #define __TIME_US(n)				(((n) / TimerManager::getResolutionInUS(TimerManager::getInstance())) - __TIMER_COUNTER_DELTA)
@@ -39,7 +39,9 @@
 #define __TIMER_20US		0x10
 #define __TIMER_100US		0x00
 
-#define __MINIMUM_TIME_PER_INTERRUPT_US			(TimerManager::getResolutionInUS(TimerManager::getInstance()) * 1)
+#define __MINIMUM_TIME_PER_INTERRUPT_US_STEP	(TimerManager::getResolutionInUS(TimerManager::getInstance()))
+#define __MINIMUM_TIME_PER_INTERRUPT_US			(TimerManager::getResolutionInUS(TimerManager::getInstance()) + TimerManager::getResolutionInUS(TimerManager::getInstance()) * __TIMER_COUNTER_DELTA)
+#define __MINIMUM_TIME_PER_INTERRUPT_MS_STEP	1
 #define __MAXIMUM_TIME_PER_INTERRUPT_US 		10 * 1000
 #define __MINIMUM_TIME_PER_INTERRUPT_MS			1
 #define __MAXIMUM_TIME_PER_INTERRUPT_MS 		49
@@ -69,10 +71,6 @@ singleton class TimerManager : Object
 	uint32 microsecondsPerInterrupt;
 	uint16 timePerInterrupt;
 	uint16 timePerInterruptUnits;
-	uint16 minimumTimePerInterruptUS;
-	uint16 minimumTimePerInterruptMS;
-	uint16 maximumTimePerInterruptUS;
-	uint16 maximumTimePerInterruptMS;
 	uint8 tcrValue;
 
 	/// @publicsection

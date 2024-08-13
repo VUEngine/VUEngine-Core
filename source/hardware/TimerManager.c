@@ -65,10 +65,6 @@ void TimerManager::constructor()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
-	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
-	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
-	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
-	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 	this->interruptsPerGameFrame = 0;
 	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 
@@ -102,10 +98,6 @@ void TimerManager::reset()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
-	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
-	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
-	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
-	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 	this->interruptsPerGameFrame = 0;
 	this->microsecondsPerInterrupt = TimerManager::getTimePerInterruptInUS(this);
 }
@@ -176,8 +168,6 @@ void TimerManager::setResolution(uint16 resolution)
 			this->resolution =  __TIMER_20US;
 			break;
 	}
-
-	this->minimumTimePerInterruptUS = __MINIMUM_TIME_PER_INTERRUPT_US;
 
 	uint32 timePerInterrupt = this->timePerInterrupt;
 
@@ -280,19 +270,21 @@ uint32 TimerManager::getTimePerInterruptInUS()
  */
 void TimerManager::setTimePerInterrupt(uint16 timePerInterrupt)
 {
-	int16 minimumTimePerInterrupt = TimerManager::getMinimumTimePerInterruptStep(this);
+	int16 minimumTimePerInterrupt = 0;
 	int16 maximumTimePerInterrupt = 1000;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			maximumTimePerInterrupt = this->maximumTimePerInterruptUS;
+			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_US;
+			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
 			break;
 
 		case kMS:
 
-			maximumTimePerInterrupt = this->maximumTimePerInterruptMS;
+			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_MS;
+			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 			break;
 
 		default:
@@ -353,12 +345,12 @@ uint16 TimerManager::getMinimumTimePerInterruptStep()
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
-			return this->minimumTimePerInterruptUS;
+			return __MINIMUM_TIME_PER_INTERRUPT_US_STEP;
 			break;
 
 		case kMS:
 
-			return this->minimumTimePerInterruptMS;
+			return __MINIMUM_TIME_PER_INTERRUPT_MS_STEP;
 			break;
 	}
 
@@ -373,8 +365,6 @@ uint16 TimerManager::computeTimerCounter()
 	{
 		case kUS:
 
-			// Not sure anymore why it is necessary to reduce the counter in 1 when using 20us
-			//timerCounter = __TIME_US(this->timePerInterrupt) - (__TIMER_20US == this->resolution ? 1 : 0);
 			timerCounter = __TIME_US(this->timePerInterrupt);
 			break;
 
