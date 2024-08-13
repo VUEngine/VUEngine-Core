@@ -91,6 +91,14 @@ void SoundTest::update()
 			Sound::printPlaybackProgress(this->sound, 1, 6);
 			Sound::printPlaybackTime(this->sound, 24, 8);
 			delay = 0;
+
+#ifndef __SHOW_TIMER_MANAGER_STATUS
+			if(Sound::hasPCMTracks(this->sound))
+			{
+				TimerManager::printStatus(TimerManager::getInstance(), 1, 15);
+				TimerManager::nextSecondStarted(TimerManager::getInstance());
+			}
+#endif
 		}
 		else
 		{
