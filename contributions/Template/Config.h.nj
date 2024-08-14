@@ -136,6 +136,10 @@
 // Frustum extension power for line shriking checks
 #define __DIRECT_DRAW_FRUSTUM_EXTENSION_POWER						{% if config.wireframes.frustumExtensionPower %}{{config.wireframes.frustumExtensionPower}} {% else %}0{% endif %} 
 
+// Optimize the drawing of vertical lines
+{% if config.optics.verticalLineOptimization %}#define{% else %}#undef{% endif %} __DIRECT_DRAW_OPTIMIZED_VERTICAL_LINES
+
+
 {{ macros.sectionHeader('Optics / Projection') }}
 
 // legacy coordinate system (0, 0, 0) is at the top left corner of the screen

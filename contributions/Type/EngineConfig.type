@@ -601,6 +601,11 @@
 						"default": 0,
 						"maximum": 4,
 						"minimum": 0
+					},
+					"verticalLineOptimization": {
+						"type": "boolean",
+						"description": "Optimize drawing of vertical lines.",
+						"default": false
 					}
 				}	
 			}
@@ -1247,6 +1252,10 @@
 							{
 								"type": "Control",
 								"scope": "#/properties/wireframes/properties/frustumExtensionPower"
+							},
+							{
+								"type": "Control",
+								"scope": "#/properties/wireframes/properties/verticalLineOptimization"
 							}
 						]
 					}
