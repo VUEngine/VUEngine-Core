@@ -88,7 +88,8 @@ PixelRightBox Wireframe::getPixelRightBox()
 
 bool Wireframe::prepareForRender(Vector3D* relativePosition)
 {
-	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, this->displacement), _previousCameraPosition);
+	Vector3D displacement = Vector3D::rotate(this->displacement, this->transformation->rotation);
+	*relativePosition = Vector3D::sub(Vector3D::sum(this->transformation->position, displacement), _previousCameraPosition);
 
 	if(NULL == ((WireframeSpec*)this->componentSpec))
 	{

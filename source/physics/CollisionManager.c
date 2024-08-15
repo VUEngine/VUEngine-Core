@@ -193,7 +193,8 @@ uint32 CollisionManager::update(Clock clock)
 
 		if(collider->dirty)
 		{
-			collider->position = Vector3D::sum(collider->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement));
+			Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation);
+			collider->position = Vector3D::sum(collider->transformation->position, displacement);
 			collider->dirty = false;
 		}
 
@@ -203,7 +204,7 @@ uint32 CollisionManager::update(Clock clock)
 		{
 			Collider colliderToCheck = Collider::safeCast(node->data);
 
-			if(!(colliderToCheck->enabled) || __NON_TRANSFORMED == colliderToCheck->transformation->invalid)
+			if(!colliderToCheck->enabled || __NON_TRANSFORMED == colliderToCheck->transformation->invalid)
 			{
 				continue;
 			}
@@ -235,7 +236,8 @@ uint32 CollisionManager::update(Clock clock)
 
 			if(colliderToCheck->dirty)
 			{
-				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement));
+				Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), colliderToCheck->transformation->rotation);				
+				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
 				colliderToCheck->dirty = false;
 			}
 

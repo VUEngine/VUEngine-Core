@@ -201,7 +201,7 @@ abstract class Collider : Component
 	// flag to know if setup is needed
 	uint8 ready;
 	// flag to know if collider is reacting to collisions
-	uint8 enabled;
+	bool enabled;
 	// flag to check against other colliders
 	uint8 checkForCollisions;
 	// flag to allow registration of colliding colliders

@@ -481,7 +481,7 @@ Wireframe Entity::addWireframe(WireframeSpec* wireframeSpec, WireframeManager wi
  */
 void Entity::destroyWireframes()
 {
-	if(NULL != this->wireframes)
+	if(!isDeleted(this->wireframes))
 	{
 		ASSERT(!isDeleted(this->wireframes), "Entity::wireframes: dead colliders");
 
