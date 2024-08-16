@@ -745,7 +745,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 
 			for(; 1 < totalPixels; totalPixels -=2)
 			{
-				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 0, color);
+				DirectDraw::drawColorPixelInterlaced((BYTE*)leftBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), __FIXED_EXT_TO_I(parallaxStart), color);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
@@ -766,7 +766,7 @@ static bool DirectDraw::drawColorLine(PixelVector fromPoint, PixelVector toPoint
 				fromPointX += xStep;
 				fromPointY += yStep;
 
-				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), 0, color);
+				DirectDraw::drawColorPixelInterlaced((BYTE*)rightBuffer, __FIXED_EXT_TO_I(fromPointX), __FIXED_EXT_TO_I(fromPointY), -__FIXED_EXT_TO_I(parallaxStart), color);
 
 				fromPointX += xStep;
 				fromPointY += yStep;
