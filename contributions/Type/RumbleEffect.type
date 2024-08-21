@@ -5,13 +5,13 @@
 		"properties": {
 			"effect": {
 				"type": "integer",
-				"default": 0,
+				"default": 1,
 				"maximum": 123,
-				"minimum": 0
+				"minimum": 1
 			},
 			"frequency": {
 				"type": "integer",
-				"default": 0
+				"default": 160
 			},
 			"sustainPositive": {
 				"type": "integer",
@@ -27,9 +27,9 @@
 			},
 			"overdrive": {
 				"type": "integer",
-				"maximum": 255,
+				"maximum": 126,
 				"minimum": 0,
-				"default": 255
+				"default": 126
 			},
 			"break": {
 				"type": "integer",
