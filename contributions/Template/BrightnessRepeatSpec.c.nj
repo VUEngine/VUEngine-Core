@@ -19,7 +19,7 @@ BrightnessRepeatROMSpec {{ sanitizedSpecName }}BrightnessRepeatSpec =
 	{
         {% for x in range(0, 96) -%}
             {%- if not (item.mirror and loop.index > 48) -%}
-				{%- set value = item.values[x] - 1 | default(0) -%}
+				{%- set value = item.values[x] | default(0) -%}
                 {%- if value is null -%}
 					{%- set value = 0 -%}
                 {%- endif -%}
