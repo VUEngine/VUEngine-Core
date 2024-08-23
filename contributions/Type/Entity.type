@@ -355,6 +355,10 @@
 								"manipulationFunction": {
 									"type": "string"
 								},
+								"optimizeTiles": {
+									"type": "boolean",
+									"default": true
+								},
 								"texture": {
 									"type": "object",
 									"properties": {
@@ -615,14 +619,6 @@
 					"useZDisplacementInProjection": {
 						"type": "boolean",
 						"default": false
-					},
-					"sharedTiles": {
-						"type": "boolean",
-						"default": true
-					},
-					"optimizedTiles": {
-						"type": "boolean",
-						"default": true
 					}
 				}
 			}

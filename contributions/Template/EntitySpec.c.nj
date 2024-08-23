@@ -130,7 +130,7 @@
 	{%- set spriteImageData = item.components.sprites[sprite._imageData - 1]._imageData -%}
 {%- endif -%}
 {%- set imageData = spriteImageData.images[0] -%}
-{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ sprite._imageData.dupeIndex -%}
+{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ spriteNumber -%}
 {%- if isStereoAnimation -%}
 	{%- set imageData = spriteImageData.images[loop.index0] -%}
 	{%- set charsetSpecName = charsetSpecName ~ eye -%}
@@ -142,7 +142,7 @@
 {%- endif -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
 
-{%- if imageData.tiles is defined and sprite._imageData.dupeIndex == spriteNumber and (eye !== 'R' or isStereoAnimation) %}
+{%- if imageData.tiles is defined and (eye !== 'R' or isStereoAnimation) %}
 CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 {
 	// number of chars in function or the number of frames to load at the same time
@@ -155,13 +155,17 @@ CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 	{%- endif %}
 
 	// whether it is shared or not
-	{{ item.sprites.sharedTiles }},
+	{%- if item.components.animations.length and not item.animations.multiframe %}
+	false,
+	{%- else %}
+	true,
+	{%- endif %}
 
 	// whether the tiles are optimized or not
 	{% if isSpritesheetAnimation -%}
 		false,
 	{%- else -%}
-		{{ item.sprites.optimizedTiles }},
+		{{ sprite.optimizeTiles }},
 	{%- endif %}
 
 	// char spec
@@ -334,7 +338,7 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 
 {% for animation in item.components.animations -%}
 {%- if animation.name != '' -%}
-	{%- set animationName = animation.name | sanitizeSpecName -%}
+	{%- set animationName = animation.name -%}
 {%- else -%} 
 	{%- set animationName = loop.index -%}
 {%- endif -%}
@@ -619,11 +623,11 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			kType{{ item.inGameType | sanitizeSpecName }},
 
 			// physical specification
-			(PhysicalProperties*){%- if item.physics.enabled -%} 
-			&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
-			{%- else -%} 
+			{%- if item.physics.enabled %} 
+			(PhysicalProperties*)&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
+			{%- else %} 
 			NULL
-			{%- endif -%},
+			{%- endif %},
 		{%- if item.components.animations.length %}
 		},
 
