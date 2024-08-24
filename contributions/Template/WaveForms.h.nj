@@ -1,4 +1,9 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
+{%- set itemNames = [] -%}
+{%- for item in project.items.WaveForm | values | unique('_fileUri') -%}
+	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
+	{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
+{%- endfor -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef WAVEFORMS_H_
@@ -7,10 +12,9 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% if project.items.WaveForm %}
-{%- for waveForm in project.items.WaveForm | values | unique('_fileUri') | sort(attribute='_fileUri') -%}
-{%- set sanitizedSpecName = waveForm._fileUri | basename(false) | sanitizeSpecName -%}
-extern const int8 {{ sanitizedSpecName }}WaveForm[];
+{% if itemNames %}
+{%- for itemName in itemNames | sort -%}
+extern const int8 {{ itemName }}WaveForm[];
 {% endfor -%}
 {% endif %}
 

@@ -1,4 +1,9 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
+{%- set itemNames = [] -%}
+{%- for item in project.items.RumbleEffect | values | unique('_fileUri') -%}
+	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
+	{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
+{%- endfor -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef RUMBLE_EFFECTS_H_
@@ -12,10 +17,9 @@
 
 {{ macros.sectionHeader('Declarations') }}
 
-{% if project.items.RumbleEffect %}
-{%- for rumbleEffect in project.items.RumbleEffect | values | unique('_fileUri') | sort(attribute='_fileUri') -%}
-{%- set sanitizedSpecName = rumbleEffect._fileUri | basename(false) | sanitizeSpecName -%}
-extern RumbleEffectSpec {{ sanitizedSpecName }}RumbleEffectSpec;
+{% if itemNames %}
+{%- for itemName in itemNames | sort -%}
+extern RumbleEffectSpec {{ itemName }}RumbleEffectSpec;
 {% endfor -%}
 {% endif %}
 

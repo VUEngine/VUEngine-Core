@@ -1,4 +1,11 @@
 {%- import 'templates/partials/macros.nj' as macros -%}
+{%- set itemNames = [] -%}
+{%- for item in project.items.Font | values | unique('_fileUri') -%}
+	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
+	{%- if item._contributor != "engine" -%}
+		{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
+	{%- endif -%}
+{%- endfor -%}
 {% include('templates/partials/fileHeader/fileHeader.h.nj') %}
 
 #ifndef FONTS_H_
@@ -16,12 +23,9 @@
 extern FontSpec DefaultFontSpec;
 extern FontSpec ProfilerFontSpec;
 extern FontSpec DebugFontSpec;
-{% if project.items.Font %}
-{%- for font in project.items.Font | values | unique('_fileUri') | sort(attribute='_fileUri') -%}
-{%- set sanitizedSpecName = font._fileUri | basename(false) | sanitizeSpecName -%}
-{%- if font._contributor != 'engine' -%}
-extern FontSpec {{ sanitizedSpecName }}FontSpec;
-{% endif -%}
+{% if itemNames %}
+{%- for itemName in itemNames | sort -%}
+extern FontSpec {{ itemName }}FontSpec;
 {% endfor -%}
 {% endif %}
 
