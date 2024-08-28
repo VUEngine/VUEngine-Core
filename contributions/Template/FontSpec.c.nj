@@ -92,7 +92,7 @@ const uint32 {{ sanitizedSpecName }} FontTilesFrameOffsets[] __attribute__((alig
 CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 {
 	// number of chars
-	{{ item.characterCount * item.size.x * item.size.y }},
+	{{ item.pageSize * item.size.x * item.size.y }},
 
 	// whether it is shared or not
 	true,
