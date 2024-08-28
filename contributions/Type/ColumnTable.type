@@ -28,7 +28,8 @@
 							"minimum": 1,
 							"maximum": 16
 						}
-					}
+					},
+					"additionalProperties": false
 				},
 				"maxItems": 256,
 				"minItems": 128,
