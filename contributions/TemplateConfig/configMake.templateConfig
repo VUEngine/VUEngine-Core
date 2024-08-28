@@ -3,7 +3,7 @@
 		"path": "config.make",
 		"root": "project"
 	}],
-	"template": "contributions/Template/config.make.nj",
+	"template": "contributions/Template/config.make.njk",
 	"events": [{
 		"type": "installedPluginsChanged"
 	}]

@@ -3,7 +3,7 @@
 		"path": "headers/WaveForms.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/WaveForms.h.nj",
+	"template": "contributions/Template/WaveForms.h.njk",
 	"events": [{
 		"type": "installedPluginsChanged"
 	}]

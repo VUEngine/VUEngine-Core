@@ -3,5 +3,5 @@
 		"path": "headers/RumbleEffects.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/RumbleEffects.h.nj"
+	"template": "contributions/Template/RumbleEffects.h.njk"
 }

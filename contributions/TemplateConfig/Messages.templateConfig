@@ -3,5 +3,5 @@
 		"path": "headers/Messages.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/Messages.h.nj"
+	"template": "contributions/Template/Messages.h.njk"
 }

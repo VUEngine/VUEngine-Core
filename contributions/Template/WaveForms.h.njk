@@ -1,10 +1,10 @@
-{%- import 'templates/partials/macros.nj' as macros -%}
+{%- import 'templates/partials/macros.njk' as macros -%}
 {%- set itemNames = [] -%}
 {%- for item in project.items.WaveForm | values | unique('_fileUri') -%}
 	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
 	{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
 {%- endfor -%}
-{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.h.njk') %}
 
 #ifndef WAVEFORMS_H_
 #define WAVEFORMS_H_

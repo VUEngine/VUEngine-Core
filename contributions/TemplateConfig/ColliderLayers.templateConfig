@@ -3,5 +3,5 @@
 		"path": "headers/ColliderLayers.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/ColliderLayers.h.nj"
+	"template": "contributions/Template/ColliderLayers.h.njk"
 }
