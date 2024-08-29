@@ -122,7 +122,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"onScreenRotation": {
 									"type": "object",
@@ -136,7 +137,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"onScreenScale": {
 									"type": "object",
@@ -150,7 +152,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"name": {
 									"type": "string"
@@ -323,7 +326,8 @@
 											"type": "boolean",
 											"default": false
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"bgmapMode": {
 									"type": "string",
@@ -362,7 +366,8 @@
 										"parallax": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"manipulationFunction": {
 									"type": "string"
@@ -399,7 +404,8 @@
 													"maximum": 255,
 													"minimum": 0
 												}
-											}
+											},
+											"additionalProperties": false
 										},
 										"palette": {
 											"type": "integer",
@@ -421,7 +427,8 @@
 													"type": "boolean",
 													"default": false
 												}
-											}
+											},
+											"additionalProperties": false
 										},
 										"repeat": {
 											"type": "object",
@@ -447,11 +454,14 @@
 														"y": {
 															"type": "number"
 														}
-													}
+													},
+													"additionalProperties": false
 												}
-											}
+											},
+											"additionalProperties": false
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"section": {
 									"type": "string",

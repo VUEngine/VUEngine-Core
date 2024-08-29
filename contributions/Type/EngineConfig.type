@@ -148,7 +148,8 @@
 								"maximum": 27,
 								"minimum": 0
 							}
-						}
+						},
+						"additionalProperties": false
 					}
 				},
 				"additionalProperties": false
@@ -250,7 +251,8 @@
 									"default": 1,
 									"minimum": 1
 								}
-							}
+							},
+							"additionalProperties": false
 						},
 						"default": [
 							{
