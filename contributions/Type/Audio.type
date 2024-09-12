@@ -1,8 +1,8 @@
 {
 	"enabled": false,
-	"file": ".song",
+	"file": ".audio",
 	"schema": {
-		"title": "Song",
+		"title": "Audio",
 		"properties": {
 			"name": {
 				"type": "string",
@@ -68,7 +68,8 @@
 									}
 								},
 								"additionalProperties": false
-							}
+							},
+							"minItems": 1
 						},
 						"volume": {
 							"type": "integer",
@@ -79,10 +80,6 @@
 							"default": false
 						},
 						"solo": {
-							"type": "boolean",
-							"default": false
-						},
-						"collapsed": {
 							"type": "boolean",
 							"default": false
 						}
@@ -108,8 +105,7 @@
 						],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					},
 					{
 						"id": 1,
@@ -118,8 +114,7 @@
 						"patterns": [],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					},
 					{
 						"id": 2,
@@ -128,8 +123,7 @@
 						"patterns": [],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					},
 					{
 						"id": 3,
@@ -138,8 +132,7 @@
 						"patterns": [],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					},
 					{
 						"id": 4,
@@ -148,8 +141,7 @@
 						"patterns": [],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					},
 					{
 						"id": 5,
@@ -158,10 +150,11 @@
 						"patterns": [],
 						"volume": 100,
 						"muted": false,
-						"solo": false,
-						"collapsed": false
+						"solo": false
 					}
-				]
+				],
+				"maxItems": 6,
+				"minItems": 6
 			},
 			"instruments": {
 				"type": "array",
@@ -171,6 +164,17 @@
 						"name": {
 							"type": "string",
 							"default": ""
+						},
+						"waveform": {
+							"type": "array",
+							"items": {
+								"type": "integer",
+								"default": 1,
+								"maximum": 64,
+								"minimum": 1
+							},
+							"maxItems": 32,
+							"minItems": 32
 						}
 					},
 					"additionalProperties": false
@@ -179,7 +183,8 @@
 					{
 						"name": "Synth"
 					}
-				]
+				],
+				"minItems": 1
 			},
 			"volume": {
 				"type": "integer",
