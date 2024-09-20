@@ -508,11 +508,9 @@
 									"maximum": 3,
 									"default": 3
 								},
-								"transparent": {
-									"type": "integer",
-									"minimum": 0,
-									"maximum": 2,
-									"default": 0
+								"transparency": {
+									"type": "string",
+									"default": "None"
 								},
 								"interlaced": {
 									"type": "boolean",
