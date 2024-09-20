@@ -209,5 +209,5 @@
 		"type": "MusicEditor",
 		"scope": "#"
 	},
-	"icon": "fa fa-music"
+	"icon": "codicon codicon-piano"
 }

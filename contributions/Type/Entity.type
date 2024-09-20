@@ -483,46 +483,40 @@
 								"name": {
 									"type": "string"
 								},
-								"wireframe": {
+								"type": {
+									"type": "string",
+									"default": "Sphere"
+								},
+								"displacement": {
 									"type": "object",
 									"properties": {
-										"type": {
-											"type": "string",
-											"default": "Sphere"
+										"x": {
+											"type": "number"
 										},
-										"displacement": {
-											"type": "object",
-											"properties": {
-												"x": {
-													"type": "number"
-												},
-												"y": {
-													"type": "number"
-												},
-												"z": {
-													"type": "number"
-												}
-											},
-											"additionalProperties": false
+										"y": {
+											"type": "number"
 										},
-										"color": {
-											"type": "integer",
-											"minimum": 0,
-											"maximum": 3,
-											"default": 3
-										},
-										"transparent": {
-											"type": "integer",
-											"minimum": 0,
-											"maximum": 2,
-											"default": 0
-										},
-										"interlaced": {
-											"type": "boolean",
-											"default": false
+										"z": {
+											"type": "number"
 										}
 									},
 									"additionalProperties": false
+								},
+								"color": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 3,
+									"default": 3
+								},
+								"transparent": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 2,
+									"default": 0
+								},
+								"interlaced": {
+									"type": "boolean",
+									"default": false
 								},
 								"segments": {
 									"type": "array",
