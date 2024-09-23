@@ -1,5 +1,5 @@
 {
-	"enabled": false,
+	"enabled": true,
 	"file": ".audio",
 	"schema": {
 		"title": "Audio",
@@ -37,9 +37,9 @@
 										"type": "string",
 										"default": ""
 									},
-									"size": {
-										"type": "integer",
-										"default": 32
+									"bar": {
+										"type": "string",
+										"default": "4/4"
 									},
 									"notes": {
 										"type": "array",
@@ -71,10 +71,6 @@
 							},
 							"minItems": 1
 						},
-						"volume": {
-							"type": "integer",
-							"default": 100
-						},
 						"muted": {
 							"type": "boolean",
 							"default": false
@@ -103,7 +99,6 @@
 								"effects": []
 							}
 						],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					},
@@ -112,7 +107,6 @@
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					},
@@ -121,7 +115,6 @@
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					},
@@ -130,7 +123,6 @@
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					},
@@ -139,7 +131,6 @@
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					},
@@ -148,7 +139,6 @@
 						"instrument": 0,
 						"sequence": [],
 						"patterns": [],
-						"volume": 100,
 						"muted": false,
 						"solo": false
 					}
@@ -166,15 +156,91 @@
 							"default": ""
 						},
 						"waveform": {
-							"type": "array",
-							"items": {
-								"type": "integer",
-								"default": 1,
-								"maximum": 64,
-								"minimum": 1
+							"type": "integer",
+							"default": 0,
+							"maximum": 0,
+							"minimum": 4
+						},
+						"interval": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"value": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 31
+								}
 							},
-							"maxItems": 32,
-							"minItems": 32
+							"additionalProperties": false
+						},
+						"envelope": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"repeat": {
+									"type": "boolean",
+									"default": false
+								},
+								"direction": {
+									"type": "boolean",
+									"default": true
+								},
+								"initialValue": {
+									"type": "integer",
+									"default": 15,
+									"minimum": 0,
+									"maximum": 15
+								},
+								"stepTime": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								}
+							},
+							"additionalProperties": false
+						},
+						"sweepMod": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"repeat": {
+									"type": "boolean",
+									"default": true
+								},
+								"function": {
+									"type": "boolean",
+									"default": true
+								},
+								"frequency": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 1
+								},
+								"interval": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								},
+								"direction": {
+									"type": "boolean",
+									"default": true
+								},
+								"shift": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								}
+							},
+							"additionalProperties": false
 						}
 					},
 					"additionalProperties": false
@@ -186,21 +252,41 @@
 				],
 				"minItems": 1
 			},
-			"volume": {
-				"type": "integer",
-				"default": 100
+			"waveforms": {
+				"type": "array",
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "integer",
+						"default": 1,
+						"maximum": 64,
+						"minimum": 1
+					},
+					"maxItems": 32,
+					"minItems": 32
+				},
+				"maxItems": 5,
+				"minItems": 5
 			},
 			"speed": {
 				"type": "integer",
 				"default": 300
 			},
-			"bar": {
-				"type": "integer",
-				"default": 4
+			"loop": {
+				"type": "boolean",
+				"default": false
 			},
-			"defaultPatternSize": {
+			"defaultBar": {
+				"type": "string",
+				"default": "4/4"
+			},
+			"noteResolution": {
 				"type": "integer",
-				"default": 32
+				"default": 16
+			},
+			"section": {
+				"type": "string",
+				"default": "rom"
 			}
 		},
 		"required": []
