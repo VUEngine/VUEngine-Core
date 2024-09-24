@@ -37,7 +37,7 @@ void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpe
 
 	this->classIndex = kColliderLineFieldIndex;
 
-	this->lineSpec = NULL;
+	this->meshSpec = NULL;
 	this->a = Vector3D::zero();
 	this->b = Vector3D::zero();
 	this->normal = Vector3D::zero();
@@ -49,12 +49,12 @@ void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpe
 // class's destructor
 void LineField::destructor()
 {
-	if(NULL != this->lineSpec)
+	if(NULL != this->meshSpec)
 	{
-		delete this->lineSpec;
+		delete this->meshSpec;
 	}
 
-	this->lineSpec = NULL;
+	this->meshSpec = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -192,11 +192,33 @@ void LineField::configureWireframe()
 		return;
 	}
 
-	this->lineSpec = new LineSpec;
-	*this->lineSpec = (LineSpec)
+	this->meshSpec = new MeshSpec;
+
+	const PixelVector MeshesSegments[][2]=
+	{
+		// line
+		{
+			PixelVector::getFromVector3D(this->a, 0),
+			PixelVector::getFromVector3D(this->b, 0),
+		},
+
+		// normal
+		{
+			PixelVector::getFromVector3D(Vector3D::intermediate(this->a, this->b), 0),
+			PixelVector::getFromVector3D(Vector3D::sum(Vector3D::intermediate(this->a, this->b), Vector3D::scalarProduct(this->normal, this->normalLength)), 0),
+		},
+
+		// limiter
+		{
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+		},
+	};
+
+	*this->meshSpec = (MeshSpec)
 	{
 		{
-			__TYPE(Line),
+			__TYPE(Mesh),
 
 			/// displacement
 			{0, 0, 0},
@@ -211,15 +233,12 @@ void LineField::configureWireframe()
 			true
 		},
 
-//		Vector3D::intermediate(this->a, this->b),
-//		Vector3D::sum(Vector3D::intermediate(this->a, this->b), this->normal)
-
-		this->a,
-		this->b,
+		/// segments
+		(PixelVector(*)[2])MeshesSegments
 	};
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Line(this->owner, this->lineSpec));
+	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, this->meshSpec));
 
 	if(!isDeleted(this->wireframe))
 	{

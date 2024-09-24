@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Collider.h>
-#include <Line.h>
+#include <Mesh.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@
 /// @ingroup physics
 class LineField : Collider
 {
-	LineSpec* lineSpec;
+	MeshSpec* meshSpec;
 	Vector3D normal;
 	Vector3D a;
 	Vector3D b;
