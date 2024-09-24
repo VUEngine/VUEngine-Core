@@ -1,5 +1,5 @@
-{%- import 'templates/partials/macros.nj' as macros -%}
-{%- include('templates/partials/fileHeader/fileHeader.c.nj') -%}
+{%- import 'templates/partials/macros.njk' as macros -%}
+{%- include('templates/partials/fileHeader/fileHeader.c.njk') -%}
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 {%- set section = sprite.section -%}
@@ -28,9 +28,9 @@
 				{%- set customMapPrefix = sanitizedSpecName ~ 'Entity' -%}
 				{#- for some reason, the uncompressJson filter in below partials wouldn't work if we don't call it here once -#}
 				{%- set __whatTheHeck__ = imageData.tiles.data | uncompressJson -%}
-				{%- include('templates/partials/image/tiles.c.nj') -%}
-				{%- include('templates/partials/image/maps.c.nj') -%}
-				{%- include('templates/partials/image/frameOffsets.c.nj') -%}
+				{%- include('templates/partials/image/tiles.c.njk') -%}
+				{%- include('templates/partials/image/maps.c.njk') -%}
+				{%- include('templates/partials/image/frameOffsets.c.njk') -%}
 			{%- endfor -%}
 		{%- endif -%}
 	{%- endfor -%}

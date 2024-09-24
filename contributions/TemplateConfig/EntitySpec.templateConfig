@@ -3,6 +3,6 @@
 		"path": "Converted/${_filename}EntitySpec.c",
 		"root": "file"
 	}],
-	"template": "contributions/Template/EntitySpec.c.nj",
+	"template": "contributions/Template/EntitySpec.c.njk",
 	"itemSpecific": "Entity"
 }

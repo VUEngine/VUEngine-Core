@@ -1,0 +1,21 @@
+{%- import 'templates/partials/macros.njk' as macros -%}
+{%- set itemNames = [] -%}
+{%- for item in project.items.WaveForm | values | unique('_fileUri') -%}
+	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
+	{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
+{%- endfor -%}
+{% include('templates/partials/fileHeader/fileHeader.h.njk') %}
+
+#ifndef WAVEFORMS_H_
+#define WAVEFORMS_H_
+
+
+{{ macros.sectionHeader('Declarations') }}
+
+{% if itemNames %}
+{%- for itemName in itemNames | sort -%}
+extern const int8 {{ itemName }}WaveForm[];
+{% endfor -%}
+{% endif %}
+
+#endif

@@ -24,7 +24,8 @@
 								"z": {
 									"type": "number"
 								}
-							}
+							},
+							"additionalProperties": false
 						},
 						"onScreenRotation": {
 							"type": "object",
@@ -38,7 +39,8 @@
 								"z": {
 									"type": "number"
 								}
-							}
+							},
+							"additionalProperties": false
 						},
 						"onScreenScale": {
 							"type": "object",
@@ -52,7 +54,8 @@
 								"z": {
 									"type": "number"
 								}
-							}
+							},
+							"additionalProperties": false
 						},
 						"name": {
 							"type": "string"
@@ -74,7 +77,8 @@
 							"type": "boolean",
 							"default": false
 						}
-					}
+					},
+					"additionalProperties": false
 				}
 			},
 			"level": {
@@ -107,7 +111,8 @@
 								"type": "number",
 								"default": 0
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"cameraInitialPosition": {
 						"type": "object",
@@ -124,7 +129,8 @@
 							"parallax": {
 								"type": "number"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"size": {
 						"type": "object",
@@ -144,9 +150,11 @@
 								"minimum": 1,
 								"default": 32
 							}
-						}
+						},
+						"additionalProperties": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"physics": {
 				"type": "object",
@@ -166,9 +174,11 @@
 							"z": {
 								"type": "number"
 							}
-						}
+						},
+						"additionalProperties": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"rendering": {
 				"type": "object",
@@ -191,12 +201,14 @@
 									"bright": {
 										"type": "string"
 									}
-								}
+								},
+								"additionalProperties": false
 							},
 							"brightnessRepeat": {
 								"type": "string"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"maximumAffineRowsToComputePerCall": {
 						"type": "number"
@@ -231,7 +243,8 @@
 									"gplt3": {
 										"type": "number"
 									}
-								}
+								},
+								"additionalProperties": false
 							},
 							"object": {
 								"type": "object",
@@ -248,9 +261,11 @@
 									"jplt3": {
 										"type": "number"
 									}
-								}
+								},
+								"additionalProperties": false
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"paramTableSegments": {
 						"type": "number"
@@ -279,12 +294,14 @@
 							"scalingFactor": {
 								"type": "number"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"texturesMaximumRowsToWrite": {
 						"type": "number"
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"sound": {
 				"type": "object",
@@ -295,7 +312,8 @@
 					"pcmTargetPlaybackFrameRate": {
 						"type": "number"
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"timer": {
 				"type": "object",
@@ -309,7 +327,8 @@
 					"timePerInterruptUnits": {
 						"type": "number"
 					}
-				}
+				},
+				"additionalProperties": false
 			}
 		},
 		"required": []

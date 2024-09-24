@@ -16,7 +16,8 @@
 						"description": "The maximum possible scale. Affects param table allocation space.",
 						"default": 2
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"animation": {
 				"type": "object",
@@ -31,7 +32,8 @@
 						"description": "The maximum number of frames per animation function.",
 						"default": 16
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"brightness": {
 				"type": "object",
@@ -56,7 +58,8 @@
 						"type": "integer",
 						"default": 1
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"chars": {
 				"type": "object",
@@ -66,7 +69,8 @@
 						"description": "The total number of available chars in char memory",
 						"default": 2048
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"communications": {
 				"type": "object",
@@ -76,7 +80,8 @@
 						"description": "Enable communications at the start of the game, e.g. for link play.",
 						"default": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"debug": {
 				"type": "object",
@@ -121,7 +126,8 @@
 						"type": "integer",
 						"default": 1000
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"exceptions": {
 				"type": "object",
@@ -142,9 +148,11 @@
 								"maximum": 27,
 								"minimum": 0
 							}
-						}
+						},
+						"additionalProperties": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"frameRate": {
 				"type": "object",
@@ -161,7 +169,8 @@
 						"type": "integer",
 						"default": 10
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"game": {
 				"type": "array",
@@ -198,7 +207,8 @@
 							"type": "string",
 							"default": ""
 						}
-					}
+					},
+					"additionalProperties": false
 				}
 			},
 			"math": {
@@ -208,7 +218,8 @@
 						"type": "integer",
 						"default": 6
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"memoryPools": {
 				"type": "object",
@@ -240,7 +251,8 @@
 									"default": 1,
 									"minimum": 1
 								}
-							}
+							},
+							"additionalProperties": false
 						},
 						"default": [
 							{
@@ -285,7 +297,8 @@
 							}
 						]
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"optics": {
 				"type": "object",
@@ -353,7 +366,8 @@
 						"type": "boolean",
 						"default": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"palettes": {
 				"type": "object",
@@ -397,7 +411,8 @@
 						"maximum": 3,
 						"minimum": 0
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"physics": {
 				"type": "object",
@@ -460,7 +475,8 @@
 						"default": 2,
 						"minimum": 0
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"random": {
 				"type": "object",
@@ -474,7 +490,8 @@
 						"default": 2,
 						"minimum": 1
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"sound": {
 				"type": "object",
@@ -489,7 +506,8 @@
 						"default": 2048,
 						"minimum": 0
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"sprite": {
 				"type": "object",
@@ -514,7 +532,8 @@
 						"type": "boolean",
 						"default": true
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"sram": {
 				"type": "object",
@@ -525,7 +544,8 @@
 						"default": 8192,
 						"minimum": 0
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"texture": {
 				"type": "object",
@@ -557,14 +577,16 @@
 										"default": 0,
 										"minimum": 0
 									}
-								}
+								},
+								"additionalProperties": false
 							},
 							"printableArea": {
 								"type": "integer",
 								"default": 1792,
 								"minimum": 0
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"paramTableSegments": {
 						"type": "integer",
@@ -572,7 +594,8 @@
 						"default": 1,
 						"minimum": 0
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"wireframes": {
 				"type": "object",
@@ -607,7 +630,8 @@
 						"description": "Optimize drawing of vertical lines.",
 						"default": false
 					}
-				}	
+				},
+				"additionalProperties": false
 			}
 		},
 		"required": []

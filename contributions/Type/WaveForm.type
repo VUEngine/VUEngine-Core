@@ -7,6 +7,7 @@
 				"type": "array",
 				"items": {
 					"type": "integer",
+					"default": 1,
 					"maximum": 64,
 					"minimum": 1
 				},

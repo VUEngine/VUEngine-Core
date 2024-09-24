@@ -4,7 +4,7 @@
 	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
 {%- set plugins = project.items.GameConfig.project.plugins | default({}) -%}
-{% include('templates/partials/fileHeader/fileHeader.make.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.make.njk') %}
 
 # VUEngine plugins which the project uses
 PLUGINS							= {{ plugins | keys | sort | join(' \\\n\t\t\t\t\t\t\t\t  ') | safe }}

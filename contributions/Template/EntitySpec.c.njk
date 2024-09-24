@@ -1,10 +1,15 @@
-{%- import 'templates/partials/macros.nj' as macros -%}
-{%- include('templates/partials/fileHeader/fileHeader.c.nj') -%}
+{%- import 'templates/partials/macros.njk' as macros -%}
+{%- include('templates/partials/fileHeader/fileHeader.c.njk') -%}
 
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
+{%- set isAnimated = false -%}
+{%- if item.components.animations.length -%}
+	{%- set isAnimated = true -%}
+{%- endif -%}
+
 {%- set isSpritesheetAnimation = false -%}
-{%- if item.components.animations.length and not item.animations.multiframe -%}
+{%- if isAnimated and not item.animations.multiframe -%}
 	{%- set isSpritesheetAnimation = true -%}
 {%- endif -%}
 
@@ -13,7 +18,7 @@
 	{%- set entityClass = item.extraProperties.customAllocator -%}
 {%- elseif item.physics.enabled -%} {#- TODO: or item.stateMachine enabled -#}
 	{%- set entityClass = 'Actor' -%}
-{%- elseif item.components.animations.length -%}
+{%- elseif isAnimated -%}
 	{%- set entityClass = 'AnimatedEntity' -%}
 {%- else %}
 	{%- set entityClass = 'Entity' -%}
@@ -31,16 +36,16 @@
 	{%- for sprite in item.components.sprites -%}
 		{%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 		{%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
-		{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not item.components.animations.length -%}
+		{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not isAnimated -%}
 			{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
 			{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
-		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
+		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and isAnimated -%}
 			{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
 			{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
-		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
+		{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not isAnimated -%}
 			{%- set spriteClass = 'MBgmapSprite' -%}
 			{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
-		{%- elseif item.components.animations.length -%}
+		{%- elseif isAnimated -%}
 			{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
 		{%- endif -%}
 		{%- set includes = (includes.push(spriteClass), includes) -%}
@@ -107,16 +112,16 @@
 
 {%- set spriteClass = item.sprites.type ~ 'Sprite' -%}
 {%- set spriteAllocatorClass = item.sprites.type ~ 'Sprite' -%}
-{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not item.components.animations.length -%}
+{%- if item.sprites.type == 'Bgmap' and not sprite.texture.repeat.x and not sprite.texture.repeat.y and sprite.colorMode == 1 and not isAnimated -%}
 	{%- set spriteClass = 'FrameBlendBgmapSprite' -%}
 	{%- set spriteAllocatorClass = 'FrameBlendBgmapSprite' -%}
-{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and item.components.animations.length -%}
+{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and isAnimated -%}
 	{%- set spriteClass = 'MBgmapAnimatedSprite' -%}
 	{%- set spriteAllocatorClass = 'MBgmapAnimatedSprite' -%}
-{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not item.components.animations.length -%}
+{%- elseif item.sprites.type == 'Bgmap' and (sprite.texture.repeat.x or sprite.texture.repeat.y) and not isAnimated -%}
 	{%- set spriteClass = 'MBgmapSprite' -%}
 	{%- set spriteAllocatorClass = 'MBgmapSprite' -%}
-{%- elseif item.components.animations.length -%}
+{%- elseif isAnimated -%}
 	{%- set spriteAllocatorClass = item.sprites.type ~ 'AnimatedSprite' -%}
 {%- endif -%}
 
@@ -130,7 +135,7 @@
 	{%- set spriteImageData = item.components.sprites[sprite._imageData - 1]._imageData -%}
 {%- endif -%}
 {%- set imageData = spriteImageData.images[0] -%}
-{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ sprite._imageData.dupeIndex -%}
+{%- set charsetSpecName = sanitizedSpecName ~ 'Sprite' ~ spriteNumber -%}
 {%- if isStereoAnimation -%}
 	{%- set imageData = spriteImageData.images[loop.index0] -%}
 	{%- set charsetSpecName = charsetSpecName ~ eye -%}
@@ -141,27 +146,37 @@
 	{%- set spriteName = spriteName ~ eye -%}
 {%- endif -%}
 {%- set spriteNames = (spriteNames.push(spriteName), spriteNames) -%}
+{%- set isOptimizedAnimation = false -%}
+{%- if isAnimated and imageData.animation.largestFrame is defined -%}
+	{%- set isOptimizedAnimation = true -%}
+{%- endif -%}
 
-{%- if imageData.tiles is defined and sprite._imageData.dupeIndex == spriteNumber and (eye !== 'R' or isStereoAnimation) %}
+{%- if imageData.tiles is defined and (eye !== 'R' or isStereoAnimation) %}
 CharSetROMSpec {{ charsetSpecName }}CharsetSpec =
 {
 	// number of chars in function or the number of frames to load at the same time
-	{%- if item.components.animations.length and imageData.animation.largestFrame is defined %}
+	{%- if isOptimizedAnimation %}
 	{{ imageData.animation.largestFrame }},
-	{%- elseif item.components.animations.length and not item.animations.multiframe %}
+	{%- elseif isSpritesheetAnimation %}
 	{{ (imageData.tiles.count / item.animations.totalFrames) | round(0, "floor") }},
 	{%- else %}
 	{{ imageData.tiles.count }},
 	{%- endif %}
 
 	// whether it is shared or not
-	{{ item.sprites.sharedTiles }},
+	{%- if isSpritesheetAnimation %}
+	false,
+	{%- else %}
+	true,
+	{%- endif %}
 
 	// whether the tiles are optimized or not
-	{% if isSpritesheetAnimation -%}
-		false,
-	{%- else -%}
-		{{ item.sprites.optimizedTiles }},
+	{%- if isOptimizedAnimation %}
+	true,
+	{%- elseif isSpritesheetAnimation %}
+	false,
+	{%- else %}
+	{{ sprite.optimizeTiles }},
 	{%- endif %}
 
 	// char spec
@@ -197,7 +212,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{%- if spriteClass == 'FrameBlendBgmapSprite' -%}
 		{%- set mapHeight = mapHeight / 2 | round(0, "floor") -%}
 	{%- endif -%}
-	{%- if isSpritesheetAnimation -%}
+	{%- if isSpritesheetAnimation and not isOptimizedAnimation -%}
 		{%- set mapHeight = mapHeight / item.animations.totalFrames -%}
 	{%- endif -%}
 	{{ mapHeight }},
@@ -206,7 +221,7 @@ TextureROMSpec {{ spriteName }}TextureSpec =
 	{ {{ sprite.texture.padding.x }}, {{ sprite.texture.padding.y }} },
 
 	// number of frames
-	{%- if item.components.animations.length and item.animations.multiframe %}
+	{%- if isAnimated and item.animations.multiframe %}
 	{{ item.animations.totalFrames }},
 	{%- elseif spriteClass == 'FrameBlendBgmapSprite' %}
 	2,
@@ -328,13 +343,13 @@ TextureROMSpec* const {{ spriteName }}TextureSpecs[] =
 {%- endif %}
 
 {#- PRINT ANIMATIONS -#}
-{%- if item.components.animations.length %}
+{%- if isAnimated %}
 
 {{ macros.sectionHeader('Animations') }}
 
 {% for animation in item.components.animations -%}
 {%- if animation.name != '' -%}
-	{%- set animationName = animation.name | sanitizeSpecName -%}
+	{%- set animationName = animation.name -%}
 {%- else -%} 
 	{%- set animationName = loop.index -%}
 {%- endif -%}
@@ -560,7 +575,7 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 	{%- if item.physics.enabled %}
 	{
 	{%- endif %}
-		{%- if item.components.animations.length %}
+		{%- if isAnimated %}
 		{
 		{%- endif %}
 			// class allocator
@@ -619,12 +634,12 @@ PositionedEntityROMSpec {{ sanitizedSpecName }}Children[] =
 			kType{{ item.inGameType | sanitizeSpecName }},
 
 			// physical specification
-			(PhysicalProperties*){%- if item.physics.enabled -%} 
-			&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
-			{%- else -%} 
+			{%- if item.physics.enabled %} 
+			(PhysicalProperties*)&{{ sanitizedSpecName }}PhysicalPropertiesSpec 
+			{%- else %} 
 			NULL
-			{%- endif -%},
-		{%- if item.components.animations.length %}
+			{%- endif %},
+		{%- if isAnimated %}
 		},
 
 		// pointer to the animation spec for the character

@@ -1,0 +1,299 @@
+{
+	"enabled": true,
+	"file": ".audio",
+	"schema": {
+		"title": "Audio",
+		"properties": {
+			"name": {
+				"type": "string",
+				"default": ""
+			},
+			"channels": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "integer",
+							"default": 0
+						},
+						"instrument": {
+							"type": "integer",
+							"default": 0
+						},
+						"sequence": {
+							"type": "array",
+							"items": {
+								"type": "integer",
+								"default": 0
+							}
+						},
+						"patterns": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string",
+										"default": ""
+									},
+									"bar": {
+										"type": "string",
+										"default": "4/4"
+									},
+									"notes": {
+										"type": "array",
+										"items": {
+											"type": "integer"
+										}
+									},
+									"volumeL": {
+										"type": "array",
+										"items": {
+											"type": "integer"
+										}
+									},
+									"volumeR": {
+										"type": "array",
+										"items": {
+											"type": "integer"
+										}
+									},
+									"effects": {
+										"type": "array",
+										"items": {
+											"type": "string",
+											"default": ""
+										}
+									}
+								},
+								"additionalProperties": false
+							},
+							"minItems": 1
+						},
+						"muted": {
+							"type": "boolean",
+							"default": false
+						},
+						"solo": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"default": [
+					{
+						"id": 0,
+						"instrument": 0,
+						"sequence": [
+							0
+						],
+						"patterns": [
+							{
+								"name": "",
+								"size": 32,
+								"notes": [],
+								"volumeL": [],
+								"volumeR": [],
+								"effects": []
+							}
+						],
+						"muted": false,
+						"solo": false
+					},
+					{
+						"id": 1,
+						"instrument": 0,
+						"sequence": [],
+						"patterns": [],
+						"muted": false,
+						"solo": false
+					},
+					{
+						"id": 2,
+						"instrument": 0,
+						"sequence": [],
+						"patterns": [],
+						"muted": false,
+						"solo": false
+					},
+					{
+						"id": 3,
+						"instrument": 0,
+						"sequence": [],
+						"patterns": [],
+						"muted": false,
+						"solo": false
+					},
+					{
+						"id": 4,
+						"instrument": 0,
+						"sequence": [],
+						"patterns": [],
+						"muted": false,
+						"solo": false
+					},
+					{
+						"id": 5,
+						"instrument": 0,
+						"sequence": [],
+						"patterns": [],
+						"muted": false,
+						"solo": false
+					}
+				],
+				"maxItems": 6,
+				"minItems": 6
+			},
+			"instruments": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"default": ""
+						},
+						"waveform": {
+							"type": "integer",
+							"default": 0,
+							"maximum": 0,
+							"minimum": 4
+						},
+						"interval": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"value": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 31
+								}
+							},
+							"additionalProperties": false
+						},
+						"envelope": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"repeat": {
+									"type": "boolean",
+									"default": false
+								},
+								"direction": {
+									"type": "boolean",
+									"default": true
+								},
+								"initialValue": {
+									"type": "integer",
+									"default": 15,
+									"minimum": 0,
+									"maximum": 15
+								},
+								"stepTime": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								}
+							},
+							"additionalProperties": false
+						},
+						"sweepMod": {
+							"type": "object",
+							"properties": {
+								"enabled": {
+									"type": "boolean",
+									"default": false
+								},
+								"repeat": {
+									"type": "boolean",
+									"default": true
+								},
+								"function": {
+									"type": "boolean",
+									"default": true
+								},
+								"frequency": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 1
+								},
+								"interval": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								},
+								"direction": {
+									"type": "boolean",
+									"default": true
+								},
+								"shift": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 7
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"default": [
+					{
+						"name": "Synth"
+					}
+				],
+				"minItems": 1
+			},
+			"waveforms": {
+				"type": "array",
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "integer",
+						"default": 1,
+						"maximum": 64,
+						"minimum": 1
+					},
+					"maxItems": 32,
+					"minItems": 32
+				},
+				"maxItems": 5,
+				"minItems": 5
+			},
+			"speed": {
+				"type": "integer",
+				"default": 300
+			},
+			"loop": {
+				"type": "boolean",
+				"default": false
+			},
+			"defaultBar": {
+				"type": "string",
+				"default": "4/4"
+			},
+			"noteResolution": {
+				"type": "integer",
+				"default": 16
+			},
+			"section": {
+				"type": "string",
+				"default": "rom"
+			}
+		},
+		"required": []
+	},
+	"uiSchema": {
+		"type": "MusicEditor",
+		"scope": "#"
+	},
+	"icon": "codicon codicon-piano"
+}

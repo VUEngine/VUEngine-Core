@@ -30,7 +30,8 @@
 						"minimum": 1,
 						"maximum": 4
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"variableSize": {
 				"type": "object",
@@ -55,35 +56,22 @@
 						"minimum": 1,
 						"maximum": 32
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"section": {
 				"type": "string",
-				"oneOf": [
-					{
-						"const": "rom",
-						"title": "ROM Space"
-					},
-					{
-						"const": "exp",
-						"title": "Expansion Space"
-					}
-				],
 				"default": "rom"
 			},
 			"compression": {
 				"type": "string",
-				"oneOf": [
-					{
-						"const": "none",
-						"title": "None"
-					},
-					{
-						"const": "rle",
-						"title": "RLE"
-					}
-				],
 				"default": "none"
+			},
+			"pageSize": {
+				"type": "integer",
+				"default": 256,
+				"minimum": 1,
+				"maximum": 256
 			},
 			"characters": {
 				"type": "array",

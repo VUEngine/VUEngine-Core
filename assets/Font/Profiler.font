@@ -3450,6 +3450,7 @@
     ],
     "compression": "none",
     "offset": 46,
+    "pageSize": 45,
     "section": "rom",
     "size": {
         "x": 1,

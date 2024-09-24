@@ -3,6 +3,6 @@
 		"path": "Converted/${_filename}ColumnTableSpec.c",
 		"root": "file"
 	}],
-	"template": "contributions/Template/ColumnTableSpec.c.nj",
+	"template": "contributions/Template/ColumnTableSpec.c.njk",
 	"itemSpecific": "ColumnTable"
 }

@@ -3,7 +3,7 @@
 {%- else -%}
 	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
-{% include('templates/partials/fileHeader/fileHeader.ld.nj') %}
+{% include('templates/partials/fileHeader/fileHeader.ld.njk') %}
 
 OUTPUT_FORMAT("elf32-v810", "elf32-v810", "elf32-v810")
 OUTPUT("a.elf") /* force elf format output */
@@ -14,12 +14,13 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-	{%- set dramLength = compiler.memorySections.dram.length %}
-	dram (!r) : ORIGIN = {{ ((compiler.memorySections.dram.origin | hexToInt) - dramLength * 1024) | intToHex(8) }}, LENGTH = {{ dramLength }}k
+	{%- set extraDram = 3 -%}
+	{%- set dramLength = compiler.memorySections.dram.length + extraDram %}
+	dram (!r) : ORIGIN = {{ ((compiler.memorySections.dram.origin | hexToInt) - dramLength * 1024) | intToHex(8) }}, LENGTH = {{ dramLength }}k /* Add additional KBs needed for debug tools */
 	wram (!r) : ORIGIN = {{ compiler.memorySections.wram.origin }}, LENGTH = {{ compiler.memorySections.wram.length }}k
-	exp  (r)  : ORIGIN = {{ compiler.memorySections.exp.origin }}, LENGTH = {{ compiler.memorySections.exp.length }}M
+	exp	 (r)  : ORIGIN = {{ compiler.memorySections.exp.origin }}, LENGTH = {{ compiler.memorySections.exp.length }}M
 	sram (!r) : ORIGIN = {{ compiler.memorySections.sram.origin }}, LENGTH = {{ compiler.memorySections.sram.length }}M
-	rom  (rx) : ORIGIN = {{ compiler.memorySections.rom.origin }}, LENGTH = {{ compiler.memorySections.rom.length }}M
+	rom	 (rx) : ORIGIN = {{ compiler.memorySections.rom.origin }}, LENGTH = {{ compiler.memorySections.rom.length }}M
 }
 
 /*
@@ -44,14 +45,14 @@ SECTIONS
 		PROVIDE (__expDataEnd = .);
 	} >exp = 0xFF
 
-	.text __textVma : SUBALIGN(4)
+	.text __textVma :
 	{
 		PROVIDE (__textStart = .);
 		*(.text*)
 		PROVIDE (__textEnd = .);
 	} >rom = 0xFF
 
-	.rodata : SUBALIGN(4)
+	.rodata :
 	{
 		PROVIDE (__stringsStart = .);
 		*(.strings*)
@@ -63,7 +64,7 @@ SECTIONS
 
 	/* Ram memory */
 	__dataLma = .;
-	.sdata __dataVma : AT(__dataLma) SUBALIGN(4)
+	.sdata __dataVma : AT(__dataLma)
 	{
 		PROVIDE (__dataStart = .);
 		PROVIDE (__gp = . + 0x8000);
@@ -76,7 +77,7 @@ SECTIONS
 		PROVIDE (__dataEnd = .);
 	} >wram = 0xFF
 
-	.dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata)) SUBALIGN(4)
+	.dram_data __dramVma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
 	{
 		PROVIDE (__dramDirtyStart = .);
 		*(.dram_dirty*)
@@ -92,21 +93,21 @@ SECTIONS
 		PROVIDE (__sramDataEnd = .);
 	} >sram = 0xFF
 
-	.sbss (NOLOAD): SUBALIGN(4)
+	.sbss (NOLOAD):
 	{
 		PROVIDE (__bssStart = .);
 		*(.sbss*)
 		*(.scommon*)
 	} >wram = 0xFF
 
-	.bss (NOLOAD): SUBALIGN(4)
+	.bss (NOLOAD):
 	{
 		*(.bss*)
 		*(COMMON)
 		PROVIDE (__bssEnd = .);
 	} >wram = 0xFF
 
-	.dram_bss (NOLOAD): AT(__dramDataEnd) SUBALIGN(4)
+	.dram_bss (NOLOAD): AT(__dramDataEnd)
 	{
 		PROVIDE(__dramBssStart = .);
 		*(.dram_bss*)

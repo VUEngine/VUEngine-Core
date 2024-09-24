@@ -8,8 +8,8 @@
 {%- else -%}
 	{%- set compiler = project.items.CompilerConfig.engine -%}
 {%- endif -%}
-{%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader/fileHeader.h.nj') %}
+{%- import 'templates/partials/macros.njk' as macros -%}
+{% include('templates/partials/fileHeader/fileHeader.h.njk') %}
 
 #ifndef CONFIG_H_
 #define CONFIG_H_

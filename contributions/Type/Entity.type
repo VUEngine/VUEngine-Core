@@ -28,12 +28,14 @@
 								"type": "number",
 								"minimum": 0
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"customAllocator": {
 						"type": "string"
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"animations": {
 				"type": "object",
@@ -50,7 +52,8 @@
 						"type": "boolean",
 						"default": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"components": {
 				"type": "object",
@@ -83,7 +86,8 @@
 										"minimum": 0
 									}
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"behaviors": {
@@ -94,7 +98,8 @@
 								"name": {
 									"type": "string"
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"children": {
@@ -117,7 +122,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"onScreenRotation": {
 									"type": "object",
@@ -131,7 +137,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"onScreenScale": {
 									"type": "object",
@@ -145,7 +152,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"name": {
 									"type": "string"
@@ -163,7 +171,8 @@
 									"type": "boolean",
 									"default": false
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"colliders": {
@@ -196,7 +205,8 @@
 											"minimum": 1,
 											"default": 32
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"displacement": {
 									"type": "object",
@@ -213,7 +223,8 @@
 										"parallax": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"rotation": {
 									"type": "object",
@@ -227,7 +238,8 @@
 										"z": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"scale": {
 									"type": "object",
@@ -244,7 +256,8 @@
 											"type": "number",
 											"default": 1
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"checkForCollisions": {
 									"type": "boolean",
@@ -262,7 +275,8 @@
 										"type": "string"
 									}
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"scripts": {
@@ -273,7 +287,8 @@
 								"function": {
 									"type": "string"
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"sprites": {
@@ -311,7 +326,8 @@
 											"type": "boolean",
 											"default": false
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"bgmapMode": {
 									"type": "string",
@@ -350,10 +366,15 @@
 										"parallax": {
 											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"manipulationFunction": {
 									"type": "string"
+								},
+								"optimizeTiles": {
+									"type": "boolean",
+									"default": true
 								},
 								"texture": {
 									"type": "object",
@@ -383,7 +404,8 @@
 													"maximum": 255,
 													"minimum": 0
 												}
-											}
+											},
+											"additionalProperties": false
 										},
 										"palette": {
 											"type": "integer",
@@ -405,7 +427,8 @@
 													"type": "boolean",
 													"default": false
 												}
-											}
+											},
+											"additionalProperties": false
 										},
 										"repeat": {
 											"type": "object",
@@ -431,11 +454,14 @@
 														"y": {
 															"type": "number"
 														}
-													}
+													},
+													"additionalProperties": false
 												}
-											}
+											},
+											"additionalProperties": false
 										}
-									}
+									},
+									"additionalProperties": false
 								},
 								"section": {
 									"type": "string",
@@ -445,7 +471,8 @@
 									"type": "string",
 									"default": "none"
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					},
 					"wireframes": {
@@ -456,44 +483,38 @@
 								"name": {
 									"type": "string"
 								},
-								"wireframe": {
+								"type": {
+									"type": "string",
+									"default": "Sphere"
+								},
+								"displacement": {
 									"type": "object",
 									"properties": {
-										"type": {
-											"type": "string",
-											"default": "Sphere"
+										"x": {
+											"type": "number"
 										},
-										"displacement": {
-											"type": "object",
-											"properties": {
-												"x": {
-													"type": "number"
-												},
-												"y": {
-													"type": "number"
-												},
-												"z": {
-													"type": "number"
-												}
-											}
+										"y": {
+											"type": "number"
 										},
-										"color": {
-											"type": "integer",
-											"minimum": 0,
-											"maximum": 3,
-											"default": 3
-										},
-										"transparent": {
-											"type": "integer",
-											"minimum": 0,
-											"maximum": 2,
-											"default": 0
-										},
-										"interlaced": {
-											"type": "boolean",
-											"default": false
+										"z": {
+											"type": "number"
 										}
-									}
+									},
+									"additionalProperties": false
+								},
+								"color": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 3,
+									"default": 3
+								},
+								"transparency": {
+									"type": "string",
+									"default": "None"
+								},
+								"interlaced": {
+									"type": "boolean",
+									"default": false
 								},
 								"segments": {
 									"type": "array",
@@ -515,7 +536,8 @@
 													"parallax": {
 														"type": "number"
 													}
-												}
+												},
+												"additionalProperties": false
 											},
 											"toVertex": {
 												"type": "object",
@@ -532,9 +554,11 @@
 													"parallax": {
 														"type": "number"
 													}
-												}
+												},
+												"additionalProperties": false
 											}
-										}
+										},
+										"additionalProperties": false
 									}
 								},
 								"length": {
@@ -549,10 +573,12 @@
 									"type": "boolean",
 									"default": true
 								}
-							}
+							},
+							"additionalProperties": false
 						}
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"inGameType": {
 				"type": "string",
@@ -589,7 +615,8 @@
 							"z": {
 								"type": "number"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"gravityAxes": {
 						"type": "array",
@@ -603,7 +630,8 @@
 							"type": "string"
 						}
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"sprites": {
 				"type": "object",
@@ -615,16 +643,9 @@
 					"useZDisplacementInProjection": {
 						"type": "boolean",
 						"default": false
-					},
-					"sharedTiles": {
-						"type": "boolean",
-						"default": true
-					},
-					"optimizedTiles": {
-						"type": "boolean",
-						"default": true
 					}
-				}
+				},
+				"additionalProperties": false
 			}
 		},
 		"required": []

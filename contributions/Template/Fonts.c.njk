@@ -1,0 +1,29 @@
+{%- import 'templates/partials/macros.njk' as macros -%}
+{%- set itemNames = [] -%}
+{%- for item in project.items.Font | values | unique('_fileUri') -%}
+	{%- set itemSanitizedSpecName = item._fileUri | basename(false) | sanitizeSpecName -%}
+	{%- if item._contributor != "engine" -%}
+		{%- set itemNames = (itemNames.push(itemSanitizedSpecName), itemNames) -%}
+	{%- endif -%}
+{%- endfor -%}
+{% include('templates/partials/fileHeader/fileHeader.c.njk') %}
+
+{{ macros.sectionHeader('Includes') }}
+
+#include <Fonts.h>
+
+
+{{ macros.sectionHeader('Definitions') }}
+
+FontSpec* const _fonts[] =
+{
+	(FontSpec*)&DefaultFontSpec,
+	(FontSpec*)&ProfilerFontSpec,
+	(FontSpec*)&DebugFontSpec,
+	{% if itemNames %}
+	{%- for itemName in itemNames | sort -%}
+	(FontSpec*)&{{ itemName }}FontSpec,
+	{% endfor -%}
+	{% endif %}
+	NULL
+};

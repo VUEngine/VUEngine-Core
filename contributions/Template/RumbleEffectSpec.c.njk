@@ -1,7 +1,7 @@
 {%- set sanitizedSpecName = itemUri | basename(false) | sanitizeSpecName -%}
 
-{%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader/fileHeader.c.nj') %}
+{%- import 'templates/partials/macros.njk' as macros -%}
+{% include('templates/partials/fileHeader/fileHeader.c.njk') %}
 
 {{ macros.sectionHeader('Includes') }}
 
@@ -19,11 +19,17 @@ RumbleEffectROMSpec {{ sanitizedSpecName }}RumbleEffectSpec =
 		1
 	{%- endif %},
 	// Frequency
-	{% if item.frequency == 1 -%}
+	{% if item.frequency == 50 -%}
+		__RUMBLE_FREQ_50HZ,
+	{% elseif item.frequency == 95 -%}
+		__RUMBLE_FREQ_95HZ,
+	{% elseif item.frequency == 130 -%}
+		__RUMBLE_FREQ_130HZ,
+	{% elseif item.frequency == 240 -%}
 		__RUMBLE_FREQ_240HZ,
-	{%- elseif item.frequency == 2 -%}
+	{%- elseif item.frequency == 320 -%}
 		__RUMBLE_FREQ_320HZ,
-	{%- elseif item.frequency == 3 -%}
+	{%- elseif item.frequency == 400 -%}
 		__RUMBLE_FREQ_400HZ,
 	{%- else -%}
 		__RUMBLE_FREQ_160HZ,

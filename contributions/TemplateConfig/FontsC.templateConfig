@@ -3,7 +3,7 @@
 		"path": "assets/Fonts.c",
 		"root": "project"
 	}],
-	"template": "contributions/Template/Fonts.c.nj",
+	"template": "contributions/Template/Fonts.c.njk",
 	"events": [{
 		"type": "installedPluginsChanged"
 	}, {

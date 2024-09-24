@@ -3,7 +3,7 @@
 		"path": "headers/Fonts.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/Fonts.h.nj",
+	"template": "contributions/Template/Fonts.h.njk",
 	"events": [{
 		"type": "installedPluginsChanged"
 		},

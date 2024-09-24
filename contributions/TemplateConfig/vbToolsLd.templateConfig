@@ -6,5 +6,5 @@
 		"path": "lib/compiler/linker/vb_debug.ld",
 		"root": "project"
 	}],
-	"template": "contributions/Template/vb_tools.ld.nj"
+	"template": "contributions/Template/vb_tools.ld.njk"
 }

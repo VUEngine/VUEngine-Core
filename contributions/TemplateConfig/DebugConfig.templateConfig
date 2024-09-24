@@ -3,5 +3,5 @@
 		"path": "headers/DebugConfig.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/DebugConfig.h.nj"
+	"template": "contributions/Template/DebugConfig.h.njk"
 }

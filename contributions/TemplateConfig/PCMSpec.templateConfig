@@ -3,6 +3,6 @@
 		"path": "Converted/${_filename}PCMSpec.c",
 		"root": "file"
 	}],
-	"template": "contributions/Template/PCMSpec.c.nj",
+	"template": "contributions/Template/PCMSpec.c.njk",
 	"itemSpecific": "PCM"
 }

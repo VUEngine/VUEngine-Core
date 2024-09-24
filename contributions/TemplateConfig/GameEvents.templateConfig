@@ -3,5 +3,5 @@
 		"path": "headers/GameEvents.h",
 		"root": "project"
 	}],
-	"template": "contributions/Template/GameEvents.h.nj"
+	"template": "contributions/Template/GameEvents.h.njk"
 }

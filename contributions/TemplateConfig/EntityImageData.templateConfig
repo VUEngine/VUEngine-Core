@@ -4,6 +4,6 @@
 		"root": "file",
         "conditions": { ">": [{ "var": "components.sprites.length" }, 0] }
 	}],
-	"template": "contributions/Template/EntityImageData.c.nj",
+	"template": "contributions/Template/EntityImageData.c.njk",
 	"itemSpecific": "Entity"
 }

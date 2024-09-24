@@ -30,7 +30,8 @@
 								"type": "string",
 								"default": "0x0003D800"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"exp": {
 						"type": "object",
@@ -44,7 +45,8 @@
 								"type": "string",
 								"default": "0x04000000"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"rom": {
 						"type": "object",
@@ -58,7 +60,8 @@
 								"type": "string",
 								"default": "0x07000000"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"sram": {
 						"type": "object",
@@ -72,7 +75,8 @@
 								"type": "string",
 								"default": "0x06000000"
 							}
-						}
+						},
+						"additionalProperties": false
 					},
 					"wram": {
 						"type": "object",
@@ -86,9 +90,11 @@
 								"type": "string",
 								"default": "0x05000000"
 							}
-						}
+						},
+						"additionalProperties": false
 					}
-				}
+				},
+				"additionalProperties": false
 			},
 			"memoryUsage": {
 				"type": "object",
@@ -113,7 +119,8 @@
 						"type": "string",
 						"default": ".dram_bss"
 					}
-				}
+				},
+				"additionalProperties": false
 			}
 		},
 		"required": []

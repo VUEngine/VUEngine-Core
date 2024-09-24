@@ -47,8 +47,8 @@
 	{%- set tilesCompressionLabel = tilesCompressionLabel ~ '\n' -%}
 {%- endif -%}
 
-{%- import 'templates/partials/macros.nj' as macros -%}
-{% include('templates/partials/fileHeader/fileHeader.c.nj') %}
+{%- import 'templates/partials/macros.njk' as macros -%}
+{% include('templates/partials/fileHeader/fileHeader.c.njk') %}
 
 {{ macros.sectionHeader('Includes') }}
 
@@ -92,7 +92,7 @@ const uint32 {{ sanitizedSpecName }} FontTilesFrameOffsets[] __attribute__((alig
 CharSetROMSpec {{ sanitizedSpecName }}FontCharSet =
 {
 	// number of chars
-	{{ item.characterCount * item.size.x * item.size.y }},
+	{{ item.pageSize * item.size.x * item.size.y }},
 
 	// whether it is shared or not
 	true,
