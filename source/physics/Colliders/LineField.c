@@ -85,7 +85,7 @@ void LineField::computeSize()
 		normalScale = this->transformation->scale.z;
 	}
 
-	this->normalLength = __FIXED_MULT(__PIXELS_TO_METERS(8), __FIX7_9_TO_FIXED(normalScale));	
+	this->normalLength = __FIXED_MULT(this->normalLength, __FIX7_9_TO_FIXED(normalScale));	
 
 	Rotation rotation = Rotation::sum(Rotation::getFromPixelRotation(((ColliderSpec*)this->componentSpec)->pixelRotation), this->transformation->rotation);	
 	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
@@ -255,6 +255,11 @@ void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
 Vector3D LineField::getNormal()
 {
 	return this->normal;
+}
+
+void LineField::setNormalLength(fixed_t normalLength)
+{
+	this->normalLength = normalLength;
 }
 
 // print debug data

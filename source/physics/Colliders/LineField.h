@@ -45,6 +45,7 @@ class LineField : Collider
 	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
 	void addDisplacement(fixed_t displacement);
 	Vector3D getCenter();
+	void setNormalLength(fixed_t normalLength);
 
 	override Vector3D getNormal();
 	override void configureWireframe();
