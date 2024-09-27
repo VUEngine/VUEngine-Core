@@ -720,10 +720,11 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 			for(; auxNode; auxNode = auxNode->next)
 			{
-				stageEntityDescription = (StageEntityDescription*)auxNode->data;
+				StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-				if(stageEntityDescription->internalId == entity->internalId)
+				if(auxStageEntityDescription->internalId == entity->internalId)
 				{
+					stageEntityDescription = auxStageEntityDescription;
 					break;
 				}
 			}
@@ -734,12 +735,12 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 				{
 					continue;
 				}
+
+				stageEntityDescription->internalId = -1;
 			}
 
 			// unload it
 			Base::removeChild(this, Container::safeCast(entity), true);
-
-			stageEntityDescription->internalId = -1;
 
 			// remove from list of entities that are to be loaded by the streaming,
 			// if the entity is not to be respawned
