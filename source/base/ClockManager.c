@@ -19,9 +19,8 @@
 #include "ClockManager.h"
 
 
-
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//											CLASS'S DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
 friend class VirtualNode;
@@ -29,24 +28,10 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S PUBLIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			ClockManager::getInstance()
- * @memberof	ClockManager
- *
- * @return		ClockManager instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void ClockManager::constructor()
 {
 	Base::constructor();
@@ -54,12 +39,7 @@ void ClockManager::constructor()
 	// create the clock list
 	this->clocks = new VirtualList();
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void ClockManager::destructor()
 {
 	VirtualNode node = this->clocks->head;
@@ -76,13 +56,7 @@ void ClockManager::destructor()
 	// allow a new construct
 	Base::destructor();
 }
-
-/**
- * Register a clock
- *
- * @private
- * @param clock Clock to register
- */
+//---------------------------------------------------------------------------------------------------------
 void ClockManager::register(Clock clock)
 {
 	if(!VirtualList::find(this->clocks, clock))
@@ -90,23 +64,14 @@ void ClockManager::register(Clock clock)
 		VirtualList::pushFront(this->clocks, clock);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Un-register a clock
- *
- * @param clock Clock to un-register
- */
 void ClockManager::unregister(Clock clock)
 {
 	VirtualList::removeElement(this->clocks, clock);
 }
-
-/**
- * Update clocks
- *
- * @param millisecondsElapsed	Milliseconds elapsed between calls
- */
-void ClockManager::update(uint32 millisecondsElapsed)
+//---------------------------------------------------------------------------------------------------------
+void ClockManager::update(uint32 elapsedMilliseconds)
 {
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
@@ -115,13 +80,10 @@ void ClockManager::update(uint32 millisecondsElapsed)
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock::update(node->data, millisecondsElapsed);
+		Clock::update(node->data, elapsedMilliseconds);
 	}
 }
-
-/**
- * Reset registered clocks
- */
+//---------------------------------------------------------------------------------------------------------
 void ClockManager::reset()
 {
 	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
@@ -134,3 +96,4 @@ void ClockManager::reset()
 		Clock::reset(node->data);
 	}
 }
+//---------------------------------------------------------------------------------------------------------

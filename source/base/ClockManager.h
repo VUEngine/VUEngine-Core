@@ -19,24 +19,48 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											FORWARD DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
 class VirtualList;
 class Clock;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+///
+/// Class ClockManager
+///
+/// Inherits from Object
+///
+/// Singleton class that manages the instances of Clock.
 /// @ingroup base
 singleton class ClockManager : Object
 {
-	// registered clocks
+	// Linked list of Clocks
 	VirtualList clocks;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return ClockManager singleton
 	static ClockManager getInstance();
+
+	/// Register a new clock
+	/// @param clock: Clock to register
 	void register(Clock clock);
-	void reset();
+
+	/// Unregister clock.
 	void unregister(Clock clock);
-	void update(uint32 millisecondsElapsed);
+
+	/// Update the clocks.
+	/// @param elapsedMilliseconds: Milliseconds that passed since the previous call to this method
+	void update(uint32 elapsedMilliseconds);
+
+	/// Reset all the registered clocks.
+	void reset();
 }
 
 

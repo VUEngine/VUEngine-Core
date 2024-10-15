@@ -173,7 +173,7 @@ void Clock::reset()
 	this->previousMinute = 0;
 }
 //---------------------------------------------------------------------------------------------------------
-void Clock::update(uint32 millisecondsElapsed)
+void Clock::update(uint32 elapsedMilliseconds)
 {
 	// increase count
 	if(this->paused)
@@ -181,7 +181,7 @@ void Clock::update(uint32 millisecondsElapsed)
 		return;
 	}
 
-	this->milliseconds += millisecondsElapsed;
+	this->milliseconds += elapsedMilliseconds;
 
 	if(NULL != this->events)
 	{

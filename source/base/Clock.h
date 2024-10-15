@@ -46,13 +46,13 @@ class Clock : ListenerObject
 	/// Elapsed time in milliseconds
 	uint32 milliseconds;
 
-	// Previous elapsed second
+	/// Previous elapsed second
 	uint32 previousSecond;
 
-	// Previous elapsed minute
+	/// Previous elapsed minute
 	uint32 previousMinute;
 
-	// Flag to signal if the clock is paused or not
+	/// Flag to signal if the clock is paused or not
 	bool paused;
 
 	/// @publicsection
@@ -111,8 +111,8 @@ class Clock : ListenerObject
 	void reset();
 
 	/// Update the clock's elapsed time
-	/// @param millisecondsElapsed: Milliseconds that have passed since the previous call to the update method
-	void update(uint32 millisecondsElapsed);
+	/// @param elapsedMilliseconds: Milliseconds that have passed since the previous call to the update method
+	void update(uint32 elapsedMilliseconds);
 
 	/// Retrieve the clock's paused state
 	/// @return True if the clock is paused
