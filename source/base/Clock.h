@@ -19,7 +19,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//												CLASS'S DATA
 //---------------------------------------------------------------------------------------------------------
 
 enum ClockPrintPrecision
@@ -30,42 +30,111 @@ enum ClockPrintPrecision
 	kTimePrecision3
 };
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+///
+/// Class Clock
+///
+/// Inherits from ListenerObject
+///
+/// Class that implements simple clock that can keep track of time and print itself.
 /// @ingroup base
 class Clock : ListenerObject
 {
-	// time elapsed
-	uint32 milliSeconds;
-	// register
+	/// Elapsed time in milliseconds
+	uint32 milliseconds;
+
+	// Previous elapsed second
 	uint32 previousSecond;
-	// register
+
+	// Previous elapsed minute
 	uint32 previousMinute;
-	// flag to pause the clock
+
+	// Flag to signal if the clock is paused or not
 	bool paused;
 
-	static void printTime(uint32 milliseconds, int32 col, int32 row, const char* font, uint32 precision);
-	static void printDeciseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
-	static void printCentiseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
-	static void printMilliseconds(uint32 milliSeconds, int32 col, int32 row, const char* font);
+	/// @publicsection
+
+	/// Print time in MM::SS:XX format
+	/// @param milliseconds: Total time to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param font: Pointer to font's name to use
+	/// @param precision: Precision of the second decimals
+	static void printTime(uint32 milliseconds, int32 x, int32 y, const char* font, uint32 precision);
+
+	/// Print the total deciseconds in the elapsed time provided.
+	/// @param milliseconds: Total time to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param font: Pointer to font's name to use
+	/// @param precision: Precision of the second decimals
+	static void printDeciseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
+
+	/// Print the total centiseconds in the elapsed time provided.
+	/// @param milliseconds: Total time to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param font: Pointer to font's name to use
+	/// @param precision: Precision of the second decimals
+	static void printCentiseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
+
+	/// Print the total milliseconds in the elapsed time provided.
+	/// @param milliseconds: Total time to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param font: Pointer to font's name to use
+	/// @param precision: Precision of the second decimals
+	static void printMilliseconds(uint32 milliSeconds, int32 x, int32 y, const char* font);
 
 	/// @publicsection
-	void constructor();
-	uint32 getElapsedTime();
-	uint32 getMilliSeconds();
-	uint32 getMinutes();
-	uint32 getSeconds();
-	uint32 getTime();
-	int32 getTimeInCurrentSecond();
-	bool isPaused();
-	void pause(bool paused);
-	void print(int32 col, int32 row, const char* font);
-	void reset();
-	void setTime(int32 hours, int32 minutes, int32 seconds);
-	void setTimeInMilliSeconds(uint32 milliSeconds);
-	void setTimeInSeconds(float totalSeconds);
-	void start();
-	void stop();
-	void update(uint32 millisecondsElapsed);
-}
 
+	/// Class' constructor
+	void constructor();
+
+	/// Class' destructor
+	void destructor();
+
+	/// Start the clock.
+	void start();
+
+	/// Stop the clock.
+	void stop();
+
+	/// Pause/unpause the clock
+	/// @param pause: Flag to set the paused state of the clock
+	void pause(bool pause);
+
+	/// Reset the clock's elapsed time
+	void reset();
+
+	/// Update the clock's elapsed time
+	/// @param millisecondsElapsed: Milliseconds that have passed since the previous call to the update method
+	void update(uint32 millisecondsElapsed);
+
+	/// Retrieve the clock's paused state
+	/// @return True if the clock is paused
+	bool isPaused();
+
+	/// Retrieve the elapsed milliseconds.
+	/// @return Elapsed milliseconds
+	uint32 getMilliseconds();
+
+	/// Retrieve the elapsed minutes.
+	/// @return Elapsed minutes
+	uint32 getMinutes();
+
+	/// Retrieve the elapsed seconds.
+	/// @return Elapsed seconds
+	uint32 getSeconds();
+
+	/// Print the clock's time in MM::SS:XX format
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	/// @param font: Pointer to font's name to use
+	void print(int32 col, int32 row, const char* font);
+}
 
 #endif

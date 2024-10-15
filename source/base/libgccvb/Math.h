@@ -404,7 +404,7 @@ static inline fixed_t Math::squareRootFixed(fixed_ext_t base)
 static inline int32 Math::random(uint32 seed, int32 randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-	seed += Clock::getTime(VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
+	seed += Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
 #endif
 
 	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;

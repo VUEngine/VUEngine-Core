@@ -911,9 +911,9 @@ bool VUEngine::handleMessage(Telegram telegram)
 }
 
 // retrieve time
-uint32 VUEngine::getTime()
+uint32 VUEngine::getElapsedMilliseconds()
 {
-	return Clock::getTime(this->clock);
+	return Clock::getMilliseconds(this->clock);
 }
 
 // retrieve clock

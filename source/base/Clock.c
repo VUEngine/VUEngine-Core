@@ -28,12 +28,98 @@ Printing _printing __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- */
+//---------------------------------------------------------------------------------------------------------
+static void Clock::printTime(uint32 milliseconds, int32 x, int32 y, const char* font, uint32 precision)
+{
+	char output[] = "00:00";
+	uint32 minutes = (uint32)(milliseconds / (__MILLISECONDS_PER_SECOND * 60));
+	uint32 seconds = (uint32)(milliseconds / __MILLISECONDS_PER_SECOND);
+
+	char* minutesString = Utilities::itoa(minutes, 10, 2);
+
+	output[0] = minutesString[0];
+	output[1] = minutesString[1];
+
+	char* secondsString = Utilities::itoa((seconds - minutes * 60) % 60, 10, 2);
+
+	output[3] = secondsString[0];
+	output[4] = secondsString[1];
+
+	Printing::text(_printing, output, x, y, font);
+
+	switch(precision)
+	{
+		case kTimePrecision1:
+
+			Clock::printDeciseconds(milliseconds, x + 6, y, font);
+			break;
+
+		case kTimePrecision2:
+
+			Clock::printCentiseconds(milliseconds, x + 6, y, font);
+			break;
+
+		case kTimePrecision3:
+
+			Clock::printMilliseconds(milliseconds, x + 6, y, font);
+			break;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+static void Clock::printDeciseconds(uint32 milliseconds, int32 col, int32 row, const char* font)
+{
+	uint32 deciSeconds = ((milliseconds + 50) / 100);
+	deciSeconds -= ((deciSeconds / 10) * 10);
+
+	Printing::int32(_printing, deciSeconds, col, row, font);
+}
+//---------------------------------------------------------------------------------------------------------
+static void Clock::printCentiseconds(uint32 milliseconds, int32 col, int32 row, const char* font)
+{
+	uint32 centiSeconds = ((milliseconds + 5) / 10);
+	centiSeconds -= ((centiSeconds / 100) * 100);
+
+	if(centiSeconds >= 10)
+	{
+		Printing::int32(_printing, centiSeconds, col, row, font);
+	}
+	else
+	{
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, centiSeconds, col + 1, row, font);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+static void Clock::printMilliseconds(uint32 milliseconds, int32 col, int32 row, const char* font)
+{
+	milliseconds -= ((milliseconds / 1000) * 1000);
+
+	if(milliseconds >= 100)
+	{
+		Printing::int32(_printing, milliseconds, col, row, font);
+	}
+	else if(milliseconds >= 10)
+	{
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, milliseconds, col + 1, row, font);
+	}
+	else
+	{
+		Printing::int32(_printing, 0, col, row, font);
+		Printing::int32(_printing, 0, col + 1, row, font);
+		Printing::int32(_printing, milliseconds, col + 2, row, font);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S PUBLIC METHODS
+//---------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------
 void Clock::constructor()
 {
 	_printing = Printing::getInstance();
@@ -41,7 +127,7 @@ void Clock::constructor()
 	Base::constructor();
 
 	// initialize time
-	this->milliSeconds = 0;
+	this->milliseconds = 0;
 
 	// initialize state
 	this->paused = true;
@@ -52,10 +138,7 @@ void Clock::constructor()
 	// register clock
 	ClockManager::register(ClockManager::getInstance(), this);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Clock::destructor()
 {
 	// unregister the clock
@@ -65,24 +148,31 @@ void Clock::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Print formatted class' attributes's states
- *
- * @param col
- * @param row
- * @param font
- */
-void Clock::print(int32 col, int32 row, const char* font)
+//---------------------------------------------------------------------------------------------------------
+void Clock::start()
 {
-	Clock::printTime(this->milliSeconds, col, row, font, kTimePrecision0);
+	Clock::reset(this);
+	this->paused = false;
 }
-
-/**
- * Called on each timer interrupt
- *
- * @param millisecondsElapsed	Time elapsed between calls
- */
+//---------------------------------------------------------------------------------------------------------
+void Clock::stop()
+{
+	Clock::reset(this);
+	this->paused = true;
+}
+//---------------------------------------------------------------------------------------------------------
+void Clock::pause(bool pause)
+{
+	this->paused = pause;
+}
+//---------------------------------------------------------------------------------------------------------
+void Clock::reset()
+{
+	this->milliseconds = 0;
+	this->previousSecond = 0;
+	this->previousMinute = 0;
+}
+//---------------------------------------------------------------------------------------------------------
 void Clock::update(uint32 millisecondsElapsed)
 {
 	// increase count
@@ -91,7 +181,7 @@ void Clock::update(uint32 millisecondsElapsed)
 		return;
 	}
 
-	this->milliSeconds += millisecondsElapsed;
+	this->milliseconds += millisecondsElapsed;
 
 	if(NULL != this->events)
 	{
@@ -116,231 +206,28 @@ void Clock::update(uint32 millisecondsElapsed)
 		}
 	}
 }
-
-/**
- * Reset clock's attributes
- */
-void Clock::reset()
-{
-	this->milliSeconds = 0;
-	this->previousSecond = 0;
-	this->previousMinute = 0;
-}
-
-/**
- * Retrieve clock's milliseconds
- *
- * @return	Current milliseconds
- */
-uint32 Clock::getMilliSeconds()
-{
-	return this->milliSeconds;
-}
-
-/**
- * Retrieve clock's seconds
- *
- * @return	Current seconds
- */
-uint32 Clock::getSeconds()
-{
-	return (uint32)(this->milliSeconds / __MILLISECONDS_PER_SECOND);
-}
-
-/**
- * Retrieve clock's minutes
- *
- * @return	Current minutes
- */
-uint32 Clock::getMinutes()
-{
-	return (uint32)(this->milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
-}
-
-/**
- * Retrieve clock's total elapsed time in milliseconds
- *
- * @return	Current milliseconds
- */
-uint32 Clock::getTime()
-{
-	return this->milliSeconds;
-}
-
-/**
- * Retrieve current elapsed milliseconds in the current second
- *
- * @return	Elapsed milliseconds in the current second
- */
-int32 Clock::getTimeInCurrentSecond()
-{
-	return __MILLISECONDS_PER_SECOND * (this->milliSeconds * 0.001f - __F_FLOOR(this->milliSeconds * 0.001f));
-}
-
-/**
- * Set clock's total elapsed time from seconds parameters
- *
- * @param totalSeconds
- */
-void Clock::setTimeInSeconds(float totalSeconds)
-{
-	this->milliSeconds = totalSeconds * __MILLISECONDS_PER_SECOND;
-}
-
-/**
- * Set clock's total elapsed time
- *
- * @param milliSeconds
- */
-void Clock::setTimeInMilliSeconds(uint32 milliSeconds)
-{
-	this->milliSeconds = milliSeconds;
-}
-
-/**
- * Start the clock
- */
-void Clock::start()
-{
-	Clock::reset(this);
-	this->paused = false;
-}
-
-/**
- * Stop the clock
- */
-void Clock::stop()
-{
-	Clock::reset(this);
-	this->paused = true;
-}
-
-/**
- * Pause the clock
- *
- * @param paused	Set to paused or unpaused?
- */
-void Clock::pause(bool paused)
-{
-	this->paused = paused;
-}
-
-/**
- * Whether the clock is running or not
- *
- * @return	Paused flag
- */
+//---------------------------------------------------------------------------------------------------------
 bool Clock::isPaused()
 {
 	return this->paused;
 }
-
-/**
- * Print formatted class' attributes's states
- *
- * @param col
- * @param row
- * @param font
- */
-static void Clock::printTime(uint32 milliSeconds, int32 col, int32 row, const char* font, uint32 precision)
+//---------------------------------------------------------------------------------------------------------
+uint32 Clock::getMilliseconds()
 {
-	char output[] = "00:00";
-	uint32 minutes = (uint32)(milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
-	uint32 seconds = (uint32)(milliSeconds / __MILLISECONDS_PER_SECOND);
-
-	char* minutesString = Utilities::itoa(minutes, 10, 2);
-
-	output[0] = minutesString[0];
-	output[1] = minutesString[1];
-
-	char* secondsString = Utilities::itoa((seconds - minutes * 60) % 60, 10, 2);
-
-	output[3] = secondsString[0];
-	output[4] = secondsString[1];
-
-	Printing::text(_printing, output, col, row, font);
-
-	switch(precision)
-	{
-		case kTimePrecision1:
-
-			Clock::printDeciseconds(milliSeconds, col + 6, row, font);
-			break;
-
-		case kTimePrecision2:
-
-			Clock::printCentiseconds(milliSeconds, col + 6, row, font);
-			break;
-
-		case kTimePrecision3:
-
-			Clock::printMilliseconds(milliSeconds, col + 6, row, font);
-			break;
-	}
+	return this->milliseconds;
 }
-
-/**
- * Print formatted class' attributes's states
- *
- * @param col
- * @param row
- * @param font
- */
-static void Clock::printDeciseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
+//---------------------------------------------------------------------------------------------------------
+uint32 Clock::getSeconds()
 {
-	uint32 deciSeconds = ((milliSeconds + 50) / 100);
-	deciSeconds -= ((deciSeconds / 10) * 10);
-
-	Printing::int32(_printing, deciSeconds, col, row, font);
+	return (uint32)(this->milliseconds / __MILLISECONDS_PER_SECOND);
 }
-
-/**
- * Print formatted class' attributes's states
- *
- * @param col
- * @param row
- * @param font
- */
-static void Clock::printCentiseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
+//---------------------------------------------------------------------------------------------------------
+uint32 Clock::getMinutes()
 {
-	uint32 centiSeconds = ((milliSeconds + 5) / 10);
-	centiSeconds -= ((centiSeconds / 100) * 100);
-
-	if(centiSeconds >= 10)
-	{
-		Printing::int32(_printing, centiSeconds, col, row, font);
-	}
-	else
-	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, centiSeconds, col + 1, row, font);
-	}
+	return (uint32)(this->milliseconds / (__MILLISECONDS_PER_SECOND * 60));
 }
-
-/**
- * Print formatted class' attributes's states
- *
- * @param col
- * @param row
- * @param font
- */
-static void Clock::printMilliseconds(uint32 milliSeconds, int32 col, int32 row, const char* font)
+//---------------------------------------------------------------------------------------------------------
+void Clock::print(int32 col, int32 row, const char* font)
 {
-	milliSeconds -= ((milliSeconds / 1000) * 1000);
-
-	if(milliSeconds >= 100)
-	{
-		Printing::int32(_printing, milliSeconds, col, row, font);
-	}
-	else if(milliSeconds >= 10)
-	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, milliSeconds, col + 1, row, font);
-	}
-	else
-	{
-		Printing::int32(_printing, 0, col, row, font);
-		Printing::int32(_printing, 0, col + 1, row, font);
-		Printing::int32(_printing, milliSeconds, col + 2, row, font);
-	}
+	Clock::printTime(this->milliseconds, col, row, font, kTimePrecision0);
 }

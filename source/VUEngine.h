@@ -116,7 +116,7 @@ singleton class VUEngine : ListenerObject
 	char* getLastProcessName();
 	void setLastProcessName(char* processName);
 	PhysicalWorld getPhysicalWorld();
-	uint32 getTime();
+	uint32 getElapsedMilliseconds();
 	StateMachine getStateMachine();
 	Stage getStage();
 	UIContainer getUIContainer();

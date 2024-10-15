@@ -151,7 +151,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 
 	delayedMessage->telegram = new Telegram(sender, receiver, message, extraInfo);
 	delayedMessage->clock = clock ? clock : VUEngine::getMessagingClock(_vuEngine);
-	delayedMessage->timeOfArrival = Clock::getTime(delayedMessage->clock) + delay;
+	delayedMessage->timeOfArrival = Clock::getMilliseconds(delayedMessage->clock) + delay;
 	delayedMessage->discarded = false;
 
 	VirtualList::pushBack(this->delayedMessages, delayedMessage);
@@ -212,7 +212,7 @@ bool MessageDispatcher::dispatchDelayedMessages()
 
 			continue;	
 		}
-		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
+		else if(!delayedMessage->discarded && !Clock::isPaused(delayedMessage->clock) && Clock::getMilliseconds(delayedMessage->clock) > delayedMessage->timeOfArrival)
 		{
 			Telegram telegram = delayedMessage->telegram;
 
