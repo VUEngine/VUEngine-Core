@@ -94,28 +94,6 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void MessageDispatcher::constructor()
-{
-	Base::constructor();
-
-	this->delayedMessages = new VirtualList();
-	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
-	this->helperTelegramIsInUse = false;
-
-	_messageDispatcher = this;
-}
-//---------------------------------------------------------------------------------------------------------
-void MessageDispatcher::destructor()
-{
-	_messageDispatcher = NULL;
-
-	delete this->delayedMessages;
-	delete this->helperTelegram;
-
-	// allow a new construct
-	Base::destructor();
-}
-//---------------------------------------------------------------------------------------------------------
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
@@ -130,44 +108,6 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 	VirtualList::pushBack(this->delayedMessages, delayedMessage);
 }
 
-/**
- * Take care of any discarded message
- */
-//---------------------------------------------------------------------------------------------------------
-void MessageDispatcher::processDiscardedMessages()
-{
-	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
-	{
-		nextNode = node->next;
-
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-
-		if(!delayedMessage->discarded)
-		{
-			continue;
-		}
-
-		Telegram telegram = delayedMessage->telegram;
-		ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
-		ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
-
-		VirtualList::removeNode(this->delayedMessages, node);
-
-		if(!isDeleted(delayedMessage))
-		{
-			delete delayedMessage;
-		}
-
-		if(!isDeleted(telegram))
-		{
-			delete telegram;
-		}
-	}
-}
-
-/**
- * Dispatch the delayed messages whose delay has expired
- */
 //---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::dispatchDelayedMessages()
 {
@@ -248,13 +188,37 @@ bool MessageDispatcher::dispatchDelayedMessages()
 
 	return messagesDispatched;
 }
+//---------------------------------------------------------------------------------------------------------
+void MessageDispatcher::processDiscardedMessages()
+{
+	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
+	{
+		nextNode = node->next;
 
-/**
- * Discarded delayed messages associated to the given clock
- *
- * @private
- * @param clock		the clock against which the message's delay is measured
- */
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!delayedMessage->discarded)
+		{
+			continue;
+		}
+
+		Telegram telegram = delayedMessage->telegram;
+		ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
+		ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
+
+		VirtualList::removeNode(this->delayedMessages, node);
+
+		if(!isDeleted(delayedMessage))
+		{
+			delete delayedMessage;
+		}
+
+		if(!isDeleted(telegram))
+		{
+			delete telegram;
+		}
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
@@ -274,14 +238,6 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 
 	return messagesWereDiscarded;
 }
-
-/**
- * Discarded delayed messages sent by an object
- *
- * @private
- * @param sender	the object that originally sent the message
- * @param message	the actual message code
- */
 //---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
@@ -306,14 +262,6 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, 
 
 	return messagesWereDiscarded;
 }
-
-/**
- * Discarded delayed messages sent to an object
- *
- * @private
- * @param sender	the object that the message was originally sent to
- * @param message	the actual message code
- */
 //---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
@@ -338,13 +286,6 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receive
 
 	return messagesWereDiscarded;
 }
-
-/**
- * Discarded all delayed messages sent by an object
- *
- * @private
- * @param sender	the object that originally sent the message
- */
 //---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
@@ -369,13 +310,63 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sende
 
 	return messagesWereDiscarded;
 }
+//---------------------------------------------------------------------------------------------------------
+bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
+{
+	bool messagesWereDiscarded = false;
+	VirtualNode node = this->delayedMessages->head;
 
-/**
- * Print all delayed messages sent by an object
- *
- * @private
- * @param sender	the object that originally sent the message
- */
+	for(; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage))
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(isDeleted(telegram) || telegram->receiver == receiver)
+			{
+				delayedMessage->discarded = true;
+				messagesWereDiscarded |= true;
+			}
+		}
+	}
+
+	return messagesWereDiscarded;
+}
+//---------------------------------------------------------------------------------------------------------
+bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
+{
+	bool messagesWereDiscarded = false;
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; NULL != node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(!isDeleted(delayedMessage))
+		{
+			Telegram telegram = delayedMessage->telegram;
+
+			if(isDeleted(telegram) || telegram->receiver == listenerObject || telegram->sender == listenerObject)
+			{
+				delayedMessage->discarded = true;
+				messagesWereDiscarded |= true;
+			}
+		}
+	}
+
+	return messagesWereDiscarded;
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __RELEASE
+void MessageDispatcher::print(int32 x, int32 y)
+{
+	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
+}
+#endif
 //---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
 void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
@@ -404,83 +395,31 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender,
 	}
 }
 #endif
-
-/**
- * Discarded all delayed messages sent to an object
- *
- * @private
- * @param sender	the object that the message was originally sent to
- */
 //---------------------------------------------------------------------------------------------------------
-bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void MessageDispatcher::constructor()
 {
-	bool messagesWereDiscarded = false;
-	VirtualNode node = this->delayedMessages->head;
+	Base::constructor();
 
-	for(; NULL != node; node = node->next)
-	{
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+	this->delayedMessages = new VirtualList();
+	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
+	this->helperTelegramIsInUse = false;
 
-		if(!isDeleted(delayedMessage))
-		{
-			Telegram telegram = delayedMessage->telegram;
-
-			if(isDeleted(telegram) || telegram->receiver == receiver)
-			{
-				delayedMessage->discarded = true;
-				messagesWereDiscarded |= true;
-			}
-		}
-	}
-
-	return messagesWereDiscarded;
+	_messageDispatcher = this;
 }
-
-
-/**
- * Discarded all delayed messages sent to an object
- *
- * @private
- * @param sender	the object that the message was originally sent to
- */
 //---------------------------------------------------------------------------------------------------------
-bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
+void MessageDispatcher::destructor()
 {
-	bool messagesWereDiscarded = false;
-	VirtualNode node = this->delayedMessages->head;
+	_messageDispatcher = NULL;
 
-	for(; NULL != node; node = node->next)
-	{
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+	delete this->delayedMessages;
+	delete this->helperTelegram;
 
-		if(!isDeleted(delayedMessage))
-		{
-			Telegram telegram = delayedMessage->telegram;
-
-			if(isDeleted(telegram) || telegram->receiver == listenerObject || telegram->sender == listenerObject)
-			{
-				delayedMessage->discarded = true;
-				messagesWereDiscarded |= true;
-			}
-		}
-	}
-
-	return messagesWereDiscarded;
+	// allow a new construct
+	Base::destructor();
 }
-
-/**
- * Print status
- *
- * @param x			x screen coordinate
- * @param y			y screen coordinate
- */
-//---------------------------------------------------------------------------------------------------------
-#ifndef __RELEASE
-void MessageDispatcher::print(int32 x, int32 y)
-{
-	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
-}
-#endif
-//---------------------------------------------------------------------------------------------------------

@@ -12,14 +12,14 @@
 
 
 //=========================================================================================================
-//												INCLUDES
+// INCLUDES
 //=========================================================================================================
 
 #include <Object.h>
 
 
 //=========================================================================================================
-//											FORWARD DECLARATIONS
+// FORWARD DECLARATIONS
 //=========================================================================================================
 
 class Clock;
@@ -27,7 +27,7 @@ class Telegram;
 
 
 //=========================================================================================================
-//												CLASS'S DATA
+// CLASS'S DATA
 //=========================================================================================================
 
 typedef struct DelayedMessage
@@ -45,7 +45,7 @@ typedef struct DelayedMessage
 
 
 //=========================================================================================================
-//											CLASS'S DECLARATION
+// CLASS'S DECLARATION
 //=========================================================================================================
 
 class ListenerObject;
@@ -91,16 +91,55 @@ singleton class MessageDispatcher : Object
 	/// @param extraInfo: Pointer to any extra data that must accompany the message
 	void dispatchDelayedMessage(Clock clock, uint32 delay, ListenerObject sender,
 		ListenerObject receiver, int32 message, void* extraInfo);
+
+	///  Dispatch the delayed messages whose delay has expired.
  	bool dispatchDelayedMessages();
-	bool discardDelayedMessagesWithClock(Clock clock);
-	bool discardDelayedMessagesFromSender(ListenerObject sender, int32 message);
-	bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
-	bool discardAllDelayedMessagesFromSender(ListenerObject sender);
-	bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
-	bool discardAllDelayedMessages(ListenerObject listenerObject);
+
+	/// Force the destruction of discarded messages.
 	void processDiscardedMessages();
-	void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
+
+	/// Discarde delayed messages associated to the given clock.
+	/// @param clock: Clock to search in delayed messages to discard
+	/// @return True if any messages is discarded
+	bool discardDelayedMessagesWithClock(Clock clock);
+
+	/// Discard delayed messages sent by an object.
+	/// @param sender: Object that originally sent the message
+	/// @param message: Message's code
+	/// @return True if any messages is discarded
+	bool discardDelayedMessagesFromSender(ListenerObject sender, int32 message);
+
+	/// Discard delayed messages sent to an object.
+	/// @param receiver: Object that was the target of the message
+	/// @param message: Message's code
+	/// @return True if any messages is discarded
+	bool discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message);
+
+	/// Discard all delayed messages sent by an object.
+	/// @param sender: Object that was the target of the message
+	/// @return True if any messages is discarded
+	bool discardAllDelayedMessagesFromSender(ListenerObject sender);
+
+	/// Discard all delayed messages sent to an object.
+	/// @param receiver: Object that was the target of the message
+	/// @return True if any messages is discarded
+	bool discardAllDelayedMessagesForReceiver(ListenerObject receiver);
+	
+	/// Discard all delayed messages sent to an object.
+	/// @param listenerObject: Object that the messages were originally sent to or sent by
+	bool discardAllDelayedMessages(ListenerObject listenerObject);
+
+	/// Print all delayed messages sent by an object.
+	/// @param sender: Object that originally sent the message
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
+
+	/// Print all delayed messages sent by an object.
+	/// @param sender: Object that originally sent the message
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y);
 }
 
 
