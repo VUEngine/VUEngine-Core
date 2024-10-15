@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -10,35 +10,52 @@
 #ifndef OPTICAL_H_
 #define OPTICAL_H_
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <Camera.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											   MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
 #define __PROJECTION_PRECISION_INCREMENT				4
 
 
-//---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class Optical
+///
+/// Inherits from Object
+///
+/// Computes the values that determine the results from 3D to 2D projection.
+/// @ingroup base-libgccvb
 static class Optical : Object
 {
+	/// Converts the provided optical parameters in pixel units to optical values in meters.
+	/// @param pixelOptical: Struct that holds optical parameters in pixel units
+	/// @param cameraFrustum: Camera's frustum configuration parameters
+	/// @return Optical configuration parameters in meters
 	static inline Optical getFromPixelOptical(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
-	static inline Optical updateWithCameraFrustum(Optical optical, CameraFrustum cameraFrustum);
+
+	/// Applies the provided camera frustum configuration to the provided optical configuration parameters.
+	/// @param optical: Struct that holds optical parameters in meters
+	/// @param cameraFrustum: Camera's frustum configuration parameters
+	/// @return Optical configuration parameters in meters
+	static inline Optical applyCameraFrustum(Optical optical, CameraFrustum cameraFrustum);
 }
 
-//---------------------------------------------------------------------------------------------------------
-//											IMPLEMENTATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
 
+//---------------------------------------------------------------------------------------------------------
 static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
 {
 	int16 maximumXViewDistancePower = -__PIXELS_PER_METER_2_POWER;
@@ -66,10 +83,10 @@ static inline Optical Optical::getFromPixelOptical(PixelOptical pixelOptical, Ca
 	optical.verticalViewPointCenter = __PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter);
 	optical.scalingFactor = __F_TO_FIXED(pixelOptical.scalingFactor);
 
-	return Optical::updateWithCameraFrustum(optical, cameraFrustum);
+	return Optical::applyCameraFrustum(optical, cameraFrustum);
 }
-
-static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFrustum cameraFrustum)
+//---------------------------------------------------------------------------------------------------------
+static inline Optical Optical::applyCameraFrustum(Optical optical, CameraFrustum cameraFrustum)
 {
 	Optical result = optical;
 
@@ -94,5 +111,6 @@ static inline Optical Optical::updateWithCameraFrustum(Optical optical, CameraFr
 
 	return result;
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif
