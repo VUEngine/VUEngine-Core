@@ -708,35 +708,21 @@ void Container::setPosition(const Vector3D* position)
 {
 	Vector3D displacement = Vector3D::get(this->transformation.position, *position);
 
-	this->localTransformation.position = Vector3D::sum(this->localTransformation.position, displacement);
-	this->transformation.position = *position;
-
-	this->transformation.invalid |= __INVALIDATE_POSITION;
-
-	if(displacement.z)
-	{
-		this->transformation.invalid |= __INVALIDATE_SCALE;
-	}
+	Container::translate(this, &displacement);
 }
 
 void Container::setRotation(const Rotation* rotation)
 {
 	Rotation displacement = Rotation::sub(this->transformation.rotation, *rotation);
 
-	this->transformation.rotation = Rotation::clamp(rotation->x, rotation->y, rotation->z);
-	this->localTransformation.rotation = Rotation::sub(this->transformation.rotation, displacement);
-
-	this->transformation.invalid |= __INVALIDATE_POSITION | __INVALIDATE_ROTATION;
+	Container::rotate(this, &displacement);
 }
 
 void Container::setScale(const Scale* scale)
 {
 	Scale factor = Scale::division(this->transformation.scale, *scale);
 
-	this->localTransformation.scale = Scale::product(this->transformation.scale, factor);	
-	this->transformation.scale = *scale;
-
-	this->transformation.invalid |= __INVALIDATE_SCALE;
+	Container::scale(this, &factor);
 }
 
 /**
