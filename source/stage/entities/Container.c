@@ -254,7 +254,7 @@ void Container::removeChild(Container child, bool deleteChild)
 
 	if(!deleteChild)
 	{
-		if(VirtualList::removeElement(this->children, child))
+		if(VirtualList::removeData(this->children, child))
 		{
 			child->parent = NULL;
 		}
@@ -1108,7 +1108,7 @@ Container Container::getParent()
  */
 int32 Container::getChildCount()
 {
-	return NULL != this->children ? VirtualList::getSize(this->children) : 0;
+	return NULL != this->children ? VirtualList::getCount(this->children) : 0;
 }
 
 /**
@@ -1233,7 +1233,7 @@ Container Container::getChildAtPosition(int16 position)
 		return NULL;
 	}
 
-	return Container::safeCast(VirtualList::getObjectAtPosition(this->children, position));
+	return Container::safeCast(VirtualList::getDataAtIndex(this->children, position));
 }
 
 /**
@@ -1337,7 +1337,7 @@ bool Container::getChildren(ClassPointer classPointer, VirtualList children)
 		}
 	}
 
-	return 0 < VirtualList::getSize(children);
+	return 0 < VirtualList::getCount(children);
 }
 
 bool Container::isTransformed()

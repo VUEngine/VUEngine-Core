@@ -214,7 +214,7 @@ void OptionsSelector::setOptions(VirtualList options)
 
 	this->pages = new VirtualList();
 
-	this->totalOptions = VirtualList::getSize(options);
+	this->totalOptions = VirtualList::getCount(options);
 
 	int32 optionsPerPage = this->cols * this->rows;
 	int32 numberOfPages = (int32)(this->totalOptions / optionsPerPage);
@@ -222,9 +222,9 @@ void OptionsSelector::setOptions(VirtualList options)
 
 	VirtualNode node = options->head;
 
-	ASSERT(VirtualList::getSize(options), "OptionsSelector::setOptions: empty options");
+	ASSERT(VirtualList::getCount(options), "OptionsSelector::setOptions: empty options");
 
-	if(0 < VirtualList::getSize(options))
+	if(0 < VirtualList::getCount(options))
 	{
 		int32 page = 0;
 
@@ -242,7 +242,7 @@ void OptionsSelector::setOptions(VirtualList options)
 		}
 
 		this->currentPage = this->pages->head;
-		ASSERT(VirtualList::getSize(this->pages), "OptionsSelector::setOptions: empty pages");
+		ASSERT(VirtualList::getCount(this->pages), "OptionsSelector::setOptions: empty pages");
 
 		this->currentOption = this->currentPage ? (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head : NULL;
 	}
@@ -270,7 +270,7 @@ void OptionsSelector::selectNext()
 		if(!this->currentOption)
 		{
 			// if there's more than 1 page, go to next page
-			if(VirtualList::getSize(this->pages) > 1)
+			if(VirtualList::getCount(this->pages) > 1)
 			{
 				// select next page
 				this->currentPage = this->currentPage->next;
@@ -324,7 +324,7 @@ void OptionsSelector::selectPrevious()
 		if(!this->currentOption)
 		{
 			// if there's more than 1 page
-			if(VirtualList::getSize(this->pages) > 1)
+			if(VirtualList::getCount(this->pages) > 1)
 			{
 				// select previous page
 				this->currentPage = VirtualNode::getPrevious(this->currentPage);
@@ -334,7 +334,7 @@ void OptionsSelector::selectPrevious()
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->tail;
-					this->currentPageIndex = VirtualList::getSize(this->pages) - 1;
+					this->currentPageIndex = VirtualList::getCount(this->pages) - 1;
 					this->currentOptionIndex = this->totalOptions - 1;
 				}
 
@@ -417,7 +417,7 @@ void OptionsSelector::printOptions(uint8 x, uint8 y, uint32 alignment, uint8 spa
 
 	spacing++;
 
-	if(this->currentPage && 0 < VirtualList::getSize(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
+	if(this->currentPage && 0 < VirtualList::getCount(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
 		FontData* fontData = Printing::getFontByName(printing, this->font);
 
@@ -543,7 +543,7 @@ void OptionsSelector::printSelectorMark(char* mark, int8 optionsLength)
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int32 indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(VirtualList::safeCast(VirtualList::front(this->pages)));
+		int32 indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getCount(VirtualList::safeCast(VirtualList::front(this->pages)));
 		int32 optionColumn = (int32)(indexOption / this->rows);
 		int32 optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;

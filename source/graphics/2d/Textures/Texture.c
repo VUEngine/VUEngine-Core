@@ -164,7 +164,7 @@ void Texture::destructor()
 	if(this->update)
 	{
 		this->update = false;
-		VirtualList::removeElement(_texturesToUpdate, this);
+		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
 	// make sure that I'm not destroyed again
@@ -255,7 +255,7 @@ void Texture::releaseCharSet()
 	if(this->update)
 	{
 		this->update = false;
-		VirtualList::removeElement(_texturesToUpdate, this);
+		VirtualList::removeData(_texturesToUpdate, this);
 	}
 
 	this->status = kTextureInvalid;

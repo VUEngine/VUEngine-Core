@@ -1128,7 +1128,7 @@ void Stage::setupSounds()
 
 bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 {
-	VirtualList::removeElement(this->sounds, eventFirer);
+	VirtualList::removeData(this->sounds, eventFirer);
 
 	Stage::fireEvent(this, kEventSoundReleased);
 
@@ -1207,9 +1207,9 @@ void Stage::showStreamingProfiling(int32 x, int32 y)
 	y++;
 
 	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->stageEntityDescriptions), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->stageEntityDescriptions), x + xDisplacement, y++, NULL);
 	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 

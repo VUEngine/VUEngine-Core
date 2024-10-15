@@ -175,7 +175,7 @@ uint32 EntityFactory::instantiateEntities()
 			if(Entity::areAllChildrenInstantiated(positionedEntityDescription->entity))
 			{
 				VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
-				VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
+				VirtualList::removeData(this->entitiesToInstantiate, positionedEntityDescription);
 
 				return __ENTITY_PROCESSED;
 			}
@@ -200,7 +200,7 @@ uint32 EntityFactory::instantiateEntities()
 	}
 	else
 	{
-		VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
+		VirtualList::removeData(this->entitiesToInstantiate, positionedEntityDescription);
 		delete positionedEntityDescription;
 	}
 
@@ -311,7 +311,7 @@ uint32 EntityFactory::transformEntities()
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
 		{
 			VirtualList::pushBack(this->entitiesToMakeReady, positionedEntityDescription);
-			VirtualList::removeElement(this->entitiesToTransform, positionedEntityDescription);
+			VirtualList::removeData(this->entitiesToTransform, positionedEntityDescription);
 
 			return __ENTITY_PROCESSED;
 		}
@@ -320,7 +320,7 @@ uint32 EntityFactory::transformEntities()
 	}
 	else
 	{
-		VirtualList::removeElement(this->entitiesToTransform, positionedEntityDescription);
+		VirtualList::removeData(this->entitiesToTransform, positionedEntityDescription);
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
@@ -361,7 +361,7 @@ uint32 EntityFactory::makeReadyEntities()
 			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
-			VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);
+			VirtualList::removeData(this->entitiesToMakeReady, positionedEntityDescription);
 
 			return __ENTITY_PROCESSED;
 		}
@@ -370,7 +370,7 @@ uint32 EntityFactory::makeReadyEntities()
 	}
 	else
 	{
-		VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);
+		VirtualList::removeData(this->entitiesToMakeReady, positionedEntityDescription);
 
 		// don't need to delete the created entity since the parent takes care of that at this point
 
@@ -398,14 +398,14 @@ uint32 EntityFactory::cleanUp()
 			Entity::removeEventListeners(positionedEntityDescription->entity, NULL, kEventEntityLoaded);
 		}
 
-		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);
+		VirtualList::removeData(this->spawnedEntities, positionedEntityDescription);
 		delete positionedEntityDescription;
 
 		return __ENTITY_PROCESSED;
 	}
 	else
 	{
-		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);
+		VirtualList::removeData(this->spawnedEntities, positionedEntityDescription);
 		delete positionedEntityDescription;
 	}
 
@@ -495,16 +495,16 @@ void EntityFactory::showStatus(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Entities pending...", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "1 Instantiation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "2 Transformation:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToTransform), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "3 Make ready:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "4 Call listeners:			", x, y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
 #endif
 #endif

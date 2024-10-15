@@ -191,13 +191,13 @@ void Printing::addSprite()
 */
 bool Printing::setActiveSprite(uint16 printingSpriteIndex)
 {
-	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, printingSpriteIndex));
+	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, printingSpriteIndex));
 
 	bool result = NULL != this->activePrintingSprite;
 
 	if(NULL == this->activePrintingSprite)
 	{
-		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getObjectAtPosition(this->printingSprites, 0));
+		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, 0));
 	}
 
 	return result;

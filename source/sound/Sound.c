@@ -229,7 +229,7 @@ int8 Sound::getVolumeReduction()
  */
 const Channel* Sound::getChannel(uint8 index)
 {
-	return VirtualList::getObjectAtPosition(this->channels, index);
+	return VirtualList::getDataAtIndex(this->channels, index);
 }
 
 /**
@@ -698,7 +698,7 @@ void Sound::setupChannels(int8* waves)
 	this->totalPlaybackMilliseconds = Sound::getTotalPlaybackMilliseconds(this, channelWithLongestTrack);
 #endif
 
-	this->volumeReductionMultiplier = this->hasPCMTracks ? VirtualList::getSize(this->channels) : 1;
+	this->volumeReductionMultiplier = this->hasPCMTracks ? VirtualList::getCount(this->channels) : 1;
 }
 
 void Sound::configureSoundRegistries()
@@ -1334,7 +1334,7 @@ void Sound::printMetadata(int32 x, int32 y, bool printDetails)
 	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Channels", trackInfoXOffset, ++y);
-	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
+	PRINT_INT(VirtualList::getCount(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT(this->soundSpec->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);

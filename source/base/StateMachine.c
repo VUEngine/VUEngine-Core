@@ -226,7 +226,7 @@ State StateMachine::getPreviousState()
 //---------------------------------------------------------------------------------------------------------
 int32 StateMachine::getStackSize()
 {
-	return VirtualList::getSize(this->stateStack);
+	return VirtualList::getCount(this->stateStack);
 }
 //---------------------------------------------------------------------------------------------------------
 bool StateMachine::handleMessage(Telegram telegram)

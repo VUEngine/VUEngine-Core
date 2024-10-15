@@ -202,7 +202,7 @@ void SpriteManager::setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMEN
 	int16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
-	if(isDeleted(this->objectSpriteContainers) ||  0 < VirtualList::getSize(this->objectSpriteContainers))
+	if(isDeleted(this->objectSpriteContainers) ||  0 < VirtualList::getCount(this->objectSpriteContainers))
 	{
 		return;
 	}
@@ -245,7 +245,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(fixed_t z)
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
 
 	NM_ASSERT(!isDeleted(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers created");
-	NM_ASSERT(0 < VirtualList::getSize(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+	NM_ASSERT(0 < VirtualList::getCount(this->objectSpriteContainers), "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	if(isDeleted(this->objectSpriteContainers))
 	{
@@ -527,13 +527,13 @@ void SpriteManager::unregisterSprite(Sprite sprite, bool hasEffects __attribute_
 
 	this->sortingSpriteNode = NULL;
 
-	VirtualList::removeElement(this->sprites, sprite);
+	VirtualList::removeData(this->sprites, sprite);
 
 #ifdef __RELEASE
 	if(hasEffects)
 #endif
 	{
-		VirtualList::removeElement(this->specialSprites, sprite);
+		VirtualList::removeData(this->specialSprites, sprite);
 	}
 }
 
@@ -552,7 +552,7 @@ void SpriteManager::stopRendering()
 
 int32 SpriteManager::getNumberOfSprites()
 {
-	return VirtualList::getSize(this->sprites);
+	return VirtualList::getCount(this->sprites);
 }
 
 /**
@@ -821,7 +821,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
  */
 Sprite SpriteManager::getSpriteAtPosition(int16 position)
 {
-	if(0 > position || position >= VirtualList::getSize(this->sprites))
+	if(0 > position || position >= VirtualList::getCount(this->sprites))
 	{
 		return NULL;
 	}
@@ -852,7 +852,7 @@ int16 SpriteManager::getSpritePosition(Sprite sprite)
 		return -1;
 	}
 
-	return (__TOTAL_LAYERS - VirtualList::getSize(this->sprites)) + VirtualList::getDataPosition(this->sprites, sprite);
+	return (__TOTAL_LAYERS - VirtualList::getCount(this->sprites)) + VirtualList::getDataIndex(this->sprites, sprite);
 }
 
 /**
@@ -1030,7 +1030,7 @@ void SpriteManager::print(int32 x, int32 y, bool resumed)
 	Printing::text(this->printing, "Used layers:                ", x, ++y, NULL);
 	Printing::int32(this->printing, __TOTAL_LAYERS - this->freeLayer, x + 22, y, NULL);
 	Printing::text(this->printing, "Sprites count:              ", x, ++y, NULL);
-	Printing::int32(this->printing, VirtualList::getSize(this->sprites), x + 22, y, NULL);
+	Printing::int32(this->printing, VirtualList::getCount(this->sprites), x + 22, y, NULL);
 #ifdef __SHOW_SPRITES_PROFILING
 	Printing::text(this->printing, "Rendered sprites:              ", x, ++y, NULL);
 	Printing::int32(this->printing, _renderedSprites, x + 22, y, NULL);

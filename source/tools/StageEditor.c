@@ -125,7 +125,7 @@ void StageEditor::constructor()
 		VirtualList::pushBack(userObjects, option);
 	}
 
-	if(VirtualList::getSize(userObjects))
+	if(VirtualList::getCount(userObjects))
 	{
 		OptionsSelector::setOptions(this->userObjectsSelector, userObjects);
 	}
@@ -948,7 +948,7 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
 		Printing::int32(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
 		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);
-		Printing::int32(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getSize(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
+		Printing::int32(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getCount(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
 	}
 }
 

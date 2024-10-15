@@ -42,7 +42,7 @@ void ClockManager::register(Clock clock)
 //---------------------------------------------------------------------------------------------------------
 void ClockManager::unregister(Clock clock)
 {
-	VirtualList::removeElement(this->clocks, clock);
+	VirtualList::removeData(this->clocks, clock);
 }
 //---------------------------------------------------------------------------------------------------------
 void ClockManager::update(uint32 elapsedMilliseconds)

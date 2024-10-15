@@ -178,7 +178,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndH
 
 	int16 minimumSegment = 0;
 
-	if(VirtualList::getSize(this->textures))
+	if(VirtualList::getCount(this->textures))
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
 

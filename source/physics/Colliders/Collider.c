@@ -582,7 +582,7 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 	}
 
 	ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
-	VirtualList::removeElement(this->otherColliders, otherColliderRegistry);
+	VirtualList::removeData(this->otherColliders, otherColliderRegistry);
 	delete otherColliderRegistry;
 
 	if(!isDeleted(otherCollider))
@@ -800,7 +800,7 @@ void Collider::print(int32 x, int32 y)
 	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
 
 	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getSize(this->otherColliders) : 0, x + 21, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
 	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
 	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }

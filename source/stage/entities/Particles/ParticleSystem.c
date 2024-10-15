@@ -798,7 +798,7 @@ void ParticleSystem::print(int16 x, int16 y)
 	Printing::text(Printing::getInstance(), "Maximum:    ", x + 1, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->maximumNumberOfAliveParticles, x + 10, y, NULL);
 	Printing::text(Printing::getInstance(), "Spawned:    ", x + 1, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->particles), x + 10, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->particles), x + 10, y, NULL);
 	Printing::text(Printing::getInstance(), "Alive:      ", x + 1, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->particleCount, x + 10, y, NULL);
 }

@@ -154,7 +154,7 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 	this->sortingSpriteNode = NULL;
 
 	// remove the objectSprite to prevent rendering afterwards
-	VirtualList::removeElement(this->objectSprites, objectSprite);
+	VirtualList::removeData(this->objectSprites, objectSprite);
 }
 
 /**

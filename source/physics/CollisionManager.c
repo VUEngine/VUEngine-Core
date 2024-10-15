@@ -367,7 +367,7 @@ void CollisionManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Colliders", x, ++y, NULL);
 	y++;
 	Printing::text(Printing::getInstance(), "Registered:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->colliders), x + 12, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->colliders), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Enabled:          ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CollisionManager::getNumberOfEnabledColliders(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Moving:          ", x, ++y, NULL);

@@ -277,7 +277,7 @@ uint32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
  */
 void ParamTableManager::free(BgmapSprite bgmapSprite)
 {
-	if(VirtualList::removeElement(this->bgmapSprites, bgmapSprite))
+	if(VirtualList::removeData(this->bgmapSprites, bgmapSprite))
 	{
 		uint32 paramToFree = BgmapSprite::getParam(bgmapSprite);
 		

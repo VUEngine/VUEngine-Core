@@ -43,7 +43,7 @@ void StopwatchManager::register(Stopwatch clock)
 //---------------------------------------------------------------------------------------------------------
 void StopwatchManager::unregister(Stopwatch clock)
 {
-	VirtualList::removeElement(this->stopwatchs, clock);
+	VirtualList::removeData(this->stopwatchs, clock);
 }
 //---------------------------------------------------------------------------------------------------------
 void StopwatchManager::update()

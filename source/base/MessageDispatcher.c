@@ -364,7 +364,7 @@ void MessageDispatcher::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->delayedMessages), x + 19, y, NULL);
 }
 #endif
 //---------------------------------------------------------------------------------------------------------

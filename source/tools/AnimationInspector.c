@@ -198,7 +198,7 @@ void AnimationInspector::show()
 	}
 
 	ASSERT(animatedEntitiesNames, "AnimationInspector::start: null animatedEntitiesNames");
-	ASSERT(VirtualList::getSize(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
+	ASSERT(VirtualList::getCount(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
 
 	OptionsSelector::setOptions(this->animatedEntitySelector, animatedEntitiesNames);
 	delete animatedEntitiesNames;

@@ -99,7 +99,7 @@ bool Polyhedron::draw()
 	bool drawn = false;
 
 	// if I have some vertex, draw them
-	if(this->vertices && 2 < VirtualList::getSize(this->vertices))
+	if(this->vertices && 2 < VirtualList::getCount(this->vertices))
 	{
 		// the nodes which hold the vertices
 		VirtualNode fromNode = this->vertices->head;

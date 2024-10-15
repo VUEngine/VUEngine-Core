@@ -134,7 +134,7 @@ void SoundManager::releaseChannels(VirtualList channels)
 
 	if(!isDeleted(channels))
 	{
-		NM_ASSERT(0 < VirtualList::getSize(channels), "SoundManager::releaseChannels: soundSpec wrapper with no channels");
+		NM_ASSERT(0 < VirtualList::getCount(channels), "SoundManager::releaseChannels: soundSpec wrapper with no channels");
 
 		for(VirtualNode node = channels->head; NULL != node; node = node->next)
 		{
@@ -155,8 +155,8 @@ void SoundManager::purgeReleasedSoundWrappers()
 
 		if(NULL == sound->soundSpec)
 		{
-			VirtualList::removeElement(this->soundsMIDI, sound);
-			VirtualList::removeElement(this->soundsPCM, sound);
+			VirtualList::removeData(this->soundsMIDI, sound);
+			VirtualList::removeData(this->soundsPCM, sound);
 			VirtualList::removeNode(this->sounds, node);
 
 			delete sound;
@@ -914,9 +914,9 @@ Sound SoundManager::doGetSound(const SoundSpec* soundSpec, uint32 command, Event
 					}
 				}
 
-				//NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableNormalChannels");
+				//NM_ASSERT(0 < VirtualList::getCount(availableChannels), "SoundManager::getSound: 0 availableNormalChannels");
 
-				if(0 < VirtualList::getSize(availableChannels))
+				if(0 < VirtualList::getCount(availableChannels))
 				{
 					sound = new Sound(soundSpec, availableChannels, waves, this->pcmTargetPlaybackFrameRate, soundReleaseListener, scope);
 

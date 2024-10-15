@@ -1458,7 +1458,7 @@ void Body::print(int32 x, int32 y)
 
 	Printing::text(Printing::getInstance(), "Normals", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->normals ? VirtualList::getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
+	Printing::int32(Printing::getInstance(), this->normals ? VirtualList::getCount(this->normals) : 0, xDisplacement + x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Friction", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);

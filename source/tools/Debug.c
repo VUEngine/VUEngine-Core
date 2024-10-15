@@ -223,7 +223,7 @@ void Debug::hide()
  */
 uint8 Debug::getCurrentPageNumber()
 {
-	return VirtualList::getNodePosition(this->pages, this->currentPage) + 1;
+	return VirtualList::getNodeIndex(this->pages, this->currentPage) + 1;
 }
 
 void Debug::setBlackBackground()
@@ -357,7 +357,7 @@ void Debug::printHeader()
 	Printing::text(Printing::getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
 	Printing::text(Printing::getInstance(), "   /   ", 16, 0, NULL);
 	Printing::int32(Printing::getInstance(), Debug::getCurrentPageNumber(this), Debug::getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->pages), 20, 0, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->pages), 20, 0, NULL);
 }
 
 /**

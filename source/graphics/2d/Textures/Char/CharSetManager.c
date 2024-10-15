@@ -181,7 +181,7 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	if(CharSet::decreaseUsageCount(charSet))
 	{
-		VirtualList::removeElement(this->charSets, charSet);
+		VirtualList::removeData(this->charSets, charSet);
 
 		uint32 offset = CharSet::getOffset(charSet);
 
@@ -353,7 +353,7 @@ int32 CharSetManager::getTotalFreeChars()
  */
 int32 CharSetManager::getTotalCharSets()
 {
-	return VirtualList::getSize(this->charSets);
+	return VirtualList::getCount(this->charSets);
 }
 
 /**
@@ -368,7 +368,7 @@ void CharSetManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->charSets), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->charSets), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);

@@ -1149,7 +1149,7 @@ void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 		return;
 	}
 
-	int16 internalId = this->internalId + (!isDeleted(this->children) ? VirtualList::getSize(this->children) : 1);
+	int16 internalId = this->internalId + (!isDeleted(this->children) ? VirtualList::getCount(this->children) : 1);
 
 	for(int32 i = 0; NULL != childrenSpecs[i].entitySpec; i++)
 	{
@@ -1816,7 +1816,7 @@ bool Entity::doesAllowCollisions()
  */
 bool Entity::hasColliders()
 {
-	return NULL != this->colliders && 0 < VirtualList::getSize(this->colliders);
+	return NULL != this->colliders && 0 < VirtualList::getCount(this->colliders);
 }
 
 void Entity::showColliders()

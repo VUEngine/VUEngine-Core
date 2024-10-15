@@ -439,7 +439,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureSpec* bgmapTextureSpec
  */
 BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue)
 {
-	uint16 id = VirtualList::getSize(this->bgmapTextures);
+	uint16 id = VirtualList::getCount(this->bgmapTextures);
 
 	//if not, then allocate
 	int32 segment = BgmapTextureManager::doAllocate(this, id, (TextureSpec*)bgmapTextureSpec, minimumSegment, mustLiveAtEvenSegment, scValue);
@@ -617,7 +617,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "Printing segment: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
 	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->bgmapTextures), x + 23, y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->bgmapTextures), x + 23, y, NULL);
 
 	y++;
 	y++;
