@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -12,30 +12,38 @@
 
 
 //=========================================================================================================
-//												INCLUDES
+// INCLUDES
 //=========================================================================================================
 
 #include <Object.h>
 
+
 //=========================================================================================================
-//											CLASS'S DECLARATION
+// CLASS'S DECLARATION
 //=========================================================================================================
 
+///
+/// Class Optics
+///
+/// Inherits from Object
+///
+/// Computes parallax.
 /// @ingroup base
 static class Optics : Object
 {
 	/// @publicsection
+
+	/// Calculate parallax based on the z coordinate.
+	/// @param z: 3D coordinate
+	/// @return Parallax value (in pixels)
 	static inline int16 calculateParallax(fixed_t z);
 }
 
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
 
-/**
- * Calculate parallax based on the x and z coordinates
- *
- * @param x	X parameter for the calculation of the parallax displacement
- * @param z	Z parameter for the calculation of the parallax displacement
- * @return 	Parallax (in pixels)
- */
+//---------------------------------------------------------------------------------------------------------
 static inline int16 Optics::calculateParallax(fixed_t z)
 {
 	fixed_t divisor = (_optical->halfWidth << 1) + z;
@@ -49,5 +57,6 @@ static inline int16 Optics::calculateParallax(fixed_t z)
 
 	return __METERS_TO_PIXELS(__FIXED_EXT_DIV(__FIXED_EXT_MULT(((unsigned)_optical->baseDistance), z), divisor));
 }
+//---------------------------------------------------------------------------------------------------------
 
 #endif

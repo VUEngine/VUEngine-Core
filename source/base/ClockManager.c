@@ -32,31 +32,6 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void ClockManager::constructor()
-{
-	Base::constructor();
-
-	// create the clock list
-	this->clocks = new VirtualList();
-}
-//---------------------------------------------------------------------------------------------------------
-void ClockManager::destructor()
-{
-	VirtualNode node = this->clocks->head;
-
-	// destroy all registered clocks
-	for(; node ; node = node->next)
-	{
-		Clock::destructor(node->data);
-	}
-
-	// clear my list
-	delete this->clocks;
-
-	// allow a new construct
-	Base::destructor();
-}
-//---------------------------------------------------------------------------------------------------------
 void ClockManager::register(Clock clock)
 {
 	if(!VirtualList::find(this->clocks, clock))
@@ -95,5 +70,36 @@ void ClockManager::reset()
 	{
 		Clock::reset(node->data);
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void ClockManager::constructor()
+{
+	Base::constructor();
+
+	// create the clock list
+	this->clocks = new VirtualList();
+}
+//---------------------------------------------------------------------------------------------------------
+void ClockManager::destructor()
+{
+	VirtualNode node = this->clocks->head;
+
+	// destroy all registered clocks
+	for(; node ; node = node->next)
+	{
+		Clock::destructor(node->data);
+	}
+
+	// clear my list
+	delete this->clocks;
+
+	// allow a new construct
+	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
