@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -12,32 +12,57 @@
 
 
 //=========================================================================================================
-//												INCLUDES
+// INCLUDES
 //=========================================================================================================
 
 #include <ListenerObject.h>
 
 
 //=========================================================================================================
-//											CLASS'S DECLARATION
+// CLASS'S DECLARATION
 //=========================================================================================================
 
+///
+/// Class Stopwatch
+///
+/// Inherits from ListenerObject
+///
+/// Implements a stopwatch to keep track of time passage.
 /// @ingroup base
 class Stopwatch : ListenerObject
 {
-	// time elapsed
+	/// Elapsed time in milliseconds
 	uint32 milliSeconds;
-	// register
+
+	/// Interrupts counter
 	uint32 interrupts;
+
+	/// Timer counter's configuration value
 	uint32 timerCounter;
+
+	/// Last registered timer counter's configuration value
 	uint32 previousTimerCounter;
+
+	/// Ratio between elapsed time per interrupt and timer counter's value
 	float timeProportion;
 
 	/// @publicsection
+
+	/// Class' constructor
 	void constructor();
-	float lap();
+
+	/// Class' destructor
+	void destructor();
+
+	/// Reset the state of the stopwatch.
 	void reset();
+
+	/// Update the state of the stopwatch.
 	void update();
+
+	/// Register a new lap.
+	/// @return Elapsed time during the last lap
+	float lap();
 }
 
 
