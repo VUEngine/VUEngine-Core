@@ -21,44 +21,10 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//											CLASS'S STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
-
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- */
-void Object::constructor()
-{
-}
-
-/**
- * Class destructor
- */
-void Object::destructor()
-{
-	// free the memory
-#ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
-	MemoryPool::free((void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
-#else
-	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
-#endif
-
-	this = NULL;
-}
-
-/**
- * Casts an object to base class
- *
- * @param targetClassGetClassMethod
- * @param baseClassGetClassMethod
- * @return								Casted Object
- */
 static Object Object::getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod)
 {
 #ifdef __BYPASS_CAST
@@ -203,21 +169,33 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }
 
-/**
- * Get an Object's vTable
- *
- * @return		vTable pointer
- */
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S PUBLIC METHODS
+//---------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------
+void Object::constructor()
+{
+}
+//---------------------------------------------------------------------------------------------------------
+void Object::destructor()
+{
+	// free the memory
+#ifndef __BYPASS_MEMORY_MANAGER_WHEN_DELETING
+	MemoryPool::free((void*)((uint32)this - __DYNAMIC_STRUCT_PAD));
+#else
+	*((uint32*)((uint32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
+#endif
+
+	this = NULL;
+}
+//---------------------------------------------------------------------------------------------------------
 const void* Object::getVTable()
 {
 	return this->vTable;
 }
-
-/**
- * Get an Object's vTable
- *
- * @return		vTable pointer
- */
+//---------------------------------------------------------------------------------------------------------
 bool Object::evolveTo(const void* targetClass)
 {
 	const struct Object_vTable* targetClassVTable = (const struct Object_vTable*)targetClass;
@@ -265,4 +243,4 @@ bool Object::evolveTo(const void* targetClass)
 
 	return false;
 }
-
+//---------------------------------------------------------------------------------------------------------

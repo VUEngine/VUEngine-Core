@@ -247,7 +247,7 @@ void VUEngine::setState(GameState gameState)
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::cleaniningStatesStack, kEventStateMachineWillCleanStack);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineCleanedStack);
-	StateMachine::prepareTransition(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
+	StateMachine::transitionTo(this->stateMachine, NULL != gameState ? State::safeCast(gameState) : NULL, kStateMachineCleanStack);
 }
 
 void VUEngine::changeState(GameState gameState)
@@ -259,7 +259,7 @@ void VUEngine::changeState(GameState gameState)
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::swappingState, kEventStateMachineWillSwapState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachineSwapedState);
-	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
+	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachineSwapState);
 }
 
 void VUEngine::addState(GameState gameState)
@@ -271,7 +271,7 @@ void VUEngine::addState(GameState gameState)
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::pushingState, kEventStateMachineWillPushState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePushedState);
-	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachinePushState);
+	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePushState);
 }
 
 void VUEngine::removeState(GameState gameState)
@@ -283,7 +283,7 @@ void VUEngine::removeState(GameState gameState)
 	StateMachine::removeAllEventListeners(this->stateMachine);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::poppingState, kEventStateMachineWillPopState);
 	StateMachine::addEventListener(this->stateMachine, ListenerObject::safeCast(this), (EventListener)VUEngine::changedState, kEventStateMachinePoppedState);
-	StateMachine::prepareTransition(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
+	StateMachine::transitionTo(this->stateMachine, State::safeCast(gameState), kStateMachinePopState);
 }
 
 bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
