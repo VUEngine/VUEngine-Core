@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Affine.h>
 
@@ -20,18 +20,19 @@
 
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 extern double fabs (double);
 
 
-//---------------------------------------------------------------------------------------------------------
-//											FUNCTIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
 
-static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixed_t y, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const PixelScale* scale, const Rotation* rotation)
+//---------------------------------------------------------------------------------------------------------
+static int16 Affine::transform(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const PixelScale* scale, const Rotation* rotation)
 {
 	fixed_t finalScaleX = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->y))), __FIX7_9_TO_FIXED(scale->x));
 	fixed_t finalScaleY = __FIXED_MULT(__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(rotation->x))), __FIX7_9_TO_FIXED(scale->y));
@@ -64,9 +65,9 @@ static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixe
 			halfWidth
 			-
 			(
-				__FIXED_MULT(highPrecisionPa, x)
+				__FIXED_MULT(highPrecisionPa, targetHalfWidth)
 				+
-				__FIXED_MULT(highPrecisionPb, y)
+				__FIXED_MULT(highPrecisionPb, targetHalfHeight)
 			)
 		);
 
@@ -79,9 +80,9 @@ static int16 Affine::applyAll(uint32 param, int16 paramTableRow, fixed_t x, fixe
 			halfHeight
 			-
 			(
-				__FIXED_MULT(highPrecisionPc, x)
+				__FIXED_MULT(highPrecisionPc, targetHalfWidth)
 				+
-				__FIXED_MULT(highPrecisionPd, y)
+				__FIXED_MULT(highPrecisionPd, targetHalfHeight)
 			)
 		);
 
@@ -199,9 +200,9 @@ PRINT_INT(lastRow, 1, 16);
 					__FIXED_TO_FIX19_13(halfWidth)
 					-
 					(
-						__FIX19_13_MULT(highPrecisionPa, __FIXED_TO_FIX19_13(x))
+						__FIX19_13_MULT(highPrecisionPa, __FIXED_TO_FIX19_13(targetHalfWidth))
 						+
-						__FIX19_13_MULT(highPrecisionPb, __FIXED_TO_FIX19_13(y))
+						__FIX19_13_MULT(highPrecisionPb, __FIXED_TO_FIX19_13(targetHalfHeight))
 					)
 				);
 
@@ -214,9 +215,9 @@ PRINT_INT(lastRow, 1, 16);
 					__FIXED_TO_FIX19_13(halfHeight)
 					-
 					(
-						__FIX19_13_MULT(highPrecisionPc, __FIXED_TO_FIX19_13(x))
+						__FIX19_13_MULT(highPrecisionPc, __FIXED_TO_FIX19_13(targetHalfWidth))
 						+
-						__FIX19_13_MULT(highPrecisionPd, __FIXED_TO_FIX19_13(y))
+						__FIX19_13_MULT(highPrecisionPd, __FIXED_TO_FIX19_13(targetHalfHeight))
 					)
 				);
 
@@ -256,8 +257,8 @@ PRINT_INT(lastRow, 1, 16);
 
 	return -1;
 }
-
-static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t x, fixed_t y, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
+//---------------------------------------------------------------------------------------------------------
+static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t targetHalfWidth, fixed_t targetHalfHeight, fix13_3 mx, fix13_3 my, fixed_t halfWidth, fixed_t halfHeight, const Rotation* rotation)
 {
 	fixed_t highPrecisionPa = __FIX7_9_TO_FIXED(__COS(-__FIXED_TO_I(rotation->z)));
 	fixed_t highPrecisionPb = -__FIX7_9_TO_FIXED(__SIN(-__FIXED_TO_I(rotation->z)));
@@ -277,9 +278,9 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t x, fixed_
 			halfWidth
 			-
 			(
-				__FIXED_MULT(highPrecisionPa, x)
+				__FIXED_MULT(highPrecisionPa, targetHalfWidth)
 				+
-				__FIXED_MULT(highPrecisionPb, y)
+				__FIXED_MULT(highPrecisionPb, targetHalfHeight)
 			)
 		);
 
@@ -292,9 +293,9 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t x, fixed_
 			halfHeight
 			-
 			(
-				__FIXED_MULT(highPrecisionPc, x)
+				__FIXED_MULT(highPrecisionPc, targetHalfWidth)
 				+
-				__FIXED_MULT(highPrecisionPd, y)
+				__FIXED_MULT(highPrecisionPd, targetHalfHeight)
 			)
 		);
 
@@ -334,3 +335,4 @@ static int16 Affine::rotate(uint32 param, int16 paramTableRow, fixed_t x, fixed_
 
 	return -1;
 }
+//---------------------------------------------------------------------------------------------------------

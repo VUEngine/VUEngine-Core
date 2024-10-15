@@ -10,47 +10,37 @@
 #ifndef MATH_H_
 #define MATH_H_
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
-// extern declarations
 extern int32 abs(int32);
 extern float fabsf(float);
+extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+
+
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
 #define __USE_WORDS_SIZE_ABS_FUNCTION
 #ifdef __USE_WORDS_SIZE_ABS_FUNCTION
 #define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
 #else
 #ifdef __USE_VB_REGISTER_ABS_FUNCTION
-#define __ABS(number)	customAbs(number)
+#define __ABS(number)	Math::abs(number)
 #else
 #define __ABS(number)   abs(number)
 #endif
 #endif
-
-inline int32 customAbs(int32 number)
-{
-	int32 result = 0;
-
-	asm
-	(
-		"ldsr	%1, 31	\n\t"	\
-		"stsr	31, %0	\n\t"
-		: "=r" (result)
-		: "r" (number)
-		:
-	);
-
-	return result;
-}
 
 // usable only when m is a power of 2
 #define __MODULO(n, m)									((n) & ((m) - 1))
@@ -326,36 +316,150 @@ extern const int16 _sinLut[];
 #define __FIXED_SQUARE(n)								__FIXED_EXT_MULT(n, n)
 #define __F_SQUARE_ROOT_OF_2							(1.47f)
 
-extern uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-extern uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
+///
+/// Class Math
+///
+/// Inherits from Object
+///
+/// Implements miscelaneous mathematical functions.
 /// @ingroup base-libgccvb
 static class Math : Object
 {
 	/// @publicsection
-	static inline float squareRoot(float number);
-	static inline fixed_t Math::squareRootFixed(fixed_ext_t base);
-	static int32 powerFast(int32 base, int32 power);
-	static int32 intInfinity();
-	static fixed_t fixedInfinity();
-	static fixed_ext_t fixed_extInfinity();
-	static int32 getAngle(fix7_9 x, fix7_9 y);
-	static int32 aSin(fix7_9 sin);
-	static void resetRandomSeed();
+
+	/// Compute the absolute value of number.
+	/// @param number: Input number to compute the absolute value of
+	/// @return Absolute value of the provided number
+	static inline int32 abs(int32 number);
+
+	/// Round down the provided number.
+	/// @param number: Input number to round down
+	/// @return Integral part of the provided number
+	static inline float floor(float number);
+
+	/// Return the minimum number between two numbers.
+	/// @param a: First number
+	/// @param b: Second number
+	/// @return Minimum number between those provided
+	static inline int32 min(int32 a, int32 b);
+
+	/// Return the maximum number between two numbers.
+	/// @param a: First number
+	/// @param b: Second number
+	/// @return Maximum number between those provided
+	static inline int32 max(int32 a, int32 b);
+
+	/// Compute the square root of the provided number (alrogithm takem from the DOOM's engine).
+	/// @param radicand: Number to compute the square root of
+	/// @return The square root of the provided number
+	static inline float squareRoot(float radicand);
+
+	/// Compute the square root of the provided number (alrogithm takem from the DOOM's engine).
+	/// @param radicand: Number to compute the square root of
+	/// @return The square root of the provided number
+	static inline fixed_t squareRootFixed(fixed_ext_t radicand);
+
+	/// Retrieve a random seed (algorithm taken from https://www.youtube.com/watch?v=RzEjqJHW-NU).
+	/// @return Random seed
 	static inline uint32 randomSeed();
-	static inline int32 random(uint32 seed, int32 randnums);
+
+	/// Compute a pseudo random number from the seed in the provided range.
+	/// @param seed: Random seed
+	/// @param range: Range for the generated pseudo random number
+	/// @return The square root of the provided number
+	static inline int32 random(uint32 seed, int32 range);
+
+	/// Check if the provided numbers have equal sign.
+	/// @param a: First number
+	/// @param b: Second number
+	/// @return True if the provided numbers have equal sign; false otherwise
 	static inline int32 haveEqualSign(int32 a, int32 b);
-	static inline int32 getDigitsCount(int32 value);
-	static inline float floor(float x);
+
+	/// Compute the number of digits that the provided number has.
+	/// @param number: Number to compute the digits of
+	/// @return Number of digits of the provided number
+	static inline int32 getDigitsCount(int32 number);
+	
+	/// Reset the internal random seed.
+	static void resetRandomSeed();
+
+	/// Retrieve the maximum number for the int32 data type.
+	/// @return Maximum positive value for the int32 data type
+	static int32 intInfinity();
+
+	/// Retrieve the maximum number for the fixed_t data type.
+	/// @return Maximum positive value for the fixed_t data type
+	static fixed_t fixedInfinity();
+
+	/// Retrieve the maximum number for the fixed_ext_t data type.
+	/// @return Maximum positive value for the fixed_ext_t data type
+	static fixed_ext_t fixed_extInfinity();
+
+	/// Compute the arc sin of the provided sin.
+	/// @param sin: sin value
+	/// @return Arcsin of the provided sin value
+	static int32 aSin(fix7_9 sin);
+
+	/// Compute the angle between (0, 0) and (x, y).
+	/// @param x: X coordinate
+	/// @param y: Y coordinate
+	/// @return Angle in degrees (0-512)
+	static int32 getAngle(fix7_9 x, fix7_9 y);
+
+	/// Compute the power for the provided base.
+	/// @param base: Base
+	/// @param power: Power
+	/// @return Base elevated to the provided power
+	static int32 power(int32 base, int32 power);
+
+	/// Compute the power for the provided base.
+	/// @param base: Base
+	/// @param power: Power
+	/// @return Base elevated to the provided power
+	static int32 powerFast(int32 base, int32 power);
 }
 
-// retrieve the square root
-// this code was taken from the Doom engine
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static inline int32 Math::abs(int32 number)
+{
+	int32 result = 0;
+
+	asm
+	(
+		"ldsr	%1, 31	\n\t"	\
+		"stsr	31, %0	\n\t"
+		: "=r" (result)
+		: "r" (number)
+		:
+	);
+
+	return result;
+}
+//---------------------------------------------------------------------------------------------------------
+static inline float Math::floor(float number) 
+{
+	return (float)((long)(number * 2 + 0.5f) >> 1);
+}
+//---------------------------------------------------------------------------------------------------------
+static inline int32 Math::min(int32 a, int32 b)
+{
+	return a < b ? a : b;
+}
+//---------------------------------------------------------------------------------------------------------
+static inline int32 Math::max(int32 a, int32 b)
+{
+	return a > b ? a : b;
+}
+//---------------------------------------------------------------------------------------------------------
 static inline float Math::squareRoot(float radicand)
 {
 // Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
@@ -371,48 +475,33 @@ static inline float Math::squareRoot(float radicand)
 
 	return radicand * y;
 }
-
-// retrieve the square root
-// this code was taken from the Doom engine
-static inline fixed_t Math::squareRootFixed(fixed_ext_t base)
+//---------------------------------------------------------------------------------------------------------
+static inline fixed_t Math::squareRootFixed(fixed_ext_t radicand)
 {
 // Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
 // Doom's code causes a warning because of breaking of aliasing rules
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
-	float radicand = (float)base;
+	float radicandHelper = (float)radicand;
 
-	float x = radicand * 0.5F;
-	float y = radicand;
+	float x = radicandHelper * 0.5F;
+	float y = radicandHelper;
 	long i = *(long*)&y;
 	i = 0x5f3759df - (i >> 1);
 	y = *(float*)&i;
 	y = y * (1.5F - ( x * y * y ));
 
 #if __FIXED_POINT_TYPE == 13
-	return (fixed_t)(90.6f * radicand * y );
+	return (fixed_t)(90.6f * radicandHelper * y );
 #else 
 #if __FIXED_POINT_TYPE == 6
-	return (fixed_t)(8 * radicand * y);
+	return (fixed_t)(8 * radicandHelper * y);
 #else
-	return (fixed_t)__F_TO_FIXED(radicand * y);
+	return (fixed_t)__F_TO_FIXED(radicandHelper * y);
 #endif
 #endif
 }
-
-// These real versions are due to Isaku Wada, 2002/01/09 added
-static inline int32 Math::random(uint32 seed, int32 randnums)
-{
-#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-	seed += Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
-#endif
-
-	return 0 != randnums ? __ABS((int32)(seed % randnums)) : 0;
-}
-
-/*
- * Taken from https://www.youtube.com/watch?v=RzEjqJHW-NU
- */
+//---------------------------------------------------------------------------------------------------------
 static inline uint32 Math::randomSeed()
 {
 	_seed >>= 1;
@@ -420,31 +509,21 @@ static inline uint32 Math::randomSeed()
 
 	return _seed;
 }
-
-/*
- * Taken from Shokwav's N64 demo
- */
-/*
-static inline uint32 Math::randomSeed()
+//---------------------------------------------------------------------------------------------------------
+static inline int32 Math::random(uint32 seed, int32 range)
 {
-	if(!_seed)
-	{
-		_seed = 7;
-	}
+#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+	seed += Clock::getMilliseconds(VUEngine::getClock(VUEngine::getInstance())) + KeypadManager::getAccumulatedUserInput(KeypadManager::getInstance());
+#endif
 
-	_seed ^= _seed << 13;
-	_seed ^= _seed >> 17;
-	_seed ^= _seed << 5;
-
-	return _seed;
+	return 0 != range ? __ABS((int32)(seed % range)) : 0;
 }
-*/
-
+//---------------------------------------------------------------------------------------------------------
 static inline int32 Math::haveEqualSign(int32 a, int32 b)
 {
 	return ((a & (1 << sizeof(int32))) ==	(b & (1 << sizeof(int32))));
 }
-
+//---------------------------------------------------------------------------------------------------------
 static inline int32 Math::getDigitsCount(int32 value)
 {
 	int32 size = 0;
@@ -458,21 +537,7 @@ static inline int32 Math::getDigitsCount(int32 value)
 
 	return size;
 }
-
-static inline float Math::floor(float x) 
-{
-	return (float)((long)(x * 2 + 0.5f) >> 1);
-}
-
-static inline int32 Math::min(int32 x, int32 y)
-{
-	return x < y ? x : y;
-}
-
-static inline int32 Math::max(int32 x, int32 y)
-{
-	return x > y ? x : y;
-}
+//---------------------------------------------------------------------------------------------------------
 
 
 #endif

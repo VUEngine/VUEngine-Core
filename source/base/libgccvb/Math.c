@@ -8,21 +8,31 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Math.h>
 
 #include <HardwareManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 extern float sqrtf (float);
+static int32 Math::multiply(int32 a, int32 b);
+static int32 Math::doPower(int32 sum, int32 base, int32 power);
 
+
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
+
+
+uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 28437657; /* Seed value */
+uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 
 const int16 _sinLut[] =
 {
@@ -92,76 +102,62 @@ const int16 _sinLut[] =
  -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6  //64
 };
 
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
+
 #define __ENTRIES_PER_QUADRANT	(__SIN_LUT_ENTRIES >> 2)
 #define __TOTAL_ENTRIES 		(__SIN_LUT_ENTRIES)
 
 
-uint32 _seed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 28437657; /* Seed value */
-uint32 _gameRandomSeed __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//											FUNCTIONS
-//---------------------------------------------------------------------------------------------------------
-
 static void Math::resetRandomSeed()
 {
 	_seed = 7; /* Seed value */
 }
-
-static int32 Math::powerFast(int32 base, int32 power)
-{
-	int32 i=0;
-	int32 j=0;
-	int32 sum = base;
-	int32 result = 0;
-	int32 limit = base;
-
-	power = 0 > power ? -power : power;
-
-	for(i = 1; i < power; i++)
-	{
-		for(j = 0; j < limit; j++)
-		{
-			result += sum;
-		}
-		limit = base -1;
-		sum = result;
-	}
-
-	return 0 == power ? 1 : 1 == power ? base : result;
-}
-
-static int32 Math::multiply(int32 a, int32 b)
-{
-	return (0 < b) ? a + Math::multiply(a, b - 1) : 0;
-}
-
-static int32 Math::doPower(int32 sum, int32 base, int32 power)
-{
-	return (1 < power) ? Math::doPower(Math::multiply(sum, base), base, power - 1) : sum;
-}
-
-static int32 Math::power(int32 base, int32 power)
-{
-	return 0 == power ? 1 : 1 == power ? base : Math::doPower(base, base, 0 > power ? -power : power);
-}
-
+//---------------------------------------------------------------------------------------------------------
 static int32 Math::intInfinity()
 {
 	return 0x3FFFFFFF;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static fixed_t Math::fixedInfinity()
 {
 	return __FIXED_INFINITY;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static fixed_ext_t Math::fixed_extInfinity()
 {
 	return __FIXED_EXT_INFINITY;
 }
+//---------------------------------------------------------------------------------------------------------
+static int32 Math::aSin(fix7_9 sin)
+{
+	int32 angle = 0;
+	int32 entry = 0;
+	int32 lastEntry = __ENTRIES_PER_QUADRANT;
+	int32 difference = 1024;
 
+	for(; entry < lastEntry; entry++)
+	{
+		if(__ABS(sin - _sinLut[entry]) <= difference)
+		{
+			difference = __ABS(sin - _sinLut[entry]);
+			angle = entry;
+		}
+		else if(__ABS(sin - _sinLut[entry]) > difference)
+		{
+			break;
+		}
+	}
+
+	return angle;
+}
+//---------------------------------------------------------------------------------------------------------
 static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 {
 	int16 firstEntry = 0;
@@ -262,26 +258,49 @@ static int32 Math::getAngle(fix7_9 cos, fix7_9 sin)
 
 	return angle;
 }
-
-static int32 Math::aSin(fix7_9 sin)
+//---------------------------------------------------------------------------------------------------------
+static int32 Math::power(int32 base, int32 power)
 {
-	int32 angle = 0;
-	int32 entry = 0;
-	int32 lastEntry = __ENTRIES_PER_QUADRANT;
-	int32 difference = 1024;
+	return 0 == power ? 1 : 1 == power ? base : Math::doPower(base, base, 0 > power ? -power : power);
+}
+//---------------------------------------------------------------------------------------------------------
+static int32 Math::powerFast(int32 base, int32 power)
+{
+	int32 i=0;
+	int32 j=0;
+	int32 sum = base;
+	int32 result = 0;
+	int32 limit = base;
 
-	for(; entry < lastEntry; entry++)
+	power = 0 > power ? -power : power;
+
+	for(i = 1; i < power; i++)
 	{
-		if(__ABS(sin - _sinLut[entry]) <= difference)
+		for(j = 0; j < limit; j++)
 		{
-			difference = __ABS(sin - _sinLut[entry]);
-			angle = entry;
+			result += sum;
 		}
-		else if(__ABS(sin - _sinLut[entry]) > difference)
-		{
-			break;
-		}
+		limit = base -1;
+		sum = result;
 	}
 
-	return angle;
+	return 0 == power ? 1 : 1 == power ? base : result;
 }
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static int32 Math::multiply(int32 a, int32 b)
+{
+	return (0 < b) ? a + Math::multiply(a, b - 1) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+static int32 Math::doPower(int32 sum, int32 base, int32 power)
+{
+	return (1 < power) ? Math::doPower(Math::multiply(sum, base), base, power - 1) : sum;
+}
+//---------------------------------------------------------------------------------------------------------
+

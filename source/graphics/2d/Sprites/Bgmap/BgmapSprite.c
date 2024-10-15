@@ -594,7 +594,7 @@ static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 
 	if(0 < bgmapSprite->param)
 	{
-		return Affine::applyAll(
+		return Affine::transform(
 			bgmapSprite->param,
 			bgmapSprite->paramTableRow,
 			// geometrically accurate, but kills the CPU
