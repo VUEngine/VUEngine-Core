@@ -50,29 +50,51 @@ enum MemoryPoolSizes
 //											CLASS'S DECLARATION
 //=========================================================================================================
 
+///
+/// Class MemoryPool
+///
+/// Inherits from Object
+///
+/// Implements a memory pool for dynamic object allocation.
 /// @ingroup base
 singleton class MemoryPool : Object
 {
-	// dynamic memory area
-	// must always put together the pools!
-	// first byte is used as a usage flag
+	/// The actual blocks that constitute the memory pools
 	__MEMORY_POOL_ARRAYS
-	// pointer to the beginning of each memory pool
+
+	/// Array of pointers to the beginning of each memory pool
 	BYTE* poolLocation[__MEMORY_POOLS];
-	// pool's size and pool's block size
+	
+	/// Mapping of memory pools to their block and total size
 	uint16 poolSizes[__MEMORY_POOLS][2];
-	// pool's size and pool's block size
+	
+	/// Array of pointers to the last free block found in each pool to accelerate the next search
 	BYTE* poolLastFreeBlock[__MEMORY_POOLS];
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return MemoryPool singleton
 	static MemoryPool getInstance();
+
+	/// Allocate a block big enough to hold the provided amount of bytes.
+	/// @param numBytes: Total number of bytes to allocate
+	/// @return A pointer to the allocated block
 	static BYTE* allocate(int32 numBytes);
+
+	/// Free the memory block in which the provided object was allocated.
+	/// @param object: Pointer to the memory block to free
 	static void free(BYTE* object);
 	
-	void cleanUp();
-	void printDirectory(int32 x, int32 y, int32 pool);
-	void printDetailedUsage(int32 x, int32 y);
+	/// Print a resume of the memory usage.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void printResumedUsage(int32 x, int32 y);
+
+	/// Print all the details of the memory usage.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void printDetailedUsage(int32 x, int32 y);
 }
 
 #endif

@@ -434,10 +434,6 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 // erase engine's current status
 void VUEngine::reset(bool resetSounds)
 {
-#ifdef	__MEMORY_POOL_CLEAN_UP
-	MemoryPool::cleanUp(MemoryPool::getInstance());
-#endif
-
 #ifdef __ENABLE_PROFILER
 	Profiler::reset(Profiler::getInstance());
 #endif
