@@ -19,7 +19,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//											CLASS'S ATTRIBUTES
 //---------------------------------------------------------------------------------------------------------
 
 static const Transformation _dummyTransformation = 
@@ -36,12 +36,10 @@ static const Transformation _dummyTransformation =
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S PUBLIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Component::constructor(SpatialObject owner, const ComponentSpec* componentSpec)
 {
 	Base::constructor();
@@ -58,16 +56,13 @@ void Component::constructor(SpatialObject owner, const ComponentSpec* componentS
 		this->transformation = SpatialObject::getTransformation(this->owner);
 	}
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Component::destructor()
 {	
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
+//---------------------------------------------------------------------------------------------------------
 ComponentSpec* Component::getSpec()
 {
 	return this->componentSpec;

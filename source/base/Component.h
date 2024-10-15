@@ -19,28 +19,48 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
+//											FORWARD DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
+
+class SpatialObject;
+typedef const void ComponentSpec;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-class SpatialObject;
-
-typedef const void ComponentSpec;
-
+///
+/// Class Component
+///
+/// Inherits from ListenerObject
+///
+/// Serves as the base class for components of entities.
+/// @ingroup base
 abstract class Component : ListenerObject 
 {
+	/// Object to which this component attaches to
 	SpatialObject owner;
+
+	/// Pointer to the spec that defines how to initialize the component 
 	const ComponentSpec* componentSpec;
+
+	/// Pointer to the transformation that the component attaches to
 	const Transformation* transformation;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the component attaches to
+	/// @param componentSpec: Pointer to the spec that defines how to initialize the component
 	void constructor(SpatialObject owner, const ComponentSpec* componentSpec);
 
+	/// Class' destructor
+	void destructor();
+
+	/// Retrieve the spec pointer that defined how to initialized the component
+	/// @return Component spec pointer
 	ComponentSpec* getSpec();
 }
-
 
 #endif

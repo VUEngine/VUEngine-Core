@@ -39,7 +39,7 @@ enum ClockPrintPrecision
 ///
 /// Inherits from ListenerObject
 ///
-/// Class that implements simple clock that can keep track of time and print itself.
+/// Implements simple clock that can keep track of time and print itself.
 /// @ingroup base
 class Clock : ListenerObject
 {

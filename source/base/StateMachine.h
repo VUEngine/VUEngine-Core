@@ -50,7 +50,7 @@ enum StateOperations
 ///
 /// Inherits from ListenerObject
 ///
-/// Class that implements a behavioral model of finite states.
+/// Implements a behavioral model of finite states.
 /// @ingroup base
 class StateMachine : ListenerObject
 {

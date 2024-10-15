@@ -60,7 +60,7 @@ typedef struct Event
 ///
 /// Inherits from Object
 ///
-/// Class capable of interactions by means of events and messages.
+/// Interacts by means of events and messages.
 /// @ingroup base
 abstract class ListenerObject : Object
 {

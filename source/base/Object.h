@@ -35,7 +35,7 @@ typedef Object (*AllocatorPointer)();
 ///
 /// Inherits from Object
 ///
-/// Base class for all other classes in the engine, it inherits from nothing but itself.
+/// Serves as the base class for all other classes in the engine.
 /// @ingroup base
 abstract class Object : Object
 {

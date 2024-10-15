@@ -35,7 +35,7 @@ class Clock;
 ///
 /// Inherits from Object
 ///
-/// Singleton class that manages the instances of Clock.
+/// Manages the instances of Clock.
 /// @ingroup base
 singleton class ClockManager : Object
 {
