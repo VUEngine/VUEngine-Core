@@ -11,25 +11,25 @@
 #define MESSAGE_DISPATCHER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
 //												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
 
 #include <Object.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+//											FORWARD DECLARATIONS
+//=========================================================================================================
 
 class Clock;
 class Telegram;
 
-/**
- * Delayed Message
- *
- * @memberof MessageDispatcher
- */
+
+//=========================================================================================================
+//												CLASS'S DATA
+//=========================================================================================================
+
 typedef struct DelayedMessage
 {
 	/// pointer to the telegram to dispatch
@@ -44,27 +44,51 @@ typedef struct DelayedMessage
 } DelayedMessage;
 
 
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
 //											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
 
 class ListenerObject;
 class StateMachine;
 class Telegram;
 class Clock;
 
+///
+/// Class MessageDispatcher
+///
+/// Inherits from Object
+///
+/// Implements a dispatcher central of message codes wrapped in a Telegram.
 /// @ingroup base
 singleton class MessageDispatcher : Object
 {
-	// Delayed messages
+	/// Linked list of queued messages to be dispatched
 	VirtualList delayedMessages;
-	// Telegram used when there is no stacking of telegrams
+
+	/// Telegram used when there is no stacking of telegrams
 	Telegram helperTelegram;
+
+	/// Flag that indicates the usage state of the helper telegram
 	bool helperTelegramIsInUse;
 
 	/// @publicsection
 	static MessageDispatcher getInstance();
+
+	/// Dispatch a message
+	/// @param delay: Milliseconds to wait before dispatching the message
+	/// @param sender: Object that sends the message
+	/// @param receiver: Object that receives the message
+	/// @param message: Message's code
+	/// @param extraInfo: Pointer to any extra data that must accompany the message
+	/// @return	Boolean indicating the status of the processing of the message if immediately dispatched
 	static bool dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo);
+
+	/// Dispatch delayed message
+	/// @param delay: Milliseconds to wait before dispatching the message
+	/// @param sender: Object that sends the message
+	/// @param receiver: Object that receives the message
+	/// @param message: Message's code
+	/// @param extraInfo: Pointer to any extra data that must accompany the message
 	void dispatchDelayedMessage(Clock clock, uint32 delay, ListenerObject sender,
 		ListenerObject receiver, int32 message, void* extraInfo);
  	bool dispatchDelayedMessages();

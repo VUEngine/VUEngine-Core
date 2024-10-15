@@ -11,39 +11,71 @@
 #define FRAMERATE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class FrameRate
+///
+/// Inherits from ListenerObject
+///
+/// Keeps track of the program's frame rate.
 /// @ingroup base
 singleton class FrameRate : ListenerObject
 {
-	// elapsed time in current 50hz cycle
-	float gameFrameTotalTime;
-	// Frames per second
+	/// Accumulated frames per second
 	uint32 totalFPS;
+
+	/// Accumulated uneven frames per second
 	uint32 totalUnevenFPS;
+	
+	/// Accumualted elapssed seconds
 	uint16 seconds;
+
+	/// Current frames per second
 	uint16 FPS;
+
+	/// Total number of game frame starts
 	uint16 gameFrameStarts;
+
+	/// Uneven frames during the current second
 	uint16 unevenFPS;
+
+	/// The target frames per second
 	uint8 targetFPS;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return FrameRate singleton
 	static FrameRate getInstance();
-	uint16 getFPS();
-	void setTarget(uint8 targetFPS);
-	void gameFrameStarted(bool gameCycleEnded);
-	void update();
-	void print(int32 col, int32 row);
+
+	/// Reset the state of the manager.
 	void reset();
+
+	/// Set the target frames per second.
+	/// @param targetFPS: Target frames per second
+	void setTarget(uint8 targetFPS);
+
+	/// Update the elapsed frames during the current second.
+	void update();
+
+	/// The next game frame cycle has started.
+	/// @param gameCycleEnded: Flag that indicates if the previous game frame was completed before the current second has elapsed
+	void gameFrameStarted(bool gameCycleEnded);
+
+	/// Print the frames per second statistics.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void print(int32 x, int32 y);
 }
 
 

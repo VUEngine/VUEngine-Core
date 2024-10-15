@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+//											CLASS'S DECLARATIONS
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <HardwareManager.h>
@@ -20,9 +20,9 @@
 #include "MemoryPool.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+//											CLASS'S DECLARATION
+//=========================================================================================================
 
 // defines a singleton (unique instance of a class)
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
@@ -91,11 +91,12 @@
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
 		void ClassName ## dummyMethodSingleton()
 
-/**
- * Class constructor
- *
- * @private
- */
+
+//=========================================================================================================
+//											CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void MemoryPool::constructor()
 {
 	Base::constructor();
@@ -105,22 +106,13 @@ void MemoryPool::constructor()
 
 	_memoryPool = this;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
  void MemoryPool::destructor()
 {
 	// allow a new construct
 	Base::destructor();
 }
-
-
-/**
- * Clear all memory pool
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void MemoryPool::reset()
 {
 	uint32 pool = 0;
@@ -138,10 +130,7 @@ void MemoryPool::reset()
 		}
 	}
 }
-
-/**
- * Clear all memory pool
- */
+//---------------------------------------------------------------------------------------------------------
 void MemoryPool::cleanUp()
 {
 	uint32 pool = 0;
@@ -163,12 +152,7 @@ void MemoryPool::cleanUp()
 		}
 	}
 }
-
-/**
- * Retrieve the pool's size
- *
- * @return			Total size of the memory pool
- */
+//---------------------------------------------------------------------------------------------------------
 uint32 MemoryPool::getPoolSize()
 {
 	uint32 size = 0;
@@ -184,12 +168,7 @@ uint32 MemoryPool::getPoolSize()
 }
 
 #ifndef __SHIPPING
-/**
- * Print the pools' detailed usage
- *
- * @param x			Camera column for the output
- * @param y			Camera row for the output
- */
+//---------------------------------------------------------------------------------------------------------
 void MemoryPool::printDetailedUsage(int32 x, int32 y)
 {
 	uint32 i;
@@ -247,12 +226,7 @@ void MemoryPool::printDetailedUsage(int32 x, int32 y)
 #endif
 
 #ifndef __RELEASE
-/**
- * Print the pools' resumed usage
- *
- * @param x			Camera column for the output
- * @param y			Camera row for the output
- */
+//---------------------------------------------------------------------------------------------------------
 void MemoryPool::printResumedUsage(int32 x, int32 y)
 {
 	uint32 originalY = y;
@@ -307,11 +281,7 @@ void MemoryPool::printResumedUsage(int32 x, int32 y)
 }
 #endif
 
-/**
- * Free the memory pool entry were the given object is allocated
- *
- * @param object	Pointer to the memory pool entry to free
- */
+//---------------------------------------------------------------------------------------------------------
 static void MemoryPool::free(BYTE* object)
 {
 	MemoryPool this = _memoryPool;
@@ -375,12 +345,7 @@ static void MemoryPool::free(BYTE* object)
 #define NM_ASSERT(Statement, ...)
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 
-/**
- * Allocate a given amount of bytes in one of the memory pools
- *
- * @param numberOfBytes		Number of bytes to allocate
- * @return					Pointer to the memory pool entry allocated
- */
+//---------------------------------------------------------------------------------------------------------
 static BYTE* MemoryPool::allocate(int32 numberOfBytes)
 {
 	MemoryPool this = _memoryPool;

@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <Printing.h>
@@ -19,25 +19,11 @@
 #include "FrameRate.h"
 
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			FrameRate::getInstance()
- * @memberof	FrameRate
- * @public
- * @return		FrameRate instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void FrameRate::constructor()
 {
 	Base::constructor();
@@ -49,21 +35,13 @@ void FrameRate::constructor()
 	this->seconds = 0;
 	this->totalFPS = 0;
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void FrameRate::destructor()
 {
 	// allow a new construct
 	Base::destructor();
 }
-
-/**
- * Reset internal values
- */
+//---------------------------------------------------------------------------------------------------------
 void FrameRate::reset()
 {
 	this->FPS = 0;
@@ -73,26 +51,18 @@ void FrameRate::reset()
 	this->totalFPS = 0;
 	this->totalUnevenFPS = 0;
 }
-
-/**
- * Retrieve FPS
- */
-uint16 FrameRate::getFPS()
-{
-	return this->FPS;
-}
-
+//---------------------------------------------------------------------------------------------------------
 void FrameRate::setTarget(uint8 targetFPS)
 {
 	FrameRate::reset(this);
 	this->targetFPS = targetFPS;
 }
-
-/**
- * Acknowledge that the game frame started
- *
- * @param gameCycleEnded	Boolean
- */
+//---------------------------------------------------------------------------------------------------------
+void FrameRate::update()
+{
+	this->FPS++;
+}
+//---------------------------------------------------------------------------------------------------------
 void FrameRate::gameFrameStarted(bool gameCycleEnded)
 {
 	if(!gameCycleEnded)
@@ -144,35 +114,22 @@ void FrameRate::gameFrameStarted(bool gameCycleEnded)
 		this->gameFrameStarts = 0;
 	}
 }
-
-/**
- * Update
- */
-void FrameRate::update()
-{
-	this->FPS++;
-}
-
-/**
- * Print FPS
- *
- * @param col	Column to start printing at
- * @param row	Row to start printing at
- */
-void FrameRate::print(int32 col, int32 row)
+//---------------------------------------------------------------------------------------------------------
+void FrameRate::print(int32 x, int32 y)
 {
 #ifdef __UNLOCK_FPS
 	Printing printing = Printing::getInstance();
-	Printing::int32(printing, this->FPS, col, row, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, col + 7, row, NULL);
+	Printing::int32(printing, this->FPS, x, y, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, x + 7, y, NULL);
 #else
 	Printing printing = Printing::getInstance();
-	Printing::text(printing, "FPS   /   ", col, row, NULL);
-	Printing::int32(printing, this->FPS, col + 4, row, NULL);
-	Printing::int32(printing, this->unevenFPS, col + 7, row, NULL);
+	Printing::text(printing, "FPS   /   ", x, y, NULL);
+	Printing::int32(printing, this->FPS, x + 4, y, NULL);
+	Printing::int32(printing, this->unevenFPS, x + 7, y, NULL);
 
-	Printing::text(printing, "AVR   /   ", col + 10, row, NULL);
-	Printing::int32(printing, this->totalFPS / this->seconds, col + 4 + 10, row, NULL);
-	Printing::int32(printing, this->unevenFPS / this->seconds, col + 7 + 10, row, NULL);
+	Printing::text(printing, "AVR   /   ", x + 10, y, NULL);
+	Printing::int32(printing, this->totalFPS / this->seconds, x + 4 + 10, y, NULL);
+	Printing::int32(printing, this->unevenFPS / this->seconds, x + 7 + 10, y, NULL);
 #endif
 }
+//---------------------------------------------------------------------------------------------------------

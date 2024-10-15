@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Clock.h>
 #include <Printing.h>
@@ -22,9 +22,9 @@
 #include "MessageDispatcher.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
@@ -32,58 +32,12 @@ friend class Telegram;
 
 static MessageDispatcher _messageDispatcher = NULL;
 
+
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			MessageDispatcher::getInstance()
- * @memberof	MessageDispatcher
- * @public
- * @return		MessageDispatcher instance
- */
-
-
-/**
- * Class constructor
- */
- void MessageDispatcher::constructor()
-{
-	Base::constructor();
-
-	this->delayedMessages = new VirtualList();
-	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
-	this->helperTelegramIsInUse = false;
-
-	_messageDispatcher = this;
-}
-
-/**
- * Class destructor
- */
-void MessageDispatcher::destructor()
-{
-	_messageDispatcher = NULL;
-
-	delete this->delayedMessages;
-	delete this->helperTelegram;
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Dispatch a message
- *
- * @param delay		milliseconds to wait before dispatching the message
- * @param sender	the object that sends the message
- * @param receiver	the object that receives the message
- * @param message	the actual message code
- * @param extraInfo	pointer to any extra data that must accompany the message
- * @return			a flag indicating the status of the processing of the message
- */
 static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
 	// make sure the receiver is valid
@@ -133,16 +87,35 @@ static bool MessageDispatcher::dispatchMessage(uint32 delay, ListenerObject send
 
 	return false;
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Dispatch delayed message
- *
- * @param delay		milliseconds to wait before dispatching the message
- * @param sender	the object that sends the message
- * @param receiver	the object that receives the message
- * @param message	the actual message code
- * @param extraInfo	pointer to any extra data that must accompany the message
- */
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void MessageDispatcher::constructor()
+{
+	Base::constructor();
+
+	this->delayedMessages = new VirtualList();
+	this->helperTelegram = new Telegram(NULL, NULL, 0, NULL);
+	this->helperTelegramIsInUse = false;
+
+	_messageDispatcher = this;
+}
+//---------------------------------------------------------------------------------------------------------
+void MessageDispatcher::destructor()
+{
+	_messageDispatcher = NULL;
+
+	delete this->delayedMessages;
+	delete this->helperTelegram;
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
 void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
  	ListenerObject sender, ListenerObject receiver, int32 message, void* extraInfo)
 {
@@ -160,6 +133,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, uint32 delay,
 /**
  * Take care of any discarded message
  */
+//---------------------------------------------------------------------------------------------------------
 void MessageDispatcher::processDiscardedMessages()
 {
 	for(VirtualNode node = this->delayedMessages->head, nextNode = NULL; NULL != node; node = nextNode)
@@ -194,6 +168,7 @@ void MessageDispatcher::processDiscardedMessages()
 /**
  * Dispatch the delayed messages whose delay has expired
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::dispatchDelayedMessages()
 {
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
@@ -280,6 +255,7 @@ bool MessageDispatcher::dispatchDelayedMessages()
  * @private
  * @param clock		the clock against which the message's delay is measured
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
 	bool messagesWereDiscarded = false;
@@ -306,6 +282,7 @@ bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, int32 message)
 {
 	bool messagesWereDiscarded = false;
@@ -337,6 +314,7 @@ bool MessageDispatcher::discardDelayedMessagesFromSender(ListenerObject sender, 
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receiver, int32 message)
 {
 	bool messagesWereDiscarded = false;
@@ -367,6 +345,7 @@ bool MessageDispatcher::discardDelayedMessagesForReceiver(ListenerObject receive
  * @private
  * @param sender	the object that originally sent the message
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sender)
 {
 	bool messagesWereDiscarded = false;
@@ -397,6 +376,7 @@ bool MessageDispatcher::discardAllDelayedMessagesFromSender(ListenerObject sende
  * @private
  * @param sender	the object that originally sent the message
  */
+//---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
 void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender, int16 x, int16 y)
 {
@@ -431,6 +411,7 @@ void MessageDispatcher::printAllDelayedMessagesFromSender(ListenerObject sender,
  * @private
  * @param sender	the object that the message was originally sent to
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject receiver)
 {
 	bool messagesWereDiscarded = false;
@@ -462,6 +443,7 @@ bool MessageDispatcher::discardAllDelayedMessagesForReceiver(ListenerObject rece
  * @private
  * @param sender	the object that the message was originally sent to
  */
+//---------------------------------------------------------------------------------------------------------
 bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
 {
 	bool messagesWereDiscarded = false;
@@ -492,6 +474,7 @@ bool MessageDispatcher::discardAllDelayedMessages(ListenerObject listenerObject)
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */
+//---------------------------------------------------------------------------------------------------------
 #ifndef __RELEASE
 void MessageDispatcher::print(int32 x, int32 y)
 {
@@ -500,3 +483,4 @@ void MessageDispatcher::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
 }
 #endif
+//---------------------------------------------------------------------------------------------------------
