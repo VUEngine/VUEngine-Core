@@ -135,17 +135,14 @@ void StateMachine::pushState(State newState)
 
 	// call enter method from new state
 	State::enter(this->currentState, this->owner);
-
-	// return the resulting stack size
-	return StateMachine::getStackSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
-uint32 StateMachine::popState()
+void StateMachine::popState()
 {
 	// return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)
 	{
-		return 0;
+		return;
 	}
 
 	// finalize current state
@@ -167,9 +164,6 @@ uint32 StateMachine::popState()
 	{
 		State::resume(this->currentState, this->owner);
 	}
-
-	// return the resulting stack size
-	return StateMachine::getStackSize(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void StateMachine::popAllStates()
