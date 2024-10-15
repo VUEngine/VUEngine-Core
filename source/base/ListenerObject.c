@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//											CLASS'S DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
 friend class VirtualNode;
@@ -32,12 +32,10 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S PUBLIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::constructor()
 {
 #ifndef __RELEASE	
@@ -47,10 +45,7 @@ void ListenerObject::constructor()
 	this->events = NULL;
 	this->eventFirings = 0;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::destructor()
 {	
 	ASSERT(!isDeleted(this), "ListenerObject::destructor: already deleted this");
@@ -62,28 +57,10 @@ void ListenerObject::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Handles incoming messages
- *
- * @param telegram	The received message
- * @return			Always returns false, this is meant to be used only in derived classes
- */
-bool ListenerObject::handleMessage(Telegram telegram __attribute__ ((unused)))
+//---------------------------------------------------------------------------------------------------------
+void ListenerObject::addEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
-	return false;
-}
-
-/**
- * Registers an event listener
- *
- * @param listener		ListenerObject to register event listener at
- * @param method		The method to execute on event
- * @param eventCode		The code of the event to listen to
- */
-void ListenerObject::addEventListener(ListenerObject listener, EventListener method, uint16 eventCode)
-{
-	if(NULL == listener || NULL == method)
+	if(NULL == listener || NULL == callback)
 	{
 		return;
 	}
@@ -98,7 +75,7 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener met
 		{
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && method == event->method && eventCode == event->code)
+			if(listener == event->listener && callback == event->callback && eventCode == event->code)
 			{
 				event->remove = false;
 				return;
@@ -108,21 +85,14 @@ void ListenerObject::addEventListener(ListenerObject listener, EventListener met
 
 	Event* event = new Event;
 	event->listener = listener;
-	event->method = method;
+	event->callback = callback;
 	event->code = eventCode;
 	event->remove = false;
 
 	VirtualList::pushBack(this->events, event);
 }
-
-/**
- * Removes an event listener
- *
- * @param listener		ListenerObject where event listener is registered at
- * @param method		The method attached to event listener
- * @param eventCode		The code of the event
- */
-void ListenerObject::removeEventListener(ListenerObject listener, EventListener method, uint16 eventCode)
+//---------------------------------------------------------------------------------------------------------
+void ListenerObject::removeEventListener(ListenerObject listener, EventListener callback, uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
@@ -145,7 +115,7 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 
 			}
 
-			if(listener == event->listener && method == event->method && eventCode == event->code)
+			if(listener == event->listener && callback == event->callback && eventCode == event->code)
 			{
 				if(0 < this->eventFirings)
 				{
@@ -168,14 +138,8 @@ void ListenerObject::removeEventListener(ListenerObject listener, EventListener 
 		HardwareManager::resumeInterrupts();
 	}
 }
-
-/**
- * Removes event listeners without specifying a scope
- *
- * @param listener		ListenerObject where event listener is registered at
- * @param eventCode		The code of the event
- */
-void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode)
+//---------------------------------------------------------------------------------------------------------
+void ListenerObject::removeEventListeners(EventListener callback, uint16 eventCode)
 {
 	if(NULL != this->events)
 	{
@@ -198,7 +162,7 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 
 			}
 
-			if((NULL == method || method == event->method) && eventCode == event->code)
+			if((NULL == callback || callback == event->callback) && eventCode == event->code)
 			{
 				if(0 < this->eventFirings)
 				{
@@ -221,13 +185,7 @@ void ListenerObject::removeEventListeners(EventListener method, uint16 eventCode
 		HardwareManager::resumeInterrupts();
 	}
 }
-
-/**
- * Removes event listeners without specifying a method
- *
- * @param listener		ListenerObject where event listener is registered at
- * @param eventCode		The code of the event
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -273,11 +231,7 @@ void ListenerObject::removeEventListenerScopes(ListenerObject listener, uint16 e
 		HardwareManager::resumeInterrupts();
 	}
 }
-
-/**
- * Removes all event listeners
- *
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::removeAllEventListeners()
 {
 	if(NULL != this->events)
@@ -308,22 +262,12 @@ void ListenerObject::removeAllEventListeners()
 		HardwareManager::resumeInterrupts();
 	}
 }
-
-/**
- * Returns whether there are event listeners or not
- *
- * @returns				True if there are registered event listeners
- */
+//---------------------------------------------------------------------------------------------------------
 bool ListenerObject::hasActiveEventListeners()
 {
 	return !isDeleted(this->events) ? NULL != VirtualList::begin(this->events) : false;
 }
-
-/**
- * Fires an event
- *
- * @param eventCode		The code of the event
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::fireEvent(uint16 eventCode)
 {
 	if(NULL != this->events)
@@ -354,7 +298,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 			}
 			else if(eventCode == event->code)
 			{
-				event->remove = !event->method(event->listener, this);
+				event->remove = !event->callback(event->listener, this);
 
 				// safe check in case that I have been deleted during the previous event
 				if(isDeleted(this))
@@ -365,7 +309,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 					Printing::text(Printing::getInstance(), "Class:    ", 1, 12, NULL);
 					Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 13, 12, NULL);
 					Printing::text(Printing::getInstance(), "Method:    ", 1, 13, NULL);
-					Printing::hex(Printing::getInstance(), (int32)event->method, 13, 13, 8, NULL);
+					Printing::hex(Printing::getInstance(), (int32)event->callback, 13, 13, 8, NULL);
 					Printing::text(Printing::getInstance(), "Event code: ", 1, 14, NULL);
 					Printing::int32(Printing::getInstance(), event->code, 13, 14, NULL);
 					NM_ASSERT(!isDeleted(this), "ListenerObject::fireEvent: deleted during event listening");
@@ -386,15 +330,7 @@ void ListenerObject::fireEvent(uint16 eventCode)
 		this->eventFirings--;
 	}
 }
-
-/**
- * Send message to object
- *
- * @param receiver
- * @param message
- * @param delay
- * @param randomDelay
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint32 delay, uint32 randomDelay)
 {
 	MessageDispatcher::dispatchMessage
@@ -406,38 +342,25 @@ void ListenerObject::sendMessageTo(ListenerObject receiver, uint32 message, uint
 		NULL
 	);
 }
-
-/**
- * Send message to self
- *
- * @param receiver
- * @param message
- * @param delay
- * @param randomDelay
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::sendMessageToSelf(uint32 message, uint32 delay, uint32 randomDelay)
 {
 	ListenerObject::sendMessageTo(this, this, message, delay, randomDelay);
 }
-
-/**
- * Discard all delayed messages that I sent
- *
- * @param targetClassGetClassMethod
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::discardAllMessages()
 {
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this));
 }
-
-/**
- * Discard a delayed messages that I sent
- *
- * @param message
- */
+//---------------------------------------------------------------------------------------------------------
 void ListenerObject::discardMessages(uint32 message)
 {
 	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
 	MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher::getInstance(), ListenerObject::safeCast(this), message);
+}
+//---------------------------------------------------------------------------------------------------------
+bool ListenerObject::handleMessage(Telegram telegram __attribute__ ((unused)))
+{
+	return false;
 }

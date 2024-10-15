@@ -168,7 +168,7 @@ static Object Object::getCast(void* object, ClassPointer targetClassGetClassMeth
 
 	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }
-
+//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S PUBLIC METHODS
