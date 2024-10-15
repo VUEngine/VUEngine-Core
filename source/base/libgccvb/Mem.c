@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Mem.h>
 
@@ -18,11 +18,31 @@
 
 #include <stdio.h>
 
+
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+/// It doesn't need to be inlined since it is not used in performance critical places
+/// and it produces graphical glitches when inlined.
+static void Mem::clear(BYTE* destination, uint32 numberOfBYTES)
+{
+	uint32 i;
+
+	for(i = 0; i < numberOfBYTES; i++)
+	{
+		*destination++ = 0;
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 
-// redefine memcpy
+//=========================================================================================================
+// GLOBAL METHODS REDEFINITIONS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+/// Redefinition of memcpy
 __attribute__ ((unused)) static void* memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes / sizeof(uint32) + __MODULO(numberOfBytes, sizeof(uint32));
@@ -44,17 +64,4 @@ __attribute__ ((unused)) static void* memcpy(void *destination, const void *sour
 
 	return destination;
 }
-
-// Produces graphical glitches if inlined
-// Not too critical since it is not used a lot
-static void Mem::clear(BYTE* destination, uint32 numberOfBYTES)
-{
-	uint32 i;
-
-	for(i = 0; i < numberOfBYTES; i++)
-	{
-		*destination++ = 0;
-	}
-}
-
-
+//---------------------------------------------------------------------------------------------------------
