@@ -40,7 +40,6 @@ void ClockManager::register(Clock clock)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-
 void ClockManager::unregister(Clock clock)
 {
 	VirtualList::removeElement(this->clocks, clock);

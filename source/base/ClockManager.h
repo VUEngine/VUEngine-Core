@@ -53,6 +53,7 @@ singleton class ClockManager : Object
 	void register(Clock clock);
 
 	/// Unregister clock.
+	/// @param clock: Clock to unregister
 	void unregister(Clock clock);
 
 	/// Update the clocks.

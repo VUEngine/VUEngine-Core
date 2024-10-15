@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <Stopwatch.h>
@@ -20,33 +20,60 @@
 #include "StopwatchManager.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualList;
 friend class VirtualNode;
 
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+void StopwatchManager::register(Stopwatch clock)
+{
+	if(!VirtualList::find(this->stopwatchs, clock))
+	{
+		VirtualList::pushFront(this->stopwatchs, clock);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void StopwatchManager::unregister(Stopwatch clock)
+{
+	VirtualList::removeElement(this->stopwatchs, clock);
+}
+//---------------------------------------------------------------------------------------------------------
+void StopwatchManager::update()
+{
+	VirtualNode node = this->stopwatchs->head;
+
+	// update all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::update(node->data);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void StopwatchManager::reset()
+{
+	VirtualNode node = this->stopwatchs->head;
+
+	// update all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::reset(node->data);
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			StopwatchManager::getInstance()
- * @memberof	StopwatchManager
- *
- * @return		StopwatchManager instance
- */
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
 
-
-/**
- * Class constructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StopwatchManager::constructor()
 {
 	Base::constructor();
@@ -54,12 +81,7 @@ void StopwatchManager::constructor()
 	// create the clock list
 	this->stopwatchs = new VirtualList();
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void StopwatchManager::destructor()
 {
 	VirtualNode node = this->stopwatchs->head;
@@ -76,56 +98,4 @@ void StopwatchManager::destructor()
 	// allow a new construct
 	Base::destructor();
 }
-
-/**
- * Register a clock
- *
- * @private
- * @param clock Stopwatch to register
- */
-void StopwatchManager::register(Stopwatch clock)
-{
-	if(!VirtualList::find(this->stopwatchs, clock))
-	{
-		VirtualList::pushFront(this->stopwatchs, clock);
-	}
-}
-
-/**
- * Un-register a clock
- *
- * @param clock Stopwatch to un-register
- */
-void StopwatchManager::unregister(Stopwatch clock)
-{
-	VirtualList::removeElement(this->stopwatchs, clock);
-}
-
-/**
- * Update stopwatchs
- *
- */
-void StopwatchManager::update()
-{
-	VirtualNode node = this->stopwatchs->head;
-
-	// update all registered stopwatchs
-	for(; node ; node = node->next)
-	{
-		Stopwatch::update(node->data);
-	}
-}
-
-/**
- * Reset registered stopwatchs
- */
-void StopwatchManager::reset()
-{
-	VirtualNode node = this->stopwatchs->head;
-
-	// update all registered stopwatchs
-	for(; node ; node = node->next)
-	{
-		Stopwatch::reset(node->data);
-	}
-}
+//---------------------------------------------------------------------------------------------------------

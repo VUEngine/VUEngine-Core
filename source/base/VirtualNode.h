@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,32 +11,55 @@
 #define VIRTUAL_NODE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class VirtualNode
+///
+/// Inherits from Object
+///
+/// Implements an element of linked lists.
 /// @ingroup base
 class VirtualNode : Object
 {
-	// pointer to next node
+	/// Pointer to the next node in the linked list
 	VirtualNode next;
-	// pointer to previous node
+
+	/// Pointer to the previous node in the linked list
 	VirtualNode previous;
-	// pointer to the data
+
+	/// Pointer to the data
 	void* data;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param data: Pointer to the data hold by this node
 	void constructor(const void* const data);
+
+	/// Retrieve the pointer to the data.
+	/// @return Pointer to the data
 	void* getData();
+
+	/// Retrieve the next node in the linked list.
+	/// @return Next node in the linked list
 	VirtualNode getNext();
+
+	/// Retrieve the previous node in the linked list.
+	/// @return Previous node in the linked list
 	VirtualNode getPrevious();
+
+	/// Swap the data with another node
+	/// @param node: Node to swap data with
 	void swapData(VirtualNode node);
 }
 

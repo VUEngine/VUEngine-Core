@@ -19,22 +19,47 @@
 
 
 //=========================================================================================================
-//											CLASS'S DECLARATION
+// FORWARD DECLARATIONS
 //=========================================================================================================
 
 class Stopwatch;
 
+
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class StopwatchManager
+///
+/// Inherits from Object
+///
+/// Manages the instances of Stopwatch.
 /// @ingroup base
 singleton class StopwatchManager : Object
 {
+	// Linked list of Stopwatches
 	VirtualList stopwatchs;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return FrameRate singleton
 	static StopwatchManager getInstance();
+
+	/// Register a new stopwatch
+	/// @param clock: Stopwatch to register
 	void register(Stopwatch clock);
-	void reset();
+
+	/// Unregister stopwatch.
+	/// @param clock: Stopwatch to unregister
 	void unregister(Stopwatch clock);
+
+	/// Update the stopwatches.
 	void update();
+
+	/// Reset all the registered stopwatches.
+	void reset();
 }
 
 

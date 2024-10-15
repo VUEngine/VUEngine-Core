@@ -12,33 +12,60 @@
 
 
 //=========================================================================================================
-//												INCLUDES
+// INCLUDES
 //=========================================================================================================
 
 #include <Object.h>
 
 
 //=========================================================================================================
-//											CLASS'S DECLARATION
+// CLASS'S DECLARATION
 //=========================================================================================================
 
+///
+/// Class Telegram
+///
+/// Inherits from Object
+///
+/// Wraps a message to be sent to an Object.
 /// @ingroup base
 class Telegram : Object
 {
-	// The message itself. These are all enumerated in a file.
+	/// The message's code
 	int32 message;
-	// Any additional information that may accompany the message
+	
+	/// Additional information that may accompany the message
 	void* extraInfo;
-	// Who sent this telegram
+
+	/// The object that sends the message
 	void* sender;
-	// Who is to receive this telegram
+
+	/// The object that receives the message
 	void* receiver;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param sender: The object that sends the message
+	/// @param receiver: The object that sends the message
+	/// @param message:	The message's code
+	/// @param extraInfo: Additional information that may accompany the message
 	void constructor(void* sender, void* receiver, int32 message, void* extraInfo);
+
+	/// Retrieve the Telegram's sender.
+	/// @return Pointer to the object that sent the message
 	void* getSender();
+
+	/// Retrieve the Telegram's receiver.
+	/// @return Pointer to the object that receives the message
 	void* getReceiver();
+
+	/// Retrieve the Telegram's message code.
+	/// @return The message's code
 	int32 getMessage();
+
+	/// Retrieve the Telegram's sender.
+	/// @return Additional information that may accompany the message
 	void* getExtraInfo();
 }
 

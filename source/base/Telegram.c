@@ -8,25 +8,18 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include "Telegram.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param sender		Sender of the message
- * @param receiver		Intended receiver
- * @param message		Message code
- * @param extraInfo		Pointer to any attachment to the message
- */
+//---------------------------------------------------------------------------------------------------------
 void Telegram::constructor(void* sender, void* receiver, int32 message, void* extraInfo)
 {
 	// construct base object
@@ -38,10 +31,7 @@ void Telegram::constructor(void* sender, void* receiver, int32 message, void* ex
 	this->message = message;
 	this->extraInfo = extraInfo;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Telegram::destructor()
 {
 	this->sender = NULL;
@@ -52,44 +42,25 @@ void Telegram::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Retrieve the sender
- *
- * @return				Sender of the message
- */
+//---------------------------------------------------------------------------------------------------------
 void* Telegram::getSender()
 {
 	return this->sender;
 }
-
-/**
- * Retrieve the receiver
- *
- * @return				Intended receiver
- */
+//---------------------------------------------------------------------------------------------------------
 void* Telegram::getReceiver()
 {
 	return this->receiver;
 }
-
-/**
- * Retrieve the message code
- *
- * @return				Message code
- */
+//---------------------------------------------------------------------------------------------------------
 int32 Telegram::getMessage()
 {
 	return this->message;
 }
-
-/**
- * Retrieve the message's attachment
- *
- * @return				Pointer to any attachment to the message
- */
+//---------------------------------------------------------------------------------------------------------
 void* Telegram::getExtraInfo()
 {
 	return this->extraInfo;
 }
+//---------------------------------------------------------------------------------------------------------
 
