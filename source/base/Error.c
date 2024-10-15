@@ -26,7 +26,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												MACROS
+//											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __DIMM_VALUE_1	0x54
@@ -34,65 +34,28 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												GLOBALS
+//											CLASS'S ATTRIBUTES
 //---------------------------------------------------------------------------------------------------------
 
 bool _triggeringException = false;
-
-
 uint32 _vuengineEIPC = 0;
 uint32 _vuengineFEPC = 0;
 uint32 _vuengineECR = 0;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			Error::getInstance()
- * @memberof	Error
- * @public
- * @return		Error instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void Error::constructor()
-{
-	Base::constructor();
-}
-
-/**
- * Class destructor
- *
- * @private
- */
-void Error::destructor()
-{
-	Base::destructor();
-}
-
-/**
- * Setup the error message and lock program here
- *
- * @param message
- * @param detail
- */
-static int32 Error::triggerException(char* message __attribute__((unused)), char* detail __attribute__((unused)))
+//---------------------------------------------------------------------------------------------------------
+static void Error::triggerException(char* message __attribute__((unused)), char* detail __attribute__((unused)))
 {
 #ifndef __SHIPPING
 	static bool processingException = false;
 
 	if(processingException)
 	{
-		return 0;
+		return;
 	}
 
 	processingException = true;
@@ -221,10 +184,8 @@ static int32 Error::triggerException(char* message __attribute__((unused)), char
 	// trap the game here
 	while(true);
 #endif
-
-	return false;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static void Error::zeroDivisionException()
 {
 #ifndef __SHIPPING
@@ -244,7 +205,7 @@ static void Error::zeroDivisionException()
 	Error::triggerException("Zero division", NULL);
 #endif
 }
-
+//---------------------------------------------------------------------------------------------------------
 static void Error::invalidOpcodeException()
 {
 #ifndef __SHIPPING
@@ -301,7 +262,7 @@ static void Error::invalidOpcodeException()
 	Error::triggerException("Invalid opcode", NULL);
 #endif
 }
-
+//---------------------------------------------------------------------------------------------------------
 static void Error::floatingPointException()
 {
 #ifndef __SHIPPING
@@ -358,3 +319,19 @@ static void Error::floatingPointException()
 	Error::triggerException("Floating point exception", NULL);
 #endif
 }
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S PUBLIC METHODS
+//---------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------
+void Error::constructor()
+{
+	Base::constructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void Error::destructor()
+{
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------

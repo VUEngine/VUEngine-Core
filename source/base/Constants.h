@@ -202,7 +202,7 @@ enum DefaulCollisionLayers
 #define __REGISTER_LAST_PROCESS_NAME
 
 void HardwareManager_printStackStatus(int32 x, int32 y, bool resumed);
-int32 Error_triggerException(char* message, char* detail);
+void Error_triggerException(char* message, char* detail);
 
 #define __CHECK_STACK_STATUS																			\
 	extern bool _stackHeadroomViolation;																\
