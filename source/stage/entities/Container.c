@@ -699,16 +699,12 @@ const Vector3D* Container::getLocalPosition()
 	return &this->localTransformation.position;
 }
 
-/**
- * Set global position
- *
- * @param position	Pointer to position
- */
 void Container::setPosition(const Vector3D* position)
 {
 	Vector3D displacement = Vector3D::sub(*position, this->transformation.position);
 
 	Container::translate(this, &displacement);
+	this->transformation.position = *position;
 }
 
 void Container::setRotation(const Rotation* rotation)
@@ -716,6 +712,7 @@ void Container::setRotation(const Rotation* rotation)
 	Rotation displacement = Rotation::sub(*rotation, this->transformation.rotation);
 
 	Container::rotate(this, &displacement);
+	this->transformation.rotation = *rotation;
 }
 
 void Container::setScale(const Scale* scale)
@@ -723,6 +720,7 @@ void Container::setScale(const Scale* scale)
 	Scale factor = Scale::division(*scale, this->transformation.scale);
 
 	Container::scale(this, &factor);
+	this->transformation.scale = *scale;
 }
 
 /**
