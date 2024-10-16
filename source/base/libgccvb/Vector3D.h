@@ -35,8 +35,15 @@
 static class Vector3D : Object
 {
 	/// @publicsection
+	/// Get a vector with all its members initialized to zero.
+	/// @return Pixel vector with all its members initialized to zero
 	static inline Vector3D zero();
+
+	/// @publicsection
+	/// Get a vector with all its members initialized to one.
+	/// @return Pixel vector with all its members initialized to one
 	static inline Vector3D unit(uint16 axis);
+
 	static inline Vector3D getFrom2D(Vector2D vector2D, fixed_t z);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
@@ -47,33 +54,34 @@ static class Vector3D : Object
 	static inline Vector3D perpedicularYPlane(Vector3D a, bool left);
 	static inline Vector3D perpedicularZPlane(Vector3D a, bool left);
 	static inline Vector3D intermediate(Vector3D a, Vector3D b);
-	static inline fixed_ext_t dotProduct(Vector3D vectorA, Vector3D vectorB);
-	static inline fix19_13 dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fixed_t scalar);
 	static inline Vector3D scalarDivision(Vector3D vector, fixed_t scalar);
 	static inline Vector3D normalize(Vector3D vector);
 	static inline Vector3D getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
-	static inline fixed_t length(Vector3D vector);
-	static inline fixed_ext_t squareLength(Vector3D vector);
-	static inline fixed_t lengthProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
-	static inline fixed_t getScale(fixed_t z, bool applyScalingMultiplier);
-	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
-	static inline PixelVector transformToPixelVector(Vector3D vector);
-	static inline Vector3D getFromPixelVector(PixelVector screenVector);
+	static inline Vector3D getFromPixelVector(PixelVector pixelVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
-	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
-	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
-	static inline bool areEqual(Vector3D a, Vector3D b);
 	static inline Vector3D projectOnto(Vector3D p, Vector3D a, Vector3D b);
 	static inline Vector3D projectOntoHighPrecision(Vector3D p, Vector3D a, Vector3D b);
-	static inline bool isValueInRange(fixed_t value, fixed_t limitA, fixed_t limitB);
-	static inline bool isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd);
 	static inline Vector3D rotateXAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotateYAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
 	static inline Vector3D rotate(Vector3D vector, Rotation rotation);
+	static inline PixelVector projectToPixelVector(Vector3D vector3D, int16 parallax);
+	static inline PixelVector transformToPixelVector(Vector3D vector);
+	static inline fixed_t length(Vector3D vector);
+	static inline fixed_t lengthProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline fixed_ext_t squareLength(Vector3D vector);
+	static inline fixed_ext_t dotProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline fix19_13 dotProductHighPrecision(Vector3D vectorA, Vector3D vectorB);
+	static inline fixed_t getScale(fixed_t z, bool applyScalingMultiplier);
+	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
+	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
+	static inline bool areEqual(Vector3D a, Vector3D b);
+	static inline bool isValueInRange(fixed_t value, fixed_t limitA, fixed_t limitB);
+	static inline bool isVectorInsideLine(Vector3D vector, Vector3D lineStart, Vector3D lineEnd);
 	static inline bool isVisible(Vector3D vector, PixelRightBox pixelRightBox, int16 padding);
+
 	static void print(Vector3D vector, int32 x, int32 y);
 	static void printRaw(Vector3D vector, int32 x, int32 y);
 }

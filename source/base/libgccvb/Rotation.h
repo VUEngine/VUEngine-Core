@@ -15,9 +15,9 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <Object.h>
 #include <Camera.h>
 #include <Math.h>
+#include <Object.h>
 
 
 //=========================================================================================================
@@ -41,19 +41,83 @@ extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 static class Rotation : Object
 {
 	/// @publicsection
+	/// Get a rotation with all its members initialized to zero.
+	/// @return Rotation with all its members initialized to zero
 	static inline Rotation zero();
+
+	/// Invert the rotation's direction in all its components.
+	/// @param rotation: Rotation to invert
+	/// @return Inverted rotation
 	static inline Rotation invert(Rotation rotation);
+
+	/// Clamp the rotation's components to 0-511 range.
+	/// @param x: Rotation's x component to clamp
+	/// @param y: Rotation's y component to clamp
+	/// @param z: Rotation's z component to clamp
+	/// @return Clamped rotation
 	static inline Rotation clamp(fixed_ext_t x, fixed_ext_t y, fixed_ext_t z);
+
+	/// Compute the shortest angle differente between the provided angles.
+	/// @param angleFrom: Starting angle
+	/// @param angleTo: End angle
+	/// @return Shortest angle between the provided angles
 	static inline fixed_t getShortestDifferce(fixed_t angleFrom, fixed_t angleTo);
+
+	/// Add two rotations.
+	/// @param a: First rotation
+	/// @param b: Second rotation
+	/// @return Addition rotation
 	static inline Rotation sum(Rotation a, Rotation b);
+
+	/// Susbtract a rotation from another.
+	/// @param a: Minuend rotation
+	/// @param b: Subtrahend rotation
+	/// @return Substraction rotation
 	static inline Rotation sub(Rotation a, Rotation b);
+
+	/// Compute the intermediate rotation between the provided ones.
+	/// @param a: First rotation
+	/// @param b: Second rotation
+	/// @return Intermediate rotation
 	static inline Rotation intermediate(Rotation a, Rotation b);
+
+	/// Apply a scalar product over the rotation's components
+	/// @param rotation: Rotation to scale
+	/// @param scalar: Scalar to multiply
+	/// @return Scaled rotation
 	static inline Rotation scalarProduct(Rotation rotation, int16 scalar);
+
+	/// Apply a scalar division over the rotation's components
+	/// @param rotation: Rotation to scale
+	/// @param scalar: Scalar divisor
+	/// @return Scaled rotation
 	static inline Rotation scalarDivision(Rotation rotation, int16 scalar);
+
+	/// Compute the rotation relative to the camera's rotation.
+	/// @param rotation: Rotation to compute the relative rotation of
+	/// @return Rotation relative to the camera's rotation
 	static inline Rotation getRelativeToCamera(Rotation rotation);
+
+	/// Transform the provided rotation in pixel coordinates into a normal rotation.
+	/// @param pixelRotation: Rotation to transform
+	/// @return Transformed rotation
 	static inline Rotation getFromPixelRotation(PixelRotation pixelRotation);
+
+	/// Transform the provided rotation in screen coordinates into a normal rotation.
+	/// @param pixelRotation: Rotation to transform
+	/// @return Transformed rotation
 	static inline Rotation getFromScreenPixelRotation(ScreenPixelRotation pixelRotation);
+
+	/// Test if two rotations are equal.
+	/// @param a: First rotation
+	/// @param b: Second rotation
+	/// @return True if all the components of both rotations are equal; false otherwise
 	static inline bool areEqual(Rotation a, Rotation b);
+
+	/// Print the rotation's components.
+	/// @param rotation: Rotation to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	static void print(Rotation rotation, int32 x, int32 y);
 }
 

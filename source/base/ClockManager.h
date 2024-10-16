@@ -39,7 +39,7 @@ class Clock;
 /// @ingroup base
 singleton class ClockManager : Object
 {
-	// Linked list of Clocks
+	/// Linked list of Clocks
 	VirtualList clocks;
 
 	/// @publicsection

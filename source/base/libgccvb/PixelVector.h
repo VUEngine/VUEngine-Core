@@ -63,7 +63,7 @@ static class PixelVector : Object
 	static inline PixelVector intermediate(PixelVector a, PixelVector b);
 
 	/// Transform the provided vector in screen coordinates into a normal pixel vector.
-	/// @param screenPixelVector: First vector
+	/// @param screenPixelVector: Vector to transform
 	/// @param parallax: Parallax component for the resulting vector
 	/// @return Vector in pixel units
 	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, int16 parallax);
