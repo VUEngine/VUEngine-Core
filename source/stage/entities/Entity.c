@@ -1580,7 +1580,7 @@ bool Entity::isInCameraRange(int16 padding, bool recursive)
 		__METERS_TO_PIXELS(this->size.z >> 1) + padding,
 	};
 
-	if(!Vector3D::isVisible(position3D, pixelRightBox, 0))
+	if(!PixelVector::isVector3DVisible(position3D, pixelRightBox, 0))
 	{
 		inCameraRange = false;
 	}

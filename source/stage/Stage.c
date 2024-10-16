@@ -243,14 +243,14 @@ int32 Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const Pixel
 			0, 0, 0
 		};
 
-		if(!Vector3D::isVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->streaming.loadPadding))
+		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), helperPixelRightBox, this->streaming.loadPadding))
 		{
 			return false;
 		}
 	}
 	else
 	{
-		if(!Vector3D::isVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), *pixelRightBox, 0))
+		if(!PixelVector::isVector3DVisible(Vector3D::getFromScreenPixelVector(onScreenPosition), *pixelRightBox, 0))
 		{
 			return false;
 		}

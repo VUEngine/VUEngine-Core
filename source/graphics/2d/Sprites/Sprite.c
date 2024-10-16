@@ -253,7 +253,7 @@ void Sprite::position()
 	}
 
 #ifdef __SPRITE_ROTATE_IN_3D
-	PixelVector position = Vector3D::transformToPixelVector(this->transformation->position);
+	PixelVector position = PixelVector::transformVector3D(this->transformation->position);
 
 	if(position.z != this->position.z)
 	{
@@ -261,7 +261,7 @@ void Sprite::position()
 	}
 
 #else
-	PixelVector position = Vector3D::projectToPixelVector(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
+	PixelVector position = PixelVector::projectVector3D(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
 
 	if(position.z != this->position.z)
 	{

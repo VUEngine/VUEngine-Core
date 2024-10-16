@@ -121,8 +121,8 @@ bool Polyhedron::draw()
 			toVertex3D = Vector3D::getRelativeToCamera(*((Vector3D*)toNode->data));
 
 			// project to 2d coordinates
-			fromVertex2D = PixelVector::project(fromVertex3D, 0);
-			toVertex2D = PixelVector::project(toVertex3D, 0);
+			fromVertex2D = PixelVector::projectVector3D(fromVertex3D, 0);
+			toVertex2D = PixelVector::projectVector3D(toVertex3D, 0);
 
 			// draw the line in both buffers
 			drawn |= DirectDraw::drawColorLine(fromVertex2D, toVertex2D, this->color, 0, false) ;

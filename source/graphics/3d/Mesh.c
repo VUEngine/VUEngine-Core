@@ -347,7 +347,7 @@ void Mesh::render(Vector3D relativePosition)
 
 			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, vertex->vector), _previousCameraInvertedRotation);
 
-			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
 	else if(scale && rotate)
@@ -363,7 +363,7 @@ void Mesh::render(Vector3D relativePosition)
 
 			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(Vector3D::scale(vertex->vector, scale), rotation)), _previousCameraInvertedRotation);
 
-			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
 	else if(rotate)
@@ -378,7 +378,7 @@ void Mesh::render(Vector3D relativePosition)
 
 			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::rotate(vertex->vector, rotation)), _previousCameraInvertedRotation);
 
-			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
 	else if(scale)
@@ -393,7 +393,7 @@ void Mesh::render(Vector3D relativePosition)
 
 			Vector3D vector = Vector3D::rotate(Vector3D::sum(relativePosition, Vector3D::scale(vertex->vector, scale)), _previousCameraInvertedRotation);
 
-			vertex->pixelVector = Vector3D::projectToPixelVector(vector, Optics::calculateParallax(vector.z));
+			vertex->pixelVector = PixelVector::projectVector3D(vector, Optics::calculateParallax(vector.z));
 		}
 	}
 }

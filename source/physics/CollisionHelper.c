@@ -256,7 +256,7 @@ static void CollisionHelper::getSolutionVectorBetweenBallAndLineField(Ball ball,
 			// are not really overlapping
 			for(bool left = true; !collision && left; left = false)
 			{
-				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpedicular(ballRadiusVector, left));
+				Vector3D projectionPlusRadio = Vector3D::sum(projection, Vector3D::perpedicularZPlane(ballRadiusVector, left));
 				
 				collision = Vector3D::isVectorInsideLine(projectionPlusRadio, lineFieldA, lineFieldB);
 			}
