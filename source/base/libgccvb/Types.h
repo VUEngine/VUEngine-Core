@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,9 +11,9 @@
 #define TYPES_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// DATA TYPES DECLARATIONs
+//=========================================================================================================
 
 // Quick, easy types
 typedef unsigned char 		uint8;
@@ -33,7 +33,6 @@ typedef uint32		 		WORD;
 // Define of boolean type
 typedef uint8				bool;
 enum { false, true };
-
 
 // Fixed point macros
 #define fix7_9											int16

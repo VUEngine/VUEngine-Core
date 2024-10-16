@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -12,11 +12,11 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <Mem.h>
+#include <stdio.h>
 
 #include <HardwareManager.h>
 
-#include <stdio.h>
+#include "Mem.h"
 
 
 //=========================================================================================================

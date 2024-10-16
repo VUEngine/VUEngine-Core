@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -12,7 +12,7 @@
 
 
 //=========================================================================================================
-// GLOBALS
+// GLOBALS FORWARD DECLARATIONS
 //=========================================================================================================
 
 extern bool _stackHeadroomViolation;

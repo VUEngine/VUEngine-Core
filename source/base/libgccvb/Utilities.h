@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,18 +11,18 @@
 #define UTILITIES_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <Clock.h>
 #include <KeypadManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
 // macros for bitmask operations
 #define SET_BIT(var,bit) 		(var |= (0x01 << bit))
@@ -31,36 +31,70 @@
 #define GET_BIT(var,bit) 		(0x01 & (var >> bit))
 #define __ITOA_ARRAY_SIZE		11
 
+
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
 extern char _itoaArray[];
 extern const char _itoaNumbers[];
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class Utilities
+///
+/// Inherits from Object
+///
+/// Implements miscelaneous methods related to strings manipulation.
 /// @ingroup base-libgccvb
 static class Utilities : Object
 {
 	/// @publicsection
 
-	static inline char* itoa(uint32 num, uint32 base, int32 digits);
+	/// Convert a number into a string.
+	/// @param number: Number to convert
+	/// @param base: Number's numeric base
+	/// @param digits: Number's digits count
+	/// @return Pointer to a string
+	static inline char* itoa(uint32 number, uint32 base, int32 digits);
+
+	/// Convert a string to upppercase
+	/// @param string: String to convert
+	/// @return Pointer to the uppercase string
 	static inline const char* toUppercase(const char* string);
+
+	/// Convert a string to lowercase
+	/// @param string: String to convert
+	/// @return Pointer to the lowercase string
 	static inline const char* toLowercase(const char* string);
+
+	/// Reverse a string
+	/// @param string: String to revers
+	/// @return Pointer to the reversed string
 	static inline uint32 reverse(uint32 x, int32 bits);
 }
 
-static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
+
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static inline char* Utilities::itoa(uint32 number, uint32 base, int32 digits)
 {
 	int32 i = __ITOA_ARRAY_SIZE - 1;
 
 	for(; 0 < i;)
 	{
 		i--;
-		_itoaArray[i] = _itoaNumbers[num % base];
-		num /= base;
+		_itoaArray[i] = _itoaNumbers[number % base];
+		number /= base;
 
-		if(0 == num)
+		if(0 == number)
 		{
 			break;
 		}
@@ -75,7 +109,7 @@ static inline char* Utilities::itoa(uint32 num, uint32 base, int32 digits)
 
 	return _itoaArray + i;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static inline const char* Utilities::toUppercase(const char* string)
 {
 	int32 i = 0;
@@ -90,7 +124,7 @@ static inline const char* Utilities::toUppercase(const char* string)
 
 	return result;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static inline const char* Utilities::toLowercase(const char* string)
 {
 	int32 i = 0;
@@ -105,7 +139,7 @@ static inline const char* Utilities::toLowercase(const char* string)
 
 	return result;
 }
-
+//---------------------------------------------------------------------------------------------------------
 static inline uint32 Utilities::reverse(uint32 x, int32 bits)
 {
     x = ((x & 0x55555555) << 1) | ((x & 0xAAAAAAAA) >> 1);
