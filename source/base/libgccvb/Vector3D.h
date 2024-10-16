@@ -35,6 +35,7 @@
 static class Vector3D : Object
 {
 	/// @publicsection
+
 	/// Get a vector with all its members initialized to zero.
 	/// @return Pixel vector with all its members initialized to zero
 	static inline Vector3D zero();
@@ -112,7 +113,7 @@ static class Vector3D : Object
 	/// Compute the vector relative to the camera's position.
 	/// @param vector: Vector to compute the relative vector of
 	/// @return Vector relative to the camera's position
-	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
+	static inline Vector3D getRelativeToCamera(Vector3D vector);
 
 	/// Compute the normal to the plane defined by the provided vectors.
 	/// @param vectorA: Common vector
@@ -159,7 +160,7 @@ static class Vector3D : Object
 	/// @return Rotated vector
 	static inline Vector3D rotateZAxis(Vector3D vector, int16 degrees);
 
-	/// Extend the provided 2D vector to 3D
+	/// Extend the provided 2D vector to 3D.
 	/// @param vector2D: 2D vector to extend
 	/// @param z: Z coordinate for the extended vector
 	/// @return Extended vector
@@ -223,10 +224,10 @@ static class Vector3D : Object
 	/// @return True if p is to the right of ab; false otherwise
 	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
 	
-	/// Test if two vector are equal.
+	/// Test if two vectors are equal.
 	/// @param a: First vector
 	/// @param b: Second vector
-	/// @return True if all the components of both vector are equal; false otherwise
+	/// @return True if all the components of both vectors are equal; false otherwise
 	static inline bool areEqual(Vector3D a, Vector3D b);
 	
 	/// Test if a number is within a range.
@@ -380,13 +381,13 @@ static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fixed_t scalar)
 	return (Vector3D){__FIXED_DIV(vector.x, scalar), __FIXED_DIV(vector.y, scalar), __FIXED_DIV(vector.z, scalar)};
 }
 //---------------------------------------------------------------------------------------------------------
-static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
+static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector)
 {
-	vector3D.x -= _cameraPosition->x;
-	vector3D.y -= _cameraPosition->y;
-	vector3D.z -= _cameraPosition->z;
+	vector.x -= _cameraPosition->x;
+	vector.y -= _cameraPosition->y;
+	vector.z -= _cameraPosition->z;
 
-	return vector3D;
+	return vector;
 }
 //---------------------------------------------------------------------------------------------------------
 static inline Vector3D Vector3D::getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
