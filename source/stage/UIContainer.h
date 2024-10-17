@@ -44,7 +44,7 @@ class UIContainer : Container
 {
 	/// @publicsection
 	void constructor(UIContainerSpec* uiContainerSpec);
-	Entity addChildEntity(const PositionedEntity* const positionedEntity);
+	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
 	void addEntities(PositionedEntity* entities);
 	void prepareToRender();
 }

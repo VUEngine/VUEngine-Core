@@ -1284,7 +1284,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const PositionedEntity* const positionedEntity)
+Entity Entity::spawnChildEntity(const PositionedEntity* const positionedEntity)
 {
 	if(NULL != positionedEntity)
 	{

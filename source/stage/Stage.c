@@ -389,7 +389,7 @@ void Stage::alertOfLoadedEntity(Entity entity)
 }
 
 // add entity to the stage
-Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
+Entity Stage::spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
 {
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }

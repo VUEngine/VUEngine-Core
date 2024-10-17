@@ -222,7 +222,7 @@ class Stage : Container
 	bool registerEntityId(int16 internalId, EntitySpec* entitySpec);
 	void registerEntities(VirtualList positionedEntitiesToIgnore);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
-	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
+	Entity spawnChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	Entity addChildEntityWithId(const PositionedEntity* const positionedEntity, bool permanent, int16 internalId);
 	StageSpec* getStageSpec();
 	void showStreamingProfiling(int32 x, int32 y);

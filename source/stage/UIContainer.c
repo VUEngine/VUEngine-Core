@@ -61,12 +61,12 @@ void UIContainer::addEntities(PositionedEntity* entities)
 
 	for(;NULL != entities && NULL != entities[i].entitySpec; i++)
 	{
-		UIContainer::addChildEntity(this, &entities[i]);
+		UIContainer::spawnChildEntity(this, &entities[i]);
 	}
 }
 
 // add entity to the stage
-Entity UIContainer::addChildEntity(const PositionedEntity* const positionedEntity)
+Entity UIContainer::spawnChildEntity(const PositionedEntity* const positionedEntity)
 {
 	if(NULL != positionedEntity)
 	{

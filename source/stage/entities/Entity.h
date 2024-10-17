@@ -162,7 +162,7 @@ class Entity : Container
 	void destroyWireframes();
 	void destroyColliders();
 	void calculateSize(bool force);
-	Entity addChildEntity(const PositionedEntity* const positionedEntity);
+	Entity spawnChildEntity(const PositionedEntity* const positionedEntity);
 	uint32 areAllChildrenInstantiated();
 	uint32 areAllChildrenTransformed();
 	uint32 areAllChildrenReady();

@@ -874,7 +874,7 @@ void StageEditor::selectUserObject(uint32 pressedKey)
 			false
 		};
 
-		Stage::addChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
+		Stage::spawnChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
 		SpriteManager::sort(SpriteManager::getInstance());
 
 		VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
