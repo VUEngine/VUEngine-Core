@@ -54,6 +54,8 @@ enum StateOperations
 /// @ingroup base
 class StateMachine : ListenerObject
 {
+	/// @protectedsection
+
 	/// Owner of this instance
 	void* owner;
 

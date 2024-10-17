@@ -38,6 +38,8 @@
 /// @ingroup base-libgccvb
 static class Optical : Object
 {
+	/// @publicsection
+
 	/// Converts the provided optical parameters in pixel units to optical values in meters.
 	/// @param pixelOptical: Struct that holds optical parameters in pixel units
 	/// @param cameraFrustum: Camera's frustum configuration parameters

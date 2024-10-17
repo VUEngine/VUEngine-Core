@@ -39,6 +39,8 @@ typedef Object (*AllocatorPointer)();
 /// @ingroup base
 abstract class Object : Object
 {
+	/// @protectedsection
+
 	/// Pointer to the class's virtual table
 	void* vTable;
 

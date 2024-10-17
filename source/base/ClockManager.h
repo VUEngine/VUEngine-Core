@@ -39,6 +39,8 @@ class Clock;
 /// @ingroup base
 singleton class ClockManager : Object
 {
+	/// @protectedsection
+
 	/// Linked list of Clocks
 	VirtualList clocks;
 

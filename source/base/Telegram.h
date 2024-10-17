@@ -31,6 +31,8 @@
 /// @ingroup base
 class Telegram : Object
 {
+	/// @protectedsection
+
 	/// The message's code
 	int32 message;
 	

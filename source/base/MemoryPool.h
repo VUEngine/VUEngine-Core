@@ -59,6 +59,8 @@ enum MemoryPoolSizes
 /// @ingroup base
 singleton class MemoryPool : Object
 {
+	/// @protectedsection
+
 	/// The actual blocks that constitute the memory pools
 	__MEMORY_POOL_ARRAYS
 

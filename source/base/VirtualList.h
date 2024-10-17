@@ -32,6 +32,8 @@
 /// @ingroup base
 class VirtualList : Object
 {
+	/// @protectedsection
+
 	/// List's first node
 	VirtualNode head;
 	

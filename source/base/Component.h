@@ -39,6 +39,8 @@ typedef const void ComponentSpec;
 /// @ingroup base
 abstract class Component : ListenerObject 
 {
+	/// @protectedsection
+
 	/// Object to which this component attaches to
 	SpatialObject owner;
 

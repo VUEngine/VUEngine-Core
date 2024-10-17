@@ -38,6 +38,8 @@ class VirtualNode;
 /// @ingroup base
 class VirtualCircularList : Object
 {
+	/// @protectedsection
+
 	/// List's first node
 	VirtualNode head;
 	

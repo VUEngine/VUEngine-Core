@@ -64,6 +64,8 @@ typedef struct Event
 /// @ingroup base
 abstract class ListenerObject : Object
 {
+	/// @protectedsection
+
 	/// List of registered events
 	VirtualList events;
 	

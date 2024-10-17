@@ -44,6 +44,8 @@ enum ClockPrintPrecision
 /// @ingroup base
 class Clock : ListenerObject
 {
+	/// @protectedsection
+
 	/// Elapsed time in milliseconds
 	uint32 milliseconds;
 

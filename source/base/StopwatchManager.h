@@ -38,6 +38,8 @@ class Stopwatch;
 /// @ingroup base
 singleton class StopwatchManager : Object
 {
+	/// @protectedsection
+
 	// Linked list of Stopwatches
 	VirtualList stopwatchs;
 

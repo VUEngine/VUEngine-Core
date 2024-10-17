@@ -62,6 +62,8 @@ class Clock;
 /// @ingroup base
 singleton class MessageDispatcher : Object
 {
+	/// @protectedsection
+
 	/// Linked list of queued messages to be dispatched
 	VirtualList delayedMessages;
 

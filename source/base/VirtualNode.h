@@ -31,6 +31,8 @@
 /// @ingroup base
 class VirtualNode : Object
 {
+	/// @protectedsection
+
 	/// Pointer to the next node in the linked list
 	VirtualNode next;
 

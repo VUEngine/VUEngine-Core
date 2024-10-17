@@ -38,6 +38,8 @@ typedef ComponentSpec VisualComponentSpec;
 /// @ingroup base
 abstract class VisualComponent : Component 
 {
+	/// @protectedsection
+
 	/// Transparent mode (__TRANSPARENT_NONE, __TRANSPARENT_EVEN or __TRANSPARENT_ODD)
 	uint8 transparent;
 

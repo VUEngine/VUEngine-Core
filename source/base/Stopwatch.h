@@ -31,6 +31,8 @@
 /// @ingroup base
 class Stopwatch : ListenerObject
 {
+	/// @protectedsection
+
 	/// Elapsed time in milliseconds
 	uint32 milliSeconds;
 

@@ -31,6 +31,8 @@
 /// @ingroup base
 singleton class FrameRate : ListenerObject
 {
+	/// @protectedsection
+
 	/// Accumulated frames per second
 	uint32 totalFPS;
 

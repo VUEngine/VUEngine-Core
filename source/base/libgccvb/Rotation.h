@@ -41,6 +41,7 @@ extern const Rotation* _cameraRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBU
 static class Rotation : Object
 {
 	/// @publicsection
+
 	/// Get a rotation with all its members initialized to zero.
 	/// @return Rotation with all its members initialized to zero
 	static inline Rotation zero();
