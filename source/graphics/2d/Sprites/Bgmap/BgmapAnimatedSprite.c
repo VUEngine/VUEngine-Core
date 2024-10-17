@@ -46,7 +46,7 @@ void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSp
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-	BgmapAnimatedSprite::createAnimationController(this, bgmapAnimatedSpriteSpec->bgmapSpriteSpec.spriteSpec.textureSpec->charSetSpec);
+	BgmapAnimatedSprite::createAnimationController(this);
 }
 
 /**

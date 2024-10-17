@@ -133,7 +133,7 @@ abstract class Sprite : VisualComponent
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);
-	void createAnimationController(CharSetSpec* charSetSpec);
+	void createAnimationController();
 	uint16 getHead();
 	uint16 getMode();
 	Texture getTexture();

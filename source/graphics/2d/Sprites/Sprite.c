@@ -85,7 +85,7 @@ void Sprite::destructor()
 	Base::destructor();
 }
 
-void Sprite::createAnimationController(CharSetSpec* charSetSpec)
+void Sprite::createAnimationController()
 {
     this->animationController = new AnimationController();
 
@@ -97,14 +97,19 @@ void Sprite::createAnimationController(CharSetSpec* charSetSpec)
 	
 	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
 	{
-		AnimationController::setAnimationCoordinator(this->animationController,
-			AnimationCoordinatorFactory::getCoordinator
-			(
-				AnimationCoordinatorFactory::getInstance(),
-				this->animationController, 
-				ListenerObject::safeCast(this->owner), 
-				charSetSpec
-			)
+		AnimationController::setAnimationCoordinator
+		(
+			this->animationController,
+			Texture::isShared(this->texture) ?
+				AnimationCoordinatorFactory::getCoordinator
+				(
+					AnimationCoordinatorFactory::getInstance(),
+					this->animationController, 
+					ListenerObject::safeCast(this->owner), 
+					Texture::getCharSet(this->texture, false)
+				)
+			:
+				NULL
 		);
 	}
 }

@@ -97,8 +97,7 @@ class CharSet : ListenerObject
 	bool isOptimized();
 	uint16 getOffset();
 	void setOffset(uint16 offset);
-	void setCharSetSpec(CharSetSpec* charSetSpec);
-	CharSetSpec* getCharSetSpec();
+	CharSetSpec* getSpec();
 	uint16 getNumberOfChars();
 	void write();
 	void putChar(uint32 charToReplace, const uint32* newChar);

@@ -134,7 +134,7 @@ static inline Scale Scale::intermediate(Scale a, Scale b)
 		(a.x + b.x) >> 1,
 		(a.y + b.y) >> 1,
 		(a.z + b.z) >> 1
-	}
+	};
 }
 //---------------------------------------------------------------------------------------------------------
 static inline Scale Scale::product(Scale a, Scale b)

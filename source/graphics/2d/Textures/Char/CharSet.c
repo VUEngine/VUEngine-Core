@@ -156,22 +156,9 @@ void CharSet::setOffset(uint16 offset)
  *
  * @return				CharSetSpec
  */
-CharSetSpec* CharSet::getCharSetSpec()
+CharSetSpec* CharSet::getSpec()
 {
 	return this->charSetSpec;
-}
-
-/**
- * Set the spec
- *
- * @param charSetSpec			CharSetSpec
- */
-void CharSet::setCharSetSpec(CharSetSpec* charSetSpec)
-{
-	if(NULL != charSetSpec)
-	{
-		this->charSetSpec = charSetSpec;
-	}
 }
 
 /**

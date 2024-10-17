@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -22,21 +22,18 @@
 #include "AnimationController.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 extern int32 strcmp(const char *, const char *);
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::constructor()
 {
 	Base::constructor();
@@ -56,10 +53,7 @@ void AnimationController::constructor()
 	// not playing anything yet
 	this->playing = false;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::destructor()
 {
 	if(!isDeleted(this->animationCoordinator))
@@ -72,58 +66,28 @@ void AnimationController::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Retrieve the animation coordinator
- *
- * @return 		Animation coordinator
- */
+//---------------------------------------------------------------------------------------------------------
 AnimationCoordinator AnimationController::getAnimationCoordinator()
 {
 	return this->animationCoordinator;
 }
-
-/**
- * Set the animation coordinator
- *
- * @param 		Animation coordinator
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::setAnimationCoordinator(AnimationCoordinator animationCoordinator)
 {
 	// animation coordinator
 	this->animationCoordinator = animationCoordinator; 
 }
-
-/**
- * Retrieve the actual frame of animation index
- *
- * @private
- * @return 		Actual frame of animation index
- */
+//---------------------------------------------------------------------------------------------------------
 int16 AnimationController::getActualFrameIndex()
 {
 	return NULL == this->animationFunction ? 0 : this->animationFunction->frames[this->actualFrame];
 }
-
-/**
- * Retrieve the actual frame of animation
- *
- * @private
- * @return 		Actual frame of animation
- */
+//---------------------------------------------------------------------------------------------------------
 int16 AnimationController::getActualFrame()
 {
 	return this->actualFrame;
 }
-
-/**
- * Set the actual frame of animation
- *
- * @public
- * @param actualFrame	The new frame of animation
- *
- * @return bool			Whether the value was updated or not
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::setActualFrame(int16 actualFrame)
 {
 	if(0 > actualFrame)
@@ -142,57 +106,27 @@ bool AnimationController::setActualFrame(int16 actualFrame)
 
 	return false;
 }
-
-/**
- * Retrieve the number of cycles that each frame of animation is shown
- *
- * @private
- * @return		Frame duration in game cycles
- */
+//---------------------------------------------------------------------------------------------------------
 uint8 AnimationController::getFrameDuration()
 {
 	return this->frameDuration;
 }
-
-/**
- * Set the number of cycles that each frame of animation is shown
- *
- * @private
- * @param frameDuration	Number of cycles that each frame of animation is shown
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::setFrameDuration(uint8 frameDuration)
 {
 	this->frameDuration = frameDuration;
 }
-
-/**
- * Retrieve the frame duration decrement per cycle
- *
- * @private
- * @return		Frame cycle decrement
- */
+//---------------------------------------------------------------------------------------------------------
 uint8 AnimationController::getFrameCycleDecrement()
 {
 	return this->frameCycleDecrement;
 }
-
-/**
- * Set the frame duration decrement per cycle
- *
- * @private
- * @param frameCycleDecrement	Decrement value for the frame cycle on each game cycle
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::setFrameCycleDecrement(uint8 frameCycleDecrement)
 {
 	this->frameCycleDecrement = frameCycleDecrement;
 }
-
-/**
- * Update the animation
- *
- * @private
- * @return		True if the animation frame changed
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::updateAnimation()
 {
 	// first check for a valid animation function
@@ -263,12 +197,7 @@ bool AnimationController::updateAnimation()
 
 	return false;
 }
-
-/**
- * Reset frame duration
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::resetFrameDuration()
 {
 	// reset frame delay
@@ -280,13 +209,7 @@ void AnimationController::resetFrameDuration()
 		this->frameDuration = 1;
 	}
 }
-
-/**
- * Play an animation given an AnimationFunction
- *
- * @private
- * @param animationFunction		Animation function to play
- */
+//--------------------------------------------------------------------------------------------------------
 void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
 {
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
@@ -315,26 +238,12 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// it's playing now
 	this->playing = true;
 }
-
-/**
- * Retrieve the currently playing AnimationFunction
- *
- * @private
- * @return			Animation function
- */
+//---------------------------------------------------------------------------------------------------------
 const AnimationFunction* AnimationController::getPlayingAnimationFunction()
 {
 	return this->playing ? this->animationFunction : NULL;
 }
-
-/**
- * Play an animation given an animation function and the name of an AnimationFunction
- *
- * @public
- * @param animationFunctions		Animation description holding the animation function
- * @param functionName				Name of the animation function's to play
- * @return							True if the animation started playing
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope)
 {
 	if(NULL == animationFunctions || NULL == functionName)
@@ -403,14 +312,7 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 
 	return true;
 }
-
-/**
- * Replay the last animation if any
- *
- * @public
- * @param animationFunctions		Animation description holding the animation function
- * @return							True if the animation started playing
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::replay(const AnimationFunction* animationFunctions[])
 {
 	if(NULL == this->animationFunction)
@@ -437,22 +339,14 @@ bool AnimationController::replay(const AnimationFunction* animationFunctions[])
 
 	return true;
 }
-
-/**
- * Stop the currently playing animation
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::stop()
 {
 	this->animationFunction = NULL;
 	this->playing = false;
 	this->actualFrame = 0;
 }
-
-/**
- * Skip to next frame
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::nextFrame()
 {
 	if(!this->animationFunction)
@@ -474,10 +368,7 @@ void AnimationController::nextFrame()
 		NM_ASSERT(!isDeleted(this), "AnimationController::nextFrame: deleted this during kEventAnimationCompleted");
 	}
 }
-
-/**
- * Rewind to previous frame
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::previousFrame()
 {
 	if(!this->animationFunction)
@@ -499,14 +390,7 @@ void AnimationController::previousFrame()
 		NM_ASSERT(!isDeleted(this), "AnimationController::previousFrame: deleted this during kEventAnimationCompleted");
 	}
 }
-
-/**
- * Check if a given animation function is playing
- *
- * @private
- * @param functionName			The animation function's name
- * @return						True if the animation is playing
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::isPlayingFunction(const char* functionName)
 {
 	if(NULL == functionName || NULL == this->animationFunction)
@@ -517,12 +401,7 @@ bool AnimationController::isPlayingFunction(const char* functionName)
 	// compare function's names
 	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
 }
-
-/**
- * Retrieve the name of the current animation
- *
- * @return				Name of the animation that is playing
- */
+//---------------------------------------------------------------------------------------------------------
 const char* AnimationController::getPlayingAnimationName()
 {
 	if(NULL != this->animationFunction)
@@ -532,24 +411,12 @@ const char* AnimationController::getPlayingAnimationName()
 
 	return "None";
 }
-
-/**
- * Check if any animation is playing
- *
- * @private
- * @return							True if there is an animation playing
- */
+//---------------------------------------------------------------------------------------------------------
 bool AnimationController::isPlaying()
 {
 	return this->playing;
 }
-
-/**
- * Pause the currently playing animation
- *
- * @private
- * @param pause			Flag to pause or to resume animation
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::pause(bool pause)
 {
 	this->playing = !pause;
@@ -559,12 +426,7 @@ void AnimationController::pause(bool pause)
 		this->actualFrame = 0;
 	}
 }
-
-/**
- * Get the total number of frames of the current animation
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 int32 AnimationController::getNumberOfFrames()
 {
 	if(this->animationFunction)
@@ -574,3 +436,4 @@ int32 AnimationController::getNumberOfFrames()
 
 	return -1;
 }
+//---------------------------------------------------------------------------------------------------------

@@ -287,7 +287,7 @@ void Texture::setSpec(TextureSpec* textureSpec)
 
 	if(this->textureSpec != textureSpec || kTextureWritten != this->status)
 	{
-		if(NULL != this->charSet && textureSpec->charSetSpec != CharSet::getCharSetSpec(this->charSet))
+		if(NULL != this->charSet && textureSpec->charSetSpec != CharSet::getSpec(this->charSet))
 		{
 			Texture::releaseCharSet(this);
 		}

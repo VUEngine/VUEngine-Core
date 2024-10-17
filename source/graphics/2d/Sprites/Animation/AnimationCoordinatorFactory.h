@@ -11,31 +11,55 @@
 #define ANIMATION_COORDINATOR_FACTORY_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <CharSet.h>
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class AnimationController;
 class AnimationCoordinator;
 class ListenerObject;
 
 
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class AnimationCoordinator
+///
+/// Inherits from ListenerObject
+///
+/// Creates instances of animation coordinators.
 /// @ingroup graphics-2d-sprites-animation
 singleton class AnimationCoordinatorFactory : Object
 {
-	// entities that use bgmap sprites
+	/// @protectedsection
+
+	/// List of instances of animation coordinators
 	VirtualList animationCoordinators;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return ClockManager singleton
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec);
+
+	/// Get an animation coordinator.
+	/// @param animationController: Animation controller to potentially coordinate
+	/// @param scope: Object that might need to listen for playback related events
+	/// @param charSet: CharSet shared by the animation controllers to coordinate   
+	/// @return ClockManager singleton
+	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, CharSet charSet);
+
+	/// Reset the animation coordinator factory's state.
 	void reset();
 }
 

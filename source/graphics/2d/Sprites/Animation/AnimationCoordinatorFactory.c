@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
@@ -21,43 +21,26 @@
 #include "AnimationCoordinatorFactory.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualList;
 friend class VirtualNode;
 
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			AnimationCoordinatorFactory::getInstance()
- * @memberof	AnimationCoordinatorFactory
- * @public
- * @return		AnimationCoordinatorFactory instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void AnimationCoordinatorFactory::constructor()
 {
 	Base::constructor();
 
 	this->animationCoordinators = new VirtualList();
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationCoordinatorFactory::destructor()
 {
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
@@ -69,30 +52,24 @@ void AnimationCoordinatorFactory::destructor()
 	// allow a new construct
 	Base::destructor();
 }
-
-/**
- * Reset
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void AnimationCoordinatorFactory::reset()
 {
 	VirtualList::deleteData(this->animationCoordinators);
 }
-
-/**
- * Get Coordinator
- *
- * @param animationController
- * @param sprite
- * @param charSetSpec
- * @return						AnimationCoordinator instance
- */
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
+//---------------------------------------------------------------------------------------------------------
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, CharSet charSet)
 {
-	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
+	if(isDeleted(charSet))
+	{
+		return NULL;
+	}
 
-	if(charSetSpec->shared)
+	const CharSetSpec* charSetSpec = CharSet::getSpec(charSet);
+	
+	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
+
+	if(NULL != charSetSpec && charSetSpec->shared)
 	{
 		// try to find an already created coordinator
 		for(VirtualNode node = this->animationCoordinators->head; NULL != node; node = node->next)
@@ -118,3 +95,4 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 	return NULL;
 }
+//---------------------------------------------------------------------------------------------------------

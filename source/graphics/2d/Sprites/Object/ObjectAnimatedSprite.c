@@ -42,7 +42,7 @@ void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimated
 	// construct base object
 	Base::constructor(owner, &objectAnimatedSpriteSpec->objectSpriteSpec);
 
-	ObjectAnimatedSprite::createAnimationController(this, objectAnimatedSpriteSpec->objectSpriteSpec.spriteSpec.textureSpec->charSetSpec);
+	ObjectAnimatedSprite::createAnimationController(this);
 }
 
 /**
