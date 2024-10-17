@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -27,25 +27,26 @@
 #include "Printing.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 extern FontROMSpec* const _fonts[];
 extern FontROMSpec DefaultFontSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-// horizontal tab size in chars
-#define __TAB_SIZE	4
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
 #define VUENGINE_DEBUG_FONT_CHARSET_OFFSET		(__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE)
+#define VUENGINE_DEBUG_FONT_SIZE				160
 
-// fontdata for debug output
-#define VUENGINE_DEBUG_FONT_SIZE	160
+
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
+
 FontROMData VUENGINE_DEBUG_FONT_DATA =
 {
 	// font spec
@@ -56,49 +57,19 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-void Printing::constructor()
+//---------------------------------------------------------------------------------------------------------
+void Printing::setDebugMode()
 {
-	Base::constructor();
-
-	// initialize members
-	this->fonts = new VirtualList();
-	this->printingSprites = new VirtualList();
-	this->mode = __PRINTING_MODE_DEFAULT;
-	this->palette = __PRINTING_PALETTE;
-	this->orientation = kPrintingOrientationHorizontal;
-	this->direction = kPrintingDirectionLTR;
-	this->lastUsedFont = NULL;
+	Printing::loadDebugFont(this);
+	this->mode = __PRINTING_MODE_DEBUG;
 	this->lastUsedFontData = NULL;
-	this->activePrintingSprite = NULL;
-	this->printingBgmapSegment = -1;
-
-	Printing::reset(this);
+	this->lastUsedFont = NULL;
 }
-
-void Printing::destructor()
-{
-	if(!isDeleted(this->fonts))
-	{
-		delete this->fonts;
-	}
-
-	this->fonts = NULL;
-
-	if(!isDeleted(this->printingSprites))
-	{
-		delete this->printingSprites;
-	}
-
-	this->printingSprites = NULL;
-
-	// allow a new construct
-	Base::destructor();
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::reset()
 {
 	if(!isDeleted(this->printingSprites))
@@ -121,149 +92,24 @@ void Printing::reset()
 	Printing::setOrientation(this, kPrintingOrientationHorizontal);
 	Printing::setDirection(this, kPrintingDirectionLTR);
 }
-
-void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
-{
-	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
-	{
-		this->printingBgmapSegment = printingBgmapSegment;
-
-		for(VirtualNode node = VirtualList::begin(this->printingSprites); NULL != node; node = VirtualNode::getNext(node))
-		{
-			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
-		}
-	}	
-}
-
-void Printing::addSprite()
-{
-	PrintingSpriteSpec DefaultPrintingSprite =
-	{
-		{
-			{
-				// sprite's type
-				__TYPE(PrintingSprite),
-
-				// texture spec
-				NULL,
-
-				// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
-				__TRANSPARENCY_NONE,
-
-				// displacement
-				{
-					0, // x
-					0, // y
-					0, // z
-					0, // parallax
-				},
-			},
-
-			// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
-			// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
-			__WORLD_BGMAP,
-
-			// pointer to affine/hbias manipulation function
-			NULL,
-
-			// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
-			__WORLD_ON,
-		}
-	};
-
-	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
-	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
-
-	PrintingSprite::setPrintingBgmapSegment(this->activePrintingSprite, this->printingBgmapSegment);
-
-	PixelVector position = 
-	{
-		0, 0, 0, 0
-	};
-
-	PrintingSprite::setPosition(this->activePrintingSprite, &position);
-
-	VirtualList::pushBack(this->printingSprites, this->activePrintingSprite);
-}
-
-/**
-* Set the current printing sprite
-*/
-bool Printing::setActiveSprite(uint16 printingSpriteIndex)
-{
-	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, printingSpriteIndex));
-
-	bool result = NULL != this->activePrintingSprite;
-
-	if(NULL == this->activePrintingSprite)
-	{
-		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, 0));
-	}
-
-	return result;
-}
-
-/**
-* Print active printing sprite's info
-*/
-void Printing::printSprite(int16 x, int16 y)
+//---------------------------------------------------------------------------------------------------------
+void Printing::show()
 {
 	if(!isDeleted(this->activePrintingSprite))
 	{
-		PrintingSprite::print(this->activePrintingSprite, x, y);
+		PrintingSprite::show(this->activePrintingSprite);
+		PrintingSprite::setPosition(this->activePrintingSprite, PrintingSprite::getPosition(this->activePrintingSprite));
 	}
 }
-
-void Printing::setOrientation(uint8 value)
+//---------------------------------------------------------------------------------------------------------
+void Printing::hide()
 {
-	this->orientation = value;
-
-	switch(this->orientation)
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		case kPrintingOrientationHorizontal:
-		case kPrintingOrientationVertical:
-
-			break;
-
-		default:
-
-			this->orientation = kPrintingOrientationHorizontal;
-			break;
+		PrintingSprite::hide(this->activePrintingSprite);
 	}
 }
-
-void Printing::setDirection(uint8 value)
-{
-	this->direction = value;
-
-	switch(this->direction)
-	{
-		case kPrintingDirectionLTR:
-		case kPrintingDirectionRTL:
-
-			break;
-
-		default:
-
-			this->direction = kPrintingDirectionLTR;
-			break;
-	}
-}
-
-bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
-{
-	CharSet charSet = CharSet::safeCast(eventFirer);
-
-	if(!isDeleted(charSet))
-	{
-		CharSet::write(charSet);
-		Printing::fireEvent(this, kEventFontRewritten);
-		NM_ASSERT(!isDeleted(this), "Printing::onFontCharChangedOffset: deleted this during kEventFontRewritten");
-	}
-
-	return true;
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::loadFonts(FontSpec** fontSpecs)
 {
 	// Since fonts' charsets will be released, there is no reason to keep
@@ -315,58 +161,7 @@ void Printing::loadFonts(FontSpec** fontSpecs)
 
 	HardwareManager::resumeInterrupts();
 }
-
-void Printing::setFontPage(const char* font, uint16 page)
-{
-	FontData* fontData = Printing::getFontByName(this, font);
-
-	if(NULL == fontData || isDeleted(fontData->charSet))
-	{
-		return;
-	}
-
-	CharSet::setFrame(fontData->charSet, page);
-}
-
-void Printing::loadDebugFont()
-{
-	Mem::copyWORD(
-		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
-		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
-		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)
-	);
-}
-
-void Printing::setDebugMode()
-{
-	Printing::loadDebugFont(this);
-	this->mode = __PRINTING_MODE_DEBUG;
-	this->lastUsedFontData = NULL;
-	this->lastUsedFont = NULL;
-}
-
-void Printing::setPalette(uint8 palette)
-{
-	if(4 > palette)
-	{
-		this->palette = palette;
-	}
-}
-
-void Printing::clear()
-{
-	if(!isDeleted(this->activePrintingSprite))
-	{
-		Mem::clear((BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
-	}
-}
-
-void Printing::clearRow(uint16 row)
-{
-	// TODO: implement something more elegant and performant
-	Printing::text(this, "                                                ", 0, row, NULL);
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::releaseFonts()
 {
 	Printing::removeEventListeners(this, NULL, kEventFontRewritten);
@@ -395,73 +190,40 @@ void Printing::releaseFonts()
 	this->lastUsedFont = NULL;
 	this->lastUsedFontData = NULL;
 }
-
-FontData* Printing::getFontByName(const char* font)
+//---------------------------------------------------------------------------------------------------------
+void Printing::clear()
 {
-	FontData* result = NULL;
-
-	if(this->mode == __PRINTING_MODE_DEBUG)
+	if(!isDeleted(this->activePrintingSprite))
 	{
-		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
+		Mem::clear((BYTE*)__BGMAP_SEGMENT(BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()) + 1) - __PRINTABLE_BGMAP_AREA * 2, __PRINTABLE_BGMAP_AREA * 2);
 	}
-	else if(NULL != this->fonts)
-	{
-		// set first defined font as default
-		result = VirtualList::front(this->fonts);
-
-		if(NULL != result)
-		{
-			if(NULL != font)
-			{
-				// iterate over registered fonts to find spec of font to use
-				VirtualNode node = VirtualList::begin(this->fonts);
-				
-				for(; NULL != node; node = VirtualNode::getNext(node))
-				{
-					FontData* fontData = VirtualNode::getData(node);
-					
-					if(!strcmp(fontData->fontSpec->name, font))
-					{
-						result = fontData;
-						break;
-					}
-				}
-			}
-
-			// if font's charset has not been preloaded, load it now
-			if(NULL == result->charSet)
-			{
-				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
-
-				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
-			}
-		}
-	}
-	
-	return result;
 }
-
-void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
+//---------------------------------------------------------------------------------------------------------
+void Printing::clearRow(uint16 row)
 {
-	if(value < 0)
-	{
-		value = -value;
-		Printing::out(this, x++, y, "-", font);
-	}
-
-	Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
+	// TODO: implement something more elegant and performant
+	Printing::text(this, "                                                ", 0, row, NULL);
 }
-
+//---------------------------------------------------------------------------------------------------------
+void Printing::text(const char* string, int32 x, int32 y, const char* font)
+{
+#ifdef __FORCE_UPPERCASE
+	Printing::out(this, x, y, Utilities::toUppercase(string), font);
+#else
+	Printing::out(this, x, y, string, font);
+#endif
+}
+//---------------------------------------------------------------------------------------------------------
 void Printing::int32(int32 value, uint8 x, uint8 y, const char* font)
 {
 	Printing::number(this, value, x, y, font);
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::hex(WORD value, uint8 x, uint8 y, uint8 length, const char* font)
 {
 	Printing::out(this, x,y, Utilities::itoa((int32)(value), 16, length), font);
 }
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char* font)
 {
 	if(1 > precision)
@@ -564,16 +326,141 @@ void Printing::float(float value, uint8 x, uint8 y, int32 precision, const char*
 
 	Printing::text(this, string, x, y, font);
 }
-
-void Printing::text(const char* string, int32 x, int32 y, const char* font)
+//---------------------------------------------------------------------------------------------------------
+void Printing::setFontPage(const char* font, uint16 page)
 {
-#ifdef __FORCE_UPPERCASE
-	Printing::out(this, x, y, Utilities::toUppercase(string), font);
-#else
-	Printing::out(this, x, y, string, font);
-#endif
-}
+	FontData* fontData = Printing::getFontByName(this, font);
 
+	if(NULL == fontData || isDeleted(fontData->charSet))
+	{
+		return;
+	}
+
+	CharSet::setFrame(fontData->charSet, page);
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::setOrientation(uint8 value)
+{
+	this->orientation = value;
+
+	switch(this->orientation)
+	{
+		case kPrintingOrientationHorizontal:
+		case kPrintingOrientationVertical:
+
+			break;
+
+		default:
+
+			this->orientation = kPrintingOrientationHorizontal;
+			break;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::setDirection(uint8 value)
+{
+	this->direction = value;
+
+	switch(this->direction)
+	{
+		case kPrintingDirectionLTR:
+		case kPrintingDirectionRTL:
+
+			break;
+
+		default:
+
+			this->direction = kPrintingDirectionLTR;
+			break;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::setPrintingBgmapSegment(int8 printingBgmapSegment)
+{
+	if((unsigned)printingBgmapSegment < __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
+	{
+		this->printingBgmapSegment = printingBgmapSegment;
+
+		for(VirtualNode node = VirtualList::begin(this->printingSprites); NULL != node; node = VirtualNode::getNext(node))
+		{
+			PrintingSprite::setPrintingBgmapSegment(PrintingSprite::safeCast(VirtualNode::getData(node)), printingBgmapSegment);
+		}
+	}	
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::addSprite()
+{
+	PrintingSpriteSpec DefaultPrintingSprite =
+	{
+		{
+			{
+				// sprite's type
+				__TYPE(PrintingSprite),
+
+				// texture spec
+				NULL,
+
+				// transparency (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
+				__TRANSPARENCY_NONE,
+
+				// displacement
+				{
+					0, // x
+					0, // y
+					0, // z
+					0, // parallax
+				},
+			},
+
+			// bgmap mode (__WORLD_BGMAP, __WORLD_AFFINE, __WORLD_OBJECT or __WORLD_HBIAS)
+			// make sure to use the proper corresponding sprite type throughout the spec (BgmapSprite or ObjectSprite)
+			__WORLD_BGMAP,
+
+			// pointer to affine/hbias manipulation function
+			NULL,
+
+			// display mode (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+			__WORLD_ON,
+		}
+	};
+
+	this->printingBgmapSegment = BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
+	this->activePrintingSprite = PrintingSprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)&DefaultPrintingSprite, NULL));
+
+	PrintingSprite::setPrintingBgmapSegment(this->activePrintingSprite, this->printingBgmapSegment);
+
+	PixelVector position = 
+	{
+		0, 0, 0, 0
+	};
+
+	PrintingSprite::setPosition(this->activePrintingSprite, &position);
+
+	VirtualList::pushBack(this->printingSprites, this->activePrintingSprite);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Printing::setActiveSprite(uint16 printingSpriteIndex)
+{
+	this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, printingSpriteIndex));
+
+	bool result = NULL != this->activePrintingSprite;
+
+	if(NULL == this->activePrintingSprite)
+	{
+		this->activePrintingSprite = PrintingSprite::safeCast(VirtualList::getDataAtIndex(this->printingSprites, 0));
+	}
+
+	return result;
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::printSprite(int16 x, int16 y)
+{
+	if(!isDeleted(this->activePrintingSprite))
+	{
+		PrintingSprite::print(this->activePrintingSprite, x, y);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 #ifdef __FORCE_PRINTING_LAYER
 void Printing::setCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
@@ -581,7 +468,15 @@ void Printing::setCoordinates(int16 x __attribute__ ((unused)), int16 y __attrib
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
 	Printing::setWorldSize(this, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
-
+#else
+void Printing::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
+{
+	Printing::setWorldCoordinates(this, x, y, z, parallax);
+	Printing::setBgmapCoordinates(this, x, y, 0);
+}
+#endif
+//---------------------------------------------------------------------------------------------------------
+#ifdef __FORCE_PRINTING_LAYER
 void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __attribute__ ((unused)), int16 z __attribute__ ((unused)), int8 parallax __attribute__ ((unused)))
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -594,30 +489,7 @@ void Printing::setWorldCoordinates(int16 x __attribute__ ((unused)), int16 y __a
 		PrintingSprite::setPosition(this->activePrintingSprite, &position);
 	}
 }
-
-void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
-{
-	if(!isDeleted(this->activePrintingSprite))
-	{
-		PrintingSprite::setMValues(this->activePrintingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
-	}
-}
-
-void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
-{
-	if(!isDeleted(this->activePrintingSprite))
-	{
-		PrintingSprite::setSize(this->activePrintingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
-	}
-}
-
 #else
-void Printing::setCoordinates(int16 x, int16 y, int16 z, int8 parallax)
-{
-	Printing::setWorldCoordinates(this, x, y, z, parallax);
-	Printing::setBgmapCoordinates(this, x, y, 0);
-}
-
 void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -633,7 +505,17 @@ void Printing::setWorldCoordinates(int16 x, int16 y, int16 z, int8 parallax)
 		PrintingSprite::setPosition(this->activePrintingSprite, &position);
 	}
 }
-
+#endif
+//---------------------------------------------------------------------------------------------------------
+#ifdef __FORCE_PRINTING_LAYER
+void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
+{
+	if(!isDeleted(this->activePrintingSprite))
+	{
+		PrintingSprite::setMValues(this->activePrintingSprite, __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Y_OFFSET, 0);
+	}
+}
+#else
 void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my __attribute__ ((unused)), int8 mp __attribute__ ((unused)))
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -641,7 +523,17 @@ void Printing::setBgmapCoordinates(int16 mx __attribute__ ((unused)), int16 my _
 		PrintingSprite::setMValues(this->activePrintingSprite, mx <= 64 * 8 ? mx : 0, __PRINTING_BGMAP_Y_OFFSET + my <= 64 * 8 ? __PRINTING_BGMAP_Y_OFFSET + my : __PRINTING_BGMAP_Y_OFFSET, mp);
 	}
 }
-
+#endif
+//---------------------------------------------------------------------------------------------------------
+#ifdef __FORCE_PRINTING_LAYER
+void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
+{
+	if(!isDeleted(this->activePrintingSprite))
+	{
+		PrintingSprite::setSize(this->activePrintingSprite, __SCREEN_WIDTH - 1, __SCREEN_HEIGHT - 1);
+	}
+}
+#else
 void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attribute__ ((unused)))
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -650,27 +542,7 @@ void Printing::setWorldSize(uint16 w __attribute__ ((unused)), uint16 h __attrib
 	}
 }
 #endif
-
-int16 Printing::getWorldCoordinatesX()
-{
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGX(this->activePrintingSprite) : 0;
-}
-
-int16 Printing::getWorldCoordinatesY()
-{
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGY(this->activePrintingSprite) : 0;
-}
-
-int16 Printing::getWorldCoordinatesP()
-{
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGP(this->activePrintingSprite) : 0;
-}
-
-PixelVector Printing::getSpritePosition()
-{
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getDisplacedPosition(this->activePrintingSprite) : (PixelVector){0, 0, 0, 0};
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Printing::setTransparent(uint8 value)
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -678,7 +550,15 @@ void Printing::setTransparent(uint8 value)
 		Sprite::setTransparent(this->activePrintingSprite, value);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
+void Printing::setPalette(uint8 palette)
+{
+	if(4 > palette)
+	{
+		this->palette = palette;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void Printing::resetCoordinates()
 {
 	if(!isDeleted(this->activePrintingSprite))
@@ -686,7 +566,72 @@ void Printing::resetCoordinates()
 		PrintingSprite::reset(this->activePrintingSprite);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+int16 Printing::getWorldCoordinatesX()
+{
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGX(this->activePrintingSprite) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Printing::getWorldCoordinatesY()
+{
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGY(this->activePrintingSprite) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Printing::getWorldCoordinatesP()
+{
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGP(this->activePrintingSprite) : 0;
+}
+//---------------------------------------------------------------------------------------------------------
+PixelVector Printing::getSpritePosition()
+{
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getDisplacedPosition(this->activePrintingSprite) : (PixelVector){0, 0, 0, 0};
+}
+//---------------------------------------------------------------------------------------------------------
+FontData* Printing::getFontByName(const char* font)
+{
+	FontData* result = NULL;
 
+	if(this->mode == __PRINTING_MODE_DEBUG)
+	{
+		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
+	}
+	else if(NULL != this->fonts)
+	{
+		// set first defined font as default
+		result = VirtualList::front(this->fonts);
+
+		if(NULL != result)
+		{
+			if(NULL != font)
+			{
+				// iterate over registered fonts to find spec of font to use
+				VirtualNode node = VirtualList::begin(this->fonts);
+				
+				for(; NULL != node; node = VirtualNode::getNext(node))
+				{
+					FontData* fontData = VirtualNode::getData(node);
+					
+					if(!strcmp(fontData->fontSpec->name, font))
+					{
+						result = fontData;
+						break;
+					}
+				}
+			}
+
+			// if font's charset has not been preloaded, load it now
+			if(NULL == result->charSet)
+			{
+				result->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec);
+
+				CharSet::addEventListener(result->charSet, ListenerObject::safeCast(this), (EventListener)Printing::onFontCharChangedOffset, kEventCharSetChangedOffset);
+			}
+		}
+	}
+	
+	return result;
+}
+//---------------------------------------------------------------------------------------------------------
 FontSize Printing::getTextSize(const char* string, const char* font)
 {
 	FontSize fontSize = {0, 0};
@@ -747,32 +692,86 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 
 	return fontSize;
 }
+//---------------------------------------------------------------------------------------------------------
 
-void Printing::show()
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Printing::constructor()
 {
-	if(!isDeleted(this->activePrintingSprite))
-	{
-		PrintingSprite::show(this->activePrintingSprite);
-		PrintingSprite::setPosition(this->activePrintingSprite, PrintingSprite::getPosition(this->activePrintingSprite));
-	}
-}
+	Base::constructor();
 
-void Printing::hide()
+	// initialize members
+	this->fonts = new VirtualList();
+	this->printingSprites = new VirtualList();
+	this->mode = __PRINTING_MODE_DEFAULT;
+	this->palette = __PRINTING_PALETTE;
+	this->orientation = kPrintingOrientationHorizontal;
+	this->direction = kPrintingDirectionLTR;
+	this->lastUsedFont = NULL;
+	this->lastUsedFontData = NULL;
+	this->activePrintingSprite = NULL;
+	this->printingBgmapSegment = -1;
+
+	Printing::reset(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::destructor()
 {
-	if(!isDeleted(this->activePrintingSprite))
+	if(!isDeleted(this->fonts))
 	{
-		PrintingSprite::hide(this->activePrintingSprite);
+		delete this->fonts;
 	}
-}
 
-void Printing::render(uint8 textLayer)
+	this->fonts = NULL;
+
+	if(!isDeleted(this->printingSprites))
+	{
+		delete this->printingSprites;
+	}
+
+	this->printingSprites = NULL;
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+bool Printing::onFontCharChangedOffset(ListenerObject eventFirer __attribute__((unused)))
 {
-	if(!isDeleted(this->activePrintingSprite))
-	{
-		PrintingSprite::doRender(this->activePrintingSprite, textLayer);
-	}
-}
+	CharSet charSet = CharSet::safeCast(eventFirer);
 
+	if(!isDeleted(charSet))
+	{
+		CharSet::write(charSet);
+		Printing::fireEvent(this, kEventFontRewritten);
+		NM_ASSERT(!isDeleted(this), "Printing::onFontCharChangedOffset: deleted this during kEventFontRewritten");
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::loadDebugFont()
+{
+	Mem::copyWORD(
+		(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)VUENGINE_DEBUG_FONT_CHARSET_OFFSET) << 4)),
+		VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->tiles + 1,
+		__UINT32S_PER_CHARS(VUENGINE_DEBUG_FONT_SIZE)
+	);
+}
+//---------------------------------------------------------------------------------------------------------
+void Printing::number(int32 value, uint8 x, uint8 y, const char* font)
+{
+	if(value < 0)
+	{
+		value = -value;
+		Printing::out(this, x++, y, "-", font);
+	}
+
+	Printing::out(this, x, y, Utilities::itoa((int32)(value), 10, 0), font);
+}
+//---------------------------------------------------------------------------------------------------------
 void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 {
 #ifdef __DEFAULT_FONT
@@ -927,3 +926,4 @@ void Printing::out(uint8 x, uint8 y, const char* string, const char* font)
 		i++;
 	}
 }
+//---------------------------------------------------------------------------------------------------------

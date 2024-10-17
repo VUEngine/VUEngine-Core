@@ -72,6 +72,7 @@ singleton class CameraEffectManager : ListenerObject
 	bool startingANewEffect;
 
 	/// @publicsection
+	
 	/// Method to retrieve the singleton instance
 	/// @return CameraEffectManager singleton
 	static CameraEffectManager getInstance();
