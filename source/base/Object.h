@@ -40,6 +40,8 @@ typedef Object (*AllocatorPointer)();
 abstract class Object : Object
 {
 	/// @protectedsection
+	// The unusual order of the attributes in the rest of the classes 
+	// aims to optimize data packing as much as possible.
 
 	/// Pointer to the class's virtual table
 	void* vTable;

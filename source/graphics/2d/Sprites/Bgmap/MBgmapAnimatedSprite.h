@@ -11,44 +11,56 @@
 #define M_BGMAP_ANIMATED_SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <MBgmapSprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
-/**
- * A MBgmapAnimatedSprite spec
- *
- * @memberof MBgmapAnimatedSprite
- */
+/// A MBgmapAnimatedSprite spec
+/// @memberof MBgmapAnimatedSprite
 typedef struct MBgmapAnimatedSpriteSpec
 {
-	/// it has a Sprite spec at the beginning
 	MBgmapSpriteSpec mBgmapSpriteSpec;
 
 } MBgmapAnimatedSpriteSpec;
 
-/**
- * A MBgmapAnimatedSprite spec that is stored in ROM
- *
- * @memberof MBgmapAnimatedSprite
- */
+/// A MBgmapAnimatedSprite spec that is stored in ROM
+/// @memberof MBgmapAnimatedSprite
 typedef const MBgmapAnimatedSpriteSpec MBgmapAnimatedSpriteROMSpec;
 
 
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class FrameBlendBgmapSprite
+///
+/// Inherits from BgmapSprite
+///
+/// Animates a sprite whose texture is allocated in BGMAP space.
 /// @ingroup graphics-2d-sprites-bgmap
 class MBgmapAnimatedSprite : MBgmapSprite
 {
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param mBgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
+
+	/// Update the animation
 	override void updateAnimation();
-	override void configureMultiframe(uint16 frame);
+
+	/// Set the current multiframe
+	/// @param frame: Current animation frame 
+	override void setMultiframe(uint16 frame);
 }
 
 

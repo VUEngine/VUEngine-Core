@@ -77,6 +77,9 @@ class PrintingSprite : BgmapSprite
 	int16 getGY();
 	int16 getGP();
 
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the regio of DRAM that this sprite configured
 	override int16 doRender(int16 index);
 }
 

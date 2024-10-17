@@ -11,103 +11,161 @@
 #define BGMAP_SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Sprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
-#define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1		1
+class BgmapSprite;
+
+
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
+
 #define __WORLD_SIZE_DISPLACEMENT					1
+#define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1		1
 #define __GX_LIMIT									511
 #define __GY_LIMIT									223
-
 #define __MINIMUM_BGMAP_SPRITE_WIDTH				0
 #define __MINIMUM_BGMAP_SPRITE_HEIGHT				7
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-class BgmapSprite;
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
 typedef int16 (*ParamTableEffectMethod)(BgmapSprite);
 
-/**
- * A BgmapSprite spec
- *
- * @memberof BgmapSprite
- */
+
+/// A BgmapSprite spec
+/// @memberof BgmapSprite
 typedef struct BgmapSpriteSpec
 {
-	/// it has a Sprite spec at the beginning
 	SpriteSpec spriteSpec;
 
-	/// the display mode (BGMAP, AFFINE, H-BIAS)
+	/// The display mode (BGMAP, AFFINE, H-BIAS)
 	uint16 bgmapMode;
 
-	/// pointer to affine/hbias manipulation function
+	/// Pointer to affine/hbias manipulation function
 	ParamTableEffectMethod applyParamTableEffect;
 
-	/// flag to indicate in which display to show the bg texture
+	/// Flag to indicate in which display to show the bg texture
 	uint16 display;
 
 } BgmapSpriteSpec;
 
-/**
- * A BgmapSprite spec that is stored in ROM
- *
- * @memberof BgmapSprite
- */
+/// A BgmapSprite spec that is stored in ROM
+/// @memberof BgmapSprite
 typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-/// Sprite which holds a texture and a drawing specification.
+///
+/// Class BgmapSprite
+///
+/// Inherits from Sprite
+///
+/// Displays a texture that is allocated in BGMAP space.
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	// The unusual order of the attributes is to optimize data packing as much as possible
-	// param table offset
+	/// @privatesection
+
+	/// Offset that keeps track of where to continue writing in param table 
 	int16 paramTableRow;
-	// param table offset
+
+	/// Offset within param table space that determines the area where this sprite
+	/// is allowed to write
 	uint32 param;
-	// pointer to function that implements the param table based effects
+
+	/// Pointer to function that implements the param table based effects
 	ParamTableEffectMethod applyParamTableEffect;
-	// bgmap's source coordinates
+
+	/// Texture's configuration in BGMAP space
 	BgmapTextureSource bgmapTextureSource;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec);
+	
+	/// Configure the displays on which to show the sprite and how it will be displayed
+	/// @param display: Displays on which to show the sprite (__WORLD_ON, __WORLD_LON or __WORLD_RON)
+	/// @param mode: The mode to use to display the sprite (__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS)
 	void setMode(uint16 display, uint16 mode);
-	void invalidateParamTable();
-	int16 getParamTableRow();
-	uint32 getParam();
+
+	/// Set the offset within param table space that determines the area where 
+	/// this sprite is allowed to write.
+	/// @param param: Offset within param table space
 	void setParam(uint32 param);
-	void putChar(const Point* texturePixel, const uint32* newChar);
-	void putPixel(const Point* texturePixel, const Point* charSetPixel, BYTE newPixelColor);
+
+	/// Retrieve the offset within param table space that determines the area where 
+	/// this sprite is allowed to write
+	/// @return Offset within param table space
+	uint32 getParam();
+
+	/// Retrieve the offset that keeps track of where to continue writing in param table
+	/// @return Offset within param table space
+	int16 getParamTableRow();
+
+	/// Force the rewrite of the sprite's param table during the next rendering cycle
+	void invalidateParamTable();
+
+	/// Callback for when the sprite's texture is rewriten.
+	/// @param eventFirer: The rewrite texture
+	/// @return True if the listener must be kept; false to remove after the current call
 	bool onTextureRewritten(ListenerObject eventFirer);
-	void applyAffineTransformations();
-	void applyHbiasEffects();
+
+	/// Check if the sprite has affine or hbias effects.
+	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)
 	bool hasSpecialEffects();
 
+	/// Start rewriting the sprite's param table for affine transformations.
+	void applyAffineTransformations();
+
+	/// Start rewriting the sprite's param table for hbias effects.
+	void applyHbiasEffects();
+
+	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();
+
+	/// Unegister this sprite with the appropriate sprites manager.	
 	override void unregisterWithManager();
-	override int16 doRender(int16 index);
+	
+	/// Process affine and hbias effects
 	override void processEffects();
-	override void configureMultiframe(uint16 frame);
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the regio of DRAM that this sprite configured
+	override int16 doRender(int16 index);
+
+	/// Set the current multiframe
+	/// @param frame: Current animation frame 
+	override void setMultiframe(uint16 frame);
+
+	/// Set the sprite's rotation.
+	/// @param rotation: Rotation to apply to the sprite 
 	override void setRotation(const Rotation* rotation);
-	override Scale getScale();
+
+	/// Set the sprite's scale.
+	/// @param scale: Scale to apply to the sprite 
 	override void setScale(const PixelScale* scale);
+
+	/// Retrieve the sprite's total number of pixels actually displayed.
+	/// @return Sprite's total number of pixels actually displayed
 	override int32 getTotalPixels();
 }
 

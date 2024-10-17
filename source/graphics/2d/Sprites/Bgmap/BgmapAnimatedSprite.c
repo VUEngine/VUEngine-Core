@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -22,23 +22,18 @@
 #include "BgmapAnimatedSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 extern int32 strcmp(const char *, const char *);
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param bgmapSpriteSpec		Sprite spec
- * @param owner						Owner
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec)
 {
 	// construct base object
@@ -48,20 +43,14 @@ void BgmapAnimatedSprite::constructor(SpatialObject owner, const BgmapAnimatedSp
 
 	BgmapAnimatedSprite::createAnimationController(this);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::destructor()
 {
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Write animation
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapAnimatedSprite::updateAnimation()
 {
 	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::updateAnimation: null animation controller");
@@ -73,7 +62,7 @@ void BgmapAnimatedSprite::updateAnimation()
 
 	if(Texture::isMultiframe(this->texture))
 	{
-		BgmapAnimatedSprite::configureMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
+		BgmapAnimatedSprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
 		BgmapAnimatedSprite::invalidateParamTable(this);
 	}
 	else
@@ -81,3 +70,4 @@ void BgmapAnimatedSprite::updateAnimation()
 		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 	}
 }
+//---------------------------------------------------------------------------------------------------------

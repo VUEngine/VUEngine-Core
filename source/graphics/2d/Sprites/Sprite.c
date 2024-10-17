@@ -115,7 +115,7 @@ void Sprite::processEffects()
 {
 }
 
-void Sprite::configureMultiframe(uint16 frame __attribute__((unused)))
+void Sprite::setMultiframe(uint16 frame __attribute__((unused)))
 {
 }
 
@@ -448,24 +448,6 @@ void Sprite::scale()
 void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 {
 	this->rendered = false;
-}
-
-/**
- * Get scale
- *
- * @return		Scale struct
- */
-Scale Sprite::getScale()
-{
-	Scale scale =
-	{
-		__1I_FIX7_9,
-		__1I_FIX7_9,
-		__1I_FIX7_9,
-	};
-
-	// return the scale
-	return scale;
 }
 
 /**
@@ -1114,33 +1096,33 @@ void Sprite::print(int32 x, int32 y)
 /**
  * Write a char directly to the Sprite's Texture
  *
- * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param texturePoint		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::addChar(const Point* texturePixel, const uint32* newChar)
+void Sprite::addChar(const Point* texturePoint, const uint32* newChar)
 {
 	if(isDeleted(this->texture))
 	{
 		return;
 	}
 
-	Texture::addChar(this->texture, texturePixel, newChar);
+	Texture::addChar(this->texture, texturePoint, newChar);
 }
 
 /**
  * Write a char directly to the Sprite's Texture
  *
- * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param texturePoint		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::putChar(const Point* texturePixel, const uint32* newChar)
+void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
 {
 	if(isDeleted(this->texture))
 	{
 		return;
 	}
 
-	Texture::putChar(this->texture, texturePixel, newChar);
+	Texture::putChar(this->texture, texturePoint, newChar);
 }
 
 /**

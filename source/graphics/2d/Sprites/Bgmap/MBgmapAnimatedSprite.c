@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 
 #include <AnimationController.h>
@@ -22,10 +22,11 @@
 #include "MBgmapAnimatedSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
+//---------------------------------------------------------------------------------------------------------
 void MBgmapAnimatedSprite::constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec)
 {
 	Base::constructor(owner, &mBgmapAnimatedSpriteSpec->mBgmapSpriteSpec);
@@ -34,7 +35,7 @@ void MBgmapAnimatedSprite::constructor(SpatialObject owner, const MBgmapAnimated
 
 	MBgmapAnimatedSprite::createAnimationController(this);
 }
-
+//---------------------------------------------------------------------------------------------------------
 void MBgmapAnimatedSprite::destructor()
 {
 	if(this->animationController)
@@ -47,7 +48,7 @@ void MBgmapAnimatedSprite::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
+//---------------------------------------------------------------------------------------------------------
 void MBgmapAnimatedSprite::updateAnimation()
 {
 	CharSet charSet = Texture::getCharSet(this->texture, true);
@@ -62,7 +63,7 @@ void MBgmapAnimatedSprite::updateAnimation()
 
 	if(Texture::isMultiframe(this->texture))
 	{
-		MBgmapAnimatedSprite::configureMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
+		MBgmapAnimatedSprite::setMultiframe(this, AnimationController::getActualFrameIndex(this->animationController));
 		MBgmapAnimatedSprite::invalidateParamTable(this);
 	}
 	else
@@ -70,8 +71,8 @@ void MBgmapAnimatedSprite::updateAnimation()
 		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 	}
 }
-
-void MBgmapAnimatedSprite::configureMultiframe(uint16 frame)
+//---------------------------------------------------------------------------------------------------------
+void MBgmapAnimatedSprite::setMultiframe(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture);
 	int16 my = BgmapTexture::getYOffset(this->texture);
@@ -80,3 +81,4 @@ void MBgmapAnimatedSprite::configureMultiframe(uint16 frame)
 	this->bgmapTextureSource.mx = (mx + (frameColumn % totalColumns)) << 3;
 	this->bgmapTextureSource.my = (my + (frameColumn % totalColumns)) << 3;
 }
+//---------------------------------------------------------------------------------------------------------

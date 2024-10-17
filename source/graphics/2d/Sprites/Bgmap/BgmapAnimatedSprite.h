@@ -19,6 +19,13 @@
 
 
 //=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class BgmapSprite;
+
+
+//=========================================================================================================
 // CLASS'S DATA
 //=========================================================================================================
 
@@ -35,12 +42,13 @@ typedef struct BgmapAnimatedSpriteSpec
 /// @memberof BgmapAnimatedSprite
 typedef const BgmapAnimatedSpriteSpec BgmapAnimatedSpriteROMSpec;
 
+
 //=========================================================================================================
 // CLASS'S DECLARATION
 //=========================================================================================================
 
 ///
-/// Class FrameBlendBgmapSprite
+/// Class BgmapAnimatedSprite
 ///
 /// Inherits from BgmapSprite
 ///
@@ -49,12 +57,13 @@ typedef const BgmapAnimatedSpriteSpec BgmapAnimatedSpriteROMSpec;
 class BgmapAnimatedSprite : BgmapSprite
 {
 	/// @publicsection
+
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the sprite attaches to
 	/// @param bgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec);
 
-	/// 
+	/// Update the animation
 	override void updateAnimation();
 }
 

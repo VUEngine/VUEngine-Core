@@ -25,27 +25,57 @@
 #include "BgmapSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class Texture;
 friend class BgmapTexture;
 
 
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
+{
+	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
+
+	if(0 < bgmapSprite->param)
+	{
+		return Affine::transform(
+			bgmapSprite->param,
+			bgmapSprite->paramTableRow,
+			// geometrically accurate, but kills the CPU
+			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
+			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
+			// don't do translations
+			// Provide a little bit of performance gain by only calculation transformation equations
+			// for the visible rows, but causes that some sprites not be rendered completely when the
+			// camera moves vertically
+			// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
+			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
+			__I_TO_FIXED(bgmapSprite->halfWidth),
+			__I_TO_FIXED(bgmapSprite->halfHeight),
+			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.mx),
+			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
+			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
+			&bgmapSprite->scale,
+			&bgmapSprite->rotation
+		);
+	}
+
+	return bgmapSprite->paramTableRow;
+}
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- * @memberof						BgmapSprite
- * @public
- *
- * @param bgmapSpriteSpec		Sprite spec
- * @param owner						Owner
- */
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapSpriteSpec)
 {
 	Base::constructor(owner, (SpriteSpec*)&bgmapSpriteSpec->spriteSpec);
@@ -88,13 +118,7 @@ void BgmapSprite::constructor(SpatialObject owner, const BgmapSpriteSpec* bgmapS
 		Texture::addEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
 	}
 }
-
-/**
- * Class denstructor
- *
- * @memberof			BgmapSprite
- * @public
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapSprite::destructor()
 {
 	BgmapSprite::removeFromCache(this);
@@ -107,198 +131,142 @@ void BgmapSprite::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Register
- *
- */
-void BgmapSprite::registerWithManager()
+//---------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setMode(uint16 display, uint16 mode)
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
-}
+	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
 
-/**
- * Unegister
- *
- */
-void BgmapSprite::unregisterWithManager()
-{
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
-}
-
-void BgmapSprite::removeFromCache()
-{	
-	if(__NO_RENDER_INDEX != this->index)
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
 	{
-		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-		worldPointer->head = __WORLD_OFF;
+		// free param table space
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
+
+		this->param = 0;
+	}
+
+	if(0 == this->param && !isDeleted(this->texture))
+	{
+		switch(mode)
+		{
+			case __WORLD_BGMAP:
+
+				// set map head
+				this->head = display | __WORLD_BGMAP;
+				break;
+
+			case __WORLD_AFFINE:
+
+				// set map head
+				this->head = display | __WORLD_AFFINE;
+				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
+				break;
+
+			case __WORLD_HBIAS:
+
+				// set map head
+				this->head = display | __WORLD_HBIAS;
+
+				if(NULL != this->applyParamTableEffect)
+				{
+					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
+				}
+
+				break;
+		}
+	}
+
+	this->head &= ~__WORLD_END;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setParam(uint32 param)
+{
+	this->param = param;
+
+	// set flag to rewrite texture's param table
+	BgmapSprite::invalidateParamTable(this);
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 BgmapSprite::getParam()
+{
+	return this->param;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 BgmapSprite::getParamTableRow()
+{
+	return this->paramTableRow;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::invalidateParamTable()
+{
+	if(__WORLD_AFFINE & this->head)
+	{
+		BgmapSprite::applyAffineTransformations(this);
+	}
+	else if(__WORLD_HBIAS & this->head)
+	{
+		BgmapSprite::applyHbiasEffects(this);
 	}
 }
-
-bool BgmapSprite::hasSpecialEffects()
-{
-	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
-}
-
-/**
- * Process event
- *
- * @param eventFirer
- */
+//---------------------------------------------------------------------------------------------------------
 bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	BgmapSprite::processEffects(this);
 
 	return true;
 }
-
-void BgmapSprite::releaseTexture()
+//---------------------------------------------------------------------------------------------------------
+bool BgmapSprite::hasSpecialEffects()
 {
-	// free the texture
-	if(!isDeleted(this->texture))
-	{
-		// if affine or bgmap
-		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
-		{
-			// free param table space
-			ParamTableManager::free(ParamTableManager::getInstance(), this);
-		}
-
-		if(0 != this->param)
-		{
-			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-		}
-		
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
-	}
-
-	this->texture = NULL;
+	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
-
-/**
- * Retrieve scale
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @return			Scale
- */
-Scale BgmapSprite::getScale()
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::applyAffineTransformations()
 {
-	// return the scale
-	return this->transformation->scale;
+	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
+
+	this->paramTableRow = 0;
 }
-
-/**
- * Rotate
- *
- * @memberof			BgmapSprite
- * @public
- *
- */
-void BgmapSprite::setRotation(const Rotation* rotation)
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::applyHbiasEffects()
 {
-	if(NULL == rotation)
-	{
-		return;
-	}
+	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
 
-	this->rotation = *rotation;
-
-	if(0 < this->param)
-	{
-
-		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
-
-		// scale the texture in the next render cycle
-		BgmapSprite::invalidateParamTable(this);
-	}
-	else if(!isDeleted(this->texture))
-	{
-		NormalizedDirection normalizedDirection =
-		{
-			__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-			__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
-			__FAR,
-		};
-
-		if(__LEFT == normalizedDirection.x)
-		{
-			BgmapTexture::setHorizontalFlip(this->texture, true);
-		}
-		else if(__RIGHT == normalizedDirection.x)
-		{
-			BgmapTexture::setHorizontalFlip(this->texture, false);
-		}
-
-		if(__UP == normalizedDirection.y)
-		{
-			BgmapTexture::setVerticalFlip(this->texture, true);
-		}
-		else if(__DOWN == normalizedDirection.y)
-		{
-			BgmapTexture::setVerticalFlip(this->texture, false);
-		}		
-	}
+	this->paramTableRow = 0;
 }
-
-/**
- * Set scale
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param scale			Scale to apply
- * @param z				Z coordinate to base on the size calculation
- */
-void BgmapSprite::setScale(const PixelScale* scale)
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::registerWithManager()
 {
-	if(NULL == scale)
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::unregisterWithManager()
+{
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::processEffects()
+{
+	// set the world size according to the zoom
+	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
 	{
-		return;
-	}
-
-	if(__WORLD_AFFINE & this->head)
-	{
-		this->rendered = false;
-		this->scale = *scale;
-
-		if(!isDeleted(this->texture))
+		if(0 != ((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && NULL != this->applyParamTableEffect)
 		{
-			// add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
-					__FIX7_9_TO_FIXED(scale->x)
-				)
-			))) + 1;
+			if(0 <= this->paramTableRow)
+			{
+				// apply affine transformation
+				this->paramTableRow = this->applyParamTableEffect(this);
 
-			this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
-				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
-				__FIXED_MULT(
-					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
-					__FIX7_9_TO_FIXED(scale->y)
-				)
-			))) + 1;
-
-		}
-
-		if(0 < this->param)
-    	{
-			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+				if(0 > this->paramTableRow)
+				{
+					this->paramTableRow = -1;
+				}
+			}
 		}
 	}
 }
-
-/**
- * Write WORLD data to DRAM
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @param index
- */
+//---------------------------------------------------------------------------------------------------------
 int16 BgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "BgmapSprite::doRender: null texture");
@@ -405,8 +373,8 @@ int16 BgmapSprite::doRender(int16 index)
 
 	return index;
 }
-
-void BgmapSprite::configureMultiframe(uint16 frame)
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setMultiframe(uint16 frame)
 {
 	int16 mx = BgmapTexture::getXOffset(this->texture);
 	int16 my = BgmapTexture::getYOffset(this->texture);
@@ -424,149 +392,93 @@ void BgmapSprite::configureMultiframe(uint16 frame)
 	this->bgmapTextureSource.my = my + (row << 3);
 	this->rendered = false;
 }
-
-void BgmapSprite::processEffects()
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setRotation(const Rotation* rotation)
 {
-	// set the world size according to the zoom
-	if(0 < this->param && (uint8)__NO_RENDER_INDEX != this->index)
+	if(NULL == rotation)
 	{
-		if(0 != ((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && NULL != this->applyParamTableEffect)
+		return;
+	}
+
+	this->rotation = *rotation;
+
+	if(0 < this->param)
+	{
+
+		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+
+		// scale the texture in the next render cycle
+		BgmapSprite::invalidateParamTable(this);
+	}
+	else if(!isDeleted(this->texture))
+	{
+		NormalizedDirection normalizedDirection =
 		{
-			if(0 <= this->paramTableRow)
-			{
-				// apply affine transformation
-				this->paramTableRow = this->applyParamTableEffect(this);
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+			__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
+			__FAR,
+		};
 
-				if(0 > this->paramTableRow)
-				{
-					this->paramTableRow = -1;
-				}
-			}
-		}
-	}
-}
-
-/**
- * Set Sprite's render mode
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @param display	Which displays to show on
- * @param mode		WORLD layer's head mode
- */
-void BgmapSprite::setMode(uint16 display, uint16 mode)
-{
-	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
-
-	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
-	{
-		// free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), this);
-
-		this->param = 0;
-	}
-
-	if(0 == this->param && !isDeleted(this->texture))
-	{
-		switch(mode)
+		if(__LEFT == normalizedDirection.x)
 		{
-			case __WORLD_BGMAP:
-
-				// set map head
-				this->head = display | __WORLD_BGMAP;
-				break;
-
-			case __WORLD_AFFINE:
-
-				// set map head
-				this->head = display | __WORLD_AFFINE;
-				this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				this->applyParamTableEffect = NULL != this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite::doApplyAffineTransformations;
-				break;
-
-			case __WORLD_HBIAS:
-
-				// set map head
-				this->head = display | __WORLD_HBIAS;
-
-				if(NULL != this->applyParamTableEffect)
-				{
-					this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
-				}
-
-				break;
+			BgmapTexture::setHorizontalFlip(this->texture, true);
 		}
+		else if(__RIGHT == normalizedDirection.x)
+		{
+			BgmapTexture::setHorizontalFlip(this->texture, false);
+		}
+
+		if(__UP == normalizedDirection.y)
+		{
+			BgmapTexture::setVerticalFlip(this->texture, true);
+		}
+		else if(__DOWN == normalizedDirection.y)
+		{
+			BgmapTexture::setVerticalFlip(this->texture, false);
+		}		
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::setScale(const PixelScale* scale)
+{
+	if(NULL == scale)
+	{
+		return;
 	}
 
-	this->head &= ~__WORLD_END;
-}
-
-/**
- * Retrieve param table address
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @return			Param table address
- */
-uint32 BgmapSprite::getParam()
-{
-	return this->param;
-}
-
-/**
- * Set param table address
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @param param		Net param table address
- */
-void BgmapSprite::setParam(uint32 param)
-{
-	this->param = param;
-
-	// set flag to rewrite texture's param table
-	BgmapSprite::invalidateParamTable(this);
-}
-
-/**
- * Force to refresh param table in the next render cycle
- *
- * @memberof		BgmapSprite
- * @public
- */
-void BgmapSprite::invalidateParamTable()
-{
 	if(__WORLD_AFFINE & this->head)
 	{
-		BgmapSprite::applyAffineTransformations(this);
-	}
-	else if(__WORLD_HBIAS & this->head)
-	{
-		BgmapSprite::applyHbiasEffects(this);
+		this->rendered = false;
+		this->scale = *scale;
+
+		if(!isDeleted(this->texture))
+		{
+			// add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+			this->halfWidth = __FIXED_TO_I(__ABS(__FIXED_MULT(
+				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.y))),
+				__FIXED_MULT(
+					__I_TO_FIXED((int32)this->texture->textureSpec->cols << 2),
+					__FIX7_9_TO_FIXED(scale->x)
+				)
+			))) + 1;
+
+			this->halfHeight = __FIXED_TO_I(__ABS(__FIXED_MULT(
+				__FIX7_9_TO_FIXED(__COS(__FIXED_TO_I(this->transformation->rotation.x))),
+				__FIXED_MULT(
+					__I_TO_FIXED((int32)this->texture->textureSpec->rows << 2),
+					__FIX7_9_TO_FIXED(scale->y)
+				)
+			))) + 1;
+
+		}
+
+		if(0 < this->param)
+    	{
+			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+		}
 	}
 }
-
-/**
- * Retrieve the next param table row to calculate
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @return				Next param table row to calculate
- */
-int16 BgmapSprite::getParamTableRow()
-{
-	return this->paramTableRow;
-}
-
-/**
- * Get the total amount of pixels displayed by the sprite
- *
- * @return		Total pixels
- */
+//---------------------------------------------------------------------------------------------------------
 int32 BgmapSprite::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
@@ -576,72 +488,42 @@ int32 BgmapSprite::getTotalPixels()
 
 	return 0;
 }
-
-//---------------------------------------------------------------------------------------------------------
-//										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Start affine calculations
- *
- * @memberof			BgmapSprite
- * @private
- * @return 				last computed row
- */
-static int16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
-{
-	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
 
-	if(0 < bgmapSprite->param)
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::removeFromCache()
+{	
+	if(__NO_RENDER_INDEX != this->index)
 	{
-		return Affine::transform(
-			bgmapSprite->param,
-			bgmapSprite->paramTableRow,
-			// geometrically accurate, but kills the CPU
-			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
-			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
-			// don't do translations
-			// Provide a little bit of performance gain by only calculation transformation equations
-			// for the visible rows, but causes that some sprites not be rendered completely when the
-			// camera moves vertically
-			// int32 lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
-			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
-			__I_TO_FIXED(bgmapSprite->halfWidth),
-			__I_TO_FIXED(bgmapSprite->halfHeight),
-			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.mx),
-			__I_TO_FIX13_3(bgmapSprite->bgmapTextureSource.my),
-			__I_TO_FIXED(bgmapSprite->texture->textureSpec->cols << 2),
-			__I_TO_FIXED(bgmapSprite->texture->textureSpec->rows << 2),
-			&bgmapSprite->scale,
-			&bgmapSprite->rotation
-		);
+		WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+		worldPointer->head = __WORLD_OFF;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapSprite::releaseTexture()
+{
+	// free the texture
+	if(!isDeleted(this->texture))
+	{
+		// if affine or bgmap
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && 0 != this->param)
+		{
+			// free param table space
+			ParamTableManager::free(ParamTableManager::getInstance(), this);
+		}
+
+		if(0 != this->param)
+		{
+			Texture::removeEventListener(this->texture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+		}
+		
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
-	return bgmapSprite->paramTableRow;
+	this->texture = NULL;
 }
-
-/**
- * Trigger affine calculations
- *
- * @memberof			BgmapSprite
- * @public
- */
-void BgmapSprite::applyAffineTransformations()
-{
-	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
-
-	this->paramTableRow = 0;
-}
-
-/**
- * Trigger h-bias calculations
- *
- * @memberof			BgmapSprite
- * @public
- */
-void BgmapSprite::applyHbiasEffects()
-{
-	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
-
-	this->paramTableRow = 0;
-}
+//---------------------------------------------------------------------------------------------------------

@@ -88,6 +88,10 @@ class ObjectSprite : Sprite
 
 	override void registerWithManager();
 	override void unregisterWithManager();
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the regio of DRAM that this sprite configured
 	override int16 doRender(int16 index);
 	override void setRotation(const Rotation* rotation);
 	override int32 getTotalPixels();

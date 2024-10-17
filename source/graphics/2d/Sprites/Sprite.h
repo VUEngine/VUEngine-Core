@@ -11,27 +11,25 @@
 #define SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
-#include <VisualComponent.h>
 #include <Texture.h>
+#include <VisualComponent.h>
 #include <VIPManager.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class AnimationController;
 
+
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
 /**
  * A SpriteSpec
@@ -96,10 +94,16 @@ typedef struct AnimationFunction
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class Sprite
+///
+/// Inherits from VisualComponent
+///
+/// Displays a Texture to the displays.
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : VisualComponent
 {
@@ -170,9 +174,22 @@ abstract class Sprite : VisualComponent
 	void setFrameDurationDecrement(uint8 frameDurationDecrement);
 	void setFrameDuration(uint8 frameDuration);
 	void update();
-	void addChar(const Point* texturePixel, const uint32* newChar);
-	void putChar(const Point* texturePixel, const uint32* newChar);
+
+	/// Add the color provided color data to a CHAR in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
+	void addChar(const Point* texturePoint, const uint32* newChar);
+
+	/// Replace a CHAR in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
+	void putChar(const Point* texturePoint, const uint32* newChar);
+
+	/// Replace a pixel in the sprite's texture.
+	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
+
 	AnimationController getAnimationController();
 	bool isVisible();
 	bool isWithinScreenSpace();
@@ -189,9 +206,11 @@ abstract class Sprite : VisualComponent
 	virtual void unregisterWithManager() = 0;
 	virtual void hideForDebug();
 	virtual void forceShow();
-	virtual Scale getScale();
 	virtual void processEffects();
-	virtual void configureMultiframe(uint16 frame);
+
+	/// Set the current multiframe
+	/// @param frame: Current animation frame 
+	virtual void setMultiframe(uint16 frame);
 	virtual int16 doRender(int16 index) = 0;
 	virtual void updateAnimation();
 	virtual void print(int32 x, int32 y);

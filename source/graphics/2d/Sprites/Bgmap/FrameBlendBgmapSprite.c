@@ -53,7 +53,7 @@ int16 FrameBlendBgmapSprite::doRender(int16 index)
 {
 	this->actualFrame = 0 == this->actualFrame ? 1 : 0;
 
-	FrameBlendBgmapSprite::configureMultiframe(this, this->actualFrame);
+	FrameBlendBgmapSprite::setMultiframe(this, this->actualFrame);
 
 	return Base::doRender(this, index);
 }

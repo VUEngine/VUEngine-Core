@@ -70,6 +70,10 @@ class ObjectSpriteContainer : Sprite
 	override void unregisterWithManager();
 	override void hideForDebug();
 	override void forceShow();
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the regio of DRAM that this sprite configured
 	override int16 doRender(int16 index);
 	override void print(int32 x, int32 y);
 	override int32 getTotalPixels();
