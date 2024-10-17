@@ -771,18 +771,18 @@ void Sprite::pause(bool pause)
  * Play a given animation
  *
  * @param animationFunctions	AnimationFunction*
- * @param functionName			Name of animation function to play
+ * @param animationName			Name of animation function to play
  */
-bool Sprite::play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope)
+bool Sprite::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
 {
 	ASSERT(NULL != animationFunctions, "Sprite::play: null animationFunctions");
-	ASSERT(NULL != functionName, "Sprite::play: null functionName");
+	ASSERT(NULL != animationName, "Sprite::play: null animationName");
 
 	bool playBackStarted = false;
 
 	if(!isDeleted(this->animationController))
 	{
-		playBackStarted = AnimationController::play(this->animationController, animationFunctions, functionName, scope);
+		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
 		this->rendered = this->rendered && !this->writeAnimationFrame;
 	}
 
@@ -838,14 +838,14 @@ bool Sprite::isPlaying()
 /**
  * Is Sprite playing a function?
  *
- * @param functionName	Name of function to play
+ * @param animationName	Name of function to play
  * @return				Boolean whether Sprite is playing a function
  */
-bool Sprite::isPlayingFunction(char* functionName)
+bool Sprite::isPlayingAnimation(char* animationName)
 {
 	if(!isDeleted(this->animationController))
 	{
-		return AnimationController::isPlayingFunction(this->animationController, functionName);
+		return AnimationController::isPlayingFunction(this->animationController, animationName);
 	}
 
 	return false;

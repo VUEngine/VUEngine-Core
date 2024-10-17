@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -52,15 +52,15 @@ singleton class AnimationCoordinatorFactory : Object
 	/// @return ClockManager singleton
 	static AnimationCoordinatorFactory getInstance();
 
+	/// Reset the animation coordinator factory's state.
+	void reset();
+
 	/// Get an animation coordinator.
 	/// @param animationController: Animation controller to potentially coordinate
 	/// @param scope: Object that might need to listen for playback related events
 	/// @param charSet: CharSet shared by the animation controllers to coordinate   
 	/// @return ClockManager singleton
 	AnimationCoordinator getCoordinator(AnimationController animationController, ListenerObject scope, CharSet charSet);
-
-	/// Reset the animation coordinator factory's state.
-	void reset();
 }
 
 

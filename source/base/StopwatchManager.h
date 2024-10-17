@@ -49,6 +49,9 @@ singleton class StopwatchManager : Object
 	/// @return FrameRate singleton
 	static StopwatchManager getInstance();
 
+	/// Reset all the registered stopwatches.
+	void reset();
+
 	/// Register a new stopwatch
 	/// @param clock: Stopwatch to register
 	void register(Stopwatch clock);
@@ -59,9 +62,6 @@ singleton class StopwatchManager : Object
 
 	/// Update the stopwatches.
 	void update();
-
-	/// Reset all the registered stopwatches.
-	void reset();
 }
 
 

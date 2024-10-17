@@ -158,11 +158,11 @@ abstract class Sprite : VisualComponent
 	bool isHBias();
 	bool isObject();
 	bool isPlaying();
-	bool isPlayingFunction(char* functionName);
+	bool isPlayingAnimation(char* animationName);
 	const char* getPlayingAnimationName();
 	void nextFrame();
 	void pause(bool pause);
-	bool play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope);
+	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
 	void stop();
 	bool replay(const AnimationFunction* animationFunctions[]);
 	void previousFrame();

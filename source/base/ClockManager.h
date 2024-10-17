@@ -50,6 +50,9 @@ singleton class ClockManager : Object
 	/// @return ClockManager singleton
 	static ClockManager getInstance();
 
+	/// Reset all the registered clocks.
+	void reset();
+
 	/// Register a new clock
 	/// @param clock: Clock to register
 	void register(Clock clock);
@@ -61,9 +64,6 @@ singleton class ClockManager : Object
 	/// Update the clocks.
 	/// @param elapsedMilliseconds: Milliseconds that passed since the previous call to this method
 	void update(uint32 elapsedMilliseconds);
-
-	/// Reset all the registered clocks.
-	void reset();
 }
 
 

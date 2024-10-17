@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -40,19 +40,42 @@ class AnimationController;
 /// @ingroup graphics-2d-sprites-animation
 class AnimationCoordinator : ListenerObject
 {
-	// who owns the coordinator
+	/// @protectedsection
+
+	/// Object that might need to listen for playback related events
 	ListenerObject scope;
-	// Controllers to sync
+
+	/// List of animation controllers to sync
 	VirtualList animationControllers;
-	// Charset spec shared among entities
+
+	// Spec shared by the animation controllers to coordinate
 	const CharSetSpec* charSetSpec;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param charSetSpec: Spec shared by the animation controllers to coordinate
+	/// @param scope: Object that might need to listen for playback related events
 	void constructor(const CharSetSpec* charSetSpec, ListenerObject scope);
-	const CharSetSpec* getCharSetSpec();
-	bool playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* functionName);
+
+	/// Play an animation on the specified animation controller.
+	/// @param animationController: Animation controller on which to play the animation
+	/// @param animationFunctions: Array of animation functions in which to look for the animation to play
+	/// @param animationName: Name of the animation to play
+	/// @return True if the animation was found and started to play; false otherwise
+	bool playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* animationName);
+
+	/// Add an animation controller to coordinate.
+	/// @param animationController: Animation controller to coordinate
 	void addAnimationController(AnimationController animationController);
+
+	/// Removed a coordinated animation controller.
+	/// @param animationController: Coordinated animation controller to remove
 	void removeAnimationController(AnimationController animationController);
+
+	/// Retrieve the spec shared by the animation controllers to coordinate.
+	/// @return Pointer to spec shared by the animation controllers to coordinate
+	const CharSetSpec* getCharSetSpec();
 }
 
 

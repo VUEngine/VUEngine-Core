@@ -33,6 +33,17 @@ friend class VirtualNode;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+void StopwatchManager::reset()
+{
+	VirtualNode node = this->stopwatchs->head;
+
+	// update all registered stopwatchs
+	for(; node ; node = node->next)
+	{
+		Stopwatch::reset(node->data);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void StopwatchManager::register(Stopwatch clock)
 {
 	if(!VirtualList::find(this->stopwatchs, clock))
@@ -54,17 +65,6 @@ void StopwatchManager::update()
 	for(; node ; node = node->next)
 	{
 		Stopwatch::update(node->data);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void StopwatchManager::reset()
-{
-	VirtualNode node = this->stopwatchs->head;
-
-	// update all registered stopwatchs
-	for(; node ; node = node->next)
-	{
-		Stopwatch::reset(node->data);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

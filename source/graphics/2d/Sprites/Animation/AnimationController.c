@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -244,25 +244,25 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
 	return this->playing ? this->animationFunction : NULL;
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope)
+bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
 {
-	if(NULL == animationFunctions || NULL == functionName)
+	if(NULL == animationFunctions || NULL == animationName)
 	{
 		return false;
 	}
 
 	ASSERT(NULL != animationFunctions, "AnimationController::play: null animationFunctions");
-	ASSERT(NULL != functionName, "AnimationController::play: null functionName");
+	ASSERT(NULL != animationName, "AnimationController::play: null animationName");
 
 	if(!isDeleted(this->animationCoordinator))
 	{
-		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationFunctions, functionName))
+		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationFunctions, animationName))
 		{
 			return false;
 		}
 	}
 
-	bool functionNameFound = NULL != this->animationFunction ? 0 == strncmp((const char *)functionName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH) : false;
+	bool functionNameFound = NULL != this->animationFunction ? 0 == strncmp((const char *)animationName, (const char *)this->animationFunction->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH) : false;
 
 	if(!functionNameFound)
 	{
@@ -272,7 +272,7 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 		for(; NULL != animationFunctions[i]; i++ )
 		{
 			// compare function's names
-			if(0 == strncmp((const char *)functionName, (const char *)animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+			if(0 == strncmp((const char *)animationName, (const char *)animationFunctions[i]->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 			{
 				// remove previous listeners
 				if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
@@ -391,15 +391,15 @@ void AnimationController::previousFrame()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimationController::isPlayingFunction(const char* functionName)
+bool AnimationController::isPlayingFunction(const char* animationName)
 {
-	if(NULL == functionName || NULL == this->animationFunction)
+	if(NULL == animationName || NULL == this->animationFunction)
 	{
 		return false;
 	}
 
 	// compare function's names
-	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
+	return !strcmp((const char *)animationName, (const char *)this->animationFunction->name);
 }
 //---------------------------------------------------------------------------------------------------------
 const char* AnimationController::getPlayingAnimationName()

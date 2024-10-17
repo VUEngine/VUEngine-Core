@@ -32,6 +32,19 @@ friend class VirtualList;
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
+void ClockManager::reset()
+{
+	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
+
+	VirtualNode node = this->clocks->head;
+
+	// update all registered clocks
+	for(; node ; node = node->next)
+	{
+		Clock::reset(node->data);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void ClockManager::register(Clock clock)
 {
 	if(!VirtualList::find(this->clocks, clock))
@@ -55,19 +68,6 @@ void ClockManager::update(uint32 elapsedMilliseconds)
 	for(; node ; node = node->next)
 	{
 		Clock::update(node->data, elapsedMilliseconds);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void ClockManager::reset()
-{
-	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
-
-	VirtualNode node = this->clocks->head;
-
-	// update all registered clocks
-	for(; node ; node = node->next)
-	{
-		Clock::reset(node->data);
 	}
 }
 //---------------------------------------------------------------------------------------------------------

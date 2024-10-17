@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -55,12 +55,7 @@ void AnimationCoordinator::destructor()
 	Base::destructor();
 }
 //---------------------------------------------------------------------------------------------------------
-const CharSetSpec* AnimationCoordinator::getCharSetSpec()
-{
-	return this->charSetSpec;
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* functionName)
+bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationFunction** animationFunctions, const char* animationName)
 {
 	if(!isDeleted(this->animationControllers->head))
 	{
@@ -72,10 +67,10 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 		}
 
 		// only if not playing already
-		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(functionName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(animationName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
-			AnimationController::play(firstAnimationController, animationFunctions, functionName, this->scope);
+			AnimationController::play(firstAnimationController, animationFunctions, animationName, this->scope);
 		}
 
 		return false;
@@ -120,5 +115,10 @@ void AnimationCoordinator::removeAnimationController(AnimationController animati
 			}
 		}
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+const CharSetSpec* AnimationCoordinator::getCharSetSpec()
+{
+	return this->charSetSpec;
 }
 //---------------------------------------------------------------------------------------------------------

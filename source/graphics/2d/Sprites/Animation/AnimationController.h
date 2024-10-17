@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -68,10 +68,10 @@ class AnimationController : ListenerObject
 	const AnimationFunction* getPlayingAnimationFunction();
 	uint8 getRows();
 	bool isPlaying();
-	bool isPlayingFunction(const char* functionName);
+	bool isPlayingFunction(const char* animationName);
 	const char* getPlayingAnimationName();
 	void pause(bool pause);
-	bool play(const AnimationFunction* animationFunctions[], const char* functionName, ListenerObject scope);
+	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
 	bool replay(const AnimationFunction* animationFunctions[]);
 	void playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope);
 	void nextFrame();

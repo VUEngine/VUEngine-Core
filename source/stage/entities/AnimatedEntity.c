@@ -167,7 +167,7 @@ bool AnimatedEntity::isPlayingAnimation()
 }
 
 // is animation selected
-bool AnimatedEntity::isAnimationLoaded(char* functionName)
+bool AnimatedEntity::isAnimationLoaded(char* animationName)
 {
 	if(isDeleted(this->sprites))
 	{
@@ -176,7 +176,7 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 
 	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
 
-	return Sprite::isPlayingFunction(sprite, functionName);
+	return Sprite::isPlayingAnimation(sprite, animationName);
 }
 
 // get loaded animation's name

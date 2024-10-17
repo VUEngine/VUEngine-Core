@@ -63,7 +63,7 @@ class AnimatedEntity : Entity
 	const AnimationFunction** getAnimationFunctions();
 	int16 getActualFrame();
 	int32 getNumberOfFrames();
-	bool isAnimationLoaded(char* functionName);
+	bool isAnimationLoaded(char* animationName);
 	const char* getPlayingAnimationName();
 	bool isPlayingAnimation();
 	void nextFrame();
