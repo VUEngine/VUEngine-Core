@@ -11,17 +11,25 @@
 #define CAMERA_EFFECT_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 #include <stdarg.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class Entity;
+class Telegram;
+
+
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
 enum CameraFX
 {
@@ -35,35 +43,65 @@ enum CameraFX
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-class Entity;
-class Telegram;
-
+///
+/// Class CameraEffectManager
+///
+/// Inherits from ListenerObject
+///
+/// Manages camera's special effects, brightness transitions, etc.
 /// @ingroup camera
 singleton class CameraEffectManager : ListenerObject
 {
-	// Target brightness for current fade effect
+	/// Target brightness for the current fade effect
 	Brightness fxFadeTargetBrightness;
-	// Callback scope for current fade effect
+
+	/// Callback scope for the current fade effect
 	ListenerObject fxFadeCallbackScope;
-	// Delay for current fade effect
+
+	/// Delay for the current fade effect
 	uint8 fxFadeDelay;
-	// fade increment
+
+	/// Fade increment
 	uint8 fadeEffectIncrement;
-	// flag to know if remove the event listener on completion
+
+	/// Flag to signal that the current event listener has to be removed when the effect is complete
 	bool startingANewEffect;
 
 	/// @publicsection
+	/// Method to retrieve the singleton instance
+	/// @return CameraEffectManager singleton
 	static CameraEffectManager getInstance();
+
+	/// Class' constructor
 	void constructor();
+
+	/// Reset the manager's state
 	void reset();
+
+	/// Set the fade increment to apply on the next effect.
+	/// @param fadeEffectIncrement: Fade increment
 	void setFadeIncrement(uint8 fadeEffectIncrement);
+
+	/// Retrieve the default brighness values for the current stage
+	/// @return Struct with the brightness levels
 	Brightness getDefaultBrightness();
+
+	/// Start a camera effect.
+	/// @param effect: Code of the effect to start
+	/// @param args: Variable arguments list depending on the effect to start
 	virtual void startEffect(int32 effect, va_list args);
+	
+	/// Stop a camera effect.
+	/// @param effect: Code of the effect to stop
 	virtual void stopEffect(int32 effect);
+	
+	/// Receive and process a Telegram.
+	/// @param telegram: Received telegram to process
+	/// @return True if the telegram was processed
 	override bool handleMessage(Telegram telegram);
 }
 

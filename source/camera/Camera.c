@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
@@ -23,9 +23,9 @@
 #include "Camera.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												GLOBALS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
 
 const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 const Vector3D* _cameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
@@ -34,23 +34,300 @@ const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIB
 const CameraFrustum* _cameraFrustum __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = NULL;
 
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+void Camera::reset()
+{
+	this->position = Vector3D::zero();
+	this->displacement = Vector3D::zero();
+	this->rotation = Rotation::zero();
+	this->invertedRotation = Rotation::zero();
+	this->lastDisplacement = Vector3D::zero();
+
+	this->transformationFlags = false;
+
+	Camera::resetCameraFrustum(this);
+
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::reset(this->cameraMovementManager);
+	}
+
+	if(!isDeleted(this->cameraEffectManager))
+	{
+		CameraEffectManager::reset(this->cameraEffectManager);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
+{
+	this->cameraFrustum = Camera::computeClampledFrustum(this, cameraFrustum);
+	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
+
+	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
+{
+	if(this->cameraMovementManager != cameraMovementManager)
+	{
+		if(!isDeleted(this->cameraMovementManager))
+		{
+			delete this->cameraMovementManager;
+		}
+
+		this->cameraMovementManager = cameraMovementManager;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+CameraMovementManager Camera::getCameraMovementManager()
+{
+	return this->cameraMovementManager;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
+{
+	if(this->cameraEffectManager != cameraEffectManager)
+	{
+		if(!isDeleted(this->cameraEffectManager))
+		{
+			delete this->cameraEffectManager;
+		}
+
+		this->cameraEffectManager = cameraEffectManager;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+CameraEffectManager Camera::getCameraEffectManager()
+{
+	return this->cameraEffectManager;
+}
+//---------------------------------------------------------------------------------------------------------
+Size Camera::getStageSize()
+{
+	return this->stageSize;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setStageSize(Size size)
+{
+	this->stageSize = size;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setFocusEntity(Entity focusEntity)
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::setFocusEntity(this->cameraMovementManager, focusEntity);
+
+		Camera::focus(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+Entity Camera::getFocusEntity()
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		return CameraMovementManager::getFocusEntity(this->cameraMovementManager);
+	}
+
+	return NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::unsetFocusEntity()
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::setFocusEntity(this->cameraMovementManager, NULL);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, &focusEntityPositionDisplacement);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D Camera::getFocusEntityPositionDisplacement()
+{
+	if(!isDeleted(this->cameraMovementManager))
+	{
+		return *CameraMovementManager::getFocusEntityPositionDisplacement(this->cameraMovementManager);
+	}
+
+	return Vector3D::zero();
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setDisplacement(Vector3D displacement)
+{
+	this->displacement = displacement;
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D Camera::geDisplacement()
+{
+	return this->displacement;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setOptical(Optical optical)
+{
+	this->optical = optical;
+
+	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
+}
+//---------------------------------------------------------------------------------------------------------
+Optical Camera::getOptical()
+{
+	return this->optical;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setPosition(Vector3D position, bool cap)
+{
+	Vector3D currentPosition = this->position;
+	this->position = position;
+
+	if(cap)
+	{
+		Camera::capPosition(this);
+	}
+
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::translate(Vector3D displacement, int32 cap)
+{
+	Vector3D currentPosition = this->position;
+	this->position = Vector3D::sum(this->position, displacement);
+
+	if(cap)
+	{
+		Camera::capPosition(this);
+	}
+
+	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D Camera::getPosition()
+{
+	return this->position;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::setRotation(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
+
+	this->rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
+	this->invertedRotation = Rotation::invert(this->rotation);
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::rotate(Rotation rotation)
+{
+	this->transformationFlags |= Camera::computeRotationFlags(rotation);
+
+	this->rotation = Rotation::sum(this->rotation, rotation);
+	this->invertedRotation = Rotation::invert(this->rotation);
+}
+//---------------------------------------------------------------------------------------------------------
+Rotation Camera::getRotation()
+{
+	return this->rotation;
+}
+//---------------------------------------------------------------------------------------------------------
+CameraFrustum Camera::getCameraFrustum()
+{
+	return this->cameraFrustum;
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D Camera::getLastDisplacement()
+{
+	return this->lastDisplacement;
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 Camera::getTransformationFlags()
+{
+	return this->transformationFlags;
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::focus()
+{
+	static bool takeTransformationFlagsDown = false;
+
+	if(takeTransformationFlagsDown)
+	{
+		this->transformationFlags = false;
+		takeTransformationFlagsDown = false;
+	}
+
+	if(this->transformationFlags)
+	{
+		takeTransformationFlagsDown = true;
+	}
+
+	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
+
+	if(NULL == CameraMovementManager::getFocusEntity(this->cameraMovementManager))
+	{
+		return;
+	}
+
+	this->lastDisplacement = this->position;
+
+	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this), true);
+
+	this->position = Vector3D::sum(this->position, this->displacement);
+	this->lastDisplacement = Vector3D::sub(this->position, this->lastDisplacement);
+
+#ifdef __SHOW_CAMERA_STATUS
+	Camera::print(this, 1, 1, true);
+#endif
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::startEffect(int32 effect, ...)
+{
+	va_list args;
+	va_start(args, effect);
+	CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
+	va_end(args);
+}
+//---------------------------------------------------------------------------------------------------------
+void Camera::stopEffect(int32 effect)
+{
+	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+void Camera::print(int32 x, int32 y, bool inPixels)
+{
+	Printing printing = Printing::getInstance();
+	
+	Printing::text(printing, "CAMERA ", x, y++, NULL);
+	Printing::text(printing, "Position: ", x, ++y, NULL);
+
+	if(inPixels)
+	{
+		PixelVector::print(PixelVector::getFromVector3D(Camera::getPosition(Camera::getInstance()), 0), x, ++y);
+	}
+	else
+	{
+		Vector3D::print(Camera::getPosition(Camera::getInstance()), x, ++y);
+	}
+
+	y += 3;
+	Printing::text(printing, "Rotation: ", x, ++y, NULL);
+	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
+}
+#endif
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			Camera::getInstance()
- * @memberof	Camera
- * @public
- * @return		Camera instance
- */
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
 
-
-/**
- * Class constructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Camera::constructor()
 {
 	// construct base object
@@ -100,179 +377,29 @@ void Camera::constructor()
 	_cameraRotation = &this->rotation;
 	_cameraInvertedRotation = &this->invertedRotation;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Camera::destructor()
 {
 	// destroy base
 	Base::destructor();
 }
-
-/**
- * Get the movement manager
- *
- * @param cameraMovementManager	The CameraMovementManager
- */
-CameraMovementManager Camera::getCameraMovementManager()
+//---------------------------------------------------------------------------------------------------------
+void Camera::resetCameraFrustum()
 {
-	return this->cameraMovementManager;
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 }
-
-/**
- * Set the movement manager
- *
- * @param cameraMovementManager	The CameraMovementManager
- */
-void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
+//---------------------------------------------------------------------------------------------------------
+void Camera::capPosition()
 {
-	if(this->cameraMovementManager != cameraMovementManager)
-	{
-		if(!isDeleted(this->cameraMovementManager))
-		{
-			delete this->cameraMovementManager;
-		}
-
-		this->cameraMovementManager = cameraMovementManager;
-	}
+	this->position = Camera::computCappedPosition(this, this->position);
 }
-
-/**
- * Set the effect manager
- *
- * @param cameraEffectManager	The CameraEffectManager
- */
-void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
-{
-	if(this->cameraEffectManager != cameraEffectManager)
-	{
-		if(!isDeleted(this->cameraEffectManager))
-		{
-			delete this->cameraEffectManager;
-		}
-
-		this->cameraEffectManager = cameraEffectManager;
-	}
-}
-
-/**
- * Center world's camera in function of focus actor's position
- *
- * @param checkIfFocusEntityIsMoving	The CameraEffectManager
- */
-void Camera::focus(bool checkIfFocusEntityIsMoving)
-{
-	static bool takeTransformationFlagsDown = false;
-
-	if(takeTransformationFlagsDown)
-	{
-		this->transformationFlags = false;
-		takeTransformationFlagsDown = false;
-	}
-
-	if(this->transformationFlags)
-	{
-		takeTransformationFlagsDown = true;
-	}
-
-	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
-
-	if(NULL == CameraMovementManager::getFocusEntity(this->cameraMovementManager))
-	{
-		return;
-	}
-
-	this->lastDisplacement = this->position;
-
-	Camera::setPosition(this, CameraMovementManager::focus(this->cameraMovementManager, this, checkIfFocusEntityIsMoving), true);
-
-	this->position = Vector3D::sum(this->position, this->displacement);
-	this->lastDisplacement = Vector3D::sub(this->position, this->lastDisplacement);
-
-#ifdef __SHOW_CAMERA_STATUS
-	Camera::print(this, 1, 1, true);
-#endif
-}
-
-/**
- * Set the focus entity
- *
- * @param focusEntity	The CameraEffectManager
- */
-void Camera::setFocusEntity(Entity focusEntity)
-{
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		CameraMovementManager::setFocusEntity(this->cameraMovementManager, focusEntity);
-	}
-}
-
-/**
- * Unset the focus entity
- */
-void Camera::unsetFocusEntity()
-{
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		CameraMovementManager::setFocusEntity(this->cameraMovementManager, NULL);
-	}
-}
-
-/**
- * Retrieve focus entity
- *
- * @return		Focus Entity
- */
-Entity Camera::getFocusEntity()
-{
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		return CameraMovementManager::getFocusEntity(this->cameraMovementManager);
-	}
-
-	return NULL;
-}
-
-static uint8 Camera::computeTranslationFlags(Vector3D translation)
-{
-	if(0 != translation.z)
-	{
-		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
-	}
-	else if(0 != translation.x || 0 != translation.y)
-	{
-		return __INVALIDATE_PROJECTION;
-	}
-
-	return false;
-}
-
-/**
- * Translate camera
- *
- * @param translation
- * @param cap
- */
-void Camera::translate(Vector3D translation, int32 cap)
-{
-	Vector3D currentPosition = this->position;
-	this->position = Vector3D::sum(this->position, translation);
-
-	if(cap)
-	{
-		Camera::capPosition(this);
-	}
-
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
-}
-
-/**
- * Cap position
- *
- * @return position	Capped Vector3d
- */
-Vector3D Camera::getCappedPosition(Vector3D position)
+//---------------------------------------------------------------------------------------------------------
+Vector3D Camera::computCappedPosition(Vector3D position)
 {
 	if(position.x < 0)
 	{
@@ -306,243 +433,8 @@ Vector3D Camera::getCappedPosition(Vector3D position)
 
 	return position;
 }
-
-/**
- * Translate camera
- */
-void Camera::capPosition()
-{
-	this->position = Camera::getCappedPosition(this, this->position);
-}
-
-/**
- * Get camera's position
- *
- * @return		Camera position
- */
-Vector3D Camera::getPosition()
-{
-	return this->position;
-}
-
-/**
- * Get camera's rotation
- *
- * @return		Camera rotation
- */
-Rotation Camera::getRotation()
-{
-	return this->rotation;
-}
-
-/**
- * Set camera's position
- *
- * @param position	Camera position
- */
-void Camera::setPosition(Vector3D position, bool cap)
-{
-	Vector3D currentPosition = this->position;
-	this->position = position;
-
-	if(cap)
-	{
-		Camera::capPosition(this);
-	}
-
-	this->transformationFlags |= Camera::computeTranslationFlags(Vector3D::sub(this->position, currentPosition));
-}
-
-static uint8 Camera::computeRotationFlags(Rotation rotation)
-{
-	if(rotation.x || rotation.y || rotation.z)
-	{
-		return __INVALIDATE_ROTATION;
-	}
-
-	return false;
-}
-
-/**
- * Set camera's rotation
- *
- * @param rotation	Camera rotation
- */
-void Camera::setRotation(Rotation rotation)
-{
-	this->transformationFlags |= Camera::computeRotationFlags(Rotation::sub(rotation, this->rotation));
-
-	this->rotation = Rotation::clamp(rotation.x, rotation.y, rotation.z);
-	this->invertedRotation = Rotation::invert(this->rotation);
-}
-
-/**
- * Set camera's position
- *
- * @param position	Camera position
- */
-void Camera::rotate(Rotation rotation)
-{
-	this->transformationFlags |= Camera::computeRotationFlags(rotation);
-
-	this->rotation = Rotation::sum(this->rotation, rotation);
-	this->invertedRotation = Rotation::invert(this->rotation);
-}
-
-/**
- * Retrieve optical config structure
- *
- * @return 		Optical config structure
- */
-Optical Camera::getOptical()
-{
-	return this->optical;
-}
-
-/**
- * Set optical config structure
- *
- * @param optical
- */
-void Camera::setOptical(Optical optical)
-{
-	this->optical = optical;
-
-	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
-}
-
-/**
- * Set optical config structure from PixelOptical
- *
- * @param optical
- * @param cameraFrustum
- */
-void Camera::setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum)
-{
-	this->cameraFrustum = Camera::getClampledFrustum(this, cameraFrustum);
-	this->optical = Optical::getFromPixelOptical(pixelOptical, this->cameraFrustum);
-	this->transformationFlags |= __INVALIDATE_TRANSFORMATION;
-
-	DirectDraw::setFrustum(DirectDraw::getInstance(), this->cameraFrustum);
-}
-
-/**
- * Get camera's position displacement
- *
- * @return focusEntityPositionDisplacement
- */
-Vector3D Camera::getFocusEntityPositionDisplacement()
-{
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		return *CameraMovementManager::getFocusEntityPositionDisplacement(this->cameraMovementManager);
-	}
-
-	return Vector3D::zero();
-}
-
-/**
- * Set camera's position displacement
- *
- * @param focusEntityPositionDisplacement
- */
-void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
-{
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		CameraMovementManager::setFocusEntityPositionDisplacement(this->cameraMovementManager, &focusEntityPositionDisplacement);
-	}
-}
-
-/**
- * Get current stage's size
- *
- * @return		Stage size
- */
-Size Camera::getStageSize()
-{
-	return this->stageSize;
-}
-
-/**
- * Set current stage's size
- *
- * @param size	Stage size
- */
-void Camera::setStageSize(Size size)
-{
-	this->stageSize = size;
-}
-
-/**
- * Start an effect
- *
- * @param effect	Effect reference ID
- * @param args		Various effect parameters
- */
-void Camera::startEffect(int32 effect, ...)
-{
-	va_list args;
-	va_start(args, effect);
-	CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
-	va_end(args);
-}
-
-/**
- * Stop an effect
- *
- * @param effect	Effect reference ID
- */
-void Camera::stopEffect(int32 effect)
-{
-	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
-}
-
-/**
- * Reset the camera
- */
-void Camera::reset()
-{
-	this->position = Vector3D::zero();
-	this->displacement = Vector3D::zero();
-	this->rotation = Rotation::zero();
-	this->invertedRotation = Rotation::zero();
-	this->lastDisplacement = Vector3D::zero();
-
-	this->transformationFlags = false;
-
-	Camera::resetCameraFrustum(this);
-
-	if(!isDeleted(this->cameraMovementManager))
-	{
-		CameraMovementManager::reset(this->cameraMovementManager);
-	}
-
-	if(!isDeleted(this->cameraEffectManager))
-	{
-		CameraEffectManager::reset(this->cameraEffectManager);
-	}
-}
-
-/**
- * Reset the camera frustum
- */
-void Camera::resetCameraFrustum()
-{
-	this->cameraFrustum.x0 = 0;
-	this->cameraFrustum.y0 = 0;
-	this->cameraFrustum.z0 = 0;
-	this->cameraFrustum.x1 = __SCREEN_WIDTH;
-	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
-	this->cameraFrustum.z1 = __SCREEN_DEPTH;
-}
-
-/**
- * Set the camera frustum
- *
- * @param cameraFrustum	Camera frustum
- */
-CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
+//---------------------------------------------------------------------------------------------------------
+CameraFrustum Camera::computeClampledFrustum(CameraFrustum cameraFrustum)
 {
 	if(cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
@@ -577,73 +469,28 @@ CameraFrustum Camera::getClampledFrustum(CameraFrustum cameraFrustum)
 
 	return cameraFrustum;
 }
-
-/**
- * Get the camera frustum
- *
- * @return		Camera frustum
- */
-CameraFrustum Camera::getCameraFrustum()
+//---------------------------------------------------------------------------------------------------------
+static uint8 Camera::computeTranslationFlags(Vector3D translation)
 {
-	return this->cameraFrustum;
-}
-
-Vector3D Camera::geDisplacement()
-{
-	return this->displacement;
-}
-
-void Camera::setDisplacement(Vector3D displacement)
-{
-	this->displacement = displacement;
-}
-
-/**
- * Retrieve last position displacement
- *
- * @return		Last position displacement vector
- */
-Vector3D Camera::getLastDisplacement()
-{
-	return this->lastDisplacement;
-}
-
-/**
- * Retrieve the status of the camera's transformation
- *
- * @return		Transformation's status flag
- */
-uint8 Camera::getTransformationFlags()
-{
-	return this->transformationFlags;
-}
-
-/**
- * Print status
- *
- * @param x				Column
- * @param y				Row
- * @param inPixels		Whether to printing the output in pixels or not
- */
-#ifndef __SHIPPING
-void Camera::print(int32 x, int32 y, bool inPixels)
-{
-	Printing printing = Printing::getInstance();
-	
-	Printing::text(printing, "CAMERA ", x, y++, NULL);
-	Printing::text(printing, "Position: ", x, ++y, NULL);
-
-	if(inPixels)
+	if(0 != translation.z)
 	{
-		PixelVector::print(PixelVector::getFromVector3D(Camera::getPosition(Camera::getInstance()), 0), x, ++y);
+		return __INVALIDATE_PROJECTION | __INVALIDATE_SCALE;
 	}
-	else
+	else if(0 != translation.x || 0 != translation.y)
 	{
-		Vector3D::print(Camera::getPosition(Camera::getInstance()), x, ++y);
+		return __INVALIDATE_PROJECTION;
 	}
 
-	y += 3;
-	Printing::text(printing, "Rotation: ", x, ++y, NULL);
-	Rotation::print(Camera::getRotation(Camera::getInstance()), x, ++y);
+	return false;
 }
-#endif
+//---------------------------------------------------------------------------------------------------------
+static uint8 Camera::computeRotationFlags(Rotation rotation)
+{
+	if(rotation.x || rotation.y || rotation.z)
+	{
+		return __INVALIDATE_ROTATION;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------

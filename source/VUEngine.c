@@ -647,7 +647,7 @@ void VUEngine::focusCamera()
 	{
 #endif
 		// position the camera
-		Camera::focus(this->camera, true);
+		Camera::focus(this->camera);
 #ifdef __TOOLS
 	}
 #endif

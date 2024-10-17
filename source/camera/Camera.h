@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,22 +11,20 @@
 #define CAMERA_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
-#define __CAMERA_VIEWING_ANGLE									(56)
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+class Entity;
+class CameraMovementManager;
+class CameraEffectManager;
 
 extern const Vector3D* _cameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 extern const Vector3D* _cameraPreviousPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
@@ -36,75 +34,190 @@ extern const Rotation* _cameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION
 extern const Optical* _optical __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
-class Entity;
-class CameraMovementManager;
-class CameraEffectManager;
+#define __CAMERA_VIEWING_ANGLE									(56)
 
 
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class Camera
+///
+/// Inherits from ListenerObject
+///
+/// Represents the player's view point.
 /// @ingroup camera
 singleton class Camera : ListenerObject
 {
-	// Optical values used in projection values
+	/// Optical configuration values used for projections
 	Optical optical;
-	// Camera position
+
+	/// Camera's position
 	Vector3D position;
-	// Camera position displacement
+
+	/// Displacement applied to the position when it changes
 	Vector3D displacement;
+
+	/// Saves the camera's change of position in the last game cycle
 	Vector3D lastDisplacement;
-	// Rotation
+
+	/// Camera's rotation
 	Rotation rotation;
-	// Backup of Camera rotation
+
+	/// Camera's rotation's complement
 	Rotation invertedRotation;
-	// Camera position displacement manager
+
+	/// Camera's movement manager
 	CameraMovementManager cameraMovementManager;
-	// Camera effect manager
+
+	/// Camera's special effects manager
 	CameraEffectManager cameraEffectManager;
-	// Stage's size in pixels
+
+	/// Cached stage's size used to optionally limit the camera's movement
 	Size stageSize;
-	// Camera frustum
+
+	/// Camera's frustum configuration
 	CameraFrustum cameraFrustum;
-	// Transformation flags
+
+	/// Transformation flags to keep track of changes in the camera's position 
+	/// and rotation during the current game cycle
 	uint8 transformationFlags;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return Camera singleton
 	static Camera getInstance();
-	void capPosition();
-	void focus(bool checkIfFocusEntityIsMoving);
-	CameraFrustum getCameraFrustum();
-	Entity getFocusEntity();
-	Vector3D geDisplacement();
-	void setDisplacement(Vector3D);
-	Vector3D getLastDisplacement();
-	Optical getOptical();
-	Vector3D getPosition();
-	Rotation getRotation();
-	Size getStageSize();
-	void translate(Vector3D, int32 cap);
-	void onFocusEntityDeleted(Entity actor);
-	void suspendUIGraphicsSynchronization();
-	void resumeUIGraphicsSynchronization();
+	
+	/// Reset the camera's state.
 	void reset();
-	void resetCameraFrustum();
-	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
-	CameraMovementManager getCameraMovementManager();
-	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
-	Vector3D getFocusEntityPositionDisplacement();
-	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
-	void setFocusEntity(Entity focusEntity);
-	void setOptical(Optical optical);
+
+	/// Setup the camera's optical and frustum configuration that determine
+	/// the results from 3D to 2D projection.
+	/// @param pixelOptical: Configuration struct for the projection functions
+	/// @param cameraFrustum: Player's point of view configuration
 	void setup(PixelOptical pixelOptical, CameraFrustum cameraFrustum);
-	void setPosition(Vector3D position, bool cap);
-	void setRotation(Rotation rotation);
-	void rotate(Rotation rotation);
+
+	/// Set the manager of the camera's properties.
+	/// @param cameraMovementManager: Movement manager
+	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
+
+	/// Retrieve the camera's current movement manager
+	/// @return Camera's current movement manager
+	CameraMovementManager getCameraMovementManager();
+
+	/// Set the manager of the camera's special effects.
+	/// @param cameraEffectManager: Special effects manager
+	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
+
+	/// Retrieve the camera's current special effects manager
+	/// @return Camera's current special effects manager
+	CameraEffectManager getCameraEffectManager();
+
+	/// Save the stage's size. 
+	/// @param size: Stage's size
 	void setStageSize(Size size);
-	void startEffect(int32 effect, ...);
-	void stopEffect(int32 effect);
+
+	/// Retrieve the stage's cached size.
+	/// @return Stage's size
+	Size getStageSize();
+
+	/// Register the entity that the camera must follow.
+	/// @param focusEntity: Entity to follow
+	void setFocusEntity(Entity focusEntity);
+
+	/// Retrieve the entity that the camera is following.
+	/// @return focusEntity: Entity being followed
+	Entity getFocusEntity();
+
+	/// Stop following any entity.
 	void unsetFocusEntity();
+
+	/// Register a displacement to be added to the camera's position 
+	/// relative to the focus entity's position.
+	/// @param focusEntityPositionDisplacement: Displacement vector
+	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
+
+	/// Retrieve the displacement that is added to the camera's position 
+	/// relative to the focus entity's position.
+	/// @return Displacement vector
+	Vector3D getFocusEntityPositionDisplacement();
+	
+	/// Set a constant displacement to be added to the camera's position.
+	/// @param displacement: Displacement vector
+	void setDisplacement(Vector3D);
+
+	/// Retrieve the constant displacement that is added to the camera's position.
+	/// @return Displacement vector
+	Vector3D geDisplacement();
+
+	/// Set the optical configuration values used for projections.
+	/// @param optical: configuration struct with the values used for projections
+	void setOptical(Optical optical);
+
+	/// Retrieve the optical configuration values used for projections.
+	/// @return Optical struct with the configuration values used for projections
+	Optical getOptical();
+
+	/// Set the camera's position.
+	/// @param position: 3D vector
+	/// @param cap: Cap the camera's position within the stage's size if true
+	void setPosition(Vector3D position, bool cap);
+	
+	/// Add a displacement the camera's current position.
+	/// @param displacement: Displacement vector
+	/// @param cap: Cap the camera's position within the stage's size if true
+	void translate(Vector3D displacement, int32 cap);
+
+	/// Retrieve the camera's position.
+	/// @return Camera's position
+	Vector3D getPosition();
+
+	/// Set the camera's rotation.
+	/// @param rotation: Rotation to assign to the camera
+	void setRotation(Rotation rotation);
+
+	/// Add a rotation the camera's current rotation.
+	/// @param rotation: Rotation delta
+	void rotate(Rotation rotation);
+
+	/// Retrieve the camera's rotation.
+	/// @return Camera's rotation
+	Rotation getRotation();
+
+	/// Retrieve the camera's frustum configuration.
+	/// @return Camera's frustum configuration
+	CameraFrustum getCameraFrustum();
+
+	/// Retrieve the camera's change of position in the last game cycle
+	/// @return Camera's change of position in the last game cycle
+	Vector3D getLastDisplacement();
+
+	/// Retrieve the transformation flags that keep track of changes in the camera's position 
+	/// and rotation during the current game cycle.
+	/// @return Transformation flags
 	uint8 getTransformationFlags();
+
+	/// Focus the camera on the focus entity if any.
+	void focus();
+
+	/// Start a camera effect.
+	/// @param effect: Code of the effect to start
+	/// @param ...: Variable arguments list depending on the effect to start
+	void startEffect(int32 effect, ...);
+
+	/// Stop a camera effect.
+	/// @param effect: Code of the effect to stop
+	void stopEffect(int32 effect);
+
+	/// Print the camera's status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y, bool inPixels);
 }
 

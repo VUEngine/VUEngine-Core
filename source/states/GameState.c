@@ -250,7 +250,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		Container::resume(this->uiContainer);
 
 		// Move the camera to its previous position
-		Camera::focus(Camera::getInstance(), false);
+		Camera::focus(Camera::getInstance());
 
 		// Force all transformations to take place again
 		GameState::transform(this);
@@ -373,7 +373,7 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		GameState::transform(this);
 
 		// Move the camera to its initial position
-		Camera::focus(Camera::getInstance(), false);
+		Camera::focus(Camera::getInstance());
 
 		// invalidate transformations
 		Stage::invalidateGlobalTransformation(this->stage);
@@ -507,7 +507,7 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	GameState::setupUI(this, stageSpec);
 
 	// move the camera to its previous position
-	Camera::focus(Camera::getInstance(), false);
+	Camera::focus(Camera::getInstance());
 
 	// transformation everything
 	GameState::transform(this);
