@@ -95,21 +95,18 @@ void Sprite::createAnimationController()
 		return;
 	}
 	
-	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture))
+	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
 	{
 		AnimationController::setAnimationCoordinator
 		(
 			this->animationController,
-			Texture::isShared(this->texture) ?
-				AnimationCoordinatorFactory::getCoordinator
-				(
-					AnimationCoordinatorFactory::getInstance(),
-					this->animationController, 
-					ListenerObject::safeCast(this->owner), 
-					Texture::getCharSet(this->texture, false)
-				)
-			:
-				NULL
+			AnimationCoordinatorFactory::getCoordinator
+			(
+				AnimationCoordinatorFactory::getInstance(),
+				this->animationController, 
+				ListenerObject::safeCast(this->owner), 
+				Texture::getSpec(this->texture)->charSetSpec
+			)
 		);
 	}
 }

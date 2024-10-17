@@ -58,15 +58,8 @@ void AnimationCoordinatorFactory::reset()
 	VirtualList::deleteData(this->animationCoordinators);
 }
 //---------------------------------------------------------------------------------------------------------
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, CharSet charSet)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, ListenerObject scope, const CharSetSpec* charSetSpec)
 {
-	if(isDeleted(charSet))
-	{
-		return NULL;
-	}
-
-	const CharSetSpec* charSetSpec = CharSet::getSpec(charSet);
-	
 	NM_ASSERT(NULL != charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
 	if(NULL != charSetSpec && charSetSpec->shared)
