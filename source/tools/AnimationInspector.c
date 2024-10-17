@@ -307,7 +307,7 @@ void AnimationInspector::setupMode()
 			AnimationInspector::createAnimationEditionSelector(this);
 			AnimationInspector::createFrameEditionSelector(this);
 			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction, NULL);
-			Sprite::writeAnimation(this->animatedSprite);
+			Sprite::updateAnimation(this->animatedSprite);
 			Sprite::pause(this->animatedSprite, true);
 			Sprite::pause(this->animatedSprite, false);
 			AnimationInspector::printAnimationConfig(this);
@@ -795,7 +795,7 @@ void AnimationInspector::createSprite()
 	Sprite::setScale(this->animatedSprite, &spriteScale);
 	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
-	this->animatedSprite->writeAnimationFrame = true;
+	this->animatedSprite->updateAnimationFrame = true;
 
 	SpriteManager::hideSprites(SpriteManager::getInstance(), this->animatedSprite, false);
 	SpriteManager::writeTextures(SpriteManager::getInstance());

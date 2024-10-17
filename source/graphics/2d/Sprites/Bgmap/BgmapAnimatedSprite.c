@@ -62,9 +62,9 @@ void BgmapAnimatedSprite::destructor()
 /**
  * Write animation
  */
-void BgmapAnimatedSprite::writeAnimation()
+void BgmapAnimatedSprite::updateAnimation()
 {
-	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::writeAnimation: null animation controller");
+	NM_ASSERT(!isDeleted(this->animationController), "BgmapAnimatedSprite::updateAnimation: null animation controller");
 
 	if(isDeleted(this->animationController))
 	{

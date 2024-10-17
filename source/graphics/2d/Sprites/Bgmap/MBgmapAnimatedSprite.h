@@ -47,7 +47,7 @@ class MBgmapAnimatedSprite : MBgmapSprite
 {
 	/// @publicsection
 	void constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
-	override void writeAnimation();
+	override void updateAnimation();
 	override void configureMultiframe(uint16 frame);
 }
 

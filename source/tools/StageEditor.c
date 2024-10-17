@@ -822,7 +822,7 @@ void StageEditor::showSelectedUserObject()
 		Sprite::setScale(this->userObjectSprite, &spriteScale);
 		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
-		this->userObjectSprite->writeAnimationFrame = true;
+		this->userObjectSprite->updateAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());
 		SpriteManager::sort(SpriteManager::getInstance());
 		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);

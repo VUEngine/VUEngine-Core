@@ -58,7 +58,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->animationController = NULL;
 	this->texture = NULL;
 	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
-	this->writeAnimationFrame = false;
+	this->updateAnimationFrame = false;
 	this->checkIfWithinScreenSpace = true;
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->rotation = Rotation::zero();
@@ -699,18 +699,18 @@ void Sprite::update()
 	}
 
 #ifdef __RELEASE
-	if(!this->writeAnimationFrame && this->animationController->playing)
+	if(!this->updateAnimationFrame && this->animationController->playing)
 #else
-	if(!this->writeAnimationFrame)
+	if(!this->updateAnimationFrame)
 #endif
 	{
-		this->writeAnimationFrame = AnimationController::updateAnimation(this->animationController);
+		this->updateAnimationFrame = AnimationController::updateAnimation(this->animationController);
 	}
 	
-	if(this->writeAnimationFrame)
+	if(this->updateAnimationFrame)
 	{
-		Sprite::writeAnimation(this);
-		this->writeAnimationFrame = false;
+		Sprite::updateAnimation(this);
+		this->updateAnimationFrame = false;
 		this->rendered = false;
 	}
 }
@@ -780,7 +780,7 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* ani
 	if(!isDeleted(this->animationController))
 	{
 		playBackStarted = AnimationController::play(this->animationController, animationFunctions, animationName, scope);
-		this->rendered = this->rendered && !this->writeAnimationFrame;
+		this->rendered = this->rendered && !this->updateAnimationFrame;
 	}
 
 	return playBackStarted;
@@ -808,9 +808,9 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 	if(!isDeleted(this->animationController))
 	{
 		AnimationController::replay(this->animationController, animationFunctions);
-		this->rendered = this->rendered && !this->writeAnimationFrame;
+		this->rendered = this->rendered && !this->updateAnimationFrame;
 
-		return this->writeAnimationFrame;
+		return this->updateAnimationFrame;
 	}
 
 	return false;
@@ -900,7 +900,7 @@ void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
 	{
-		this->writeAnimationFrame = this->writeAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->updateAnimationFrame = this->updateAnimationFrame || AnimationController::setActualFrame(this->animationController, actualFrame);
 	}
 	else if(!isDeleted(this->texture))
 	{
@@ -916,7 +916,7 @@ void Sprite::nextFrame()
 	if(!isDeleted(this->animationController))
 	{
 		AnimationController::nextFrame(this->animationController);
-		this->writeAnimationFrame = true;
+		this->updateAnimationFrame = true;
 	}
 }
 
@@ -928,7 +928,7 @@ void Sprite::previousFrame()
 	if(!isDeleted(this->animationController))
 	{
 		AnimationController::previousFrame(this->animationController);
-		this->writeAnimationFrame = true;
+		this->updateAnimationFrame = true;
 	}
 }
 
@@ -963,7 +963,7 @@ void Sprite::setFrameDuration(uint8 frameDuration)
 /**
  * Write animation
  */
-void Sprite::writeAnimation()
+void Sprite::updateAnimation()
 {}
 
 /**

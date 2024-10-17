@@ -127,7 +127,7 @@ abstract class Sprite : VisualComponent
 	// Our texture
 	Texture texture;
 	// Update animation flag
-	bool writeAnimationFrame;
+	bool updateAnimationFrame;
 	// The flag raises after the first render cycle
 	bool transformed;
 
@@ -170,7 +170,6 @@ abstract class Sprite : VisualComponent
 	void setFrameDurationDecrement(uint8 frameDurationDecrement);
 	void setFrameDuration(uint8 frameDuration);
 	void update();
-	bool updateAnimation();	
 	void addChar(const Point* texturePixel, const uint32* newChar);
 	void putChar(const Point* texturePixel, const uint32* newChar);
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
@@ -194,7 +193,7 @@ abstract class Sprite : VisualComponent
 	virtual void processEffects();
 	virtual void configureMultiframe(uint16 frame);
 	virtual int16 doRender(int16 index) = 0;
-	virtual void writeAnimation();
+	virtual void updateAnimation();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels() = 0;
 	virtual void invalidateRendering();

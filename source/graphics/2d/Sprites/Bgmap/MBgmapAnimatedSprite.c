@@ -48,12 +48,12 @@ void MBgmapAnimatedSprite::destructor()
 	Base::destructor();
 }
 
-void MBgmapAnimatedSprite::writeAnimation()
+void MBgmapAnimatedSprite::updateAnimation()
 {
 	CharSet charSet = Texture::getCharSet(this->texture, true);
 
-	NM_ASSERT(!isDeleted(charSet), "MBgmapAnimatedSprite::writeAnimation: deleted charset");
-	NM_ASSERT(!isDeleted(this->animationController), "MBgmapAnimatedSprite::writeAnimation: null animation controller");
+	NM_ASSERT(!isDeleted(charSet), "MBgmapAnimatedSprite::updateAnimation: deleted charset");
+	NM_ASSERT(!isDeleted(this->animationController), "MBgmapAnimatedSprite::updateAnimation: null animation controller");
 
 	if(isDeleted(charSet) || isDeleted(this->animationController))
 	{

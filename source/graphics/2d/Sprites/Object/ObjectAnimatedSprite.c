@@ -60,9 +60,9 @@ void ObjectAnimatedSprite::destructor()
 /**
  * Write animation
  */
-void ObjectAnimatedSprite::writeAnimation()
+void ObjectAnimatedSprite::updateAnimation()
 {
-	NM_ASSERT(!isDeleted(this->animationController), "ObjectAnimatedSprite::writeAnimation: null animation controller");
+	NM_ASSERT(!isDeleted(this->animationController), "ObjectAnimatedSprite::updateAnimation: null animation controller");
 
 	if(isDeleted(this->animationController))
 	{

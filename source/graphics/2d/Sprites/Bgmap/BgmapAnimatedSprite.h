@@ -55,7 +55,7 @@ class BgmapAnimatedSprite : BgmapSprite
 	void constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec);
 
 	/// 
-	override void writeAnimation();
+	override void updateAnimation();
 }
 
 

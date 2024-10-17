@@ -42,7 +42,7 @@ class ObjectAnimatedSprite : ObjectSprite
 {	
 	/// @publicsection
 	void constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
-	override void writeAnimation();
+	override void updateAnimation();
 }
 
 
