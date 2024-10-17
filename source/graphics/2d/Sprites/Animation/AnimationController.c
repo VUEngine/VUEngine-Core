@@ -40,11 +40,11 @@ void AnimationController::constructor()
 
 	// initialize frame tracking
 	this->actualFrame = 0;
-	this->previousFrameValue = -1;
+	this->actualFrameIndex = -1;
 
 	// initialize frame head
 	this->frameDuration = 0;
-	this->frameCycleDecrement = 1;
+	this->frameDurationDecrement = 1;
 
 	// initialize animation function
 	this->animationFunction = NULL;
@@ -65,183 +65,6 @@ void AnimationController::destructor()
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
-}
-//---------------------------------------------------------------------------------------------------------
-AnimationCoordinator AnimationController::getAnimationCoordinator()
-{
-	return this->animationCoordinator;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimationController::setAnimationCoordinator(AnimationCoordinator animationCoordinator)
-{
-	// animation coordinator
-	this->animationCoordinator = animationCoordinator; 
-}
-//---------------------------------------------------------------------------------------------------------
-int16 AnimationController::getActualFrameIndex()
-{
-	return NULL == this->animationFunction ? 0 : this->animationFunction->frames[this->actualFrame];
-}
-//---------------------------------------------------------------------------------------------------------
-int16 AnimationController::getActualFrame()
-{
-	return this->actualFrame;
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimationController::setActualFrame(int16 actualFrame)
-{
-	if(0 > actualFrame)
-	{
-		actualFrame = -1;
-	}
-
-	if(NULL != this->animationFunction && 0 <= actualFrame)
-	{
-		bool updatedActualFrame = this->actualFrame != actualFrame && 0 <= actualFrame;
-
-		this->actualFrame = actualFrame;
-
-		return updatedActualFrame;
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-uint8 AnimationController::getFrameDuration()
-{
-	return this->frameDuration;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimationController::setFrameDuration(uint8 frameDuration)
-{
-	this->frameDuration = frameDuration;
-}
-//---------------------------------------------------------------------------------------------------------
-uint8 AnimationController::getFrameCycleDecrement()
-{
-	return this->frameCycleDecrement;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimationController::setFrameCycleDecrement(uint8 frameCycleDecrement)
-{
-	this->frameCycleDecrement = frameCycleDecrement;
-}
-//---------------------------------------------------------------------------------------------------------
-bool AnimationController::updateAnimation()
-{
-	// first check for a valid animation function
-	if(!this->playing || NULL == this->animationFunction)
-	{
-		return false;
-	}
-
-	// if the actual frame was set to -1
-	// it means that a non looping animation has been completed
-	if(-1 == this->actualFrame)
-	{
-		return false;
-	}
-
-	// reduce frame delay count
-	if(this->frameDuration > this->frameCycleDecrement)
-	{
-		this->frameDuration -= this->frameCycleDecrement;
-	}
-	else
-	{
-		this->frameDuration = 0;
-	}
-
-	// reduce frame delay count
-	if(0 == this->frameDuration)
-	{
-		int16 actualFrame = this->actualFrame;
-
-		// increase the frame to show
-		this->actualFrame++;
-
-		// check if the actual frame is out of bounds
-		if(this->actualFrame >= this->animationFunction->numberOfFrames)
-		{
-			// rewind to first frame
-			this->actualFrame = 0;
-
-			// if the animation is not a loop
-			if(!this->animationFunction->loop)
-			{
-				// not playing anymore
-				this->playing = false;
-
-				// invalidate animation
-				this->actualFrame = this->animationFunction->numberOfFrames - 1;
-			}
-
-			// the last frame has been reached
-			if(NULL != this->animationFunction->onAnimationComplete && !isDeleted(this->events))
-			{
-				AnimationController::fireEvent(this, kEventAnimationCompleted);
-				NM_ASSERT(!isDeleted(this), "AnimationController::updateAnimation: deleted this during kEventAnimationCompleted");
-			}
-		}
-
-		// Reset frame duration
-		AnimationController::resetFrameDuration(this);
-
-		uint16 actualFrameValue = this->animationFunction->frames[this->actualFrame];
-
-		bool frameValueChanged = this->previousFrameValue != actualFrameValue || actualFrameValue != this->animationFunction->frames[actualFrame];
-		this->previousFrameValue = actualFrameValue;
-		
-		return frameValueChanged;
-	}
-
-	return false;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimationController::resetFrameDuration()
-{
-	// reset frame delay
-	this->frameDuration = this->animationFunction->delay;
-
-	// the minimum valid delay is 1
-	if(0 == this->frameDuration)
-	{
-		this->frameDuration = 1;
-	}
-}
-//--------------------------------------------------------------------------------------------------------
-void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
-{
-	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
-
-	// remove previous listeners
-	if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
-	{
-		AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
-	}
-
-	// setup animation frame
-	this->animationFunction = animationFunction;
-
-	// register event callback
-	if(!isDeleted(scope) && NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
-	{
-		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
-	}
-
-	// reset frame to play
-	this->actualFrame = 0;
-
-	// Reset frame duration
-	AnimationController::resetFrameDuration(this);
-
-	// it's playing now
-	this->playing = true;
-}
-//---------------------------------------------------------------------------------------------------------
-const AnimationFunction* AnimationController::getPlayingAnimationFunction()
-{
-	return this->playing ? this->animationFunction : NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 bool AnimationController::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
@@ -312,6 +135,35 @@ bool AnimationController::play(const AnimationFunction* animationFunctions[], co
 
 	return true;
 }
+//--------------------------------------------------------------------------------------------------------
+void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope)
+{
+	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
+
+	// remove previous listeners
+	if(NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
+	{
+		AnimationController::removeEventListeners(this, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+	}
+
+	// setup animation frame
+	this->animationFunction = animationFunction;
+
+	// register event callback
+	if(!isDeleted(scope) && NULL != this->animationFunction && NULL != this->animationFunction->onAnimationComplete)
+	{
+		AnimationController::addEventListener(this, scope, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+	}
+
+	// reset frame to play
+	this->actualFrame = 0;
+
+	// Reset frame duration
+	AnimationController::resetFrameDuration(this);
+
+	// it's playing now
+	this->playing = true;
+}
 //---------------------------------------------------------------------------------------------------------
 bool AnimationController::replay(const AnimationFunction* animationFunctions[])
 {
@@ -340,11 +192,108 @@ bool AnimationController::replay(const AnimationFunction* animationFunctions[])
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
+void AnimationController::pause(bool pause)
+{
+	this->playing = !pause;
+
+	if(pause && -1 == this->actualFrame)
+	{
+		this->actualFrame = 0;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void AnimationController::stop()
 {
 	this->animationFunction = NULL;
 	this->playing = false;
 	this->actualFrame = 0;
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimationController::updateAnimation()
+{
+	// first check for a valid animation function
+	if(!this->playing || NULL == this->animationFunction)
+	{
+		return false;
+	}
+
+	// if the actual frame was set to -1
+	// it means that a non looping animation has been completed
+	if(-1 == this->actualFrame)
+	{
+		return false;
+	}
+
+	// reduce frame delay count
+	if(this->frameDuration > this->frameDurationDecrement)
+	{
+		this->frameDuration -= this->frameDurationDecrement;
+	}
+	else
+	{
+		this->frameDuration = 0;
+	}
+
+	// reduce frame delay count
+	if(0 == this->frameDuration)
+	{
+		int16 actualFrame = this->actualFrame;
+
+		// increase the frame to show
+		this->actualFrame++;
+
+		// check if the actual frame is out of bounds
+		if(this->actualFrame >= this->animationFunction->numberOfFrames)
+		{
+			// rewind to first frame
+			this->actualFrame = 0;
+
+			// if the animation is not a loop
+			if(!this->animationFunction->loop)
+			{
+				// not playing anymore
+				this->playing = false;
+
+				// invalidate animation
+				this->actualFrame = this->animationFunction->numberOfFrames - 1;
+			}
+
+			// the last frame has been reached
+			if(NULL != this->animationFunction->onAnimationComplete && !isDeleted(this->events))
+			{
+				AnimationController::fireEvent(this, kEventAnimationCompleted);
+				NM_ASSERT(!isDeleted(this), "AnimationController::updateAnimation: deleted this during kEventAnimationCompleted");
+			}
+		}
+
+		// Reset frame duration
+		AnimationController::resetFrameDuration(this);
+
+		uint16 actualFrameIndex = this->animationFunction->frames[this->actualFrame];
+
+		bool frameValueChanged = this->actualFrameIndex != actualFrameIndex || actualFrameIndex != this->animationFunction->frames[actualFrame];
+		this->actualFrameIndex = actualFrameIndex;
+		
+		return frameValueChanged;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimationController::isPlaying()
+{
+	return this->playing;
+}
+//---------------------------------------------------------------------------------------------------------
+bool AnimationController::isPlayingFunction(const char* animationName)
+{
+	if(NULL == animationName || NULL == this->animationFunction)
+	{
+		return false;
+	}
+
+	// compare function's names
+	return !strcmp((const char *)animationName, (const char *)this->animationFunction->name);
 }
 //---------------------------------------------------------------------------------------------------------
 void AnimationController::nextFrame()
@@ -391,15 +340,69 @@ void AnimationController::previousFrame()
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimationController::isPlayingFunction(const char* animationName)
+bool AnimationController::setActualFrame(int16 actualFrame)
 {
-	if(NULL == animationName || NULL == this->animationFunction)
+	if(0 > actualFrame)
 	{
-		return false;
+		actualFrame = -1;
 	}
 
-	// compare function's names
-	return !strcmp((const char *)animationName, (const char *)this->animationFunction->name);
+	if(NULL != this->animationFunction && 0 <= actualFrame)
+	{
+		bool updatedActualFrame = this->actualFrame != actualFrame && 0 <= actualFrame;
+
+		this->actualFrame = actualFrame;
+
+		return updatedActualFrame;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 AnimationController::getActualFrame()
+{
+	return this->actualFrame;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 AnimationController::getActualFrameIndex()
+{
+	return NULL == this->animationFunction ? 0 : this->animationFunction->frames[this->actualFrame];
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimationController::setFrameDuration(uint8 frameDuration)
+{
+	this->frameDuration = frameDuration;
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 AnimationController::getFrameDuration()
+{
+	return this->frameDuration;
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimationController::setFrameDurationDecrement(uint8 frameDurationDecrement)
+{
+	this->frameDurationDecrement = frameDurationDecrement;
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 AnimationController::getFrameDurationDecrement()
+{
+	return this->frameDurationDecrement;
+}
+//---------------------------------------------------------------------------------------------------------
+void AnimationController::setAnimationCoordinator(AnimationCoordinator animationCoordinator)
+{
+	// animation coordinator
+	this->animationCoordinator = animationCoordinator; 
+}
+//---------------------------------------------------------------------------------------------------------
+AnimationCoordinator AnimationController::getAnimationCoordinator()
+{
+	return this->animationCoordinator;
+}
+//---------------------------------------------------------------------------------------------------------
+const AnimationFunction* AnimationController::getPlayingAnimationFunction()
+{
+	return this->playing ? this->animationFunction : NULL;
 }
 //---------------------------------------------------------------------------------------------------------
 const char* AnimationController::getPlayingAnimationName()
@@ -412,21 +415,6 @@ const char* AnimationController::getPlayingAnimationName()
 	return "None";
 }
 //---------------------------------------------------------------------------------------------------------
-bool AnimationController::isPlaying()
-{
-	return this->playing;
-}
-//---------------------------------------------------------------------------------------------------------
-void AnimationController::pause(bool pause)
-{
-	this->playing = !pause;
-
-	if(pause && -1 == this->actualFrame)
-	{
-		this->actualFrame = 0;
-	}
-}
-//---------------------------------------------------------------------------------------------------------
 int32 AnimationController::getNumberOfFrames()
 {
 	if(this->animationFunction)
@@ -437,3 +425,22 @@ int32 AnimationController::getNumberOfFrames()
 	return -1;
 }
 //---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void AnimationController::resetFrameDuration()
+{
+	// reset frame delay
+	this->frameDuration = this->animationFunction->delay;
+
+	// the minimum valid delay is 1
+	if(0 == this->frameDuration)
+	{
+		this->frameDuration = 1;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+

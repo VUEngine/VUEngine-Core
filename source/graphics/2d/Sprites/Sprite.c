@@ -869,13 +869,13 @@ const char* Sprite::getPlayingAnimationName()
 /**
  * Set frame cycle decrement
  *
- * @param frameCycleDecrement	Frame cycle decrement
+ * @param frameDurationDecrement	Frame cycle decrement
  */
-void Sprite::setFrameCycleDecrement(uint8 frameCycleDecrement)
+void Sprite::setFrameDurationDecrement(uint8 frameDurationDecrement)
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::setFrameCycleDecrement(this->animationController, frameCycleDecrement);
+		AnimationController::setFrameDurationDecrement(this->animationController, frameDurationDecrement);
 	}
 }
 

@@ -39,50 +39,123 @@ class AnimationCoordinator;
 /// @ingroup graphics-2d-sprites-animation
 class AnimationController : ListenerObject
 {
-	// who owns the animated sprite
+	/// @protectedsection
+
+	/// Animation coordinator that syncs the animations with other animation controllers
 	AnimationCoordinator animationCoordinator;
-	// a pointer to the animation function being played
+
+	/// Pointer to the current animation function being played
 	const AnimationFunction* animationFunction;
-	// actual animation's frame to show
+
+	/// The current frame of the playing animation function
 	int16 actualFrame;
-	// previous animation's frame shown
-	int16 previousFrameValue;	
-	// the number of game cycles that an animation frame is shown
+
+	/// The current frame index of the playing animation function
+	int16 actualFrameIndex;	
+
+	/// Number of game cycles that an animation frame persists
 	uint8 frameDuration;
-	// frame delay decrement update cycle
-	uint8 frameCycleDecrement;
-	// flag to know if playing an animation
+
+	/// Decrement to frameDuration in each game cycle
+	uint8 frameDurationDecrement;
+
+	/// Flag that signals if playing an animation
 	uint8 playing;
 
 	/// @publicsection
+
+	/// Class' constructor
 	void constructor();
-	AnimationCoordinator getAnimationCoordinator();
-	void setAnimationCoordinator(AnimationCoordinator animationCoordinator);
-	int16 getActualFrame();
-	int16 getActualFrameIndex();
-	uint8 getCols();
-	uint8 getFrameCycleDecrement();
-	uint8 getFrameDuration();
-	int32 getMapType();
-	int32 getNumberOfFrames();
-	const AnimationFunction* getPlayingAnimationFunction();
-	uint8 getRows();
-	bool isPlaying();
-	bool isPlayingFunction(const char* animationName);
-	const char* getPlayingAnimationName();
-	void pause(bool pause);
+
+	/// Play the animation with the provided name from the provided array of animation functions.
+	/// @param animationName: Name of the animation to play
+	/// @param scope: Object that will be notified of playback events
+	/// @return True if the animation started playing; false otherwise
 	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
-	bool replay(const AnimationFunction* animationFunctions[]);
+
+	/// Play the animation defined by the the provided animation function.
+	/// @param animationFunction: Animation function to play
+	/// @param scope: Object that will be notified of playback events
 	void playAnimationFunction(const AnimationFunction* animationFunction, ListenerObject scope);
-	void nextFrame();
-	void previousFrame();
-	bool setActualFrame(int16 actualFrame);
-	void setFrameCycleDecrement(uint8 frameCycleDecrement);
-	void setFrameDuration(uint8 frameDuration);
+
+	/// Replay the last playing animation, if any, from the provided array of animation functions.
+	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
+	/// @return True if the animation started playing again; false otherwise
+	bool replay(const AnimationFunction* animationFunctions[]);
+
+	/// Pause or unpause the currently playing animation if any.
+	/// @param pause: Flag that signals if the animation must be paused or unpaused
+	void pause(bool pause);
+
+	/// Stop any playing animation if any.
 	void stop();
+
+	/// Update the current playing animation if any.
 	bool updateAnimation();
-	void write();
-	void writeAnimation();
+
+	/// Check if an animation is playing.
+	/// @return True if an animation is playing; false otherwise
+	bool isPlaying();
+
+	/// Check if the animation whose name is provided is playing.
+	/// @param animationName: Name of the animation to check
+	/// @return True if an animation is playing; false otherwise
+	bool isPlayingFunction(const char* animationName);
+
+	/// Skip the currently playing animation to the next frame.
+	void nextFrame();
+
+	/// Rewind the currently playing animation to the previous frame.
+	void previousFrame();
+
+	/// Skip the currently playing animation to the provided frame.
+	/// @param actualFrame: The frame of the playing animation to skip to
+	/// @return True if the actual frame was changed; false otherwise
+	bool setActualFrame(int16 actualFrame);
+
+	/// Retrieve the actual frame of the playing animation if any.
+	/// @return Actual frame of the playing animation if any
+	int16 getActualFrame();
+
+	/// Retrieve the actual frame index of the playing animation if any.
+	/// @return Actual frame index of the playing animation if any
+	int16 getActualFrameIndex();
+
+	/// Set the duration in game cycles for each frame of animation.
+	/// @param frameDuration: Duration in game cycles for each frame of animation
+	void setFrameDuration(uint8 frameDuration);
+
+	/// Retrieve the duration in game cycles for each frame of animation.
+	/// @param Duration in game cycles for each frame of animation
+	uint8 getFrameDuration();
+
+	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
+	/// @param frameCycleDecrement: Decrement to frameDuration in each game cycle for each frame of animation
+	void setFrameDurationDecrement(uint8 frameCycleDecrement);
+
+	/// Retrieve the decrement to frameDuration in each game cycle for each frame of animation.
+	/// @return Decrement to frameDuration in each game cycle for each frame of animation
+	uint8 getFrameDurationDecrement();
+
+	/// Set the animation coordinator for this animation controller.
+	/// @param animationCoordinator: Animation coordinator for this animation controller
+	void setAnimationCoordinator(AnimationCoordinator animationCoordinator);
+
+	/// Retrieve the animation coordinator for this animation controller.
+	/// @return Animation coordinator for this animation controller
+	AnimationCoordinator getAnimationCoordinator();
+
+	/// Retrieve the animation function currently playing if any
+	/// @return Animation function currently playing if any
+	const AnimationFunction* getPlayingAnimationFunction();
+
+	/// Retrieve the animation function's name currently playing if any
+	/// @return Animation function's name currently playing if any
+	const char* getPlayingAnimationName();
+
+	/// Retrieve the number of frames in the currently playing if any
+	/// @return Number of frames in the currently playing if any
+	int32 getNumberOfFrames();
 }
 
 

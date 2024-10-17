@@ -167,7 +167,7 @@ abstract class Sprite : VisualComponent
 	bool replay(const AnimationFunction* animationFunctions[]);
 	void previousFrame();
 	void setActualFrame(int16 actualFrame);
-	void setFrameCycleDecrement(uint8 frameDelayDelta);
+	void setFrameDurationDecrement(uint8 frameDurationDecrement);
 	void setFrameDuration(uint8 frameDuration);
 	void update();
 	bool updateAnimation();	
