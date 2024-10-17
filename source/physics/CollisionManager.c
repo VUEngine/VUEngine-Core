@@ -242,7 +242,6 @@ uint32 CollisionManager::update(Clock clock)
 			}
 
 #ifdef __SHOW_PHYSICS_PROFILING
-			// check if colliders overlap
 			if(kNoCollision != Collider::collides(collider, colliderToCheck))
 			{
 				this->lastCycleCollisions++;

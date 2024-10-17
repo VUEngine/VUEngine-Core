@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -22,23 +22,18 @@
 #include "FrameBlendBgmapSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 extern int32 strcmp(const char *, const char *);
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param bgmapSpriteSpec		Sprite spec
- * @param owner						Owner
- */
+//---------------------------------------------------------------------------------------------------------
 void FrameBlendBgmapSprite::constructor(SpatialObject owner, const FrameBlendBgmapSpriteSpec* frameBlendBgmapSpriteSpec)
 {
 	// construct base object
@@ -48,27 +43,18 @@ void FrameBlendBgmapSprite::constructor(SpatialObject owner, const FrameBlendBgm
 
 	ASSERT(this->texture, "FrameBlendBgmapSprite::constructor: null texture");
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void FrameBlendBgmapSprite::destructor()
 {
-	// destroy the super object
-	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
+//---------------------------------------------------------------------------------------------------------
 int16 FrameBlendBgmapSprite::doRender(int16 index)
-{
-	FrameBlendBgmapSprite::swapFrame(this);
-
-	return Base::doRender(this, index);
-}
-
-void FrameBlendBgmapSprite::swapFrame()
 {
 	this->actualFrame = 0 == this->actualFrame ? 1 : 0;
 
 	FrameBlendBgmapSprite::configureMultiframe(this, this->actualFrame);
+
+	return Base::doRender(this, index);
 }
+//---------------------------------------------------------------------------------------------------------
