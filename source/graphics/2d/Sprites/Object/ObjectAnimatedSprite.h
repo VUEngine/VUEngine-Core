@@ -11,22 +11,19 @@
 #define OBJECT_ANIMATED_SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ObjectSprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
-/**
- * A ObjectSprite spec
- *
- * @memberof ObjectSprite
- */
+/// A ObjectSprite spec
+/// @memberof ObjectSprite
 typedef struct ObjectAnimatedSpriteSpec
 {
 	/// it has a Sprite spec at the beginning
@@ -34,14 +31,33 @@ typedef struct ObjectAnimatedSpriteSpec
 
 } ObjectAnimatedSpriteSpec;
 
+/// A ObjectAnimatedSpriteSpec spec that is stored in ROM
+/// @memberof ObjectAnimatedSprite
 typedef const ObjectAnimatedSpriteSpec ObjectAnimatedSpriteROMSpec;
 
 
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class BgmapAnimatedSprite
+///
+/// Inherits from BgmapSprite
+///
+/// Animates a sprite whose graphics are allocated in OBJECT space.
 /// @ingroup graphics-2d-sprites-object
 class ObjectAnimatedSprite : ObjectSprite
 {	
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param bgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec);
+
+	/// Update the animation
+	override void updateAnimation();
 	override void updateAnimation();
 }
 

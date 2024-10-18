@@ -277,7 +277,7 @@ typedef struct ScreenPixelScale
 
 } ScreenPixelScale;
 
-// used to represent the m coordinates of the bgmaps
+// Represent the m coordinates of the textures in BGMAP space
 typedef struct BgmapTextureSource
 {
 	int16 mx;
@@ -286,6 +286,7 @@ typedef struct BgmapTextureSource
 
 } BgmapTextureSource;
 
+// Represent the displacement of graphics data in map arrays
 typedef struct ObjectTextureSource
 {
 	int32 displacement;

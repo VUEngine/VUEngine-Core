@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <string.h>
 
@@ -20,23 +20,11 @@
 #include "ObjectAnimatedSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-extern int32 strcmp(const char *, const char *);
-
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- *
- * @param objectSpriteSpec	Sprite spec
- * @param owner						Owner
- */
 void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimatedSpriteSpec* objectAnimatedSpriteSpec)
 {
 	// construct base object
@@ -44,22 +32,14 @@ void ObjectAnimatedSprite::constructor(SpatialObject owner, const ObjectAnimated
 
 	ObjectAnimatedSprite::createAnimationController(this);
 }
-
-/**
- * Class destructor
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectAnimatedSprite::destructor()
 {
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Write animation
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectAnimatedSprite::updateAnimation()
 {
 	NM_ASSERT(!isDeleted(this->animationController), "ObjectAnimatedSprite::updateAnimation: null animation controller");
@@ -78,3 +58,4 @@ void ObjectAnimatedSprite::updateAnimation()
 		Texture::setFrame(this->texture, AnimationController::getActualFrameIndex(this->animationController));
 	}
 }
+//---------------------------------------------------------------------------------------------------------

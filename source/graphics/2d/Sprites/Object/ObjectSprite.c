@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
@@ -22,31 +22,18 @@
 #include "ObjectSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class Texture;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @memberof						ObjectSprite
- * @public
- *
- * @param objectSpriteSpec	Sprite spec
- * @param owner						Owner
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec)
 {
 	Base::constructor(owner, (SpriteSpec*)objectSpriteSpec);
@@ -91,13 +78,7 @@ void ObjectSprite::constructor(SpatialObject owner, const ObjectSpriteSpec* obje
 
 	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
-
-/**
- * Class destructor
- *
- * @memberof						ObjectSprite
- * @public
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectSprite::destructor()
 {
 	ObjectSprite::removeFromCache(this);
@@ -114,13 +95,19 @@ void ObjectSprite::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+//---------------------------------------------------------------------------------------------------------
+void ObjectSprite::resetTotalObjects()
+{
+	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
+}
+//---------------------------------------------------------------------------------------------------------
+int16 ObjectSprite::getTotalObjects()
+{
+	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
-/**
- * Check if assigned to a container
- *
- * @memberof			ObjectSprite
- * @private
- */
+	return this->totalObjects;
+}
+//---------------------------------------------------------------------------------------------------------
 void ObjectSprite::registerWithManager()
 {
 	if(NULL == this->objectSpriteContainer)
@@ -138,7 +125,7 @@ void ObjectSprite::registerWithManager()
 		ObjectSpriteContainer::registerSprite(this->objectSpriteContainer, this);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
 void ObjectSprite::unregisterWithManager()
 {
 	if(NULL != this->objectSpriteContainer)
@@ -148,149 +135,7 @@ void ObjectSprite::unregisterWithManager()
 
 	this->objectSpriteContainer = NULL;
 }
-
-void ObjectSprite::removeFromCache()
-{
-	if(__NO_RENDER_INDEX != this->index)
-	{
-		int16 jDisplacement = 0;
-		ObjectAttributes* objectPointer = NULL;
-
-		for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
-		{
-			int16 objectIndexStart = this->index + jDisplacement;
-
-			for(int16 j = 0; j < this->cols; j++)
-			{
-				int16 objectIndex = objectIndexStart + j;
-				objectPointer = &_objectAttributesCache[objectIndex];
-				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-			}
-		}
-	}
-}
-
-/**
- * Process event
- *
- * @param eventFirer
- */
-bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	ObjectSprite::rewrite(this);
-
-	return true;
-}
-
-void ObjectSprite::rewrite()
-{
-	if(__HIDE == this->show)
-	{
-		return;
-	}
-
-	if(__NO_RENDER_INDEX == this->index)
-	{
-		return;
-	}
-
-	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
-	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
-
-	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
-
-	int16 jDisplacement = 0;
-
-	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
-
-	ObjectAttributes* objectPointer = NULL;
-
-	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
-	{
-		int16 objectIndexStart = this->index + jDisplacement;
-
-		for(int16 j = 0; j < this->cols; j++)
-		{
-			int16 objectIndex = objectIndexStart + j;
-			objectPointer = &_objectAttributesCache[objectIndex];
-
-			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
-		}
-	}
-}
-
-/**
- * Set rotation
- *
- * @memberof			ObjectSprite
- * @public
- *
- */
-void ObjectSprite::setRotation(const Rotation* rotation)
-{
-	this->rotation = *rotation;
-
-	NormalizedDirection normalizedDirection =
-	{
-		__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
-		__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
-		__FAR,
-	};
-
-	if(__LEFT == normalizedDirection.x)
-	{
-		this->head |= 0x2000;
-	}
-	else if(__RIGHT == normalizedDirection.x)
-	{
-		this->head &= 0xDFFF;
-	}
-
-	if(__UP == normalizedDirection.y)
-	{
-		this->head |= 0x1000;
-	}
-	else if(__DOWN == normalizedDirection.y)
-	{
-		this->head &= 0xEFFF;
-	}
-
-	this->xDisplacementIncrement = 8;
-	this->yDisplacementIncrement = 8;
-	this->xDisplacementDelta = 0;
-	this->yDisplacementDelta = 0;
-
-	this->halfWidth = this->texture->textureSpec->cols << 2;
-	this->halfHeight = this->texture->textureSpec->rows << 2;
-
-	this->cols = this->halfWidth >> 2;
-	this->rows = this->halfHeight >> 2;
-
-	if(this->head & 0x2000)
-	{
-		this->xDisplacementIncrement = -8;
-		this->halfWidth = -this->halfWidth;
-		this->xDisplacementDelta = __OBJECT_SPRITE_FLIP_X_DISPLACEMENT;
-	}
-
-	if(this->head & 0x1000)
-	{
-		this->yDisplacementIncrement = -8;
-		this->halfHeight = -this->halfHeight;
-		this->yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
-	}
-
-	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
-}
-
-/**
- * Write WORLD data to DRAM
- *
- * @memberof		ObjectSprite
- * @public
- *
- * @param index
- */
+//---------------------------------------------------------------------------------------------------------
 int16 ObjectSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::doRender: null texture");
@@ -356,38 +201,64 @@ int16 ObjectSprite::doRender(int16 index)
 
 	return result;
 }
-
-/**
- * Retrieved number of OBJECTs
- *
- * @memberof			ObjectSprite
- * @public
- *
- * @return				Number of used OBJECTs
- */
-int16 ObjectSprite::getTotalObjects()
+//---------------------------------------------------------------------------------------------------------
+void ObjectSprite::setRotation(const Rotation* rotation)
 {
-	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
+	this->rotation = *rotation;
 
-	return this->totalObjects;
+	NormalizedDirection normalizedDirection =
+	{
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->y) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+		__QUARTER_ROTATION_DEGREES < __ABS(rotation->x) || __QUARTER_ROTATION_DEGREES < __ABS(rotation->z) ? __UP : __DOWN,
+		__FAR,
+	};
+
+	if(__LEFT == normalizedDirection.x)
+	{
+		this->head |= 0x2000;
+	}
+	else if(__RIGHT == normalizedDirection.x)
+	{
+		this->head &= 0xDFFF;
+	}
+
+	if(__UP == normalizedDirection.y)
+	{
+		this->head |= 0x1000;
+	}
+	else if(__DOWN == normalizedDirection.y)
+	{
+		this->head &= 0xEFFF;
+	}
+
+	this->xDisplacementIncrement = 8;
+	this->yDisplacementIncrement = 8;
+	this->xDisplacementDelta = 0;
+	this->yDisplacementDelta = 0;
+
+	this->halfWidth = this->texture->textureSpec->cols << 2;
+	this->halfHeight = this->texture->textureSpec->rows << 2;
+
+	this->cols = this->halfWidth >> 2;
+	this->rows = this->halfHeight >> 2;
+
+	if(this->head & 0x2000)
+	{
+		this->xDisplacementIncrement = -8;
+		this->halfWidth = -this->halfWidth;
+		this->xDisplacementDelta = __OBJECT_SPRITE_FLIP_X_DISPLACEMENT;
+	}
+
+	if(this->head & 0x1000)
+	{
+		this->yDisplacementIncrement = -8;
+		this->halfHeight = -this->halfHeight;
+		this->yDisplacementDelta = __OBJECT_SPRITE_FLIP_Y_DISPLACEMENT;
+	}
+
+	this->fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14);
 }
-
-/**
- * Compute total objects
- *
- * @memberof				ObjectSprite
- * @public
- */
- void ObjectSprite::resetTotalObjects()
-{
-	this->totalObjects = Texture::getCols(this->texture) * Texture::getRows(this->texture);
-}
-
-/**
- * Get the total amount of pixels displayed by the sprite
- *
- * @return		Total pixels
- */
+//---------------------------------------------------------------------------------------------------------
 int32 ObjectSprite::getTotalPixels()
 {
 	if(__NO_RENDER_INDEX != this->index)
@@ -397,3 +268,75 @@ int32 ObjectSprite::getTotalPixels()
 
 	return 0;
 }
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void ObjectSprite::removeFromCache()
+{
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		int16 jDisplacement = 0;
+		ObjectAttributes* objectPointer = NULL;
+
+		for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
+		{
+			int16 objectIndexStart = this->index + jDisplacement;
+
+			for(int16 j = 0; j < this->cols; j++)
+			{
+				int16 objectIndex = objectIndexStart + j;
+				objectPointer = &_objectAttributesCache[objectIndex];
+				objectPointer->head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+			}
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void ObjectSprite::rewrite()
+{
+	if(__HIDE == this->show)
+	{
+		return;
+	}
+
+	if(__NO_RENDER_INDEX == this->index)
+	{
+		return;
+	}
+
+	NM_ASSERT(!isDeleted(this->texture), "ObjectSprite::rewrite: null texture");
+	NM_ASSERT(!isDeleted(this->texture->charSet), "ObjectSprite::rewrite: null char set");
+
+	uint16 fourthWordValue = (this->head & 0x3000) | (this->texture->palette << 14) | (CharSet::getOffset(this->texture->charSet) +  this->objectTextureSource.displacement);
+
+	int16 jDisplacement = 0;
+
+	uint16* framePointer = (uint16*)(this->texture->textureSpec->map + this->texture->mapDisplacement + this->objectTextureSource.displacement);
+
+	ObjectAttributes* objectPointer = NULL;
+
+	for(int16 i = 0; i < this->rows; i++, jDisplacement += this->cols)
+	{
+		int16 objectIndexStart = this->index + jDisplacement;
+
+		for(int16 j = 0; j < this->cols; j++)
+		{
+			int16 objectIndex = objectIndexStart + j;
+			objectPointer = &_objectAttributesCache[objectIndex];
+
+			objectPointer->tile = fourthWordValue + framePointer[jDisplacement + j];
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool ObjectSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((unused)))
+{
+	ObjectSprite::rewrite(this);
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------

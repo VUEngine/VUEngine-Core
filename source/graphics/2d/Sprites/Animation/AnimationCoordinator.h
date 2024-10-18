@@ -69,7 +69,7 @@ class AnimationCoordinator : ListenerObject
 	/// @param animationController: Animation controller to coordinate
 	void addAnimationController(AnimationController animationController);
 
-	/// Removed a coordinated animation controller.
+	/// Remove a coordinated animation controller.
 	/// @param animationController: Coordinated animation controller to remove
 	void removeAnimationController(AnimationController animationController);
 
