@@ -799,7 +799,7 @@ void AnimationInspector::createSprite()
 
 	SpriteManager::hideSprites(SpriteManager::getInstance(), this->animatedSprite, false);
 	SpriteManager::writeTextures(SpriteManager::getInstance());
-	SpriteManager::sort(SpriteManager::getInstance());
+	SpriteManager::sortSprites(SpriteManager::getInstance());
 	SpriteManager::render(SpriteManager::getInstance());
 }
 

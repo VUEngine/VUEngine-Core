@@ -161,13 +161,13 @@ typedef const FontData FontROMData;
 // CLASS'S DECLARATION
 //=========================================================================================================
 
-//
-// Class Printing
-//
-// Inherits from ListenerObject
-//
-// Manages printing layer and offers various functions to write to it.
-// @ingroup graphics-2d
+///
+/// Class Printing
+///
+/// Inherits from ListenerObject
+///
+/// Manages printing layer and offers various functions to write to it.
+/// @ingroup graphics-2d
 singleton class Printing : ListenerObject
 {
 	/// @protectedsection
@@ -346,7 +346,7 @@ singleton class Printing : ListenerObject
 	
 	/// Retrieve sprite's position.
 	/// @return Sprite's position
-	PixelVector getSpritePosition();
+	PixelVector getSpriteIndex();
 
 	/// Get font spec and starting position in character memory.
 	/// @param font: Name of font to get spec for

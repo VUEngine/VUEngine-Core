@@ -334,15 +334,15 @@ int32 ObjectSpriteContainer::getTotalUsedObjects()
 {
 	return this->firstObjectIndex - this->lastObjectIndex;
 }
-//---------------------------------------------------------------------------------------------------------//---------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::registerWithManager()
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::unregisterWithManager()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 int16 ObjectSpriteContainer::doRender(int16 index)
@@ -387,7 +387,7 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Index: ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), SpriteManager::getSpritePosition(SpriteManager::getInstance(), Sprite::safeCast(this)), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), this->index, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);

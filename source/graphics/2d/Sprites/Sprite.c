@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -556,6 +556,11 @@ void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE
 	}
 
 	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::hasSpecialEffects()
+{
+	return false;
 }
 //---------------------------------------------------------------------------------------------------------
 void Sprite::invalidateRendering()

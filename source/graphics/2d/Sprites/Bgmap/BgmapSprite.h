@@ -128,10 +128,6 @@ class BgmapSprite : Sprite
 	/// @return True if the listener must be kept; false to remove after the current call
 	bool onTextureRewritten(ListenerObject eventFirer);
 
-	/// Check if the sprite has affine or hbias effects.
-	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)
-	bool hasSpecialEffects();
-
 	/// Start rewriting the sprite's param table for affine transformations.
 	void applyAffineTransformations();
 
@@ -143,6 +139,10 @@ class BgmapSprite : Sprite
 
 	/// Unegister this sprite with the appropriate sprites manager.	
 	override void unregisterWithManager();
+
+	/// Check if the sprite has affine or hbias effects.
+	/// @return True if the sprite's mode of display is (__WORLD_AFFINE or __WORLD_HBIAS)
+	override bool hasSpecialEffects();
 	
 	/// Process affine and hbias effects
 	override void processEffects();

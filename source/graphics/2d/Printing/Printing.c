@@ -582,7 +582,7 @@ int16 Printing::getWorldCoordinatesP()
 	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGP(this->activePrintingSprite) : 0;
 }
 //---------------------------------------------------------------------------------------------------------
-PixelVector Printing::getSpritePosition()
+PixelVector Printing::getSpriteIndex()
 {
 	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getDisplacedPosition(this->activePrintingSprite) : (PixelVector){0, 0, 0, 0};
 }

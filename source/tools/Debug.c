@@ -1269,11 +1269,11 @@ void Debug::objectsShowStatus(int32 increment, int32 x, int32 y)
 	{
 		Printing::text(Printing::getInstance(), "OBJECTS INSPECTOR", x, y++, NULL);
 
-		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
+		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
 
 		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
 		{
-			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
+			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySPT(SpriteManager::getInstance(), this->objectSegment);
 
 			if(!objectSpriteContainer)
 			{
@@ -1350,7 +1350,7 @@ void Debug::spritesShowStatus(int32 increment, int32 x, int32 y)
 	}
 	else if(0 <= this->currentSprite && this->currentSprite < numberOfSprites)
 	{
-		Sprite sprite = SpriteManager::getSpriteAtPosition(SpriteManager::getInstance(), this->currentSprite);
+		Sprite sprite = SpriteManager::getSpriteAtIndex(SpriteManager::getInstance(), this->currentSprite);
 		SpriteManager::hideSprites(SpriteManager::getInstance(), sprite, false);
 		SpriteManager::renderAndDraw(SpriteManager::getInstance());
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);

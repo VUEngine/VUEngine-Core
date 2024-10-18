@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,24 +11,17 @@
 #define SPRITE_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <Sprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __TOTAL_OBJECT_SEGMENTS 	4
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class BgmapTextureManager;
 class CharSetManager;
@@ -38,93 +31,198 @@ class ParamTableManager;
 class Printing;
 class VirtualList;
 
-/**
- * Sprites List
- *
- * @memberof SpriteManager
- */
-typedef struct SpritesList
-{
-	const void* spriteClassVTable;
-	VirtualList sprites;
 
-} SpritesList;
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
+
+#define __TOTAL_OBJECT_SEGMENTS 	4
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-
+///
+/// Class PrinSpriteManagerting
+///
+/// Inherits from ListenerObject
+///
+/// Manages all the sprite instances.
 /// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
+	/// @protectedsection
+
+	/// Cache printing manager
 	Printing printing;
+
+	/// Cache param table manager
 	ParamTableManager paramTableManager;
+
+	/// Cache charset manager
 	CharSetManager charSetManager;
+
+	/// Cache BGMAP texture manager
 	BgmapTextureManager bgmapTextureManager;
+
+	/// Cache OBJECT texture manager
 	ObjectTextureManager objectTextureManager;
-	// Sprites to render
+
+	/// List of sprites to render
 	VirtualList sprites;
-	// Object sprite containers
+
+	/// List of object sprite containers
 	VirtualList objectSpriteContainers;
-	// Sprites with special effects
+
+	/// List of sprites with special effects
 	VirtualList specialSprites;
-	// Node for z sorting
+
+	/// List node used for for z sorting over time
 	VirtualNode sortingSpriteNode;
-	// pixels drawn
+
+	/// Total pixels currently drawn
 	int32 totalPixelsDrawn;
-	// number of rows to write in affine transformations
+	
+	/// Number of param table rows to write during each rendering cycle
 	int16 maximumParamTableRowsToComputePerCall;
-	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
+
+	/// Flag to distinguish between even and odd game frames
 	bool evenFrame;
-	// next world layer
+
+	/// Free WORLD layer during the last rendering cycle
 	int16 freeLayer;
-	// number of rows to write in texture's writing
+
+	/// Number of texture rows to write during each rendering cycle
 	int8 texturesMaximumRowsToWrite;
-	// flag to control texture's writing deferring
+
+	/// Flag to defer texturing writing over time
 	bool deferTextureUpdating;
-	// flag to control param table effects deferring
+
+	/// Flag to defer param tables writing over time
 	bool deferParamTableEffects;
-	// Flag for Z sorting
+
+	// Flag to forze a complete Z sorting of sprites
 	bool completeSort;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return SpriteManager singleton
 	static SpriteManager getInstance();
 
+	/// Reset the manager's state
+	void reset();
+	
+	/// Create a sprite with the provided spec.
+	/// @param spriteSpec: Spec to use to create the sprite
+	/// @param owner: Object to which the sprite will attach to
+	/// @return Created sprite
 	Sprite createSprite(const SpriteSpec* spriteSpec, SpatialObject owner);
-	bool registerSprite(Sprite sprite, bool hasEffects);
-	void unregisterSprite(Sprite sprite, bool hasEffects);
-	void deferTextureUpdating(bool deferTextureUpdating);
-	void deferParamTableEffects(bool deferAffineTransformations);
-	void destructor();
+
+	/// Destroy the provided sprite.
+	/// @param sprite: Sprite to destroy
 	void destroySprite(Sprite sprite);
-	void forceRendering();
-	int8 getFreeLayer();
-	int32 getNumberOfSprites();
+
+	/// Register a sprite to be managed
+	/// @param sprite: Sprite to be managed
+	/// @return True if the sprite was successfully registered; false otherwise
+	bool registerSprite(Sprite sprite);
+
+	/// Unregister a sprite to be managed
+	/// @param sprite: Sprite to no longer manage
+	void unregisterSprite(Sprite sprite);
+
+	/// Configure the object sprite containers.
+	/// @param size: Array with the number of OBJECTS for each container
+	/// @param z: Array of Z coordinates for each container
+	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
+
+	/// Set the number of param table rows to write during each rendering cycle.
+	/// @param maximumParamTableRowsToComputePerCall: Number of param table rows to write during each rendering cycle 
+	void setMaximumParamTableRowsToComputePerCall(int32 maximumParamTableRowsToComputePerCall);
+
+	/// Retrieve the number of param table rows to write during each rendering cycle.
+	/// @return Number of param table rows to write during each rendering cycle 
 	int32 getMaximumParamTableRowsToComputePerCall();
-	Sprite getSpriteAtPosition(int16 position);
-	int16 getSpritePosition(Sprite sprite);
+
+	/// Set the number of texture rows to write during each rendering cycle.
+	/// @param texturesMaximumRowsToWrite: Number of texture rows to write during each rendering cycle
+	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
+
+	/// Get the number of texture rows to write during each rendering cycle.
+	/// @return Number of texture rows to write during each rendering cycle
 	int8 getTexturesMaximumRowsToWrite();
+
+	/// Enable or disable the texture writing over time.
+	/// @param deferTextureUpdating: If true, textures are written overtime; otherwise
+	/// they are written in a single pass
+	void deferTextureUpdating(bool deferTextureUpdating);
+
+	/// Enable or disable the writing of param tables over time.
+	/// @param deferAffineTransformations: If true, param tables are written overtime; otherwise
+	/// they are written in a single pass
+	void deferParamTableEffects(bool deferAffineTransformations);
+
+	/// Force the Z sorting of all sprites.
+	void sortSprites();
+
+	/// Force the rendering and drawing of all sprites.
+	void prepareAll();
+
+	/// Render sprites.
+	void render();
+
+	/// Force the rendering of all sprites.
+	void forceRendering();
+
+	/// Force the rendering and drawing of all sprites.
+	void renderAndDraw();
+
+	/// Copy DRAM cache data to real DRAM space.
+	void writeDRAM();
+
+	/// Force the writing of graphical data to DRAM space.
+	void writeTextures();
+	
+	/// Show all sprites except the provided one.
+	/// @param spareSprite: Sprite to not show
+	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
+	void showSprites(Sprite spareSprite, bool showPrinting);
+
+	/// Hide all sprites except the provided one.
+	/// @param spareSprite: Sprite to not hide
+	/// @param showPrinting: Flag to allow/prohibit the display of the printing sprite
+	void hideSprites(Sprite spareSprite, bool hidePrinting);
+
+	/// Compute the total pixels drawn.
 	void computeTotalPixelsDrawn();
+
+	/// Retrieve the free WORLD layer during the last rendering cycle.
+	/// @return Free WORLD layer during the last rendering cycle
+	int8 getFreeLayer();
+
+	/// Retrieve the total number of registerd sprites.
+	/// @return Total number of registerd sprites
+	int32 getNumberOfSprites();
+
+	/// Retrieve the sprite at the provided position in the list of sprites.
+	/// @param index: Index of the node in the list of sprites
+	/// @return Sprite at the provided position in the list of sprites
+	Sprite getSpriteAtIndex(int16 index);
+	
+	/// Retrieve the object sprite container closer to the provided position.
+	/// @param z: Z coordinate
+	/// @return Object sprite container closer to the provided position
+	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
+
+	/// Retrieve the object sprite container that manages the provided STP.
+	/// @param spt: OBJECT space SPT
+	/// @return Object sprite container that manages the provided STP
+	ObjectSpriteContainer getObjectSpriteContainerBySPT(int32 spt);
+
 	void print(int32 x, int32 y, bool resumed);
 	void printObjectSpriteContainersStatus(int32 x, int32 y);
-	void showSprites(Sprite spareSprite, bool showPrinting);
-	void hideSprites(Sprite spareSprite, bool hidePrinting);
-	void render();
-	void renderAndDraw();
-	void stopRendering();
-	void reset();
-	void setMaximumParamTableRowsToComputePerCall(int32 maximumAffineRowsToComputePerCall);
-	void setTexturesMaximumRowsToWrite(uint8 texturesMaximumRowsToWrite);
-	void setupObjectSpriteContainers(int16 size[__TOTAL_OBJECT_SEGMENTS], int16 z[__TOTAL_OBJECT_SEGMENTS]);
-	ObjectSpriteContainer getObjectSpriteContainer(fixed_t z);
-	ObjectSpriteContainer getObjectSpriteContainerBySegment(int32 segment);
-	void sort();
-	void writeTextures();
-	void prepareAll();
-	bool isEvenFrame();
-	void writeDRAM();
 }
 
 

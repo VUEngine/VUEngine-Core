@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -335,6 +335,10 @@ abstract class Sprite : VisualComponent
 
 	/// Unegister this sprite with the appropriate sprites manager.	
 	virtual void unregisterWithManager() = 0;
+
+	/// Check if the sprite has special effects.
+	/// @return True if the sprite has special effects
+	virtual bool hasSpecialEffects();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure

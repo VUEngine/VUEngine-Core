@@ -217,11 +217,6 @@ bool BgmapSprite::onTextureRewritten(ListenerObject eventFirer __attribute__ ((u
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------
-bool BgmapSprite::hasSpecialEffects()
-{
-	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
-}
-//---------------------------------------------------------------------------------------------------------
 void BgmapSprite::applyAffineTransformations()
 {
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
@@ -238,12 +233,17 @@ void BgmapSprite::applyHbiasEffects()
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::registerWithManager()
 {
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
 }
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::unregisterWithManager()
 {
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), BgmapSprite::hasSpecialEffects(this));
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this));
+}
+//---------------------------------------------------------------------------------------------------------
+bool BgmapSprite::hasSpecialEffects()
+{
+	return NULL != this->applyParamTableEffect && 0 != ((__WORLD_HBIAS | __WORLD_AFFINE ) & this->head);
 }
 //---------------------------------------------------------------------------------------------------------
 void BgmapSprite::processEffects()
