@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -12,15 +12,15 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <TextObjectSprite.h>
+#include <string.h>
 
+#include <DebugConfig.h>
 #include <ObjectSpriteContainer.h>
 #include <Printing.h>
 #include <Texture.h>
 #include <VIPManager.h>
 
-#include <DebugConfig.h>
-#include <string.h>
+#include "TextObjectSprite.h"
 
 
 //=========================================================================================================
