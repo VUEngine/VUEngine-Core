@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -76,17 +76,51 @@ singleton class BgmapTextureManager : Object
 
 	/// @publicsection
 	static BgmapTextureManager getInstance();
+
+	/// Reset the manager's state.
 	void reset();
-	void loadTextures(const TextureSpec** textureSpecs);
+
+	/// Compute the number of available BGMAP segments for texture allocation.
 	void calculateAvailableBgmapSegments();
+
+	/// Retrieve the number of available BGMAP segments to allocate textures.
+	/// @return Number of available BGMAP segments to allocate textures
 	int8 getAvailableBgmapSegmentsForTextures();
+
+	/// Retrieve the number of the BGMAP segment available for printing.
+	/// @return Number of the BGMAP segment available for printing
 	int8 getPrintingBgmapSegment();
+
+	/// Load textures in function of the provided array of specs.
+	/// @param textureSpecs: Array of texture specs in function of which to load textures 
+	void loadTextures(const TextureSpec** textureSpecs);
+
+	/// Retrieve a texture initialized with the provided spec.
+	/// @param bgmapTextureSpec: Spec to use to initilize the desired texture
+	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
+	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
+	/// @param scValue: SC configuration value for multi segment textures
 	BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue);
-	int16 getXOffset(int32 id);
-	int16 getYOffset(int32 id);
-	void print(int32 x, int32 y);
+
+	/// Release a texture.
+	/// @param bgmapTexture: Texture to release
 	void releaseTexture(BgmapTexture bgmapTexture);
-	void setDeferTextureUpdate(bool value);
+
+	/// Retrieve the X coordinate in BGMAP space for the texture ID provided.
+	/// @param id: Texture's id
+	/// @return X coordinate in BGMAP space for the texture ID provided
+	int16 getXOffset(int32 id);
+
+	/// Retrieve the Y coordinate in BGMAP space for the texture ID provided.
+	/// @param id: Texture's id
+	/// @return Y coordinate in BGMAP space for the texture ID provided
+	int16 getYOffset(int32 id);
+
+	/// Print the camera's status.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void print(int32 x, int32 y);
+
 }
 
 
