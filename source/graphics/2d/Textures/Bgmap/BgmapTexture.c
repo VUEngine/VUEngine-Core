@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 #include <BgmapTextureManager.h>
 #include <CharSet.h>
@@ -22,27 +22,20 @@
 #include "BgmapTexture.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												GLOBALS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
 
 static BgmapTextureManager _bgmapTextureManager = NULL;
 static SpriteManager _spriteManager = NULL;
-
 static const uint16 _emptyTextureRow[64] = {0};
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @private
- * @param bgmapTextureSpec		Texture spec
- * @param id							Identifier
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 {
 	// construct base object
@@ -67,30 +60,79 @@ void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, uint16 id)
 		_spriteManager = SpriteManager::getInstance();
 	}
 }	
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapTexture::destructor()
 {
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Write again the texture to DRAM
- */
-void BgmapTexture::rewrite()
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::setSegment(int8 segment)
 {
-	Base::rewrite(this);
-
-	this->remainingRowsToBeWritten = this->textureSpec->rows;
+	this->segment = segment;
 }
+//---------------------------------------------------------------------------------------------------------
+int8 BgmapTexture::getSegment()
+{
+	return this->segment;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::setOffsets(int16 xOffset, int16 yOffset)
+{
+	this->xOffset = xOffset;
+	this->yOffset = yOffset;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 BgmapTexture::getXOffset()
+{
+	return this->xOffset;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 BgmapTexture::getYOffset()
+{
+	return this->yOffset;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::setHorizontalFlip(bool value)
+{	
+	// TODO: this is a hack, positioned entities should have a complete transformation
+	// and the flip flags should be removed from the texture spec
+	if(this->textureSpec->horizontalFlip)
+	{
+		value = !value;
+	}
 
-/**
- * Write the texture to DRAM
- */
+	if(this->horizontalFlip != value)
+	{
+		BgmapTexture::rewrite(this);
+	}
+
+	this->horizontalFlip = value;
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::setVerticalFlip(bool value)
+{
+	// TODO: this is a hack, positioned entities should have a complete transformation
+	// and the flip flags should be removed from the texture spec
+	if(this->textureSpec->verticalFlip)
+	{
+		value = !value;
+	}
+
+	if(this->verticalFlip != value)
+	{
+		BgmapTexture::rewrite(this);
+	}
+
+	this->verticalFlip = value;
+}
+//---------------------------------------------------------------------------------------------------------
+int8 BgmapTexture::getRemainingRowsToBeWritten()
+{
+	return this->remainingRowsToBeWritten;
+}
+//---------------------------------------------------------------------------------------------------------
 bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 {
 	if(isDeleted(this->charSet))
@@ -130,15 +172,23 @@ bool BgmapTexture::write(int16 maximumTextureRowsToWrite)
 	{
 		this->status = 0 >= this->remainingRowsToBeWritten ? kTextureWritten : kTexturePendingWriting;
 	}
-
+	
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------
+void BgmapTexture::rewrite()
+{
+	Base::rewrite(this);
 
-/**
- * Write multi frame Texture to DRAM
- *
- * @private
- */
+	this->remainingRowsToBeWritten = this->textureSpec->rows;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset, int16 yOffset, uint16 charSetOffset)
 {
 	if((0 > xOffset) | (0 > yOffset))
@@ -177,7 +227,7 @@ void BgmapTexture::writeAllFrames(int16 maximumTextureRowsToWrite, int16 xOffset
 		}
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
 // TODO: inlining this causes trouble with ANIMATED_MULTI animations
 static inline void BgmapTexture::addHWORD(HWORD* destination, const HWORD* source, uint32 numberOfHWORDS, uint32 offset, uint16 flip, int16 increment)
 {
@@ -230,12 +280,7 @@ static inline void BgmapTexture::addHWORDCompressed(HWORD* destination, const HW
 		: "r10" // regs used
     );
 }
-
-/**
- * Write Texture to DRAM
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRewrite, int16 xOffset, int16 yOffset, uint16 charSetOffset, uint16 frame)
 {
 	if((0 > xOffset) || (0 > yOffset))
@@ -343,124 +388,4 @@ void BgmapTexture::writeFrame(int16 maximumTextureRowsToWrite, bool forceFullRew
 		);
 	}
 }
-
-/*
-void BgmapTexture::writeAnimatedSingleOptimized()
-{
-	int32 bgmapSegment = this->segment;
-	int32 palette = this->palette << 14;
-
-	int32 charLocation = (int32)CharSet::getOffset(this->charSet);
-
-	if((0 > xOffset) | (0 > yOffset))
-	{
-		return;
-	}
-
-	int32 counter = SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager::getInstance());
-
-	//put the map into memory calculating the number of char for each reference
-	for(; counter && this->remainingRowsToBeWritten--; counter--)
-	{
-		Mem::add ((uint8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
-				(const uint8*)(this->textureSpec->map + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureSpec->cols) << 1)),
-				this->textureSpec->cols << 1,
-				(palette) | (charLocation));
-	}
-}
-*/
-
-/**
- * Retrieve the number of rows pending writing
- *
- * @return				Number of rows pending writing
- */
-int8 BgmapTexture::getRemainingRowsToBeWritten()
-{
-	return this->remainingRowsToBeWritten;
-}
-
-/**
- * Set the Texture's x and y offsets within the BGMAP segment where it is allocated
- *
- * @return				Texture's x offset within BGMAP segment
- */
-void BgmapTexture::setOffsets(int16 xOffset, int16 yOffset)
-{
-	this->xOffset = xOffset;
-	this->yOffset = yOffset;
-}
-
-/**
- * Retrieve the Texture's x offset within the BGMAP segment where it is allocated
- *
- * @return				Texture's x offset within BGMAP segment
- */
-int16 BgmapTexture::getXOffset()
-{
-	return this->xOffset;
-}
-
-/**
- * Retrieve the Texture's y offset within the BGMAP segment where it is allocated
- *
- * @return				Texture's y offset within BGMAP segment
- */
-int16 BgmapTexture::getYOffset()
-{
-	return this->yOffset;
-}
-
-/**
- * Set the Texture's BGMAP segment where it is allocated
- *
- * @param segment		Texture's BGMAP segment
- */
-void BgmapTexture::setSegment(int8 segment)
-{
-	this->segment = segment;
-}
-
-/**
- * Retrieve the Texture's BGMAP segment where it is allocated
- *
- * @return				Texture's BGMAP segment
- */
-int8 BgmapTexture::getSegment()
-{
-	return this->segment;
-}
-
-void BgmapTexture::setHorizontalFlip(bool value)
-{	
-	// TODO: this is a hack, positioned entities should have a complete transformation
-	// and the flip flags should be removed from the texture spec
-	if(this->textureSpec->horizontalFlip)
-	{
-		value = !value;
-	}
-
-	if(this->horizontalFlip != value)
-	{
-		BgmapTexture::rewrite(this);
-	}
-
-	this->horizontalFlip = value;
-}
-
-void BgmapTexture::setVerticalFlip(bool value)
-{
-	// TODO: this is a hack, positioned entities should have a complete transformation
-	// and the flip flags should be removed from the texture spec
-	if(this->textureSpec->verticalFlip)
-	{
-		value = !value;
-	}
-
-	if(this->verticalFlip != value)
-	{
-		BgmapTexture::rewrite(this);
-	}
-
-	this->verticalFlip = value;
-}
+//---------------------------------------------------------------------------------------------------------

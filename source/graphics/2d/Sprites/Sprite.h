@@ -91,7 +91,7 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 ///
 /// Inherits from VisualComponent
 ///
-/// Displays a Texture to the displays.
+/// Displays a Texture on the screen.
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : VisualComponent
 {

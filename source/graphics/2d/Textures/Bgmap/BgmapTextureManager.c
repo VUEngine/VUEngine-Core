@@ -91,7 +91,7 @@ void BgmapTextureManager::reset()
 	// clear each bgmap segment usage
 	for(int32 i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS; i++)
 	{
-		this->numberOfChars[i] = 0;
+		this->usedTiles[i] = 0;
 
 		// clear the offsets
 		for(int32 j = 0; j <__NUM_BGMAPS_PER_SEGMENT; j++)
@@ -258,7 +258,7 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 		
 		// if there is space in the segment memory
 		// there are 4096 chars in each bgmap segment
-		if((int32)(4096 - this->numberOfChars[i]) >= (int32)area )
+		if((int32)(4096 - this->usedTiles[i]) >= (int32)area )
 		{
 			// check if there is space within the segment
 			// we check the next so don't go to the last element
@@ -300,7 +300,7 @@ int32 BgmapTextureManager::doAllocate(uint16 id, TextureSpec* textureSpec, int16
 							}
 							
 							// update the number of chars defined inside the bgmap segment
-							this->numberOfChars[i] += area;
+							this->usedTiles[i] += area;
 
 							// if there is a free bgmap segment
 							return i;

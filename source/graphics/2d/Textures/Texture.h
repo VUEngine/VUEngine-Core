@@ -145,7 +145,12 @@ abstract class Texture : ListenerObject
 	bool isSingleFrame();
 	bool isMultiframe();
 
+	/// Write graphical data to the allocated DRAM space.
+	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
+	/// @return True if the texture was written; false if it fails
 	virtual bool write(int16 maximumTextureRowsToWrite);
+
+	/// Rewrite graphical data to the allocated DRAM space.
 	virtual void rewrite();
 }
 

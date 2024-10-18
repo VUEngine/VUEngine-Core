@@ -11,23 +11,24 @@
 #define BGMAP_TEXTURE_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <BgmapTexture.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
 #define __BGMAP_SEGMENT_SIZE	8192
 
-//---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
 enum OffsetIndex
 {
@@ -39,26 +40,38 @@ enum OffsetIndex
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class BgmapTextureManager
+///
+/// Inherits from Texture
+///
+/// Allocates BGMAP space for textures.
 /// @ingroup graphics-2d-textures-bgmap
 singleton class BgmapTextureManager : Object
 {
-	// Allocated textures
+	// List of textures with BGMAP space allocated for them
 	VirtualList bgmapTextures;
-	// Number of chars occupied
-	uint16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];
-	// Current x offset to set the next bgmap
+
+	/// Used tiles per BGMAP segment
+	uint16 usedTiles[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];
+
+	/// Start X coordinate of free space in each BGMAP segment
 	int8 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];
-	// Current y offset to set the next bgmap
+	
+	/// Start Y coordinate of free space in each BGMAP segment
 	int8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];
-	// 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment
+
+	/// Multidimensional array to keep track of the offsets for each allocated texture
 	int8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];
-	// Number of available bgmap segments
+	
+	/// Number of available BGMAP segments for texture allocation
 	int8 availableBgmapSegmentsForTextures;
-	// Segment for printing
+
+	/// BGMAP segment available for printing
 	int8 printingBgmapSegment;
 
 	/// @publicsection
