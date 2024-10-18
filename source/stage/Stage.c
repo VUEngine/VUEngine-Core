@@ -516,7 +516,7 @@ void Stage::preloadAssets()
 	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
 	CharSetManager::loadCharSets(CharSetManager::getInstance(), (const CharSetSpec**)this->stageSpec->assets.charSetSpecs);
 	BgmapTextureManager::loadTextures(BgmapTextureManager::getInstance(), (const TextureSpec**)this->stageSpec->assets.textureSpecs);
-	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
+	ParamTableManager::setup(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
 }
 
 // register an entity in the streaming list

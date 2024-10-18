@@ -79,7 +79,7 @@ typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 /// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	/// @privatesection
+	/// @protectedsection
 
 	/// Offset that keeps track of where to continue writing in param table 
 	int16 paramTableRow;

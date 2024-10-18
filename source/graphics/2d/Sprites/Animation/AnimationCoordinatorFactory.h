@@ -49,7 +49,7 @@ singleton class AnimationCoordinatorFactory : Object
 	/// @publicsection
 
 	/// Method to retrieve the singleton instance
-	/// @return ClockManager singleton
+	/// @return AnimationCoordinatorFactory singleton
 	static AnimationCoordinatorFactory getInstance();
 
 	/// Reset the animation coordinator factory's state.

@@ -11,37 +11,33 @@
 #define M_BGMAP_SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <BgmapSprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
-/**
- * A MBgmapSprite spec
- *
- * @memberof MBgmapSprite
- */
+/// A MBgmapSprite spec
+/// @memberof MBgmapSprite
 typedef struct MBgmapSpriteSpec
 {
-	/// the normal sprite spec
 	BgmapSpriteSpec bgmapSpriteSpec;
 
-	/// texture to use with the sprite
+	/// Texture to use with the sprite
 	TextureSpec** textureSpecs;
 
 	/// SCX/SCY value
 	uint32 scValue;
 
-	/// flag to loop the x axis
+	/// Flag to loop the x axis
 	int32 xLoop;
 
-	/// flag to loop the y axis
+	/// Flag to loop the y axis
 	int32 yLoop;
 
 	/// Bounds the sprite's size to provide culling; if 0, the value is inferred from the texture
@@ -52,28 +48,40 @@ typedef struct MBgmapSpriteSpec
 
 } MBgmapSpriteSpec;
 
-/**
- * A MBgmapSprite spec that is stored in ROM
- *
- * @memberof MBgmapSprite
- */
+/// A MBgmapSprite spec that is stored in ROM
+/// @memberof MBgmapSprite
 typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
+///
+/// Class MBgmapSprite
+///
+/// Inherits from MBgmapSprite
+///
+/// Can display various textures across multiple BGMAP memory segments.
 /// @ingroup graphics-2d-sprites-bgmap
 class MBgmapSprite : BgmapSprite
 {
+	/// @protectedsection
+
+	/// List of textures to display
 	VirtualList textures;
-	// to speed up rendering
+
+	/// Cache of the first texture x offest to speed up rendering
 	uint16 textureXOffset;
-	// to speed up rendering
+
+	/// Cache of the first texture x offest to speed up rendering
 	uint16 textureYOffset;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec);
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.

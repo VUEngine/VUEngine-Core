@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <BgmapTextureManager.h>
 #include <Camera.h>
@@ -24,18 +24,9 @@
 #include "MBgmapSprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __ACCOUNT_FOR_BGMAP_PLACEMENT		1
-#define __GX_LIMIT							511
-//#define __GY_LIMIT						511
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class Texture;
 friend class BgmapTexture;
@@ -43,19 +34,19 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S MACROS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @memberof							MBgmapSprite
- * @public
- *
- * @param mBgmapSpriteSpec		Spec to use
- * @param owner							Sprite's owner
- */
+#define __ACCOUNT_FOR_BGMAP_PLACEMENT		1
+#define __GX_LIMIT							511
+
+
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgmapSpriteSpec)
 {
 	Base::constructor(owner, &mBgmapSpriteSpec->bgmapSpriteSpec);
@@ -77,13 +68,7 @@ void MBgmapSprite::constructor(SpatialObject owner, const MBgmapSpriteSpec* mBgm
 		MBgmapSprite::setMode(this, mBgmapSpriteSpec->bgmapSpriteSpec.display, mBgmapSpriteSpec->bgmapSpriteSpec.bgmapMode);
 	}
 }
-
-/**
- * Class destructor
- *
- * @memberof		MBgmapSprite
- * @public
- */
+//---------------------------------------------------------------------------------------------------------
 void MBgmapSprite::destructor()
 {
 	MBgmapSprite::releaseTextures(this);
@@ -92,131 +77,7 @@ void MBgmapSprite::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Release the loaded textures
- *
- * @memberof		MBgmapSprite
- * @public
- */
-void MBgmapSprite::releaseTextures()
-{
-	// free the texture
-	if(!isDeleted(this->texture))
-	{
-		// if affine or bgmap
-		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
-		{
-			// free param table space
-			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
-		}
-	}
-
-	this->texture = NULL;
-
-	if(!isDeleted(this->textures))
-	{
-		VirtualNode node = this->textures->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
-
-			if(!isDeleted(bgmapTexture))
-			{
-				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
-			}
-		}
-
-		delete this->textures;
-		this->textures = NULL;
-	}
-}
-
-/**
- * Load textures from spec
- *
- * @memberof		MBgmapSprite
- * @public
- */
-void MBgmapSprite::loadTextures()
-{
-	if(NULL != ((MBgmapSpriteSpec*)this->componentSpec))
-	{
-		if(NULL == this->texture && NULL == this->textures)
-		{
-			this->textures = new VirtualList();
-
-			for(int32 i = 0; NULL != ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i]; i++)
-			{
-				MBgmapSprite::loadTexture(this, ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i], 0 == i && ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i + 1]);
-			}
-
-			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
-			this->textureYOffset = BgmapTexture::getYOffset(this->texture) << 3;
-		}
-		else
-		{
-			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: textures already loaded");
-		}
-	}
-}
-
-/**
- * Load a texture
- *
- * @memberof										MBgmapSprite
- * @public
- *
- * @param textureSpec								TextureSpec to use
- * @param isFirstTextureAndHasMultipleTextures		To force loading in an even bgmap segment for the first texture
- */
-void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
-{
-	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
-
-	int16 minimumSegment = 0;
-
-	if(VirtualList::getCount(this->textures))
-	{
-		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
-
-		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
-
-		// This allows to have bgmaps sprites that are smaller than 512 pixels high
-		// But depends on all the segments being free
-		if(((MBgmapSpriteSpec*)this->componentSpec)->xLoop && 64 > Texture::getRows(bgmapTexture))
-		{
-			minimumSegment += 1;
-		}
-	}
-
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue);
-
-	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
-	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
-	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
-
-	if(!isDeleted(bgmapTexture))
-	{
-		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
-
-		VirtualList::pushBack(this->textures, bgmapTexture);
-
-		this->texture = Texture::safeCast(bgmapTexture);
-		NM_ASSERT(this->texture, "MBgmapSprite::loadTexture: null texture");
-	}
-}
-
-/**
- * Write WORLD data to DRAM
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @param index
- */
+//---------------------------------------------------------------------------------------------------------
 int16 MBgmapSprite::doRender(int16 index)
 {
 	NM_ASSERT(!isDeleted(this->texture), "MBgmapSprite::doRender: null texture");
@@ -352,13 +213,108 @@ int16 MBgmapSprite::doRender(int16 index)
 
 	return index;
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Calculate Sprite's size
- *
- * @memberof			MBgmapSprite
- * @public
- */
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void MBgmapSprite::loadTextures()
+{
+	if(NULL != ((MBgmapSpriteSpec*)this->componentSpec))
+	{
+		if(NULL == this->texture && NULL == this->textures)
+		{
+			this->textures = new VirtualList();
+
+			for(int32 i = 0; NULL != ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i]; i++)
+			{
+				MBgmapSprite::loadTexture(this, ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i], 0 == i && ((MBgmapSpriteSpec*)this->componentSpec)->textureSpecs[i + 1]);
+			}
+
+			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
+			this->textureYOffset = BgmapTexture::getYOffset(this->texture) << 3;
+		}
+		else
+		{
+			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: textures already loaded");
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
+{
+	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
+
+	int16 minimumSegment = 0;
+
+	if(VirtualList::getCount(this->textures))
+	{
+		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
+
+		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
+
+		// This allows to have bgmaps sprites that are smaller than 512 pixels high
+		// But depends on all the segments being free
+		if(((MBgmapSpriteSpec*)this->componentSpec)->xLoop && 64 > Texture::getRows(bgmapTexture))
+		{
+			minimumSegment += 1;
+		}
+	}
+
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures, ((MBgmapSpriteSpec*)this->componentSpec)->scValue);
+
+	NM_ASSERT(!isDeleted(bgmapTexture), "MBgmapSprite::loadTexture: texture not loaded");
+	NM_ASSERT(!isDeleted(this->textures), "MBgmapSprite::loadTexture: null textures list");
+	NM_ASSERT(!isFirstTextureAndHasMultipleTextures || 0 == (BgmapTexture::getSegment(bgmapTexture) % 2), "MBgmapSprite::loadTexture: first texture not loaded in even segment");
+
+	if(!isDeleted(bgmapTexture))
+	{
+		BgmapTexture::addEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+
+		VirtualList::pushBack(this->textures, bgmapTexture);
+
+		this->texture = Texture::safeCast(bgmapTexture);
+		NM_ASSERT(this->texture, "MBgmapSprite::loadTexture: null texture");
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void MBgmapSprite::releaseTextures()
+{
+	// free the texture
+	if(!isDeleted(this->texture))
+	{
+		// if affine or bgmap
+		if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+		{
+			// free param table space
+			ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
+		}
+	}
+
+	this->texture = NULL;
+
+	if(!isDeleted(this->textures))
+	{
+		VirtualNode node = this->textures->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
+
+			if(!isDeleted(bgmapTexture))
+			{
+				BgmapTexture::removeEventListener(bgmapTexture, ListenerObject::safeCast(this), (EventListener)BgmapSprite::onTextureRewritten, kEventTextureRewritten);
+				BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
+			}
+		}
+
+		delete this->textures;
+		this->textures = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void MBgmapSprite::calculateSize()
 {
 	VirtualNode node = this->textures->head;
@@ -396,3 +352,4 @@ void MBgmapSprite::calculateSize()
 		this->halfHeight = ((MBgmapSpriteSpec*)this->componentSpec)->height >> 1;
 	}
 }
+//---------------------------------------------------------------------------------------------------------
