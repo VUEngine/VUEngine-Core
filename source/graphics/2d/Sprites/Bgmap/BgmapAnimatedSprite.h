@@ -63,7 +63,7 @@ class BgmapAnimatedSprite : BgmapSprite
 	/// @param bgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const BgmapAnimatedSpriteSpec* bgmapAnimatedSpriteSpec);
 
-	/// Update the animation
+	/// Update the animation.
 	override void updateAnimation();
 }
 

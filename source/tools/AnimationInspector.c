@@ -783,6 +783,7 @@ void AnimationInspector::createSprite()
 	PixelVector spritePosition = Sprite::getDisplacedPosition(this->animatedSprite);
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
+	spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
 
 	Sprite::setPosition(this->animatedSprite, &spritePosition);
 	Sprite::processEffects(this->animatedSprite);
@@ -793,7 +794,6 @@ void AnimationInspector::createSprite()
 	Sprite::setPosition(this->animatedSprite, &spritePosition);
 	Sprite::setRotation(this->animatedSprite, &spriteRotation);
 	Sprite::setScale(this->animatedSprite, &spriteScale);
-	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->updateAnimationFrame = true;
 

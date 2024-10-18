@@ -31,66 +31,54 @@ class AnimationController;
 // CLASS'S DATA
 //=========================================================================================================
 
-/**
- * A SpriteSpec
- *
- * @memberof	Sprite
- */
+/// A SpriteSpec
+/// @memberof Sprite
 typedef struct SpriteSpec
 {
-	/// class allocator
+	/// Class' allocator
 	AllocatorPointer allocator;
 
-	/// texture to use with the sprite
+	/// Spec for the texture to display
 	TextureSpec* textureSpec;
 
-	/// transparency mode
+	/// Transparency mode
+	/// (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	uint8 transparent;
 
-	/// displacement modifier to achieve better control over display
+	/// Displacement added to the sprite's position
 	PixelVector displacement;
 
 } SpriteSpec;
 
-/**
- * A SpriteSpec that is stored in ROM
- *
- * @memberof	Sprite
- */
+/// @memberof Sprite
 typedef const SpriteSpec SpriteROMSpec;
 
-/**
- * A function which defines the frames to play
- *
- * @memberof	Sprite
- */
+/// A function which defines the frames to play
+/// @memberof Sprite
 typedef struct AnimationFunction
 {
-	/// number of frames of this animation function
+	/// Number of frames of this animation function
 	uint16 numberOfFrames;
 
-	/// frames to play in animation
+	/// Frames to play in animation
 	uint16 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
-	/// number of cycles a frame of animation is displayed
+	/// Number of cycles a frame of animation is displayed
 	uint8 delay;
 
-	/// whether to play it in loop or not
+	/// Whether to play it in loop or not
 	bool loop;
 
-	/// method to call on function completion
+	/// Callback on function completion
 	EventListener onAnimationComplete;
 
-	/// function's name
+	/// Animation's name
 	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
 
 } AnimationFunction;
 
-/**
- * An AnimationFunction that is stored in ROM
- *
- * @memberof	Sprite
- */
+/// An AnimationFunction that is stored in ROM
+/// @memberof	Sprite
 typedef const AnimationFunction AnimationFunctionROMSpec;
 
 
@@ -107,73 +95,225 @@ typedef const AnimationFunction AnimationFunctionROMSpec;
 /// @ingroup graphics-2d-sprites
 abstract class Sprite : VisualComponent
 {
-	// The unusual order of the attributes is to optimize data packing as much as possible
-	// Flag to check if rendered even if outside the screen
+	/// @protectedsection
+
+	/// Flag to check if rendered even if outside the screen
 	bool checkIfWithinScreenSpace;
-	// 2D position
+
+	/// Position cache
 	PixelVector position;
-	// Displacement modifier to achieve better control over display
+
+	/// Displacement added to the sprite's position
 	PixelVector displacement;
-	// Rotation cache
+
+	/// Rotation cache
 	Rotation rotation;
-	// World layer where to render the texture
+	
+	/// Index of the block in DRAM that the sprite configures to
+	/// display its texture
 	int16 index;
-	// Scale cache
+	
+	/// Scale cache
 	PixelScale scale;
-	// Head spec for world entry setup
+	
+	/// Head flags for DRAM entries
 	uint16 head;
-	// Texture's half width
+	
+	/// Cache of the texture's half width
 	int16 halfWidth;
-	// Texture's half height
+	
+	/// Cache of the texture's half height
 	int16 halfHeight;
-	// Animation Controller
+	
+	/// Animation controller
 	AnimationController animationController;
-	// Our texture
+	
+	/// Texture to display
 	Texture texture;
-	// Update animation flag
+	
+	/// Flag to allow/prohibit the update of the animation
 	bool updateAnimationFrame;
-	// The flag raises after the first render cycle
+	
+	/// Flag to invalidate the spatial properties caches (position, rotation, scale)
 	bool transformed;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the sprite attaches to
+	/// @param spriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const SpriteSpec* spriteSpec);
-	void createAnimationController();
-	uint16 getHead();
-	uint16 getMode();
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the region of DRAM that this sprite configured
+	int16 render(int16 index, bool updateAnimation);
+
+	/// Retrieve the sprite's texture.
+	/// @return Texture displayed by the sprite
 	Texture getTexture();
-	uint32 getEffectiveHead();
-	uint16 getEffectiveHeight();
-	uint16 getEffectiveWidth();
-	int16 getEffectiveP();
-	int16 getEffectiveX();
-	int16 getEffectiveY();
-	int16 getWorldMP();
-	int16 getWorldMX();
-	int16 getWorldMY();
-	bool isHidden();
-	int16 getActualFrame();
-	const PixelVector* getDisplacement();
-	void setDisplacement(const PixelVector* displacement);
-	uint8 getFrameDuration();
-	int32 getHalfHeight();
+
+	/// Retrieve the index that determines the region of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite configured
+	int16 getIndex();
+
+	/// Retrieve the head flags for DRAM entries.
+	/// @return Head flags for DRAM entries
+	uint16 getHead();
+
+	/// Retrieve the sprite's texture's half weight.
+	/// @return Sprite's texture's half weight
 	int32 getHalfWidth();
+
+	/// Retrieve the sprite's texture's half height.
+	/// @return Sprite's texture's half height
+	int32 getHalfHeight();
+
+	/// Retrieve the head flags written in the DRAM entries determined by index.
+	/// @return Head flags written to DRAM entries
+	uint32 getEffectiveHead();
+
+	/// Retrieve the weight written in the DRAM entries determined by index.
+	/// @return Weight written to DRAM entries
+	uint16 getEffectiveWidth();
+
+	/// Retrieve the height written in the DRAM entries determined by index.
+	/// @return Height written to DRAM entries
+	uint16 getEffectiveHeight();
+
+	/// Retrieve the X coordinate written in the DRAM entries determined by index.
+	/// @return X coordinate written to DRAM entries
+	int16 getEffectiveX();
+
+	/// Retrieve the Y coordinate written in the DRAM entries determined by index.
+	/// @return Y coordinate written to DRAM entries
+	int16 getEffectiveY();
+
+	/// Retrieve the P value written in the DRAM entries determined by index.
+	/// @return P value written to DRAM entries
+	int16 getEffectiveP();
+
+	/// Retrieve the MX coordinate written in the DRAM entries determined by index.
+	/// @return MX coordinate written to DRAM entries
+	int16 getEffectiveMX();
+
+	/// Retrieve the MY coordinate written in the DRAM entries determined by index.
+	/// @return MY coordinate written to DRAM entries
+	int16 getEffectiveMY();
+
+	/// Retrieve the MP value written in the DRAM entries determined by index.
+	/// @return MP value written to DRAM entries
+	int16 getEffectiveMP();
+
+	/// Check if the sprite is visible.
+	/// @return True if the sprite is visible; false otherwise
+	bool isVisible();
+
+	/// Check if the sprite is hidden.
+	/// @return True if the sprite is hidden; false otherwise
+	bool isHidden();
+
+	/// Check if the sprite displays a texture in BGMAP mode.
+	/// @return True if the sprite displays a texture in BGMAP mode; false otherwise
 	bool isBgmap();
-	bool isAffine();
-	bool isHBias();
+
+	/// Check if the sprite displays a texture in OBJECT mode.
+	/// @return True if the sprite displays a texture in OBJECT mode; false otherwise
 	bool isObject();
-	bool isPlaying();
-	bool isPlayingAnimation(char* animationName);
-	const char* getPlayingAnimationName();
-	void nextFrame();
-	void pause(bool pause);
+
+	/// Check if the sprite displays a texture in AFFINE mode.
+	/// @return True if the sprite displays a texture in AFFINE mode; false otherwise
+	bool isAffine();
+
+	/// Check if the sprite displays a texture in HBIAS mode.
+	/// @return True if the sprite displays a texture in HBIAS mode; false otherwise
+	bool isHBias();
+	
+	/// Create an animation controller for this sprite.
+	void createAnimationController();
+
+	/// Retrieve the sprite's animation controller.
+	/// @return sprite's animation controller
+	AnimationController getAnimationController();
+
+	/// Play the animation with the provided name from the provided array of animation functions.
+	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
+	/// @param animationName: Name of the animation to play
+	/// @param scope: Object that will be notified of playback events
+	/// @return True if the animation started playing; false otherwise
 	bool play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope);
-	void stop();
+
+	/// Replay the last playing animation, if any, from the provided array of animation functions.
+	/// @param animationFunctions: Array of animation functions to look for the animation function to replay
+	/// @return True if the animation started playing again; false otherwise
 	bool replay(const AnimationFunction* animationFunctions[]);
+
+	/// Pause or unpause the currently playing animation if any.
+	/// @param pause: Flag that signals if the animation must be paused or unpaused
+	void pause(bool pause);
+
+	/// Stop any playing animation if any.
+	void stop();
+
+	/// Check if an animation is playing.
+	/// @return True if an animation is playing; false otherwise
+	bool isPlaying();
+
+	/// Check if the animation whose name is provided is playing.
+	/// @param animationName: Name of the animation to check
+	/// @return True if an animation is playing; false otherwise
+	bool isPlayingAnimation(char* animationName);
+
+	/// Skip the currently playing animation to the next frame.
+	void nextFrame();
+
+	/// Rewind the currently playing animation to the previous frame.
 	void previousFrame();
+
+	/// Skip the currently playing animation to the provided frame.
+	/// @param actualFrame: The frame of the playing animation to skip to
+	/// @return True if the actual frame was changed; false otherwise
 	void setActualFrame(int16 actualFrame);
-	void setFrameDurationDecrement(uint8 frameDurationDecrement);
+
+	/// Retrieve the actual frame of the playing animation if any.
+	/// @return Actual frame of the playing animation if any
+	int16 getActualFrame();
+
+	/// Set the duration in game cycles for each frame of animation.
+	/// @param frameDuration: Duration in game cycles for each frame of animation
 	void setFrameDuration(uint8 frameDuration);
-	void update();
+
+	/// Retrieve the duration in game cycles for each frame of animation.
+	/// @param Duration in game cycles for each frame of animation
+	uint8 getFrameDuration();
+
+	/// Set the decrement to frameDuration in each game cycle for each frame of animation.
+	/// @param frameCycleDecrement: Decrement to frameDuration in each game cycle for each frame of animation
+	void setFrameDurationDecrement(uint8 frameDurationDecrement);
+
+	/// Retrieve the animation function's name currently playing if any
+	/// @return Animation function's name currently playing if any
+	const char* getPlayingAnimationName();
+
+	/// Set the position cache.
+	/// @param position: Position cache to save 
+	void setPosition(const PixelVector* position);
+
+	/// Retrieve the position cache.
+	/// @param position: Cached position
+	const PixelVector* getPosition();
+
+	/// Set the position displacement.
+	/// @param displacement: Displacement added to the sprite's position
+	void setDisplacement(const PixelVector* displacement);
+	
+	/// Retrieve the position displacement.
+	/// @return Displacement added to the sprite's position
+	const PixelVector* getDisplacement();
+	
+	/// Retrieve the cached position plus the position displacement.
+	/// @return Cached position plus the position displacement
+	PixelVector getDisplacedPosition();
 
 	/// Add the color provided color data to a CHAR in the sprite's texture.
 	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
@@ -190,34 +330,52 @@ abstract class Sprite : VisualComponent
 	/// @param newChar: Color data array for the CHAR 
 	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
 
-	AnimationController getAnimationController();
-	bool isVisible();
-	bool isWithinScreenSpace();
-	bool isDisposed();
-	int16 render(int16 index, bool updateAnimation);
-	void calculateParallax(fixed_t z);
-	int16 getIndex();
-	PixelVector getDisplacedPosition();
-	void setPosition(const PixelVector* position);
-	const PixelVector* getPosition();
-	virtual void setRotation(const Rotation* rotation);
-	virtual void setScale(const PixelScale* scale);
+	/// Register this sprite with the appropriate sprites manager.
 	virtual void registerWithManager() = 0;
+
+	/// Unegister this sprite with the appropriate sprites manager.	
 	virtual void unregisterWithManager() = 0;
-	virtual void forceHide();
-	virtual void forceShow();
+
+	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
+	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
+	/// @return The index that determines the region of DRAM that this sprite configured
+	virtual int16 doRender(int16 index) = 0;
+
+	/// Invalidate the flags that determine if the sprite requires rendering.
+	virtual void invalidateRendering();
+
+	/// Update the animation.
+	virtual void updateAnimation();
+
+	/// Process special effects
 	virtual void processEffects();
 
 	/// Set the current multiframe.
 	/// @param frame: Current animation frame 
 	virtual void setMultiframe(uint16 frame);
-	virtual int16 doRender(int16 index) = 0;
-	virtual void updateAnimation();
-	virtual void print(int32 x, int32 y);
+
+	/// Forcefully show the sprite
+	virtual void forceShow();
+
+	/// Forcefully hide the sprite
+	virtual void forceHide();
+
+	/// Set the rotation cache.
+	/// @param rotation: Rotation cache to save 
+	virtual void setRotation(const Rotation* rotation);
+
+	/// Set the scale cache.
+	/// @param scale: Scale cache to save 
+	virtual void setScale(const PixelScale* scale);
+
+	/// Retrieve the sprite's total number of pixels actually displayed.
+	/// @return Sprite's total number of pixels actually displayed
 	virtual int32 getTotalPixels() = 0;
 
-	/// Invalidate the flags that determine if the sprite requires rendering.
-	virtual void invalidateRendering();
+	/// Print the sprite's properties.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	virtual void print(int32 x, int32 y);
 }
 
 #endif

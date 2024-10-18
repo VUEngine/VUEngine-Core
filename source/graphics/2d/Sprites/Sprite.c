@@ -8,8 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationController.h>
@@ -26,9 +27,9 @@
 #include "Sprite.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class Texture;
 
@@ -36,16 +37,12 @@ friend class Texture;
 friend class AnimationController;
 #endif
 
-//---------------------------------------------------------------------------------------------------------
-//										CLASS'S METHODS (General)
-//---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- * @param spriteSpec	Spec of the Sprite
- * @param owner				Entity the Sprite belongs to
- */
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
 	Base::constructor(owner, spriteSpec);
@@ -66,10 +63,7 @@ void Sprite::constructor(SpatialObject owner, const SpriteSpec* spriteSpec)
 	this->transformed = false;
 	this->displacement = PixelVector::zero();
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Sprite::destructor()
 {
 	ASSERT(this, "Sprite::destructor: null cast");
@@ -84,41 +78,7 @@ void Sprite::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-void Sprite::createAnimationController()
-{
-    this->animationController = new AnimationController();
-
-	if(isDeleted(this->animationController))
-	{
-		this->animationController = NULL;
-		return;
-	}
-	
-	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
-	{
-		AnimationController::setAnimationCoordinator
-		(
-			this->animationController,
-			AnimationCoordinatorFactory::getCoordinator
-			(
-				AnimationCoordinatorFactory::getInstance(),
-				this->animationController, 
-				ListenerObject::safeCast(this->owner), 
-				Texture::getSpec(this->texture)->charSetSpec
-			)
-		);
-	}
-}
-
-void Sprite::processEffects()
-{
-}
-
-void Sprite::setMultiframe(uint16 frame __attribute__((unused)))
-{
-}
-
+//---------------------------------------------------------------------------------------------------------
 int16 Sprite::render(int16 index, bool updateAnimation)
 {
 	// If the client code makes these checks before calling this method,
@@ -201,311 +161,32 @@ int16 Sprite::render(int16 index, bool updateAnimation)
 
 	return this->index;
 }
-
-/**
- * Retrieve the texture
- *
- * @return 		Texture struct
- */
+//---------------------------------------------------------------------------------------------------------
 Texture Sprite::getTexture()
 {
 	return this->texture;
 }
-
-/**
- * Show
- */
-void Sprite::forceShow()
-{
-	this->show = __SHOW;
-
-	Sprite::setPosition(this, &this->position);
-}
-
-/**
- * Hide
- */
-void Sprite::forceHide()
-{
-	this->show = __HIDE;
-
-	Sprite::setPosition(this, &this->position);
-}
-
-/**
- * Is the Sprite show?
- *
- * @return		Boolean telling whether the sprite is show
- */
-bool Sprite::isHidden()
-{
-	return __HIDE == this->show;
-}
-
-/**
- * Calculate 2D position
- *
- * @param position		3D position
- */
-void Sprite::position()
-{
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
-#ifdef __SPRITE_ROTATE_IN_3D
-	PixelVector position = PixelVector::transformVector3D(this->transformation->position);
-
-	if(position.z != this->position.z)
-	{
-		this->scale.x = this->scale.y = 0;
-	}
-
-#else
-	PixelVector position = PixelVector::projectVector3D(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
-
-	if(position.z != this->position.z)
-	{
-		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
-
-		this->scale.x = this->scale.y = 0;
-	}
-#endif
-
-	if
-	(
-		!this->transformed 
-		||
-		this->position.x != position.x
-		||
-		this->position.y != position.y
-		||
-		this->position.z != position.z
-	)
-	{
-		Sprite::setPosition(this, &position);
-	}
-}
-
-/**
- * Set position
- *
- * @param position		Pixel position
- */
-void Sprite::setPosition(const PixelVector* position)
-{
-	if(NULL == position)
-	{
-		return;
-	}
-
-	this->position = *position;
-	this->rendered = false;
-}
-
-/**
- * Get position relative to the camera
- *
- * @return			Position relative to camera
- */
-const PixelVector* Sprite::getPosition()
-{
-	return (const PixelVector*)&this->position;
-}
-
-
-/**
- * Get displacement
- *
- * @return
- */
-const PixelVector* Sprite::getDisplacement()
-{
-	return &this->displacement;
-}
-
-/**
- * Set displacement
- *
- * @param displacement 	PixelVector
- */
-void Sprite::setDisplacement(const PixelVector* displacement)
-{
-	this->displacement = *displacement;
-	this->rendered = false;
-}
-
-/**
- * Get displaced position relative to the camera
- *
- * @return			Displaced position relative to camera
- */
-PixelVector Sprite::getDisplacedPosition()
-{
-	PixelVector position =
-	{
-		this->position.x + this->displacement.x,
-		this->position.y + this->displacement.y,
-		this->position.z + this->displacement.z,
-		this->position.parallax + this->displacement.parallax
-	};
-
-	return position;
-}
-
-/**
- * Rotate
- *
- * @param rotation	Rotation struct
- */
-void Sprite::rotate()
-{
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
-	if
-	(
-		!this->transformed
-		||
-		this->rotation.x != this->transformation->rotation.x
-		||
-		this->rotation.y != this->transformation->rotation.y
-		||
-		this->rotation.z != this->transformation->rotation.z
-	)
-	{
-		Sprite::setRotation(this, &this->transformation->rotation);
-		this->rotation = this->transformation->rotation;
-		this->rendered = false;
-	}
-}
-
-void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
-{
-	this->rotation = *rotation;
-	this->rendered = false;
-}
-
-const Rotation* Sprite::getRotation()
-{
-	return &this->transformation->rotation;
-}
-
-/**
- * Calculate zoom scaling factor
- *
- * @param scale	Scale struct to apply
- * @param z
- */
-void Sprite::scale()
-{
-	if(NULL == this->transformation)
-	{
-		return;
-	}
-
-	if
-	(
-		!this->transformed
-		||
-		0 >= this->scale.x
-		||
-		0 >= this->scale.y
-		||
-		this->scale.x != this->transformation->scale.x
-		||
-		this->scale.y != this->transformation->scale.y
-	)
-	{
-		this->scale.x = this->transformation->scale.x;
-		this->scale.y = this->transformation->scale.y;
-
-		this->rendered = false;
-
-		if(Sprite::overrides(this, setScale))
-		{
-			PixelScale scale = this->scale;
-
-			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
-			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
-
-			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
-
-			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
-			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
-
-			scale.x = __FIX7_9_MULT(scale.x, ratio);
-			scale.y = __FIX7_9_MULT(scale.y, ratio);
-
-			Sprite::setScale(this, &scale);
-		}		
-	}
-}
-
-void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
-{
-	this->rendered = false;
-}
-
-/**
- * Calculate parallax
- *
- * @param z				Z coordinate to base on the calculation
- */
-void Sprite::calculateParallax(fixed_t z __attribute__ ((unused)))
-{
-	this->position.parallax = Optics::calculateParallax(z);
-}
-
-/**
- * Retrieve animation controller
- *
- * @private
- * @return		Sprite's AnimationController
- */
-AnimationController Sprite::getAnimationController()
-{
-	return this->animationController;
-}
-
-/**
- * Get WORLD layer
- *
- * @return 		World layer
- */
+//---------------------------------------------------------------------------------------------------------
 int16 Sprite::getIndex()
 {
 	return this->index;
 }
-
-/**
- * Get sprite's render head
- *
- * @return
- */
+//---------------------------------------------------------------------------------------------------------
 uint16 Sprite::getHead()
 {
 	return this->head;
 }
-
-/**
- * Get sprite's render mode
- *
- * @return 		Mode
- */
-uint16 Sprite::getMode()
+//---------------------------------------------------------------------------------------------------------
+int32 Sprite::getHalfWidth()
 {
-	return this->head & 0x3000;
+	return this->halfWidth;
 }
-
-/**
- * Get sprites's world head
- *
- * @return
- */
+//---------------------------------------------------------------------------------------------------------
+int32 Sprite::getHalfHeight()
+{
+	return this->halfHeight;
+}
+//---------------------------------------------------------------------------------------------------------
 uint32 Sprite::getEffectiveHead()
 {
 	if(Sprite::isObject(this))
@@ -516,108 +197,7 @@ uint32 Sprite::getEffectiveHead()
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return worldPointer->head;
 }
-
-/**
- * Get sprites's layer's gx
- *
- * @return
- */
-int16 Sprite::getEffectiveX()
-{
-	if(Sprite::isObject(this))
-	{
-		return this->position.x;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->gx;
-}
-
-/**
- * Get sprites's layer's gy
- *
- * @return
- */
-int16 Sprite::getEffectiveY()
-{
-	if(Sprite::isObject(this))
-	{
-		return this->position.y;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->gy;
-}
-
-/**
- * Get sprites's layer's gp
- *
- * @return
- */
-int16 Sprite::getEffectiveP()
-{
-	if(Sprite::isObject(this))
-	{
-		return this->position.parallax;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->gp;
-}
-
-/**
- * Get sprites's layer's mx
- *
- * @return
- */
-int16 Sprite::getWorldMX()
-{
-	if(Sprite::isObject(this))
-	{
-		return -1;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->mx;
-}
-
-/**
- * Get sprites's layer's my
- *
- * @return
- */
-int16 Sprite::getWorldMY()
-{
-	if(Sprite::isObject(this))
-	{
-		return -1;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->my;
-}
-
-/**
- * Get sprites's layer's mp
- *
- * @return
- */
-int16 Sprite::getWorldMP()
-{
-	if(Sprite::isObject(this))
-	{
-		return -1;
-	}
-
-	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
-	return worldPointer->mp;
-}
-
-/**
- * Get sprites's layer's width
- *
- * @return 		Width
- */
+//---------------------------------------------------------------------------------------------------------
 uint16 Sprite::getEffectiveWidth()
 {
 	if(Sprite::isObject(this))
@@ -628,12 +208,7 @@ uint16 Sprite::getEffectiveWidth()
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return 0 > (int16)worldPointer->w ? 0 : worldPointer->w;
 }
-
-/**
- * Get sprites's layer's height
- *
- * @return 		Width
- */
+//---------------------------------------------------------------------------------------------------------
 uint16 Sprite::getEffectiveHeight()
 {
 	if(Sprite::isObject(this))
@@ -644,114 +219,134 @@ uint16 Sprite::getEffectiveHeight()
 	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
 	return 0 > (int16)worldPointer->h ? 0 : worldPointer->h;
 }
-
-/**
- * Get half width
- *
- * @return
- */
-int32 Sprite::getHalfWidth()
-{
-	return this->halfWidth;
-}
-
-/**
- * Get half height
- *
- * @return
- */
-int32 Sprite::getHalfHeight()
-{
-	return this->halfHeight;
-}
-
-
 //---------------------------------------------------------------------------------------------------------
-//										CLASS'S METHODS (Animation)
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Update
- */
-void Sprite::update()
+int16 Sprite::getEffectiveX()
 {
-	if(NULL == this->animationController)
+	if(Sprite::isObject(this))
 	{
-		return;
+		return this->position.x;
 	}
 
-#ifdef __RELEASE
-	if(!this->updateAnimationFrame && this->animationController->playing)
-#else
-	if(!this->updateAnimationFrame)
-#endif
-	{
-		this->updateAnimationFrame = AnimationController::updateAnimation(this->animationController);
-	}
-	
-	if(this->updateAnimationFrame)
-	{
-		Sprite::updateAnimation(this);
-		this->updateAnimationFrame = false;
-		this->rendered = false;
-	}
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gx;
 }
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getEffectiveY()
+{
+	if(Sprite::isObject(this))
+	{
+		return this->position.y;
+	}
 
-/**
- * Is visible?
- *
- * @return visibility
- */
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gy;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getEffectiveP()
+{
+	if(Sprite::isObject(this))
+	{
+		return this->position.parallax;
+	}
+
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->gp;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getEffectiveMX()
+{
+	if(Sprite::isObject(this))
+	{
+		return -1;
+	}
+
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->mx;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getEffectiveMY()
+{
+	if(Sprite::isObject(this))
+	{
+		return -1;
+	}
+
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->my;
+}
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getEffectiveMP()
+{
+	if(Sprite::isObject(this))
+	{
+		return -1;
+	}
+
+	WorldAttributes* worldPointer = &_worldAttributesCache[this->index];
+	return worldPointer->mp;
+}
+//---------------------------------------------------------------------------------------------------------
 bool Sprite::isVisible()
 {
 	return __NO_RENDER_INDEX != this->index && __SHOW == this->show;
 }
-
-/**
- * Is within the screen space
- *
- * @return visibility
- */
-bool Sprite::isWithinScreenSpace()
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::isHidden()
 {
-	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
-	{
-		return false;
-	}
-
-	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
-	{
-		return false;
-	}
-/*
-	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
-	{
-		return false;
-	}
-*/
-	return true;
+	return __HIDE == this->show;
 }
-
-/**
- * Pause animation
- *
- * @param pause	Boolean
- */
-void Sprite::pause(bool pause)
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::isBgmap()
 {
-	if(!isDeleted(this->animationController))
+	return (__WORLD_BGMAP == (this->head & __WORLD_BGMAP)) || Sprite::isAffine(this) || Sprite::isHBias(this);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::isObject()
+{
+	return NULL != __GET_CAST(ObjectSprite, this);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::isAffine()
+{
+	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Sprite::isHBias()
+{
+	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::createAnimationController()
+{
+    this->animationController = new AnimationController();
+
+	if(isDeleted(this->animationController))
 	{
-		// first animate the frame
-		AnimationController::pause(this->animationController, pause);
+		this->animationController = NULL;
+		return;
+	}
+	
+	if(!isDeleted(this->texture) && Texture::isSingleFrame(this->texture) && Texture::isShared(this->texture))
+	{
+		AnimationController::setAnimationCoordinator
+		(
+			this->animationController,
+			AnimationCoordinatorFactory::getCoordinator
+			(
+				AnimationCoordinatorFactory::getInstance(),
+				this->animationController, 
+				ListenerObject::safeCast(this->owner), 
+				Texture::getSpec(this->texture)->charSetSpec
+			)
+		);
 	}
 }
-
-/**
- * Play a given animation
- *
- * @param animationFunctions	AnimationFunction*
- * @param animationName			Name of animation function to play
- */
+//---------------------------------------------------------------------------------------------------------
+AnimationController Sprite::getAnimationController()
+{
+	return this->animationController;
+}
+//---------------------------------------------------------------------------------------------------------
 bool Sprite::play(const AnimationFunction* animationFunctions[], const char* animationName, ListenerObject scope)
 {
 	ASSERT(NULL != animationFunctions, "Sprite::play: null animationFunctions");
@@ -767,24 +362,6 @@ bool Sprite::play(const AnimationFunction* animationFunctions[], const char* ani
 
 	return playBackStarted;
 }
-
-/**
- * Stop any playing animation
- *
- */
-void Sprite::stop()
-{
-	if(!isDeleted(this->animationController))
-	{
-		AnimationController::stop(this->animationController);
-	}
-}
-
-/**
- * Replay the last animation
- *
- * @param animationFunctions	AnimationFunction
- */
 bool Sprite::replay(const AnimationFunction* animationFunctions[])
 {
 	if(!isDeleted(this->animationController))
@@ -798,11 +375,22 @@ bool Sprite::replay(const AnimationFunction* animationFunctions[])
 	return false;
 }
 
-/**
- * Is Sprite playing an animation?
- *
- * @return		Boolean whether Sprite is playing an animation
- */
+void Sprite::pause(bool pause)
+{
+	if(!isDeleted(this->animationController))
+	{
+		// first animate the frame
+		AnimationController::pause(this->animationController, pause);
+	}
+}
+void Sprite::stop()
+{
+	if(!isDeleted(this->animationController))
+	{
+		AnimationController::stop(this->animationController);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool Sprite::isPlaying()
 {
 	if(!isDeleted(this->animationController))
@@ -813,13 +401,7 @@ bool Sprite::isPlaying()
 
 	return false;
 }
-
-/**
- * Is Sprite playing a function?
- *
- * @param animationName	Name of function to play
- * @return				Boolean whether Sprite is playing a function
- */
+//---------------------------------------------------------------------------------------------------------
 bool Sprite::isPlayingAnimation(char* animationName)
 {
 	if(!isDeleted(this->animationController))
@@ -829,55 +411,25 @@ bool Sprite::isPlayingAnimation(char* animationName)
 
 	return false;
 }
-
-/**
- * Retrieve the name of the current animation
- *
- * @return				Name of the animation that is playing
- */
-const char* Sprite::getPlayingAnimationName()
+//---------------------------------------------------------------------------------------------------------
+void Sprite::nextFrame()
 {
 	if(!isDeleted(this->animationController))
 	{
-		return AnimationController::getPlayingAnimationName(this->animationController);
+		AnimationController::nextFrame(this->animationController);
+		this->updateAnimationFrame = true;
 	}
-
-	return "None";
 }
-
-/**
- * Set frame cycle decrement
- *
- * @param frameDurationDecrement	Frame cycle decrement
- */
-void Sprite::setFrameDurationDecrement(uint8 frameDurationDecrement)
+//---------------------------------------------------------------------------------------------------------
+void Sprite::previousFrame()
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::setFrameDurationDecrement(this->animationController, frameDurationDecrement);
+		AnimationController::previousFrame(this->animationController);
+		this->updateAnimationFrame = true;
 	}
 }
-
-/**
- * Get actual frame
- *
- * @return		Frame number
- */
-int16 Sprite::getActualFrame()
-{
-	if(!isDeleted(this->animationController))
-	{
-		return AnimationController::getActualFrame(this->animationController);
-	}
-
-	return -1;
-}
-
-/**
- * Set actual frame
- *
- * @param actualFrame	Frame number
- */
+//---------------------------------------------------------------------------------------------------------
 void Sprite::setActualFrame(int16 actualFrame)
 {
 	if(!isDeleted(this->animationController))
@@ -889,36 +441,25 @@ void Sprite::setActualFrame(int16 actualFrame)
 		Texture::setFrame(this->texture, actualFrame);
 	}
 }
-
-/**
- * Skip to next frame
- */
-void Sprite::nextFrame()
+//---------------------------------------------------------------------------------------------------------
+int16 Sprite::getActualFrame()
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::nextFrame(this->animationController);
-		this->updateAnimationFrame = true;
+		return AnimationController::getActualFrame(this->animationController);
 	}
-}
 
-/**
- * Rewind to previous frame
- */
-void Sprite::previousFrame()
+	return -1;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setFrameDuration(uint8 frameDuration)
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::previousFrame(this->animationController);
-		this->updateAnimationFrame = true;
+		AnimationController::setFrameDuration(this->animationController, frameDuration);
 	}
 }
-
-/**
- * Get frame delay
- *
- * @return		Frame delay
- */
+//---------------------------------------------------------------------------------------------------------
 uint8 Sprite::getFrameDuration()
 {
 	if(!isDeleted(this->animationController))
@@ -928,72 +469,135 @@ uint8 Sprite::getFrameDuration()
 
 	return -1;
 }
-
-/**
- * Set frame delay
- *
- * @param frameDuration	Frame delay
- */
-void Sprite::setFrameDuration(uint8 frameDuration)
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setFrameDurationDecrement(uint8 frameDurationDecrement)
 {
 	if(!isDeleted(this->animationController))
 	{
-		AnimationController::setFrameDuration(this->animationController, frameDuration);
+		AnimationController::setFrameDurationDecrement(this->animationController, frameDurationDecrement);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+const char* Sprite::getPlayingAnimationName()
+{
+	if(!isDeleted(this->animationController))
+	{
+		return AnimationController::getPlayingAnimationName(this->animationController);
+	}
 
-/**
- * Write animation
- */
+	return "None";
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setPosition(const PixelVector* position)
+{
+	if(NULL == position)
+	{
+		return;
+	}
+
+	this->position = *position;
+	this->rendered = false;
+}
+//---------------------------------------------------------------------------------------------------------
+const PixelVector* Sprite::getPosition()
+{
+	return (const PixelVector*)&this->position;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setDisplacement(const PixelVector* displacement)
+{
+	this->displacement = *displacement;
+	this->rendered = false;
+}
+//---------------------------------------------------------------------------------------------------------
+const PixelVector* Sprite::getDisplacement()
+{
+	return &this->displacement;
+}
+//---------------------------------------------------------------------------------------------------------
+PixelVector Sprite::getDisplacedPosition()
+{
+	PixelVector position =
+	{
+		this->position.x + this->displacement.x,
+		this->position.y + this->displacement.y,
+		this->position.z + this->displacement.z,
+		this->position.parallax + this->displacement.parallax
+	};
+
+	return position;
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::addChar(const Point* texturePoint, const uint32* newChar)
+{
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	Texture::addChar(this->texture, texturePoint, newChar);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
+{
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	Texture::putChar(this->texture, texturePoint, newChar);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
+{
+	if(isDeleted(this->texture))
+	{
+		return;
+	}
+
+	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::invalidateRendering()
+{
+	this->transformed = false;
+	this->rendered = false;
+}
+//---------------------------------------------------------------------------------------------------------
 void Sprite::updateAnimation()
 {}
-
-/**
- * Check if uses affine mode
- *
- * @return		True if it does
- */
-bool Sprite::isAffine()
+//---------------------------------------------------------------------------------------------------------
+void Sprite::processEffects()
+{}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setMultiframe(uint16 frame __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::forceShow()
 {
-	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
-}
+	this->show = __SHOW;
 
-/**
- * Check if uses h-bias mode
- *
- * @return		True if it does
- */
-bool Sprite::isHBias()
+	Sprite::setPosition(this, &this->position);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::forceHide()
 {
-	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
-}
+	this->show = __HIDE;
 
-/**
- * Check if uses OBJECT mode
- *
- * @return		True if it does
- */
-bool Sprite::isBgmap()
+	Sprite::setPosition(this, &this->position);
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setRotation(const Rotation* rotation __attribute__((unused)))
 {
-	return (__WORLD_BGMAP == (this->head & __WORLD_BGMAP)) || Sprite::isAffine(this) || Sprite::isHBias(this);
+	this->rotation = *rotation;
+	this->rendered = false;
 }
-
-/**
- * Check if uses OBJECT mode
- *
- * @return		True if it does
- */
-bool Sprite::isObject()
+//---------------------------------------------------------------------------------------------------------
+void Sprite::setScale(const PixelScale* scale __attribute__((unused)))
 {
-	return NULL != __GET_CAST(ObjectSprite, this);
+	this->rendered = false;
 }
-
-/**
- * Print status
- *
- * @param x			Camera's x coordinate
- * @param y			Camera's y coordinate
- */
+//---------------------------------------------------------------------------------------------------------
 void Sprite::print(int32 x, int32 y)
 {
 	// Allow normal rendering once for WORLD values to populate properly
@@ -1052,9 +656,9 @@ void Sprite::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveY(this), x + 24, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "M (x,y,p):                           ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getWorldMX(this), x + 18, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getWorldMY(this), x + 24, y, NULL);
-	Printing::int32(Printing::getInstance(), Sprite::getWorldMP(this), x + 30, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMX(this), x + 18, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMY(this), x + 24, y, NULL);
+	Printing::int32(Printing::getInstance(), Sprite::getEffectiveMP(this), x + 30, y, NULL);
 	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveWidth(this), x + 18, y, NULL);
 	Printing::int32(Printing::getInstance(), Sprite::getEffectiveHeight(this), x + 24, y++, NULL);
@@ -1087,84 +691,164 @@ void Sprite::print(int32 x, int32 y)
 
 	this->transparent = transparent;
 }
-
-
-//---------------------------------------------------------------------------------------------------------
-//										CLASS'S METHODS (Direct Draw)
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Write a char directly to the Sprite's Texture
- *
- * @param texturePoint		Point that defines the position of the char in the Sprite's texture
- * @param newChar			Char to write
- */
-void Sprite::addChar(const Point* texturePoint, const uint32* newChar)
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Sprite::position()
 {
-	if(isDeleted(this->texture))
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	Texture::addChar(this->texture, texturePoint, newChar);
-}
+#ifdef __SPRITE_ROTATE_IN_3D
+	PixelVector position = PixelVector::transformVector3D(this->transformation->position);
 
-/**
- * Write a char directly to the Sprite's Texture
- *
- * @param texturePoint		Point that defines the position of the char in the Sprite's texture
- * @param newChar			Char to write
- */
-void Sprite::putChar(const Point* texturePoint, const uint32* newChar)
+	if(position.z != this->position.z)
+	{
+		this->scale.x = this->scale.y = 0;
+	}
+
+#else
+	PixelVector position = PixelVector::projectVector3D(Vector3D::sub(this->transformation->position, *_cameraPosition), this->position.parallax);
+
+	if(position.z != this->position.z)
+	{
+		position.parallax = Optics::calculateParallax(this->transformation->position.z - _cameraPosition->z);
+
+		this->scale.x = this->scale.y = 0;
+	}
+#endif
+
+	if
+	(
+		!this->transformed 
+		||
+		this->position.x != position.x
+		||
+		this->position.y != position.y
+		||
+		this->position.z != position.z
+	)
+	{
+		Sprite::setPosition(this, &position);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::rotate()
 {
-	if(isDeleted(this->texture))
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	Texture::putChar(this->texture, texturePoint, newChar);
+	if
+	(
+		!this->transformed
+		||
+		this->rotation.x != this->transformation->rotation.x
+		||
+		this->rotation.y != this->transformation->rotation.y
+		||
+		this->rotation.z != this->transformation->rotation.z
+	)
+	{
+		Sprite::setRotation(this, &this->transformation->rotation);
+		this->rotation = this->transformation->rotation;
+		this->rendered = false;
+	}
 }
-
-/**
- * Write a single pixel directly to the Sprite's Texture
- *
- * @param texturePixel		Point that defines the position of the char in the Sprite's texture
- * @param charSetPixel		Pixel data
- * @param newPixelColor		Color value of pixel
- */
-void Sprite::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
+//---------------------------------------------------------------------------------------------------------
+void Sprite::scale()
 {
-	if(isDeleted(this->texture))
+	if(NULL == this->transformation)
 	{
 		return;
 	}
 
-	Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
-}
+	if
+	(
+		!this->transformed
+		||
+		0 >= this->scale.x
+		||
+		0 >= this->scale.y
+		||
+		this->scale.x != this->transformation->scale.x
+		||
+		this->scale.y != this->transformation->scale.y
+	)
+	{
+		this->scale.x = this->transformation->scale.x;
+		this->scale.y = this->transformation->scale.y;
 
-/**
- * Invalidate render flag
- *
- */
-void Sprite::invalidateRendering()
+		this->rendered = false;
+
+		if(Sprite::overrides(this, setScale))
+		{
+			PixelScale scale = this->scale;
+
+			NM_ASSERT(0 < scale.x, "Sprite::scale: 0 scale x");
+			NM_ASSERT(0 < scale.y, "Sprite::scale: 0 scale y");
+
+			fix7_9 ratio = __FIXED_TO_FIX7_9(Vector3D::getScale(this->transformation->position.z, true));
+
+			ratio = 0 > ratio? __1I_FIX7_9 : ratio;
+			ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
+
+			scale.x = __FIX7_9_MULT(scale.x, ratio);
+			scale.y = __FIX7_9_MULT(scale.y, ratio);
+
+			Sprite::setScale(this, &scale);
+		}		
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Sprite::update()
 {
-	this->transformed = false;
-	this->rendered = false;
+	if(NULL == this->animationController)
+	{
+		return;
+	}
+
+#ifdef __RELEASE
+	if(!this->updateAnimationFrame && this->animationController->playing)
+#else
+	if(!this->updateAnimationFrame)
+#endif
+	{
+		this->updateAnimationFrame = AnimationController::updateAnimation(this->animationController);
+	}
+	
+	if(this->updateAnimationFrame)
+	{
+		Sprite::updateAnimation(this);
+		this->updateAnimationFrame = false;
+		this->rendered = false;
+	}
 }
-
-
 //---------------------------------------------------------------------------------------------------------
-//										CLASS'S METHODS (Affine & HBias FX)
+bool Sprite::isWithinScreenSpace()
+{
+	if(!((unsigned)(this->position.x + this->displacement.x - (_cameraFrustum->x0 - this->halfWidth)) < (unsigned)(_cameraFrustum->x1 + this->halfWidth - (_cameraFrustum->x0 - this->halfWidth))))
+	{
+		return false;
+	}
+
+	if(!((unsigned)(this->position.y + this->displacement.y - (_cameraFrustum->y0 - this->halfHeight)) < (unsigned)(_cameraFrustum->y1 + this->halfHeight - (_cameraFrustum->y0 - this->halfHeight))))
+	{
+		return false;
+	}
+/*
+	if(!((unsigned)(this->position.z + this->displacement.z - _cameraFrustum->z0) < (unsigned)(_cameraFrustum->z1 - _cameraFrustum->z0)))
+	{
+		return false;
+	}
+*/
+	return true;
+}
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * Apply Affine transformations to Sprite
- */
-void Sprite::applyAffineTransformations()
-{}
-
-/**
- * Apply HBias effects to Sprite
- */
-void Sprite::applyHbiasEffects()
-{}

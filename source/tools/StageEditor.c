@@ -814,13 +814,13 @@ void StageEditor::showSelectedUserObject()
 		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userObjectSprite);
 		spritePosition.x = __I_TO_FIXED((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
 		spritePosition.y = __I_TO_FIXED((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.parallax = Optics::calculateParallax(spritePosition.z);
 
 		Rotation spriteRotation = {0, 0, 0};
 		PixelScale spriteScale = {1, 1};
 		Sprite::setPosition(this->userObjectSprite, &spritePosition);
 		Sprite::setRotation(this->userObjectSprite, &spriteRotation);
 		Sprite::setScale(this->userObjectSprite, &spriteScale);
-		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->updateAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());

@@ -114,7 +114,7 @@ class ObjectSpriteContainer : Sprite
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the regio of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite configured
 	override int16 doRender(int16 index);
 	
 	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
@@ -124,13 +124,13 @@ class ObjectSpriteContainer : Sprite
 	/// Invalidate the render flag
 	override void invalidateRendering();
 	
-	/// Show the sprite for debugging purposes
+	/// Forcefully show the sprites
 	override void forceShow();
 
-	/// Hide the sprite for debugging purposes
+	/// Forcefully hide the sprites
 	override void forceHide();
 
-	/// Print the frames per second statistics.
+	/// Print the container's statistics.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	override void print(int32 x, int32 y);
