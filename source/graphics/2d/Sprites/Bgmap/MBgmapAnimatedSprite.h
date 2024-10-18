@@ -55,10 +55,10 @@ class MBgmapAnimatedSprite : MBgmapSprite
 	/// @param mBgmapAnimatedSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const MBgmapAnimatedSpriteSpec* mBgmapAnimatedSpriteSpec);
 
-	/// Update the animation
+	/// Update the animation.
 	override void updateAnimation();
 
-	/// Set the current multiframe
+	/// Set the current multiframe.
 	/// @param frame: Current animation frame 
 	override void setMultiframe(uint16 frame);
 }

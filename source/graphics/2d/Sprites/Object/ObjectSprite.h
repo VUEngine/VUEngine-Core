@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -58,7 +58,7 @@ typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 //=========================================================================================================
 
 ///
-/// Class BgmapSprite
+/// Class ObjectSprite
 ///
 /// Inherits from Sprite
 ///
@@ -106,7 +106,7 @@ class ObjectSprite : Sprite
 
 	/// Class' constructor
 	/// @param owner: SpatialObject to which the sprite attaches to
-	/// @param bgmapSpriteSpec: Specification that determines how to configure the sprite
+	/// @param objectSpriteSpec: Specification that determines how to configure the sprite
 	void constructor(SpatialObject owner, const ObjectSpriteSpec* objectSpriteSpec);
 
 	/// Force the computation of the number of OBJECTs that the sprite uses.

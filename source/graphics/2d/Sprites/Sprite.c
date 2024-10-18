@@ -225,7 +225,7 @@ void Sprite::forceShow()
 /**
  * Hide
  */
-void Sprite::hideForDebug()
+void Sprite::forceHide()
 {
 	this->show = __HIDE;
 

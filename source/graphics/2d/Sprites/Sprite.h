@@ -204,17 +204,19 @@ abstract class Sprite : VisualComponent
 	virtual void setScale(const PixelScale* scale);
 	virtual void registerWithManager() = 0;
 	virtual void unregisterWithManager() = 0;
-	virtual void hideForDebug();
+	virtual void forceHide();
 	virtual void forceShow();
 	virtual void processEffects();
 
-	/// Set the current multiframe
+	/// Set the current multiframe.
 	/// @param frame: Current animation frame 
 	virtual void setMultiframe(uint16 frame);
 	virtual int16 doRender(int16 index) = 0;
 	virtual void updateAnimation();
 	virtual void print(int32 x, int32 y);
 	virtual int32 getTotalPixels() = 0;
+
+	/// Invalidate the flags that determine if the sprite requires rendering.
 	virtual void invalidateRendering();
 }
 

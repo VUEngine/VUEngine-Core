@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <Mem.h>
@@ -29,9 +29,9 @@
 #include "ObjectSpriteContainer.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class ObjectSprite;
 friend class Sprite;
@@ -40,19 +40,76 @@ friend class VirtualList;
 friend class VirtualNode;
 
 
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
+
 static int32 _spt;
 static int16 _objectIndex;
 static int16 _previousObjectIndex;
 static uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
+
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+static void ObjectSpriteContainer::reset()
+{
+	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
+
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegistersCache[i] = _objectIndex;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+static void ObjectSpriteContainer::prepareForRendering()
+{
+	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
+	_objectIndex = __TOTAL_OBJECTS - 1;
+}
+//---------------------------------------------------------------------------------------------------------
+static void ObjectSpriteContainer::finishRendering()
+{
+	// clear OBJ memory
+	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
+	{
+		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
+	}
+
+	_previousObjectIndex = _objectIndex;
+}
+//---------------------------------------------------------------------------------------------------------
+static void ObjectSpriteContainer::writeDRAM()
+{
+	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
+	{
+		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
+	}
+
+	CACHE_RESET;
+	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2);
+
+#ifdef __SHOW_SPRITES_PROFILING
+	extern int32 _writtenObjectTiles;
+	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
+#endif
+}
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- */
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::constructor()
 {
 	Base::constructor(NULL, NULL);
@@ -67,10 +124,7 @@ void ObjectSpriteContainer::constructor()
 	this->hideSprites = false;
 	this->sortingSpriteNode = NULL;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::destructor()
 {
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
@@ -88,30 +142,7 @@ void ObjectSpriteContainer::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Register
- *
- */
-void ObjectSpriteContainer::registerWithManager()
-{
-	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
-}
-
-/**
- * Unregister
- *
- */
-void ObjectSpriteContainer::unregisterWithManager()
-{
-	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
-}
-
-/**
- * Add an ObjectSprite to this container
- *
- * @param objectSprite		Sprite to add
- */
+//---------------------------------------------------------------------------------------------------------
 bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 {
 	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
@@ -138,12 +169,7 @@ bool ObjectSpriteContainer::registerSprite(ObjectSprite objectSprite)
 
 	return true;
 }
-
-/**
- * Remove a previously registered ObjectSprite
- *
- * @param objectSprite		Sprite to remove
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 {
 	ASSERT(objectSprite, "ObjectSpriteContainer::unregisterSprite: null objectSprite");
@@ -156,12 +182,7 @@ void ObjectSpriteContainer::unregisterSprite(ObjectSprite objectSprite)
 	// remove the objectSprite to prevent rendering afterwards
 	VirtualList::removeData(this->objectSprites, objectSprite);
 }
-
-/**
- * Sort the object sprites within this container according to their z coordinates
- *
- * @private
- */
+//---------------------------------------------------------------------------------------------------------
 bool ObjectSpriteContainer::sortProgressively(bool complete)
 {
 	if(NULL == this->sortingSpriteNode)
@@ -217,78 +238,7 @@ bool ObjectSpriteContainer::sortProgressively(bool complete)
 
 	return swapped;
 }
-
-void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
-{
-	ObjectSpriteContainer::hideForDebug(this);
-
-	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(objectSprite == spareSprite)
-		{
-			ObjectSprite::forceShow(objectSprite);
-			ObjectSpriteContainer::forceShow(this);
-			continue;
-		}
-
-		ObjectSprite::hideForDebug(objectSprite);
-	}
-}
-
-/**
- * Show all WORLD layers
- */
-void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
-{
-	ObjectSpriteContainer::forceShow(this);
-
-	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
-	{
-		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
-
-		if(objectSprite == spareSprite)
-		{
-			ObjectSprite::hideForDebug(objectSprite);
-			continue;
-		}
-
-		ObjectSprite::forceShow(objectSprite);
-	}
-}
-
-void ObjectSpriteContainer::forceShow()
-{
-	Base::forceShow(this);
-	this->show = __HIDE;
-	this->hideSprites = false;
-}
-
-void ObjectSpriteContainer::hideForDebug()
-{
-	this->show = __SHOW;
-	this->hideSprites = true;
-}
-
-/**
- * Render
- *
- * @param index
- */
-int16 ObjectSpriteContainer::doRender(int16 index)
-{
-	this->index = index;
-
-	return index;
-}
-
-/**
- * Render child sprites
- *
- * @param evenFrame
- * @param updateAnimations
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 {
 	// Setup spt
@@ -342,43 +292,97 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 	this->lastObjectIndex = _objectIndex;
 }
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::showSprites(ObjectSprite spareSprite)
+{
+	ObjectSpriteContainer::forceShow(this);
 
-/**
- * Retrieve the number of used OBJECTs within the segment assigned to this container
- *
- * @return 		Number of used OBJECTs
- */
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(objectSprite == spareSprite)
+		{
+			ObjectSprite::forceHide(objectSprite);
+			continue;
+		}
+
+		ObjectSprite::forceShow(objectSprite);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::hideSprites(ObjectSprite spareSprite)
+{
+	ObjectSpriteContainer::forceHide(this);
+
+	for(VirtualNode node = this->objectSprites->head; NULL != node; node = node->next)
+	{
+		ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+		if(objectSprite == spareSprite)
+		{
+			ObjectSprite::forceShow(objectSprite);
+			ObjectSpriteContainer::forceShow(this);
+			continue;
+		}
+
+		ObjectSprite::forceHide(objectSprite);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 int32 ObjectSpriteContainer::getTotalUsedObjects()
 {
 	return this->firstObjectIndex - this->lastObjectIndex;
 }
-
-/**
- * Retrieve the index of the first OBJECT within the segment assigned to this container
- *
- * @return 		Index of the first OBJECT
- */
-int32 ObjectSpriteContainer::getFirstObjectIndex()
+//---------------------------------------------------------------------------------------------------------//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::registerWithManager()
 {
-	return this->firstObjectIndex;
+	SpriteManager::registerSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
-
-/**
- * Retrieve the index of the last OBJECT within the segment assigned to this container
- *
- * @return 		Index of the last OBJECT
- */
-int32 ObjectSpriteContainer::getLastObjectIndex()
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::unregisterWithManager()
 {
-	return this->firstObjectIndex + this->lastObjectIndex;
+	SpriteManager::unregisterSprite(SpriteManager::getInstance(), Sprite::safeCast(this), false);
 }
+//---------------------------------------------------------------------------------------------------------
+int16 ObjectSpriteContainer::doRender(int16 index)
+{
+	this->index = index;
 
-/**
- * Print the container's status
- *
- * @param x			Camera x coordinate
- * @param y			Camera y coordinate
- */
+	return index;
+}
+//---------------------------------------------------------------------------------------------------------
+int32 ObjectSpriteContainer::getTotalPixels()
+{
+	if(__NO_RENDER_INDEX != this->index)
+	{
+		return (this->firstObjectIndex - this->lastObjectIndex) * 8 * 8;
+	}
+
+	return 0;
+}
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::invalidateRendering()
+{
+	for(VirtualNode node = this->objectSprites->tail; NULL != node; node = node->previous)
+	{
+		ObjectSprite::invalidateRendering(ObjectSprite::safeCast(node->data));
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::forceShow()
+{
+	Base::forceShow(this);
+	this->show = __HIDE;
+	this->hideSprites = false;
+}
+//---------------------------------------------------------------------------------------------------------
+void ObjectSpriteContainer::forceHide()
+{
+	this->show = __SHOW;
+	this->hideSprites = true;
+}
+//---------------------------------------------------------------------------------------------------------
 void ObjectSpriteContainer::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
@@ -401,81 +405,10 @@ void ObjectSpriteContainer::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->lastObjectIndex, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "-", x  + 18 + Math::getDigitsCount(this->firstObjectIndex), y, NULL);
-	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Math::getDigitsCount(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing::int32(Printing::getInstance(), this->firstObjectIndex, x  + 18 + Math::getDigitsCount(this->firstObjectIndex) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
 	Printing::int32(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }
-
-int32 ObjectSpriteContainer::getTotalPixels()
-{
-	if(__NO_RENDER_INDEX != this->index)
-	{
-		return (this->firstObjectIndex - this->lastObjectIndex) * 8 * 8;
-	}
-
-	return 0;
-}
-
-static void ObjectSpriteContainer::reset()
-{
-	for(int32 i = __TOTAL_OBJECTS - 1; 0 <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
-
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegistersCache[i] = _objectIndex;
-	}
-}
-
-static void ObjectSpriteContainer::prepareForRendering()
-{
-	_spt = __TOTAL_OBJECT_SEGMENTS - 1;
-	_objectIndex = __TOTAL_OBJECTS - 1;
-
-}
-
-static void ObjectSpriteContainer::finishRendering()
-{
-	// clear OBJ memory
-	for(int32 i = _objectIndex; _previousObjectIndex <= i; i--)
-	{
-		_objectAttributesCache[i].head = __OBJECT_SPRITE_CHAR_HIDE_MASK;
-	}
-
-	_previousObjectIndex = _objectIndex;
-}
-
-static void ObjectSpriteContainer::writeDRAM()
-{
-	for(int32 i = __TOTAL_OBJECT_SEGMENTS; i--;)
-	{
-		_vipRegisters[__SPT0 + i] = _vipRegistersCache[i] - _objectIndex;
-	}
-
-	CACHE_RESET;
-	Mem::copyWORD((WORD*)(_objectAttributesBaseAddress), (WORD*)(_objectAttributesCache + _objectIndex), sizeof(ObjectAttributes) * (__TOTAL_OBJECTS - _objectIndex) >> 2);
-
-#ifdef __SHOW_SPRITES_PROFILING
-	extern int32 _writtenObjectTiles;
-	_writtenObjectTiles = __TOTAL_OBJECTS - _objectIndex;
-#endif
-}
-
-/**
- * Invalidate render flag on all sprites
- *
- */
-void ObjectSpriteContainer::invalidateRendering()
-{
-	for(VirtualNode node = this->objectSprites->tail; NULL != node; node = node->previous)
-	{
-		ObjectSprite::invalidateRendering(ObjectSprite::safeCast(node->data));
-	}
-}
+//---------------------------------------------------------------------------------------------------------

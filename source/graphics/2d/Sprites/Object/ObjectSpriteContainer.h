@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,73 +11,129 @@
 #define OBJECT_SPRITE_CONTAINER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Sprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class ObjectSprite;
 
+
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
+
+///
+/// Class ObjectSpriteContainer
+///
+/// Inherits from Sprite
+///
+/// Manages ObjectSprites that are displayed in the same SPT.
 /// @ingroup graphics-2d-sprites-object
 class ObjectSpriteContainer : Sprite
 {
-	// object sprites
+	/// @protectedsection
+
+	/// List of managed object sprites
 	VirtualList objectSprites;
-	// Node for z sorting
+	
+	/// List node used to Z sort object sprites over time
 	VirtualNode sortingSpriteNode;
-	// first object index
+
+	/// Index of the first OBJECT
 	int32 firstObjectIndex;
-	// last rendered object index
+
+	/// Index of the last OBJECT
 	int32 lastObjectIndex;
-	// spt index
+
+	/// SPT index that this container manages
 	int32 spt;
-	// flag to override to show / hide sprites
+
+	/// Flag to control the behavior of renderSprites
 	bool hideSprites;
 
 	/// @publicsection
+
+	/// Reset the state of the class's attributes.
 	static void reset();
+
+	/// Prepare the class' global state for rendering.
 	static void prepareForRendering();
+
+	/// Finish rendering.
 	static void finishRendering();
+
+	/// Write cached OBJECT settings to DRAM
 	static void writeDRAM();
 
+	/// Class' constructor
 	void constructor();
+
+	/// Register a sprite to be managed
+	/// @param objectSprite: Sprite to be managed
+	/// @return True if the sprite was successfully registered; false otherwise
 	bool registerSprite(ObjectSprite objectSprite);
-	int32 getAvailableObjects();
-	int32 getFirstObjectIndex();
-	int32 getLastObjectIndex();
-	int32 getNextFreeObjectIndex();
-	int32 getTotalUsedObjects();
-	bool hasRoomFor(int32 numberOfObjects);
-	bool sortProgressively(bool complete);
-	void position(const Vector3D* position);
+
+	/// Unregister a sprite to be managed
+	/// @param objectSprite: Sprite to no longer manage
 	void unregisterSprite(ObjectSprite objectSprite);
-	void showSprites(ObjectSprite spareSprite);
-	void hideSprites(ObjectSprite spareSprite);
+
+	/// Z sort over time the managed sprites.
+	/// @param complete: Flag to indicate if the sorting must be complete or deferred
+	/// @return True if some sprites was moved to another position in the list
+	bool sortProgressively(bool complete);
+
+	/// Render the managed sprites
+	/// @param evenFrame: Flag to control transparency effects
+	/// @param updateAnimations: Flag to allow or prevent animations to be updated
 	void renderSprites(bool evenFrame, bool updateAnimations);
 
+	/// Show all sprites except the provided one.
+	/// @param spareSprite: Sprite to not show
+	void showSprites(ObjectSprite spareSprite);
+
+	/// Hide all sprites except the provided one.
+	/// @param spareSprite: Sprite to not hide
+	void hideSprites(ObjectSprite spareSprite);
+
+	/// Retrieve the total number of OBJECTs used by all the managed sprites.
+	/// @return Total number of OBJECTs used by all the managed sprites
+	int32 getTotalUsedObjects();
+
+	/// Register this sprite with the appropriate sprites manager.
 	override void registerWithManager();
+
+	/// Unegister this sprite with the appropriate sprites manager.	
 	override void unregisterWithManager();
-	override void hideForDebug();
-	override void forceShow();
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the regio of DRAM that this sprite configured
 	override int16 doRender(int16 index);
-	override void print(int32 x, int32 y);
+	
+	/// Retrieve the total number of pixels actually displayed by all the managed sprites.
+	/// @return Total number of pixels displayed by all the managed sprites
 	override int32 getTotalPixels();
+
+	/// Invalidate the render flag
 	override void invalidateRendering();
+	
+	/// Show the sprite for debugging purposes
+	override void forceShow();
+
+	/// Hide the sprite for debugging purposes
+	override void forceHide();
+
+	/// Print the frames per second statistics.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	override void print(int32 x, int32 y);
 }
 
 

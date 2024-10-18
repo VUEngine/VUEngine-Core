@@ -740,7 +740,7 @@ void SpriteManager::hideSprites(Sprite spareSprite, bool hidePrinting)
 			continue;
 		}
 
-		Sprite::hideForDebug(sprite);
+		Sprite::forceHide(sprite);
 	}
 
 	if(!isDeleted(spareSprite) && !VirtualList::find(this->sprites, spareSprite))
@@ -778,7 +778,7 @@ void SpriteManager::showSprites(Sprite spareSprite, bool showPrinting)
 
 		if(sprite == spareSprite)
 		{
-			Sprite::hideForDebug(spareSprite);
+			Sprite::forceHide(spareSprite);
 			continue;
 		}
 
