@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CharSetManager.h>
 #include <Optics.h>
@@ -21,21 +21,27 @@
 #include "Texture.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATIONS
+//=========================================================================================================
 
 friend class CharSet;
 friend class VirtualList;
 friend class VirtualNode;
 
+
+//=========================================================================================================
+// CLASS'S ATTRIBUTES
+//=========================================================================================================
+
 static VirtualList _texturesToUpdate = NULL;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S STATIC METHODS
+//=========================================================================================================
 
+//---------------------------------------------------------------------------------------------------------
 static void Texture::reset()
 {
 	if(NULL == _texturesToUpdate)
@@ -48,7 +54,7 @@ static void Texture::reset()
 		VirtualList::clear(_texturesToUpdate);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
 static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 {
 	if(defer)
@@ -60,7 +66,48 @@ static void Texture::updateTextures(int16 maximumTextureRowsToWrite, bool defer)
 		Texture::doUpdateTextures(maximumTextureRowsToWrite);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
+{
+	if(NULL == textureSpec->charSetSpec)
+	{
+		return 0;
+	}
 
+	if(!Texture::isSpecSingleFrame(textureSpec))
+	{
+		uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
+
+		if(maximumNumberOfFrames > textureSpec->numberOfFrames)
+		{
+			return textureSpec->numberOfFrames * textureSpec->cols;
+		}
+
+		return maximumNumberOfFrames * textureSpec->cols;	
+	}
+
+	return textureSpec->cols;
+}
+//---------------------------------------------------------------------------------------------------------
+static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
+{
+	if(NULL == textureSpec->charSetSpec)
+	{
+		return 0;
+	}
+
+	if(!Texture::isSpecSingleFrame(textureSpec))
+	{
+		int16 allocableFrames = 64 / textureSpec->cols;
+		int16 neededRows = __FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
+
+		// return the total number of chars
+		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
+	}
+
+	return textureSpec->rows;
+}
+//---------------------------------------------------------------------------------------------------------
 static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 {
 	if(NULL == _texturesToUpdate)
@@ -86,7 +133,7 @@ static void Texture::doUpdateTextures(int16 maximumTextureRowsToWrite)
 		}
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------
 static void Texture::doUpdateTexturesDeferred()
 {
 	if(NULL == _texturesToUpdate)
@@ -120,14 +167,45 @@ static void Texture::doUpdateTexturesDeferred()
 		}
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
+{
+	if(NULL == textureSpec)
+	{
+		return false;		
+	}
 
-/**
- * Class constructor
- *
- * @private
- * @param textureSpec		Spec to use
- * @param id					Texture's identification
- */
+	return 1 == textureSpec->numberOfFrames;
+}
+//---------------------------------------------------------------------------------------------------------
+static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsToWrite)
+{
+	Texture::write(texture, maximumTextureRowsToWrite);
+}
+//---------------------------------------------------------------------------------------------------------
+static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
+{
+	if(isDeleted(texture->charSet))
+	{
+		return;
+	}
+
+	CharSet::setFrame(texture->charSet, texture->frame);
+
+	texture->status = kTextureWritten;
+}
+//---------------------------------------------------------------------------------------------------------
+static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
+{
+	texture->status = kTextureWritten;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 {
 	if(NULL == _texturesToUpdate)
@@ -155,10 +233,7 @@ void Texture::constructor(TextureSpec* textureSpec, uint16 id)
 	this->frame = 0;
 	this->update = false;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Texture::destructor()
 {
 	if(this->update)
@@ -176,106 +251,12 @@ void Texture::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Retrieve the count usage for this Texture
- *
- * @return				Texture's count usage
- */
-uint8 Texture::getUsageCount()
+//---------------------------------------------------------------------------------------------------------
+uint16 Texture::getId()
 {
-	return this->usageCount;
+	return this->id;
 }
-
-/**
- * Increase the count usage for this Texture
- */
-void Texture::increaseUsageCount()
-{
-	this->usageCount++;
-}
-
-/**
- * Decrease the count usage for this Texture
- *
- * @return				True if count usage reached zero
- */
-bool Texture::decreaseUsageCount()
-{
-	if(0 >= --this->usageCount)
-	{
-		this->usageCount = 0;
-	}
-
-	if(0 == this->usageCount && !this->textureSpec->recyclable)
-	{
-		Texture::releaseCharSet(this);
-	}
-
-	return 0 == this->usageCount;
-}
-
-/**
- * Load the CharSet defined by the TextureSpec
- *
- * @private
- */
-void Texture::loadCharSet()
-{
-	if(!isDeleted(this->charSet))
-	{
-		return;
-	}
-
-	if(NULL == this->textureSpec || NULL == this->textureSpec->charSetSpec)
-	{
-		return;
-	}
-
-	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
-
-	if(isDeleted(this->charSet))
-	{
-		return;
-	}
-
-	this->status = kTexturePendingWriting;
-
-	Texture::setupUpdateFunction(this);
-
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
-}
-
-/**
- * Release the CharSet
- */
-void Texture::releaseCharSet()
-{
-	if(this->update)
-	{
-		this->update = false;
-		VirtualList::removeData(_texturesToUpdate, this);
-	}
-
-	this->status = kTextureInvalid;
-
-	if(!isDeleted(this->charSet))
-	{
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
-		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
-
-		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
-
-		this->charSet = NULL;
-	}
-}
-
-/**
- * Set the TextureSpec
- *
- * @param textureSpec		New TextureSpec
- */
+//---------------------------------------------------------------------------------------------------------
 void Texture::setSpec(TextureSpec* textureSpec)
 {
 	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
@@ -300,26 +281,164 @@ void Texture::setSpec(TextureSpec* textureSpec)
 		Texture::rewrite(this);
 	}
 }
-
-/**
- * Retrieve the TextureSpec
- *
- * @return				TextureSpec
- */
+//---------------------------------------------------------------------------------------------------------
 TextureSpec* Texture::getSpec()
 {
 	return this->textureSpec;
 }
+//---------------------------------------------------------------------------------------------------------
+CharSet Texture::getCharSet(uint32 loadIfNeeded)
+{
+	if(isDeleted(this->charSet) && loadIfNeeded)
+	{
+		Texture::loadCharSet(this);
+	}
 
+	return this->charSet;
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::increaseUsageCount()
+{
+	this->usageCount++;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Texture::decreaseUsageCount()
+{
+	if(0 >= --this->usageCount)
+	{
+		this->usageCount = 0;
+	}
 
-bool Texture::isReady()
+	if(0 == this->usageCount && !this->textureSpec->recyclable)
+	{
+		Texture::releaseCharSet(this);
+	}
+
+	return 0 == this->usageCount;
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 Texture::getUsageCount()
+{
+	return this->usageCount;
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::setPalette(uint8 palette)
+{
+	this->palette = palette;
+
+	Texture::rewrite(this);
+}
+//---------------------------------------------------------------------------------------------------------
+uint8 Texture::getPalette()
+{
+	return this->palette;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Texture::getNumberOfFrames()
+{
+	return this->textureSpec->numberOfFrames;
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::setFrame(uint16 frame)
+{
+	bool statusChanged = kTextureFrameChanged != this->status;
+	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
+	
+	bool valueChanged = this->frame != frame;
+	this->frame = frame;
+
+	if((valueChanged && !this->update) || (statusChanged && kTextureFrameChanged == this->status))
+	{
+		Texture::prepare(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+uint16 Texture::getFrame()
+{
+	return this->frame;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Texture::getCols()
+{
+	return this->textureSpec->cols;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Texture::getRows()
+{
+	return this->textureSpec->rows;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Texture::isWritten()
 {
 	return kTextureWritten == this->status;
 }
+//---------------------------------------------------------------------------------------------------------
+bool Texture::isShared()
+{
+	if(!isDeleted(this->charSet))
+	{
+		return CharSet::isShared(this->charSet);
+	}
 
-/**
- * Write the map to DRAM
- */
+	if(NULL != this->textureSpec->charSetSpec)
+	{
+		return this->textureSpec->charSetSpec->shared;
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool Texture::isSingleFrame()
+{
+	return Texture::isSpecSingleFrame(this->textureSpec);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Texture::isMultiframe()
+{
+	return !Texture::isSpecSingleFrame(this->textureSpec);
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::addChar(const Point* textureChar, const uint32* newChar)
+{
+	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	{
+		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
+
+		CharSet::addChar(this->charSet, charToReplace, newChar);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::putChar(const Point* textureChar, const uint32* newChar)
+{
+	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
+	{
+		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
+
+		CharSet::putChar(this->charSet, charToReplace, newChar);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
+{
+	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
+	{
+		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
+		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
+		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::prepare()
+{
+	if(!this->update)
+	{
+		VirtualList::pushBack(_texturesToUpdate, this);
+		this->update = true;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 {
 	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
@@ -346,16 +465,75 @@ bool Texture::write(int16 maximumTextureRowsToWrite __attribute__((unused)))
 	this->status = kTextureWritten;
 	return true;
 }
-
-void Texture::prepare()
+//---------------------------------------------------------------------------------------------------------
+void Texture::rewrite()
 {
-	if(!this->update)
+	bool statusChanged = kTexturePendingRewriting != this->status;
+
+	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
+
+	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
 	{
-		VirtualList::pushBack(_texturesToUpdate, this);
-		this->update = true;
+		// Prepare the texture right away just in case the call initiates
+		// at a defragmentation process
+		Texture::prepare(this);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Texture::loadCharSet()
+{
+	if(!isDeleted(this->charSet))
+	{
+		return;
+	}
+
+	if(NULL == this->textureSpec || NULL == this->textureSpec->charSetSpec)
+	{
+		return;
+	}
+
+	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
+
+	if(isDeleted(this->charSet))
+	{
+		return;
+	}
+
+	this->status = kTexturePendingWriting;
+
+	Texture::setupUpdateFunction(this);
+
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
+	CharSet::addEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+}
+//---------------------------------------------------------------------------------------------------------
+void Texture::releaseCharSet()
+{
+	if(this->update)
+	{
+		this->update = false;
+		VirtualList::removeData(_texturesToUpdate, this);
+	}
+
+	this->status = kTextureInvalid;
+
+	if(!isDeleted(this->charSet))
+	{
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetChangedOffset, kEventCharSetChangedOffset);
+		CharSet::removeEventListener(this->charSet, ListenerObject::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
+
+		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
+
+		this->charSet = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool Texture::update(int16 maximumTextureRowsToWrite)
 {
 	switch(this->status)
@@ -412,125 +590,7 @@ bool Texture::update(int16 maximumTextureRowsToWrite)
 
 	return kTextureWritten == this->status;
 }
-
-static void Texture::updateOptimized(Texture texture, int16 maximumTextureRowsToWrite)
-{
-	Texture::write(texture, maximumTextureRowsToWrite);
-}
-
-static void Texture::updateDefault(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
-{
-	if(isDeleted(texture->charSet))
-	{
-		return;
-	}
-
-	CharSet::setFrame(texture->charSet, texture->frame);
-
-	texture->status = kTextureWritten;
-}
-
-static void Texture::updateMulti(Texture texture, int16 maximumTextureRowsToWrite __attribute__((unused)))
-{
-	texture->status = kTextureWritten;
-}
-
-bool Texture::isShared()
-{
-	if(!isDeleted(this->charSet))
-	{
-		return CharSet::isShared(this->charSet);
-	}
-
-	if(NULL != this->textureSpec->charSetSpec)
-	{
-		return this->textureSpec->charSetSpec->shared;
-	}
-
-	return true;
-}
-
-static bool Texture::isSpecSingleFrame(const TextureSpec* textureSpec)
-{
-	if(NULL == textureSpec)
-	{
-		return false;		
-	}
-
-	return 1 == textureSpec->numberOfFrames;
-}
-
-bool Texture::isSingleFrame()
-{
-	return Texture::isSpecSingleFrame(this->textureSpec);
-}
-
-bool Texture::isMultiframe()
-{
-	return !Texture::isSpecSingleFrame(this->textureSpec);
-}
-
-/**
- * Rewrite the map to DRAM
- */
-void Texture::rewrite()
-{
-	bool statusChanged = kTexturePendingRewriting != this->status;
-
-	this->status = this->status > kTexturePendingWriting ? kTexturePendingRewriting : this->status;
-
-	if(!this->update || (statusChanged && kTexturePendingRewriting == this->status))
-	{
-		// Prepare the texture right away just in case the call initiates
-		// at a defragmentation process
-		Texture::prepare(this);
-	}
-}
-
-/**
- * Write to DRAM in h-bias mode
- */
-void Texture::writeHBiasMode()
-{
-	// TODO
-	/*
-	int32 i;
-	//put the this into memory calculation the number of char for each reference
-	for(i=0;i<this->textureSpec->rows;i++)
-	{
-		//write into the specified bgmap segment plus the offset defined in the this structure, the this spec
-		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureSpec->map<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+64* const this->yOffset+64*i)<<1), this->textureSpec->map<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
-	}
-	*/
-}
-
-/**
- * Retrieve the number of CHARs according to the TextureSpec's CharSpec
- *
- * @return	Number of CHARs
- */
-int32 Texture::getNumberOfChars()
-{
-	return this->textureSpec->charSetSpec->numberOfChars;
-}
-
-/**
- * Retrieve the TextureSpec
- *
- * @return	TextureSpec
- */
-TextureSpec* Texture::getTextureSpec()
-{
-	return this->textureSpec;
-}
-
-/**
- * Set displacement to add to the offset within the BGMAP memory
- *
- * @param mapDisplacement	Displacement
- */
+//---------------------------------------------------------------------------------------------------------
 void Texture::setMapDisplacement(uint32 mapDisplacement)
 {
 	bool statusChanged = kTextureMapDisplacementChanged != this->status;
@@ -544,113 +604,7 @@ void Texture::setMapDisplacement(uint32 mapDisplacement)
 		Texture::prepare(this);
 	}
 }
-
-/**
- * Set Texture's frame
- *
- * @param frame	Texture's frame to display
- */
-void Texture::setFrame(uint16 frame)
-{
-	bool statusChanged = kTextureFrameChanged != this->status;
-	this->status = this->status > kTextureFrameChanged ? kTextureFrameChanged : this->status;
-	
-	bool valueChanged = this->frame != frame;
-	this->frame = frame;
-
-	if((valueChanged && !this->update) || (statusChanged && kTextureFrameChanged == this->status))
-	{
-		Texture::prepare(this);
-	}
-}
-
-/**
- * Get Texture's frame
- *
- * @return 	Texture's frame to display
- */
-uint16 Texture::getFrame()
-{
-	return this->frame;
-}
-
-/**
- * Retrieve map's total column size, accounting for the total frames of animation
- *
- * @return	Number of total columns
- */
-static uint32 Texture::getTotalCols(TextureSpec* textureSpec)
-{
-	if(NULL == textureSpec->charSetSpec)
-	{
-		return 0;
-	}
-
-	if(!Texture::isSpecSingleFrame(textureSpec))
-	{
-		uint32 maximumNumberOfFrames = 64 / textureSpec->cols;
-
-		if(maximumNumberOfFrames > textureSpec->numberOfFrames)
-		{
-			return textureSpec->numberOfFrames * textureSpec->cols;
-		}
-
-		return maximumNumberOfFrames * textureSpec->cols;	
-	}
-
-	return textureSpec->cols;
-}
-
-/**
- * Retrieve map's total row size, accounting for the total frames of animation
- *
- * @return	Number of total rows
- */
-static uint32 Texture::getTotalRows(TextureSpec* textureSpec)
-{
-	if(NULL == textureSpec->charSetSpec)
-	{
-		return 0;
-	}
-
-	if(!Texture::isSpecSingleFrame(textureSpec))
-	{
-		int16 allocableFrames = 64 / textureSpec->cols;
-		int16 neededRows = __FIXED_TO_I(__FIXED_DIV(__I_TO_FIXED(textureSpec->numberOfFrames), __I_TO_FIXED(allocableFrames)) + __05F_FIXED) - 1;
-
-		// return the total number of chars
-		return textureSpec->rows + textureSpec->rows * (0 < neededRows ? neededRows : 0);
-	}
-
-	return textureSpec->rows;
-}
-
-/**
- * Retrieve number of frames for animation
- *
- * @return	Number of frames for animation
- */
-uint32 Texture::getNumberOfFrames()
-{
-	return this->textureSpec->numberOfFrames;
-}
-
-/**
- * Retrieve CharSet
- *
- * @param loadIfNeeded	Flag to force loading if CharSet is NULL
- * @return				CharSet
- */
-CharSet Texture::getCharSet(uint32 loadIfNeeded)
-{
-	if(isDeleted(this->charSet) && loadIfNeeded)
-	{
-		Texture::loadCharSet(this);
-	}
-
-	return this->charSet;
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Texture::setupUpdateFunction()
 {
 	if(Texture::isMultiframe(this))
@@ -667,154 +621,18 @@ void Texture::setupUpdateFunction()
 		this->doUpdate = Texture::updateDefault;
 	}
 }
-
-/**
- * Retrieve map spec
- *
- * @return	Pointer to the map spec
- */
-uint16* Texture::getMap()
-{
-	return this->textureSpec ? this->textureSpec->map : NULL;
-}
-
-/**
- * Set palette
- *
- * @param palette	New palette
- */
-void Texture::setPalette(uint8 palette)
-{
-	this->palette = palette;
-
-	Texture::rewrite(this);
-}
-
-/**
- * Retrieve palette
- *
- * @return	Palette
- */
-uint8 Texture::getPalette()
-{
-	return this->palette;
-}
-
-/**
- * Retrieve map's row size
- *
- * @return	Number of rows
- */
-uint32 Texture::getRows()
-{
-	//ASSERT(this->textureSpec, "Texture::getRows: 0 rows");
-
-	return this->textureSpec->rows;
-}
-
-/**
- * Retrieve map's column size
- *
- * @return	Number of columns
- */
-uint32 Texture::getCols()
-{
-	return this->textureSpec->cols;
-}
-
-/**
- * Retrieve identification
- *
- * @return	Identification number
- */
-uint16 Texture::getId()
-{
-	return this->id;
-}
-
-/**
- * Event listener for CharSet re-writing to DRAM
- *
- * @private
- * @param eventFirer	CharSet
- */
+//---------------------------------------------------------------------------------------------------------
 bool Texture::onCharSetChangedOffset(ListenerObject eventFirer __attribute__ ((unused)))
 {
 	Texture::rewrite(this);
 
 	return true;
 }
-
-/**
- * Event listener for CharSet deletion
- *
- * @private
- * @param eventFirer	CharSet
- */
+//---------------------------------------------------------------------------------------------------------
 bool Texture::onCharSetDeleted(ListenerObject eventFirer)
 {
 	this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
 
 	return false;
 }
-
-/**
- * Write a single CHAR to DRAM
- *
- * @param textureChar	Coordinates within the map spec to write
- * @param newChar		CHAR data to write
- */
-void Texture::addChar(const Point* textureChar, const uint32* newChar)
-{
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
-	{
-		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
-		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
-
-		CharSet::addChar(this->charSet, charToReplace, newChar);
-	}
-}
-
-/**
- * Write a single CHAR to DRAM
- *
- * @param textureChar	Coordinates within the map spec to write
- * @param newChar		CHAR data to write
- */
-void Texture::putChar(const Point* textureChar, const uint32* newChar)
-{
-	if(NULL != this->charSet && NULL != textureChar && ((unsigned)textureChar->x) < this->textureSpec->cols && ((unsigned)textureChar->y) < this->textureSpec->rows)
-	{
-		uint32 displacement = this->textureSpec->cols * textureChar->y + textureChar->x;
-		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
-
-		CharSet::putChar(this->charSet, charToReplace, newChar);
-	}
-}
-
-/**
- * Write a single pixel to DRAM
- *
- * @param texturePixel	Point that defines the position of the char in the Sprite's texture
- * @param charSetPixel	Pixel data
- * @param newPixelColor	Color value of pixel
- */
-void Texture::putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor)
-{
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
-	{
-		uint32 displacement = this->textureSpec->cols * texturePixel->y + texturePixel->x;
-		uint32 charToReplace = this->textureSpec->map[displacement] & 0x7FF;
-		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
-	}
-}
-
-/**
- * Check if writing to DRAM is done
- *
- * @return	True if completely written to DRAM
- */
-bool Texture::isWritten()
-{
-	return this->status;
-}
+//---------------------------------------------------------------------------------------------------------

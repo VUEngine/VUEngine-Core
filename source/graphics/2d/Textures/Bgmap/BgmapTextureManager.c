@@ -291,7 +291,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 	{
 		BgmapTexture bgmapTexture = BgmapTexture::safeCast(node->data);
 
-		TextureSpec* allocatedTextureSpec = Texture::getTextureSpec(bgmapTexture);
+		TextureSpec* allocatedTextureSpec = Texture::getSpec(bgmapTexture);
 
 		if(allocatedTextureSpec->recyclable)
 		{
@@ -299,7 +299,7 @@ void BgmapTextureManager::print(int32 x, int32 y)
 			freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
 //				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
-			Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(bgmapTexture), x + j, y + i, 8, NULL);
+			Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(bgmapTexture), x + j, y + i, 8, NULL);
 			Printing::int32(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
 
 			if(++i + y > __SCREEN_HEIGHT / 8)

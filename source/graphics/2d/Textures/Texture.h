@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,17 +11,17 @@
 #define TEXTURE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 #include <CharSet.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
 enum TextureStatus
 {
@@ -33,117 +33,205 @@ enum TextureStatus
 	kTextureInvalid
 };
 
-/**
- * A Texture spec
- *
- * @memberof Texture
- */
+/// A Texture spec
+/// @memberof Texture
 typedef struct TextureSpec
 {
-	/// pointer to the char spec
+	/// Pointer to the char spec that the texture uses
 	CharSetSpec* charSetSpec;
 
-	/// pointer to the bgtexture spec in ROM
+	/// Pointer to the map array that defines how to use the tiles from the char set
 	uint16* map;
 
-	/// x size, 1 column represents 8 pixels
+	/// Horizontal size in tiles of the texture
 	uint8 cols;
 
-	/// y size, 1 row represents 8 pixels
+	/// Vertical size in tiles of the texture
 	uint8 rows;
 
-	/// padding for affine/hbias transformations (cols, rows)
+	/// Padding added to the size for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
-	/// number of frames
+	/// Number of frames that the texture supports
 	uint8 numberOfFrames;
 
-	/// palette index to use
+	/// Palette index to use by the graphical data
 	uint8 palette;
 
-	/// recyclable
+	/// Flag to recyble the texture with a different map
 	bool recyclable;
 
-	// vertical flip
+	// Flag to vertically flip the image
 	bool verticalFlip;
 
-	// horizontal flip
+	// Flag to horizontally flip the image
 	bool horizontalFlip;
 
 } TextureSpec;
 
-/**
- * A Texture spec that is stored in ROM
- *
- * @memberof Texture
- */
+/// A Texture spec that is stored in ROM
+/// @memberof Texture
 typedef const TextureSpec TextureROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-/// A texture which has the logic to be allocated in graphic memory
+///
+/// Class CharSet
+///
+/// Inherits from ListenerObject
+///
+/// A texture to be displayed by a sprite.
 /// @ingroup graphics-2d-textures
 abstract class Texture : ListenerObject
 {
+	/// Pointer to the implementation that updates graphical data in DRAM
 	void (*doUpdate)(Texture, int16);
-	// Char group to use int32 this texture
+	
+	/// Char set that holds the pixel data used by the texture
 	CharSet charSet;
-	// Pointer to ROM spec
+
+	/// Spec used to configure the texture
 	TextureSpec* textureSpec;
-	// Array spec of the map
+
+	/// Displacement inside the map array modified according to the frame's value
 	uint32 mapDisplacement;
-	// Texture's id
+
+	/// Identificator
 	uint16 id;
+
+	/// Indicator of the block inside the map array to write to DRAM
 	uint16 frame;
-	// Color palette
+
+	/// Palette index to use by the graphical data
 	uint8 palette;
-	// Status flag
+
+	/// Writing status flag
 	uint8 status;
-	// How many sprites are using me
+
+	/// Number of references to this texture instance
 	uint8 usageCount;
-	// update flag
+
+	/// Flag to signal that the texture needs to update DRAM in the next render cycle
 	bool update;
 
-	static void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
+	/// Reset class' state.
 	static void reset();
+
+	/// Update texture pending rewriting of data in DRAM.
+	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call
+	/// @param defer: If true, the texture data is written overtime; otherwise
+	/// all is written in a single pass
+	static void updateTextures(int16 maximumTextureRowsToWrite, bool defer);
+
+	/// Retrieve the total horizontal size of the textures defined by the provided spec.
+	/// @param textureSpec: Spec of which to compute the horizontal size
+	/// @return Total horizontal size of the textures defined by the provided spec
 	static uint32 getTotalCols(TextureSpec* textureSpec);
+
+	/// Retrieve the total vertical size of the textures defined by the provided spec.
+	/// @param textureSpec: Spec of which to compute the vertical size
+	/// @return Total vertical size of the textures defined by the provided spec
 	static uint32 getTotalRows(TextureSpec* textureSpec);
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param textureSpec: Specification that determines how to configure the texture
+	/// @param id: Texture's identificator
 	void constructor(TextureSpec* textureSpec, uint16 id);
-	void setSpec(TextureSpec* textureSpec);
-	TextureSpec* getSpec();
-	void releaseCharSet();
-	bool isReady();
-	void writeHBiasMode();
-	int32 getNumberOfChars();
-	TextureSpec* getTextureSpec();
-	uint32 getNumberOfFrames();
-	CharSet getCharSet(uint32 loadIfNeeded);
-	uint16* getMap();
-	void setPalette(uint8 palette);
-	uint8 getPalette();
-	uint32 getRows();
-	uint32 getCols();
+
+	/// Retrieve the texture's identificator.
+	/// @return Texture's identificator
 	uint16 getId();
-	uint8 getUsageCount();
+
+	/// Set the texture's spec.
+	/// @param textureSpec: Specification that determines how to configure the texture
+	void setSpec(TextureSpec* textureSpec);
+
+	/// Retrieve the texture's spec.
+	/// @return Specification that determines how to configure the texture
+	TextureSpec* getSpec();
+
+	/// Retrieve the texture's char set.
+	/// @param loadIfNeeded: If true and the char set is not loaded, loads it
+	/// @return Texture's char set
+	CharSet getCharSet(uint32 loadIfNeeded);
+
+	/// Increase the usage count.
 	void increaseUsageCount();
+
+	/// Decrease the usage count.
 	bool decreaseUsageCount();
-	void addChar(const Point* texturePixel, const uint32* newChar);
-	void putChar(const Point* texturePixel, const uint32* newChar);
-	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
-	bool isWritten();
-	void setMapDisplacement(uint32 mapDisplacement);
+
+	/// Retrieve the usage count.
+	/// @return Usage count
+	uint8 getUsageCount();
+
+	/// Set the palette index to use by the graphical data.
+	/// @param palette: Palette index to use by the graphical data
+	void setPalette(uint8 palette);
+
+	/// Retrieve the palette index used the graphical data.
+	/// @return Palette index used by the graphical data
+	uint8 getPalette();
+
+	/// Retrieve the number frames specified by the texture's spec.
+	/// @return Number frames specified by the texture's spec
+	uint32 getNumberOfFrames();
+
+	/// Write to DRAM the graphical data of the map that corresponds to the specified frame.
+	/// @param frame: The frame that species the block inside the map array to write to DRAM 
 	void setFrame(uint16 frame);
+
+	/// Retrieve frame that species the block inside the map array to write to DRAM.
+	/// @return The frame that species the block inside the map array to write to DRAM 
 	uint16 getFrame();
-	void prepare();
-	bool update(int16 maximumTextureRowsToWrite);
+
+	/// Retrieve the texture's horizontal size in tiles.
+	/// @return Horizontal size in tiles
+	uint32 getCols();
+
+	/// Retrieve the texture's vertical size in tiles.
+	/// @return Vertical size in tiles
+	uint32 getRows();
+
+	/// Check if the texture's data is completely writen to DRAM.
+	/// @return True if the texture's data is completely writing to DRAM
+	bool isWritten();
+
+	/// Check if the texture is a shared one.
+	/// @return True if the texture is shared; false otherwise
 	bool isShared();
+
+	/// Check if the texture has only one frame.
+	/// @return True if the texture has only one frame; false otherwise
 	bool isSingleFrame();
+
+	/// Check if the texture is a multiframe texture.
+	/// @return True if the texture is multiframe; false otherwise
 	bool isMultiframe();
+
+	/// Add the color provided color data to a CHAR in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
+	void addChar(const Point* texturePoint, const uint32* newChar);
+
+	/// Replace a CHAR in the sprite's texture.
+	/// @param texturePoint: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
+	void putChar(const Point* texturePoint, const uint32* newChar);
+
+	/// Replace a pixel in the sprite's texture.
+	/// @param texturePixel: Coordinate in texture's space of the CHAR to replace
+	/// @param newChar: Color data array for the CHAR 
+	void putPixel(const Point* texturePixel, const Pixel* charSetPixel, BYTE newPixelColor);
+	
+	/// Prepare the texture to write its graphical data to DRAM during 
+	/// the next render cycle.
+	void prepare();
 
 	/// Write graphical data to the allocated DRAM space.
 	/// @param maximumTextureRowsToWrite: Number of texture rows to write during this call

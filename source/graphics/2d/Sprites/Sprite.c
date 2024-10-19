@@ -11,7 +11,6 @@
 //=========================================================================================================
 // INCLUDES
 //=========================================================================================================
-//---------------------------------------------------------------------------------------------------------
 
 #include <AnimationController.h>
 #include <AnimationCoordinatorFactory.h>
@@ -676,7 +675,7 @@ void Sprite::print(int32 x, int32 y)
 		Printing::text(Printing::getInstance(), "TEXTURE                          ", x, ++y, NULL);
 		y++;
 		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int32)Texture::getTextureSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
+		Printing::hex(Printing::getInstance(), (int32)Texture::getSpec(Sprite::getTexture(this)), x + 18, y, 8, NULL);
 		Printing::text(Printing::getInstance(), "Size (w,h):                      ", x, ++y, NULL);
 		Printing::int32(Printing::getInstance(), this->halfWidth * 2, x + 18, y, NULL);
 		Printing::int32(Printing::getInstance(), this->halfHeight * 2, x + 24, y, NULL);

@@ -618,7 +618,7 @@ void AnimationInspector::editAnimation(uint32 pressedKey)
 					Texture texture = Sprite::getTexture(this->animatedSprite);
 					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
 
-					TextureSpec* textureSpec = Texture::getTextureSpec(texture);
+					TextureSpec* textureSpec = Texture::getSpec(texture);
 					NM_ASSERT(textureSpec, "AnimationInspector::selectAnimation: null textureSpec");
 
 					if(++this->animationFunction.frames[selectedFrame] >= textureSpec->numberOfFrames && 1 < textureSpec->numberOfFrames)
