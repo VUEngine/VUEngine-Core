@@ -331,7 +331,7 @@ void SpriteManager::render()
 
 	this->completeSort = SpriteManager::sortProgressively(this, this->completeSort);
 
-	ParamTableManager::defragmentProgressively(this->paramTableManager);
+	ParamTableManager::defragment(this->paramTableManager, true);
 
 	// switch between even and odd frame
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
@@ -410,7 +410,7 @@ void SpriteManager::writeDRAM()
 	// Update all graphical data
 
 	// Update CHAR memory
-	CharSetManager::defragmentProgressively(this->charSetManager);
+	CharSetManager::defragment(this->charSetManager, true);
 
 	// Update DRAM memory
 	Texture::updateTextures(this->texturesMaximumRowsToWrite, this->deferTextureUpdating);

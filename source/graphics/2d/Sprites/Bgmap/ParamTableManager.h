@@ -152,8 +152,9 @@ singleton class ParamTableManager : Object
 	/// @param bgmapSprite: Sprite whose param table has to be freed
 	void free(BgmapSprite bgmapSprite);
 
-	/// Defragment param table space one sprite at each call
-	bool defragmentProgressively();
+	/// Defragment param table space.
+	/// @param deferred: Flag to defragment param table memory over time
+	void defragment(bool deferred);
 
 	/// Retrieve the param table displacement in bytes used to keep track
 	/// of the start address of param table space.

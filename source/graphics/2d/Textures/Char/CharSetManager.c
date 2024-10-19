@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CharSet.h>
 #include <Printing.h>
@@ -19,59 +19,20 @@
 #include "CharSetManager.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class CharSet;
 
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			CharSetManager::getInstance()
- * @memberof	CharSetManager
- * @public
- * @return		CharSetManager instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void CharSetManager::constructor()
-{
-	Base::constructor();
-
-	this->charSets = new VirtualList();
-	this->freedOffset = 1;
-}
-
-/**
- * Class destructor
- */
-void CharSetManager::destructor()
-{
-	CharSetManager::reset(this);
-
-	delete this->charSets;
-	this->charSets = NULL;
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Reset manager's state
- */
 void CharSetManager::reset()
 {
 	if(this->charSets)
@@ -81,13 +42,7 @@ void CharSetManager::reset()
 
 	this->freedOffset = 1;
 }
-
-
-/**
- * Load charSets from array of CharSetPecs
- *
- * @param charSets				NULL terminaed array of pointers to charSetSpec
- */
+//---------------------------------------------------------------------------------------------------------
 void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 {
 	if(NULL != charSetSpecs)
@@ -101,40 +56,7 @@ void CharSetManager::loadCharSets(const CharSetSpec** charSetSpecs)
 		}
 	}
 }
-
-/**
- * Find a previously registered CharSet with the given spec
- *
- * @private
- * @param charSetSpec		CharSet spec
- */
-CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
-{
-	// try to find a charset with the same char spec
-	VirtualNode node = this->charSets->head;
-
-	CACHE_RESET;
-
-	for(; NULL != node; node = node->next)
-	{
-		CharSet charSet = CharSet::safeCast(node->data);
-
-		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->shared == charSetSpec->shared)
-		{
-			return charSet;
-		}
-	}
-
-	return NULL;
-}
-
-/**
- * Retrieve a CharSet
- *
- * @private
- * @param charSetSpec				CharSet spec to find o allocate a CharSet
- * @return 								Allocated CharSet
- */
+//---------------------------------------------------------------------------------------------------------
 CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 {
 	if(NULL == charSetSpec)
@@ -166,17 +88,12 @@ CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 
 	return charSet;
 }
-
-/**
- * Release a previously allocated CharSet
- *
- * @param charSet			CharSet to release
- */
+//---------------------------------------------------------------------------------------------------------
 bool CharSetManager::releaseCharSet(CharSet charSet)
 {
 	if(isDeleted(charSet))
 	{
-		return true;
+		return false;
 	}
 
 	if(CharSet::decreaseUsageCount(charSet))
@@ -197,14 +114,94 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 
 	return false;
 }
+//---------------------------------------------------------------------------------------------------------
+void CharSetManager::defragment(bool deferred)
+{
+	do
+	{
+		CharSetManager::defragmentProgressively(this);
+	}
+	while(!deferred && 1 < this->freedOffset);
+}
+//---------------------------------------------------------------------------------------------------------
+int32 CharSetManager::getTotalUsedChars()
+{
+	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
-/**
- * Try to allocate a CHAR memory space for a new CharSet
- *
- * @private
- * @param charSetSpec		CharSet spec to allocate space for
- * @return 						Allocated CharSet
- */
+	CharSet lastCharSet = VirtualList::back(this->charSets);
+	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
+}
+//---------------------------------------------------------------------------------------------------------
+int32 CharSetManager::getTotalFreeChars()
+{
+	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
+}
+//---------------------------------------------------------------------------------------------------------
+int32 CharSetManager::getTotalCharSets()
+{
+	return VirtualList::getCount(this->charSets);
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+void CharSetManager::print(int32 x, int32 y)
+{
+	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->charSets), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
+	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
+}
+#endif
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void CharSetManager::constructor()
+{
+	Base::constructor();
+
+	this->charSets = new VirtualList();
+	this->freedOffset = 1;
+}
+//---------------------------------------------------------------------------------------------------------
+void CharSetManager::destructor()
+{
+	CharSetManager::reset(this);
+
+	delete this->charSets;
+	this->charSets = NULL;
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
+CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
+{
+	// try to find a charset with the same char spec
+	VirtualNode node = this->charSets->head;
+
+	CACHE_RESET;
+
+	for(; NULL != node; node = node->next)
+	{
+		CharSet charSet = CharSet::safeCast(node->data);
+
+		if(!isDeleted(charSet) && charSet->charSetSpec->tiles == charSetSpec->tiles && charSet->charSetSpec->shared == charSetSpec->shared)
+		{
+			return charSet;
+		}
+	}
+
+	return NULL;
+}
+//---------------------------------------------------------------------------------------------------------
 CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 {
 	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
@@ -257,13 +254,10 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 
 	return NULL;
 }
-
-/**
- * Write char sets pending writing
- */
+//---------------------------------------------------------------------------------------------------------
 void CharSetManager::writeCharSets()
 {
-	CharSetManager::defragment(this);
+	CharSetManager::defragment(this, false);
 
 	VirtualNode node = this->charSets->head;
 
@@ -272,22 +266,8 @@ void CharSetManager::writeCharSets()
 		CharSet::write(node->data);
 	}
 }
-
-/**
- * Deframent CHAR memory
- */
-void CharSetManager::defragment()
-{
-	while(1 < this->freedOffset)
-	{
-		CharSetManager::defragmentProgressively(this);
-	}
-}
-
-/**
- * Deframent CHAR memory progressively
- */
-bool CharSetManager::defragmentProgressively()
+//---------------------------------------------------------------------------------------------------------
+void CharSetManager::defragmentProgressively()
 {
 	if(1 < this->freedOffset)
 	{
@@ -309,7 +289,7 @@ bool CharSetManager::defragmentProgressively()
 				uint16 newOffset = this->freedOffset;
 				this->freedOffset += CharSet::getNumberOfChars(charSet);
 				CharSet::setOffset(charSet, newOffset);
-				return true;
+				return;
 			}
 			else if(this->freedOffset == offset)
 			{
@@ -319,59 +299,5 @@ bool CharSetManager::defragmentProgressively()
 
 		this->freedOffset = 1;
 	}
-
-	return false;
 }
-
-/**
- * Retrieve the total number of used CHARs
- *
- * @return 				Total number of used CHARs
- */
-int32 CharSetManager::getTotalUsedChars()
-{
-	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
-
-	CharSet lastCharSet = VirtualList::back(this->charSets);
-	return (int32)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
-}
-
-/**
- * Retrieve the total number of free CHARs
- *
- * @return 				Total number of free CHARs
- */
-int32 CharSetManager::getTotalFreeChars()
-{
-	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
-}
-
-/**
- * Retrieve the total number of registered char sets
- *
- * @return 				Total number of registered char sets
- */
-int32 CharSetManager::getTotalCharSets()
-{
-	return VirtualList::getCount(this->charSets);
-}
-
-/**
- * Print manager's state
- *
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
- */
-#ifndef __SHIPPING
-void CharSetManager::print(int32 x, int32 y)
-{
-	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), VirtualList::getCount(this->charSets), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
-}
-#endif
+//---------------------------------------------------------------------------------------------------------

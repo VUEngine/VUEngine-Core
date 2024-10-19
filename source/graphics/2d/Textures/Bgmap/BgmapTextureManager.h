@@ -100,6 +100,7 @@ singleton class BgmapTextureManager : Object
 	/// @param minimumSegment: Minimum BGMAP segment where to allocate the texture
 	/// @param mustLiveAtEvenSegment: Required BGMAP segment where to allocate the texture
 	/// @param scValue: SC configuration value for multi segment textures
+	/// @return Texture initialized with the provided spec
 	BgmapTexture getTexture(BgmapTextureSpec* bgmapTextureSpec, int16 minimumSegment, bool mustLiveAtEvenSegment, uint32 scValue);
 
 	/// Release a texture.
@@ -116,7 +117,7 @@ singleton class BgmapTextureManager : Object
 	/// @return Y coordinate in BGMAP space for the texture ID provided
 	int16 getYOffset(int32 id);
 
-	/// Print the camera's status.
+	/// Print the manager's status.
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);

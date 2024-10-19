@@ -49,7 +49,6 @@ void CharSet::destructor()
 	// make sure that I'm not destroyed again
 	this->usageCount = 0;
 
-	// free processor memory
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
@@ -149,7 +148,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
 
-		CharSet::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
+		Mem::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
 
 		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
@@ -158,7 +157,7 @@ void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BY
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
 //		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
 
-		CharSet::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4));
+		Mem::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4));
 	}
 }
 //---------------------------------------------------------------------------------------------------------
@@ -248,29 +247,6 @@ void CharSet::write()
 // CLASS'S PRIVATE METHODS
 //=========================================================================================================
 
-//---------------------------------------------------------------------------------------------------------
-// TODO: if inline is allowed, the optimization that GCC does makes this ineffective in putPixel method
-// It is not because of O3 optimization option, the same happens with O1
-static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
-{
-	const BYTE* finalSource = source + numberOfBYTES;
-
-	asm
-	(
-		"jr end%=		\n\t"      \
-		"loop%=:		\n\t"      \
-		"ld.b 0[%1],r10	\n\t"      \
-		"st.b r10,0[%0] \n\t"      \
-		"add 1,%0		\n\t"      \
-		"add 1,%1		\n\t"      \
-		"end%=:			\n\t"      \
-		"cmp %1,%2		\n\t"      \
-		"bgt loop%=		\n\t"
-		: // No Output
-		: "r" (destination), "r" (source), "r" (finalSource)
-		: "r10" // regs used
-	);
-}
 //---------------------------------------------------------------------------------------------------------
 void CharSet::writeRLE()
 {
