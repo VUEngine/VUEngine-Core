@@ -191,11 +191,60 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 //---------------------------------------------------------------------------------------------------------
 void ParamTableManager::defragment(bool deferred)
 {
-	do
+	if(0 != this->paramTableFreeData.param)
 	{
-		ParamTableManager::defragmentProgressively(this);
+		do
+		{
+			VirtualNode node = this->bgmapSprites->head;
+			
+			for(; NULL != node; node = node->next)
+			{
+				BgmapSprite sprite = BgmapSprite::safeCast(node->data);
+
+				uint32 spriteParam = BgmapSprite::getParam(sprite);
+
+				// retrieve param
+				if(spriteParam > this->paramTableFreeData.param)
+				{
+					int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
+
+					// check that the sprite won't override itself
+					if(this->paramTableFreeData.param + size > spriteParam)
+					{
+						break;
+					}
+
+					if(!isDeleted(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite::getParamTableRow(this->previouslyMovedBgmapSprite))
+					{
+						break;
+					}
+
+					//move back paramSize bytes
+					BgmapSprite::setParam(sprite, this->paramTableFreeData.param);
+
+					// set the new param to move on the next cycle
+					this->paramTableFreeData.param += size;
+
+					this->previouslyMovedBgmapSprite = sprite;
+
+					break;
+				}
+			}
+
+			if(NULL == node)
+			{
+				//recover space
+				this->usedBytes -= this->paramTableFreeData.recoveredSize;
+				this->size += this->paramTableFreeData.recoveredSize;
+
+				this->paramTableFreeData.param = 0;
+				this->paramTableFreeData.recoveredSize = 0;
+
+				this->previouslyMovedBgmapSprite = NULL;
+			}
+		}
+		while(!deferred && 0 != this->paramTableFreeData.param);
 	}
-	while(!deferred && 0 != this->paramTableFreeData.param);
 }
 //---------------------------------------------------------------------------------------------------------
 uint32 ParamTableManager::getParamTableBase()
@@ -279,61 +328,5 @@ uint32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 	}
 
 	return size;
-}
-//---------------------------------------------------------------------------------------------------------
-void ParamTableManager::defragmentProgressively()
-{
-	if(0 != this->paramTableFreeData.param)
-	{
-		VirtualNode node = this->bgmapSprites->head;
-		
-		for(; NULL != node; node = node->next)
-		{
-			BgmapSprite sprite = BgmapSprite::safeCast(node->data);
-
-			uint32 spriteParam = BgmapSprite::getParam(sprite);
-
-			// retrieve param
-			if(spriteParam > this->paramTableFreeData.param)
-			{
-				int32 size = ParamTableManager::calculateSpriteParamTableSize(this, sprite);
-
-				// check that the sprite won't override itself
-				if(this->paramTableFreeData.param + size > spriteParam)
-				{
-					break;
-				}
-
-				if(!isDeleted(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite::getParamTableRow(this->previouslyMovedBgmapSprite))
-				{
-					break;
-				}
-
-				//move back paramSize bytes
-				BgmapSprite::setParam(sprite, this->paramTableFreeData.param);
-
-				// set the new param to move on the next cycle
-				this->paramTableFreeData.param += size;
-
-				this->previouslyMovedBgmapSprite = sprite;
-
-				break;
-			}
-		}
-
-		if(NULL == node)
-		{
-			//recover space
-			this->usedBytes -= this->paramTableFreeData.recoveredSize;
-			this->size += this->paramTableFreeData.recoveredSize;
-
-			this->paramTableFreeData.param = 0;
-			this->paramTableFreeData.recoveredSize = 0;
-
-			this->previouslyMovedBgmapSprite = NULL;
-
-			return;
-		}
-	}
 }
 //---------------------------------------------------------------------------------------------------------

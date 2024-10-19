@@ -117,11 +117,43 @@ bool CharSetManager::releaseCharSet(CharSet charSet)
 //---------------------------------------------------------------------------------------------------------
 void CharSetManager::defragment(bool deferred)
 {
-	do
+	if(1 < this->freedOffset)
 	{
-		CharSetManager::defragmentProgressively(this);
+		do
+		{
+			VirtualNode node = this->charSets->head;
+
+			for(; NULL != node; node = node->next)
+			{
+				CharSet charSet = CharSet::safeCast(node->data);
+
+				if(isDeleted(charSet))
+				{
+					continue;
+				}
+
+				uint32 offset = CharSet::getOffset(charSet);
+
+				if(this->freedOffset < offset)
+				{
+					uint16 newOffset = this->freedOffset;
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
+					CharSet::setOffset(charSet, newOffset);
+					break;
+				}
+				else if(this->freedOffset == offset)
+				{
+					this->freedOffset += CharSet::getNumberOfChars(charSet);
+				}
+			}
+
+			if(NULL == node)
+			{
+				this->freedOffset = 1;
+			}
+		}
+		while(!deferred && 1 < this->freedOffset);
 	}
-	while(!deferred && 1 < this->freedOffset);
 }
 //---------------------------------------------------------------------------------------------------------
 int32 CharSetManager::getTotalUsedChars()
@@ -264,40 +296,6 @@ void CharSetManager::writeCharSets()
 	for(; NULL != node; node = node->next)
 	{
 		CharSet::write(node->data);
-	}
-}
-//---------------------------------------------------------------------------------------------------------
-void CharSetManager::defragmentProgressively()
-{
-	if(1 < this->freedOffset)
-	{
-		VirtualNode node = this->charSets->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			CharSet charSet = CharSet::safeCast(node->data);
-
-			if(isDeleted(charSet))
-			{
-				continue;
-			}
-
-			uint32 offset = CharSet::getOffset(charSet);
-
-			if(this->freedOffset < offset)
-			{
-				uint16 newOffset = this->freedOffset;
-				this->freedOffset += CharSet::getNumberOfChars(charSet);
-				CharSet::setOffset(charSet, newOffset);
-				return;
-			}
-			else if(this->freedOffset == offset)
-			{
-				this->freedOffset += CharSet::getNumberOfChars(charSet);
-			}
-		}
-
-		this->freedOffset = 1;
 	}
 }
 //---------------------------------------------------------------------------------------------------------
