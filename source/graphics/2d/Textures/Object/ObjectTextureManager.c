@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ObjectTexture.h>
 #include <VirtualList.h>
@@ -18,64 +18,23 @@
 #include "ObjectTextureManager.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 friend class ObjectTexture;
 friend class Texture;
 friend class VirtualList;
 friend class VirtualNode;
 
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			ObjectTextureManager::getInstance()
- * @public
- * @return		ObjectTextureManager instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void ObjectTextureManager::constructor()
-{
-	Base::constructor();
-}
-
-/**
- * Class destructor
- */
-void ObjectTextureManager::destructor()
-{
-	ObjectTextureManager::reset(this);
-
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Reset manager's state
- */
 void ObjectTextureManager::reset()
-{
-}
-
-/**
- * Retrieve a Texture
- *
- * @private
- * @param objectTextureSpec		Texture spec to find o allocate a Texture
- * @param owber					Sprite owner
- * @return 								Allocated Texture
- */
+{}
+//---------------------------------------------------------------------------------------------------------
 ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureSpec)
 {
 	NM_ASSERT(NULL != objectTextureSpec, "ObjectTextureManager::getTexture: NULL objectTextureSpec");
@@ -93,15 +52,33 @@ ObjectTexture ObjectTextureManager::getTexture(ObjectTextureSpec* objectTextureS
 
 	return objectTexture;
 }
-
-/**
- * Release a previously allocated Texture
- *
- * @param objectTexture		Texture to release
- */
+//---------------------------------------------------------------------------------------------------------
 void ObjectTextureManager::releaseTexture(ObjectTexture objectTexture)
 {
 	NM_ASSERT(!isDeleted(objectTexture), "ObjectTextureManager::releaseTexture: trying to release an invalid objectTexture");
 
 	delete objectTexture;
 }
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void ObjectTextureManager::constructor()
+{
+	Base::constructor();
+}
+
+/**
+ * Class destructor
+ */
+void ObjectTextureManager::destructor()
+{
+	ObjectTextureManager::reset(this);
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------

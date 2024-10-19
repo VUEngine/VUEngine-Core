@@ -75,6 +75,9 @@ singleton class BgmapTextureManager : Object
 	int8 printingBgmapSegment;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return BgmapTextureManager singleton
 	static BgmapTextureManager getInstance();
 
 	/// Reset the manager's state.

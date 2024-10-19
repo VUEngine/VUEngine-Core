@@ -11,31 +11,44 @@
 #define OBJECT_TEXTURE_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 #include <ObjectTexture.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/// @ingroup graphics-2d-textures-bgmap
+///
+/// Class BgmapTextureManager
+///
+/// Inherits from Texture
+///
+/// Managers textures for OBJECT space.
+/// @ingroup graphics-2d-textures-object
 singleton class ObjectTextureManager : Object
 {
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return ObjectTextureManager singleton
 	static ObjectTextureManager getInstance();
-	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
-	void releaseTexture(ObjectTexture bgmapTexture);
+
+	/// Reset the manager's state.
 	void reset();
+
+	/// Retrieve a texture initialized with the provided spec.
+	/// @param objectTextureSpec: Spec to use to initilize the desired texture
+	/// @return Texture initialized with the provided spec
+	ObjectTexture getTexture(ObjectTextureSpec* objectTextureSpec);
+
+	/// Release a texture.
+	/// @param objectTexture: Texture to release
+	void releaseTexture(ObjectTexture objectTexture);
 }
 
 
