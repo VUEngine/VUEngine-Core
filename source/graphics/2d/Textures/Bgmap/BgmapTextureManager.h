@@ -120,7 +120,6 @@ singleton class BgmapTextureManager : Object
 	/// @param x: Screen x coordinate where to print
 	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
-
 }
 
 

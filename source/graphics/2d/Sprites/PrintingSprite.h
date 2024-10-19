@@ -11,28 +11,19 @@
 #define PRINTING_SPRITE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <BgmapSprite.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											 MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DATA
+//=========================================================================================================
 
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * A PrintingSprite spec
- *
- * @memberof PrintingSprite
- */
+/// A PrintingSprite spec
+/// @memberof PrintingSprite
 typedef struct PrintingSpriteSpec
 {
 	/// it has a Sprite spec at the beginning
@@ -40,43 +31,54 @@ typedef struct PrintingSpriteSpec
 
 } PrintingSpriteSpec;
 
-/**
- * A PrintingSprite spec that is stored in ROM
- *
- * @memberof PrintingSprite
- */
+/// A PrintingSprite spec that is stored in ROM
+/// @memberof PrintingSprite
 typedef const PrintingSpriteSpec PrintingSpriteROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS'S DECLARATION
+//=========================================================================================================
 
-/// Sprite which holds a texture and a drawing specification.
+///
+/// Class BgmapTexture
+///
+/// Inherits from Texture
+///
+/// Enables the Printing class to output text to the screen.
 /// @ingroup graphics-2d-sprites-bgmap
 class PrintingSprite : BgmapSprite
 {
-	// print WORLD's width
-	uint16 w;
-	// print WORLD's height
-	uint16 h;
-	// printing segment
+	/// BGMAP segment used for printing
 	int8 printingBgmapSegment;
 	
 	/// @publicsection
 	void constructor(SpatialObject owner, const PrintingSpriteSpec* printingSpriteSpec);
+
+	/// Reset the sprite's rendering configuration.
 	void reset();
 
+	/// Set the BGMAP segment used for printing.
+	/// @param printingBgmapSegment: BGMAP segment to use for printing
 	void setPrintingBgmapSegment(int8 printingBgmapSegment);
+
+	/// Set the G values to be written to the WORLD's entry mananged by the sprite.
+	/// @param gx: GX coordinate of the WORLD used to display the text
+	/// @param gy: GY coordinate of the WORLD used to display the text
+	/// @param gp: GP coordinate of the WORLD used to display the text
 	void setGValues(int16 gx, int16 gy, int16 gp);
+
+	/// Set the M values to be written to the WORLD's entry mananged by the sprite.
+	/// @param mx: MX coordinate of BGMAP area to be used to display the text
+	/// @param my: MY coordinate of BGMAP area to be used to display the text
+	/// @param mp: MP coordinate of BGMAP area to be used to display the text
 	void setMValues(int16 mx, int16 my, int16 mp);
-	void setSize(uint16 w, uint16 h);
-	void setSize(uint16 w, uint16 h);
 
-	int16 getGX();
-	int16 getGY();
-	int16 getGP();
-
+	/// Set the size of the WORLD to by used to display the text
+	/// @param width: Width of the WORLD to by used to display the text
+	/// @param height: Height of the WORLD to by used to display the text
+	void setSize(uint16 width, uint16 height);
+	
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
 	/// @return The index that determines the region of DRAM that this sprite configured

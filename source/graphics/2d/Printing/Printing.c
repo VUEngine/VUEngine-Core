@@ -569,17 +569,17 @@ void Printing::resetCoordinates()
 //---------------------------------------------------------------------------------------------------------
 int16 Printing::getWorldCoordinatesX()
 {
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGX(this->activePrintingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getEffectiveX(this->activePrintingSprite) : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 int16 Printing::getWorldCoordinatesY()
 {
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGY(this->activePrintingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getEffectiveY(this->activePrintingSprite) : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 int16 Printing::getWorldCoordinatesP()
 {
-	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getGP(this->activePrintingSprite) : 0;
+	return !isDeleted(this->activePrintingSprite) ? PrintingSprite::getEffectiveP(this->activePrintingSprite) : 0;
 }
 //---------------------------------------------------------------------------------------------------------
 PixelVector Printing::getSpriteIndex()
