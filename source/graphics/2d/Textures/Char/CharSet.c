@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CharSetManager.h>
 #include <DebugConfig.h>
@@ -20,23 +20,11 @@
 #include "CharSet.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-
+//=========================================================================================================
+// CLASS'S PUBLIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- *
- * @private
- * @param charSetSpec				CharSet spec
- * @param offset						Displacement within the CHAR segment
- */
 void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 {
 	Base::constructor();
@@ -52,10 +40,7 @@ void CharSet::constructor(CharSetSpec* charSetSpec, uint16 offset)
 
 	CharSet::write(this);
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void CharSet::destructor()
 {
 	CharSet::fireEvent(this, kEventCharSetDeleted);
@@ -68,20 +53,12 @@ void CharSet::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Increase CharSet usage
- */
+//---------------------------------------------------------------------------------------------------------
 void CharSet::increaseUsageCount()
 {
 	this->usageCount++;
 }
-
-/**
- * Decrease CharSet usage
- *
- * @return								True if usage count is zero
- */
+//---------------------------------------------------------------------------------------------------------
 bool CharSet::decreaseUsageCount()
 {
 	if(0 < this->usageCount)
@@ -91,52 +68,22 @@ bool CharSet::decreaseUsageCount()
 
 	return 0 == this->usageCount;
 }
-
-/**
- * Get usage count
- *
- * @return								Usage count
- */
+//---------------------------------------------------------------------------------------------------------
 uint8 CharSet::getUsageCount()
 {
 	return this->usageCount;
 }
-
-/**
- * Return if shared or not
- *
- * @return				Boolean
- */
+//---------------------------------------------------------------------------------------------------------
 bool CharSet::isShared()
 {
 	return this->charSetSpec->shared;
 }
-
-/**
- * Return if optimized or not
- *
- * @return				Boolean
- */
+//---------------------------------------------------------------------------------------------------------
 bool CharSet::isOptimized()
 {
 	return this->charSetSpec->optimized;
 }
-
-/**
- * Retrieve the offset within CHAR memory
- *
- * @return				Offset within CHAR memory
- */
-uint16 CharSet::getOffset()
-{
-	return this->offset;
-}
-
-/**
- * Set the offset within CHAR memory
- *
- * @param offset		Offset within CHAR memory
- */
+//---------------------------------------------------------------------------------------------------------
 void CharSet::setOffset(uint16 offset)
 {
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
@@ -150,83 +97,92 @@ void CharSet::setOffset(uint16 offset)
 		CharSet::fireEvent(this, kEventCharSetChangedOffset);
 	}
 }
-
-/**
- * Retrieve the spec
- *
- * @return				CharSetSpec
- */
+//---------------------------------------------------------------------------------------------------------
+uint16 CharSet::getOffset()
+{
+	return this->offset;
+}
+//---------------------------------------------------------------------------------------------------------
 CharSetSpec* CharSet::getSpec()
 {
 	return this->charSetSpec;
 }
-
-/**
- * Retrieve the number of CHARS in the spec
- *
- * @return 			Number of CHARS in the spec
- */
+//---------------------------------------------------------------------------------------------------------
 uint16 CharSet::getNumberOfChars()
 {
 	return this->charSetSpec->numberOfChars;
 }
-
-void CharSet::writeRLE()
+//---------------------------------------------------------------------------------------------------------
+void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
 {
-	// 1 poxel = 2 pixels = 4 bits = 1 hex digit
-	// So, each char has 32 poxels
-	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
-
-	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
-	uint32* limit = destination + __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars);
-	uint32* source = &this->charSetSpec->tiles[1] + this->tilesDisplacement;
-
-	uint32 uncompressedData = 0;
-	uint32 uncompressedDataSize = 0;
-
-	CACHE_RESET;
-
-	for(uint32 poxel = 0; poxel < totalPoxels; poxel++)
+	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
 	{
-		uint32 compressedData = source[poxel];
-
-		uint32 cycles = 4;
-
-		while(cycles--)
-		{
-			uint8 pack = ((BYTE*)&compressedData)[3];
-
-			uint8 counter = (pack >> 4) + 1;
-			uint8 data = 0x0F & (pack);
-
-			while(0 < counter--)
-			{
-				uncompressedData = (uncompressedData << 4) | data;
-				uncompressedDataSize++;
-
-				if(8 <= uncompressedDataSize)
-				{
-					if(limit <= destination)
-					{
-						return;
-					}
-
-					*destination = uncompressedData;
-					destination++;
-					
-					uncompressedData = 0;
-					uncompressedDataSize = 0;
-				}
-			}
-
-			compressedData <<= 8;
-		}
+		Mem::combineWORDs
+		(
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
+			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_CHARS(charToAddTo) + 1] + this->tilesDisplacement,
+			(uint32*)newChar,
+			__UINT32S_PER_CHARS(1)
+		);
 	}
 }
+//---------------------------------------------------------------------------------------------------------
+void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
+{
+	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
+	{
+		Mem::copyWORD
+		(
+			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
+			(uint32*)newChar,
+			__UINT32S_PER_CHARS(1)
+		);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor)
+{
+	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
+	{
+		static BYTE auxChar[] =
+		{
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		};
 
-/**
- * Write the CHARs to DRAM
- */
+		CharSet::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
+
+		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
+		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
+
+		// TODO: review this, only works with non transparent pixels
+		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
+//		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
+
+		CharSet::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4));
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void CharSet::setFrame(uint16 frame)
+{
+	uint32 tilesDisplacement = 0;
+
+	if(NULL != this->charSetSpec->frameOffsets)
+	{
+		tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
+	}
+	else
+	{
+		tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame);
+	}
+
+	if(!this->written || this->tilesDisplacement != tilesDisplacement)
+	{
+		this->tilesDisplacement = tilesDisplacement;
+
+		CharSet::write(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 void CharSet::write()
 {
 	NM_ASSERT(0 < this->charSetSpec->numberOfChars, "CharSet::write: 0 chars");
@@ -286,46 +242,13 @@ void CharSet::write()
 
 	this->written = true;
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Write a single CHAR to DRAM
- *
- * @param charToReplace		Index of the CHAR to overwrite
- * @param newChar			CHAR data to write
- */
-void CharSet::putChar(uint32 charToReplace, const uint32* newChar)
-{
-	if(NULL != newChar && charToReplace < this->charSetSpec->numberOfChars)
-	{
-		Mem::copyWORD
-		(
-			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToReplace) << 4)),
-			(uint32*)newChar,
-			__UINT32S_PER_CHARS(1)
-		);
-	}
-}
+//=========================================================================================================
+// CLASS'S PRIVATE METHODS
+//=========================================================================================================
 
-/**
- * Add a single CHAR to DRAM
- *
- * @param charToAddTo		Index of the CHAR to overwrite
- * @param newChar			CHAR data to write
- */
-void CharSet::addChar(uint32 charToAddTo, const uint32* newChar)
-{
-	if(NULL != newChar && charToAddTo < this->charSetSpec->numberOfChars)
-	{
-		Mem::combineWORDs
-		(
-			(uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset + charToAddTo) << 4)),
-			(uint32*)&this->charSetSpec->tiles[__UINT32S_PER_CHARS(charToAddTo) + 1] + this->tilesDisplacement,
-			(uint32*)newChar,
-			__UINT32S_PER_CHARS(1)
-		);
-	}
-}
-
+//---------------------------------------------------------------------------------------------------------
 // TODO: if inline is allowed, the optimization that GCC does makes this ineffective in putPixel method
 // It is not because of O3 optimization option, the same happens with O1
 static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, const BYTE* source, uint32 numberOfBYTES)
@@ -348,58 +271,57 @@ static void __attribute__ ((noinline)) CharSet::copyBYTE(BYTE* destination, cons
 		: "r10" // regs used
 	);
 }
-
-/**
- * Write a single pixel to DRAM
- *
- * @param charToReplace		Index of the CHAR to overwrite
- * @param charSetPixel		Pixel data
- * @param newPixelColor		Color value of pixel
- */
-void CharSet::putPixel(const uint32 charToReplace, const Pixel* charSetPixel, BYTE newPixelColor)
+//---------------------------------------------------------------------------------------------------------
+void CharSet::writeRLE()
 {
-	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
+	// 1 poxel = 2 pixels = 4 bits = 1 hex digit
+	// So, each char has 32 poxels
+	uint32 totalPoxels = this->charSetSpec->numberOfChars << 5;
+
+	uint32* destination = (uint32*)(__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4));
+	uint32* limit = destination + __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars);
+	uint32* source = &this->charSetSpec->tiles[1] + this->tilesDisplacement;
+
+	uint32 uncompressedData = 0;
+	uint32 uncompressedDataSize = 0;
+
+	CACHE_RESET;
+
+	for(uint32 poxel = 0; poxel < totalPoxels; poxel++)
 	{
-		static BYTE auxChar[] =
+		uint32 compressedData = source[poxel];
+
+		uint32 cycles = 4;
+
+		while(cycles--)
 		{
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		};
+			uint8 pack = ((BYTE*)&compressedData)[3];
 
-		CharSet::copyBYTE(auxChar, (uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), (int32)(1 << 4));
+			uint8 counter = (pack >> 4) + 1;
+			uint8 data = 0x0F & (pack);
 
-		uint16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
-		uint16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
+			while(0 < counter--)
+			{
+				uncompressedData = (uncompressedData << 4) | data;
+				uncompressedDataSize++;
 
-		// TODO: review this, only works with non transparent pixels
-		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((uint16)newPixelColor << pixelToReplaceDisplacement));
-//		auxChar[displacement] |= (uint16)newPixelColor << pixelToReplaceDisplacement;
+				if(8 <= uncompressedDataSize)
+				{
+					if(limit <= destination)
+					{
+						return;
+					}
 
-		CharSet::copyBYTE((uint8*)__CHAR_SPACE_BASE_ADDRESS + (((uint32)this->offset) << 4) + (charToReplace << 4), auxChar, (int32)(sizeof(BYTE) << 4));
+					*destination = uncompressedData;
+					destination++;
+					
+					uncompressedData = 0;
+					uncompressedDataSize = 0;
+				}
+			}
+
+			compressedData <<= 8;
+		}
 	}
 }
-
-/**
- * Write CharSet with displacement = frame * numberOfFrames
- *
- * @param frame		ROM memory displacement multiplier
- */
-void CharSet::setFrame(uint16 frame)
-{
-	uint32 tilesDisplacement = 0;
-
-	if(NULL != this->charSetSpec->frameOffsets)
-	{
-		tilesDisplacement = this->charSetSpec->frameOffsets[frame] - 1;
-	}
-	else
-	{
-		tilesDisplacement = __UINT32S_PER_CHARS(this->charSetSpec->numberOfChars * frame);
-	}
-
-	if(!this->written || this->tilesDisplacement != tilesDisplacement)
-	{
-		this->tilesDisplacement = tilesDisplacement;
-
-		CharSet::write(this);
-	}
-}
+//---------------------------------------------------------------------------------------------------------
