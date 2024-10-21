@@ -193,11 +193,7 @@ void VUEngine::initialize()
 
 	// Enable communications
 #ifdef __ENABLE_COMMUNICATIONS
-#ifdef __RELEASE
-	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL, 2000);
-#else
-	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL, 500);
-#endif
+	CommunicationManager::enableCommunications(this->communicationManager, NULL, NULL);
 #else
 #ifdef __RELEASE
 	VUEngine::wait(VUEngine::getInstance(), 4000);
@@ -756,7 +752,6 @@ void VUEngine::nextFrameStarted(uint16 gameFrameDuration)
 			VUEngine::fireEvent(this, kEventVUEngineNextSecondStarted);
 		}
 #ifdef __SHOW_TIMER_MANAGER_STATUS
-		TimerManager::printStatus(this->timerManager, 1, 0);
 		TimerManager::nextSecondStarted(this->timerManager);
 #endif
 

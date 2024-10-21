@@ -453,11 +453,10 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 void TimerManager::nextSecondStarted()
 {
 	this->interruptsPerSecond = 0;
-}
-
 #ifndef __SHIPPING
-void TimerManager::printStatus(int32 x, int32 y)
-{
+	int x = 1;
+	int y = 1;
+	
 	PRINT_TEXT("TIMER STATUS", x, y++);
 	PRINT_TEXT("Inter./sec.:          ", x, y);
 	PRINT_INT(this->interruptsPerSecond, x + 17, y++);
@@ -467,8 +466,8 @@ void TimerManager::printStatus(int32 x, int32 y)
 	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y++);
 	PRINT_TEXT("Real us/inter.:       ", x, y);
 	PRINT_INT(this->microsecondsPerInterrupt, x + 17, y++);
-}
 #endif
+}
 
 /**
  * Interrupt handler

@@ -42,7 +42,6 @@ Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRI
 Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 
 
-
 //=========================================================================================================
 // CLASS' PUBLIC METHODS
 //=========================================================================================================

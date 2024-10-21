@@ -95,7 +95,7 @@ void SoundTest::update()
 #ifndef __SHOW_TIMER_MANAGER_STATUS
 			if(Sound::hasPCMTracks(this->sound))
 			{
-				TimerManager::printStatus(TimerManager::getInstance(), 1, 15);
+				TimerManager::print(TimerManager::getInstance(), 1, 15);
 				TimerManager::nextSecondStarted(TimerManager::getInstance());
 			}
 #endif
