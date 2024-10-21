@@ -100,6 +100,11 @@ class Mesh : Wireframe
 	/// @displacement: Displacement to add to the segments' vertices
 	void addSegments(PixelVector (*segments)[2], Vector3D displacement);
 	
+	/// Create a new segment from provided vectors.
+	/// @param startVector: New segment's starting point
+	/// @param endVector: New segment's end point
+	void addSegment(Vector3D startVector, Vector3D endVector);
+
 	/// Retrieve the mesh's bounding box in pixel units.
 	/// @return Bounding box of the mesh
 	override PixelRightBox getPixelRightBox();

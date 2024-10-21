@@ -184,7 +184,6 @@ static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector,
 	}
 }
 
-// configure Polyhedron
 void LineField::configureWireframe()
 {
 	if(!isDeleted(this->wireframe))

@@ -55,7 +55,6 @@
 #include <Particle.h>
 #include <ParticleSystem.h>
 #include <PhysicalWorld.h>
-#include <Polyhedron.h>
 #include <Printing.h>
 #include <Collider.h>
 #include <SolidParticle.h>
@@ -687,7 +686,6 @@ void Debug::memoryStatusShowFourthPage(int32 increment __attribute__ ((unused)),
 		{&InverseBox_getObjectSize,		"InverseBox"},
 		{&LineField_getObjectSize,		"LineField"},
 		{&Wireframe_getObjectSize, 		"Wireframe"},
-		{&Polyhedron_getObjectSize, 	"Polyhedron"},
 		{&Sphere_getObjectSize, 		"Sphere"},
 	};
 

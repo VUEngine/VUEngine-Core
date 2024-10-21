@@ -14,7 +14,7 @@
 
 #include <CollisionHelper.h>
 #include <DebugConfig.h>
-#include <Polyhedron.h>
+#include <Mesh.h>
 #include <Printing.h>
 
 #include "Box.h"
@@ -466,10 +466,10 @@ void Box::configureWireframe()
 		return;
 	}
 
-	PolyhedronSpec polyhedronSpec =
+	MeshSpec meshSpec =
 	{
 		{
-			__TYPE(Polyhedron),
+			__TYPE(Mesh),
 
 			/// displacement
 			{0, 0, 0},
@@ -483,76 +483,79 @@ void Box::configureWireframe()
 			/// interlaced
 			false
 		},
+
+		// segments
+		NULL
 	};
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Polyhedron(this->owner, &polyhedronSpec));
+	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
 
-	Polyhedron::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{
 		if(!this->rotationVertexDisplacement.z)
 		{
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
 #endif
 		}
 
 		if(!this->rotationVertexDisplacement.y)
 		{
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
 #endif
 		}
 
 		if(!this->rotationVertexDisplacement.x)
 		{
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 #endif
 		}
 	}
 	else
 	{
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
-		Polyhedron::addVertex(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
+		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
 #endif
 	}
 }

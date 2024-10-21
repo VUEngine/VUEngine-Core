@@ -778,14 +778,12 @@ void Collider::show()
 	}
 }
 
-// hide polyhedron
 void Collider::hide()
 {
 	if(!isDeleted(this->wireframe))
 	{
 		WireframeManager::unregisterWireframe(WireframeManager::getInstance(), this->wireframe);
 
-		// delete the Polyhedron
 		delete this->wireframe;
 		this->wireframe = NULL;
 	}

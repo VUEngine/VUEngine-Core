@@ -297,7 +297,6 @@ void CollisionManager::showColliders()
 	}
 }
 
-// free memory by deleting direct draw Polyhedrons
 void CollisionManager::hideColliders()
 {
 	// comparing against the other colliders

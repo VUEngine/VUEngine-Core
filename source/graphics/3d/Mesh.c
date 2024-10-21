@@ -214,6 +214,52 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	while(!isEndSegment);
 }
 //---------------------------------------------------------------------------------------------------------
+void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
+{
+	MeshSegment* newMeshSegment = new MeshSegment;
+	newMeshSegment->fromVertex = NULL;
+	newMeshSegment->toVertex = NULL;
+
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+	{
+		Vertex* vertex = (Vertex*)node->data;
+
+		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
+		{
+			newMeshSegment->fromVertex = vertex;
+		}
+		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
+		{
+			newMeshSegment->toVertex = vertex;
+		}
+
+		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
+		{
+			break;
+		}
+	}
+
+	if(NULL == newMeshSegment->fromVertex)
+	{
+		newMeshSegment->fromVertex = new Vertex;
+		newMeshSegment->fromVertex->vector = startVector;
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
+	}
+
+	if(NULL == newMeshSegment->toVertex)
+	{
+		newMeshSegment->toVertex = new Vertex;
+		newMeshSegment->toVertex->vector = endVector;
+		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
+	}
+
+	VirtualList::pushBack(this->segments, newMeshSegment);
+}
+//---------------------------------------------------------------------------------------------------------
 PixelRightBox Mesh::getPixelRightBox()
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
@@ -388,51 +434,5 @@ void Mesh::deleteLists()
 		delete this->segments;
 		this->segments = NULL;
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
-{
-	MeshSegment* newMeshSegment = new MeshSegment;
-	newMeshSegment->fromVertex = NULL;
-	newMeshSegment->toVertex = NULL;
-
-	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
-	{
-		Vertex* vertex = (Vertex*)node->data;
-
-		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
-		{
-			newMeshSegment->fromVertex = vertex;
-		}
-		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
-		{
-			newMeshSegment->toVertex = vertex;
-		}
-
-		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
-		{
-			break;
-		}
-	}
-
-	if(NULL == newMeshSegment->fromVertex)
-	{
-		newMeshSegment->fromVertex = new Vertex;
-		newMeshSegment->fromVertex->vector = startVector;
-		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
-	}
-
-	if(NULL == newMeshSegment->toVertex)
-	{
-		newMeshSegment->toVertex = new Vertex;
-		newMeshSegment->toVertex->vector = endVector;
-		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
-	}
-
-	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 //---------------------------------------------------------------------------------------------------------

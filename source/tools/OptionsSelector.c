@@ -50,7 +50,6 @@
 #include <ParticleSystem.h>
 #include <PhysicalWorld.h>
 #include <Printing.h>
-#include <Polyhedron.h>
 #include <Collider.h>
 #include <SolidParticle.h>
 #include <SoundManager.h>

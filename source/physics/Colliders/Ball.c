@@ -15,7 +15,6 @@
 #include <CollisionHelper.h>
 #include <DebugConfig.h>
 #include <Optics.h>
-#include <Polyhedron.h>
 #include <Printing.h>
 #include <Sphere.h>
 
@@ -97,7 +96,6 @@ void Ball::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionI
 	this->radius = radius;
 }
 
-// configure Polyhedron
 void Ball::configureWireframe()
 {
 	if(!isDeleted(this->wireframe))
