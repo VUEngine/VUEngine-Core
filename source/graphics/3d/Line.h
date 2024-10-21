@@ -11,37 +11,70 @@
 #define LINE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Wireframe.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
+/// A Line spec
+/// @memberof Line
 typedef struct LineSpec
 {
-	// Wireframe
+	// Wireframe spec
 	WireframeSpec wireframeSpec;
 
+	/// Starting point
 	Vector3D a;
+
+	/// End point
 	Vector3D b;
 
 } LineSpec;
 
+/// A Line spec that is stored in ROM
+/// @memberof Line
+typedef const LineSpec LineROMSpec;
+
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class Line
+///
+/// Inherits from Wireframe
+///
+/// Draws a line.
 /// @ingroup graphics-3d
 class Line : Wireframe
 {
-	// Vertices
+	/// @protectedsection
+
+	/// Starting point
 	PixelVector a;
+
+	/// End point
 	PixelVector b;
 
 	/// @publicsection
+
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the wireframe attaches to
+	/// @param asteriskSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const LineSpec* lineSpec);
+
+	/// Prepare the wireframe for drawing.
+	/// @param relativePosition: Position relative to the camera's
 	override void render(Vector3D relativePosition);
+
+	/// Draw the wireframe to the frame buffers.
+	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
 }
 

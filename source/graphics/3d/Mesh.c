@@ -8,14 +8,12 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DirectDraw.h>
 #include <DebugConfig.h>
-#include <Math.h>
-#include <Optics.h>
 #include <PixelVector.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
@@ -24,115 +22,19 @@
 #include "Mesh.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Class constructor
- *
- * @private
- */
-void Mesh::constructor(SpatialObject owner, const MeshSpec* meshSpec)
-{
-	// construct base object
-	Base::constructor(owner, &meshSpec->wireframeSpec);
-
-	this->segments = new VirtualList();
-	this->vertices = new VirtualList();
-
-	if(NULL != this->componentSpec)
-	{
-		Mesh::addSegments(this, ((MeshSpec*)this->componentSpec)->segments, Vector3D::zero());
-	}
-}
-
-/**
- * Class destructor
- */
-void Mesh::destructor()
-{
-	Mesh::hide(this);
-
-	Mesh::deleteLists(this);
-
-	// destroy the super object
-	// must always be called at the end of the destructor
-	Base::destructor();
-}
-
-void Mesh::deleteLists()
-{
-	if(!isDeleted(this->vertices))
-	{
-		VirtualList::deleteData(this->vertices);
-		delete this->vertices;
-		this->vertices = NULL;
-	}
-	
-	if(!isDeleted(this->segments))
-	{
-		VirtualList::deleteData(this->segments);
-		delete this->segments;
-		this->segments = NULL;
-	}
-}
-
-/**
- * Get pixel right box
- */
-PixelRightBox Mesh::getPixelRightBox()
-{
-	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
-
-	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
-	{
-		Vertex* vertex = (Vertex*)node->data;
-
-		PixelVector pixelVector = PixelVector::getFromVector3D(Vector3D::sum(vertex->vector, this->displacement), 0);
-
-		if(pixelVector.x < pixelRightBox.x0)
-		{
-			pixelRightBox.x0 = pixelVector.x;
-		}
-
-		if(pixelVector.x > pixelRightBox.x1)
-		{
-			pixelRightBox.x1 = pixelVector.x;
-		}
-
-		if(pixelVector.y < pixelRightBox.y0)
-		{
-			pixelRightBox.y0 = pixelVector.y;
-		}
-
-		if(pixelVector.y > pixelRightBox.y1)
-		{
-			pixelRightBox.y1 = pixelVector.y;
-		}
-
-		if(pixelVector.z < pixelRightBox.z0)
-		{
-			pixelRightBox.z0 = pixelVector.z;
-		}
-
-		if(pixelVector.z > pixelRightBox.z1)
-		{
-			pixelRightBox.z1 = pixelVector.z;
-		}
-	}
-
-	return pixelRightBox;
-}
-
 static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
@@ -249,7 +151,38 @@ static PixelRightBox Mesh::getPixelRightBoxFromSpec(MeshSpec* meshSpec)
 
 	return pixelRightBox;
 }
+//---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Mesh::constructor(SpatialObject owner, const MeshSpec* meshSpec)
+{
+	// construct base object
+	Base::constructor(owner, &meshSpec->wireframeSpec);
+
+	this->segments = new VirtualList();
+	this->vertices = new VirtualList();
+
+	if(NULL != this->componentSpec)
+	{
+		Mesh::addSegments(this, ((MeshSpec*)this->componentSpec)->segments, Vector3D::zero());
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Mesh::destructor()
+{
+	Mesh::hide(this);
+
+	Mesh::deleteLists(this);
+
+	// destroy the super object
+	// must always be called at the end of the destructor
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
 void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 {
 	if(NULL == segments)
@@ -280,56 +213,56 @@ void Mesh::addSegments(PixelVector (*segments)[2], Vector3D displacement)
 	}
 	while(!isEndSegment);
 }
-
-void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
+//---------------------------------------------------------------------------------------------------------
+PixelRightBox Mesh::getPixelRightBox()
 {
-	MeshSegment* newMeshSegment = new MeshSegment;
-	newMeshSegment->fromVertex = NULL;
-	newMeshSegment->toVertex = NULL;
+	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
 	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
 	{
 		Vertex* vertex = (Vertex*)node->data;
 
-		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
+		PixelVector pixelVector = PixelVector::getFromVector3D(Vector3D::sum(vertex->vector, this->displacement), 0);
+
+		if(pixelVector.x < pixelRightBox.x0)
 		{
-			newMeshSegment->fromVertex = vertex;
-		}
-		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
-		{
-			newMeshSegment->toVertex = vertex;
+			pixelRightBox.x0 = pixelVector.x;
 		}
 
-		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
+		if(pixelVector.x > pixelRightBox.x1)
 		{
-			break;
+			pixelRightBox.x1 = pixelVector.x;
+		}
+
+		if(pixelVector.y < pixelRightBox.y0)
+		{
+			pixelRightBox.y0 = pixelVector.y;
+		}
+
+		if(pixelVector.y > pixelRightBox.y1)
+		{
+			pixelRightBox.y1 = pixelVector.y;
+		}
+
+		if(pixelVector.z < pixelRightBox.z0)
+		{
+			pixelRightBox.z0 = pixelVector.z;
+		}
+
+		if(pixelVector.z > pixelRightBox.z1)
+		{
+			pixelRightBox.z1 = pixelVector.z;
 		}
 	}
 
-	if(NULL == newMeshSegment->fromVertex)
-	{
-		newMeshSegment->fromVertex = new Vertex;
-		newMeshSegment->fromVertex->vector = startVector;
-		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
-	}
-
-	if(NULL == newMeshSegment->toVertex)
-	{
-		newMeshSegment->toVertex = new Vertex;
-		newMeshSegment->toVertex->vector = endVector;
-		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
-
-		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
-	}
-
-	VirtualList::pushBack(this->segments, newMeshSegment);
+	return pixelRightBox;
 }
-
-/**
- * Render
- */
+//---------------------------------------------------------------------------------------------------------
+VirtualList Mesh::getVertices()
+{
+	return this->vertices;
+}
+//---------------------------------------------------------------------------------------------------------
 void Mesh::render(Vector3D relativePosition)
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::render: NULL transformation");
@@ -397,10 +330,7 @@ void Mesh::render(Vector3D relativePosition)
 		}
 	}
 }
-
-/**
- * Draw
- */
+//---------------------------------------------------------------------------------------------------------
 bool Mesh::draw()
 {
 	NM_ASSERT(NULL != this->transformation, "Mesh::draw: NULL transformation");
@@ -419,10 +349,7 @@ bool Mesh::draw()
 
 	return drawn;
 }
-
-/**
- * Draw interlaced
- */
+//---------------------------------------------------------------------------------------------------------
 bool Mesh::drawInterlaced()
 {
 	bool drawn = false;
@@ -439,8 +366,73 @@ bool Mesh::drawInterlaced()
 
 	return drawn;
 }
+//---------------------------------------------------------------------------------------------------------
 
-VirtualList Mesh::getVertices()
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Mesh::deleteLists()
 {
-	return this->vertices;
+	if(!isDeleted(this->vertices))
+	{
+		VirtualList::deleteData(this->vertices);
+		delete this->vertices;
+		this->vertices = NULL;
+	}
+	
+	if(!isDeleted(this->segments))
+	{
+		VirtualList::deleteData(this->segments);
+		delete this->segments;
+		this->segments = NULL;
+	}
 }
+//---------------------------------------------------------------------------------------------------------
+void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
+{
+	MeshSegment* newMeshSegment = new MeshSegment;
+	newMeshSegment->fromVertex = NULL;
+	newMeshSegment->toVertex = NULL;
+
+	for(VirtualNode node = this->vertices->head; NULL != node; node = node->next)
+	{
+		Vertex* vertex = (Vertex*)node->data;
+
+		if(NULL == newMeshSegment->fromVertex && Vector3D::areEqual(vertex->vector, startVector))
+		{
+			newMeshSegment->fromVertex = vertex;
+		}
+		else if(NULL == newMeshSegment->toVertex && Vector3D::areEqual(vertex->vector, endVector))
+		{
+			newMeshSegment->toVertex = vertex;
+		}
+
+		if(NULL != newMeshSegment->fromVertex && NULL != newMeshSegment->toVertex)
+		{
+			break;
+		}
+	}
+
+	if(NULL == newMeshSegment->fromVertex)
+	{
+		newMeshSegment->fromVertex = new Vertex;
+		newMeshSegment->fromVertex->vector = startVector;
+		newMeshSegment->fromVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->fromVertex);
+	}
+
+	if(NULL == newMeshSegment->toVertex)
+	{
+		newMeshSegment->toVertex = new Vertex;
+		newMeshSegment->toVertex->vector = endVector;
+		newMeshSegment->toVertex->pixelVector = (PixelVector){0, 0, 0, 0};
+
+		VirtualList::pushBack(this->vertices, newMeshSegment->toVertex);
+	}
+
+	VirtualList::pushBack(this->segments, newMeshSegment);
+}
+//---------------------------------------------------------------------------------------------------------
