@@ -26,7 +26,7 @@
 /// @memberof Mesh
 typedef struct MeshSpec
 {
-	// Wireframe spec
+	/// Wireframe spec
 	WireframeSpec wireframeSpec;
 
 	/// Segments that compose the mesh
@@ -120,10 +120,6 @@ class Mesh : Wireframe
 	/// Draw the wireframe to the frame buffers.
 	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
-
-	/// Draw the wireframe to the frame buffers in interlaced mode.
-	/// @return True if at least one pixel is drawn; false otherwise
-	bool drawInterlaced();
 }
 
 

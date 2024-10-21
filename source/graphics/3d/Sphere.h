@@ -11,50 +11,75 @@
 #define SPHERE_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Wireframe.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
+/// A Sphere spec
+/// @memberof Sphere
 typedef struct SphereSpec
 {
-	// Wireframe
+	/// Wireframe spec
 	WireframeSpec wireframeSpec;
 
-	// radius
+	/// Radius
 	fixed_t radius;
 
-	// draw center
+	/// Flag to control the drawing of the sphere's center point
 	bool drawCenter;
 
 } SphereSpec;
 
+/// A Sphere spec that is stored in ROM
+/// @memberof Sphere
 typedef const SphereSpec SphereROMSpec;
 
 
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
-	PixelVector center;
+	/// @protectedsection
+
+	/// Position at which to draw the wireframe
+	PixelVector position;
+
+	/// Radius of the sphere
 	fixed_t radius;
+
+	/// Used radius of the sphere's to draw it
 	uint16 scaledRadius;
+
+	/// Flag to control the drawing of the sphere's center point
 	bool drawCenter;
 
 	/// @publicsection
-	void constructor(SpatialObject owner, const SphereSpec* sphereSpec);
-	PixelVector getCenter();
-	fixed_t getRadius();
-	void setCenter(PixelVector center);
-	void setRadius(fixed_t radius);
-	void setRadiusScale(fixed_t radiusScale);
 
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the wireframe attaches to
+	/// @param asteriskSpec: Specification that determines how to configure the wireframe
+	void constructor(SpatialObject owner, const SphereSpec* sphereSpec);
+
+	/// Set the sphere's radius.
+	/// @param radius: Sphere's radius
+	void setRadius(fixed_t radius);
+
+	/// Retrieve the sphere's radius.
+	/// @return Sphere's radius
+	fixed_t getRadius();
+	
+	/// Prepare the wireframe for drawing.
+	/// @param relativePosition: Position relative to the camera's
 	override void render(Vector3D relativePosition);
+
+	/// Draw the wireframe to the frame buffers.
+	/// @return True if at least one pixel is drawn; false otherwise
 	override bool draw();
 }
 
