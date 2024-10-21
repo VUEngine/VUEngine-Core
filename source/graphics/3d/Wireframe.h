@@ -11,68 +11,123 @@
 #define WIREFRAME_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <VisualComponent.h>
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class VirtualList;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __WIREFRAME_MAXIMUM_SQUARE_DISTANCE_TO_CAMERA							__FIXED_EXT_INFINITY
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-class VirtualList;
-
+/// A Wireframe spec
+/// @memberof Wireframe
 typedef struct WireframeSpec
 {
-	/// class allocator
+	/// Class' allocator
 	AllocatorPointer allocator;
 
-	/// displacement
+	/// Displacement relative to the owner's spatial position
 	Vector3D displacement;
 
-	/// color
+	/// Color for the wireframe
 	uint8 color;
 
-	/// transparent
+	/// Transparency mode
+	/// (__TRANSPARENCY_NONE, __TRANSPARENCY_EVEN or __TRANSPARENCY_ODD)
 	uint8 transparent;
 
-	/// interlaced
+	/// Flag to render the wireframe in interlaced mode
 	bool interlaced;
 
 } WireframeSpec;
 
+/// A Wireframe spec that is stored in ROM
+/// @memberof Wireframe
 typedef const WireframeSpec WireframeROMSpec;
 
 
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class Wireframe
+///
+/// Inherits from VisualComponent
+///
+/// Draws 3D shapes to the frame buffers.
 /// @ingroup graphics-3d
 abstract class Wireframe : VisualComponent
 {
+	/// Displacement relative to the owner's spatial position
 	Vector3D displacement;
+
+	/// Wireframe's squared distance to the camera's position
 	fixed_ext_t squaredDistanceToCamera;
+
+	/// Flag that indicates that the wireframe has been drawn
 	bool drawn;
+
+	/// Flag to render the wireframe in interlaced mode
 	bool interlaced;
+
+	/// Color for the wireframe
 	uint8 color;
+
+	/// Index of the last frame buffer used in interlaced mode 
 	uint8 bufferIndex;
 
 	/// @publicsection
+	/// Class' constructor
+	/// @param owner: SpatialObject to which the wireframe attaches to
+	/// @param wireframeSpec: Specification that determines how to configure the wireframe
 	void constructor(SpatialObject owner, const WireframeSpec* wireframeSpec);
-	bool prepareForRender(Vector3D* relativePosition);
-	void setDisplacement(Vector3D displacement);
-	bool isVisible();
-	PixelVector getPixelPosition();
 
-	virtual bool draw() = 0;
-	virtual void render(Vector3D relativePosition);
-	virtual VirtualList getVertices();
+	/// Set the displacement relative to the owner's spatial position
+	/// @param displacement: Displacement relative to the owner's spatial position
+	void setDisplacement(Vector3D displacement);
+
+	/// Check if the wireframe is visible.
+	/// @return True if the wireframe is visible; false otherwise
+	bool isVisible();
+
+	/// Configure the wireframe to be drawn.
+	/// @param out relativePosition: Wireframe's position relative to the camera's position 
+	/// @return True if the wireframe is visible within the camera's frustum; false otherwise
+	bool prepareForRender(Vector3D* relativePosition);
+
+	/// Retrieve the mesh's bounding box in pixel units.
+	/// @return Bounding box of the mesh
 	virtual PixelRightBox getPixelRightBox();
+
+	/// Retrieve the list of vertices that compose the mesh.
+	/// @return Linked list of vertices
+	virtual VirtualList getVertices();
+
+	/// Prepare the wireframe for drawing.
+	/// @param relativePosition: Position relative to the camera's
+	virtual void render(Vector3D relativePosition);
+
+	/// Draw the wireframe to the frame buffers.
+	/// @return True if at least one pixel is drawn; false otherwise
+	virtual bool draw() = 0;
 }
 
 

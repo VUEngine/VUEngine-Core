@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Camera.h>
 #include <DebugConfig.h>
@@ -21,21 +21,19 @@
 #include "Wireframe.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
-/**
- * Class constructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeSpec)
 {
 	// construct base object
@@ -50,10 +48,7 @@ void Wireframe::constructor(SpatialObject owner, const WireframeSpec* wireframeS
 	this->rendered = false;
 	this->drawn = false;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Wireframe::destructor()
 {
 	Wireframe::hide(this);
@@ -62,30 +57,17 @@ void Wireframe::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-/**
- * Rendered
- */
-void Wireframe::render(Vector3D relativePosition __attribute__((unused)))
+//---------------------------------------------------------------------------------------------------------
+void Wireframe::setDisplacement(Vector3D displacement)
 {
+	this->displacement = displacement;
 }
-
-/**
- * Get vertices
- */
-VirtualList Wireframe::getVertices()
+//---------------------------------------------------------------------------------------------------------
+bool Wireframe::isVisible()
 {
-	return NULL;
+	return this->drawn && __SHOW == this->show;
 }
-
-/**
- * Get pixel right box
- */
-PixelRightBox Wireframe::getPixelRightBox()
-{
-	return (PixelRightBox){0, 0, 0, 0, 0, 0};
-}
-
+//---------------------------------------------------------------------------------------------------------
 bool Wireframe::prepareForRender(Vector3D* relativePosition)
 {
 	Vector3D displacement = Vector3D::rotate(this->displacement, this->transformation->rotation);
@@ -209,18 +191,17 @@ bool Wireframe::prepareForRender(Vector3D* relativePosition)
 
 	return __COLOR_BLACK != this->color;
 }
-
-void Wireframe::setDisplacement(Vector3D displacement)
+//---------------------------------------------------------------------------------------------------------
+PixelRightBox Wireframe::getPixelRightBox()
 {
-	this->displacement = displacement;
+	return (PixelRightBox){0, 0, 0, 0, 0, 0};
 }
-
-/**
- * Is visible?
- *
- * @return visibility
- */
-bool Wireframe::isVisible()
+//---------------------------------------------------------------------------------------------------------
+VirtualList Wireframe::getVertices()
 {
-	return this->drawn && __SHOW == this->show;
+	return NULL;
 }
+//---------------------------------------------------------------------------------------------------------
+void Wireframe::render(Vector3D relativePosition __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------

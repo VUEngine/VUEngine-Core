@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Camera.h>
 #include <DebugConfig.h>
@@ -22,13 +22,18 @@
 
 #include "WireframeManager.h"
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 friend class Wireframe;
+
+
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
 
 Vector3D _cameraDirection __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 Vector3D _previousCameraPosition __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
@@ -37,164 +42,12 @@ Rotation _previousCameraInvertedRotation __INITIALIZED_GLOBAL_DATA_SECTION_ATTRI
 Rotation _previousCameraInvertedRotationBuffer __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = {0, 0, 0};
 
 
+
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			WireframeManager::getInstance()
- * @memberof	WireframeManager
- * @public
- * @return		WireframeManager instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void WireframeManager::constructor()
-{
-	Base::constructor();
-
-	this->wireframes = new VirtualList();
-	this->stopDrawing = false;
-	this->evenFrame = __TRANSPARENCY_EVEN;
-	this->disabled = false;
-	this->renderedWireframes = 0;
-	this->drawnWireframes = 00;
-
-	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-}
-
-/**
- * Class destructor
- */
-void WireframeManager::destructor()
-{
-	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
-
-	if(!isDeleted(this->wireframes))
-	{
-		VirtualList::deleteData(this->wireframes);
-		delete this->wireframes;
-		this->wireframes = NULL;
-	}
-
-	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
-
-	// allow a new construct
-	Base::destructor();
-}
-
-bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
-{
-	this->stopDrawing = true;
-
-	return true;
-}
-
-/**
- * Create a Wireframe to be rendered
- *
- * @param wireframeSpec	Wireframe spec
- */
-Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner)
-{
-	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
-
-	if(NULL == wireframeSpec)
-	{
-		return NULL;
-	}
-
-	Wireframe wireframe = ((Wireframe (*)(SpatialObject, const WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
-
-	if(!isDeleted(wireframe))
-	{
-		return WireframeManager::registerWireframe(this, wireframe);
-	}
-
-	return NULL;
-}
-
-/**
- * Register a Wireframe to be rendered
- *
- * @param wireframeSpec	Wireframe spec
- */
-Wireframe WireframeManager::registerWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return NULL;
-	}
-
-	if(!VirtualList::find(this->wireframes, wireframe))
-	{
-		VirtualList::pushBack(this->wireframes, wireframe);
-	}
-	else
-	{
-		NM_ASSERT(false, "WireframeManager::registerWireframe: already wireframe");
-	}
-
-	return wireframe;
-}
-
-/**
- * Destroy a Wireframe
- *
- * @param wireframe	Wireframe to remove
- */
-void WireframeManager::destroyWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWireframe: trying to dispose dead wireframe");
-	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWireframe: trying to dispose non wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return;
-	}
-
-	if(wireframe == WireframeManager::unregisterWireframe(this, wireframe))
-	{
-		Wireframe::hide(wireframe);
-		delete wireframe;
-	}
-	else
-	{
-		NM_ASSERT(false, "WireframeManager::destroyWireframe: destroying a wireframe that I don't manage");
-	}
-}
-
-/**
- * Register a Wireframe to be rendered
- *
- * @param wireframeSpec	Wireframe spec
- */
-Wireframe WireframeManager::unregisterWireframe(Wireframe wireframe)
-{
-	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
-
-	if(isDeleted(wireframe))
-	{
-		return NULL;
-	}
-
-	bool result = VirtualList::removeData(this->wireframes, wireframe);
-
-	return result ? wireframe : NULL;
-}
-
-/**
- * Reset manager's state
- */
 void WireframeManager::reset()
 {
 	WireframeManager::enable(this);
@@ -208,56 +61,90 @@ void WireframeManager::reset()
 	_previousCameraInvertedRotation = *_cameraInvertedRotation;
 	_previousCameraInvertedRotationBuffer = _previousCameraInvertedRotation;
 }
-
-/**
- * Sort wireframes according to their z coordinate
- */
-void WireframeManager::sort()
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::enable()
 {
-	while(WireframeManager::sortProgressively(this));
+	this->disabled = false;
 }
-
-/**
- * Deferred sorting wireframes according to their z coordinate
- */
-bool WireframeManager::sortProgressively()
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::disable()
 {
-	bool swapped = false;
+	this->disabled = true;
+}
+//---------------------------------------------------------------------------------------------------------
+Wireframe WireframeManager::createWireframe(const WireframeSpec* wireframeSpec, SpatialObject owner)
+{
+	NM_ASSERT(NULL != wireframeSpec, "WireframeManager::createWireframe: null wireframeSpec");
 
-	for(VirtualNode node = this->wireframes->head; NULL != node && NULL != node->next; node = node->next)
+	if(NULL == wireframeSpec)
 	{
-		VirtualNode nextNode = node->next;
-
-		NM_ASSERT(!isDeleted(node->data), "WireframeManager::sortProgressively: NULL node's data");
-		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
-
-		Wireframe wireframe = Wireframe::safeCast(node->data);
-
-		NM_ASSERT(!isDeleted(nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data");
-		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
-
-		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
-
-		// check if z positions are swapped
-		if(nextWireframe->squaredDistanceToCamera < wireframe->squaredDistanceToCamera)
-		{
-			// swap nodes' data
-			node->data = nextWireframe;
-			nextNode->data = wireframe;
-
-			node = nextNode;
-
-			swapped = true;
-			break;
-		}
+		return NULL;
 	}
 
-	return swapped;
-}
+	Wireframe wireframe = ((Wireframe (*)(SpatialObject, const WireframeSpec*))wireframeSpec->allocator)(owner, wireframeSpec);
 
-/**
- * Render the wireframes
- */
+	if(!isDeleted(wireframe) && WireframeManager::registerWireframe(this, wireframe))
+	{
+		return wireframe;
+	}
+
+	return NULL;
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::destroyWireframe(Wireframe wireframe)
+{
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::destroyWireframe: trying to dispose dead wireframe");
+	ASSERT(__GET_CAST(Wireframe, wireframe), "WireframeManager::destroyWireframe: trying to dispose non wireframe");
+
+	if(isDeleted(wireframe))
+	{
+		return;
+	}
+
+	if(WireframeManager::unregisterWireframe(this, wireframe))
+	{
+		Wireframe::hide(wireframe);
+		delete wireframe;
+	}
+	else
+	{
+		NM_ASSERT(false, "WireframeManager::destroyWireframe: destroying a wireframe that I don't manage");
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool WireframeManager::registerWireframe(Wireframe wireframe)
+{
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::registerWireframe: coudln't create wireframe");
+
+	if(isDeleted(wireframe))
+	{
+		return false;
+	}
+
+	if(!VirtualList::find(this->wireframes, wireframe))
+	{
+		VirtualList::pushBack(this->wireframes, wireframe);
+	}
+	else
+	{
+		NM_ASSERT(false, "WireframeManager::registerWireframe: already wireframe");
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
+bool WireframeManager::unregisterWireframe(Wireframe wireframe)
+{
+	NM_ASSERT(!isDeleted(wireframe), "WireframeManager::createWireframe: coudln't create wireframe");
+
+	if(isDeleted(wireframe))
+	{
+		return false;
+	}
+
+	return VirtualList::removeData(this->wireframes, wireframe);
+}
+//---------------------------------------------------------------------------------------------------------
 void WireframeManager::render()
 {
 	if(NULL == this->wireframes->head)
@@ -316,10 +203,7 @@ void WireframeManager::render()
 	_previousCameraInvertedRotation = _previousCameraInvertedRotationBuffer;
 	_previousCameraInvertedRotationBuffer = *_cameraInvertedRotation;
 }
-
-/**
- * Draw the wireframes to the frame buffers
- */
+//---------------------------------------------------------------------------------------------------------
 void WireframeManager::draw()
 {
 	if(this->disabled || NULL == this->wireframes->head)
@@ -359,23 +243,32 @@ void WireframeManager::draw()
 
 	this->evenFrame = __TRANSPARENCY_EVEN == this->evenFrame ? __TRANSPARENCY_ODD : __TRANSPARENCY_EVEN;
 }
-
-void WireframeManager::enable()
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::showWireframes()
 {
-	this->disabled = false;
-}
+	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-void WireframeManager::disable()
+		Wireframe::show(wireframe);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::hideWireframes()
 {
-	this->disabled = true;
-}
+	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	{
+		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-/**
- * Print manager's state
- *
- * @param x		Camera's x coordinate
- * @param y		Camera's y coordinate
- */
+		Wireframe::hide(wireframe);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+bool WireframeManager::hasWireframes()
+{
+	return NULL != this->wireframes && NULL != this->wireframes->head;
+}
+//---------------------------------------------------------------------------------------------------------
 #ifndef __SHIPPING
 void WireframeManager::print(int32 x, int32 y)
 {
@@ -389,28 +282,88 @@ void WireframeManager::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), this->drawnWireframes, x + 17, y++, NULL);
 }
 #endif
+//---------------------------------------------------------------------------------------------------------
 
-void WireframeManager::hideWireframes()
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::constructor()
 {
-	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
+	Base::constructor();
+
+	this->wireframes = new VirtualList();
+	this->stopDrawing = false;
+	this->evenFrame = __TRANSPARENCY_EVEN;
+	this->disabled = false;
+	this->renderedWireframes = 0;
+	this->drawnWireframes = 00;
+
+	VIPManager::addEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::destructor()
+{
+	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
+
+	if(!isDeleted(this->wireframes))
 	{
+		VirtualList::deleteData(this->wireframes);
+		delete this->wireframes;
+		this->wireframes = NULL;
+	}
+
+	VIPManager::removeEventListener(VIPManager::getInstance(), ListenerObject::safeCast(this), (EventListener)WireframeManager::onVIPManagerGAMESTARTDuringXPEND, kEventVIPManagerGAMESTARTDuringXPEND);
+
+	// allow a new construct
+	Base::destructor();
+}
+//---------------------------------------------------------------------------------------------------------
+void WireframeManager::sort()
+{
+	while(WireframeManager::sortProgressively(this));
+}
+//---------------------------------------------------------------------------------------------------------
+bool WireframeManager::sortProgressively()
+{
+	bool swapped = false;
+
+	for(VirtualNode node = this->wireframes->head; NULL != node && NULL != node->next; node = node->next)
+	{
+		VirtualNode nextNode = node->next;
+
+		NM_ASSERT(!isDeleted(node->data), "WireframeManager::sortProgressively: NULL node's data");
+		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL node's data cast");
+
 		Wireframe wireframe = Wireframe::safeCast(node->data);
 
-		Wireframe::hide(wireframe);
+		NM_ASSERT(!isDeleted(nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data");
+		ASSERT(__GET_CAST(Wireframe, nextNode->data), "WireframeManager::sortProgressively: NULL nextNode's data cast");
+
+		Wireframe nextWireframe = Wireframe::safeCast(nextNode->data);
+
+		// check if z positions are swapped
+		if(nextWireframe->squaredDistanceToCamera < wireframe->squaredDistanceToCamera)
+		{
+			// swap nodes' data
+			node->data = nextWireframe;
+			nextNode->data = wireframe;
+
+			node = nextNode;
+
+			swapped = true;
+			break;
+		}
 	}
-}
 
-void WireframeManager::showWireframes()
+	return swapped;
+}
+//---------------------------------------------------------------------------------------------------------
+bool WireframeManager::onVIPManagerGAMESTARTDuringXPEND(ListenerObject eventFirer __attribute__ ((unused)))
 {
-	for(VirtualNode node = this->wireframes->head; NULL != node; node = node->next)
-	{
-		Wireframe wireframe = Wireframe::safeCast(node->data);
+	this->stopDrawing = true;
 
-		Wireframe::show(wireframe);
-	}
+	return true;
 }
-
-bool WireframeManager::hasWireframes()
-{
-	return NULL != this->wireframes && NULL != this->wireframes->head;
-}
+//---------------------------------------------------------------------------------------------------------

@@ -42,6 +42,16 @@ typedef struct SphereSpec
 typedef const SphereSpec SphereROMSpec;
 
 
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class Sphere
+///
+/// Inherits from Wireframe
+///
+/// Draws a cirle that represents a 3D sphere.
 /// @ingroup graphics-3d
 class Sphere : Wireframe
 {
