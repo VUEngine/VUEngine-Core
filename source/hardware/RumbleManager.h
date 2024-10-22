@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -13,25 +13,31 @@
 #define __RUMBLE_PAK_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Object.h>
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class CommunicationManager;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __RUMBLE_MAX_EFFECTS_IN_CHAIN				8
 #define __RUMBLE_MAX_OVERDRIVE						126
-
 #define __RUMBLE_CHAIN_EFFECT_0						0x00
 #define __RUMBLE_CHAIN_EFFECT_1						0x01
 #define __RUMBLE_CHAIN_EFFECT_2						0x02
 #define __RUMBLE_CHAIN_EFFECT_3						0x03
 #define __RUMBLE_CHAIN_EFFECT_4						0x04
-
 #define __RUMBLE_FREQ_50HZ							0x04
 #define __RUMBLE_FREQ_95HZ							0x05
 #define __RUMBLE_FREQ_130HZ							0x06
@@ -39,7 +45,6 @@
 #define __RUMBLE_FREQ_240HZ							0x01
 #define __RUMBLE_FREQ_320HZ							0x02
 #define __RUMBLE_FREQ_400HZ							0x03
-
 #define __RUMBLE_CMD_STOP							0x00
 #define __RUMBLE_CMD_MIN_EFFECT						0x01
 #define __RUMBLE_CMD_MAX_EFFECT						0x7B
@@ -62,75 +67,108 @@
 #define __RUMBLE_CMD_BREAK							0xA3
 #define __RUMBLE_CMD_WRITE_EFFECT_CHAIN				0xB0
 #define __RUMBLE_CMD_WRITE_EFFECT_LOOPS_CHAIN		0xB1
-
 #define __RUMBLE_EFFECT_CHAIN_END				 	0xFF
-
-
 #define __RUMBLE_TOTAL_COMMANDS						10
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-class CommunicationManager;
-
-/**
- * A Rumble effect
- *
- * @memberof	Sprite
- */
+/// A rumble effect spec
+/// @memberof RumbleManager
 typedef struct RumbleEffectSpec
 {
-	/// Effect #
+	/// Effect number
 	uint8 effect;
+	
 	/// Frequency
 	uint8 frequency;
+
 	/// Positive Sustain
 	uint8 sustainPositive;
+
 	/// Negative Sustain
 	uint8 sustainNegative;
+
 	/// Overdrive
 	uint8 overdrive;
+
 	/// Break
 	uint8 breaking;
+
 	/// Stop before starting
 	bool stop;
 
 } RumbleEffectSpec;
 
+/// A A rumble effect spec that is stored in ROM
+/// @memberof RumbleManager
 typedef const RumbleEffectSpec RumbleEffectROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class RumbleManager
+///
+/// Inherits from Object
+///
+/// Managers rumble effects.
 /// @ingroup hardware
 singleton class RumbleManager : Object
 {
+	/// @protectedsection
+
+	/// Used to broadcast the rumble commands over the EXT port
 	CommunicationManager communicationManager;
+
+	/// Queue of commands to broadcast
 	uint8 rumbleCommands[__RUMBLE_TOTAL_COMMANDS];
+
+	/// Determines if the commands are broadcasted asynchronously,
+	/// defaults to true
 	bool async;
+
+	/// Determines if the broadcast of new effects should wait or not 
+	/// for a previous queue effect being completedly broadcasted
 	bool overridePreviousEffect;
+
+	/// Index of the command in the queue to broadcast next
 	uint8 rumbleCommandIndex;
-	const RumbleEffectSpec* rumbleEffect;
-	uint8 frequency;
-	uint8 sustainPositive;
-	uint8 sustainNegative;
-	uint8 overdrive;
-	uint8 breaking;
+
+	/// Rumble effect spec being broadcasted
+	const RumbleEffectSpec* rumbleEffectSpec;
+
+	/// Cached rumble effect to prevent broadcasting again previous send commands
+	RumbleEffectSpec cachedRumbleEffect;
 
 	/// @publicsection
 	static RumbleManager getInstance();
 
-	void reset();
-	void setAsync(bool async);
-	void setOverridePreviousEffect(bool overridePreviousEffect);
-	static void startEffect(const RumbleEffectSpec* rumbleEffect);
-	static void stopEffect(const RumbleEffectSpec* rumbleEffect);
-	static void stopAllEffects();
-}
+	/// Start a rumble effect configured with the provided spec.
+	/// @param rumbleEffectSpec: Specification of the rumble effect to play
+	static void startEffect(const RumbleEffectSpec* rumbleEffectSpec);
 
+	/// Stop a rumble effect configured with the provided spec.
+	/// @param rumbleEffectSpec: Specification of the rumble effect to stop; if NULL,
+	/// any playing effect is stoped
+	static void stopEffect(const RumbleEffectSpec* rumbleEffectSpec);
+	
+	/// Reset the manager's state.
+	void reset();
+
+	/// Set the async flag.
+	/// @param async: If true, rumble commands are broadcasted asynchronously
+	void setAsync(bool async);
+
+	/// Set the flag to broadcast new effects regardless of if there is a previous 
+	/// queue effect pending broadcasted
+	/// @param overridePreviousEffect: If true, new effects are broadcasted regardless of if 
+	/// there is a queued effect pending broadcasting
+	void setOverridePreviousEffect(bool overridePreviousEffect);
+}
 
 #endif
