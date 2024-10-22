@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -24,10 +24,6 @@
 
 class Telegram;
 
-
-//=========================================================================================================
-// CLASS' DATA
-//=========================================================================================================
 
 //=========================================================================================================
 // CLASS' DECLARATION
@@ -81,6 +77,7 @@ singleton class CommunicationManager : ListenerObject
 	volatile uint8 communicationMode;
 
 	/// @publicsection
+	
 	/// Method to retrieve the singleton instance
 	/// @return CommunicationManager singleton
 	static CommunicationManager getInstance();

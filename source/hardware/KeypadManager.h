@@ -11,16 +11,16 @@
 #define KEY_PAD_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 // hardware reg __SCR specs
 #define	__S_INTDIS		0x80 	// Disable Interrupts
@@ -61,74 +61,108 @@
 #define __KEY_HOLD		0x0100
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * User's input
- *
- * @memberof	KeypadManager
- */
+/// User's input
+/// @memberof	KeypadManager
 typedef struct UserInput
 {
 	/// All pressed key(s)
 	uint16 allKeys;
+
 	/// Pressed key(s) just in the last cycle
 	uint16 pressedKey;
+
 	/// Released key(s) just in the last cycle
 	uint16 releasedKey;
+
 	/// Held key(s)
 	uint16 holdKey;
+
 	/// How long the key(s) have been held (in game frames)
 	uint32 holdKeyDuration;
+
 	/// Previously pressed key(s)
 	uint16 previousKey;
+
 	/// Low power flag
 	uint16 powerFlag;
+
 } UserInput;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class KeypadManager
+///
+/// Inherits from ListenerObject
+///
+/// Manages keypad inputs.
 /// @ingroup hardware
 singleton class KeypadManager : ListenerObject
 {
+	/// @protectedsection
+
+	/// Holds the mathematical sum of all user's presses
 	long accumulatedUserInput;
-	// User's Input
+
+	/// Struct that holds the user's input during the last game frame
 	UserInput userInput;
-	// User's Input to be registered
+
+	/// Flags to select which inputs to register and which to ignore
 	UserInput userInputToRegister;
-	// Enabled
+
+	/// Flag to enable/disable the capture of user input
 	bool enabled;
-	// Flag to prevent pressed and released keys from
-	// being raised when holding buttons while changing 
-	// game states
+
+	/// Flag to prevent pressed and released keys from being raised when 
+	/// holding buttons while changing game states
 	bool reseted;
 
 	/// @publicsection
-	static KeypadManager getInstance();
-	static void interruptHandler();
-	static void printUserInput(const UserInput* userInput, int32 x, int32 y);
 
+	/// Method to retrieve the singleton instance
+	/// @return CommunicationManager singleton
+	static KeypadManager getInstance();
+
+	/// Interrupt handler for keypad's interrupts
+	static void interruptHandler();
+
+	/// Reset the manager's state.
 	void reset();
-	void disable();
-	void disableInterrupt();
+
+	/// Enable user input.
 	void enable();
-	void enableInterrupt();
-	void flush();
-	uint16 getHoldKey();
-	uint32 getHoldKeyDuration();
-	uint16 getPressedKey();
-	uint16 getPreviousKey();
-	uint16 getReleasedKey();
-	UserInput getUserInput();
+
+	/// Disable user input.
+	void disable();
+	
+	/// Check if user input is enabled.
+	/// @return True if user input is enabled
 	int32 isEnabled();
-	UserInput captureUserInput();
+
+	/// Retrieve the user input during the last game frame
+	/// @return User input struct with the key presses of the last game frame
+	UserInput readUserInput();
+
+	/// Register the user input according to the provided flags.
+	/// @param inputToRegister: Flags to select which inputs to register and which to ignore
 	void registerInput(uint16 inputToRegister);
+
+	/// Retrieve the accumulated sum of user inputs since the start of the program.
+	/// @return The mathematical sum of all user's presses.
 	long getAccumulatedUserInput();
+
+	/// Print the last reads of user input.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	void print(int32 x, int32 y);
+
 }
 
 

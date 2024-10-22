@@ -544,8 +544,7 @@ void VUEngine::processUserInput(GameState currentGameState)
 	this->lastProcessName = PROCESS_NAME_INPUT;
 #endif
 
-	// poll the user's input
-	UserInput userInput = KeypadManager::captureUserInput(this->keypadManager);
+	UserInput userInput = KeypadManager::readUserInput(this->keypadManager);
 	
 #ifdef __TOOLS
 	if(VUEngine::checkIfToggleTool(this, &userInput))
