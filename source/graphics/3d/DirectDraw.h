@@ -38,8 +38,8 @@ singleton class DirectDraw : Object
 	/// @publicsection
 	static DirectDraw getInstance();
 	static void writeToFrameBuffers();
-	static bool drawColorPoint(int16 x, int16 y, int16 parallax, int32 color);
-	static bool drawColorPointInterlaced(int16 x, int16 y, int16 parallax, int32 color, uint8 bufferIndex);
+	static bool drawColorPoint(PixelVector point, int32 color);
+	static bool drawColorPointInterlaced(PixelVector point, int32 color, uint8 bufferIndex);
 	static bool drawColorLine(PixelVector fromPoint, PixelVector toPoint, int32 color, uint8 bufferIndex, bool interlaced);
 	static bool drawColorCircle(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
 	static bool drawColorCircumference(PixelVector center, int16 radius, int32 color, uint8 bufferIndex, bool interlaced);
