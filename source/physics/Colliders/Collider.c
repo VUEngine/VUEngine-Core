@@ -17,6 +17,7 @@
 #include <DebugConfig.h>
 #include <Printing.h>
 #include <SpatialObject.h>
+#include <Telegram.h>
 #include <VirtualList.h>
 #include <VirtualNode.h>
 #include <VUEngine.h>
@@ -803,3 +804,22 @@ void Collider::print(int32 x, int32 y)
 	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
 }
 #endif
+
+
+bool Collider::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kMessageColliderShow:
+
+			Collider::show(this);
+			break;
+
+		case kMessageColliderHide:
+
+			Collider::hide(this);
+			break;
+	}
+
+	return false;
+}

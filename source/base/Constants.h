@@ -40,6 +40,8 @@ enum MessagesTypes
 	kMessageBodyBounced,
 	kMessageBodyStartedMoving,
 	kMessageBodyChangedDirection,
+	kMessageColliderShow,
+	kMessageColliderHide,
 
 	// keypad massages
 	kMessageKeyPressed,

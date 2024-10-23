@@ -245,6 +245,7 @@ abstract class Collider : Component
 	virtual void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
+	override bool handleMessage(Telegram telegram);
 }
 
 
