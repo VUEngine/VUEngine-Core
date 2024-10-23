@@ -43,10 +43,16 @@
 friend class VirtualNode;
 friend class VirtualList;
 
+Mirror _mirror = {false, false, false};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
+
+static void Sound::setMirror(Mirror mirror)
+{
+	_mirror = mirror;
+}
 
 /**
  * Class constructor
@@ -976,6 +982,21 @@ void Sound::updateMIDIPlayback(uint32 elapsedMicroseconds __attribute__((unused)
 #else
 				Vector3D relativePosition = Vector3D::rotate(Vector3D::sub(Vector3D::getRelativeToCamera(*this->position), (Vector3D){__HALF_SCREEN_WIDTH_METERS, __HALF_SCREEN_HEIGHT_METERS, 0}), *_cameraInvertedRotation);
 #endif
+				if(_mirror.x)
+				{
+					relativePosition.x = -relativePosition.x;
+				}
+
+				if(_mirror.y)
+				{
+					relativePosition.y = -relativePosition.y;
+				}
+
+				if(_mirror.z)
+				{
+					relativePosition.z = -relativePosition.z;
+				}
+
 				Vector3D leftEar = (Vector3D){__PIXELS_TO_METERS(-__EAR_DISPLACEMENT), 0, 0};
 				Vector3D rightEar = (Vector3D){__PIXELS_TO_METERS(__EAR_DISPLACEMENT), 0, 0};
 

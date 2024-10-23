@@ -243,6 +243,7 @@ class Sound : ListenerObject
 	bool locked;
 
 	/// @publicsection
+	static void setMirror(Mirror mirror);
 	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope);
 
 	const Channel* getChannel(uint8 index);
@@ -269,9 +270,9 @@ class Sound : ListenerObject
 	void updateMIDIPlayback(uint32 elapsedMicroseconds);
 	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
 	void setSpeed(fix7_9_ext speed);
+	fix7_9_ext getSpeed();
 	void setVolumeReduction(int8 volumeReduction);
 	int8 getVolumeReduction();
-	fix7_9_ext getSpeed();
 	void computeTimerResolutionFactor();
 	void setFrequencyModifier(uint16 frequencyModifier);
 	uint16 getFrequencyModifier();

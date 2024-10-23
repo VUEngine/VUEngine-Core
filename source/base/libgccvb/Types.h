@@ -369,5 +369,13 @@ typedef struct CameraFrustum
 
 } CameraFrustum;
 
+typedef struct Mirror
+{
+	bool x;
+	bool y;
+	bool z;
+
+} Mirror;
+
 
 #endif
