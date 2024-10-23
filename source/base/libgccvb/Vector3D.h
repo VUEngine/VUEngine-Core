@@ -78,19 +78,19 @@ static class Vector3D : Object
 	/// @param a: Vector to compute the perpendicular of
 	/// @param left: Direction of the perpendicular vector
 	/// @return Perpendicular vector to the X plane
-	static inline Vector3D perpedicularXPlane(Vector3D a, bool left);
+	static inline Vector3D perpendicularXPlane(Vector3D a, bool left);
 
 	/// Compute the perpendicular vector to the Y plane in the provided direction.
 	/// @param a: Vector to compute the perpendicular of
 	/// @param left: Direction of the perpendicular vector
 	/// @return Perpendicular vector to the Y plane
-	static inline Vector3D perpedicularYPlane(Vector3D a, bool left);
+	static inline Vector3D perpendicularYPlane(Vector3D a, bool left);
 
 	/// Compute the perpendicular vector to the Z plane in the provided direction.
 	/// @param a: Vector to compute the perpendicular of
 	/// @param left: Direction of the perpendicular vector
 	/// @return Perpendicular vector to the Z plane
-	static inline Vector3D perpedicularZPlane(Vector3D a, bool left);
+	static inline Vector3D perpendicularZPlane(Vector3D a, bool left);
 
 	/// Scale the provided vector's components
 	/// @param vector: Vector to scale
@@ -307,7 +307,7 @@ static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
 	};
 }
 //---------------------------------------------------------------------------------------------------------
-static inline Vector3D Vector3D::perpedicularXPlane(Vector3D a, bool left)
+static inline Vector3D Vector3D::perpendicularXPlane(Vector3D a, bool left)
 {
 	if(left)
 	{
@@ -325,7 +325,7 @@ static inline Vector3D Vector3D::perpedicularXPlane(Vector3D a, bool left)
 	return a;
 }
 //---------------------------------------------------------------------------------------------------------
-static inline Vector3D Vector3D::perpedicularYPlane(Vector3D a, bool left)
+static inline Vector3D Vector3D::perpendicularYPlane(Vector3D a, bool left)
 {
 	if(left)
 	{
@@ -343,7 +343,7 @@ static inline Vector3D Vector3D::perpedicularYPlane(Vector3D a, bool left)
 	return a;
 }
 //---------------------------------------------------------------------------------------------------------
-static inline Vector3D Vector3D::perpedicularZPlane(Vector3D a, bool left)
+static inline Vector3D Vector3D::perpendicularZPlane(Vector3D a, bool left)
 {
 	if(left)
 	{

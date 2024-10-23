@@ -79,7 +79,7 @@ static class Vector2D : Object
 	/// @param a: Vector to compute the perpendicular of
 	/// @param left: Direction of the perpendicular vector
 	/// @return Perpendicular vector
-	static inline Vector2D perpedicular(Vector2D a, bool left);
+	static inline Vector2D perpendicular(Vector2D a, bool left);
 
 	/// @param vector: Vector to scale
 	/// @param scale: Scale to apply to the vector's components
@@ -205,6 +205,18 @@ static class Vector2D : Object
 	/// @param b: Second vector point of the vector onto which to test p
 	/// @return True if p lies in ab; false otherwise
 	static inline bool isVectorInsideLine(Vector2D p, Vector2D a, Vector2D b);
+
+	/// Print the vector's components.
+	/// @param vector: Vector to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void print(Vector2D vector, int32 x, int32 y);
+
+	/// Print the vector's components without converting the underlying data type.
+	/// @param vector: Vector to print
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	static void printRaw(Vector2D vector, int32 x, int32 y);
 }
 
 //=========================================================================================================
@@ -255,7 +267,7 @@ static inline Vector2D Vector2D::intermediate(Vector2D a, Vector2D b)
 	};
 }
 //---------------------------------------------------------------------------------------------------------
-static inline Vector2D Vector2D::perpedicular(Vector2D a, bool left)
+static inline Vector2D Vector2D::perpendicular(Vector2D a, bool left)
 {
 	if(left)
 	{
