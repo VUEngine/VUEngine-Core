@@ -165,7 +165,7 @@ void LineField::addDisplacement(fixed_t displacement)
 
 Vector3D LineField::getCenter()
 {
-	return Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b));
+	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 }
 
 static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
