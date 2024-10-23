@@ -83,7 +83,7 @@ bool Sphere::draw()
 
 	if(this->drawCenter)
 	{
-		DirectDraw::drawColorPoint(this->position.x, this->position.y, this->position.parallax, this->color);
+		DirectDraw::drawColorPoint(this->position, this->color);
 	}
 
 	this->bufferIndex = !this->bufferIndex;
