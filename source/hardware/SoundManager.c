@@ -395,7 +395,7 @@ void SoundManager::rewindAllSounds(uint32 type)
 
 				if(sound->hasMIDITracks)
 				{
-					Sound::rewind(sound);
+					Sound::rewind(sound, kSoundPlaybackNormal);
 				}
 				break;
 
@@ -403,7 +403,7 @@ void SoundManager::rewindAllSounds(uint32 type)
 
 				if(sound->hasPCMTracks)
 				{
-					Sound::rewind(sound);
+					Sound::rewind(sound, kSoundPlaybackNormal);
 				}
 				break;
 

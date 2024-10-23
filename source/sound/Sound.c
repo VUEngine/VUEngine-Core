@@ -74,7 +74,7 @@ void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* 
 	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
-	this->playbackType = kSoundPlaybackNormal;
+	this->playbackType = kSoundPlaybackNone;
 	this->locked = false;
 
 #ifdef __MUTE_ALL_SOUND
@@ -295,7 +295,7 @@ bool Sound::isFadingIn()
  */
 bool Sound::isFadingOut()
 {
-	return kSoundPlaybackFadeOut == this->playbackType;
+	return kSoundPlaybackFadeOut == this->playbackType || kSoundPlaybackFadeOutAndRelease == this->playbackType;
 }
 
 /**
@@ -501,7 +501,7 @@ void Sound::turnOn()
  * Rewind
  *
  */
-void Sound::rewind()
+void Sound::rewind(uint8 playbackType)
 {
 	if(NULL == this->soundSpec)
 	{
@@ -512,10 +512,10 @@ void Sound::rewind()
 	{
 		return;
 	}
-
+	
 	this->previouslyElapsedTicks = 0;
 	this->volumeReduction = 0;
-	this->playbackType = kSoundPlaybackNormal;
+	this->playbackType = playbackType;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -589,7 +589,6 @@ void Sound::release()
 		Sound::fireEvent(this, kEventSoundReleased);
 		NM_ASSERT(!isDeleted(this), "Sound::release: deleted this during kEventSoundReleased");
 	}
-
 }
 
 /**
@@ -784,7 +783,7 @@ void Sound::completedPlayback()
 	}
 	else
 	{
-		Sound::rewind(this);
+		Sound::rewind(this, this->playbackType);
 	}
 
 	if(!isDeleted(this->events))
@@ -903,7 +902,7 @@ void Sound::updateVolumeReduction()
 				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
 				{
 					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-					this->playbackType = kSoundPlaybackNormal;
+					this->playbackType = kSoundPlaybackNone;
 					Sound::pause(this);
 				}
 
@@ -916,7 +915,7 @@ void Sound::updateVolumeReduction()
 				if(__MAXIMUM_VOLUME * this->volumeReductionMultiplier <= this->volumeReduction)
 				{
 					this->volumeReduction = __MAXIMUM_VOLUME * this->volumeReductionMultiplier;
-					this->playbackType = kSoundPlaybackNormal;
+					this->playbackType = kSoundPlaybackNone;
 					Sound::release(this);
 				}
 

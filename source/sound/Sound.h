@@ -201,7 +201,8 @@ enum SoundTrackTypes
 
 enum SoundPlaybackTypes
 {
-	kSoundPlaybackNormal = 0,
+	kSoundPlaybackNone = 0,
+	kSoundPlaybackNormal,
 	kSoundPlaybackFadeIn,
 	kSoundPlaybackFadeOut,
 	kSoundPlaybackFadeOutAndRelease
@@ -259,7 +260,7 @@ class Sound : ListenerObject
 	void unpause();
 	void turnOff();
 	void turnOn();
-	void rewind();
+	void rewind(bool playbackType);
 	void stop();
 	void release();
 	void mute();
