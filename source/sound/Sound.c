@@ -198,7 +198,7 @@ void Sound::setSpeed(fix7_9_ext speed)
 	// Prevent timer interrupts to unsync tracks
 	if(!this->hasPCMTracks)
 	{
-		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(2) ? speed : __I_TO_FIX7_9_EXT(2);
+		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(4) ? speed : __I_TO_FIX7_9_EXT(4);
 	}
 }
 
