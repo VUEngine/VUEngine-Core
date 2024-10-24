@@ -198,7 +198,7 @@ void Sound::setSpeed(fix7_9_ext speed)
 	// Prevent timer interrupts to unsync tracks
 	if(!this->hasPCMTracks)
 	{
-		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(4) ? speed : __I_TO_FIX7_9_EXT(4);
+		this->speed = 0 >= speed ? __F_TO_FIX7_9_EXT(0.01f) : speed < __I_TO_FIX7_9_EXT(16) ? speed : __I_TO_FIX7_9_EXT(16);
 	}
 }
 
@@ -215,6 +215,11 @@ fix7_9_ext Sound::getSpeed()
  */
 void Sound::setVolumeReduction(int8 volumeReduction)
 {
+	if(Sound::isFadingIn(this) || Sound::isFadingOut(this))
+	{
+		return;
+	}
+
 	this->volumeReduction = volumeReduction;
 }
 
@@ -514,8 +519,12 @@ void Sound::rewind(uint8 playbackType)
 	}
 	
 	this->previouslyElapsedTicks = 0;
-	this->volumeReduction = 0;
 	this->playbackType = playbackType;
+
+	if(!(Sound::isFadingIn(this) || Sound::isFadingOut(this)))
+	{
+		this->volumeReduction = 0;
+	}
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
