@@ -452,7 +452,6 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 
 void TimerManager::nextSecondStarted()
 {
-	this->interruptsPerSecond = 0;
 #ifndef __SHIPPING
 	int x = 1;
 	int y = 1;
@@ -467,6 +466,8 @@ void TimerManager::nextSecondStarted()
 	PRINT_TEXT("Real us/inter.:       ", x, y);
 	PRINT_INT(this->microsecondsPerInterrupt, x + 17, y++);
 #endif
+
+	this->interruptsPerSecond = 0;
 }
 
 /**
