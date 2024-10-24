@@ -319,8 +319,6 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 		return;
 	}
 
-	this->playbackType = playbackType;
-
 	switch(playbackType)
 	{
 		case kSoundPlaybackFadeIn:
@@ -342,6 +340,8 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 			Sound::setVolumeReduction(this, 0);
 			break;
 	}
+
+	this->playbackType = playbackType;
 
 	switch(playbackType)
 	{
@@ -805,7 +805,7 @@ void Sound::completedPlayback()
 void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rightVolumeFactor)
 {
 	int16 note = channel->soundTrack.dataMIDI[channel->cursor];
-	uint8 volume = (Sound::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->samples << 1) + 1 + channel->cursor] - this->volumeReduction)) & this->unmute;
+	uint8 volume = Sound::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->samples << 1) + 1 + channel->cursor] - this->volumeReduction) & this->unmute;
 
 	int16 leftVolume = volume;
 	int16 rightVolume = volume;
@@ -818,7 +818,7 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 		rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
 	}
 
-	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
+	uint8 SxLRV = ((leftVolume << 4) | rightVolume);// & channel->soundChannelConfiguration.volume;
 
 	// Is it a special note?
 	switch(note)
