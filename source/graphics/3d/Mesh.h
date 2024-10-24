@@ -105,6 +105,10 @@ class Mesh : Wireframe
 	/// @param endVector: New segment's end point
 	void addSegment(Vector3D startVector, Vector3D endVector);
 
+	/// Draw the wireframe to the frame buffers in interlaced mode.
+	/// @return True if at least one pixel is drawn; false otherwise
+	bool drawInterlaced();
+
 	/// Retrieve the mesh's bounding box in pixel units.
 	/// @return Bounding box of the mesh
 	override PixelRightBox getPixelRightBox();

@@ -260,6 +260,23 @@ void Mesh::addSegment(Vector3D startVector, Vector3D endVector)
 	VirtualList::pushBack(this->segments, newMeshSegment);
 }
 //---------------------------------------------------------------------------------------------------------
+bool Mesh::drawInterlaced()
+{
+	bool drawn = false;
+
+	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
+	{
+		MeshSegment* meshSegment = (MeshSegment*)node->data;
+
+		// draw the line in both buffers
+		drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
+	}
+
+	this->bufferIndex = !this->bufferIndex;
+
+	return drawn;
+}
+//---------------------------------------------------------------------------------------------------------
 PixelRightBox Mesh::getPixelRightBox()
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
@@ -417,22 +434,5 @@ void Mesh::deleteLists()
 		delete this->segments;
 		this->segments = NULL;
 	}
-}
-//---------------------------------------------------------------------------------------------------------
-bool Mesh::drawInterlaced()
-{
-	bool drawn = false;
-
-	for(VirtualNode node = this->segments->head; NULL != node; node = node->next)
-	{
-		MeshSegment* meshSegment = (MeshSegment*)node->data;
-
-		// draw the line in both buffers
-		drawn |= DirectDraw::drawColorLine(meshSegment->fromVertex->pixelVector, meshSegment->toVertex->pixelVector, this->color, this->bufferIndex, true) || this->drawn;
-	}
-
-	this->bufferIndex = !this->bufferIndex;
-
-	return drawn;
 }
 //---------------------------------------------------------------------------------------------------------
