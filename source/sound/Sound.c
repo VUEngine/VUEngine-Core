@@ -726,7 +726,7 @@ void Sound::configureSoundRegistries()
 	{
 		Channel* channel = (Channel*)node->data;
 
-		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+		_soundRegistries[channel->number].SxINT = 0x00;
 		_soundRegistries[channel->number].SxLRV = 0x00;
 		_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
 		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
