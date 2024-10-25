@@ -805,12 +805,19 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 	int16 leftVolume = volume;
 	int16 rightVolume = volume;
 
-	if(0 != volume && 0 <= leftVolumeFactor + rightVolumeFactor)
+	if(0 != volume)
 	{
 		fixed_t volumeHelper = __I_TO_FIXED(volume);
 
-		leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
-		rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
+		if(0 <= leftVolumeFactor)
+		{
+			leftVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, leftVolumeFactor));
+		}
+
+		if(0 <= rightVolumeFactor)
+		{
+			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
+		}
 	}
 
 	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
