@@ -82,16 +82,17 @@ void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* 
 #else
 	this->unmute = 0xFF;
 #endif
-	this->frequencyModifier = 0;
-	this->position = NULL;
-	this->volumeReduction = 0;
 
 	// Compute target timerCounter factor
 	Sound::computeTimerResolutionFactor(this);
 
 	this->mainChannel = NULL;
 	this->channels = channels;
+	this->position = NULL;
+	this->volumeReduction = 0;
 	this->volumeReductionMultiplier = 1;
+	this->volumenScalePower = 0;
+	this->frequencyModifier = 0;
 
 	Sound::setupChannels(this, waves);
 	Sound::configureSoundRegistries(this);
@@ -208,6 +209,16 @@ void Sound::setSpeed(fix7_9_ext speed)
 fix7_9_ext Sound::getSpeed()
 {
 	return this->speed;
+}
+
+void Sound::setVolumenScalePower(uint8 volumenScalePower)
+{
+	if(4 < volumenScalePower)
+	{
+		volumenScalePower = 4;
+	}
+
+	this->volumenScalePower = volumenScalePower;
 }
 
 /**
@@ -819,6 +830,9 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 			rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
 		}
 	}
+
+	leftVolume >>= this->volumenScalePower;
+	rightVolume >>= this->volumenScalePower;
 
 	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 

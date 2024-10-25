@@ -234,6 +234,7 @@ class Sound : ListenerObject
 	uint16 frequencyModifier;
 	uint16 volumeReductionMultiplier;
 	int8 volumeReduction;
+	uint8 volumenScalePower;
 	uint8 playbackType;
 	bool turnedOn;
 	bool paused;
@@ -272,6 +273,7 @@ class Sound : ListenerObject
 	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
 	void setSpeed(fix7_9_ext speed);
 	fix7_9_ext getSpeed();
+	void setVolumenScalePower(uint8 volumenScalePower);
 	void setVolumeReduction(int8 volumeReduction);
 	int8 getVolumeReduction();
 	void computeTimerResolutionFactor();
