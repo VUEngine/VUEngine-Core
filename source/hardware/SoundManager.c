@@ -618,7 +618,7 @@ void SoundManager::releaseSoundChannel(Channel* channel)
 		}
 
 		channel->soundChannelConfiguration.trackType = kUnknownType;
-		channel->soundChannelConfiguration.SxINT = 0x00;
+		channel->soundChannelConfiguration.SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		channel->soundChannelConfiguration.SxLRV = 0x00;
 		channel->soundChannelConfiguration.SxRAM = 0x00;
 		channel->soundChannelConfiguration.SxEV0 = 0x00;
@@ -649,7 +649,7 @@ void SoundManager::turnOffPlayingSounds()
 
 	for(int32 i = 0; i < __TOTAL_CHANNELS; i++)
 	{
-		_soundRegistries[i].SxINT = 0x00;
+		_soundRegistries[i].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		_soundRegistries[i].SxLRV = 0x00;
 	}
 }

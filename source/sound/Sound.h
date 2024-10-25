@@ -23,7 +23,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __SOUND_WRAPPER_STOP_SOUND 											0xA1
+#define __SOUND_WRAPPER_STOP_SOUND 											0x21
 
 #define __MAXIMUM_VOLUME													0xF
 #define __MIDI_CONVERTER_FREQUENCY_US										20

@@ -414,7 +414,7 @@ void Sound::pause()
 		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
+			_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		}
 	}
 }
@@ -471,7 +471,7 @@ void Sound::turnOff()
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
+		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
@@ -566,7 +566,7 @@ void Sound::stop()
 		channel->nextElapsedTicksTarget = 0;
 
 		// If turned of right away, pops and cracks are perceptible
-		_soundRegistries[channel->number].SxINT = __SOUND_WRAPPER_STOP_SOUND;
+		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
@@ -731,7 +731,7 @@ void Sound::configureSoundRegistries()
 	{
 		Channel* channel = (Channel*)node->data;
 
-		_soundRegistries[channel->number].SxINT = 0x00;
+		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		_soundRegistries[channel->number].SxLRV = 0x00;
 		_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
 		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
@@ -865,17 +865,13 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 			_soundRegistries[channel->number].SxLRV = SxLRV;
 			_soundRegistries[channel->number].SxFQH = (note >> 8);
 			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
-			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+//			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+//			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 
 			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
 			{
 				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->samples * 3) + 1 + channel->cursor];
 				_soundRegistries[channel->number].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
-			}
-			else
-			{
-				_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 			}
 			
 			break;
