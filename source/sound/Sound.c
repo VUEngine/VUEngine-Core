@@ -521,11 +521,6 @@ void Sound::rewind(uint8 playbackType)
 	this->previouslyElapsedTicks = 0;
 	this->playbackType = playbackType;
 
-	if(!(Sound::isFadingIn(this) || Sound::isFadingOut(this)))
-	{
-		this->volumeReduction = 0;
-	}
-
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
@@ -818,7 +813,7 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 		rightVolume = __FIXED_TO_I(__FIXED_MULT(volumeHelper, rightVolumeFactor));
 	}
 
-	uint8 SxLRV = ((leftVolume << 4) | rightVolume);// & channel->soundChannelConfiguration.volume;
+	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 
 	// Is it a special note?
 	switch(note)
