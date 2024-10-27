@@ -212,7 +212,7 @@ void VUEngine::debug()
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
-	SoundManager::print(this->soundManager);
+	SoundManager::print(this->soundManager,1, 1);
 #endif
 }
 

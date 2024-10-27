@@ -1092,8 +1092,7 @@ void Stage::prepareGraphics()
 void Stage::setupSounds()
 {
 	SoundManager::unlock(SoundManager::getInstance());
-	SoundManager::deferMIDIPlayback(SoundManager::getInstance(), this->stageSpec->sound.MIDIPlaybackCounterPerInterrupt);
-	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackFrameRate);
+	SoundManager::setPCMTargetPlaybackRefreshRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackRefreshRate);
 
 	int32 i = 0;
 

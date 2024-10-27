@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,25 +11,22 @@
 #define SOUND_MANAGER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 #include <Sound.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//											MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-/**
- * Sound Registry
- *
- */
+/// Sound Registry
 typedef struct SoundRegistry
 {
-	// this table is for the most part untested, but looks to be accurate
+	// This table is for the most part untested, but looks to be accurate
 	//				 	|		D7	   ||		D6	   ||		D5	   ||		D4	   ||		D3	   ||		D2	   ||		D1	   ||		D0	   |
 	uint8 SxINT; //		[----Enable----][--XXXXXXXXXX--][-Interval/??--][--------------------------------Interval Data---------------------------------]
 	uint8 spacer1[3];
@@ -63,18 +60,10 @@ enum SoundRequestMessages
 	kPlayForceAll,					// Plays all tracks deallocating previous sound if necessary
 };
 
-/*
-enum ChannelTypes
-{
-	kChannelNormal0 		= 0,
-	kChannelNormal1 		= 1,
-	kChannelNormal2 		= 2,
-	kChannelNormal3 		= 3,
-	kChannelNormal4 		= 4,
-	kChannelModulation0 	= 5,
-	kChannelNoise0 			= 6,
-};
-*/
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __DEFAULT_PCM_HZ					8000
 #define __TOTAL_CHANNELS					6
@@ -84,54 +73,133 @@ enum ChannelTypes
 #define __TOTAL_POTENTIAL_NORMAL_CHANNELS	(__TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS)
 #define __TOTAL_WAVEFORMS					__TOTAL_POTENTIAL_NORMAL_CHANNELS
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class SoundManager
+///
+/// Inherits from ListenerObject
+///
+/// Managers the VSU.
 /// @ingroup hardware
 singleton class SoundManager : ListenerObject
 {
+	/// @protectedsection
+
+	/// List of playing sounds
 	VirtualList sounds;
+
+	/// List of playing sounds with MIDI tracks
 	VirtualList soundsMIDI;
+
+	/// List of playing sounds with PCM tracks
 	VirtualList soundsPCM;
-	VirtualNode soundMIDINode;
+
+	/// List of sounds pending playback
 	VirtualList queuedSounds;
+
+	/// Mapping of VSU channels
 	Channel channels[__TOTAL_CHANNELS];
+
+	/// Mapping of waveworms
 	Waveform waveforms[__TOTAL_WAVEFORMS];
+
+	/// Target PCM cycles per game cycle
 	uint32 targetPCMUpdates;
-	uint16 pcmTargetPlaybackFrameRate;
-	uint16 MIDIPlaybackCounterPerInterrupt;
+
+	/// Target refresh rate for PCM playback 
+	uint16 pcmTargetPlaybackRefreshRate;
+
+	/// If raised, no petitions to play or allocate sounds are processed
 	bool lock;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return SoundManager singleton
 	static SoundManager getInstance();
+
+	/// Play the allocated sounds.
+	/// @param elapsedMicroseconds: Elapsed time between call
 	static void playSounds(uint32 elapsedMicroseconds);
 
+	/// Reset the manager's state.
 	void reset();
 
-	void setTargetPlaybackFrameRate(uint16 pcmTargetPlaybackFrameRate);
-
+	/// Update the manager.
 	void update();
 
-	void stopAllSounds(bool release, SoundSpec** excludedSounds);
-	void flushQueuedSounds();
+	/// Set the target refresh rate for PCM playback.
+	/// @param pcmTargetPlaybackRefreshRate: Target refresh rate for PCM playback
+	void setPCMTargetPlaybackRefreshRate(uint16 pcmTargetPlaybackRefreshRate);
 
-	bool playSound(const SoundSpec* soundSpec, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
-	Sound getSound(const SoundSpec* soundSpec, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
-	Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
-
-	void releaseSound(Sound sound);
-	void releaseChannels(VirtualList channels);
-	void deferMIDIPlayback(uint32 MIDIPlaybackCounterPerInterrupt);
+	///  Check if a sound with the provided spec is playing.
+	/// @param soundSpec: Sound spec to check for
 	bool isPlayingSound(const SoundSpec* soundSpec);
 
+	/// Play a sound defined by the provided spec.
+	/// @param soundSpec: Spec that defines the sound to play
+	/// @param command: Command for sound allocation priority
+	/// @param position: Position for spatilly position sound
+	/// @param playbackType: How to play the sound
+	/// @param soundReleaseListener: Callback method for when the sound is released
+	/// @param scope: Object on which to perform the callback
+	bool playSound(const SoundSpec* soundSpec, uint32 command, const Vector3D* position, uint32 playbackType, EventListener soundReleaseListener, ListenerObject scope);
+
+	/// Allocate sound defined by the provided spec.
+	/// @param soundSpec: Spec that defines the sound to play
+	/// @param command: Command for sound allocation priority
+	/// @param soundReleaseListener: Callback method for when the sound is released
+	/// @param scope: Object on which to perform the callback
+	Sound getSound(const SoundSpec* soundSpec, uint32 command, EventListener soundReleaseListener, ListenerObject scope);
+
+	/// Retrieve a previously allocated sound defined by the provided spec.
+	/// @param soundSpec: Spec that defines the sound to play
+	/// @param soundReleaseListener: Callback method for when the sound is released
+	/// @param scope: Object on which to perform the callback
+	Sound findSound(const SoundSpec* soundSpec, EventListener soundReleaseListener, ListenerObject scope);
+
+	/// Mute all playing sounds of the provided type (MIDI or PCM).
+	/// @param type: Type of sounds to mute
+	void muteAllSounds(uint32 type);
+
+	/// Unmute all playing sounds of the provided type (MIDI or PCM).
+	/// @param type: Type of sounds to unmute
+	void unmuteAllSounds(uint32 type);
+
+	/// Rewind all playing sounds of the provided type (MIDI or PCM).
+	/// @param type: Type of sounds to rewind
+	void rewindAllSounds(uint32 type);
+
+	/// Stop all playing sounds.
+	/// @param excludedSounds: Array of sound specs to not stop
+	void stopAllSounds(bool release, SoundSpec** excludedSounds);
+
+	/// Release sound channels.
+	/// @param channels: List of channels to release
+	void releaseChannels(VirtualList channels);
+
+	/// Refuse petitions to play or allocate sounds are processed.
 	void lock();
+
+	/// Allow petitions to play or allocate sounds are processed.
 	void unlock();
 
-	void print();
-	void printPlaybackTime();
+	/// Discard sounds pending playback.
+	void flushQueuedSounds();
+
+	/// Print the manager's status.
+	void print(int32 x, int32 y);
+
+	/// Print playback time of the playing sounds.
+	void printPlaybackTime(int32 x, int32 y);
+
+	/// Print waveforms.
+	void printWaveFormStatus(int32 x, int32 y);
 }
 
-extern SoundRegistry* const _soundRegistries;
 
 #endif

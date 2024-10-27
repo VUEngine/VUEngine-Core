@@ -309,7 +309,7 @@
 					"midiPlaybackCounterPerInterrupt": {
 						"type": "number"
 					},
-					"pcmTargetPlaybackFrameRate": {
+					"pcmTargetPlaybackRefreshRate": {
 						"type": "number"
 					}
 				},

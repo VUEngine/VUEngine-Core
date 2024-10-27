@@ -146,6 +146,9 @@ singleton class RumbleManager : Object
 	RumbleEffectSpec cachedRumbleEffect;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return RumbleManager singleton
 	static RumbleManager getInstance();
 
 	/// Start a rumble effect configured with the provided spec.

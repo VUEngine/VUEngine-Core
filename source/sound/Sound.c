@@ -43,6 +43,8 @@
 friend class VirtualNode;
 friend class VirtualList;
 
+extern SoundRegistry* const _soundRegistries;
+
 Mirror _mirror = {false, false, false};
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ static void Sound::setMirror(Mirror mirror)
  *
  * @param channel	Channel*
  */
-void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope)
+void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackRefreshRate, EventListener soundReleaseListener, ListenerObject scope)
 {
 	// construct base Container
 	Base::constructor();
@@ -70,7 +72,7 @@ void Sound::constructor(const SoundSpec* soundSpec, VirtualList channels, int8* 
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
 	this->speed = __I_TO_FIX7_9_EXT(1);
-	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
+	this->pcmTargetPlaybackRefreshRate = pcmTargetPlaybackRefreshRate;
 	this->previouslyElapsedTicks = 0;
 	this->totalPlaybackMilliseconds = 0;
 	this->autoReleaseOnFinish = true;
@@ -1221,7 +1223,7 @@ uint32 Sound::getTotalPlaybackMilliseconds(Channel* channel)
 
 		case kPCM:
 
-			return (channel->samples * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackFrameRate;
+			return (channel->samples * __MICROSECONDS_PER_MILLISECOND) / this->pcmTargetPlaybackRefreshRate;
 			break;
 	}
 

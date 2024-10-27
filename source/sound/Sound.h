@@ -230,7 +230,7 @@ class Sound : ListenerObject
 	fix7_9_ext targetTimerResolutionFactor;
 	uint32 previouslyElapsedTicks;
 	uint32 totalPlaybackMilliseconds;
-	uint16 pcmTargetPlaybackFrameRate;
+	uint16 pcmTargetPlaybackRefreshRate;
 	uint16 frequencyModifier;
 	uint16 volumeReductionMultiplier;
 	int8 volumeReduction;
@@ -246,7 +246,7 @@ class Sound : ListenerObject
 
 	/// @publicsection
 	static void setMirror(Mirror mirror);
-	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackFrameRate, EventListener soundReleaseListener, ListenerObject scope);
+	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackRefreshRate, EventListener soundReleaseListener, ListenerObject scope);
 
 	const Channel* getChannel(uint8 index);
 	bool isUsingChannel(Channel* channel);
