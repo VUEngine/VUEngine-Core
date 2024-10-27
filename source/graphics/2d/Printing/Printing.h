@@ -36,7 +36,7 @@ class PrintingSprite;
 #define PRINT_FLOAT(number, x, y)			Printing::float(Printing::getInstance(), number, x, y, 2, NULL)
 #define PRINT_HEX(number, x, y)				Printing::hex(Printing::getInstance(), number, x, y, 8, NULL)
 #define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(Printing::getInstance(), number, x, y, d, NULL)
-#define	PRINT_TIME(x, y)					Printing::int32(Printing_getInstance(), TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance()), x, y, NULL);
+#define	PRINT_TIME(x, y)					Printing::int32(Printing_getInstance(), TimerManager::getTotalElapsedMilliseconds(TimerManager::getInstance()), x, y, NULL);
 #define	PRINT_IN_GAME_TIME(x, y)			Printing::int32(Printing_getInstance(), VUEngine::getElapsedMilliseconds(VUEngine::getInstance()), x, y, NULL);
 
 #define __TAB_SIZE					4

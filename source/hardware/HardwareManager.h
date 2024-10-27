@@ -78,7 +78,7 @@ singleton class HardwareManager : Object
 	void startDrawing();
 	void stopDrawing();
 	void enableKeypad();
-	void setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits);
+	void setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits);
 	void lowerBrightness();
 	void print(int32 x, int32 y);
 	void setInterruptVectors();

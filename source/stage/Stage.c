@@ -687,7 +687,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
 	bool unloadedEntities = false;
@@ -754,7 +754,7 @@ bool Stage::unloadOutOfRangeEntities(int32 defer __attribute__((unused)))
 	}
 
 #ifdef __PROFILE_STREAMING
-		uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+		uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 
@@ -765,7 +765,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
 	bool loadedEntities = false;
@@ -864,7 +864,7 @@ bool Stage::loadInRangeEntities(int32 defer)
 	}
 
 #ifdef __PROFILE_STREAMING
-	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
 
@@ -891,13 +891,13 @@ bool Stage::updateEntityFactory()
 {
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
-	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
+	timeBeforeProcess = TimerManager::getElapsedMilliseconds(TimerManager::getInstance());
 #endif
 
 	bool preparingEntities = EntityFactory::prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
+	uint32 processTime = -_renderingProcessTimeHelper + TimerManager::getElapsedMilliseconds(TimerManager::getInstance()) - timeBeforeProcess;
 	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
 #endif
 
@@ -1136,7 +1136,7 @@ bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 
 void Stage::setupTimer()
 {
-	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
+	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
 }
 
 bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))

@@ -293,21 +293,21 @@ void SoundTest::processUserInput(uint16 pressedKey)
 	}
 	else if(K_RD & pressedKey)
 	{
-		uint16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
-		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupttUnits = TimerManager::getTargetTimePerInterruptUnits(TimerManager::getInstance());
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
 
-		switch(timePerInterruptUnits)
+		switch(targetTimePerInterrupttUnits)
 		{
 			case kUS:
 
-				timePerInterruptUnits = kMS;
-				timePerInterrupt = 10;
+				targetTimePerInterrupttUnits = kMS;
+				targetTimePerInterrupt = 10;
 				break;
 
 			case kMS:
 
-				timePerInterruptUnits = kUS;
-				timePerInterrupt = 1000;
+				targetTimePerInterrupttUnits = kUS;
+				targetTimePerInterrupt = 1000;
 				break;
 
 			default:
@@ -316,26 +316,26 @@ void SoundTest::processUserInput(uint16 pressedKey)
 				break;
 		}
 
-		TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), timePerInterruptUnits);
-		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RL & pressedKey)
 	{
-		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
 
-		timePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
+		targetTimePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
 		timerChanged = true;
 	}
 	else if(K_RR & pressedKey)
 	{
-		uint16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		uint16 targetTimePerInterrupt = TimerManager::getTargetTimePerInterrupt(TimerManager::getInstance());
 
-		timePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
+		targetTimePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
-		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
 		timerChanged = true;
 	}
 

@@ -52,8 +52,8 @@ typedef struct StageSpec
 	struct Timer
 	{
 		uint16 resolution;
-		uint16 timePerInterrupt;
-		uint16 timePerInterruptUnits;
+		uint16 targetTimePerInterrupt;
+		uint16 targetTimePerInterrupttUnits;
 
 	} timer;
 

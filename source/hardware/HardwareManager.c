@@ -215,11 +215,11 @@ int32 HardwareManager::getInterruptLevel()
 /**
  * Initialize the timer
  */
-void HardwareManager::setupTimer(uint16 timerResolution, uint16 timePerInterrupt, uint16 timePerInterruptUnits)
+void HardwareManager::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
 {
 	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
-	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), timePerInterruptUnits);
-	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
+	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
 
 	TimerManager::initialize(TimerManager::getInstance());
 }
