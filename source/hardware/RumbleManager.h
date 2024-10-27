@@ -116,7 +116,7 @@ typedef const RumbleEffectSpec RumbleEffectROMSpec;
 ///
 /// Inherits from Object
 ///
-/// Managers rumble effects.
+/// Manages rumble effects.
 /// @ingroup hardware
 singleton class RumbleManager : Object
 {

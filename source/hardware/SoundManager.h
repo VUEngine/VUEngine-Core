@@ -83,7 +83,7 @@ enum SoundRequestMessages
 ///
 /// Inherits from ListenerObject
 ///
-/// Managers the VSU.
+/// Manages the VSU.
 /// @ingroup hardware
 singleton class SoundManager : ListenerObject
 {
