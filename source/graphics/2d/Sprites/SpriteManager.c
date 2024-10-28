@@ -285,11 +285,11 @@ void SpriteManager::sortSprites()
 //---------------------------------------------------------------------------------------------------------
 void SpriteManager::prepareAll()
 {
-	bool isDrawingAllowed = HardwareManager::isDrawingAllowed(HardwareManager::getInstance());
+	bool isDrawingAllowed = VIPManager::isDrawingAllowed(VIPManager::getInstance());
 	bool deferTextureUpdating = this->deferTextureUpdating;
 
 	// Prevent VIP's interrupt from calling render during this process
-	HardwareManager::stopDrawing(HardwareManager::getInstance());
+	VIPManager::stopDrawing(VIPManager::getInstance());
 
 	// Must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(this, false);
@@ -317,7 +317,8 @@ void SpriteManager::prepareAll()
 	if(isDrawingAllowed)
 	{
 		// Restore drawing
-		HardwareManager::startDrawing(HardwareManager::getInstance());
+		VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
+		VIPManager::startDrawing(VIPManager::getInstance());
 	}
 
 	this->deferTextureUpdating = deferTextureUpdating;

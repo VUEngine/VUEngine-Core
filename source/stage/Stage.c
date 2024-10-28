@@ -1136,7 +1136,7 @@ bool Stage::onSoundReleased(ListenerObject eventFirer __attribute__((unused)))
 
 void Stage::setupTimer()
 {
-	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
+	VUEngine::setupTimer(VUEngine::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.targetTimePerInterrupt, this->stageSpec->timer.targetTimePerInterrupttUnits);
 }
 
 bool Stage::onFocusEntityDeleted(ListenerObject eventFirer __attribute__ ((unused)))

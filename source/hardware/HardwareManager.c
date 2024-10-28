@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CommunicationManager.h>
 #include <DebugConfig.h>
@@ -24,9 +24,9 @@
 #include "HardwareManager.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												GLOBALS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 extern uint32 keyVector;
 extern uint32 timVector;
@@ -40,11 +40,10 @@ extern uint32 floatingPointVector;
 extern uint32 _dramBssEnd;
 extern uint32 _dramDataStart;
 
-int32 _vuengineLinkPointer = 0;
-int32 _vuengineStackPointer = 0;
-bool _stackHeadroomViolation = false;
-bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = false;
-int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
 typedef const struct ROMInfo
 {
@@ -74,56 +73,26 @@ ROMInfo romInfo __attribute__((section(".rominfo"))) =
 	__ROM_VERSION
 };
 
+
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+uint8* const _hardwareRegisters = (uint8*)0x02000000;
+int32 _vuengineLinkPointer = 0;
+int32 _vuengineStackPointer = 0;
+bool _stackHeadroomViolation = false;
+bool _enabledInterrupts __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = false;
+int16 _suspendInterruptRequest __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
 uint32 _wramSample __attribute__((section(".dram_dirty"))) __attribute__((unused));
 uint32 _sramSample __attribute__((section(".dram_dirty"))) __attribute__((unused));
 
 
+//=========================================================================================================
+// CLASS' STATIC PRIVATE METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			HardwareManager::getInstance()
- * @memberof	HardwareManager
- * @public
- * @return		HardwareManager instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void HardwareManager::constructor()
-{
-	Base::constructor();
-
-	// set ROM waiting to 1 cycle
-	_hardwareRegisters[__WCR] |= 0x0001;
-
-	this->hwRegisters =	(uint8*)0x02000000;
-
-	//setup timer interrupts
-	HardwareManager::setInterruptVectors(this);
-	HardwareManager::setInterruptLevel(0);
-	HardwareManager::setExceptionVectors(this);
-}
-
-/**
- * Class destructor
- */
-void HardwareManager::destructor()
-{
-	// allow a new construct
-	Base::destructor();
-}
-
-/**
- * Check that the memory map is sane
- */
 static void HardwareManager::checkMemoryMap()
 {
 	if((uint32)&_dramDataStart < __WORLD_SPACE_BASE_ADDRESS && (uint32)&_dramBssEnd >= __WORLD_SPACE_BASE_ADDRESS)
@@ -157,20 +126,14 @@ static void HardwareManager::checkMemoryMap()
 		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
 	}
 }
-
-/**
- * Expansion port interrupt handle
- */
+//---------------------------------------------------------------------------------------------------------
 static void HardwareManager::croInterruptHandler()
 {
 	Printing::resetCoordinates(Printing::getInstance());
 	Printing::text(Printing::getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
-
-/**
- * Setup interrupt vectors
- */
-void HardwareManager::setInterruptVectors()
+//---------------------------------------------------------------------------------------------------------
+static void HardwareManager::setInterruptVectors()
 {
 	keyVector = (uint32)KeypadManager::interruptHandler;
 	timVector = (uint32)TimerManager::interruptHandler;
@@ -178,23 +141,15 @@ void HardwareManager::setInterruptVectors()
 	comVector = (uint32)CommunicationManager::interruptHandler;
 	vipVector = (uint32)VIPManager::interruptHandler;
 }
-
-/**
- * Setup interrupt vectors
- */
-void HardwareManager::setExceptionVectors()
+//---------------------------------------------------------------------------------------------------------
+static void HardwareManager::setExceptionVectors()
 {
 	zeroDivisionVector = (uint32)Error::zeroDivisionException;
 	invalidOpcodeVector = (uint32)Error::invalidOpcodeException;
 	floatingPointVector = (uint32)Error::floatingPointException;
 }
-
-/**
- * Get the interrupt level
- *
- * @return		 	Interrupt level
- */
-int32 HardwareManager::getInterruptLevel()
+//---------------------------------------------------------------------------------------------------------
+static int32 HardwareManager::getInterruptLevel()
 {
 	int32 level;
 
@@ -211,109 +166,28 @@ int32 HardwareManager::getInterruptLevel()
 
 	return level;
 }
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Initialize the timer
- */
-void HardwareManager::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+static void HardwareManager::initialize()
 {
-	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
-	TimerManager::seTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+	// set ROM waiting to 1 cycle
+	_hardwareRegisters[__WCR] |= 0x0001;
 
-	TimerManager::initialize(TimerManager::getInstance());
+	// check memory map before anything else
+	HardwareManager::checkMemoryMap();
+
+	//setup timer interrupts
+	HardwareManager::setInterruptVectors();
+	HardwareManager::setInterruptLevel(0);
+	HardwareManager::setExceptionVectors();
 }
-
-/**
- * Clear the CHAR and Param table memory
- */
-void HardwareManager::clearScreen()
-{
-	VIPManager::clearScreen(VIPManager::getInstance());
-}
-
-/**
- * Turn the displays on
- */
-void HardwareManager::turnDisplayOn()
-{
-	VIPManager::turnDisplayOn(VIPManager::getInstance());
-}
-
-/**
- * Turn the displays off
- */
-void HardwareManager::turnDisplayOff()
-{
-	VIPManager::turnDisplayOff(VIPManager::getInstance());
-}
-
-/**
- * Return true if rendering is allowed
- */
-
-bool HardwareManager::isDrawingAllowed()
-{
-	return VIPManager::isDrawingAllowed(VIPManager::getInstance());
-}
-
-/**
- * Enable drawing
- */
-void HardwareManager::startDrawing()
-{
-	VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
-	VIPManager::startDrawing(VIPManager::getInstance());
-}
-
-/**
- * Disable drawing
- */
-void HardwareManager::stopDrawing()
-{
-	// disable interrupt
-	VIPManager::stopDrawing(VIPManager::getInstance());
-}
-
-/**
- * Turn brightness all the way up
- */
-void HardwareManager::upBrightness()
-{
-	VIPManager::upBrightness(VIPManager::getInstance());
-}
-
-/**
- * Turn brightness all the way down
- */
-void HardwareManager::lowerBrightness()
-{
-	VIPManager::lowerBrightness(VIPManager::getInstance());
-}
-
-/**
- * Enable user input processing
- */
-void HardwareManager::enableKeypad()
-{
-	KeypadManager::enable(KeypadManager::getInstance());
-}
-
-/**
- * Disable user input processing
- */
-void HardwareManager::disableKeypad()
-{
-	KeypadManager::disable(KeypadManager::getInstance());
-}
-
-/**
- * Print manager's state
- *
- * @param x			Camera's x coordinate
- * @param y			Camera's y coordinate
- */
-void HardwareManager::print(int32 x, int32 y)
+//---------------------------------------------------------------------------------------------------------
+static void HardwareManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
@@ -392,14 +266,7 @@ void HardwareManager::print(int32 x, int32 y)
 
 //	Printing::hex(Printing::getInstance(), HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
 }
-
-/**
- * Print the Stack Pointer's status
- *
- * @param x			Camera's x coordinate
- * @param y			Camera's y coordinate
- * @param resumed	Flag to print resumed or detailed info
- */
+//---------------------------------------------------------------------------------------------------------
 static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 {
 	Printing::setDebugMode(Printing::getInstance());
@@ -444,3 +311,4 @@ static void HardwareManager::printStackStatus(int32 x, int32 y, bool resumed)
 		Printing::int32(Printing::getInstance(), __STACK_HEADROOM - room, x + 15, y, NULL);
 	}
 }
+//---------------------------------------------------------------------------------------------------------

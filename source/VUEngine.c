@@ -94,9 +94,6 @@ static bool VUEngine::isConstructed()
 // class's constructor
 void VUEngine::constructor()
 {
-	// check memory map before anything else
-	HardwareManager::checkMemoryMap();
-
 	// construct base object
 	Base::constructor();
 
@@ -170,14 +167,14 @@ void VUEngine::initialize()
 	DirectDraw::reset(DirectDraw::getInstance());
 	SRAMManager::reset(SRAMManager::getInstance());
 
-	// setup vectorInterrupts
-	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
+	// Initialize hardware registries
+	HardwareManager::initialize();
 
 	// clear sprite memory
-	HardwareManager::clearScreen(HardwareManager::getInstance());
+	VIPManager::clearScreen(this->vipManager);
 
 	// make sure timer interrupts are enable
-	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_100US, 10, kMS);
+	VUEngine::setupTimer(this, __TIMER_100US, 10, kMS);
 
 	// Reset sounds
 	SoundManager::reset(this->soundManager);
@@ -201,6 +198,15 @@ void VUEngine::initialize()
 #endif
 }
 
+void VUEngine::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
+{
+	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
+	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
+	TimerManager::seTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
+
+	TimerManager::initialize(TimerManager::getInstance());
+}
+
 void VUEngine::debug()
 {
 #ifdef __SHOW_WIREFRAME_MANAGER_STATUS
@@ -222,7 +228,7 @@ void VUEngine::start(GameState currentGameState)
 	ASSERT(currentGameState, "VUEngine::start: currentGameState is NULL");
 
 	// Initialize VPU and turn off the brightness
-	HardwareManager::lowerBrightness(HardwareManager::getInstance());
+	VIPManager::lowerBrightness(this->vipManager);
 
 	if(NULL == StateMachine::getCurrentState(this->stateMachine))
 	{
@@ -293,8 +299,9 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
-	HardwareManager::stopDrawing(HardwareManager::getInstance());
+	VIPManager::turnDisplayOff(this->vipManager);
+
+	VIPManager::stopDrawing(this->vipManager);
 
 	// Clean the game's stack
 	// pop states until the stack is empty
@@ -329,8 +336,8 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
-	HardwareManager::stopDrawing(HardwareManager::getInstance());
+	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDrawing(this->vipManager);
 
 	return false;
 }
@@ -346,8 +353,8 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
-	HardwareManager::stopDrawing(HardwareManager::getInstance());
+	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDrawing(this->vipManager);
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -372,8 +379,8 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	HardwareManager::turnDisplayOff(HardwareManager::getInstance());
-	HardwareManager::stopDrawing(HardwareManager::getInstance());
+	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDrawing(this->vipManager);
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
@@ -415,8 +422,9 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	// Make sure everything is properly rendered
 	VUEngine::prepareGraphics(this);
 
-	HardwareManager::startDrawing(HardwareManager::getInstance());
-	HardwareManager::turnDisplayOn(HardwareManager::getInstance());
+	VIPManager::enableInterrupts(this->vipManager, __FRAMESTART | __XPEND);
+	VIPManager::startDrawing(this->vipManager);
+	VIPManager::turnDisplayOn(this->vipManager);
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
@@ -439,8 +447,8 @@ void VUEngine::reset(bool resetSounds)
 	// Disable timer
 
 	// disable rendering
-	HardwareManager::lowerBrightness(HardwareManager::getInstance());
-	HardwareManager::clearScreen(HardwareManager::getInstance());
+	VIPManager::lowerBrightness(this->vipManager);
+	VIPManager::clearScreen(this->vipManager);
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers
