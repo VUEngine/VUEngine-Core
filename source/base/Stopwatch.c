@@ -49,7 +49,7 @@ void Stopwatch::reset()
 	this->interrupts = 0;
 	this->milliSeconds = 0;
 	this->timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance());
-	this->timeProportion = TimerManager::getTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
+	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS(TimerManager::getInstance()) / (float)this->timerCounter;
 	this->previousTimerCounter = this->timerCounter;
 }
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,8 @@ float Stopwatch::lap()
 {
 	extern uint8* const _hardwareRegisters;
 
-	TimerManager::enable(TimerManager::getInstance(), false);
+	TimerManager::disable(TimerManager::getInstance());
+
 	uint16 currentTimerCounter = (_hardwareRegisters[__THR] << 8 ) | _hardwareRegisters[__TLR];
 
 	uint16 timerCounter = 0;
@@ -96,7 +97,7 @@ float Stopwatch::lap()
 
 	this->milliSeconds += elapsedTime;
 
-	TimerManager::enable(TimerManager::getInstance(), true);
+	TimerManager::enable(TimerManager::getInstance(), false);
 
 	return elapsedTime;
 }

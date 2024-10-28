@@ -109,33 +109,102 @@ singleton class TimerManager : Object
 	uint8 tcrValue;
 
 	/// @publicsection
+	/// Method to retrieve the singleton instance
+	/// @return TimerManager singleton
 	static TimerManager getInstance();
+
+	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
-	void reset();
-	uint16 getResolution();
-	uint16 getResolutionInUS();
-	uint16 getTargetTimePerInterrupt();
-	float getTimePerInterruptInMS();
-	uint32 getTimePerInterruptInUS();
-	uint16 getTimerCounter();
-	uint16 getTargetTimePerInterruptUnits();
-	uint16 getMinimumTimePerInterruptStep();
-	void setResolution(uint16 resolution);
-	void setTimePerInterrupt(uint16 targetTimePerInterrupt);
-	void setTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits);
-	void enable(bool flag);
-	void nextFrameStarted(uint32 elapsedMicroseconds);
-	void nextSecondStarted();
-	uint32 getElapsedMilliseconds();
-	uint32 getTotalElapsedMilliseconds();
-	uint32 resetMilliseconds();
-	uint16 getCurrentTimerCounter();
-	void configureTimerCounter();
-	int32 getStat();
-	void clearStat();
+
 	void initialize();
-	void wait(uint32 milliSeconds);
+
+	/// Reset the manager's state.
+	void reset();
+
+	/// Enable the timer.
+	/// @param resetTimerCounter: If true, the timer's counter is reset
+	void enable(bool resetTimerCounter);
+
+	/// Disable the timer.
+	void disable();
+
+	/// Set the timer's resolution.
+	/// @param resolution: __TIMER_20US or __TIMER_100US
+	void setResolution(uint16 resolution);
+
+	/// Retrieve the timer's resolution.
+	/// @return Timer's resolution
+	uint16 getResolution();
+
+	/// Retrieve the timer's resolution in microseconds.
+	/// @return Timer's resolution in microseconds
+	uint16 getResolutionInUS();
+
+	/// Set the target time between interrupt calls.
+	/// @param targetTimePerInterrupt: Target time between interrupt calls
+	void seTargetTimePerInterrupt(uint16 targetTimePerInterrupt);
+
+	/// Retrieve the target time between interrupt calls.
+	/// @return Target time between interrupt calls
+	uint16 getTargetTimePerInterrupt();
+
+	/// Retrieve the target time in milliseconds between interrupt calls.
+	/// @return Target time in milliseconds between interrupt calls
+	float getTargetTimePerInterruptInMS();
+
+	/// Retrieve the target time in microseconds between interrupt calls.
+	/// @return Target time in microseconds between interrupt calls
+	uint32 getTargetTimePerInterruptInUS();
+	
+	/// Set the target time units between interrupt calls.
+	/// @param targetTimePerInterrupttUnits: Target time units between interrupt calls
+	void setTargetTimePerInterruptUnits(uint16 targetTimePerInterrupttUnits);
+
+	/// Retrieve the target time units between interrupt calls.
+	/// @return Target time units between interrupt calls
+	uint16 getTargetTimePerInterruptUnits();
+
+	/// Retrieve the configured timer counter.
+	/// @return Configured timer counter
+	uint16 getTimerCounter();
+	
+	/// Retrieve the current timer counter.
+	/// @return Current timer counter
+	uint16 getCurrentTimerCounter();
+
+	/// Retrieve the minimum timer per interrupt step.
+	/// @return Minimum timer per interrupt step
+	uint16 getMinimumTimePerInterruptStep();
+
+	/// Retrieve elapsed milliseconds since the last call to reset.
+	/// @return Elapsed milliseconds since the last call to reset
+	uint32 getElapsedMilliseconds();
+
+	/// Retrieve elapsed milliseconds since the start of the program.
+	/// @return Elapsed milliseconds since the start of the program
+	uint32 getTotalElapsedMilliseconds();
+
+	/// Halt the program by the provided time.
+	/// @param milliseconds: Time to halt the program
+	void wait(uint32 milliseconds);
+
+	/// Call a method on the provided scope a numer of time during a lapse of time.
+	/// @param callTimes: Number of calls to produce during the total duration
+	/// @param duration: Time that must take the callTimes
+	/// @param object: Called method's scope
+ 	/// @param method: Method to call
 	void repeatMethodCall(uint32 callTimes, uint32 duration, ListenerObject object, void (*method)(ListenerObject, uint32));
+
+	/// Call when the next frame starts.
+	/// @param elapsedMicroseconds: Elapsed microseconds between calls
+	void nextFrameStarted(uint32 elapsedMicroseconds);
+
+	/// Call when the next second starts.
+	void nextSecondStarted();
+
+	/// Print the manager's configuration.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	void print(int32 x, int32 y);
 }
 

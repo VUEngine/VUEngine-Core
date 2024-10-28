@@ -117,7 +117,7 @@ void Profiler::reset()
 	this->printedProcessesNames = false;
 	this->timerCounter = TimerManager::getTimerCounter(this->timerManager);
 	this->timePerGameFrameInMS = VUEngine::getGameFrameDuration(VUEngine::getInstance());
-	this->timeProportion = TimerManager::getTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
+	this->timeProportion = TimerManager::getTargetTimePerInterruptInMS(this->timerManager) / (float)this->timerCounter;
 	this->skipFrames = 1;
 	this->lastCycleTotalTime = 0;
 	this->totalTime = 0;
@@ -191,8 +191,7 @@ void Profiler::start()
 	this->lastLapIndex = 0;
 	this->interruptFlags = 0;
 
-	TimerManager::enable(this->timerManager, false);
-	TimerManager::configureTimerCounter(this->timerManager);
+	TimerManager::disable(this->timerManager);
 	TimerManager::enable(this->timerManager, true);
 	Profiler::wait(this, 1000);
 
@@ -331,7 +330,8 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 {
 	HardwareManager::suspendInterrupts();
 
-	TimerManager::enable(this->timerManager, false);
+	TimerManager::disable(this->timerManager);
+
 	uint16 currentTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
 
 	if(this->previousTimerCounter < currentTimerCounter)
@@ -386,7 +386,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 		Profiler::registerLap(this, "AVERAGE", this->totalTime / this->cycles, lapType, 47);		
 	}
 
-	TimerManager::enable(this->timerManager, true);
+	TimerManager::enable(this->timerManager, false);
 
 	HardwareManager::resumeInterrupts();
 }

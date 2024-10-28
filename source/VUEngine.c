@@ -451,7 +451,7 @@ void VUEngine::reset(bool resetSounds)
 		SoundManager::reset(this->soundManager);
 	}
 
-	TimerManager::resetMilliseconds(this->timerManager);
+	TimerManager::reset(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 	CommunicationManager::reset(this->communicationManager);
 	StopwatchManager::reset(StopwatchManager::getInstance());
