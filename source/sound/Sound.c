@@ -519,7 +519,7 @@ void Sound::turnOn()
  * Rewind
  *
  */
-void Sound::rewind(uint8 playbackType)
+void Sound::rewind()
 {
 	if(NULL == this->soundSpec)
 	{
@@ -532,7 +532,6 @@ void Sound::rewind(uint8 playbackType)
 	}
 	
 	this->previouslyElapsedTicks = 0;
-	this->playbackType = playbackType;
 
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
@@ -800,7 +799,7 @@ void Sound::completedPlayback()
 	}
 	else
 	{
-		Sound::rewind(this, this->playbackType);
+		Sound::rewind(this);
 	}
 
 	if(!isDeleted(this->events))

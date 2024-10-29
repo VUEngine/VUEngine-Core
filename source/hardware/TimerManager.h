@@ -143,7 +143,7 @@ singleton class TimerManager : Object
 
 	/// Set the target time between interrupt calls.
 	/// @param targetTimePerInterrupt: Target time between interrupt calls
-	void seTargetTimePerInterrupt(uint16 targetTimePerInterrupt);
+	void setTargetTimePerInterrupt(uint16 targetTimePerInterrupt);
 
 	/// Retrieve the target time between interrupt calls.
 	/// @return Target time between interrupt calls

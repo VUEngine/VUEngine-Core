@@ -176,7 +176,7 @@ void TimerManager::setResolution(uint16 resolution)
 			break;
 	}
 
-	TimerManager::seTargetTimePerInterrupt(this, targetTimePerInterrupt);
+	TimerManager::setTargetTimePerInterrupt(this, targetTimePerInterrupt);
 }
 //---------------------------------------------------------------------------------------------------------
 uint16 TimerManager::getResolution()
@@ -208,7 +208,7 @@ uint16 TimerManager::getResolutionInUS()
 	return 0;
 }
 //---------------------------------------------------------------------------------------------------------
-void TimerManager::seTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
+void TimerManager::setTargetTimePerInterrupt(uint16 targetTimePerInterrupt)
 {
 	int16 minimumTimePerInterrupt = 0;
 	int16 maximumTimePerInterrupt = 1000;
@@ -420,6 +420,7 @@ void TimerManager::nextFrameStarted(uint32 elapsedMicroseconds)
 void TimerManager::nextSecondStarted()
 {
 #ifndef __SHIPPING
+#ifdef __SHOW_TIMER_MANAGER_STATUS
 	int x = 1;
 	int y = 1;
 	
@@ -432,6 +433,7 @@ void TimerManager::nextSecondStarted()
 	PRINT_INT(__MICROSECONDS_PER_SECOND / this->interruptsPerSecond, x + 17, y++);
 	PRINT_TEXT("Real us/inter.:       ", x, y);
 	PRINT_INT(this->elapsedMicrosecondsPerInterrupt, x + 17, y++);
+#endif
 #endif
 
 	this->interruptsPerSecond = 0;

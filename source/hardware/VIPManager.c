@@ -36,6 +36,10 @@
 //											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
+extern ColumnTableROMSpec DefaultColumnTableSpec;
+extern BrightnessRepeatROMSpec DefaultBrightnessRepeatSpec;
+extern uint32 _dramDirtyStart;
+
 WorldAttributes _worldAttributesCache[__TOTAL_LAYERS] __attribute__((section(".dram_bss")));
 ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS] __attribute__((section(".dram_bss")));
 
@@ -46,9 +50,9 @@ static VIPManager _vipManager = NULL;
 static WireframeManager _wireframeManager = NULL;
 static SpriteManager _spriteManager = NULL;
 static DirectDraw _directDraw = NULL;
+static uint16* const _columnTableBaseAddressLeft =	(uint16*)0x0003DC00; // base address of Column Table (Left Eye)
+static uint16* const _columnTableBaseAddressRight =	(uint16*)0x0003DE00; // base address of Column Table (Right Eye)
 
-extern ColumnTableROMSpec DefaultColumnTableSpec;
-extern BrightnessRepeatROMSpec DefaultBrightnessRepeatSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -580,11 +584,7 @@ void VIPManager::clearScreen()
 		*bgmapStartAddress = 0;
 	}
 
-	// clear every char segment
-	Mem::clear ((BYTE*) __CHAR_SEGMENT_0_BASE_ADDRESS, 8192);
-	Mem::clear ((BYTE*) __CHAR_SEGMENT_1_BASE_ADDRESS, 8192);
-	Mem::clear ((BYTE*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
-	Mem::clear ((BYTE*) __CHAR_SEGMENT_3_BASE_ADDRESS, 8192);
+	Mem::clear((BYTE*) __CHAR_SPACE_BASE_ADDRESS, 8192 * 4);
 
 	for(int32 i = 0; i < __TOTAL_LAYERS; i++)
 	{

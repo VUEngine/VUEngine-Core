@@ -261,7 +261,7 @@ class Sound : ListenerObject
 	void unpause();
 	void turnOff();
 	void turnOn();
-	void rewind(bool playbackType);
+	void rewind();
 	void stop();
 	void release();
 	void mute();
