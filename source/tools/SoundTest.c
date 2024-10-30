@@ -479,7 +479,7 @@ void SoundTest::printTimer()
 
 void SoundTest::applyTimerSettings()
 {
-	TimerManager::applySettings(TimerManager::getInstance());
+	TimerManager::applySettings(TimerManager::getInstance(), true);
 
 	SoundTest::printTimer(this);
 }

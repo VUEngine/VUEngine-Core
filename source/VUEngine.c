@@ -170,9 +170,6 @@ void VUEngine::initialize()
 	// Initialize hardware registries
 	HardwareManager::initialize();
 
-	// Clear DRAM
-	VIPManager::clearDRAM(this->vipManager);
-
 	// make sure timer interrupts are enable
 	VUEngine::setupTimer(this, __TIMER_100US, 10, kMS);
 
@@ -298,7 +295,7 @@ bool VUEngine::cleaniningStatesStack(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDisplaying(this->vipManager);
 
 	VIPManager::stopDrawing(this->vipManager);
 
@@ -335,7 +332,7 @@ bool VUEngine::pushingState(ListenerObject eventFirer)
 	this->isToolStateTransition = NULL != __GET_CAST(ToolState, StateMachine::getNextState(this->stateMachine));
 #endif
 
-	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDisplaying(this->vipManager);
 	VIPManager::stopDrawing(this->vipManager);
 
 	return false;
@@ -352,7 +349,7 @@ bool VUEngine::swappingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDisplaying(this->vipManager);
 	VIPManager::stopDrawing(this->vipManager);
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -378,7 +375,7 @@ bool VUEngine::poppingState(ListenerObject eventFirer)
 	this->lastProcessName = PROCESS_NAME_STATE_SWAP;
 #endif
 
-	VIPManager::turnDisplayOff(this->vipManager);
+	VIPManager::stopDisplaying(this->vipManager);
 	VIPManager::stopDrawing(this->vipManager);
 
 	GameState currentGameState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -422,7 +419,7 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	VUEngine::prepareGraphics(this);
 
 	VIPManager::startDrawing(this->vipManager);
-	VIPManager::turnDisplayOn(this->vipManager);
+	VIPManager::startDisplaying(this->vipManager);
 
 	// Fire event
 	VUEngine::fireEvent(this, kEventNextStateSet);
@@ -446,7 +443,6 @@ void VUEngine::reset(bool resetSounds)
 
 	// disable rendering
 	VIPManager::lowerBrightness(this->vipManager);
-	VIPManager::clearDRAM(this->vipManager);
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers
