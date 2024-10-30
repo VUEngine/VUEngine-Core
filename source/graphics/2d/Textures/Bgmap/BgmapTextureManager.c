@@ -13,6 +13,7 @@
 //=========================================================================================================
 
 #include <BgmapTexture.h>
+#include <Mem.h>
 #include <ParamTableManager.h>
 #include <Printing.h>
 #include <VirtualList.h>
@@ -71,6 +72,11 @@ void BgmapTextureManager::reset()
 		this->offset[i][kCols] = 0;
 		this->offset[i][kRows] = 0;
 	}
+}
+//---------------------------------------------------------------------------------------------------------
+void BgmapTextureManager::clearBgmapSegment(int32 segment)
+{
+	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), 64 * 64 * 2);
 }
 //---------------------------------------------------------------------------------------------------------
 void BgmapTextureManager::calculateAvailableBgmapSegments()

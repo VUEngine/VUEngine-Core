@@ -24,6 +24,10 @@
 
 class SpatialObject;
 
+extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
+extern uint32 _dramDirtyStart;
+
 
 //=========================================================================================================
 // CLASS' MACROS
@@ -139,6 +143,7 @@ class SpatialObject;
 // CLASS' DATA
 //=========================================================================================================
 
+/// Represents an entry in WORLD space in DRAM
 typedef struct WorldAttributes
 {
 	uint16 head;
@@ -156,6 +161,7 @@ typedef struct WorldAttributes
 
 } WorldAttributes;
 
+/// Represents an entry in OBJECT space in DRAM
 typedef struct ObjectAttributes
 {
 	int16 jx;
@@ -165,45 +171,50 @@ typedef struct ObjectAttributes
 
 } ObjectAttributes;
 
+/// Column table specification
 typedef struct ColumnTableSpec
 {
-	// defines whether the spec's first half should be mirrored (true)
-	// or if a full 256 entry table is provided (false)
+	/// Defines whether the spec's first half should be mirrored (true)
+	/// or if a full 256 entry table is provided (false)
 	bool mirror;
 
-	// column table spec
+	/// Column table entries array
 	BYTE columnTable[__COLUMN_TABLE_ENTRIES];
 
 } ColumnTableSpec;
 
 typedef const ColumnTableSpec ColumnTableROMSpec;
 
+/// Brigtness control specification
 typedef struct BrightnessRepeatSpec
 {
-	// defines whether the spec's first half should be mirrored (true)
-	// or if a full 96 entry table is provided (false)
+	/// Defines whether the spec's first half should be mirrored (true)
+	/// or if a full 96 entry table is provided (false)
 	bool mirror;
 
-	// brightness repeat values
+	/// Brightness repeat values
 	uint8 brightnessRepeat[__BRIGHTNESS_REPEAT_ENTRIES];
 
 } BrightnessRepeatSpec;
 
+/// A BrightnessRepeat spec that is stored in ROM
 typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
 
+/// Color configuration struct
 typedef struct ColorConfig
 {
-	// background color
+	/// Background color
 	uint8 backgroundColor;
 
-	// brightness config
+	// Brightness config
 	Brightness brightness;
 
-	// brightness repeat values
+	// Brightness repeat values
 	BrightnessRepeatSpec* brightnessRepeat;
 
 } ColorConfig;
 
+/// Palette configuration struct
 typedef struct PaletteConfig
 {
 	struct Bgmap
@@ -224,6 +235,7 @@ typedef struct PaletteConfig
 
 } PaletteConfig;
 
+/// Enums used to control VIP interrupts
 enum MultiplexedInterrupts
 {
 	kVIPNoMultiplexedInterrupts 					= 1 << 0,
@@ -234,15 +246,13 @@ enum MultiplexedInterrupts
 	kVIPAllMultiplexedInterrupts					= 0x7FFFFFFF,
 };
 
-typedef void (*PostProcessingEffect) (uint32, SpatialObject);
+/// A method pointer for processing special effects after drawing operations are completed
+typedef void (*PostProcessingEffect) (uint32 currentDrawingFrameBufferSet, SpatialObject scope);
 
 
 //=========================================================================================================
-// CLASS' DECLARATIONS
+// FORWARD DECLARATIONS
 //=========================================================================================================
-
-extern volatile uint16* _vipRegisters __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
-extern uint32* _currentDrawingFrameBufferSet __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE;
 
 // Pointers to access DRAM caches
 extern WorldAttributes _worldAttributesCache[__TOTAL_LAYERS];
@@ -250,9 +260,7 @@ extern ObjectAttributes _objectAttributesCache[__TOTAL_OBJECTS];
 
 // Pointers to access the DRAM space
 static WorldAttributes* const _worldAttributesBaseAddress =	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-static ObjectAttributes* const	_objectAttributesBaseAddress =	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objectAttributesBaseAddress
-
-extern uint32 _dramDirtyStart;
+static ObjectAttributes* const	_objectAttributesBaseAddress =	(ObjectAttributes*)__OBJECT_SPACE_BASE_ADDRESS;
 
 
 //=========================================================================================================
@@ -268,40 +276,57 @@ extern uint32 _dramDirtyStart;
 /// @ingroup hardware
 singleton class VIPManager : ListenerObject
 {
+	/// @publicsection
+
+	/// Linked list of post processing effects to be applied after the VIP's
+	/// drawing operations are completed
 	VirtualList postProcessingEffects;
-	uint32 totalMilliseconds;
+
+	/// Frame buffers set using during the current game frame
 	uint32 currentDrawingFrameBufferSet;
+
+	/// Enum that determines which multiplexed interrupts are allowed
 	uint32 enabledMultiplexedInterrupts;
-	uint16 multiplexedGAMESTARTCounter;
-	uint16 multiplexedXPENDCounter;
-	uint16 timeErrorCounter;
-	uint16 scanErrorCounter;
+
+	/// Allows VIP interrupts that the engine doesn't use
 	uint16 customInterrupts;
+
+	/// Register of the interrupts being processed
 	uint16 currrentInterrupt;
+
+	/// Time in milliseconds that the game frame last according to the
+	/// FRMCYC configuration
 	uint16 gameFrameDuration;
-	bool processingGAMESTART;
-	bool processingXPEND;
-	volatile bool frameStartedDuringXPEND;
-	bool skipFrameBuffersProcessing;
+
+	/// If true, a VIP interrupt happened while in the midst of GAMESTART
+	volatile bool processingGAMESTART;
+
+	/// If true, a VIP interrupt happened while in the midst of XPEND
+	volatile bool processingXPEND;
+
+	/// If true, FRAMESTART happened during XPEND
+	volatile bool FRAMESTARTDuringXPEND;
 
 	/// @publicsection
+
+	/// Method to retrieve the singleton instance
+	/// @return VIPManager singleton
 	static VIPManager getInstance();
+
+	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
+
 	void reset();
-	void setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing);
 	void enableCustomInterrupts(uint16 customInterrupts);
 	void startDrawing();
 	void stopDrawing();
-	void enableInterrupts(uint16 interruptCode);
-	void disableInterrupts();
 	void enableMultiplexedInterrupts(uint32 enabledMultiplexedInterrupts);
 	void turnDisplayOn();
 	void turnDisplayOff();
 	void setupPalettes(PaletteConfig* paletteConfig);
 	void upBrightness();
 	void lowerBrightness();
-	void displayHide();
-	void clearScreen();
+	void clearDRAM();
 	void clearBgmapSegment(int32 segment, int32 size);
 	void setFrameCycle(uint8 frameCycle);
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
@@ -313,11 +338,8 @@ singleton class VIPManager : ListenerObject
 	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void removePostProcessingEffects();
-	void registerCurrentDrawingFrameBufferSet();
 	bool isDrawingAllowed();
-	bool hasFrameStartedDuringXPEND();	
 	uint16 getGameFrameDuration();
-	void wait(uint32 milliSeconds);
 }
 
 

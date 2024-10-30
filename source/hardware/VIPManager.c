@@ -103,17 +103,11 @@ void VIPManager::constructor()
 
 	this->postProcessingEffects = new VirtualList();
 	this->currentDrawingFrameBufferSet = 0;
-	this->frameStartedDuringXPEND = false;
+	this->FRAMESTARTDuringXPEND = false;
 	this->processingXPEND = false;
 	this->processingGAMESTART = false;
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->skipFrameBuffersProcessing = false;
-	this->multiplexedGAMESTARTCounter = 0;
-	this->multiplexedXPENDCounter = 0;
-	this->timeErrorCounter = 0;
-	this->scanErrorCounter = 0;
-	this->totalMilliseconds = 0;
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
@@ -143,10 +137,8 @@ void VIPManager::reset()
 {
 	this->customInterrupts = 0;
 	this->currrentInterrupt = 0;
-	this->skipFrameBuffersProcessing = false;
 	this->processingGAMESTART = false;
 	this->processingXPEND = false;
-	this->totalMilliseconds = 0;
 	
 #ifndef __ENABLE_PROFILER
 	this->enabledMultiplexedInterrupts = kVIPAllMultiplexedInterrupts;
@@ -156,11 +148,6 @@ void VIPManager::reset()
 
 	VIPManager::setFrameCycle(this, __FRAME_CYCLE);
 	VIPManager::setupColumnTable(this, NULL);
-}
-
-void VIPManager::setSkipFrameBuffersProcessing(bool skipFrameBuffersProcessing)
-{
-	this->skipFrameBuffersProcessing = skipFrameBuffersProcessing;
 }
 
 void VIPManager::setFrameCycle(uint8 frameCycle __attribute__((unused)))
@@ -207,6 +194,8 @@ void VIPManager::enableCustomInterrupts(uint16 customInterrupts)
  */
 void VIPManager::startDrawing()
 {
+	VIPManager::enableInterrupts(this, __FRAMESTART | __XPEND);
+
 	while(_vipRegisters[__XPSTTS] & __XPBSY);
 	_vipRegisters[__XPCTRL] |= __XPEN;
 }
@@ -223,20 +212,29 @@ void VIPManager::stopDrawing()
 }
 
 /**
+ * Allow VIP's drawing process to start
+ */
+void VIPManager::resumeDrawing()
+{
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	_vipRegisters[__XPCTRL] |= __XPEN;
+}
+
+/**
+ * Disallow VIP's drawing process to start
+ */
+void VIPManager::pauseDrawing()
+{
+	while(_vipRegisters[__XPSTTS] & __XPBSY);
+	_vipRegisters[__XPCTRL] &= ~__XPEN;
+}
+
+/**
  * Return true if rendering is allowed
  */
 bool VIPManager::isDrawingAllowed()
 {
 	return 0 != (_vipRegisters[__XPSTTS] & __XPEN);
-}
-
-/**
- * Return true if FRAMESTART happened during XPEND's processing
- */
-__attribute__((noinline))
-bool VIPManager::hasFrameStartedDuringXPEND()
-{
-	return this->frameStartedDuringXPEND;
 }
 
 /**
@@ -367,8 +365,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 				PRINT_TEXT(VUEngine::getLastProcessName(_vuEngine), 9, 27);
 #endif
 
-				this->totalMilliseconds += __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS;
-				this->frameStartedDuringXPEND = this->processingXPEND;
+				this->FRAMESTARTDuringXPEND = this->processingXPEND;
 				VUEngine::nextFrameStarted(_vuEngine, __MILLISECONDS_PER_SECOND / __MAXIMUM_FPS);
 				break;
 
@@ -390,8 +387,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				if(this->processingXPEND)
 				{
-					this->multiplexedGAMESTARTCounter++;
-
 					if(NULL != this->events)
 					{
 						VIPManager::fireEvent(this, kEventVIPManagerGAMESTARTDuringXPEND);
@@ -437,8 +432,6 @@ void VIPManager::processInterrupt(uint16 interrupt)
 
 				if(this->processingGAMESTART)
 				{
-					this->multiplexedXPENDCounter++;
-
 					if(NULL != this->events)
 					{
 						VIPManager::fireEvent(this, kEventVIPManagerXPENDDuringGAMESTART);
@@ -449,7 +442,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __RELEASE
 					_vipRegisters[__XPCTRL] &= ~__XPEN;
 #else
-					VIPManager::stopDrawing(this);
+					VIPManager::pauseDrawing(this);
 #endif
 
 					// Allow game start interrupt because the frame buffers can change mid drawing
@@ -475,7 +468,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifdef __RELEASE
 					_vipRegisters[__XPCTRL] |= __XPEN;
 #else
-					VIPManager::startDrawing(this);
+					VIPManager::resumeDrawing(this);
 #endif
 				}
 
@@ -484,13 +477,11 @@ void VIPManager::processInterrupt(uint16 interrupt)
 #ifndef __SHIPPING
 			case __TIMEERR:
 
-				this->timeErrorCounter++;
 				VIPManager::fireEvent(this, kEventVIPManagerTimeError);
 				break;
 
 			case __SCANERR:
 
-				this->scanErrorCounter++;
 				VIPManager::fireEvent(this, kEventVIPManagerScanError);
 
 				Error::triggerException("VIPManager::servo error", NULL);		
@@ -507,7 +498,7 @@ void VIPManager::processInterrupt(uint16 interrupt)
  */
 void VIPManager::applyPostProcessingEffects()
 {
-	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !VIPManager::hasFrameStartedDuringXPEND(this) && NULL != node; node = previousNode)
+	for(VirtualNode node = this->postProcessingEffects->tail, previousNode = NULL; !this->FRAMESTARTDuringXPEND && NULL != node; node = previousNode)
 	{
 		previousNode = node->previous;
 
@@ -522,7 +513,7 @@ void VIPManager::applyPostProcessingEffects()
 				delete postProcessingEffectRegistry;
 			}
 		}
-		else if(!this->skipFrameBuffersProcessing)
+		else
 		{
 			postProcessingEffectRegistry->postProcessingEffect(this->currentDrawingFrameBufferSet, postProcessingEffectRegistry->spatialObject);
 		}
@@ -575,8 +566,9 @@ void VIPManager::lowerBrightness()
 /**
  * Clear the CHAR and Param table memory
  */
-void VIPManager::clearScreen()
-{	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
+void VIPManager::clearDRAM()
+{	
+	uint8* bgmapStartAddress = (uint8*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// clear every bgmap segment
 	for(bgmapStartAddress = 0; bgmapStartAddress < (uint8*)__PARAM_TABLE_END; bgmapStartAddress++)
@@ -625,17 +617,6 @@ void VIPManager::clearScreen()
 		_objectAttributesBaseAddress[i].jy = 0;
 		_objectAttributesBaseAddress[i].tile = 0;
 	}
-}
-
-/**
- * Clear a BGMAP segment
- *
- * @param segment	The segment to clean up
- * @param size		Segment's size
- */
-void VIPManager::clearBgmapSegment(int32 segment, int32 size)
-{
-	Mem::clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
 }
 
 /**
@@ -897,24 +878,5 @@ int16 VIPManager::getCurrentBlockBeingDrawn()
 void VIPManager::print(int32 x, int32 y)
 {
 	Printing::text(Printing::getInstance(), "VIP Status", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "TIMEERR counter:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->timeErrorCounter, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "SCANERR counter:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->scanErrorCounter, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Multi FRAMESTARTS:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->multiplexedGAMESTARTCounter, x + 18, y, NULL);
-	Printing::text(Printing::getInstance(), "Multi XPENDs:                ", x, ++y, NULL);
-	Printing::int32(Printing::getInstance(), this->multiplexedXPENDCounter, x + 18, y, NULL);
 }
 #endif
-
-void VIPManager::wait(uint32 milliSeconds)
-{
-	uint32 waitStartTime = this->totalMilliseconds;
-	volatile uint32 *milliseconds = (uint32*)&this->totalMilliseconds;
-
-	while ((*milliseconds - waitStartTime) < milliSeconds)
-	{
-		HardwareManager::halt();
-	}
-}

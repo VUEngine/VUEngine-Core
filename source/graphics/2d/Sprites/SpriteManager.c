@@ -317,7 +317,6 @@ void SpriteManager::prepareAll()
 	if(isDrawingAllowed)
 	{
 		// Restore drawing
-		VIPManager::enableInterrupts(VIPManager::getInstance(), __FRAMESTART | __XPEND);
 		VIPManager::startDrawing(VIPManager::getInstance());
 	}
 

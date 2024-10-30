@@ -170,8 +170,8 @@ void VUEngine::initialize()
 	// Initialize hardware registries
 	HardwareManager::initialize();
 
-	// clear sprite memory
-	VIPManager::clearScreen(this->vipManager);
+	// Clear DRAM
+	VIPManager::clearDRAM(this->vipManager);
 
 	// make sure timer interrupts are enable
 	VUEngine::setupTimer(this, __TIMER_100US, 10, kMS);
@@ -203,7 +203,7 @@ void VUEngine::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt,
 	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
 	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
 	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
-
+	
 	TimerManager::initialize(TimerManager::getInstance());
 }
 
@@ -422,7 +422,6 @@ bool VUEngine::changedState(ListenerObject eventFirer)
 	// Make sure everything is properly rendered
 	VUEngine::prepareGraphics(this);
 
-	VIPManager::enableInterrupts(this->vipManager, __FRAMESTART | __XPEND);
 	VIPManager::startDrawing(this->vipManager);
 	VIPManager::turnDisplayOn(this->vipManager);
 
@@ -448,7 +447,7 @@ void VUEngine::reset(bool resetSounds)
 
 	// disable rendering
 	VIPManager::lowerBrightness(this->vipManager);
-	VIPManager::clearScreen(this->vipManager);
+	VIPManager::clearDRAM(this->vipManager);
 	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers

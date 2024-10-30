@@ -83,6 +83,10 @@ singleton class BgmapTextureManager : Object
 	/// Reset the manager's state.
 	void reset();
 
+	/// Clear the data in the BGMAP spaced defined by the provided segment.
+	/// @param segment: Index of the BGMAP segment to clear
+	void clearBgmapSegment(int32 segment);
+
 	/// Compute the number of available BGMAP segments for texture allocation.
 	void calculateAvailableBgmapSegments();
 
