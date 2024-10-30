@@ -200,11 +200,10 @@ void VUEngine::initialize()
 
 void VUEngine::setupTimer(uint16 timerResolution, uint16 targetTimePerInterrupt, uint16 targetTimePerInterrupttUnits)
 {
-	TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
-	TimerManager::setTargetTimePerInterruptUnits(TimerManager::getInstance(), targetTimePerInterrupttUnits);
-	TimerManager::setTargetTimePerInterrupt(TimerManager::getInstance(), targetTimePerInterrupt);
-	
-	TimerManager::initialize(TimerManager::getInstance());
+	TimerManager::setResolution(this->timerManager, timerResolution);
+	TimerManager::setTargetTimePerInterruptUnits(this->timerManager, targetTimePerInterrupttUnits);
+	TimerManager::setTargetTimePerInterrupt(this->timerManager, targetTimePerInterrupt);
+	TimerManager::applySettings(this->timerManager, true);
 }
 
 void VUEngine::debug()

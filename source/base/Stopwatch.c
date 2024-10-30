@@ -97,7 +97,7 @@ float Stopwatch::lap()
 
 	this->milliSeconds += elapsedTime;
 
-	TimerManager::enable(TimerManager::getInstance(), false);
+	TimerManager::enable(TimerManager::getInstance());
 
 	return elapsedTime;
 }

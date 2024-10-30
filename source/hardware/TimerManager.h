@@ -117,14 +117,15 @@ singleton class TimerManager : Object
 	/// Interrupt handler for timer's interrupts
 	static void interruptHandler();
 
-	void initialize();
-
 	/// Reset the manager's state.
 	void reset();
 
+	/// Apply the settings to the hardware timer.
+	/// @param enable: If true, the hardware timer is enabled
+	void applySettings(bool enable);
+
 	/// Enable the timer.
-	/// @param resetTimerCounter: If true, the timer's counter is reset
-	void enable(bool resetTimerCounter);
+	void enable();
 
 	/// Disable the timer.
 	void disable();

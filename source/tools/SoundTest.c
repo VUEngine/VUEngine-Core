@@ -479,9 +479,7 @@ void SoundTest::printTimer()
 
 void SoundTest::applyTimerSettings()
 {
-	TimerManager::disable(TimerManager::getInstance());
-	TimerManager::initialize(TimerManager::getInstance());
-	TimerManager::enable(TimerManager::getInstance(), true);
+	TimerManager::applySettings(TimerManager::getInstance());
 
 	SoundTest::printTimer(this);
 }

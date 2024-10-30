@@ -192,7 +192,8 @@ void Profiler::start()
 	this->interruptFlags = 0;
 
 	TimerManager::disable(this->timerManager);
-	TimerManager::enable(this->timerManager, true);
+	TimerManager::resetTimerCounter(this->timerManager);
+	TimerManager::enable(this->timerManager);
 	Profiler::wait(this, 1000);
 
 	this->previousTimerCounter = TimerManager::getCurrentTimerCounter(this->timerManager);
@@ -386,7 +387,7 @@ void Profiler::computeLap(const char* processName, uint32 lapType, bool isHeadro
 		Profiler::registerLap(this, "AVERAGE", this->totalTime / this->cycles, lapType, 47);		
 	}
 
-	TimerManager::enable(this->timerManager, false);
+	TimerManager::enable(this->timerManager);
 
 	HardwareManager::resumeInterrupts();
 }

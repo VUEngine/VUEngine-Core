@@ -76,7 +76,7 @@ static void TimerManager::interruptHandler()
 
 // enable
 #ifndef __ENABLE_PROFILER
-	TimerManager::enable(_timerManager, false);
+	TimerManager::enable(_timerManager);
 #else
 	TimerManager::enableInterrupt(_timerManager, true);
 	Profiler::lap(Profiler::getInstance(), kProfilerLapTypeTimerInterruptProcess, PROCESS_NAME_SOUND_PLAY);
@@ -91,11 +91,12 @@ static void TimerManager::interruptHandler()
 //---------------------------------------------------------------------------------------------------------
 void TimerManager::initialize()
 {
-	TimerManager::enableInterrupt(this, false);
+	TimerManager::disableInterrupt(this);
 	TimerManager::setTimerResolution(this);
 	TimerManager::clearStat(this);
-	TimerManager::enable(this, true);
-	TimerManager::enableInterrupt(this, true);
+	TimerManager::resetTimerCounter(this);
+	TimerManager::enable(this);
+	TimerManager::enableInterrupt(this);
 }
 //---------------------------------------------------------------------------------------------------------
 void TimerManager::reset()
@@ -110,13 +111,19 @@ void TimerManager::reset()
 	this->elapsedMicrosecondsPerInterrupt = TimerManager::getTargetTimePerInterruptInUS(this);
 }
 //---------------------------------------------------------------------------------------------------------
-void TimerManager::enable(bool resetTimerCounter)
+void TimerManager::applySettings(bool enable)
 {
-	if(resetTimerCounter)
-	{
-		TimerManager::resetTimerCounter(this);
-	}
+	TimerManager::disable(this);
+	TimerManager::initialize(this);
 
+	if(enable)
+	{
+		TimerManager::enable(this);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void TimerManager::enable()
+{
 	this->tcrValue |= __TIMER_ENB | __TIMER_INT;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
@@ -536,16 +543,16 @@ uint16 TimerManager::computeTimerCounter()
 	return (uint16)(0 >= timerCounter ? 1 : timerCounter);
 }
 //---------------------------------------------------------------------------------------------------------
-void TimerManager::enableInterrupt(bool flag)
+void TimerManager::enableInterrupt()
 {
-	if(flag)
-	{
-		this->tcrValue |= __TIMER_INT;
-	}
-	else
-	{
-		this->tcrValue &= ~__TIMER_INT;
-	}
+	this->tcrValue |= __TIMER_INT;
+
+	_hardwareRegisters[__TCR] = this->tcrValue;
+}
+//---------------------------------------------------------------------------------------------------------
+void TimerManager::disableInterrupt()
+{
+	this->tcrValue &= ~__TIMER_INT;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
