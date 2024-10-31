@@ -101,7 +101,7 @@ void Collider::destructor()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderDestroyed, kEventColliderDeleted);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
 				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
 			}
 
@@ -134,7 +134,7 @@ void Collider::reset()
 
 			if(!isDeleted(otherColliderRegistry->collider))
 			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderDestroyed, kEventColliderDeleted);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
 				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
 			}
 
@@ -239,33 +239,7 @@ CollisionResult Collider::collides(Collider collider)
 	collision.result = kNoCollision;
 	collision.collisionInformation.collider = NULL;
 	collision.collisionInformation.otherCollider = NULL;
-
-	/*
-	{
-		// result
-		kNoCollision,
-
-		// collision information
-		{
-			// collider
-			NULL,
-			// colliding collider
-			NULL,
-			// solution vector
-			{
-				// direction
-				{0, 0, 0},
-				// magnitude
-				0
-			}
-		},
-
-		// out-of-collision collider
-		NULL,
-
-		// is impenetrable colliding collider
-		false,
-	};*/
+	collision.collisionInformation.isImpenetrable = false;
 
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collider);
 
@@ -299,9 +273,10 @@ CollisionResult Collider::collides(Collider collider)
 		}
 		else
 		{
+			collision.result = kExitCollision;
 			collision.collisionInformation.collider = this;
 			collision.collisionInformation.otherCollider = collider;
-			collision.result = kExitCollision;
+			collision.collisionInformation.isImpenetrable = true;
 		}
 	}
 	else
@@ -540,7 +515,7 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 	bool newEntry = false;
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, Collider::safeCast(otherCollider));
 
-	if(!otherColliderRegistry)
+	if(NULL == otherColliderRegistry)
 	{
 		newEntry = true;
 		otherColliderRegistry = new OtherColliderRegistry;
@@ -555,7 +530,7 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 	{
 		VirtualList::pushBack(this->otherColliders, otherColliderRegistry);
 
-		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderDestroyed, kEventColliderDeleted);
+		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
 		Collider::addEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
 	}
 
@@ -573,61 +548,23 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 	ASSERT(!isDeleted(otherCollider), "Collider::removeOtherCollider: dead otherCollider");
 
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, Collider::safeCast(otherCollider));
+	NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
 
-	if(!otherColliderRegistry)
+	if(isDeleted(otherColliderRegistry))
 	{
 		return false;
 	}
 
-	ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
 	VirtualList::removeData(this->otherColliders, otherColliderRegistry);
 	delete otherColliderRegistry;
 
 	if(!isDeleted(otherCollider))
 	{
-		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderDestroyed, kEventColliderDeleted);
+		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
 		Collider::removeEventListener(otherCollider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
 	}
 
 	return true;
-}
-
-/**
- * Collider destroying listener
- *
- * @private
- * @param eventFirer		Destroyed collider
- */
-bool Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
-{
-	if(isDeleted(this->owner))
-	{
-		return false;
-	}
-
-	Collider otherCollider = Collider::safeCast(eventFirer);
-
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
-	ASSERT(otherColliderRegistry, "Collider::onOtherColliderDestroyed: onOtherColliderDestroyed not found");
-
-	if(NULL == otherColliderRegistry)
-	{
-		return false;
-	}
-
-	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
-
-	if(Collider::unregisterOtherCollider(this, otherCollider))
-	{
-		CollisionInformation collisionInformation;
-		collisionInformation.collider = this;
-		collisionInformation.otherCollider = otherCollider;
-		collisionInformation.isImpenetrable = isImpenetrable;
-
-		SpatialObject::exitCollision(this->owner, &collisionInformation);
-	}
-
-	return false;
 }
 
 /**
@@ -638,17 +575,20 @@ bool Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
  */
 bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 {
-	if(isDeleted(this->owner))
+	if(isDeleted(this->owner) || isDeleted(eventFirer))
 	{
 		return false;
 	}
 
 	Collider otherCollider = Collider::safeCast(eventFirer);
 
-	Collider::registerOtherCollider(this, otherCollider, (SolutionVector){{0, 0, 0}, 0}, true);
-
 	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
-	ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
+	NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::onOtherColliderChanged: dead otherColliderRegistry");
+
+	if(NULL == otherColliderRegistry)
+	{
+		return false;
+	}
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
 
