@@ -51,6 +51,13 @@ void Ball::destructor()
 
 void Ball::computeRadius()
 {
+	NM_ASSERT(NULL != this->componentSpec, "Ball::computeRadius: NULL componentSpec");
+
+	if(NULL == this->componentSpec)
+	{
+		return;
+	}
+
 	Size size = Size::getFromPixelSize(((ColliderSpec*)this->componentSpec)->pixelSize);
 
 	this->radius = size.z >> 1;
@@ -108,7 +115,11 @@ void Ball::configureWireframe()
 
 	if(!isDeleted(this->wireframe))
 	{		
-		Sphere::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+		if(NULL != this->componentSpec)
+		{
+			Sphere::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+		}
+		
 		Sphere::setRadius(this->wireframe, this->radius);
 	}
 }
