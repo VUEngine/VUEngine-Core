@@ -762,7 +762,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		localPosition.z += translation.z;
 
 		Container::setLocalPosition(container, &localPosition);
-		Container::invalidateGlobalPosition(container);
 
 		GameState::transform(this->gameState);
 

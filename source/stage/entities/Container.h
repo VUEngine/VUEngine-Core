@@ -92,9 +92,6 @@ class Container : SpatialObject
 	const Scale* getLocalScale();
 	const char* getName();
 	Container getParent();
-	void invalidateGlobalPosition();
-	void invalidateGlobalRotation();
-	void invalidateGlobalScale();
 	void invalidateGlobalTransformation();
 	bool isHidden();
 	int32 onPropagatedMessage(va_list args);
