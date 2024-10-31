@@ -53,8 +53,7 @@ class SpatialObject : ListenerObject
 	virtual fixed_t getSpeed();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);
 	virtual bool updateCollision(const CollisionInformation* collisionInformation);
-	virtual void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
-	virtual void otherColliderOwnerDestroyed(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
+	virtual void exitCollision(const CollisionInformation* collisionInformation);
 	virtual uint32 getInGameType();
 }
 

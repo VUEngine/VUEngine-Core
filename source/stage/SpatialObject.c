@@ -195,10 +195,7 @@ bool SpatialObject::updateCollision(const CollisionInformation* collisionInforma
 	return false;
 }
 
-void SpatialObject::exitCollision(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
-{}
-
-void SpatialObject::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore __attribute__ ((unused)), bool isColliderImpenetrable __attribute__ ((unused)))
+void SpatialObject::exitCollision(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 
 /**

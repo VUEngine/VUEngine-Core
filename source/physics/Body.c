@@ -990,7 +990,7 @@ void Body::clearNormal(ListenerObject referent)
 {
 	ASSERT(!isDeleted(referent), "Body::clearNormal: dead referent");
 
-	if(!isDeleted(this->normals))
+	if(!isDeleted(referent) && !isDeleted(this->normals))
 	{
 		VirtualNode node = this->normals->head;
 

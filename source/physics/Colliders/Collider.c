@@ -216,8 +216,8 @@ void Collider::updateCollision(Collision* collision)
  */
 void Collider::exitCollision(Collision* collision)
 {
-	SpatialObject::exitCollision(this->owner, collision->collisionInformation.collider, collision->colliderNotCollidingAnymore, collision->isImpenetrableOtherCollider);
-	Collider::unregisterOtherCollider(this, collision->colliderNotCollidingAnymore);
+	SpatialObject::exitCollision(this->owner, &collision->collisionInformation);
+	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
 }
 
 /**
@@ -239,8 +239,6 @@ CollisionResult Collider::collides(Collider collider)
 	collision.result = kNoCollision;
 	collision.collisionInformation.collider = NULL;
 	collision.collisionInformation.otherCollider = NULL;
-	collision.colliderNotCollidingAnymore = NULL;
-	collision.isImpenetrableOtherCollider = false;
 
 	/*
 	{
@@ -294,17 +292,16 @@ CollisionResult Collider::collides(Collider collider)
 	{
 		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collision.collisionInformation);
 
-		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if(NULL != collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
 			collision.result = kUpdateCollision;
-			collision.isImpenetrableOtherCollider = true;
+			collision.collisionInformation.isImpenetrable = true;
 		}
 		else
 		{
 			collision.collisionInformation.collider = this;
+			collision.collisionInformation.otherCollider = collider;
 			collision.result = kExitCollision;
-			collision.isImpenetrableOtherCollider = true;
-			collision.colliderNotCollidingAnymore = collider;
 		}
 	}
 	else
@@ -318,10 +315,10 @@ CollisionResult Collider::collides(Collider collider)
 		}
 		else
 		{
-			collision.collisionInformation.collider = this;
 			collision.result = kExitCollision;
-			collision.isImpenetrableOtherCollider = otherColliderRegistry->isImpenetrable;
-			collision.colliderNotCollidingAnymore = collider;
+			collision.collisionInformation.collider = this;
+			collision.collisionInformation.otherCollider = collider;
+			collision.collisionInformation.isImpenetrable = otherColliderRegistry->isImpenetrable;
 		}
 	}
 
@@ -608,9 +605,9 @@ bool Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 		return false;
 	}
 
-	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
+	Collider otherCollider = Collider::safeCast(eventFirer);
 
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, colliderNotCollidingAnymore);
+	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
 	ASSERT(otherColliderRegistry, "Collider::onOtherColliderDestroyed: onOtherColliderDestroyed not found");
 
 	if(NULL == otherColliderRegistry)
@@ -620,9 +617,14 @@ bool Collider::onOtherColliderDestroyed(ListenerObject eventFirer)
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
 
-	if(Collider::unregisterOtherCollider(this, colliderNotCollidingAnymore))
+	if(Collider::unregisterOtherCollider(this, otherCollider))
 	{
-		SpatialObject::otherColliderOwnerDestroyed(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
+		CollisionInformation collisionInformation;
+		collisionInformation.collider = this;
+		collisionInformation.otherCollider = otherCollider;
+		collisionInformation.isImpenetrable = isImpenetrable;
+
+		SpatialObject::exitCollision(this->owner, &collisionInformation);
 	}
 
 	return false;
@@ -641,18 +643,23 @@ bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		return false;
 	}
 
-	Collider colliderNotCollidingAnymore = Collider::safeCast(eventFirer);
+	Collider otherCollider = Collider::safeCast(eventFirer);
 
-	Collider::registerOtherCollider(this, colliderNotCollidingAnymore, (SolutionVector){{0, 0, 0}, 0}, true);
+	Collider::registerOtherCollider(this, otherCollider, (SolutionVector){{0, 0, 0}, 0}, true);
 
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, colliderNotCollidingAnymore);
+	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
 	ASSERT(!isDeleted(otherColliderRegistry), "Collider::removeOtherCollider: dead otherColliderRegistry");
 
 	bool isImpenetrable = otherColliderRegistry->isImpenetrable;
 
-	if(Collider::unregisterOtherCollider(this, colliderNotCollidingAnymore))
+	if(Collider::unregisterOtherCollider(this, otherCollider))
 	{
-		SpatialObject::exitCollision(this->owner, this, colliderNotCollidingAnymore, isImpenetrable);
+		CollisionInformation collisionInformation;
+		collisionInformation.collider = this;
+		collisionInformation.otherCollider = otherCollider;
+		collisionInformation.isImpenetrable = isImpenetrable;
+
+		SpatialObject::exitCollision(this->owner, &collisionInformation);
 	}
 
 	return true;

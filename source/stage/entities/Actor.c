@@ -419,6 +419,22 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 	return returnValue;
 }
 
+void Actor::exitCollision(const CollisionInformation* collisionInformation)
+{
+	if(isDeleted(this->body))
+	{
+		return;
+	}
+
+	if(NULL == collisionInformation || isDeleted(collisionInformation->collider))
+	{
+		return;
+	}
+
+	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
+	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
+}
+
 // process a telegram
 bool Actor::handleMessage(Telegram telegram)
 {
@@ -575,36 +591,6 @@ fixed_t Actor::getSpeed()
 fixed_t Actor::getMaximumSpeed()
 {
 	return !isDeleted(this->body) ? Body::getMaximumSpeed(this->body) : 0;
-}
-
-void Actor::exitCollision(Collider collider  __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
-{
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
-
-	if(isColliderImpenetrable)
-	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
-	}
-}
-
-void Actor::otherColliderOwnerDestroyed(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
-{
-	if(isDeleted(this->body))
-	{
-		return;
-	}
-
-	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
-
-	if(isColliderImpenetrable)
-	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
-	}
 }
 
 Body Actor::getBody()

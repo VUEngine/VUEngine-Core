@@ -90,11 +90,11 @@ class SolidParticle : PhysicalParticle
 	override fixed_t getHeight();
 	override fixed_t getDepth();
 	override bool enterCollision(const CollisionInformation* collisionInformation);
+	override void exitCollision(const CollisionInformation* collisionInformation);
 	override bool isSubjectToGravity(Vector3D gravity);
 	override bool handleMessage(Telegram telegram);
 	override uint32 getInGameType();
 	override const Vector3D* getVelocity();
-	override void exitCollision(Collider collider, Collider colliderNotCollidingAnymore, bool isColliderImpenetrable);
 	override void reset();
 }
 

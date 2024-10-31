@@ -84,6 +84,9 @@ typedef struct CollisionInformation
 	/// Vector to solve the collision
 	SolutionVector solutionVector;
 
+	/// Raised when the collider solves the collision
+	bool isImpenetrable;
+
 } CollisionInformation;
 
 
@@ -111,8 +114,6 @@ typedef struct Collision
 {
 	CollisionResult result;
 	CollisionInformation collisionInformation;
-	Collider colliderNotCollidingAnymore;
-	bool isImpenetrableOtherCollider;
 
 } Collision;
 

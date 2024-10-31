@@ -276,16 +276,22 @@ const Vector3D* SolidParticle::getVelocity()
  *
  * @param colliderNotCollidingAnymore		Collider that is no longer colliding
  */
-void SolidParticle::exitCollision(Collider collider __attribute__ ((unused)), Collider colliderNotCollidingAnymore, bool isColliderImpenetrable)
+void SolidParticle::exitCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
-	if(isColliderImpenetrable)
+	if(isDeleted(this->body))
 	{
-		Body::clearNormal(this->body, ListenerObject::safeCast(colliderNotCollidingAnymore));
+		return;
 	}
 
-	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(this->collider));
+	if(NULL == collisionInformation || isDeleted(collisionInformation->collider))
+	{
+		return;
+	}
+
+	Body::clearNormal(this->body, ListenerObject::safeCast(collisionInformation->otherCollider));
+	Body::setSurroundingFrictionCoefficient(this->body, Collider::getCollidingFrictionCoefficient(collisionInformation->collider));
 }
 
 /**
