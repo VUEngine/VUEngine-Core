@@ -266,7 +266,7 @@ CollisionResult Collider::collides(Collider collider)
 	{
 		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collision.collisionInformation);
 
-		if(NULL != collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
 			collision.result = kUpdateCollision;
 			collision.collisionInformation.isImpenetrable = true;
