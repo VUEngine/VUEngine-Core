@@ -224,7 +224,7 @@ uint32 EntityFactory::transformEntities()
 		if(!positionedEntityDescription->transformed)
 		{
 			const Transformation* environmentTransform = Entity::getTransformation(positionedEntityDescription->parent);
-			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
+			Entity::invalidateTransformation(positionedEntityDescription->entity);
 			Entity::transform(positionedEntityDescription->entity, environmentTransform, false);
 
 			positionedEntityDescription->transformed = true;
@@ -347,7 +347,7 @@ uint32 EntityFactory::makeReadyEntities()
 		if(!positionedEntityDescription->graphicsSynchronized)
 		{
 			Entity::calculateSize(positionedEntityDescription->entity, false);
-			Entity::invalidateGlobalTransformation(positionedEntityDescription->entity);
+			Entity::invalidateTransformation(positionedEntityDescription->entity);
 			positionedEntityDescription->graphicsSynchronized = true;
 
 			return __ENTITY_PENDING_PROCESSING;

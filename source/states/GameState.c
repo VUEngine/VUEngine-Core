@@ -376,7 +376,7 @@ void GameState::doStreamAll(bool(*stageStreamMethod)(void*))
 		Camera::focus(Camera::getInstance());
 
 		// invalidate transformations
-		Stage::invalidateGlobalTransformation(this->stage);
+		Stage::invalidateTransformation(this->stage);
 
 		// Transformation everything
 		GameState::transform(this);

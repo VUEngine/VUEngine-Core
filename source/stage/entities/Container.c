@@ -493,7 +493,7 @@ void Container::changeEnvironment(Transformation* environmentTransformation)
 	Container::setLocalScale(this, &localScale);
 
 	// force global position calculation on the next transformation cycle
-	Container::invalidateGlobalTransformation(this);
+	Container::invalidateTransformation(this);
 }
 
 /**
@@ -868,7 +868,7 @@ void Container::scale(const Scale* scale)
 /**
  * Invalidate global transformation
  */
-void Container::invalidateGlobalTransformation()
+void Container::invalidateTransformation()
 {
 	this->transformation.invalid = __INVALIDATE_TRANSFORMATION;
 
@@ -878,7 +878,7 @@ void Container::invalidateGlobalTransformation()
 		for(VirtualNode node = this->children->head; NULL != node; node = node->next)
 		{
 			// make sure child recalculates its global position
-			Container::invalidateGlobalTransformation(node->data);
+			Container::invalidateTransformation(node->data);
 		}
 	}
 }
@@ -1201,7 +1201,7 @@ void Container::suspend()
  */
 void Container::resume()
 {
-	Container::invalidateGlobalTransformation(this);
+	Container::invalidateTransformation(this);
 
 	if(NULL == this->children)
 	{
@@ -1220,7 +1220,7 @@ void Container::show()
 {
 	this->hidden = false;
 
-	Container::invalidateGlobalTransformation(this);
+	Container::invalidateTransformation(this);
 
 	if(NULL == this->children)
 	{
