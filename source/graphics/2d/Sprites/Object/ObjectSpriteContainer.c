@@ -254,12 +254,11 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
 
-			NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
-
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
 			if(__HIDE == objectSprite->show || (objectSprite->transparent & evenFrame) || (0 > _objectIndex - objectSprite->totalObjects))
 			{
+				NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
 				objectSprite->index = __NO_RENDER_INDEX;
 				continue;
 			}
