@@ -56,7 +56,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 		// collider
 		__TYPE(Ball),
 
-		{solidParticleSpec->radius, solidParticleSpec->radius, solidParticleSpec->radius},
+		{__METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius), __METERS_TO_PIXELS(solidParticleSpec->radius)},
 
 		// displacement (x, y, z, p)
 		{0, 0, 0, 0},
