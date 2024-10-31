@@ -44,9 +44,9 @@ friend class VirtualNode;
 // CLASS' ATTRIBUTES
 //=========================================================================================================
 
-static int32 _spt;
-static int16 _objectIndex;
-static int16 _previousObjectIndex;
+static int32 _spt = __TOTAL_OBJECT_SEGMENTS - 1;
+static int16 _objectIndex = __TOTAL_OBJECTS - 1;
+static int16 _previousObjectIndex = __TOTAL_OBJECTS - 1;
 static uint16 _vipRegistersCache[__TOTAL_OBJECT_SEGMENTS];
 
 
@@ -253,6 +253,8 @@ void ObjectSpriteContainer::renderSprites(bool evenFrame, bool updateAnimations)
 			NM_ASSERT(!isDeleted(node->data), "ObjectSpriteContainer::renderSprites: NULL node's data");
 
 			ObjectSprite objectSprite = ObjectSprite::safeCast(node->data);
+
+			NM_ASSERT(0 < _objectIndex - objectSprite->totalObjects, "ObjectSpriteContainer::renderSprites: OBJECTS depleted");
 
 			// Saves on method calls quite a bit when there are lots of
 			// sprites. Don't remove.
