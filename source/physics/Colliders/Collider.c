@@ -185,17 +185,17 @@ void Collider::testForCollision(Collider collider __attribute__((unused)), fixed
 /**
  * Process enter collision event
  *
- * @param collisionData			Collision data
+ * @param collision			Collision data
  */
-void Collider::enterCollision(CollisionData* collisionData)
+void Collider::enterCollision(Collision* collision)
 {
-	if(SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
+	if(SpatialObject::enterCollision(this->owner, &collision->collisionInformation))
 	{
-		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collisionData->collisionInformation.otherCollider);
+		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
 
 		if(otherColliderRegistry)
 		{
-			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionData->collisionInformation.otherCollider->owner);
+			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
 		}
 	}
 }
@@ -203,21 +203,21 @@ void Collider::enterCollision(CollisionData* collisionData)
 /**
  * Process update collision event
  *
- * @param collisionData			Collision data
+ * @param collision			Collision data
  */
-void Collider::updateCollision(CollisionData* collisionData)
+void Collider::updateCollision(Collision* collision)
 {
-	SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
+	SpatialObject::updateCollision(this->owner, &collision->collisionInformation);
 }
 /**
  * Process exit collision event
  *
- * @param collisionData			Collision data
+ * @param collision			Collision data
  */
-void Collider::exitCollision(CollisionData* collisionData)
+void Collider::exitCollision(Collision* collision)
 {
-	SpatialObject::exitCollision(this->owner, collisionData->collisionInformation.collider, collisionData->colliderNotCollidingAnymore, collisionData->isImpenetrableOtherCollider);
-	Collider::unregisterOtherCollider(this, collisionData->colliderNotCollidingAnymore);
+	SpatialObject::exitCollision(this->owner, collision->collisionInformation.collider, collision->colliderNotCollidingAnymore, collision->isImpenetrableOtherCollider);
+	Collider::unregisterOtherCollider(this, collision->colliderNotCollidingAnymore);
 }
 
 /**
@@ -225,7 +225,7 @@ void Collider::exitCollision(CollisionData* collisionData)
  *
  * @param collider					collider to check for overlapping
  *
-  * @return						CollisionData
+  * @return						collision
  */
 // check if two rectangles overlap
 CollisionResult Collider::collides(Collider collider)
@@ -235,12 +235,12 @@ CollisionResult Collider::collides(Collider collider)
 		return kNoCollision;
 	}
 
-	CollisionData collisionData;
-	collisionData.result = kNoCollision;
-	collisionData.collisionInformation.collider = NULL;
-	collisionData.collisionInformation.otherCollider = NULL;
-	collisionData.colliderNotCollidingAnymore = NULL;
-	collisionData.isImpenetrableOtherCollider = false;
+	Collision collision;
+	collision.result = kNoCollision;
+	collision.collisionInformation.collider = NULL;
+	collision.collisionInformation.otherCollider = NULL;
+	collision.colliderNotCollidingAnymore = NULL;
+	collision.isImpenetrableOtherCollider = false;
 
 	/*
 	{
@@ -275,78 +275,78 @@ CollisionResult Collider::collides(Collider collider)
 	if(NULL == otherColliderRegistry)
 	{
 		// check for new overlap
-		CollisionHelper::checkIfOverlap(this, collider, &collisionData.collisionInformation);
+		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation);
 
-		if(NULL != collisionData.collisionInformation.collider && 0 != collisionData.collisionInformation.solutionVector.magnitude)
+		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
-			collisionData.result = kEnterCollision;
+			collision.result = kEnterCollision;
 
 			if(this->registerCollisions)
 			{
-				otherColliderRegistry = Collider::registerOtherCollider(this, collider, collisionData.collisionInformation.solutionVector, false);
+				otherColliderRegistry = Collider::registerOtherCollider(this, collider, collision.collisionInformation.solutionVector, false);
 			}
 		}
 	}
-	// impenetrable registered colliding colliders require a another test
+	// Impenetrable registered colliding colliders require another test
 	// to determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
-		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collisionData.collisionInformation);
+		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collision.collisionInformation);
 
-		if(collisionData.collisionInformation.collider == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
-			collisionData.result = kUpdateCollision;
-			collisionData.isImpenetrableOtherCollider = true;
+			collision.result = kUpdateCollision;
+			collision.isImpenetrableOtherCollider = true;
 		}
 		else
 		{
-			collisionData.collisionInformation.collider = this;
-			collisionData.result = kExitCollision;
-			collisionData.isImpenetrableOtherCollider = true;
-			collisionData.colliderNotCollidingAnymore = collider;
+			collision.collisionInformation.collider = this;
+			collision.result = kExitCollision;
+			collision.isImpenetrableOtherCollider = true;
+			collision.colliderNotCollidingAnymore = collider;
 		}
 	}
 	else
 	{
 		// otherwise make a normal collision test
-		CollisionHelper::checkIfOverlap(this, collider, &collisionData.collisionInformation);
+		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation);
 
-		if(collisionData.collisionInformation.collider == this && 0 != collisionData.collisionInformation.solutionVector.magnitude)
+		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
-			collisionData.result = kUpdateCollision;
+			collision.result = kUpdateCollision;
 		}
 		else
 		{
-			collisionData.collisionInformation.collider = this;
-			collisionData.result = kExitCollision;
-			collisionData.isImpenetrableOtherCollider = otherColliderRegistry->isImpenetrable;
-			collisionData.colliderNotCollidingAnymore = collider;
+			collision.collisionInformation.collider = this;
+			collision.result = kExitCollision;
+			collision.isImpenetrableOtherCollider = otherColliderRegistry->isImpenetrable;
+			collision.colliderNotCollidingAnymore = collider;
 		}
 	}
 
-	switch(collisionData.result)
+	switch(collision.result)
 	{
 		case kEnterCollision:
 
-			Collider::enterCollision(this, &collisionData);
+			Collider::enterCollision(this, &collision);
 			break;
 
 		case kUpdateCollision:
 
-			Collider::updateCollision(this, &collisionData);
+			Collider::updateCollision(this, &collision);
 			break;
 
 		case kExitCollision:
 
-			Collider::exitCollision(this, &collisionData);
+			Collider::exitCollision(this, &collision);
 			break;
 
 		default:
 			break;
 	}
 
-	return collisionData.result;
+	return collision.result;
 }
 
 /**

@@ -11,28 +11,35 @@
 #define COLLIDER_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Component.h>
 #include <Wireframe.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __COLLIDER_NORMALS	3
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class SpatialObject;
 class Collider;
 
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
+
+#define __COLLIDER_NORMALS	3
+
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
+
+/// Collision events
+/// @memberof Collider
 typedef enum CollisionResult
 {
 	kNoCollision = 0,
@@ -42,76 +49,75 @@ typedef enum CollisionResult
 
 } CollisionResult;
 
-/**
- * Collision information
- *
- * @memberof Collider
- */
+/// Possible types of a colliders
+/// @memberof Collider
+enum ColliderClassIndexes
+{
+	kColliderBallIndex = 0,
+	kColliderBoxIndex,
+	kColliderInverseBoxIndex,
+	kColliderLineFieldIndex,
+};
+
+/// Collision solution vector struct
+/// @memberof Collider
 typedef struct SolutionVector
 {
-	// collision's plane normal
+	/// Direction of vector to solve the collision
 	Vector3D direction;
 
-	// minimum vector to solve the collision
+	// Minimum distance to solve the collision
 	fixed_t magnitude;
 
 } SolutionVector;
 
-/**
- * Collision information
- *
- * @memberof Collider
- */
+/// Collision information struct
+/// @memberof Collider
 typedef struct CollisionInformation
 {
-	// collider detecting the collision
+	/// Collider detecting the collision
 	Collider collider;
 
-	// colliding collider
+	/// Colliding collider
 	Collider otherCollider;
 
-	// information to solve the collision
+	/// Vector to solve the collision
 	SolutionVector solutionVector;
 
 } CollisionInformation;
 
 
-/**
- * Collision collider registry
- *
- * @memberof Collider
- */
+/// Registry to keep track of collisions
+/// @memberof Collider
 typedef struct OtherColliderRegistry
 {
+	/// Colliding collider
 	Collider collider;
 
+	/// Collision solution vector
 	SolutionVector solutionVector;
 
+	/// Friction coeficient of the colliding collider's owner
 	fixed_t frictionCoefficient;
 
+	/// Raised when the collider solves the collision
 	bool isImpenetrable;
 
 } OtherColliderRegistry;
 
-/**
- * Collision data
- *
- * @memberof Collider
- */
-typedef struct CollisionData
+/// Collision struct
+/// @memberof Collider
+typedef struct Collision
 {
 	CollisionResult result;
 	CollisionInformation collisionInformation;
 	Collider colliderNotCollidingAnymore;
 	bool isImpenetrableOtherCollider;
 
-} CollisionData;
+} Collision;
 
-/**
- * Normals
- *
- * @memberof Collider
- */
+/// Normals
+/// @memberof Collider
 typedef struct Normals
 {
 	Vector3D vectors[__COLLIDER_NORMALS];
@@ -159,26 +165,6 @@ typedef const ColliderSpec ColliderROMSpec;
 //												ENUMS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Possible types of a Collider
- *
- * @memberof Collider
- */
-enum ColliderTypes
-{
-	kNoCollider = 0,
-	kBall,
-	kBox,
-	kInverseBox,
-};
-
-enum ColliderClassIndexes
-{
-	kColliderBallIndex = 0,
-	kColliderBoxIndex,
-	kColliderInverseBoxIndex,
-	kColliderLineFieldIndex,
-};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -215,9 +201,9 @@ abstract class Collider : Component
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	void enterCollision(CollisionData* collisionData);
-	void updateCollision(CollisionData* collisionData);
-	void exitCollision(CollisionData* collisionData);
+	void enterCollision(Collision* collision);
+	void updateCollision(Collision* collision);
+	void exitCollision(Collision* collision);
 	CollisionResult collides(Collider collider);
 	bool checkForCollisions();
 	SpatialObject getOwner();
