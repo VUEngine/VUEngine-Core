@@ -15,6 +15,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Collider.h>
 #include <PhysicalParticle.h>
 #include <ParticleSystem.h>
 
@@ -23,7 +24,6 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-class Collider;
 
 /**
  * Defines a SolidParticle
@@ -80,6 +80,7 @@ class SolidParticle : PhysicalParticle
 	// Particle's collider for collision detection
 	Collider collider;
 	//
+	ColliderSpec* colliderSpec;
 	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection

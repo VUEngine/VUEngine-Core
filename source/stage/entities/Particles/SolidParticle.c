@@ -51,7 +51,9 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 	this->creator = creator;
 	this->solidParticleSpec = solidParticleSpec;
 
-	ColliderSpec colliderSpec =
+	this->colliderSpec = new ColliderSpec;
+
+	*this->colliderSpec = (ColliderSpec)
 	{
 		// collider
 		__TYPE(Ball),
@@ -78,7 +80,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 	};
 
 	// register a collider for collision detection
-	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), &colliderSpec);
+	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
 	Collider::checkCollisions(this->collider, true);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -95,6 +97,12 @@ void SolidParticle::destructor()
 	CollisionManager::destroyCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), this->collider);
 
 	this->collider = NULL;
+
+	if(!isDeleted(this->colliderSpec))
+	{
+		delete this->colliderSpec;
+		this->colliderSpec = NULL;
+	}
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
