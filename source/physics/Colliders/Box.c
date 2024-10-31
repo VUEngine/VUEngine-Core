@@ -461,10 +461,36 @@ void Box::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionIn
 // configure Polyhedron
 void Box::configureWireframe()
 {
-	if(this->wireframe)
+	if(!isDeleted(this->wireframe))
 	{
 		return;
 	}
+
+	const PixelVector MeshesSegments[][2]=
+	{
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		
+		// limiter
+		{
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+		},
+	};
 
 	MeshSpec meshSpec =
 	{
@@ -485,79 +511,13 @@ void Box::configureWireframe()
 		},
 
 		// segments
-		NULL
+		(PixelVector(*)[2])MeshesSegments
 	};
 
 	// create a wireframe
 	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
 
 	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-
-	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
-	{
-		if(!this->rotationVertexDisplacement.z)
-		{
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
-#ifdef __DRAW_COMPLETE_BOXES
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-#endif
-		}
-
-		if(!this->rotationVertexDisplacement.y)
-		{
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-#ifdef __DRAW_COMPLETE_BOXES
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-#endif
-		}
-
-		if(!this->rotationVertexDisplacement.x)
-		{
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-#ifdef __DRAW_COMPLETE_BOXES
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-#endif
-		}
-	}
-	else
-	{
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-#ifdef __DRAW_COMPLETE_BOXES
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
-		//Mesh::addSegment(this->wireframe, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-#endif
-	}
 }
 
 // print debug data
