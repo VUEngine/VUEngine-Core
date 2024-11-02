@@ -57,7 +57,6 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 
 	// not setup yet
 	this->destroyMe = false;
-	this->ready = false;
 	this->enabled = true;
 
 	this->wireframe = NULL;
@@ -70,7 +69,7 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 	this->registerCollisions = colliderSpec->checkForCollisions;
 
 	this->position = Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(colliderSpec->displacement));
-	this->dirty = true;
+	this->invalidPosition = true;
 }
 
 /**
@@ -453,26 +452,6 @@ void Collider::enable(bool enable)
 	}
 	
 	this->enabled = enable;
-}
-
-/**
- * Has been configured?
- *
- * @return		Configured status
- */
-bool Collider::isReady()
-{
-	return this->ready;
-}
-
-/**
- * Set configured flag
- *
- * @param ready
- */
-void Collider::setReady(bool ready)
-{
-	this->ready = ready;
 }
 
 /**

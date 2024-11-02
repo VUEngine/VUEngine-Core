@@ -166,7 +166,7 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		collider->dirty = true;
+			collider->invalidPosition = true;
 	}
 
 	// check the colliders
@@ -191,11 +191,11 @@ uint32 CollisionManager::update(Clock clock)
 			continue;
 		}
 
-		if(collider->dirty)
+		if(collider->invalidPosition)
 		{
 			Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)collider->componentSpec)->displacement), collider->transformation->rotation);
 			collider->position = Vector3D::sum(collider->transformation->position, displacement);
-			collider->dirty = false;
+			collider->invalidPosition = false;
 		}
 
 		Vector3D colliderPosition = collider->transformation->position;
@@ -234,11 +234,11 @@ uint32 CollisionManager::update(Clock clock)
 			this->lastCycleCollisionChecks++;
 #endif
 
-			if(colliderToCheck->dirty)
+			if(colliderToCheck->invalidPosition)
 			{
 				Vector3D displacement = Vector3D::rotate(Vector3D::getFromPixelVector(((ColliderSpec*)colliderToCheck->componentSpec)->displacement), colliderToCheck->transformation->rotation);				
 				colliderToCheck->position = Vector3D::sum(colliderToCheck->transformation->position, displacement);
-				colliderToCheck->dirty = false;
+				colliderToCheck->invalidPosition = false;
 			}
 
 #ifdef __SHOW_PHYSICS_PROFILING

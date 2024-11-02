@@ -156,79 +156,92 @@ typedef struct ColliderSpec
 
 } ColliderSpec;
 
+/// A ColliderSpec spec that is stored in ROM
+/// @memberof Collider
 typedef const ColliderSpec ColliderROMSpec;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
+///
+/// Class Collider
+///
+/// Inherits from Component
+///
+/// Checks collisions against other colliders.
 /// @ingroup physics
 abstract class Collider : Component
 {
-	// Displaced position
+	/// @protectedsection
+
+	/// Displaced position
 	Vector3D position;
-	// colliding colliders list
+	
+	/// List of colliding colliders
 	VirtualList otherColliders;
-	// layers on which this collider live
+
+	/// Layers on which this collider live
 	uint32 layers;
-	// layers to ignore when checking for collisions
+
+	/// Layers to ignore when checking for collisions
 	uint32 layersToIgnore;
-	// for debugging purposes
+	
+	/// Wireframe to make the collider visible (mainly for debugging purposes)
 	Wireframe wireframe;
-	// flag to know if setup is needed
-	uint8 ready;
-	// flag to know if collider is reacting to collisions
+
+	/// If false, it is ignored in all callision checks
 	bool enabled;
-	// flag to check against other colliders
+
+	/// If false, it doesn't check collision against other colliders
 	uint8 checkForCollisions;
-	// flag to allow registration of colliding colliders
+
+	/// If true, it registers other colliders when a collision arises
 	bool registerCollisions;
-	// flag to destroy it
+	
+	/// Flag to destroy the collider
 	bool destroyMe;
-	// class index 
+
+	/// Class index to avoid using __GET_CAST when checking for collisions
 	uint8 classIndex;
-	// flag to compute the displaced position
-	bool dirty;
+
+	/// Flag to force the computation of the collider's position
+	bool invalidPosition;
 
 	/// @publicsection
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	void enterCollision(Collision* collision);
-	void updateCollision(Collision* collision);
-	void exitCollision(Collision* collision);
-	CollisionResult collides(Collider collider);
-	bool checkForCollisions();
-	SpatialObject getOwner();
+
 	void reset();
-	bool isEnabled();
-	bool isReady();
-	void checkCollisions(bool activate);
-	void enable(bool enable);
-	void setCheckForCollisions(bool checkForCollisions);
-	void setReady(bool ready);
-	bool canMoveTowards(Vector3D displacement, fixed_t sizeIncrement);
-	fixed_t getCollidingFrictionCoefficient();
+
+	/// 
+	CollisionResult collides(Collider collider);
 	void resolveCollision(const CollisionInformation* collisionInformation, bool registerOtherCollider);
-	uint32 getLayers();
-	void setLayers(uint32 layers);
-	uint32 getLayersToIgnore();
-	void setLayersToIgnore(uint32 layersToIgnore);
+	bool canMoveTowards(Vector3D displacement, fixed_t sizeIncrement);
+
+	SpatialObject getOwner();
+	fixed_t getCollidingFrictionCoefficient();
+
+	void enable(bool enable);
+	bool isEnabled();
+
+	void checkCollisions(bool activate);
 	void registerCollisions(bool value);
+
+	void setLayers(uint32 layers);
+	uint32 getLayers();
+
+	void setLayersToIgnore(uint32 layersToIgnore);
+	uint32 getLayersToIgnore();
+
 	void show();
 	void hide();
-	void setVisible(bool value);
 
-//	virtual void setup(uint32 layers, uint32 layersToIgnore);
-	virtual Vector3D getNormal();
 	virtual void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	virtual Vector3D getNormal();
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;
+	
 	override bool handleMessage(Telegram telegram);
 }
 
