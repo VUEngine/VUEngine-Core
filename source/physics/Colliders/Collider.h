@@ -237,7 +237,7 @@ abstract class Collider : Component
 	void show();
 	void hide();
 
-	virtual void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	virtual void resize(fixed_t sizeIncrement);
 	virtual Vector3D getNormal();
 	virtual void configureWireframe() = 0;
 	virtual void print(int32 x, int32 y) = 0;

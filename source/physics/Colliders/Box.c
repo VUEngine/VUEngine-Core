@@ -432,11 +432,8 @@ void Box::projectOntoItself()
 }
 
 // test if collision with the entity give the displacement
-void Box::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
+void Box::resize(fixed_t sizeIncrement __attribute__((unused)))
 {
-	// save position
-	RightBox rightBox = this->rightBox;
-
 	// add displacement
 	this->rightBox.x0 -= sizeIncrement;
 	this->rightBox.x1 += sizeIncrement;
@@ -446,14 +443,6 @@ void Box::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionIn
 
 	this->rightBox.z0 -= sizeIncrement;
 	this->rightBox.z1 += sizeIncrement;
-
-	Box::projectOntoItself(this);
-
-	// test for collision on displaced center
-	CollisionHelper::checkIfOverlap(Collider::safeCast(this), collider, collisionInformation);
-
-	// put back myself
-	this->rightBox = rightBox;
 
 	Box::projectOntoItself(this);
 }

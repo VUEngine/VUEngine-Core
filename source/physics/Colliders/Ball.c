@@ -91,16 +91,9 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 	}
 }
 
-void Ball::testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation)
+void Ball::resize(fixed_t sizeIncrement __attribute__((unused)))
 {
-	// save state
-	fixed_t radius = this->radius;
 	this->radius += sizeIncrement;
-
-	CollisionHelper::checkIfOverlap(Collider::safeCast(this), collider, collisionInformation);
-
-	// restore state
-	this->radius = radius;
 }
 
 void Ball::configureWireframe()

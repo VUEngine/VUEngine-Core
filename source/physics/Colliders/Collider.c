@@ -172,14 +172,8 @@ Vector3D Collider::getNormal()
 {
 	return Vector3D::zero();
 }
-
-/**
- * Test if I collide with the give collider
- *
- */
-void Collider::testForCollision(Collider collider __attribute__((unused)), fixed_t sizeIncrement __attribute__((unused)), CollisionInformation* collisionInformation __attribute__((unused)))
-{
-}
+void Collider::resize(fixed_t sizeIncrement __attribute__((unused)))
+{}
 
 /**
  * Process enter collision event
@@ -245,7 +239,7 @@ CollisionResult Collider::collides(Collider collider)
 	if(NULL == otherColliderRegistry)
 	{
 		// check for new overlap
-		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation);
+		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, 0);
 
 		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
@@ -262,7 +256,7 @@ CollisionResult Collider::collides(Collider collider)
 	// to determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
-		Collider::testForCollision(this, collider, __STILL_COLLIDING_CHECK_SIZE_INCREMENT, &collision.collisionInformation);
+		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -278,7 +272,7 @@ CollisionResult Collider::collides(Collider collider)
 	else
 	{
 		// otherwise make a normal collision test
-		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation);
+		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, 0);
 
 		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{

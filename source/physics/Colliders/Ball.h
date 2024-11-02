@@ -32,7 +32,7 @@ class Ball : Collider
 	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 	
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	override void testForCollision(Collider collider, fixed_t sizeIncrement, CollisionInformation* collisionInformation);
+	override void resize(fixed_t sizeIncrement);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }
