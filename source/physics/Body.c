@@ -800,6 +800,9 @@ uint16 Body::getAxisSubjectToGravity()
 void Body::setAxisSubjectToGravity(uint16 axisSubjectToGravity)
 {
 	this->axisSubjectToGravity = axisSubjectToGravity;
+
+	this->gravity = Body::getGravity(this);
+
 }
 
 // retrieve position
