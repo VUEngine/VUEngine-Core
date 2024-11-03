@@ -51,9 +51,9 @@ class SpatialObject : ListenerObject
 	virtual fixed_t getFrictionCoefficient();
 	virtual const Vector3D* getVelocity();
 	virtual fixed_t getSpeed();
-	virtual bool enterCollision(const CollisionInformation* collisionInformation);
-	virtual bool updateCollision(const CollisionInformation* collisionInformation);
-	virtual void exitCollision(const CollisionInformation* collisionInformation);
+	virtual bool collisionStarts(const CollisionInformation* collisionInformation);
+	virtual bool collisionPersists(const CollisionInformation* collisionInformation);
+	virtual void collisionEnds(const CollisionInformation* collisionInformation);
 	virtual uint32 getInGameType();
 }
 

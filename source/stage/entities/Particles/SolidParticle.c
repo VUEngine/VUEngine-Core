@@ -156,12 +156,12 @@ fixed_t SolidParticle::getDepth()
  * @param collisionInformation			Information about the collision
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle::enterCollision(const CollisionInformation* collisionInformation)
+bool SolidParticle::collisionStarts(const CollisionInformation* collisionInformation)
 {
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collisionInformation->otherCollider, "SolidParticle::resolveCollision: otherColliders");
 
-	ASSERT(collisionInformation->otherCollider, "SolidParticle::enterCollision: otherColliders");
+	ASSERT(collisionInformation->otherCollider, "SolidParticle::collisionStarts: otherColliders");
 
 	bool returnValue = false;
 
@@ -284,9 +284,9 @@ const Vector3D* SolidParticle::getVelocity()
  *
  * @param colliderNotCollidingAnymore		Collider that is no longer colliding
  */
-void SolidParticle::exitCollision(const CollisionInformation* collisionInformation)
+void SolidParticle::collisionEnds(const CollisionInformation* collisionInformation)
 {
-	ASSERT(this->body, "SolidParticle::exitCollision: null this");
+	ASSERT(this->body, "SolidParticle::collisionEnds: null this");
 
 	if(isDeleted(this->body))
 	{

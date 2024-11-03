@@ -91,8 +91,8 @@ class Actor : AnimatedEntity
 	override const Vector3D* getDirection();
 	override fixed_t getSpeed();
 	override void changeEnvironment(Transformation* environmentTransform);
-	override bool enterCollision(const CollisionInformation* collisionInformation);
-	override void exitCollision(const CollisionInformation* collisionInformation);
+	override bool collisionStarts(const CollisionInformation* collisionInformation);
+	override void collisionEnds(const CollisionInformation* collisionInformation);
 	override void destroyComponents();
 }
 

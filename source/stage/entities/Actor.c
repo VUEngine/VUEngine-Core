@@ -369,9 +369,9 @@ fixed_t Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute_
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
 
-bool Actor::enterCollision(const CollisionInformation* collisionInformation)
+bool Actor::collisionStarts(const CollisionInformation* collisionInformation)
 {
-	ASSERT(collisionInformation->otherCollider, "Actor::enterCollision: otherColliders");
+	ASSERT(collisionInformation->otherCollider, "Actor::collisionStarts: otherColliders");
 
 	if(NULL == this->body)
 	{
@@ -396,7 +396,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 				Body::bounce(this->body, ListenerObject::safeCast(collisionInformation->otherCollider), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 				Actor::fireEvent(this, kEventActorBounced);
-				NM_ASSERT(!isDeleted(this), "Actor::enterCollision: deleted this during kEventActorBounced");
+				NM_ASSERT(!isDeleted(this), "Actor::collisionStarts: deleted this during kEventActorBounced");
 			}
 			else
 			{
@@ -414,7 +414,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 	return returnValue;
 }
 
-void Actor::exitCollision(const CollisionInformation* collisionInformation)
+void Actor::collisionEnds(const CollisionInformation* collisionInformation)
 {
 	if(isDeleted(this->body))
 	{

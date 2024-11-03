@@ -654,7 +654,7 @@ void VUEngine::focusCamera()
 #endif
 }
 
-void VUEngine::updateTransformations(GameState gameState)
+void VUEngine::processTransformations(GameState gameState)
 {
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = PROCESS_NAME_TRANSFORMS;
@@ -668,7 +668,7 @@ void VUEngine::updateTransformations(GameState gameState)
 #endif
 }
 
-void VUEngine::updateCollisions(GameState gameState)
+void VUEngine::processCollisions(GameState gameState)
 {
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -847,10 +847,10 @@ void VUEngine::run(GameState currentGameState)
 		VUEngine::updatePhysics(this, currentGameState);
 
 		// apply transformations
-		VUEngine::updateTransformations(this, currentGameState);
+		VUEngine::processTransformations(this, currentGameState);
 
 		// process collisions
-		VUEngine::updateCollisions(this, currentGameState);
+		VUEngine::processCollisions(this, currentGameState);
 
 		// dispatch delayed messages
 		VUEngine::dispatchDelayedMessages(this);

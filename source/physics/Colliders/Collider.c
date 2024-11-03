@@ -187,7 +187,7 @@ CollisionResult Collider::collides(Collider collider)
 		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
-			collision.result = kEnterCollision;
+			collision.result = kCollisionStarts;
 
 			if(this->registerCollisions)
 			{
@@ -203,11 +203,11 @@ CollisionResult Collider::collides(Collider collider)
 
 		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
-			collision.result = kUpdateCollision;
+			collision.result = kCollisionPersists;
 		}
 		else
 		{
-			collision.result = kExitCollision;
+			collision.result = kCollisionEnds;
 			collision.collisionInformation.collider = this;
 			collision.collisionInformation.otherCollider = collider;
 		}
@@ -219,11 +219,11 @@ CollisionResult Collider::collides(Collider collider)
 
 		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
-			collision.result = kUpdateCollision;
+			collision.result = kCollisionPersists;
 		}
 		else
 		{
-			collision.result = kExitCollision;
+			collision.result = kCollisionEnds;
 			collision.collisionInformation.collider = this;
 			collision.collisionInformation.otherCollider = collider;
 		}
@@ -231,19 +231,19 @@ CollisionResult Collider::collides(Collider collider)
 
 	switch(collision.result)
 	{
-		case kEnterCollision:
+		case kCollisionStarts:
 
-			Collider::enterCollision(this, &collision);
+			Collider::collisionStarts(this, &collision);
 			break;
 
-		case kUpdateCollision:
+		case kCollisionPersists:
 
-			Collider::updateCollision(this, &collision);
+			Collider::collisionPersists(this, &collision);
 			break;
 
-		case kExitCollision:
+		case kCollisionEnds:
 
-			Collider::exitCollision(this, &collision);
+			Collider::collisionEnds(this, &collision);
 			break;
 
 		default:
@@ -439,9 +439,9 @@ bool Collider::handleMessage(Telegram telegram)
 //=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-void Collider::enterCollision(Collision* collision)
+void Collider::collisionStarts(Collision* collision)
 {
-	if(SpatialObject::enterCollision(this->owner, &collision->collisionInformation))
+	if(SpatialObject::collisionStarts(this->owner, &collision->collisionInformation))
 	{
 		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
 
@@ -452,14 +452,14 @@ void Collider::enterCollision(Collision* collision)
 	}
 }
 //---------------------------------------------------------------------------------------------------------
-void Collider::updateCollision(Collision* collision)
+void Collider::collisionPersists(Collision* collision)
 {
-	SpatialObject::updateCollision(this->owner, &collision->collisionInformation);
+	SpatialObject::collisionPersists(this->owner, &collision->collisionInformation);
 }
 //---------------------------------------------------------------------------------------------------------
-void Collider::exitCollision(Collision* collision)
+void Collider::collisionEnds(Collision* collision)
 {
-	SpatialObject::exitCollision(this->owner, &collision->collisionInformation);
+	SpatialObject::collisionEnds(this->owner, &collision->collisionInformation);
 	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
 }
 //---------------------------------------------------------------------------------------------------------
@@ -486,7 +486,7 @@ bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
 		collisionInformation.collider = this;
 		collisionInformation.otherCollider = otherCollider;
 
-		SpatialObject::exitCollision(this->owner, &collisionInformation);
+		SpatialObject::collisionEnds(this->owner, &collisionInformation);
 	}
 
 	return true;

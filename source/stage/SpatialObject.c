@@ -185,17 +185,17 @@ fixed_t SpatialObject::getMaximumSpeed()
 	return 0;
 }
 
-bool SpatialObject::enterCollision(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject::collisionStarts(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	return false;
 }
 
-bool SpatialObject::updateCollision(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject::collisionPersists(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	return false;
 }
 
-void SpatialObject::exitCollision(const CollisionInformation* collisionInformation __attribute__ ((unused)))
+void SpatialObject::collisionEnds(const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {}
 
 /**

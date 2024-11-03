@@ -43,9 +43,9 @@ class Collider;
 typedef enum CollisionResult
 {
 	kNoCollision = 0,
-	kEnterCollision,
-	kUpdateCollision,
-	kExitCollision,
+	kCollisionStarts,
+	kCollisionPersists,
+	kCollisionEnds,
 
 } CollisionResult;
 
