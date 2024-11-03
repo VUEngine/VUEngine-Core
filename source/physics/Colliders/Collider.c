@@ -153,7 +153,7 @@ void Collider::checkCollisions(bool checkCollisions)
 {
 	this->checkForCollisions = checkCollisions;
 
-	if(activate)
+	if(checkCollisions)
 	{
 		Collider::enable(this);
 	}
