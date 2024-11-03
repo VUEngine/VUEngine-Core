@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CollisionHelper.h>
 #include <CollisionManager.h>
@@ -26,30 +26,26 @@
 #include "Collider.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(1)
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
-/**
- * Class constructor
- *
- * @param owner
- */
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(1)
+
+
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	// construct base object
@@ -71,10 +67,7 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 	this->position = Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(colliderSpec->displacement));
 	this->invalidPosition = true;
 }
-
-/**
- * Class destructor
- */
+//---------------------------------------------------------------------------------------------------------
 void Collider::destructor()
 {
 	// unset owner now
@@ -115,109 +108,62 @@ void Collider::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-void Collider::discardCollisions()
+//---------------------------------------------------------------------------------------------------------
+void Collider::enable()
 {
-	if(NULL != this->otherColliders)
-	{
-		VirtualNode node = this->otherColliders->head;
-
-		for(; NULL != node; node = node->next)
-		{
-			OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
-
-			ASSERT(!isDeleted(otherColliderRegistry), "Collider::reset: dead otherColliderRegistry");
-
-			if(!isDeleted(otherColliderRegistry->collider))
-			{
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
-				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
-			}
-
-			delete otherColliderRegistry;
-		}
-
-		delete this->otherColliders;
-		this->otherColliders = NULL;
-	}
-}
-
-/**
- * Setup
- *
- * @param layers				uint32
- * @param layersToIgnore		uint32
- */
-void Collider::setup(uint32 layers, uint32 layersToIgnore)
-{
-	this->layers = layers;
-	this->layersToIgnore = layersToIgnore;
-
-	if(NULL != this->events)
+	if(!this->enabled)
 	{
 		Collider::fireEvent(this, kEventColliderChanged);
-		NM_ASSERT(!isDeleted(this), "Collider::setup: deleted this during kEventColliderChanged");
 	}
+	
+	this->enabled = true;
 }
-
-/**
- * Position
- *
- * @return						Vector3D
- */
-Vector3D Collider::getNormal()
+//---------------------------------------------------------------------------------------------------------
+void Collider::disable()
 {
-	return Vector3D::zero();
-}
-void Collider::resize(fixed_t sizeDelta __attribute__((unused)))
-{}
-
-/**
- * Process enter collision event
- *
- * @param collision			Collision data
- */
-void Collider::enterCollision(Collision* collision)
-{
-	if(SpatialObject::enterCollision(this->owner, &collision->collisionInformation))
+	if(this->enabled)
 	{
-		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
+		Collider::fireEvent(this, kEventColliderChanged);
+	}
+	
+	this->enabled = false;
+}
+//---------------------------------------------------------------------------------------------------------
+void Collider::setLayers(uint32 layers)
+{
+	this->layers = layers;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Collider::getLayers()
+{
+	return this->layers;
+}
+//---------------------------------------------------------------------------------------------------------
+void Collider::setLayersToIgnore(uint32 layersToIgnore)
+{
+	this->layersToIgnore = layersToIgnore;
+}
+//---------------------------------------------------------------------------------------------------------
+uint32 Collider::getLayersToIgnore()
+{
+	return this->layersToIgnore;
+}
+//---------------------------------------------------------------------------------------------------------
+void Collider::checkCollisions(bool checkCollisions)
+{
+	this->checkForCollisions = checkCollisions;
 
-		if(otherColliderRegistry)
-		{
-			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
-		}
+	if(activate)
+	{
+		Collider::enable(this);
 	}
 }
-
-/**
- * Process update collision event
- *
- * @param collision			Collision data
- */
-void Collider::updateCollision(Collision* collision)
+//---------------------------------------------------------------------------------------------------------
+void Collider::registerCollisions(bool value)
 {
-	SpatialObject::updateCollision(this->owner, &collision->collisionInformation);
+	this->registerCollisions = value;
 }
-/**
- * Process exit collision event
- *
- * @param collision			Collision data
- */
-void Collider::exitCollision(Collision* collision)
-{
-	SpatialObject::exitCollision(this->owner, &collision->collisionInformation);
-	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
-}
-
-/**
- * Check if collides with other collider
- *
- * @param collider					collider to check for overlapping
- *
-  * @return						collision
- */
-// check if two rectangles overlap
+//---------------------------------------------------------------------------------------------------------
 CollisionResult Collider::collides(Collider collider)
 {
 	if(isDeleted(this->owner))
@@ -306,12 +252,35 @@ CollisionResult Collider::collides(Collider collider)
 
 	return collision.result;
 }
+//---------------------------------------------------------------------------------------------------------
+void Collider::resolveCollision(const CollisionInformation* collisionInformation)
+{
+	ASSERT(collisionInformation->collider, "Collider::resolveCollision: null collider");
+	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingEntities");
 
-/**
- * Check if there is a collision in the magnitude
- *
- * @param displacement		collider displacement
- */
+	if(isDeleted(this->owner))
+	{
+		return;
+	}
+
+	SolutionVector solutionVector = collisionInformation->solutionVector;
+
+	if(collisionInformation->collider == this && solutionVector.magnitude)
+	{
+		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
+
+		// need to invalidate solution vectors for other colliding colliders
+		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
+
+		if(this->registerCollisions)
+		{
+			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
+			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
+			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------
 bool Collider::canMoveTowards(Vector3D displacement)
 {
 	if(!this->otherColliders || NULL == this->otherColliders->head)
@@ -343,111 +312,186 @@ bool Collider::canMoveTowards(Vector3D displacement)
 	// not colliding anymore
 	return canMove;
 }
-
-/**
- * Displace owner
- *
- * @param displacement		Displacement to apply to owner
- */
-void Collider::displaceOwner(Vector3D displacement)
+//---------------------------------------------------------------------------------------------------------
+void Collider::discardCollisions()
 {
-	// retrieve the colliding spatialObject's position and gap
-	Vector3D ownerPosition = * SpatialObject::getPosition(this->owner);
-
-	ownerPosition.x += displacement.x;
-	ownerPosition.y += displacement.y;
-	ownerPosition.z += displacement.z;
-
-	SpatialObject::setPosition(this->owner, &ownerPosition);
-}
-
-/**
- * Solve the collision by moving owner
- */
-void Collider::resolveCollision(const CollisionInformation* collisionInformation)
-{
-	ASSERT(collisionInformation->collider, "Collider::resolveCollision: null collider");
-	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingEntities");
-
-	if(isDeleted(this->owner))
+	if(NULL != this->otherColliders)
 	{
-		return;
+		VirtualNode node = this->otherColliders->head;
+
+		for(; NULL != node; node = node->next)
+		{
+			OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
+
+			ASSERT(!isDeleted(otherColliderRegistry), "Collider::reset: dead otherColliderRegistry");
+
+			if(!isDeleted(otherColliderRegistry->collider))
+			{
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderDeleted);
+				Collider::removeEventListener(otherColliderRegistry->collider, ListenerObject::safeCast(this), (EventListener)Collider::onOtherColliderChanged, kEventColliderChanged);
+			}
+
+			delete otherColliderRegistry;
+		}
+
+		delete this->otherColliders;
+		this->otherColliders = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+fixed_t Collider::getCollidingFrictionCoefficient()
+{
+	if(!this->otherColliders)
+	{
+		return 0;
 	}
 
-	SolutionVector solutionVector = collisionInformation->solutionVector;
+	fixed_t totalFrictionCoefficient = 0;
 
-	if(collisionInformation->collider == this && solutionVector.magnitude)
+	VirtualNode node = this->otherColliders->head;
+
+	for(; NULL != node; node = node->next)
 	{
-		Collider::displaceOwner(this, Vector3D::scalarProduct(solutionVector.direction, solutionVector.magnitude));
+		OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
+		ASSERT(!isDeleted(otherColliderRegistry), "Collider::getCollidingFriction: dead otherColliderRegistry");
 
-		// need to invalidate solution vectors for other colliding colliders
-		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
+		ASSERT(otherColliderRegistry->collider, "Collider::getCollidingFriction: null otherCollider");
 
-		if(this->registerCollisions)
+		if(!isDeleted(otherColliderRegistry->collider->owner))
 		{
-			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
-			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
-			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->otherCollider->owner);
+			totalFrictionCoefficient += otherColliderRegistry->frictionCoefficient;
+		}
+	}
+
+	return totalFrictionCoefficient;
+}
+//---------------------------------------------------------------------------------------------------------
+void Collider::show()
+{
+	if(isDeleted(this->wireframe))
+	{
+		Collider::configureWireframe(this);
+
+		if(!isDeleted(this->wireframe))
+		{
+			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
+
+			Wireframe::show(this->wireframe);
 		}
 	}
 }
-
-/**
- * Make this collider to test collision against other colliders
- *
- * @param activate
- */
-void Collider::checkCollisions(bool activate)
+//---------------------------------------------------------------------------------------------------------
+void Collider::hide()
 {
-	this->checkForCollisions = activate;
-
-	if(activate)
+	if(!isDeleted(this->wireframe))
 	{
-		Collider::enable(this);
+		WireframeManager::unregisterWireframe(WireframeManager::getInstance(), this->wireframe);
+
+		delete this->wireframe;
+		this->wireframe = NULL;
 	}
 }
-
-/**
- * Enable / disable
- *
- * @param enable
- */
-void Collider::enable()
+//---------------------------------------------------------------------------------------------------------
+void Collider::resize(fixed_t sizeDelta __attribute__((unused)))
+{}
+//---------------------------------------------------------------------------------------------------------
+Vector3D Collider::getNormal()
 {
-	if(!this->enabled)
+	return Vector3D::zero();
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+void Collider::print(int32 x, int32 y)
+{
+	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
+	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
+	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
+
+	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
+	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
+	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
+}
+#endif
+//---------------------------------------------------------------------------------------------------------
+bool Collider::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
 	{
-		Collider::fireEvent(this, kEventColliderChanged);
-	}
-	
-	this->enabled = true;
-}
+		case kMessageColliderShow:
 
-void Collider::disable()
+			Collider::show(this);
+			break;
+
+		case kMessageColliderHide:
+
+			Collider::hide(this);
+			break;
+	}
+
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
+void Collider::enterCollision(Collision* collision)
 {
-	if(this->enabled)
+	if(SpatialObject::enterCollision(this->owner, &collision->collisionInformation))
 	{
-		Collider::fireEvent(this, kEventColliderChanged);
+		OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, collision->collisionInformation.otherCollider);
+
+		if(otherColliderRegistry)
+		{
+			otherColliderRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collision->collisionInformation.otherCollider->owner);
+		}
 	}
-	
-	this->enabled = false;
 }
-
-/**
- * Get flag
- *
- * @return		Collision check status
- */
-bool Collider::checkForCollisions()
+//---------------------------------------------------------------------------------------------------------
+void Collider::updateCollision(Collision* collision)
 {
-	return this->checkForCollisions;
+	SpatialObject::updateCollision(this->owner, &collision->collisionInformation);
 }
+//---------------------------------------------------------------------------------------------------------
+void Collider::exitCollision(Collision* collision)
+{
+	SpatialObject::exitCollision(this->owner, &collision->collisionInformation);
+	Collider::unregisterOtherCollider(this, collision->collisionInformation.otherCollider);
+}
+//---------------------------------------------------------------------------------------------------------
+bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
+{
+	if(isDeleted(this->owner) || isDeleted(eventFirer))
+	{
+		return false;
+	}
 
-/**
- * Register colliding collider from the lists
- *
- * @private
- * @param otherCollider	Colliding collider to register
- */
+	Collider otherCollider = Collider::safeCast(eventFirer);
+
+	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
+	NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::onOtherColliderChanged: dead otherColliderRegistry");
+
+	if(NULL == otherColliderRegistry)
+	{
+		return false;
+	}
+
+	if(Collider::unregisterOtherCollider(this, otherCollider))
+	{
+		CollisionInformation collisionInformation;
+		collisionInformation.collider = this;
+		collisionInformation.otherCollider = otherCollider;
+
+		SpatialObject::exitCollision(this->owner, &collisionInformation);
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------
 OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, SolutionVector solutionVector, bool isImpenetrable)
 {
 	if(!this->otherColliders)
@@ -479,13 +523,7 @@ OtherColliderRegistry* Collider::registerOtherCollider(Collider otherCollider, S
 
 	return otherColliderRegistry;
 }
-
-/**
- * Remove colliding collider from the lists
- *
- * @private
- * @param otherCollider	Colliding collider to remove
- */
+//---------------------------------------------------------------------------------------------------------
 bool Collider::unregisterOtherCollider(Collider otherCollider)
 {
 	ASSERT(!isDeleted(otherCollider), "Collider::removeOtherCollider: dead otherCollider");
@@ -509,49 +547,7 @@ bool Collider::unregisterOtherCollider(Collider otherCollider)
 
 	return true;
 }
-
-/**
- * Collider changed listener
- *
- * @private
- * @param eventFirer		Changed collider
- */
-bool Collider::onOtherColliderChanged(ListenerObject eventFirer)
-{
-	if(isDeleted(this->owner) || isDeleted(eventFirer))
-	{
-		return false;
-	}
-
-	Collider otherCollider = Collider::safeCast(eventFirer);
-
-	OtherColliderRegistry* otherColliderRegistry = Collider::findOtherColliderRegistry(this, otherCollider);
-	NM_ASSERT(!isDeleted(otherColliderRegistry), "Collider::onOtherColliderChanged: dead otherColliderRegistry");
-
-	if(NULL == otherColliderRegistry)
-	{
-		return false;
-	}
-
-	if(Collider::unregisterOtherCollider(this, otherCollider))
-	{
-		CollisionInformation collisionInformation;
-		collisionInformation.collider = this;
-		collisionInformation.otherCollider = otherCollider;
-
-		SpatialObject::exitCollision(this->owner, &collisionInformation);
-	}
-
-	return true;
-}
-
-/**
- * Get OtherColliderRegistry
- *
- * @private
- * @param collider	Collider to find
- * @return		OtherColliderRegistry*
- */
+//---------------------------------------------------------------------------------------------------------
 OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 {
 	ASSERT(collider, "Collider::findOtherColliderRegistry: null collider");
@@ -573,39 +569,19 @@ OtherColliderRegistry* Collider::findOtherColliderRegistry(Collider collider)
 
 	return NULL;
 }
-
-/**
- * Get total friction of colliding colliders
- *
- * @return				The sum of friction coefficients
- */
-fixed_t Collider::getCollidingFrictionCoefficient()
+//---------------------------------------------------------------------------------------------------------
+void Collider::displaceOwner(Vector3D displacement)
 {
-	if(!this->otherColliders)
-	{
-		return 0;
-	}
+	// retrieve the colliding spatialObject's position and gap
+	Vector3D ownerPosition = * SpatialObject::getPosition(this->owner);
 
-	fixed_t totalFrictionCoefficient = 0;
+	ownerPosition.x += displacement.x;
+	ownerPosition.y += displacement.y;
+	ownerPosition.z += displacement.z;
 
-	VirtualNode node = this->otherColliders->head;
-
-	for(; NULL != node; node = node->next)
-	{
-		OtherColliderRegistry* otherColliderRegistry = (OtherColliderRegistry*)node->data;
-		ASSERT(!isDeleted(otherColliderRegistry), "Collider::getCollidingFriction: dead otherColliderRegistry");
-
-		ASSERT(otherColliderRegistry->collider, "Collider::getCollidingFriction: null otherCollider");
-
-		if(!isDeleted(otherColliderRegistry->collider->owner))
-		{
-			totalFrictionCoefficient += otherColliderRegistry->frictionCoefficient;
-		}
-	}
-
-	return totalFrictionCoefficient;
+	SpatialObject::setPosition(this->owner, &ownerPosition);
 }
-
+//---------------------------------------------------------------------------------------------------------
 int32 Collider::getNumberOfImpenetrableOtherColliders()
 {
 	if(!this->otherColliders)
@@ -624,89 +600,4 @@ int32 Collider::getNumberOfImpenetrableOtherColliders()
 
 	return count;
 }
-
-uint32 Collider::getLayers()
-{
-	return this->layers;
-}
-
-void Collider::setLayers(uint32 layers)
-{
-	this->layers = layers;
-}
-
-uint32 Collider::getLayersToIgnore()
-{
-	return this->layersToIgnore;
-}
-
-void Collider::setLayersToIgnore(uint32 layersToIgnore)
-{
-	this->layersToIgnore = layersToIgnore;
-}
-
-void Collider::registerCollisions(bool value)
-{
-	this->registerCollisions = value;
-}
-
-// show me
-void Collider::show()
-{
-	if(isDeleted(this->wireframe))
-	{
-		Collider::configureWireframe(this);
-
-		if(!isDeleted(this->wireframe))
-		{
-			WireframeManager::registerWireframe(WireframeManager::getInstance(), this->wireframe);
-
-			Wireframe::show(this->wireframe);
-		}
-	}
-}
-
-void Collider::hide()
-{
-	if(!isDeleted(this->wireframe))
-	{
-		WireframeManager::unregisterWireframe(WireframeManager::getInstance(), this->wireframe);
-
-		delete this->wireframe;
-		this->wireframe = NULL;
-	}
-}
-
-#ifndef __SHIPPING
-void Collider::print(int32 x, int32 y)
-{
-	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
-	Printing::hex(Printing::getInstance(), (int32)this->owner, x + 7, y++, 8, NULL);
-
-	Printing::text(Printing::getInstance(), "Colliding colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), this->otherColliders ? VirtualList::getCount(this->otherColliders) : 0, x + 21, y++, NULL);
-	Printing::text(Printing::getInstance(), "Impenetrable colliders:            ", x, y, NULL);
-	Printing::int32(Printing::getInstance(), Collider::getNumberOfImpenetrableOtherColliders(this), x + 21, y++, NULL);
-}
-#endif
-
-
-bool Collider::handleMessage(Telegram telegram)
-{
-	switch(Telegram::getMessage(telegram))
-	{
-		case kMessageColliderShow:
-
-			Collider::show(this);
-			break;
-
-		case kMessageColliderHide:
-
-			Collider::hide(this);
-			break;
-	}
-
-	return false;
-}
+//---------------------------------------------------------------------------------------------------------

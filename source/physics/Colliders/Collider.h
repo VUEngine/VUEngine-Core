@@ -237,8 +237,8 @@ abstract class Collider : Component
 	uint32 getLayersToIgnore();
 
 	/// Make this collider to test collision against other colliders.
-	/// @param activate: It true, this collider checks collision against others
-	void checkCollisions(bool activate);
+	/// @param checkCollisions: It true, this collider checks collision against others
+	void checkCollisions(bool checkCollisions);
 
 	/// Keep track of colliding colliders to detect when collisions exit.
 	/// @param registerCollisions: If true, colliding colliders are registered
