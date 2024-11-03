@@ -63,6 +63,9 @@ abstract class Component : ListenerObject
 	/// Retrieve the spec pointer that defined how to initialized the component
 	/// @return Component spec pointer
 	ComponentSpec* getSpec();
+
+	/// Retrieve the collider's owner	
+	SpatialObject getOwner();
 }
 
 #endif

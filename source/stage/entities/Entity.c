@@ -1787,9 +1787,9 @@ void Entity::registerCollisions(bool value)
 /**
  * Propagate active status to the colliders
  */
-void Entity::enableCollisions(bool value)
+void Entity::enableCollisions()
 {
-	this->collisionsEnabled = value;
+	this->collisionsEnabled = true;
 
 	if(NULL != this->colliders)
 	{
@@ -1797,7 +1797,22 @@ void Entity::enableCollisions(bool value)
 		{
 			Collider collider = Collider::safeCast(node->data);
 
-			Collider::enable(collider, value);
+			Collider::enable(collider);
+		}
+	}
+}
+
+void Entity::disableCollisions()
+{
+	this->collisionsEnabled = false;
+
+	if(NULL != this->colliders)
+	{
+		for(VirtualNode node = this->colliders->head; NULL != node; node = node->next)
+		{
+			Collider collider = Collider::safeCast(node->data);
+
+			Collider::disable(collider);
 		}
 	}
 }

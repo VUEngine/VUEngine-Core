@@ -48,7 +48,7 @@ class Box : Collider
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
 	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
 	void projectOntoItself();
-	override void resize(fixed_t sizeIncrement);
+	override void resize(fixed_t sizeDelta);
 	override void configureWireframe();
 	override void print(int32 x, int32 y);
 }

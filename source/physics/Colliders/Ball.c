@@ -91,9 +91,9 @@ static void Ball::project(Vector3D center, fixed_t radius, Vector3D vector, fixe
 	}
 }
 
-void Ball::resize(fixed_t sizeIncrement __attribute__((unused)))
+void Ball::resize(fixed_t sizeDelta __attribute__((unused)))
 {
-	this->radius += sizeIncrement;
+	this->radius += sizeDelta;
 }
 
 void Ball::configureWireframe()
@@ -117,9 +117,11 @@ void Ball::configureWireframe()
 	}
 }
 
-// print debug data
+#ifndef __SHIPPING
 void Ball::print(int32 x, int32 y)
 {
+	Base::print(this, x, y);
+	
 	Printing::text(Printing::getInstance(), "R:             " , x, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->radius), x + 2, y++, NULL);
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
@@ -142,3 +144,4 @@ void Ball::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->transformation->position.z + this->radius), x + 8, y++, NULL);
 }
+#endif

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -116,10 +116,7 @@ void Collider::destructor()
 	Base::destructor();
 }
 
-/**
- * Reset
- */
-void Collider::reset()
+void Collider::discardCollisions()
 {
 	if(NULL != this->otherColliders)
 	{
@@ -172,7 +169,7 @@ Vector3D Collider::getNormal()
 {
 	return Vector3D::zero();
 }
-void Collider::resize(fixed_t sizeIncrement __attribute__((unused)))
+void Collider::resize(fixed_t sizeDelta __attribute__((unused)))
 {}
 
 /**
@@ -315,7 +312,7 @@ CollisionResult Collider::collides(Collider collider)
  *
  * @param displacement		collider displacement
  */
-bool Collider::canMoveTowards(Vector3D displacement, fixed_t sizeIncrement __attribute__ ((unused)))
+bool Collider::canMoveTowards(Vector3D displacement)
 {
 	if(!this->otherColliders || NULL == this->otherColliders->head)
 	{
@@ -367,7 +364,7 @@ void Collider::displaceOwner(Vector3D displacement)
 /**
  * Solve the collision by moving owner
  */
-void Collider::resolveCollision(const CollisionInformation* collisionInformation, bool registerOtherCollider)
+void Collider::resolveCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->collider, "Collider::resolveCollision: null collider");
 	ASSERT(collisionInformation->otherCollider, "Collider::resolveCollision: null collidingEntities");
@@ -386,7 +383,7 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 		// need to invalidate solution vectors for other colliding colliders
 		//Collider::checkPreviousCollisions(this, collisionInformation->otherCollider);
 
-		if(registerOtherCollider)
+		if(this->registerCollisions)
 		{
 			OtherColliderRegistry* otherColliderRegistry = Collider::registerOtherCollider(this, collisionInformation->otherCollider, collisionInformation->solutionVector, true);
 			ASSERT(!isDeleted(otherColliderRegistry), "Collider::resolveCollision: dead otherColliderRegistry");
@@ -396,37 +393,17 @@ void Collider::resolveCollision(const CollisionInformation* collisionInformation
 }
 
 /**
- * Retrieve owner
- *
- * @return		Owning SpatialObject
- */
-SpatialObject Collider::getOwner()
-{
-	return this->owner;
-}
-
-/**
- * Is enabled?
- *
- * @return		Enabled status
- */
-bool Collider::isEnabled()
-{
-	return this->enabled;
-}
-
-/**
  * Make this collider to test collision against other colliders
  *
  * @param activate
  */
 void Collider::checkCollisions(bool activate)
 {
-	Collider::setCheckForCollisions(this, activate);
+	this->checkForCollisions = activate;
 
-	if(activate && !this->enabled)
+	if(activate)
 	{
-		Collider::enable(this, activate);
+		Collider::enable(this);
 	}
 }
 
@@ -435,27 +412,24 @@ void Collider::checkCollisions(bool activate)
  *
  * @param enable
  */
-void Collider::enable(bool enable)
+void Collider::enable()
 {
-	if(this->enabled != enable)
+	if(!this->enabled)
 	{
-		if(!enable)
-		{
-			Collider::fireEvent(this, kEventColliderChanged);
-		}
+		Collider::fireEvent(this, kEventColliderChanged);
 	}
 	
-	this->enabled = enable;
+	this->enabled = true;
 }
 
-/**
- * Set flag
- *
- * @param checkForCollisions
- */
-void Collider::setCheckForCollisions(bool checkForCollisions)
+void Collider::disable()
 {
-	this->checkForCollisions = checkForCollisions;
+	if(this->enabled)
+	{
+		Collider::fireEvent(this, kEventColliderChanged);
+	}
+	
+	this->enabled = false;
 }
 
 /**

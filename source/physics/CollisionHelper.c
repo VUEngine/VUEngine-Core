@@ -632,7 +632,7 @@ static void CollisionHelper::checkIfLineFieldOverlapsLineField(Collider collider
  * @param colliderA	Collider
  * @param colliderB	Collider
  */
-static void CollisionHelper::checkIfOverlap(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation, fixed_t sizeIncrement)
+static void CollisionHelper::checkIfOverlap(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation, fixed_t sizeDelta)
 {
 	NM_ASSERT(!isDeleted(colliderA), "CollisionHelper::checkIfOverlap: deleted colliderA");
 	NM_ASSERT(!isDeleted(colliderB), "CollisionHelper::checkIfOverlap: deleted colliderB");
@@ -645,9 +645,9 @@ static void CollisionHelper::checkIfOverlap(Collider colliderA, Collider collide
 		return;
 	}
 
-	if(0 != sizeIncrement)
+	if(0 != sizeDelta)
 	{
-		Collider::resize(colliderA, sizeIncrement);
+		Collider::resize(colliderA, sizeDelta);
 	}
 
 	typedef void (*CollisionHelperFunction)(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation);
@@ -679,8 +679,8 @@ static void CollisionHelper::checkIfOverlap(Collider colliderA, Collider collide
 		collisionInformation->otherCollider = colliderB;
 	}
 
-	if(0 != sizeIncrement)
+	if(0 != sizeDelta)
 	{
-		Collider::resize(colliderA, -sizeIncrement);
+		Collider::resize(colliderA, -sizeDelta);
 	}
 }

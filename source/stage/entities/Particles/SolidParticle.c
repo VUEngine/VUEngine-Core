@@ -81,7 +81,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 
 	// register a collider for collision detection
 	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
-	Collider::checkCollisions(this->collider, true);
+	Collider::registerCollisions(this->collider, false);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
 	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
@@ -169,7 +169,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Collider::resolveCollision(collisionInformation->collider, collisionInformation, false);
+			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
 			SpatialObject owner = Collider::getOwner(collisionInformation->otherCollider);
 			fixed_t frictionCoefficient =  SpatialObject::getFrictionCoefficient(owner);
@@ -207,7 +207,7 @@ bool SolidParticle::isSubjectToGravity(Vector3D gravity)
 		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	return Collider::canMoveTowards(this->collider, displacement, 0);
+	return Collider::canMoveTowards(this->collider, displacement);
 }
 
 /**
@@ -308,5 +308,5 @@ void SolidParticle::exitCollision(const CollisionInformation* collisionInformati
 void SolidParticle::reset()
 {
 	Base::reset(this);
-	Collider::reset(this->collider);
+	Collider::discardCollisions(this->collider);
 }

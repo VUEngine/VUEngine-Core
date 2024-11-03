@@ -261,9 +261,11 @@ void LineField::setNormalLength(fixed_t normalLength)
 	this->normalLength = normalLength;
 }
 
-// print debug data
+#ifndef __SHIPPING
 void LineField::print(int32 x, int32 y)
 {
+	Base::print(this, x, y);
+	
 	Printing::text(Printing::getInstance(), "L:             " , x, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::length(Vector3D::get(this->a, this->b))), x + 2, y++, NULL);
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
@@ -286,3 +288,4 @@ void LineField::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
 }
+#endif

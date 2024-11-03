@@ -432,17 +432,17 @@ void Box::projectOntoItself()
 }
 
 // test if collision with the entity give the displacement
-void Box::resize(fixed_t sizeIncrement __attribute__((unused)))
+void Box::resize(fixed_t sizeDelta __attribute__((unused)))
 {
 	// add displacement
-	this->rightBox.x0 -= sizeIncrement;
-	this->rightBox.x1 += sizeIncrement;
+	this->rightBox.x0 -= sizeDelta;
+	this->rightBox.x1 += sizeDelta;
 
-	this->rightBox.y0 -= sizeIncrement;
-	this->rightBox.y1 += sizeIncrement;
+	this->rightBox.y0 -= sizeDelta;
+	this->rightBox.y1 += sizeDelta;
 
-	this->rightBox.z0 -= sizeIncrement;
-	this->rightBox.z1 += sizeIncrement;
+	this->rightBox.z0 -= sizeDelta;
+	this->rightBox.z1 += sizeDelta;
 
 	Box::projectOntoItself(this);
 }
@@ -509,9 +509,11 @@ void Box::configureWireframe()
 	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
 }
 
-// print debug data
+#ifndef __SHIPPING
 void Box::print(int32 x, int32 y)
 {
+	Base::print(this, x, y);
+	
 	RightBox rightBox = this->rightBox;
 
 	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
@@ -529,3 +531,4 @@ void Box::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
 	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
 }
+#endif

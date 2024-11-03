@@ -27,7 +27,7 @@
 static class CollisionHelper : ListenerObject
 {
 	/// @publicsection
-	static void checkIfOverlap(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation, fixed_t sizeIncrement);
+	static void checkIfOverlap(Collider colliderA, Collider colliderB, CollisionInformation* collisionInformation, fixed_t sizeDelta);
 }
 
 

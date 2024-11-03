@@ -333,7 +333,7 @@ bool Actor::canMoveTowards(Vector3D direction)
 		for(; NULL != node; node = node->next)
 		{
 			Collider collider = Collider::safeCast(node->data);
-			canMove &= Collider::canMoveTowards(collider, displacement, 0);
+			canMove &= Collider::canMoveTowards(collider, displacement);
 		}
 	}
 
@@ -369,11 +369,6 @@ fixed_t Actor::getFrictionOnCollision(SpatialObject collidingObject __attribute_
 	return  Actor::getSurroundingFrictionCoefficient(this);
 }
 
-bool Actor::registerOtherColliders()
-{
-	return true;
-}
-
 bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 {
 	ASSERT(collisionInformation->otherCollider, "Actor::enterCollision: otherColliders");
@@ -389,7 +384,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Collider::resolveCollision(collisionInformation->collider, collisionInformation, Actor::registerOtherColliders(this));
+			Collider::resolveCollision(collisionInformation->collider, collisionInformation);
 
 			SpatialObject collidingObject = Collider::getOwner(collisionInformation->otherCollider);
 

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -210,38 +210,86 @@ abstract class Collider : Component
 	bool invalidPosition;
 
 	/// @publicsection
+
+	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
 
-	void reset();
+	/// Enable the collider for collision checks.
+	void enable();
 
-	/// 
-	CollisionResult collides(Collider collider);
-	void resolveCollision(const CollisionInformation* collisionInformation, bool registerOtherCollider);
-	bool canMoveTowards(Vector3D displacement, fixed_t sizeIncrement);
+	/// Disable the collider for collision checks.
+	void disable();
 
-	SpatialObject getOwner();
-	fixed_t getCollidingFrictionCoefficient();
-
-	void enable(bool enable);
-	bool isEnabled();
-
-	void checkCollisions(bool activate);
-	void registerCollisions(bool value);
-
+	/// Set the layers in which this collider lives.
+	/// @param layers: Layers in which the collider must live
 	void setLayers(uint32 layers);
+
+	/// Retrieve the layers in which this collider lives.
+	/// @return Layers in which the collider must live
 	uint32 getLayers();
 
+	/// Set the layers in which live colliders to ignore when testing collisions.
+	/// @param layers: Layers to ignore when checking collisions
 	void setLayersToIgnore(uint32 layersToIgnore);
+
+	/// Retrieve the layers in which live colliders to ignore when testing collisions.
+	/// @return Layers to ignore when checking collisions
 	uint32 getLayersToIgnore();
 
+	/// Make this collider to test collision against other colliders.
+	/// @param activate: It true, this collider checks collision against others
+	void checkCollisions(bool activate);
+
+	/// Keep track of colliding colliders to detect when collisions exit.
+	/// @param registerCollisions: If true, colliding colliders are registered
+	void registerCollisions(bool registerCollisions);
+
+	/// Check if there is there is a collision with the provided collider.
+	/// @param collider: Collider to check collision against to
+	CollisionResult collides(Collider collider);
+
+	/// Resolve a collision by moving the owner to a position where the collision ceases.
+	/// @param collisionInformation: Information struct about the collision to resolve 
+	/// @param registerOtherCollider:
+	void resolveCollision(const CollisionInformation* collisionInformation);
+
+	/// Check if there is some collider blocking in the provided direction.
+	/// @param displacement: Vector towards which to check if it is possible to move the owner
+	/// @return True if there is no collision when moving the collider and increasing its size
+	bool canMoveTowards(Vector3D displacement);
+
+	/// Discard any registered collision.
+	void discardCollisions();
+
+	/// Get the total friction of colliding colliders.
+	/// @return The sum of friction coefficients of the colliders colliding's owners
+	fixed_t getCollidingFrictionCoefficient();
+
+	/// Show the collider.
 	void show();
+
+	/// Hide the collider.
 	void hide();
 
-	virtual void resize(fixed_t sizeIncrement);
+	/// Resize the colliders add the provided increment.
+	/// @param sizeDelta: Delta to add to the collider's size
+	virtual void resize(fixed_t sizeDelta);
+
+	/// Retrieve the normal to the collider.
+	/// @return Normal to the collider
 	virtual Vector3D getNormal();
+
+	/// Configure the wireframe used to show the collider.
 	virtual void configureWireframe() = 0;
-	virtual void print(int32 x, int32 y) = 0;
+
+	/// Print collider's state.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
+	virtual void print(int32 x, int32 y);
 	
+	/// Process a Telegram.
+	/// @param telegram: Telegram to process
+	/// @return True if the Telegram was processed
 	override bool handleMessage(Telegram telegram);
 }
 

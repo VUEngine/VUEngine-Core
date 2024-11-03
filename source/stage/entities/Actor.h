@@ -79,7 +79,6 @@ class Actor : AnimatedEntity
 	virtual fixed_t getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fixed_t getSurroundingFrictionCoefficient();
 	virtual bool mustBounce();
-	virtual bool registerOtherColliders();
 	virtual fixed_t getMaximumSpeed();
 	override void update();
 	override bool handleMessage(Telegram telegram);

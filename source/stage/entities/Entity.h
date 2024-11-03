@@ -176,7 +176,8 @@ class Entity : Container
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	void setAnimation(void (*animation)());
 	void checkCollisions(bool activate);
-	void enableCollisions(bool value);
+	void enableCollisions();
+	void disableCollisions();
 	void registerCollisions(bool value);
 	bool doesAllowCollisions();
 	bool hasColliders();
