@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,44 +11,82 @@
 #define LINE_FIELD_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Collider.h>
 #include <Mesh.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __LINE_FIELD_VERTEXES		2
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
+
+///
+/// Class LineField
+///
+/// Inherits from Collider
+///
+/// Defines a line that is sensible to collision on one of its sides.
 /// @ingroup physics
 class LineField : Collider
 {
+	/// @protectedsection
+
+	/// Mesh used to draw the collider
 	MeshSpec* meshSpec;
-	Vector3D normal;
+
+	/// Extreme of the line that defines the line field
 	Vector3D a;
+
+	/// Extreme of the line that defines the line field
 	Vector3D b;
+
+	/// Normal to the line defined by the points a and b
+	Vector3D normal;
+
+	/// Length of the line field's normal
 	fixed_t normalLength;
 
 	/// @publicsection
-	static void project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max);
 
+	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
-	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
-	void addDisplacement(fixed_t displacement);
+
+	/// Displace the line filed.
+	/// @param displacement: Displacement vector
+	void displace(fixed_t displacement);
+
+	/// Retrieve the line field's center point.
+	/// @return Line field's center point
 	Vector3D getCenter();
+
+	/// Retrieve the vertexes that define the line field.
+	/// @param out vertexes: Array of vectors that define the linefied
+	void getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES]);
+
+	/// Set the length of the line field's normal.
+	/// @param normalLength: Length of the line field's normal
 	void setNormalLength(fixed_t normalLength);
 
+	/// Retrieve the normal to the collider.
+	/// @return Normal to the collider
 	override Vector3D getNormal();
+
+	/// Configure the wireframe used to show the collider.
 	override void configureWireframe();
+
+	/// Print collider's state.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	override void print(int32 x, int32 y);
 }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CollisionHelper.h>
 #include <DebugConfig.h>
@@ -20,21 +20,46 @@
 #include "Box.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
-//												CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max)
+{
+	int32 vertexIndex = 0;
+
+	// project this onto the current normal
+	fixed_t dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
+
+	fixed_t finalMin = dotProduct;
+	fixed_t finalMax = dotProduct;
+
+	// project this onto the current normal
+	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
+	{
+		dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
+
+		if(dotProduct < finalMin)
+		{
+			finalMin = dotProduct;
+		}
+		else if(dotProduct > finalMax)
+		{
+			finalMax = dotProduct;
+		}
+	}
+
+	*min = finalMin;
+	*max = finalMax;
+}
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Box::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	Base::constructor(owner, colliderSpec);
@@ -55,8 +80,7 @@ void Box::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 	Box::computeRightBox(this);
 	Box::projectOntoItself(this);
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void Box::destructor()
 {
 	if(this->normals)
@@ -69,7 +93,193 @@ void Box::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+//---------------------------------------------------------------------------------------------------------
+void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
+{
+	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
+	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
+	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
+	Vector3D rightBottomNear	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
+	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
+	Vector3D rightTopFar 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
+	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
+	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
 
+	if(0 != this->rotationVertexDisplacement.x || 0 != this->rotationVertexDisplacement.y || 0 != this->rotationVertexDisplacement.z)
+	{
+		if(0 == this->rotationVertexDisplacement.z)
+		{
+			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
+			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
+		}
+		else if(0 == this->rotationVertexDisplacement.y)
+		{
+			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
+
+			leftTopFar.z 		-= this->rotationVertexDisplacement.z;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
+		}
+		else if(0 == this->rotationVertexDisplacement.x)
+		{
+			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.y 		+= this->rotationVertexDisplacement.y;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
+		}
+	}
+
+	vertexes[0] = Vector3D::sum(leftTopNear, this->transformation->position);
+	vertexes[1] = Vector3D::sum(rightTopNear, this->transformation->position);
+	vertexes[2] = Vector3D::sum(leftBottomNear, this->transformation->position);
+	vertexes[3] = Vector3D::sum(rightBottomNear, this->transformation->position);
+
+	vertexes[4] = Vector3D::sum(leftTopFar, this->transformation->position);
+	vertexes[5] = Vector3D::sum(rightTopFar, this->transformation->position);
+	vertexes[6] = Vector3D::sum(leftBottomFar, this->transformation->position);
+	vertexes[7] = Vector3D::sum(rightBottomFar, this->transformation->position);
+}
+//---------------------------------------------------------------------------------------------------------
+void Box::projectOntoItself()
+{
+	Vector3D vertexes[__BOX_VERTEXES];
+	Box::getVertexes(this, vertexes);
+
+	// Compute normals
+	Box::computeNormals(this, vertexes);
+
+	// Has to project all points on all the normals of the tilted box
+	int32 normalIndex = 0;
+
+	// Initialize vertex projections
+	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
+	{
+		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+void Box::resize(fixed_t sizeDelta __attribute__((unused)))
+{
+	// add displacement
+	this->rightBox.x0 -= sizeDelta;
+	this->rightBox.x1 += sizeDelta;
+
+	this->rightBox.y0 -= sizeDelta;
+	this->rightBox.y1 += sizeDelta;
+
+	this->rightBox.z0 -= sizeDelta;
+	this->rightBox.z1 += sizeDelta;
+
+	Box::projectOntoItself(this);
+}
+//---------------------------------------------------------------------------------------------------------
+void Box::configureWireframe()
+{
+	if(!isDeleted(this->wireframe))
+	{
+		return;
+	}
+
+	const PixelVector MeshesSegments[][2]=
+	{
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		{
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
+			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
+		},
+		
+		// limiter
+		{
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+		},
+	};
+
+	MeshSpec meshSpec =
+	{
+		{
+			__TYPE(Mesh),
+
+			/// displacement
+			{0, 0, 0},
+
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// transparent
+			__TRANSPARENCY_NONE,
+		
+			/// interlaced
+			false
+		},
+
+		// segments
+		(PixelVector(*)[2])MeshesSegments
+	};
+
+	// create a wireframe
+	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
+
+	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+void Box::print(int32 x, int32 y)
+{
+	Base::print(this, x, y);
+	
+	RightBox rightBox = this->rightBox;
+
+	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->transformation->position.x), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->transformation->position.x), x + 8, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->transformation->position.y), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->transformation->position.y), x + 8, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->transformation->position.z), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
+}
+#endif
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Box::computeRightBox()
 {
 	this->rotationVertexDisplacement.x = 0;
@@ -280,69 +490,7 @@ void Box::computeRightBox()
 		Box::projectOntoItself(this);
 	}
 }
-
-void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
-{
-	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
-	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
-	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
-	Vector3D rightBottomNear	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
-	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
-	Vector3D rightTopFar 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
-	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
-	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
-
-	if(0 != this->rotationVertexDisplacement.x || 0 != this->rotationVertexDisplacement.y || 0 != this->rotationVertexDisplacement.z)
-	{
-		if(0 == this->rotationVertexDisplacement.z)
-		{
-			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
-			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
-
-			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
-		}
-		else if(0 == this->rotationVertexDisplacement.y)
-		{
-			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
-			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-			rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
-
-			leftTopFar.z 		-= this->rotationVertexDisplacement.z;
-			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
-		}
-		else if(0 == this->rotationVertexDisplacement.x)
-		{
-			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
-			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-			leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
-			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
-
-			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-			rightTopFar.y 		+= this->rotationVertexDisplacement.y;
-			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-			rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
-		}
-	}
-
-	vertexes[0] = Vector3D::sum(leftTopNear, this->transformation->position);
-	vertexes[1] = Vector3D::sum(rightTopNear, this->transformation->position);
-	vertexes[2] = Vector3D::sum(leftBottomNear, this->transformation->position);
-	vertexes[3] = Vector3D::sum(rightBottomNear, this->transformation->position);
-
-	vertexes[4] = Vector3D::sum(leftTopFar, this->transformation->position);
-	vertexes[5] = Vector3D::sum(rightTopFar, this->transformation->position);
-	vertexes[6] = Vector3D::sum(leftBottomFar, this->transformation->position);
-	vertexes[7] = Vector3D::sum(rightBottomFar, this->transformation->position);
-}
-
+//---------------------------------------------------------------------------------------------------------
 void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 {
 /*
@@ -383,152 +531,4 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 	this->normals->vectors[1] = Vector3D::normalize(this->normals->vectors[1]);
 	this->normals->vectors[2] = Vector3D::normalize(this->normals->vectors[2]);
 }
-
-static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max)
-{
-	int32 vertexIndex = 0;
-
-	// project this onto the current normal
-	fixed_t dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
-
-	fixed_t finalMin = dotProduct;
-	fixed_t finalMax = dotProduct;
-
-	// project this onto the current normal
-	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
-	{
-		dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
-
-		if(dotProduct < finalMin)
-		{
-			finalMin = dotProduct;
-		}
-		else if(dotProduct > finalMax)
-		{
-			finalMax = dotProduct;
-		}
-	}
-
-	*min = finalMin;
-	*max = finalMax;
-}
-
-void Box::projectOntoItself()
-{
-	Vector3D vertexes[__BOX_VERTEXES];
-	Box::getVertexes(this, vertexes);
-
-	// compute normals
-	Box::computeNormals(this, vertexes);
-
-	// has to project all points on all the normals of the tilted box
-	int32 normalIndex = 0;
-
-	// initialize vertex projections
-	for(; normalIndex < __COLLIDER_NORMALS; normalIndex++)
-	{
-		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
-	}
-}
-
-// test if collision with the entity give the displacement
-void Box::resize(fixed_t sizeDelta __attribute__((unused)))
-{
-	// add displacement
-	this->rightBox.x0 -= sizeDelta;
-	this->rightBox.x1 += sizeDelta;
-
-	this->rightBox.y0 -= sizeDelta;
-	this->rightBox.y1 += sizeDelta;
-
-	this->rightBox.z0 -= sizeDelta;
-	this->rightBox.z1 += sizeDelta;
-
-	Box::projectOntoItself(this);
-}
-
-// configure Polyhedron
-void Box::configureWireframe()
-{
-	if(!isDeleted(this->wireframe))
-	{
-		return;
-	}
-
-	const PixelVector MeshesSegments[][2]=
-	{
-		{
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
-		},
-		{
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
-		},
-		{
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x0, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
-		},
-		{
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y0, 0}, Optics::calculateParallax(this->rightBox.z0)),
-			PixelVector::getFromVector3D((Vector3D){this->rightBox.x1, this->rightBox.y1, 0}, Optics::calculateParallax(this->rightBox.z0)),
-		},
-		
-		// limiter
-		{
-			{0, 0, 0, 0}, 
-			{0, 0, 0, 0}
-		},
-	};
-
-	MeshSpec meshSpec =
-	{
-		{
-			__TYPE(Mesh),
-
-			/// displacement
-			{0, 0, 0},
-
-			/// color
-			__COLOR_BRIGHT_RED,
-
-			/// transparent
-			__TRANSPARENCY_NONE,
-		
-			/// interlaced
-			false
-		},
-
-		// segments
-		(PixelVector(*)[2])MeshesSegments
-	};
-
-	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, &meshSpec));
-
-	Mesh::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-}
-
-#ifndef __SHIPPING
-void Box::print(int32 x, int32 y)
-{
-	Base::print(this, x, y);
-	
-	RightBox rightBox = this->rightBox;
-
-	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0 + this->transformation->position.x), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1 + this->transformation->position.x), x + 8, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0 + this->transformation->position.y), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1 + this->transformation->position.y), x + 8, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0 + this->transformation->position.z), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1 + this->transformation->position.z), x + 8, y++, NULL);
-}
-#endif
+//---------------------------------------------------------------------------------------------------------

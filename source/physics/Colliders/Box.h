@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -11,45 +11,76 @@
 #define BOX_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <Collider.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __BOX_VERTEXES	8
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
+///
+/// Class Box
+///
+/// Inherits from Collider
+///
+/// Defines a collider with the shape of a box.
 /// @ingroup physics
 class Box : Collider
 {
-	// the normals of the box
+	/// @protectedsection
+
+	/// The normals of the box
 	VertexProjection vertexProjections[__COLLIDER_NORMALS];
-	// the rectangle
+
+	/// Bounding box
 	RightBox rightBox;
 	// for collision detection purposes
+
+	/// The normals of the box
 	Normals* normals;
 	// for rotation purposes
 	Vector3D rotationVertexDisplacement;
 
 	/// @publicsection
+
+	/// Project the vertexes onto the provided vector.
+	/// @param vertexes: Array of vectors to project
+	/// @param vector: Vector onto which make the projections
+	/// @param out min: Variable to store the value of the lowest value of the projection
+	/// @param out max: Variable to store the value of the biggest value of the projection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fixed_t* min, fixed_t* max);
 
+	/// Class' constructor
 	void constructor(SpatialObject owner, const ColliderSpec* colliderSpec);
+
+	/// Retrieve the vertexes that define the box.
+	/// @param out vertexes: Array of vectors that define the box
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
-	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
+
+	/// Project the box's vertexes onto its normals.
 	void projectOntoItself();
+
+	/// Resize the colliders add the provided increment.
+	/// @param sizeDelta: Delta to add to the collider's size
 	override void resize(fixed_t sizeDelta);
+
+	/// Configure the wireframe used to show the collider.
 	override void configureWireframe();
+
+	/// Print collider's state.
+	/// @param x: Screen x coordinate where to print
+	/// @param y: Screen y coordinate where to print
 	override void print(int32 x, int32 y);
 }
 

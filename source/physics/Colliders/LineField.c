@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <CollisionHelper.h>
 #include <DebugConfig.h>
@@ -21,16 +21,33 @@
 #include "LineField.h"
 
 
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
+
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S MACROS
+static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
+{
+	// project this onto the current normal
+	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
+
+	*min = dotProduct - radius;
+	*max = dotProduct + radius;
+
+	if(*min > *max)
+	{
+		fixed_t aux = *min;
+		*min = *max;
+		*max = aux;
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-// class's constructor
 void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	Base::constructor(owner, colliderSpec);
@@ -45,8 +62,7 @@ void LineField::constructor(SpatialObject owner, const ColliderSpec* colliderSpe
 
 	LineField::computeSize(this);
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void LineField::destructor()
 {
 	if(NULL != this->meshSpec)
@@ -60,7 +76,130 @@ void LineField::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+//---------------------------------------------------------------------------------------------------------
+void LineField::displace(fixed_t displacement)
+{
+	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
+	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D LineField::getCenter()
+{
+	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+}
+//---------------------------------------------------------------------------------------------------------
+void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
+{
+	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
+}
+//---------------------------------------------------------------------------------------------------------
+void LineField::setNormalLength(fixed_t normalLength)
+{
+	this->normalLength = normalLength;
+}
+//---------------------------------------------------------------------------------------------------------
+Vector3D LineField::getNormal()
+{
+	return this->normal;
+}
+//---------------------------------------------------------------------------------------------------------
+void LineField::configureWireframe()
+{
+	if(!isDeleted(this->wireframe))
+	{
+		return;
+	}
 
+	this->meshSpec = new MeshSpec;
+
+	const PixelVector MeshesSegments[][2]=
+	{
+		// line
+		{
+			PixelVector::getFromVector3D(this->a, 0),
+			PixelVector::getFromVector3D(this->b, 0),
+		},
+
+		// normal
+		{
+			PixelVector::getFromVector3D(Vector3D::intermediate(this->a, this->b), 0),
+			PixelVector::getFromVector3D(Vector3D::sum(Vector3D::intermediate(this->a, this->b), Vector3D::scalarProduct(this->normal, this->normalLength)), 0),
+		},
+
+		// limiter
+		{
+			{0, 0, 0, 0}, 
+			{0, 0, 0, 0}
+		},
+	};
+
+	*this->meshSpec = (MeshSpec)
+	{
+		{
+			__TYPE(Mesh),
+
+			/// displacement
+			{0, 0, 0},
+
+			/// color
+			__COLOR_BRIGHT_RED,
+
+			/// transparent
+			__TRANSPARENCY_NONE,
+		
+			/// interlaced
+			true
+		},
+
+		/// segments
+		(PixelVector(*)[2])MeshesSegments
+	};
+
+	// create a wireframe
+	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, this->meshSpec));
+
+	if(!isDeleted(this->wireframe))
+	{
+		Line::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
+	}
+}
+//---------------------------------------------------------------------------------------------------------
+#ifndef __SHIPPING
+void LineField::print(int32 x, int32 y)
+{
+	Base::print(this, x, y);
+	
+	Printing::text(Printing::getInstance(), "L:             " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::length(Vector3D::get(this->a, this->b))), x + 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).x), x + 2, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).y), x + 8, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).z), x + 14, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.x), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.x), x + 8, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.y), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.y), x + 8, y++, NULL);
+
+	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
+	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
+}
+#endif
+//---------------------------------------------------------------------------------------------------------
+
+//=========================================================================================================
+// CLASS' PRIVATE METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void LineField::computeSize()
 {
 	if(NULL == this->transformation)
@@ -156,136 +295,4 @@ void LineField::computeSize()
 
 	this->normal = Vector3D::normalize((Vector3D){dy, -dx, dz});
 }
-
-void LineField::addDisplacement(fixed_t displacement)
-{
-	this->a = Vector3D::sum(this->a, Vector3D::scalarProduct(this->normal, displacement));
-	this->b = Vector3D::sum(this->b, Vector3D::scalarProduct(this->normal, displacement));
-}
-
-Vector3D LineField::getCenter()
-{
-	return Vector3D::sum(Vector3D::sum(this->transformation->position, Vector3D::intermediate(this->a, this->b)), Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-}
-
-static void LineField::project(Vector3D center, fixed_t radius, Vector3D vector, fixed_t* min, fixed_t* max)
-{
-	// project this onto the current normal
-	fixed_t dotProduct = Vector3D::dotProduct(vector, center);
-
-	*min = dotProduct - radius;
-	*max = dotProduct + radius;
-
-	if(*min > *max)
-	{
-		fixed_t aux = *min;
-		*min = *max;
-		*max = aux;
-	}
-}
-
-void LineField::configureWireframe()
-{
-	if(!isDeleted(this->wireframe))
-	{
-		return;
-	}
-
-	this->meshSpec = new MeshSpec;
-
-	const PixelVector MeshesSegments[][2]=
-	{
-		// line
-		{
-			PixelVector::getFromVector3D(this->a, 0),
-			PixelVector::getFromVector3D(this->b, 0),
-		},
-
-		// normal
-		{
-			PixelVector::getFromVector3D(Vector3D::intermediate(this->a, this->b), 0),
-			PixelVector::getFromVector3D(Vector3D::sum(Vector3D::intermediate(this->a, this->b), Vector3D::scalarProduct(this->normal, this->normalLength)), 0),
-		},
-
-		// limiter
-		{
-			{0, 0, 0, 0}, 
-			{0, 0, 0, 0}
-		},
-	};
-
-	*this->meshSpec = (MeshSpec)
-	{
-		{
-			__TYPE(Mesh),
-
-			/// displacement
-			{0, 0, 0},
-
-			/// color
-			__COLOR_BRIGHT_RED,
-
-			/// transparent
-			__TRANSPARENCY_NONE,
-		
-			/// interlaced
-			true
-		},
-
-		/// segments
-		(PixelVector(*)[2])MeshesSegments
-	};
-
-	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Mesh(this->owner, this->meshSpec));
-
-	if(!isDeleted(this->wireframe))
-	{
-		Line::setDisplacement(this->wireframe, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement));
-	}
-}
-
-void LineField::getVertexes(Vector3D vertexes[__LINE_FIELD_VERTEXES])
-{
-	vertexes[0] = Vector3D::sum(this->a, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
-	vertexes[1] = Vector3D::sum(this->b, Vector3D::sum(this->transformation->position, Vector3D::getFromPixelVector(((ColliderSpec*)this->componentSpec)->displacement)));
-}
-
-Vector3D LineField::getNormal()
-{
-	return this->normal;
-}
-
-void LineField::setNormalLength(fixed_t normalLength)
-{
-	this->normalLength = normalLength;
-}
-
-#ifndef __SHIPPING
-void LineField::print(int32 x, int32 y)
-{
-	Base::print(this, x, y);
-	
-	Printing::text(Printing::getInstance(), "L:             " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::length(Vector3D::get(this->a, this->b))), x + 2, y++, NULL);
-	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).x), x + 2, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).y), x + 8, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(Vector3D::intermediate(this->a, this->b).z), x + 14, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.x), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.x), x + 8, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.y), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->b.y), x + 8, y++, NULL);
-
-	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "," , x + 6, y, NULL);
-	Printing::int32(Printing::getInstance(), __METERS_TO_PIXELS(this->a.z), x + 8, y++, NULL);
-}
-#endif
+//---------------------------------------------------------------------------------------------------------
