@@ -562,7 +562,7 @@ Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collis
 		this->colliders = new VirtualList();
 	}
 
-	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
+	Collider collider = CollisionManager::createCollider(collisionManager, colliderSpec, SpatialObject::safeCast(this));
 
 	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
 

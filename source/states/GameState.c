@@ -472,7 +472,12 @@ uint32 GameState::processCollisions()
 		return false;
 	}
 
-	return CollisionManager::update(this->collisionManager, this->physicsClock);
+	if(Clock::isPaused(this->physicsClock))
+	{
+		return false;
+	}
+
+	return CollisionManager::update(this->collisionManager);
 }
 
 /**
