@@ -12,7 +12,6 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <CollisionHelper.h>
 #include <DebugConfig.h>
 #include <Optics.h>
 #include <Printing.h>

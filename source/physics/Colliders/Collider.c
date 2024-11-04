@@ -12,7 +12,7 @@
 // INCLUDES
 //=========================================================================================================
 
-#include <CollisionHelper.h>
+#include <CollisionTester.h>
 #include <CollisionManager.h>
 #include <DebugConfig.h>
 #include <Printing.h>
@@ -182,7 +182,7 @@ CollisionResult Collider::collides(Collider collider)
 	if(NULL == otherColliderRegistry)
 	{
 		// check for new overlap
-		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, 0);
+		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(NULL != collision.collisionInformation.collider && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
@@ -199,7 +199,7 @@ CollisionResult Collider::collides(Collider collider)
 	// to determine if I'm not colliding against them anymore
 	else if(otherColliderRegistry->isImpenetrable && otherColliderRegistry->solutionVector.magnitude)
 	{
-		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collision.collisionInformation.collider == this && collision.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -215,7 +215,7 @@ CollisionResult Collider::collides(Collider collider)
 	else
 	{
 		// otherwise make a normal collision test
-		CollisionHelper::checkIfOverlap(this, collider, &collision.collisionInformation, 0);
+		CollisionTester::testOverlaping(this, collider, &collision.collisionInformation, 0);
 
 		if(collision.collisionInformation.collider == this && 0 != collision.collisionInformation.solutionVector.magnitude)
 		{
