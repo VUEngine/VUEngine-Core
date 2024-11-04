@@ -420,6 +420,8 @@ then
 
 			fi
 		fi
+	else
+		classDefinition="$prototypes"
 	fi
 else
 	classDefinition="$prototypes"
