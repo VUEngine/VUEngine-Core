@@ -108,7 +108,7 @@ void SpriteManager::reset()
 	HardwareManager::resumeInterrupts();
 }
 //---------------------------------------------------------------------------------------------------------
-Sprite SpriteManager::createSprite(const SpriteSpec* spriteSpec, SpatialObject owner)
+Sprite SpriteManager::createSprite(SpatialObject owner, const SpriteSpec* spriteSpec)
 {
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");

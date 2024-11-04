@@ -228,7 +228,7 @@ uint32 CollisionManager::update()
 	return returnValue;
 }
 //---------------------------------------------------------------------------------------------------------
-Collider CollisionManager::createCollider(const ColliderSpec* colliderSpec, SpatialObject owner)
+Collider CollisionManager::createCollider(SpatialObject owner, const ColliderSpec* colliderSpec)
 {
 	NM_ASSERT(!(NULL == colliderSpec || NULL == colliderSpec->allocator), "CollisionManager::createCollider: invalid collider spec");
 

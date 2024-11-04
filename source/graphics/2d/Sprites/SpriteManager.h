@@ -115,10 +115,10 @@ singleton class SpriteManager : Object
 	void reset();
 	
 	/// Create a sprite with the provided spec.
-	/// @param spriteSpec: Spec to use to create the sprite
 	/// @param owner: Object to which the sprite will attach to
+	/// @param spriteSpec: Spec to use to create the sprite
 	/// @return Created sprite
-	Sprite createSprite(const SpriteSpec* spriteSpec, SpatialObject owner);
+	Sprite createSprite(SpatialObject owner, const SpriteSpec* spriteSpec);
 
 	/// Destroy the provided sprite.
 	/// @param sprite: Sprite to destroy

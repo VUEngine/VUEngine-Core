@@ -89,7 +89,7 @@ void Particle::addSprite(const SpriteSpec* spriteSpec)
 	if(NULL != spriteSpec && NULL == this->sprite)
 	{
 		// call the appropriate allocator to support inheritance
-		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, SpatialObject::safeCast(this));
+		this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), SpatialObject::safeCast(this), (SpriteSpec*)spriteSpec);
 
 		ASSERT(this->sprite, "Particle::addSprite: sprite not created");
 	}

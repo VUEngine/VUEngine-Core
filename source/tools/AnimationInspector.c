@@ -776,7 +776,7 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteSpec, "AnimationInspector::createSprite: null spriteSpec");
 
-	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, NULL));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), NULL, (SpriteSpec*)spriteSpec));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 

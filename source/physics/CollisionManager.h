@@ -76,7 +76,7 @@ class CollisionManager : Object
 	/// @param spriteSpec: Spec to use to create the collider
 	/// @param owner: Object to which the collider will attach to
 	/// @return Created collider
-	Collider createCollider(const ColliderSpec* colliderSpec, SpatialObject owner);
+	Collider createCollider(SpatialObject owner, const ColliderSpec* colliderSpec);
 
 	/// Destroy the provided collider.
 	/// @param collider: Collider to destroy

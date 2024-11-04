@@ -80,7 +80,7 @@ void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, Part
 	};
 
 	// register a collider for collision detection
-	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), this->colliderSpec, SpatialObject::safeCast(this));
+	this->collider = CollisionManager::createCollider(VUEngine::getCollisionManager(VUEngine::getInstance()), SpatialObject::safeCast(this), this->colliderSpec);
 	Collider::registerCollisions(this->collider, false);
 
 	// has to set bounciness and friction myself since Particle ignores collisions

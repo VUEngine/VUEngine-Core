@@ -337,7 +337,7 @@ Sprite Entity::addSprite(SpriteSpec* spriteSpec, SpriteManager spriteManager)
 		this->sprites = new VirtualList();
 	}
 
-	Sprite sprite = SpriteManager::createSprite(spriteManager, spriteSpec, SpatialObject::safeCast(this));
+	Sprite sprite = SpriteManager::createSprite(spriteManager, SpatialObject::safeCast(this), spriteSpec);
 
 	NM_ASSERT(!isDeleted(sprite), "Entity::addSprite: sprite not created");
 
@@ -562,7 +562,7 @@ Collider Entity::addCollider(ColliderSpec* colliderSpec, CollisionManager collis
 		this->colliders = new VirtualList();
 	}
 
-	Collider collider = CollisionManager::createCollider(collisionManager, colliderSpec, SpatialObject::safeCast(this));
+	Collider collider = CollisionManager::createCollider(collisionManager, SpatialObject::safeCast(this), colliderSpec);
 
 	NM_ASSERT(!isDeleted(collider), "Entity::addCollider: collider not created");
 
