@@ -86,7 +86,7 @@ void CollisionManager::purgeDestroyedColliders()
 		// load the current collider to check against
 		Collider colliderToCheck = Collider::safeCast(auxNode->data);
 
-		if(colliderToCheck->destroyMe)
+		if(colliderToCheck->deleteMe)
 		{
 			VirtualList::removeNode(this->colliders, auxNode);
 
@@ -116,9 +116,9 @@ uint32 CollisionManager::update()
 		Collider collider = Collider::safeCast(auxNode->data);
 
 #ifndef __RELEASE
-		if(isDeleted(collider) || collider->destroyMe)
+		if(isDeleted(collider) || collider->deleteMe)
 #else
-		if(collider->destroyMe)
+		if(collider->deleteMe)
 #endif
 		{
 			VirtualList::removeNode(this->colliders, auxNode);
@@ -258,7 +258,7 @@ void CollisionManager::destroyCollider(Collider collider)
 #ifndef __ENABLE_PROFILER
 		NM_ASSERT(NULL != VirtualList::find(this->colliders, collider), "CollisionManager::destroyCollider: non registerd collider");
 #endif
-		collider->destroyMe = true;
+		collider->deleteMe = true;
 	}
 }
 //---------------------------------------------------------------------------------------------------------

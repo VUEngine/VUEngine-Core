@@ -22,7 +22,7 @@
 
 
 //=========================================================================================================
-// FORWARD DECLARATIONS
+// CLASS' DECLARATIONS
 //=========================================================================================================
 
 friend class Body;
@@ -90,7 +90,7 @@ void PhysicalWorld::update()
 
 		NM_ASSERT(!isDeleted(body), "PhysicalWorld::update: deleted body");
 
-		if(body->destroy)
+		if(body->deleteMe)
 		{
 			// place in the removed bodies list
 			VirtualList::removeNode(this->bodies, node);
@@ -138,7 +138,7 @@ Body PhysicalWorld::createBody(SpatialObject owner, const PhysicalProperties* ph
 
 			Body body = Body::safeCast(node->data);
 
-			if(body->destroy)
+			if(body->deleteMe)
 			{
 				// place in the removed bodies list
 				VirtualList::removeNode(this->bodies, node);
@@ -164,7 +164,7 @@ void PhysicalWorld::destroyBody(Body body)
 
 	if(!isDeleted(body))
 	{
-		body->destroy = true;
+		body->deleteMe = true;
 		this->dirty = true;
 	}
 }
@@ -253,6 +253,7 @@ void PhysicalWorld::print(int32 x, int32 y)
 	Printing::text(Printing::getInstance(), "                         ", x, y, NULL);
 }
 #endif
+//---------------------------------------------------------------------------------------------------------
 
 //=========================================================================================================
 // CLASS' PRIVATE METHODS

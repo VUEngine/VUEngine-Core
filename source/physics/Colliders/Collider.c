@@ -52,7 +52,7 @@ void Collider::constructor(SpatialObject owner, const ColliderSpec* colliderSpec
 	Base::constructor(owner, colliderSpec);
 
 	// not setup yet
-	this->destroyMe = false;
+	this->deleteMe = false;
 	this->enabled = true;
 
 	this->wireframe = NULL;

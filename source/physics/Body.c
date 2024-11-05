@@ -8,9 +8,9 @@
  */
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <DebugConfig.h>
 #include <FrameRate.h>
@@ -25,26 +25,25 @@
 #include "Body.h"
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATIONS
+//=========================================================================================================
 
 friend class VirtualList;
 friend class VirtualNode;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #ifndef __MAXIMUM_BOUNCINESS_COEFFICIENT
-	#define __MAXIMUM_BOUNCINESS_COEFFICIENT	1
+#define __MAXIMUM_BOUNCINESS_COEFFICIENT		1
 #endif
 
-// this should be improved and calculated dynamically based on framerate
-#define STOPPED_MOVING		0
-#define STILL_MOVES			1
-#define CHANGED_DIRECTION	2
+#define STOPPED_MOVING							0
+#define STILL_MOVES								1
+#define CHANGED_DIRECTION						2
 
 #ifndef __STOP_VELOCITY_THRESHOLD
 #define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(1)
@@ -54,51 +53,25 @@ friend class VirtualNode;
 #endif
 
 #ifndef __FRICTION_FORCE_FACTOR_POWER
-#define __FRICTION_FORCE_FACTOR_POWER					2
+#define __FRICTION_FORCE_FACTOR_POWER			2
 #endif
 
 
-//---------------------------------------------------------------------------------------------------------
-//												CLASS' METHODS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-fix7_9_ext _currentPhysicsElapsedTime __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-static fixed_t _currentWorldFriction __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-static const Vector3D* _currentGravity __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
-static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
+/// Movement result
+/// @memberof Body
+typedef struct MovementResult
 {
-	_currentWorldFriction = currentWorldFriction;
-}
+	uint16 axisStoppedMovement;
+	uint16 axisOfAcceleratedBouncing;
 
-static void Body::setCurrentElapsedTime(fix7_9_ext currentElapsedTime)
-{
-	_currentPhysicsElapsedTime = currentElapsedTime;
-}
+} MovementResult;
 
-static fix7_9_ext Body::getCurrentElapsedTime()
-{
-	return _currentPhysicsElapsedTime;
-}
-
-static void Body::setCurrentGravity(const Vector3D* currentGravity)
-{
-	_currentGravity = currentGravity;
-}
-
-static const Vector3D* Body::getCurrentGravity()
-{
-	return _currentGravity;
-}
-
-enum CollidingObjectIndexes
-{
-	eXAxis = 0,
-	eYAxis,
-	eZAxis,
-	eLastCollidingObject,
-};
-
+/// Registry of normals
+/// @memberof Body
 typedef struct NormalRegistry
 {
 	ListenerObject referent;
@@ -108,17 +81,55 @@ typedef struct NormalRegistry
 } NormalRegistry;
 
 
+//=========================================================================================================
+// CLASS' ATTRIBUTES
+//=========================================================================================================
+
+fix7_9_ext _currentPhysicsElapsedTime __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+static fixed_t _currentWorldFriction __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+static const Vector3D* _currentGravity __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
+
+
+//=========================================================================================================
+// CLASS' STATIC METHODS
+//=========================================================================================================
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
+{
+	_currentWorldFriction = currentWorldFriction;
+}
 //---------------------------------------------------------------------------------------------------------
+static void Body::setCurrentElapsedTime(fix7_9_ext currentElapsedTime)
+{
+	_currentPhysicsElapsedTime = currentElapsedTime;
+}
+//---------------------------------------------------------------------------------------------------------
+static fix7_9_ext Body::getCurrentElapsedTime()
+{
+	return _currentPhysicsElapsedTime;
+}
+//---------------------------------------------------------------------------------------------------------
+static void Body::setCurrentGravity(const Vector3D* currentGravity)
+{
+	_currentGravity = currentGravity;
+}
+//---------------------------------------------------------------------------------------------------------
+static const Vector3D* Body::getCurrentGravity()
+{
+	return _currentGravity;
+}
 
-// class's constructor
+//=========================================================================================================
+// CLASS' PUBLIC METHODS
+//=========================================================================================================
+
+//---------------------------------------------------------------------------------------------------------
 void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity)
 {
 	Base::constructor();
 
-	this->destroy = false;
+	this->deleteMe = false;
 	this->owner = owner;
 	this->normals = NULL;
 	this->mass = __BODY_MIN_MASS < physicalProperties->mass ? __BODY_MAX_MASS > physicalProperties->mass ? physicalProperties->mass : __BODY_MAX_MASS : __BODY_MIN_MASS;
@@ -165,8 +176,7 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	Body::setFrictionCoefficient(this, physicalProperties->frictionCoefficient);
 	Body::computeFrictionForceMagnitude(this);
 }
-
-// class's destructor
+//---------------------------------------------------------------------------------------------------------
 void Body::destructor()
 {
 	if(this->normals)
@@ -180,33 +190,21 @@ void Body::destructor()
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
-
-// set game entity
-void Body::setOwner(SpatialObject owner)
+//---------------------------------------------------------------------------------------------------------
+void Body::setVelocity(const Vector3D* velocity)
 {
-	this->owner = owner;
-}
-
-// get game entity
-SpatialObject Body::getOwner()
-{
-	return this->owner;
-}
-
-// retrieve velocity
-const Vector3D* Body::getVelocity()
-{
-	return &this->velocity;
-}
-
-void Body::setVelocity(Vector3D* velocity)
-{
-	if(velocity)
+	if(NULL != velocity)
 	{
 		this->velocity = *velocity;
 	}
 }
 
+//---------------------------------------------------------------------------------------------------------
+const Vector3D* Body::getVelocity()
+{
+	return &this->velocity;
+}
+//---------------------------------------------------------------------------------------------------------
 const Vector3D* Body::getDirection()
 {
 	return &this->direction;

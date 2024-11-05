@@ -11,62 +11,61 @@
 #define BODY_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-// movement type
-#define	__NO_MOVEMENT				0x00
-#define	__UNIFORM_MOVEMENT			0x01
-#define	__ACCELERATED_MOVEMENT		0x20
-
-#define __BODY_MIN_MASS			__F_TO_FIXED(0.01f)
-#define __BODY_MAX_MASS			__I_TO_FIXED(1)
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
 
 class SpatialObject;
 
-/**
- * Movement result
- *
- * @memberof Body
- */
-typedef struct MovementResult
-{
-	uint16 axisStoppedMovement;
-	uint16 axisOfAcceleratedBouncing;
 
-} MovementResult;
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
-// defines a body
+#define	__NO_MOVEMENT					0x00
+#define	__UNIFORM_MOVEMENT				0x01
+#define	__ACCELERATED_MOVEMENT			0x20
+
+#define __BODY_MIN_MASS					__F_TO_FIXED(0.01f)
+#define __BODY_MAX_MASS					__I_TO_FIXED(1)
+
+
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
+
+/// Struct that specifies the physical properties of bodies
+/// @memberof Body
 typedef struct PhysicalProperties
 {
-	/// mass
+	/// Mass
 	fixed_t mass;
-	/// friction coefficient
+	
+	/// Friction coefficient
 	fixed_t frictionCoefficient;
-	/// bounciness
+
+	/// Bounciness
 	fixed_t bounciness;
-	/// maximum velocity
+	
+	/// Maximum velocity
 	Vector3D maximumVelocity;
-	/// maximum speed
+	
+	/// Maximum speed
 	fixed_t maximumSpeed;
 
 } PhysicalProperties;
 
 typedef const PhysicalProperties PhysicalPropertiesROMSpec;
 
+/// 3D Vector struct for higher decimal precision
+/// @memberof Body
 typedef struct Vector3DPlus
 {
 	fix7_9_ext x;
@@ -76,71 +75,110 @@ typedef struct Vector3DPlus
 } Vector3DPlus;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-
+///
+/// Class Body
+///
+/// Inherits from ListenerObject
+///
+/// Implements newtonian physics.
 /// @ingroup physics
 class Body : ListenerObject
 {
-	// owner
+	/// @protectedsection
+
+	/// Object to which this body attaches to
 	SpatialObject owner;
-	// gravity
-	Vector3D gravity;
-	// applied external force
-	Vector3D externalForce;
-	// friction surrounding object
-	Vector3D friction;
-	// total normal forces applied to the body
-	Vector3D totalNormal;
-	// List of normal forces affecting the body
-	VirtualList normals;
-	// spatial position
+
+	/// Spatial position
 	Vector3D position;
+
+	/// Spatial position at higher decimal precision
 	Vector3DPlus internalPosition;
-	// velocity on each instance
+
+	/// Velocity vector
 	Vector3D velocity;
+
+	/// Velocity vector at higher decimal precision
 	Vector3DPlus internalVelocity;
-	// direction
+
+	// Direction vector
 	Vector3D direction;
-	// speed
-	fixed_t speed;
-	// maximum velocity on each instance
+
+	/// Maximum velocity
 	Vector3D maximumVelocity;
-	// maximum speed
+
+	/// Speed magnitude
+	fixed_t speed;
+
+	/// Maximum speed
 	fixed_t maximumSpeed;
-	// acceleration structure
+
+	/// Gravity affecting the body
+	Vector3D gravity;
+
+	/// External applied force
+	Vector3D externalForce;
+
+	/// Friction surrounding object
+	Vector3D friction;
+	
+	/// Total normal forces applied to the body
+	Vector3D totalNormal;
+	
+	/// List of normal for the forces affecting the body
+	VirtualList normals;
+
+	/// Flags for the acceleration state of the body on each axis
 	Vector3DFlag accelerating;
-	// bounciness
+	
+	/// Body's bounciness factor
 	fixed_t bounciness;
-	// friction coefficient
+
+	/// Friction coefficient of the body
 	fixed_t frictionCoefficient;
-	// friction coefficient of the surroundings
+
+	/// Friction coefficient of the body's surroundings
 	fixed_t surroundingFrictionCoefficient;
-	// friction force magnitude
+
+	/// Friction force's magnitude
 	fixed_t totalFrictionCoefficient;
-	// total friction force magnitude
+
+	/// Total friction force magnitude affecting the body
 	fixed_t frictionForceMagnitude;
-	// mass
+
+	/// Body's mass
 	fixed_t mass;
-	// movement type on each axis
+
+	/// Body's movement type on each axis
 	MovementType movementType;
-	// axis that are subject to gravity
+
+	/// Axis on which the body is subject to gravity
 	uint16 axisSubjectToGravity;
-	// shift elapsed time
+
+	/// Number of cycles to skip physical simulations to slow down physics
 	int8 skipCycles;
+
+	/// Number of skiped cycles
 	int8 skipedCycles;
-	// raise flag to update body's physics
+	
+	/// If not true, the body skips physical simulations
 	bool awake;
-	// Flag to enable messages
+
+	/// If true, the body informs its owner of its change in movement state
 	bool sendMessages;
-	// Delete flag
-	bool destroy;
-	// flag that determines the logic for stoping the body
+
+	/// Flag to destroy the body
+	bool deleteMe;
+
+	/// If true, the movement of the body is independent on each axis
 	bool movesIndependentlyOnEachAxis;
 
 	/// @publicsection
+
 	static void setCurrentElapsedTime(fix7_9_ext currentElapsedTime);
 	static fix7_9_ext getCurrentElapsedTime();
 	static void setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction);
@@ -167,7 +205,7 @@ class Body : ListenerObject
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
 	const Vector3D* getVelocity();
-	void setVelocity(Vector3D* velocity);
+	void setVelocity(const Vector3D* velocity);
 	const Vector3D* getDirection();
 	void setDirection3D(const Vector3D* direction);
 	fixed_t getSpeed();
