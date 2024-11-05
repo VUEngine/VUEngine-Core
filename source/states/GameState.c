@@ -457,7 +457,12 @@ void GameState::updatePhysics()
 		return;
 	}
 
-	PhysicalWorld::update(this->physicalWorld, this->physicsClock);
+	if(Clock::isPaused(this->physicsClock))
+	{
+		return;
+	}
+
+	PhysicalWorld::update(this->physicalWorld);
 }
 
 /**

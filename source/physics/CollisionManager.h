@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -43,7 +43,7 @@ class Clock;
 ///
 /// Inherits from Object
 ///
-/// Manages the colliders in the game.
+/// Manages the colliders in the game states.
 /// @ingroup physics
 class CollisionManager : Object
 {
@@ -63,7 +63,7 @@ class CollisionManager : Object
 	/// Class' constructor
 	void constructor();
 
-	/// Reset the manager's state
+	/// Reset the manager's state.
 	void reset();
 
 	/// Purge destroyed colliders.
@@ -73,8 +73,8 @@ class CollisionManager : Object
 	uint32 update();
 
 	/// Create a collider with the provided spec.
-	/// @param spriteSpec: Spec to use to create the collider
 	/// @param owner: Object to which the collider will attach to
+	/// @param colliderSpec: Spec to use to create the collider
 	/// @return Created collider
 	Collider createCollider(SpatialObject owner, const ColliderSpec* colliderSpec);
 

@@ -484,7 +484,7 @@ Vector3D Body::getLastDisplacement()
 {
 	Vector3D displacement = {0, 0, 0};
 
-	fixed_t elapsedTime = PhysicalWorld::getElapsedTime(VUEngine::getPhysicalWorld(_vuEngine));
+	fixed_t elapsedTime = PhysicalWorld::getElapsedTimeStep();
 
 	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIXED_MULT(this->velocity.x, elapsedTime) : 0;
 	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIXED_MULT(this->velocity.y, elapsedTime) : 0;

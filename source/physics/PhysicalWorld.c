@@ -1,4 +1,4 @@
-/**
+/*
  * VUEngine Core
  *
  * © Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <c.radke@posteo.de>
@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
-#include <Clock.h>
 #include <DebugConfig.h>
 #include <Printing.h>
 #include <VirtualList.h>
@@ -41,6 +40,11 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+static fixed_t PhysicalWorld::getElapsedTimeStep()
+{
+	return __PHYSICS_TIME_ELAPSED_STEP;
+}
+
 /**
  * Class constructor
  */
@@ -63,7 +67,7 @@ void PhysicalWorld::constructor()
 	this->dirty = false;
 	this->cycle = 0;
 
-	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
+	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED_STEP);
 	PhysicalWorld::setTimeScale(this, __1I_FIXED);
 }
 
@@ -165,18 +169,8 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 	return NULL;
 }
 
-/**
- * Calculate collisions
- *
- * @param clock
- */
-void PhysicalWorld::update(Clock clock)
+void PhysicalWorld::update()
 {
-	if(clock->paused)
-	{
-		return;
-	}
-
 	if(__TARGET_FPS < ++this->cycle)
 	{
 		this->cycle = 1;
@@ -287,16 +281,6 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 }
 
 /**
- * Retrieve frictionCoefficient
- *
- * @return		PhysicalWorld's frictionCoefficient
- */
-fixed_t PhysicalWorld::getFrictionCoefficient()
-{
-	return this->frictionCoefficient;
-}
-
-/**
  * Set frictionCoefficient
  *
  * @param frictionCoefficient
@@ -367,19 +351,9 @@ void PhysicalWorld::setGravity(Vector3D gravity)
  *
  * @return		PhysicalWorld's gravity
  */
-const Vector3D* PhysicalWorld::getGravity()
+Vector3D PhysicalWorld::getGravity()
 {
-	return (const Vector3D*)&this->gravity;
-}
-
-/**
- * Get last elapsed time
- *
- * @return		Elapsed time
- */
-fixed_t PhysicalWorld::getElapsedTime()
-{
-	return __PHYSICS_TIME_ELAPSED;
+	return this->gravity;
 }
 
 #ifndef __SHIPPING
