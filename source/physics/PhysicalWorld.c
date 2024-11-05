@@ -116,11 +116,11 @@ void PhysicalWorld::update()
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a collider below
 				// when moving from one collider over another
-				Body::applyGravity(body, gravitySensibleAxis);
+				Body::applyGravity(body, gravitySensibleAxis, &this->gravity);
 			}
 		}
 
-		Body::update(body, this->cycle);
+		Body::update(body, this->cycle, __PHYSICS_TIME_ELAPSED_STEP);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING
@@ -210,7 +210,6 @@ uint32 PhysicalWorld::getTimeScale()
 void PhysicalWorld::setGravity(Vector3D gravity)
 {
 	this->gravity = gravity;
-	Body::setCurrentGravity(&this->gravity);
 }
 //---------------------------------------------------------------------------------------------------------
 Vector3D PhysicalWorld::getGravity()
@@ -221,7 +220,6 @@ Vector3D PhysicalWorld::getGravity()
 void PhysicalWorld::setFrictionCoefficient(fixed_t frictionCoefficient)
 {
 	this->frictionCoefficient = frictionCoefficient;
-	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 }
 //---------------------------------------------------------------------------------------------------------
 fixed_t PhysicalWorld::getFrictionCoefficient()
@@ -279,7 +277,6 @@ void PhysicalWorld::constructor()
 	this->dirty = false;
 	this->cycle = 0;
 
-	Body::setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED_STEP);
 	PhysicalWorld::setTimeScale(this, __1I_FIXED);
 }
 //---------------------------------------------------------------------------------------------------------

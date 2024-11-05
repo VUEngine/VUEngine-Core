@@ -85,40 +85,11 @@ typedef struct NormalRegistry
 // CLASS' ATTRIBUTES
 //=========================================================================================================
 
-fix7_9_ext _currentPhysicsElapsedTime __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-static fixed_t _currentWorldFriction __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-static const Vector3D* _currentGravity __INITIALIZED_GLOBAL_DATA_SECTION_ATTRIBUTE = 0;
-
 
 //=========================================================================================================
 // CLASS' STATIC METHODS
 //=========================================================================================================
 
-//---------------------------------------------------------------------------------------------------------
-static void Body::setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction)
-{
-	_currentWorldFriction = currentWorldFriction;
-}
-//---------------------------------------------------------------------------------------------------------
-static void Body::setCurrentElapsedTime(fix7_9_ext currentElapsedTime)
-{
-	_currentPhysicsElapsedTime = currentElapsedTime;
-}
-//---------------------------------------------------------------------------------------------------------
-static fix7_9_ext Body::getCurrentElapsedTime()
-{
-	return _currentPhysicsElapsedTime;
-}
-//---------------------------------------------------------------------------------------------------------
-static void Body::setCurrentGravity(const Vector3D* currentGravity)
-{
-	_currentGravity = currentGravity;
-}
-//---------------------------------------------------------------------------------------------------------
-static const Vector3D* Body::getCurrentGravity()
-{
-	return _currentGravity;
-}
 
 //=========================================================================================================
 // CLASS' PUBLIC METHODS
@@ -174,7 +145,7 @@ void Body::constructor(SpatialObject owner, const PhysicalProperties* physicalPr
 	this->gravity = Body::getGravity(this);
 
 	Body::setFrictionCoefficient(this, physicalProperties->frictionCoefficient);
-	Body::computeFrictionForceMagnitude(this);
+	Body::computeFrictionForceMagnitude(this, PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance())));
 }
 //---------------------------------------------------------------------------------------------------------
 void Body::destructor()
@@ -347,7 +318,7 @@ uint8 Body::applyForce(const Vector3D* force)
 }
 
 // apply gravity
-uint8 Body::applyGravity(uint16 axis)
+uint8 Body::applyGravity(uint16 axis, const Vector3D* gravity)
 {
 	if(axis)
 	{
@@ -355,9 +326,9 @@ uint8 Body::applyGravity(uint16 axis)
 
 		Vector3D force =
 		{
-			__X_AXIS & axis ? __FIXED_MULT(_currentGravity->x, this->mass) : 0,
-			__Y_AXIS & axis ? __FIXED_MULT(_currentGravity->y, this->mass) : 0,
-			__Z_AXIS & axis ? __FIXED_MULT(_currentGravity->z, this->mass) : 0,
+			__X_AXIS & axis ? __FIXED_MULT(gravity->x, this->mass) : 0,
+			__Y_AXIS & axis ? __FIXED_MULT(gravity->y, this->mass) : 0,
+			__Z_AXIS & axis ? __FIXED_MULT(gravity->z, this->mass) : 0,
 		};
 
 		return Body::applyForce(this, &force);
@@ -367,7 +338,7 @@ uint8 Body::applyGravity(uint16 axis)
 }
 
 // update movement
-void Body::update(uint16 cycle)
+void Body::update(uint16 cycle, fix7_9_ext currentPhysicsElapsedTime)
 {
 	if(!this->awake)
 	{
@@ -387,7 +358,7 @@ void Body::update(uint16 cycle)
 
 			this->skipedCycles = 0;
 
-			movementResult = Body::updateMovement(this, cycle);
+			movementResult = Body::updateMovement(this, cycle, currentPhysicsElapsedTime);
 		}
 		else if(0 > this->skipCycles)
 		{
@@ -395,13 +366,13 @@ void Body::update(uint16 cycle)
 
 			while(this->skipCycles <= this->skipedCycles--)
 			{
-				movementResult = Body::updateMovement(this, cycle);
+				movementResult = Body::updateMovement(this, cycle, currentPhysicsElapsedTime);
 			}
 		}
 	}
 	else
 	{
-		movementResult = Body::updateMovement(this, cycle);
+		movementResult = Body::updateMovement(this, cycle, currentPhysicsElapsedTime);
 	}
 
 	if(!isDeleted(this->owner))
@@ -493,11 +464,13 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 Vector3D Body::getGravity()
 {
+	Vector3D gravity = PhysicalWorld::getGravity(VUEngine::getPhysicalWorld(VUEngine::getInstance()));
+	
 	return (Vector3D)
 	{
-		__X_AXIS & this->axisSubjectToGravity ? _currentGravity->x : 0,
-		__Y_AXIS & this->axisSubjectToGravity ? _currentGravity->y : 0,
-		__Z_AXIS & this->axisSubjectToGravity ? _currentGravity->z : 0,
+		__X_AXIS & this->axisSubjectToGravity ? gravity.x : 0,
+		__Y_AXIS & this->axisSubjectToGravity ? gravity.y : 0,
+		__Z_AXIS & this->axisSubjectToGravity ? gravity.z : 0,
 	};
 }
 
@@ -510,7 +483,7 @@ static inline fix7_9_ext Body::doComputeInstantaneousSpeed(fixed_t forceMagnitud
 
 static inline fixed_t Body::computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed)
 {
-	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, _currentPhysicsElapsedTime));
+	fixed_t instantaneousSpeed = __FIX7_9_EXT_TO_FIXED(Body::doComputeInstantaneousSpeed(forceMagnitude, gravity, mass, friction, PhysicalWorld::getElapsedTimeStep()));
 
 	return 0 != maximumSpeed && maximumSpeed < __ABS(instantaneousSpeed) ? maximumSpeed : instantaneousSpeed;
 }
@@ -596,7 +569,7 @@ void Body::clampVelocity(bool useExternalForceForDirection)
 }
 
 // update movement over axis
-MovementResult Body::updateMovement(uint16 cycle)
+MovementResult Body::updateMovement(uint16 cycle, fix7_9_ext currentPhysicsElapsedTime)
 {
 	this->friction = Vector3D::scalarProduct(this->direction, -this->frictionForceMagnitude);
 
@@ -604,7 +577,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, _currentPhysicsElapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.x + this->totalNormal.x, this->gravity.x, this->mass, this->friction.x, currentPhysicsElapsedTime);
 
 		this->accelerating.x = 0 != instantaneousSpeed;
 		this->internalVelocity.x += instantaneousSpeed;
@@ -613,7 +586,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, _currentPhysicsElapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.y + this->totalNormal.y, this->gravity.y, this->mass, this->friction.y, currentPhysicsElapsedTime);
 
 		this->accelerating.y = 0 != instantaneousSpeed;
 		this->internalVelocity.y += instantaneousSpeed;
@@ -622,7 +595,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 
 	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, _currentPhysicsElapsedTime);
+		fix7_9_ext instantaneousSpeed = Body::doComputeInstantaneousSpeed(this->externalForce.z + this->totalNormal.z, this->gravity.z, this->mass, this->friction.z, currentPhysicsElapsedTime);
 
 		this->accelerating.z = 0 != instantaneousSpeed;
 		this->internalVelocity.z += instantaneousSpeed;
@@ -645,7 +618,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 		}
 		else
 		{
-			this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, _currentPhysicsElapsedTime);
+			this->internalPosition.x += __FIX7_9_EXT_MULT(this->internalVelocity.x, currentPhysicsElapsedTime);
 			this->position.x = __FIX7_9_EXT_TO_FIXED(this->internalPosition.x);
 		}
 	}
@@ -661,7 +634,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 		}
 		else
 		{
-			this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, _currentPhysicsElapsedTime);
+			this->internalPosition.y += __FIX7_9_EXT_MULT(this->internalVelocity.y, currentPhysicsElapsedTime);
 			this->position.y = __FIX7_9_EXT_TO_FIXED(this->internalPosition.y);
 		}
 	}
@@ -677,7 +650,7 @@ MovementResult Body::updateMovement(uint16 cycle)
 		}
 		else
 		{
-			this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, _currentPhysicsElapsedTime);
+			this->internalPosition.z += __FIX7_9_EXT_MULT(this->internalVelocity.z, currentPhysicsElapsedTime);
 			this->position.z = __FIX7_9_EXT_TO_FIXED(this->internalPosition.z);
 		}
 	}
@@ -818,7 +791,7 @@ void Body::computeTotalNormal()
 	if(0 != this->totalNormal.x || 0 != this->totalNormal.y || 0 != this->totalNormal.z)
 	{
 		Body::computeTotalFrictionCoefficient(this);
-		Body::computeFrictionForceMagnitude(this);
+		Body::computeFrictionForceMagnitude(this, PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance())));
 	}
 }
 
@@ -967,9 +940,10 @@ fixed_t Body::getFrictionCoefficient()
 
 void Body::computeTotalFrictionCoefficient()
 {
+	fixed_t currentWorldFriction = PhysicalWorld::getFrictionCoefficient(VUEngine::getPhysicalWorld(VUEngine::getInstance()));
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
-	this->totalFrictionCoefficient += _currentWorldFriction + this->surroundingFrictionCoefficient;
+	this->totalFrictionCoefficient += currentWorldFriction + this->surroundingFrictionCoefficient;
 
 	if(0 > this->totalFrictionCoefficient)
 	{
@@ -980,7 +954,7 @@ void Body::computeTotalFrictionCoefficient()
 		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
 
-	Body::computeFrictionForceMagnitude(this);
+	Body::computeFrictionForceMagnitude(this, currentWorldFriction);
 }
 
 Vector3D Body::getWeight()
@@ -988,7 +962,7 @@ Vector3D Body::getWeight()
 	return Vector3D::scalarProduct(this->gravity, this->mass);
 }
 
-void Body::computeFrictionForceMagnitude()
+void Body::computeFrictionForceMagnitude(fixed_t currentWorldFriction)
 {
 	if(0 == this->frictionCoefficient)
 	{
@@ -1006,11 +980,11 @@ void Body::computeFrictionForceMagnitude()
 
 		if(weight)
 		{
-			this->frictionForceMagnitude = __ABS(__FIXED_MULT(weight, _currentWorldFriction));
+			this->frictionForceMagnitude = __ABS(__FIXED_MULT(weight, currentWorldFriction));
 		}
 		else
 		{
-			this->frictionForceMagnitude = __ABS(_currentWorldFriction + this->frictionCoefficient);
+			this->frictionForceMagnitude = __ABS(currentWorldFriction + this->frictionCoefficient);
 
 			if(0 > this->frictionForceMagnitude)
 			{

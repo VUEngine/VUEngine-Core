@@ -179,14 +179,6 @@ class Body : ListenerObject
 
 	/// @publicsection
 
-	static void setCurrentElapsedTime(fix7_9_ext currentElapsedTime);
-	static fix7_9_ext getCurrentElapsedTime();
-
-	static void setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction);
-	
-	static void setCurrentGravity(const Vector3D* currentGravity);
-	static const Vector3D* getCurrentGravity();
-	
 	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
 
 	void constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
@@ -195,10 +187,10 @@ class Body : ListenerObject
 
 	void clearNormal(ListenerObject referent);
 
-	void update(uint16 cycle);
+	void update(uint16 cycle, fix7_9_ext currentPhysicsElapsedTime);
 
 	uint8 applyForce(const Vector3D* force);
-	uint8 applyGravity(uint16 axis);
+	uint8 applyGravity(uint16 axis, const Vector3D* gravity);
 
 	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
 
