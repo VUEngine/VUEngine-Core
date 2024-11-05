@@ -210,7 +210,7 @@ const Vector3D* Body::getDirection()
 	return &this->direction;
 }
 
-void Body::setDirection3D(const Vector3D* direction)
+void Body::setDirection(const Vector3D* direction)
 {
 	if(NULL == direction)
 	{
@@ -228,29 +228,6 @@ void Body::setDirection3D(const Vector3D* direction)
 fixed_t Body::getSpeed()
 {
 	return this->speed;
-}
-
-void Body::modifyVelocity(const Vector3D* modifier)
-{
-	ASSERT(modifier, "Body::modifyVelocity: null multiplier");
-
-	this->velocity.x += modifier->x;
-	this->velocity.y += modifier->y;
-	this->velocity.z += modifier->z;
-
-	Body::clampVelocity(this, false);
-}
-
-// retrieve acceleration
-Vector3DFlag Body::getAccelerationState()
-{
-	return this->accelerating;
-}
-
-// retrieve applied force
-Vector3D Body::getAppliedForce()
-{
-	return this->externalForce;
 }
 
 // retrieve movement type
@@ -275,27 +252,6 @@ void Body::setMovementType(int32 movementType, uint16 axis)
 	if(__Z_AXIS & axis)
 	{
 		this->movementType.z = movementType;
-	}
-}
-
-void Body::clearAcceleration(uint16 axis)
-{
-	if(__X_AXIS & axis)
-	{
-		this->accelerating.x = false;
-		this->externalForce.x = 0;
-	}
-
-	if(__Y_AXIS & axis)
-	{
-		this->accelerating.y = false;
-		this->externalForce.y = 0;
-	}
-
-	if(__Z_AXIS & axis)
-	{
-		this->accelerating.z = false;
-		this->externalForce.z = 0;
 	}
 }
 
@@ -408,14 +364,6 @@ uint8 Body::applyGravity(uint16 axis)
 	}
 
 	return __NO_AXIS;
-}
-
-// add force
-void Body::applySustainedForce(const Vector3D* force)
-{
-	ASSERT(force, "Body::applySustainedForce: null force");
-
-	Body::applyForce(this, force);
 }
 
 // update movement
@@ -541,11 +489,6 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 	}
 
 	return movementResult;
-}
-
-Vector3D Body::getFriction()
-{
-	return this->friction;
 }
 
 Vector3D Body::getGravity()
@@ -905,11 +848,6 @@ void Body::addNormal(ListenerObject referent, Vector3D direction, fixed_t magnit
 	Body::computeTotalNormal(this);
 }
 
-Vector3D Body::getNormal()
-{
-	return this->totalNormal;
-}
-
 Vector3D Body::getLastNormalDirection()
 {
 	if(!this->normals || !this->normals->head)
@@ -1133,12 +1071,6 @@ void Body::setMass(fixed_t mass)
 bool Body::reachedMaximumSpeedpeed()
 {
 	return this->speed == this->maximumSpeed;
-}
-
-// retrieve state
-bool Body::isAwake()
-{
-	return this->awake;
 }
 
 // awake body

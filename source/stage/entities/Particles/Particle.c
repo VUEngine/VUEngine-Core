@@ -159,7 +159,7 @@ bool Particle::update(uint32 elapsedTime, void (* behavior)(Particle particle))
  * @param force
  * @param movementType
  */
-void Particle::applySustainedForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
+void Particle::applyForce(const Vector3D* force __attribute__ ((unused)), uint32 movementType __attribute__ ((unused)))
 {
 }
 
@@ -318,7 +318,7 @@ void Particle::setup(const SpriteSpec* spriteSpec, const WireframeSpec* wirefram
 	{
 		if(0 != force->x || 0 != force->y || 0 != force->z)
 		{
-			Particle::applySustainedForce(this, force, movementType);
+			Particle::applyForce(this, force, movementType);
 		}
 	}
 

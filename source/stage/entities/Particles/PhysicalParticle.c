@@ -88,7 +88,7 @@ bool PhysicalParticle::update(uint32 elapsedTime, void (* behavior)(Particle par
  * @param force
  * @param movementType
  */
-void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movementType)
+void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 {
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
@@ -119,7 +119,7 @@ void PhysicalParticle::applySustainedForce(const Vector3D* force, uint32 movemen
 	}
 	else
 	{
-		Body::applySustainedForce(this->body, force);
+		Body::applyForce(this->body, force);
 	}
 }
 

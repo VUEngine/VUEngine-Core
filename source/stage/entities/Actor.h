@@ -68,7 +68,6 @@ class Actor : AnimatedEntity
 	void stopAllMovement();
 	void resetCollisionStatus();
 	Body getBody();
-	void takeHitFrom(Actor other);
 	bool isMoving();
 	uint16 getMovementState();
 	bool setVelocity(const Vector3D* velocity, bool checkIfCanMove);

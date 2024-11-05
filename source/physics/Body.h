@@ -181,65 +181,73 @@ class Body : ListenerObject
 
 	static void setCurrentElapsedTime(fix7_9_ext currentElapsedTime);
 	static fix7_9_ext getCurrentElapsedTime();
+
 	static void setCurrentWorldFrictionCoefficient(fixed_t currentWorldFriction);
+	
 	static void setCurrentGravity(const Vector3D* currentGravity);
 	static const Vector3D* getCurrentGravity();
+	
 	static fixed_t computeInstantaneousSpeed(fixed_t forceMagnitude, fixed_t gravity, fixed_t mass, fixed_t friction, fixed_t maximumSpeed);
 
 	void constructor(SpatialObject owner, const PhysicalProperties* physicalProperties, uint16 axisSubjectToGravity);
-	void applySustainedForce(const Vector3D* force);
+	
+	void reset();
+
+	void clearNormal(ListenerObject referent);
+
+	void update(uint16 cycle);
+
 	uint8 applyForce(const Vector3D* force);
 	uint8 applyGravity(uint16 axis);
+
 	void bounce(ListenerObject bounceReferent, Vector3D bouncingPlaneNormal, fixed_t frictionCoefficient, fixed_t bounciness);
-	void clearAcceleration(uint16 axis);
-	void clearExternalForce();
-	Vector3DFlag getAccelerationState();
-	Vector3D getAppliedForce();
-	uint16 getAxisSubjectToGravity();
-	fixed_t getBounciness();
-	Vector3D getLastDisplacement();
-	Vector3D getGravity();
-	Vector3D getFriction();
-	fixed_t getMass();
-	MovementType getMovementType();
-	SpatialObject getOwner();
-	const Vector3D* getPosition();
-	const Vector3D* getVelocity();
+
+	uint16 stopMovement(uint16 axis);
+
 	void setVelocity(const Vector3D* velocity);
+	const Vector3D* getVelocity();
+	
+	void setDirection(const Vector3D* direction);
 	const Vector3D* getDirection();
-	void setDirection3D(const Vector3D* direction);
-	fixed_t getSpeed();
-	fixed_ext_t getSpeedSquare();
-	void modifyVelocity(const Vector3D* multiplier);
-	bool isAwake();
-	bool reachedMaximumSpeed();
-	uint16 getMovementOnAllAxis();
+	
 	void setMovementType(int32 movementType, uint16 axis);
+	MovementType getMovementType();
+
+	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
+	uint16 getAxisSubjectToGravity();
+
 	void moveAccelerated(uint16 axis);
 	void moveUniformly(const Vector3D* velocity);
-	void setAxisSubjectToGravity(uint16 axisSubjectToGravity);
+	
 	void setBounciness(fixed_t bounciness);
-	void setSkipCycles(int8 skipCycles);
-	Vector3D getNormal();
-	Vector3D getLastNormalDirection();
-	void reset();
-	void clearNormal(ListenerObject referent);
-	fixed_t getFrictionForceMagnitude();
-	fixed_t getFrictionCoefficient();
+	fixed_t getBounciness();
+
 	void setFrictionCoefficient(fixed_t frictionCoefficient);
-	void setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoefficient);
+	fixed_t getFrictionCoefficient();
+
 	void setMass(fixed_t mass);
-	void setOwner(SpatialObject owner);
+	fixed_t getMass();
+
 	void setPosition(const Vector3D* position, SpatialObject caller);
-	uint16 stopMovement(uint16 axis);
-	void takeHitFrom(Body other);
+	const Vector3D* getPosition();
+
 	void setMaximumVelocity(Vector3D maximumVelocity);
 	Vector3D getMaximumVelocity();
+
 	void setMaximumSpeed(fixed_t maximumSpeed);
 	fixed_t getMaximumSpeed();
-	void print(int32 x, int32 y);
+	
 	void sendMessages(bool value);
-	void update(uint16 cycle);
+
+	void setSkipCycles(int8 skipCycles);
+		
+	void setSurroundingFrictionCoefficient(fixed_t surroundingFrictionCoefficient);
+
+	fixed_t getSpeed();
+	uint16 getMovementOnAllAxis();
+	Vector3D getLastDisplacement();
+
+	void print(int32 x, int32 y);
 }
 
 
