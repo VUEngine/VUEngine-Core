@@ -115,7 +115,7 @@ void PhysicalParticle::applyForce(const Vector3D* force, uint32 movementType)
 			acceleration.z
 		};
 
-		Body::moveUniformly(this->body, &velocity);
+		Body::setVelocity(this->body, &velocity);
 	}
 	else
 	{

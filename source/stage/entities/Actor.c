@@ -511,7 +511,7 @@ bool Actor::setVelocity(const Vector3D* velocity, bool checkIfCanMove)
 		}
 	}
 
-	Body::moveUniformly(this->body, velocity);
+	Body::setVelocity(this->body, velocity);
 
 	return true;
 }

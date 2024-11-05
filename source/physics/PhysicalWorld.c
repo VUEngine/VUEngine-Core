@@ -113,10 +113,16 @@ void PhysicalWorld::update()
 
 			if(__NO_AXIS != gravitySensibleAxis)
 			{
-				// must account for the fps to avoid situations is which a collision is not detected
-				// when a body starts to fall and doesn't have enough time to detect a collider below
-				// when moving from one collider over another
-				Body::applyGravity(body, gravitySensibleAxis, &this->gravity);
+				fixed_t mass = Body::getMass(body);
+
+				Vector3D force =
+				{
+					__X_AXIS & gravitySensibleAxis ? __FIXED_MULT(this->gravity.x, mass) : 0,
+					__Y_AXIS & gravitySensibleAxis ? __FIXED_MULT(this->gravity.y, mass) : 0,
+					__Z_AXIS & gravitySensibleAxis ? __FIXED_MULT(this->gravity.z, mass) : 0,
+				};
+
+				Body::applyForce(body, &force);
 			}
 		}
 
