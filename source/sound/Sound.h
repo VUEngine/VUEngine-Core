@@ -11,17 +11,24 @@
 #define SOUND_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #include <ListenerObject.h>
 #include <MIDI.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// FORWARD DECLARATIONS
+//=========================================================================================================
+
+class VirtualList;
+
+
+//=========================================================================================================
+// CLASS' MACROS
+//=========================================================================================================
 
 #define __SOUND_WRAPPER_STOP_SOUND 											0x21
 
@@ -41,12 +48,12 @@
 #define __SOUND_TARGET_TIMER_US_PER_INTERRUPT(TargetHz)						(__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) + 20 * (int)((__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20) / 20.0f + 0.5f) - (__SOUND_TARGET_TIMER_US_PER_INTERRUPT_HELPER(TargetHz) % 20))
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// CLASS' DATA
+//=========================================================================================================
 
-class VirtualList;
-
+/// Sound channel types
+/// @memberof Sound
 enum SoundChannelTypes
 {
 	kChannelNormal 			= (1 << 0),
@@ -54,6 +61,28 @@ enum SoundChannelTypes
 	kChannelNoise			= (1 << 2)
 };
 
+/// Sound track types
+/// @memberof Sound
+enum SoundTrackTypes
+{
+	kUnknownType = 0,
+	kMIDI,
+	kPCM
+};
+
+/// Sound playback types
+/// @memberof Sound
+enum SoundPlaybackTypes
+{
+	kSoundPlaybackNone = 0,
+	kSoundPlaybackNormal,
+	kSoundPlaybackFadeIn,
+	kSoundPlaybackFadeOut,
+	kSoundPlaybackFadeOutAndRelease
+};
+
+/// Sound channel configuration struct
+/// @memberof Sound
 typedef struct SoundChannelConfiguration
 {
 	/// kMIDI, kPCM
@@ -94,8 +123,12 @@ typedef struct SoundChannelConfiguration
 
 } SoundChannelConfiguration;
 
+/// A SoundChannelConfiguration spec that is stored in ROM
+/// @memberof Sound
 typedef const SoundChannelConfiguration SoundChannelConfigurationROM;
 
+/// A SoundChannel spec struct
+/// @memberof Sound
 typedef struct SoundChannel
 {
 	/// Configuration
@@ -117,8 +150,12 @@ typedef struct SoundChannel
 
 } SoundChannel;
 
+/// A SoundChannel spec that is stored in ROM
+/// @memberof Sound
 typedef const SoundChannel SoundChannelROM;
 
+/// A Sound spec
+/// @memberof Sound
 typedef struct SoundSpec
 {
 	/// Name
@@ -135,21 +172,37 @@ typedef struct SoundSpec
 
 } SoundSpec;
 
+/// A Sound spec that is stored in ROM
+/// @memberof Sound
 typedef const SoundSpec SoundROMSpec;
 
+
+/// A Waveform struct
+/// @memberof Sound
 typedef struct Waveform
 {
-	uint8 number;
+	/// Waveform's index
+	uint8 index;
+
+	/// Count of channels using this waveform
 	int8 usageCount;
+
+	/// Pointer to the VSU's waveform address
 	uint8* wave;
+
+	/// If true, waveform data has to be rewritten
 	uint8 overwrite;
+
+	/// Pointer to the waveform's data
 	const int8* data;
 
 } Waveform;
 
+/// A Channel struct
+/// @memberof Sound
 typedef struct Channel
 {
-	// Channel configuration
+	/// Channel configuration
 	SoundChannelConfiguration soundChannelConfiguration;
 
 	/// Sound definition
@@ -184,42 +237,32 @@ typedef struct Channel
 
 	} soundTrack;
 
+	/// Channel's type (normal, modulation or noise)
 	uint32 type;
 
-	uint8 number;
+	/// Channel's sound registries index
+	uint8 index;
+
+	/// Channel's sound's spec channels index
 	uint8 soundChannel;
+
+	/// If true, the channel's track's playback is complete
 	bool finished;
 
 } Channel;
 
-enum SoundTrackTypes
-{
-	kUnknownType = 0,
-	kMIDI,
-	kPCM
-};
 
-enum SoundPlaybackTypes
-{
-	kSoundPlaybackNone = 0,
-	kSoundPlaybackNormal,
-	kSoundPlaybackFadeIn,
-	kSoundPlaybackFadeOut,
-	kSoundPlaybackFadeOutAndRelease
-};
+//=========================================================================================================
+// CLASS' DECLARATION
+//=========================================================================================================
 
-enum SoundMessages
-{
-	kSoundFadeIn = 23,
-	kSoundFadeOut,
-};
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/// @ingroup stage-entities-particles
+///
+/// Class Sound
+///
+/// Inherits from ListenerObject
+///
+/// Implements sound playback.
+/// @ingroup sound
 class Sound : ListenerObject
 {
 	const SoundSpec* soundSpec;
@@ -246,39 +289,50 @@ class Sound : ListenerObject
 
 	/// @publicsection
 	static void setMirror(Mirror mirror);
+
 	void constructor(const SoundSpec* soundSpec, VirtualList channels, int8* waves, uint16 pcmTargetPlaybackRefreshRate, EventListener soundReleaseListener, ListenerObject scope);
 
-	const Channel* getChannel(uint8 index);
+	void play(const Vector3D* position, uint32 playbackType);
+	void stop();
+	void updateMIDIPlayback(uint32 elapsedMicroseconds);
+	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
+
+	void pause();
+	void unpause();
+
+	void turnOn();
+	void turnOff();
+
+	void mute();
+	void unmute();
+
+	void lock();
+	void unlock();
+
+	void rewind();
+	void release();
+
+	void autoReleaseOnFinish(bool value);
+
+	void setSpeed(fix7_9_ext speed);
+	fix7_9_ext getSpeed();
+
+	void setVolumeReduction(int8 volumeReduction);
+	void setVolumenScalePower(uint8 volumenScalePower);
+
+	void computeTimerResolutionFactor();
+
+	void setFrequencyModifier(uint16 frequencyModifier);
+	uint16 getFrequencyModifier();
+
+	bool hasPCMTracks();
 	bool isUsingChannel(Channel* channel);
 	bool isPlaying();
 	bool isPaused();
 	bool isTurnedOn();
-	bool hasPCMTracks();
 	bool isFadingIn();
 	bool isFadingOut();
-	void play(const Vector3D* position, uint32 playbackType);
-	void pause();
-	void unpause();
-	void turnOff();
-	void turnOn();
-	void rewind();
-	void stop();
-	void release();
-	void mute();
-	void unmute();
-	void lock();
-	void unlock();
-	void autoReleaseOnFinish(bool value);
-	void updateMIDIPlayback(uint32 elapsedMicroseconds);
-	void updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdates);
-	void setSpeed(fix7_9_ext speed);
-	fix7_9_ext getSpeed();
-	void setVolumenScalePower(uint8 volumenScalePower);
-	void setVolumeReduction(int8 volumeReduction);
-	int8 getVolumeReduction();
-	void computeTimerResolutionFactor();
-	void setFrequencyModifier(uint16 frequencyModifier);
-	uint16 getFrequencyModifier();
+
 	void print(int32 x, int32 y);
 	void printMetadata(int32 x, int32 y, bool printDetails);
 	void printVolume(int32 x, int32 y, bool printHeader);

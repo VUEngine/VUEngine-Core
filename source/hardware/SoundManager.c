@@ -133,7 +133,7 @@ void SoundManager::reset()
 	// Reset all channels
 	for(i = 0; i < __TOTAL_CHANNELS; i++)
 	{
-		this->channels[i].number = i;
+		this->channels[i].index = i;
 		this->channels[i].soundSpec = NULL;
 		this->channels[i].cursor = 0;
 		this->channels[i].ticks = 0;
@@ -155,7 +155,7 @@ void SoundManager::reset()
 	// Reset all waveforms
 	for(i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
-		this->waveforms[i].number = i;
+		this->waveforms[i].index = i;
 		this->waveforms[i].usageCount = 0;
 		this->waveforms[i].wave = __WAVE_ADDRESS(i);
 		this->waveforms[i].data = NULL;
@@ -502,7 +502,7 @@ void SoundManager::print(int32 x, int32 y)
 		int32 y = yDisplacement;
 
 		PRINT_TEXT("CHANNEL ", x, y);
-		PRINT_INT(this->channels[i].number + 1, x + xDisplacement, y);
+		PRINT_INT(this->channels[i].index + 1, x + xDisplacement, y);
 
 		PRINT_TEXT("Type   : ", x, ++y);
 
@@ -617,10 +617,10 @@ void SoundManager::printWaveFormStatus(int32 x, int32 y)
 {
 	for(uint32 i = 0; i < __TOTAL_WAVEFORMS; i++)
 	{
-		PRINT_TEXT("           ", x, y + this->waveforms[i].number);
-		PRINT_INT(this->waveforms[i].number, x, y + this->waveforms[i].number);
-		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].number);
-		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].number);
+		PRINT_TEXT("           ", x, y + this->waveforms[i].index);
+		PRINT_INT(this->waveforms[i].index, x, y + this->waveforms[i].index);
+		PRINT_INT(this->waveforms[i].usageCount, x + 4, y + this->waveforms[i].index);
+		PRINT_HEX((uint32)this->waveforms[i].data, x + 8, y + this->waveforms[i].index);
 	}
 }
 #endif
@@ -893,7 +893,7 @@ int8 SoundManager::getWaveform(const int8* waveFormData)
 		if(waveFormData == this->waveforms[i].data)
 		{
 			this->waveforms[i].usageCount++;
-			return this->waveforms[i].number;
+			return this->waveforms[i].index;
 		}
 	}
 
@@ -903,7 +903,7 @@ int8 SoundManager::getWaveform(const int8* waveFormData)
 		freeWaveformPriority1->data = waveFormData;
 		freeWaveformPriority1->usageCount = 1;
 
-		return freeWaveformPriority1->number;
+		return freeWaveformPriority1->index;
 	}
 
 	if(NULL != freeWaveformPriority2)
@@ -912,7 +912,7 @@ int8 SoundManager::getWaveform(const int8* waveFormData)
 		freeWaveformPriority2->data = waveFormData;
 		freeWaveformPriority2->usageCount = 1;
 
-		return freeWaveformPriority2->number;
+		return freeWaveformPriority2->index;
 	}
 
 	return -1;

@@ -237,26 +237,6 @@ void Sound::setVolumeReduction(int8 volumeReduction)
 }
 
 /**
- * Get volume reduction
- */
-int8 Sound::getVolumeReduction()
-{
-	return this->volumeReduction;
-}
-
-/**
- * Get channel
- *
- *
- * @param index uint8
- * @return Channel*
- */
-const Channel* Sound::getChannel(uint8 index)
-{
-	return VirtualList::getDataAtIndex(this->channels, index);
-}
-
-/**
  * Is playing?
  *
  * @return bool
@@ -381,10 +361,10 @@ void Sound::play(const Vector3D* position, uint32 playbackType)
 						channel->cursor = 0;
 					}
 
-					_soundRegistries[channel->number].SxFQH = 0;
-					_soundRegistries[channel->number].SxFQL = 0;
-					_soundRegistries[channel->number].SxLRV = 0;
-					_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+					_soundRegistries[channel->index].SxFQH = 0;
+					_soundRegistries[channel->index].SxFQL = 0;
+					_soundRegistries[channel->index].SxLRV = 0;
+					_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
 				}
 
 				if(!wasPaused)
@@ -423,11 +403,10 @@ void Sound::pause()
 	{
 		this->paused = true;
 
-		// Silence all channels first
 		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+			_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 		}
 	}
 }
@@ -450,12 +429,11 @@ void Sound::unpause()
 
 	if(this->paused && this->turnedOn)
 	{
-		// Silence all channels first
 		for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 		{
 			Channel* channel = (Channel*)node->data;
-			_soundRegistries[channel->number].SxLRV = 0x00;
-			_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+			_soundRegistries[channel->index].SxLRV = 0x00;
+			_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
 		}
 
 		this->paused = false;
@@ -480,11 +458,10 @@ void Sound::turnOff()
 
 	this->turnedOn = false;
 
-	// Silence all channels first
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+		_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
@@ -504,12 +481,11 @@ void Sound::turnOn()
 		return;
 	}
 
-	// Silence all channels first
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+		_soundRegistries[channel->index].SxLRV = 0x00;
+		_soundRegistries[channel->index].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
 	}
 
 	this->turnedOn = true;
@@ -563,7 +539,6 @@ void Sound::stop()
 	this->turnedOn = false;
 	this->paused = true;
 
-	// Silence all channels first
 	for(VirtualNode node = this->channels->head; NULL != node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
@@ -573,7 +548,7 @@ void Sound::stop()
 		channel->nextElapsedTicksTarget = 0;
 
 		// If turned of right away, pops and cracks are perceptible
-		_soundRegistries[channel->number].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
+		_soundRegistries[channel->index].SxINT |= __SOUND_WRAPPER_STOP_SOUND;
 	}
 }
 
@@ -738,17 +713,17 @@ void Sound::configureSoundRegistries()
 	{
 		Channel* channel = (Channel*)node->data;
 
-		_soundRegistries[channel->number].SxINT = 0x00;
-		_soundRegistries[channel->number].SxLRV = 0x00;
-		_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
-		_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH;
-		_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL;
-		_soundRegistries[channel->number].SxRAM = channel->soundChannelConfiguration.SxRAM;
+		_soundRegistries[channel->index].SxINT = 0x00;
+		_soundRegistries[channel->index].SxLRV = 0x00;
+		_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+		_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+		_soundRegistries[channel->index].SxFQH = channel->soundChannelConfiguration.SxFQH;
+		_soundRegistries[channel->index].SxFQL = channel->soundChannelConfiguration.SxFQL;
+		_soundRegistries[channel->index].SxRAM = channel->soundChannelConfiguration.SxRAM;
 
 		if(kChannelModulation == channel->type)
 		{
-			_soundRegistries[channel->number].S5SWP = 0;
+			_soundRegistries[channel->index].S5SWP = 0;
 		}
 	}
 }
@@ -837,23 +812,22 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 
 	uint8 SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 
-	// Is it a special note?
 	switch(note)
 	{
 		case PAU:
 
-			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 | 0x1;
+			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1 | 0x1;
 			break;
 
 		case HOLD:
-			// Continue playing the previous note, just modify the voluem
+
 #ifdef __SOUND_TEST
-			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
 #else
 #ifdef __SHOW_SOUND_STATUS
-			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
+			_soundRegistries[channel->index].SxLRV = channel->soundChannelConfiguration.SxLRV = SxLRV;
 #else
-			_soundRegistries[channel->number].SxLRV = SxLRV;
+			_soundRegistries[channel->index].SxLRV = SxLRV;
 #endif
 #endif
 			break;
@@ -879,16 +853,16 @@ void Sound::playMIDINote(Channel* channel, fixed_t leftVolumeFactor, fixed_t rig
 #endif
 #endif
 
-			_soundRegistries[channel->number].SxLRV = SxLRV;
-			_soundRegistries[channel->number].SxFQH = (note >> 8);
-			_soundRegistries[channel->number].SxFQL = (note & 0xFF);
-			_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
-			_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+			_soundRegistries[channel->index].SxLRV = SxLRV;
+			_soundRegistries[channel->index].SxFQH = (note >> 8);
+			_soundRegistries[channel->index].SxFQL = (note & 0xFF);
+			_soundRegistries[channel->index].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+			_soundRegistries[channel->index].SxEV1 = channel->soundChannelConfiguration.SxEV1;
 
 			if(kChannelNoise == channel->soundChannelConfiguration.channelType)
 			{
 				uint8 tapLocation = channel->soundTrack.dataMIDI[(channel->samples * 3) + 1 + channel->cursor];
-				_soundRegistries[channel->number].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
+				_soundRegistries[channel->index].SxEV1 = (tapLocation << 4) | (0x0F & channel->soundChannelConfiguration.SxEV1);
 			}
 			
 			break;
@@ -1088,12 +1062,12 @@ void Sound::updatePCMPlayback(uint32 elapsedMicroseconds, uint32 targetPCMUpdate
 
 			if(__MAXIMUM_VOLUME <= volume)
 			{
-				_soundRegistries[channel->number].SxLRV = 0xFF;
+				_soundRegistries[channel->index].SxLRV = 0xFF;
 				volume -= __MAXIMUM_VOLUME;
 			}
 			else
 			{
-				_soundRegistries[channel->number].SxLRV = ((volume << 4) | volume);
+				_soundRegistries[channel->index].SxLRV = ((volume << 4) | volume);
 				volume = 0;
 			}
 		}
@@ -1128,7 +1102,7 @@ void Sound::print(int32 x, int32 y)
 		Channel* channel = (Channel*)node->data;
 
 		PRINT_TEXT("CHANNEL: ", x, y);
-		PRINT_INT(channel->number, x + xDisplacement, y);
+		PRINT_INT(channel->index, x + xDisplacement, y);
 
 		PRINT_TEXT("Type:         ", x, ++y);
 
@@ -1459,7 +1433,7 @@ void Sound::printVolume(int32 x, int32 y, bool printHeader)
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
-			'C', '0' + channel->number,
+			'C', '0' + channel->index,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,
 			__CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX, __CHAR_DARK_RED_BOX,

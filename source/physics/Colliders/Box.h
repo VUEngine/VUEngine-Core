@@ -49,6 +49,7 @@ class Box : Collider
 
 	/// The normals of the box
 	Normals* normals;
+
 	// for rotation purposes
 	Vector3D rotationVertexDisplacement;
 

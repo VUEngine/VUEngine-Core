@@ -146,7 +146,7 @@ abstract class Sprite : VisualComponent
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the region of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite manages
 	int16 render(int16 index, bool updateAnimation);
 
 	/// Retrieve the sprite's texture.
@@ -154,7 +154,7 @@ abstract class Sprite : VisualComponent
 	Texture getTexture();
 
 	/// Retrieve the index that determines the region of DRAM that this sprite configured
-	/// @return The index that determines the region of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite manages
 	int16 getIndex();
 
 	/// Retrieve the head flags for DRAM entries.
@@ -342,7 +342,7 @@ abstract class Sprite : VisualComponent
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the region of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite manages
 	virtual int16 doRender(int16 index) = 0;
 
 	/// Invalidate the flags that determine if the sprite requires rendering.

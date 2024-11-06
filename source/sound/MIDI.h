@@ -11,9 +11,9 @@
 #define MIDI_H_
 
 
-//---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
+//=========================================================================================================
+// INCLUDES
+//=========================================================================================================
 
 #define PAU 0x00
 #define HOLD 0x01
@@ -45,7 +45,7 @@
 #define C_2 0x00
 #define CS2 0x00
 #define D_2 0x00
-//beginning of VB audible range
+// Beginning of VB audible range
 #define DS2 0x27
 #define E_2 0x98
 #define F_2 0x102
@@ -118,8 +118,8 @@
 #define C_8 0x7DB
 #define CS8 0x7DD
 #define D_8 0x7DF
-//end of VB audible range
-//(Higher sounds are audible, but will not produce a pure, specific note)
+// End of VB audible range
+// (Higher sounds are audible, but will not produce a pure, specific note)
 #define DS8 0x7E1
 #define E_8 0x7E2
 #define F_8 0x7E4
@@ -151,8 +151,8 @@
 #define G_10 0x00 //25087,71
 
 // Special sound notes
-#define ENDSOUND  0xFFFF  // Ends the sound.
-#define LOOPSOUND 0xFFFE  // Repeats the sound from the beginning.
+#define ENDSOUND  0xFFFF  		// Ends the sound.
+#define LOOPSOUND 0xFFFE  		// Repeats the sound from the beginning.
 #define MINIMUM_AUDIBLE_NOTE	DS2
 #define MAXIMUM_AUDIBLE_NOTE	D_8
 

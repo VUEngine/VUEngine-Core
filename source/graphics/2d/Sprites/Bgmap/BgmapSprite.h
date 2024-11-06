@@ -149,7 +149,7 @@ class BgmapSprite : Sprite
 
 	/// Render the sprite by configuring the DRAM assigned to it by means of the provided index.
 	/// @param index: Determines the region of DRAM that this sprite is allowed to configure
-	/// @return The index that determines the region of DRAM that this sprite configured
+	/// @return The index that determines the region of DRAM that this sprite manages
 	override int16 doRender(int16 index);
 
 	/// Set the current multiframe
