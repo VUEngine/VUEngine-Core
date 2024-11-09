@@ -125,6 +125,8 @@ void Camera::setFocusEntity(Entity focusEntity)
 
 		Camera::focus(this);
 	}
+
+	this->lastDisplacement = Vector3D::zero();
 }
 //---------------------------------------------------------------------------------------------------------
 Entity Camera::getFocusEntity()
